@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, Directive, inject, Input, NgModule, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { booleanAttribute, Directive, effect, input, NgModule, signal, untracked } from '@angular/core';
 import { createElement, focus, getFirstFocusableElement, getLastFocusableElement } from '@exhaustive-ui/utils';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 
@@ -8,47 +8,48 @@ import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
  * @group Components
  */
 @Directive({
-    selector: '[pFocusTrap]',
-    standalone: true
+    selector: '[pFocusTrap]'
 })
 export class FocusTrap extends BaseComponent {
     /**
      * When set as true, focus wouldn't be managed.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) pFocusTrapDisabled: boolean = false;
+    readonly pFocusTrapDisabled = input(false, { transform: booleanAttribute });
 
-    platformId = inject(PLATFORM_ID);
+    firstHiddenFocusableElement = signal<HTMLElement | undefined>(undefined);
 
-    document: Document = inject(DOCUMENT);
+    lastHiddenFocusableElement = signal<HTMLElement | undefined>(undefined);
 
-    firstHiddenFocusableElement!: HTMLElement;
-
-    lastHiddenFocusableElement!: HTMLElement;
-
-    onInit() {
-        if (isPlatformBrowser(this.platformId) && !this.pFocusTrapDisabled) {
-            !this.firstHiddenFocusableElement && !this.lastHiddenFocusableElement && this.createHiddenFocusableElements();
-        }
-    }
-
-    onChanges(changes: SimpleChanges) {
-        if (changes.pFocusTrapDisabled && isPlatformBrowser(this.platformId)) {
-            if (changes.pFocusTrapDisabled.currentValue) {
-                this.removeHiddenFocusableElements();
-            } else {
-                this.createHiddenFocusableElements();
+    constructor() {
+        super();
+        effect(() => {
+            if (!isPlatformBrowser(this.platformId)) {
+                return;
             }
-        }
+
+            const disabled = this.pFocusTrapDisabled();
+
+            untracked(() => {
+                if (disabled) {
+                    this.removeHiddenFocusableElements();
+                } else {
+                    this.createHiddenFocusableElements();
+                }
+            });
+        });
     }
 
     removeHiddenFocusableElements() {
-        if (this.firstHiddenFocusableElement && this.firstHiddenFocusableElement.parentNode) {
-            this.firstHiddenFocusableElement.parentNode.removeChild(this.firstHiddenFocusableElement);
+        const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
+        const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
+
+        if (firstHiddenFocusableElement && firstHiddenFocusableElement.parentNode) {
+            firstHiddenFocusableElement.parentNode.removeChild(firstHiddenFocusableElement);
         }
 
-        if (this.lastHiddenFocusableElement && this.lastHiddenFocusableElement.parentNode) {
-            this.lastHiddenFocusableElement.parentNode.removeChild(this.lastHiddenFocusableElement);
+        if (lastHiddenFocusableElement && lastHiddenFocusableElement.parentNode) {
+            lastHiddenFocusableElement.parentNode.removeChild(lastHiddenFocusableElement);
         }
     }
     getComputedSelector(selector) {
@@ -70,28 +71,31 @@ export class FocusTrap extends BaseComponent {
             }) as HTMLElement;
         };
 
-        this.firstHiddenFocusableElement = createFocusableElement(this.onFirstHiddenElementFocus);
-        this.lastHiddenFocusableElement = createFocusableElement(this.onLastHiddenElementFocus);
+        const firstHiddenFocusableElement = createFocusableElement(this.onFirstHiddenElementFocus);
+        const lastHiddenFocusableElement = createFocusableElement(this.onLastHiddenElementFocus);
 
-        this.firstHiddenFocusableElement.setAttribute('data-pc-section', 'firstfocusableelement');
-        this.lastHiddenFocusableElement.setAttribute('data-pc-section', 'lastfocusableelement');
+        firstHiddenFocusableElement.setAttribute('data-pc-section', 'firstfocusableelement');
+        lastHiddenFocusableElement.setAttribute('data-pc-section', 'lastfocusableelement');
 
-        this.el.nativeElement.prepend(this.firstHiddenFocusableElement);
-        this.el.nativeElement.append(this.lastHiddenFocusableElement);
+        this.el.nativeElement.prepend(firstHiddenFocusableElement);
+        this.el.nativeElement.append(lastHiddenFocusableElement);
+
+        this.firstHiddenFocusableElement.set(firstHiddenFocusableElement);
+        this.lastHiddenFocusableElement.set(lastHiddenFocusableElement);
     }
 
     onFirstHiddenElementFocus(event) {
         const { currentTarget, relatedTarget } = event;
-        const focusableElement =
-            relatedTarget === this.lastHiddenFocusableElement || !this.el.nativeElement?.contains(relatedTarget) ? getFirstFocusableElement(currentTarget.parentElement, ':not(.p-hidden-focusable)') : this.lastHiddenFocusableElement;
+        const lastHiddenFocusableElement = this.lastHiddenFocusableElement();
+        const focusableElement = relatedTarget === lastHiddenFocusableElement || !this.el.nativeElement?.contains(relatedTarget) ? getFirstFocusableElement(currentTarget.parentElement, ':not(.p-hidden-focusable)') : lastHiddenFocusableElement;
 
         focus(focusableElement as any);
     }
 
     onLastHiddenElementFocus(event) {
         const { currentTarget, relatedTarget } = event;
-        const focusableElement =
-            relatedTarget === this.firstHiddenFocusableElement || !this.el.nativeElement?.contains(relatedTarget) ? getLastFocusableElement(currentTarget.parentElement, ':not(.p-hidden-focusable)') : this.firstHiddenFocusableElement;
+        const firstHiddenFocusableElement = this.firstHiddenFocusableElement();
+        const focusableElement = relatedTarget === firstHiddenFocusableElement || !this.el.nativeElement?.contains(relatedTarget) ? getLastFocusableElement(currentTarget.parentElement, ':not(.p-hidden-focusable)') : firstHiddenFocusableElement;
 
         focus(focusableElement as any);
     }

@@ -173,7 +173,7 @@ describe('FocusTrap', () => {
         });
 
         it('should have default values', () => {
-            expect(directive.pFocusTrapDisabled).toBe(false);
+            expect(directive.pFocusTrapDisabled()).toBe(false);
         });
 
         it('should inject platform ID and document', () => {
@@ -182,8 +182,8 @@ describe('FocusTrap', () => {
         });
 
         it('should create hidden focusable elements on init', () => {
-            expect(directive.firstHiddenFocusableElement).toBeDefined();
-            expect(directive.lastHiddenFocusableElement).toBeDefined();
+            expect(directive.firstHiddenFocusableElement()).toBeDefined();
+            expect(directive.lastHiddenFocusableElement()).toBeDefined();
         });
 
         it('should add hidden elements to DOM', () => {
@@ -297,7 +297,7 @@ describe('FocusTrap', () => {
         });
 
         it('should focus first element when tabbing from last hidden element', () => {
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const lastHidden = directive.lastHiddenFocusableElement();
 
             // Simulate focus event on last hidden element
             const focusEvent = new FocusEvent('focus', {
@@ -312,7 +312,7 @@ describe('FocusTrap', () => {
         });
 
         it('should focus last element when tabbing from first hidden element', () => {
-            const firstHidden = directive.firstHiddenFocusableElement;
+            const firstHidden = directive.firstHiddenFocusableElement();
 
             // Simulate focus event on first hidden element
             const focusEvent = new FocusEvent('focus', {
@@ -327,7 +327,7 @@ describe('FocusTrap', () => {
         });
 
         it('should handle focus events from outside the trap', () => {
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const lastHidden = directive.lastHiddenFocusableElement();
             const outsideElement = document.createElement('button');
             document.body.appendChild(outsideElement);
 
@@ -346,8 +346,8 @@ describe('FocusTrap', () => {
         });
 
         it('should handle circular focus navigation', () => {
-            const firstHidden = directive.firstHiddenFocusableElement;
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const firstHidden = directive.firstHiddenFocusableElement();
+            const lastHidden = directive.lastHiddenFocusableElement();
 
             // Simulate focus event from last hidden to first hidden
             const focusEvent = new FocusEvent('focus', {
@@ -407,7 +407,7 @@ describe('FocusTrap', () => {
             expect(textarea).toBeTruthy();
 
             // Test that focus trap still works with new element
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const lastHidden = directive.lastHiddenFocusableElement();
 
             const focusEvent = new FocusEvent('focus', {
                 relatedTarget: null,
@@ -430,7 +430,7 @@ describe('FocusTrap', () => {
 
             // Focus trap should still work with remaining elements
             const select = element.querySelector('.select') as HTMLElement;
-            const firstHidden = directive.firstHiddenFocusableElement;
+            const firstHidden = directive.firstHiddenFocusableElement();
 
             vi.spyOn(select, 'focus').mockImplementation(() => {});
 
@@ -462,8 +462,8 @@ describe('FocusTrap', () => {
             await fixture.whenStable();
 
             // Should not throw errors and hidden elements should still exist
-            expect(directive.firstHiddenFocusableElement).toBeTruthy();
-            expect(directive.lastHiddenFocusableElement).toBeTruthy();
+            expect(directive.firstHiddenFocusableElement()).toBeTruthy();
+            expect(directive.lastHiddenFocusableElement()).toBeTruthy();
         });
 
         it('should handle trap disable/enable with dynamic content', async () => {
@@ -506,13 +506,13 @@ describe('FocusTrap', () => {
         });
 
         it('should create separate hidden elements for each trap', () => {
-            expect(outerTrapDirective.firstHiddenFocusableElement).toBeDefined();
-            expect(outerTrapDirective.lastHiddenFocusableElement).toBeDefined();
-            expect(innerTrapDirective.firstHiddenFocusableElement).toBeDefined();
-            expect(innerTrapDirective.lastHiddenFocusableElement).toBeDefined();
+            expect(outerTrapDirective.firstHiddenFocusableElement()).toBeDefined();
+            expect(outerTrapDirective.lastHiddenFocusableElement()).toBeDefined();
+            expect(innerTrapDirective.firstHiddenFocusableElement()).toBeDefined();
+            expect(innerTrapDirective.lastHiddenFocusableElement()).toBeDefined();
 
-            expect(outerTrapDirective.firstHiddenFocusableElement).not.toBe(innerTrapDirective.firstHiddenFocusableElement);
-            expect(outerTrapDirective.lastHiddenFocusableElement).not.toBe(innerTrapDirective.lastHiddenFocusableElement);
+            expect(outerTrapDirective.firstHiddenFocusableElement()).not.toBe(innerTrapDirective.firstHiddenFocusableElement());
+            expect(outerTrapDirective.lastHiddenFocusableElement()).not.toBe(innerTrapDirective.lastHiddenFocusableElement());
         });
 
         it('should handle focus independently in nested traps', () => {
@@ -521,7 +521,7 @@ describe('FocusTrap', () => {
                 relatedTarget: null,
                 bubbles: true
             });
-            Object.defineProperty(focusEvent, 'currentTarget', { value: innerTrapDirective.lastHiddenFocusableElement });
+            Object.defineProperty(focusEvent, 'currentTarget', { value: innerTrapDirective.lastHiddenFocusableElement() });
             Object.defineProperty(focusEvent, 'relatedTarget', { value: null });
 
             // Test that the handler doesn't throw
@@ -557,7 +557,7 @@ describe('FocusTrap', () => {
             expect(textInput.disabled).toBe(true);
 
             // Focus should skip disabled elements and go to next focusable
-            const firstHidden = directive.firstHiddenFocusableElement;
+            const firstHidden = directive.firstHiddenFocusableElement();
             const focusEvent = new FocusEvent('focus', {
                 relatedTarget: null,
                 bubbles: true
@@ -580,7 +580,7 @@ describe('FocusTrap', () => {
             // Readonly elements should still be focusable
             vi.spyOn(textarea, 'focus').mockImplementation(() => {});
 
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const lastHidden = directive.lastHiddenFocusableElement();
             const focusEvent = new FocusEvent('focus', {
                 relatedTarget: null,
                 bubbles: true
@@ -605,7 +605,7 @@ describe('FocusTrap', () => {
                 relatedTarget: null,
                 bubbles: true
             });
-            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.lastHiddenFocusableElement });
+            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.lastHiddenFocusableElement() });
 
             directive.onLastHiddenElementFocus(focusEvent);
 
@@ -624,7 +624,7 @@ describe('FocusTrap', () => {
                 relatedTarget: null,
                 bubbles: true
             });
-            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.lastHiddenFocusableElement });
+            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.lastHiddenFocusableElement() });
             Object.defineProperty(focusEvent, 'relatedTarget', { value: null });
 
             directive.onLastHiddenElementFocus(focusEvent);
@@ -645,8 +645,8 @@ describe('FocusTrap', () => {
         });
 
         it('should handle trap with no focusable elements', () => {
-            const firstHidden = directive.firstHiddenFocusableElement;
-            const lastHidden = directive.lastHiddenFocusableElement;
+            const firstHidden = directive.firstHiddenFocusableElement();
+            const lastHidden = directive.lastHiddenFocusableElement();
 
             // Should create hidden elements even with no focusable content
             expect(firstHidden).toBeTruthy();
@@ -686,7 +686,7 @@ describe('FocusTrap', () => {
                 relatedTarget: null,
                 bubbles: true
             });
-            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.firstHiddenFocusableElement });
+            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.firstHiddenFocusableElement() });
             Object.defineProperty(focusEvent, 'relatedTarget', { value: null });
 
             expect(() => directive.onFirstHiddenElementFocus(focusEvent)).not.toThrow();
@@ -708,14 +708,14 @@ describe('FocusTrap', () => {
                 relatedTarget: null,
                 bubbles: true
             });
-            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.firstHiddenFocusableElement });
+            Object.defineProperty(focusEvent, 'currentTarget', { value: directive.firstHiddenFocusableElement() });
             Object.defineProperty(focusEvent, 'relatedTarget', { value: null });
 
             expect(() => directive.onFirstHiddenElementFocus(focusEvent)).not.toThrow();
         });
 
         it('should handle rapid disable/enable cycles', async () => {
-            expect(directive.firstHiddenFocusableElement).toBeTruthy();
+            expect(directive.firstHiddenFocusableElement()).toBeTruthy();
 
             // Rapid disable/enable
             component.trapDisabled = true;
@@ -739,9 +739,9 @@ describe('FocusTrap', () => {
             expect(element.querySelector('[data-pc-section="lastfocusableelement"]')).toBeTruthy();
         });
 
-        it('should handle focus trap removal and recreation', () => {
-            const originalFirst = directive.firstHiddenFocusableElement;
-            const originalLast = directive.lastHiddenFocusableElement;
+        it('should handle focus trap removal and recreation', async () => {
+            const originalFirst = directive.firstHiddenFocusableElement();
+            const originalLast = directive.lastHiddenFocusableElement();
 
             // Remove
             directive.removeHiddenFocusableElements();
@@ -753,8 +753,12 @@ describe('FocusTrap', () => {
             expect(element.querySelector('[data-pc-section="lastfocusableelement"]')).toBeTruthy();
 
             // New elements should be different instances
-            expect(directive.firstHiddenFocusableElement).not.toBe(originalFirst);
-            expect(directive.lastHiddenFocusableElement).not.toBe(originalLast);
+            expect(directive.firstHiddenFocusableElement()).not.toBe(originalFirst);
+            expect(directive.lastHiddenFocusableElement()).not.toBe(originalLast);
+
+            await fixture.whenStable();
+            expect(element.querySelectorAll('[data-pc-section="firstfocusableelement"]').length).toBe(1);
+            expect(element.querySelectorAll('[data-pc-section="lastfocusableelement"]').length).toBe(1);
         });
 
         it('should handle getComputedSelector method', () => {
@@ -785,54 +789,47 @@ describe('FocusTrap', () => {
     });
 
     describe('Lifecycle Hooks', () => {
-        let fixture: ComponentFixture<TestBasicFocusTrapComponent>;
+        let fixture: ComponentFixture<TestDisabledFocusTrapComponent>;
+        let component: TestDisabledFocusTrapComponent;
         let directive: FocusTrap;
 
         beforeEach(() => {
-            fixture = TestBed.createComponent(TestBasicFocusTrapComponent);
+            fixture = TestBed.createComponent(TestDisabledFocusTrapComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+
             directive = fixture.debugElement.query(By.directive(FocusTrap)).injector.get(FocusTrap);
         });
 
-        it('should call ngOnInit and create hidden elements', () => {
-            vi.spyOn(directive, 'createHiddenFocusableElements');
-
-            directive.ngOnInit();
-
-            expect(directive.createHiddenFocusableElements).toHaveBeenCalled();
+        it('should create hidden elements on init', () => {
+            expect(directive.firstHiddenFocusableElement()).toBeDefined();
+            expect(directive.lastHiddenFocusableElement()).toBeDefined();
         });
 
-        it('should handle ngOnChanges for pFocusTrapDisabled', () => {
-            const changes = {
-                pFocusTrapDisabled: {
-                    currentValue: true,
-                    previousValue: false,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            };
+        it('should call removeHiddenFocusableElements when pFocusTrapDisabled becomes true', async () => {
+            vi.spyOn(directive, 'removeHiddenFocusableElements');
 
-            vi.spyOn(directive, 'removeHiddenFocusableElements').mockImplementation(() => {});
-
-            directive.ngOnChanges(changes);
+            component.disabled = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
             expect(directive.removeHiddenFocusableElements).toHaveBeenCalled();
         });
 
-        it('should handle ngOnChanges when enabling focus trap', () => {
-            const changes = {
-                pFocusTrapDisabled: {
-                    currentValue: false,
-                    previousValue: true,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            };
+        it('should call createHiddenFocusableElements when pFocusTrapDisabled becomes false', async () => {
+            component.disabled = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            vi.spyOn(directive, 'createHiddenFocusableElements').mockImplementation(() => {});
+            vi.spyOn(directive, 'createHiddenFocusableElements');
 
-            directive.ngOnChanges(changes);
+            component.disabled = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            expect(directive.createHiddenFocusableElements).toHaveBeenCalled();
+            expect(directive.createHiddenFocusableElements).toHaveBeenCalledTimes(1);
+            expect(fixture.nativeElement.querySelectorAll('[data-pc-section="firstfocusableelement"]').length).toBe(1);
+            expect(fixture.nativeElement.querySelectorAll('[data-pc-section="lastfocusableelement"]').length).toBe(1);
         });
     });
 
@@ -852,28 +849,28 @@ describe('FocusTrap', () => {
 
         it('should prepend first hidden element to container', () => {
             const firstChild = element.firstElementChild;
-            expect(firstChild).toBe(directive.firstHiddenFocusableElement);
+            expect(firstChild).toBe(directive.firstHiddenFocusableElement());
         });
 
         it('should append last hidden element to container', () => {
             const lastChild = element.lastElementChild;
-            expect(lastChild).toBe(directive.lastHiddenFocusableElement);
+            expect(lastChild).toBe(directive.lastHiddenFocusableElement());
         });
 
         it('should remove hidden elements from DOM when removeHiddenFocusableElements is called', () => {
-            expect(directive.firstHiddenFocusableElement.parentNode).toBe(element);
-            expect(directive.lastHiddenFocusableElement.parentNode).toBe(element);
+            expect(directive.firstHiddenFocusableElement()!.parentNode).toBe(element);
+            expect(directive.lastHiddenFocusableElement()!.parentNode).toBe(element);
 
             directive.removeHiddenFocusableElements();
 
-            expect(directive.firstHiddenFocusableElement.parentNode).toBeNull();
-            expect(directive.lastHiddenFocusableElement.parentNode).toBeNull();
+            expect(directive.firstHiddenFocusableElement()!.parentNode).toBeNull();
+            expect(directive.lastHiddenFocusableElement()!.parentNode).toBeNull();
         });
 
         it('should handle removeHiddenFocusableElements when elements have no parent', () => {
             // Manually remove from DOM
-            element.removeChild(directive.firstHiddenFocusableElement);
-            element.removeChild(directive.lastHiddenFocusableElement);
+            element.removeChild(directive.firstHiddenFocusableElement()!);
+            element.removeChild(directive.lastHiddenFocusableElement()!);
 
             // Should not throw error when trying to remove already removed elements
             expect(() => directive.removeHiddenFocusableElements()).not.toThrow();
