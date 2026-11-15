@@ -141,13 +141,18 @@ describe('InputText', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputDirective.pSize).toBe('large');
+            expect(inputDirective.pSize()).toBe('large');
+            expect(inputEl.nativeElement.classList.contains('p-inputtext-lg')).toBe(true);
+            expect(inputEl.nativeElement.getAttribute('data-p')).toContain('large');
 
             component.size = 'small';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputDirective.pSize).toBe('small');
+            expect(inputDirective.pSize()).toBe('small');
+            expect(inputEl.nativeElement.classList.contains('p-inputtext-sm')).toBe(true);
+            expect(inputEl.nativeElement.classList.contains('p-inputtext-lg')).toBe(false);
+            expect(inputEl.nativeElement.getAttribute('data-p')).toContain('small');
         });
 
         it('should apply variant styles', async () => {
@@ -156,12 +161,14 @@ describe('InputText', () => {
             await fixture.whenStable();
 
             expect(inputDirective.variant()).toBe('filled');
+            expect(inputEl.nativeElement.classList.contains('p-variant-filled')).toBe(true);
 
             component.variant = 'outlined';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
             expect(inputDirective.variant()).toBe('outlined');
+            expect(inputEl.nativeElement.classList.contains('p-variant-filled')).toBe(false);
         });
 
         it('should apply fluid styling', async () => {
@@ -170,14 +177,16 @@ describe('InputText', () => {
             await fixture.whenStable();
 
             expect(inputDirective.fluid()).toBe(true);
-            expect(inputDirective.hasFluid).toBe(true);
+            expect(inputDirective.hasFluid()).toBe(true);
+            expect(inputEl.nativeElement.classList.contains('p-inputtext-fluid')).toBe(true);
 
             component.fluid = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
             expect(inputDirective.fluid()).toBe(false);
-            expect(inputDirective.hasFluid).toBe(false);
+            expect(inputDirective.hasFluid()).toBe(false);
+            expect(inputEl.nativeElement.classList.contains('p-inputtext-fluid')).toBe(false);
         });
 
         it('should apply invalid state', async () => {
@@ -186,12 +195,14 @@ describe('InputText', () => {
             await fixture.whenStable();
 
             expect(inputDirective.invalid()).toBe(true);
+            expect(inputEl.nativeElement.classList.contains('p-invalid')).toBe(true);
 
             component.invalid = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
             expect(inputDirective.invalid()).toBe(false);
+            expect(inputEl.nativeElement.classList.contains('p-invalid')).toBe(false);
         });
     });
 
@@ -457,7 +468,7 @@ describe('InputText', () => {
                 component.pt = {
                     root: ({ instance }) => ({
                         style: {
-                            width: instance?.hasFluid ? '100%' : 'auto'
+                            width: instance?.hasFluid() ? '100%' : 'auto'
                         }
                     })
                 };
@@ -558,7 +569,7 @@ describe('InputText', () => {
                         style: {
                             border: '1px solid green'
                         },
-                        'data-fluid': instance?.hasFluid
+                        'data-fluid': instance?.hasFluid()
                     })
                 };
                 fixture.changeDetectorRef.markForCheck();
