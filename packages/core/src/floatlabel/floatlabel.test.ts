@@ -36,6 +36,22 @@ class TestVariantFloatLabelComponent {
     variant: 'in' | 'over' | 'on' = 'over';
 }
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [FloatLabel, FormsModule],
+    template: `
+        <p-floatlabel class="static-class" [class]="dynamicClass">
+            <input id="class-input" [(ngModel)]="value" />
+            <label for="class-input">Class Label</label>
+        </p-floatlabel>
+    `
+})
+class TestClassFloatLabelComponent {
+    value: string = '';
+    dynamicClass: string | undefined;
+}
+
 describe('FloatLabel', () => {
     describe('Basic Functionality', () => {
         let component: TestBasicFloatLabelComponent;
@@ -92,7 +108,7 @@ describe('FloatLabel', () => {
         });
 
         it('should have default variant "over"', () => {
-            expect(floatLabelInstance.variant).toBe('over');
+            expect(floatLabelInstance.variant()).toBe('over');
         });
 
         it('should apply variant "in"', async () => {
@@ -100,7 +116,7 @@ describe('FloatLabel', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(floatLabelInstance.variant).toBe('in');
+            expect(floatLabelInstance.variant()).toBe('in');
         });
 
         it('should apply variant "on"', async () => {
@@ -108,7 +124,7 @@ describe('FloatLabel', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(floatLabelInstance.variant).toBe('on');
+            expect(floatLabelInstance.variant()).toBe('on');
         });
 
         it('should have correct variant classes', async () => {
@@ -131,6 +147,49 @@ describe('FloatLabel', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             expect(floatLabelElement.nativeElement.classList.contains('p-floatlabel-over')).toBe(true);
+        });
+    });
+
+    describe('Class Attribute', () => {
+        let component: TestClassFloatLabelComponent;
+        let fixture: ComponentFixture<TestClassFloatLabelComponent>;
+        let floatLabelElement: HTMLElement;
+
+        beforeEach(async () => {
+            await TestBed.configureTestingModule({
+                imports: [TestClassFloatLabelComponent],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            fixture = TestBed.createComponent(TestClassFloatLabelComponent);
+            component = fixture.componentInstance;
+            floatLabelElement = fixture.debugElement.query(By.directive(FloatLabel)).nativeElement;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+        });
+
+        it('should keep the static class attribute alongside the root class', () => {
+            expect(floatLabelElement.classList.contains('p-floatlabel')).toBe(true);
+            expect(floatLabelElement.classList.contains('p-floatlabel-over')).toBe(true);
+            expect(floatLabelElement.classList.contains('static-class')).toBe(true);
+        });
+
+        it('should re-render the bound class attribute when it changes', async () => {
+            component.dynamicClass = 'dynamic-class';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            expect(floatLabelElement.classList.contains('dynamic-class')).toBe(true);
+            expect(floatLabelElement.classList.contains('static-class')).toBe(true);
+            expect(floatLabelElement.classList.contains('p-floatlabel')).toBe(true);
+
+            component.dynamicClass = 'other-class';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            expect(floatLabelElement.classList.contains('other-class')).toBe(true);
+            expect(floatLabelElement.classList.contains('dynamic-class')).toBe(false);
+            expect(floatLabelElement.classList.contains('p-floatlabel')).toBe(true);
         });
     });
 
@@ -291,10 +350,10 @@ describe('FloatLabel PassThrough Tests', () => {
 
     describe('PT Case 4: Use variables from instance', () => {
         it('should access instance variables in PT function', () => {
-            component.variant = 'in';
+            fixture.componentRef.setInput('variant', 'in');
             fixture.componentRef.setInput('pt', {
                 root: ({ instance }: any) => ({
-                    class: instance?.variant === 'in' ? 'VARIANT_IN' : ''
+                    class: instance?.variant() === 'in' ? 'VARIANT_IN' : ''
                 })
             });
             fixture.detectChanges();
@@ -303,11 +362,11 @@ describe('FloatLabel PassThrough Tests', () => {
         });
 
         it('should conditionally apply styles based on instance state', () => {
-            component.variant = 'over';
+            fixture.componentRef.setInput('variant', 'over');
             fixture.componentRef.setInput('pt', {
                 root: ({ instance }: any) => ({
                     style: {
-                        'background-color': instance?.variant === 'over' ? 'yellow' : 'red'
+                        'background-color': instance?.variant() === 'over' ? 'yellow' : 'red'
                     }
                 })
             });
@@ -337,18 +396,20 @@ describe('FloatLabel PassThrough Tests', () => {
             expect(clicked).toBe(true);
         });
 
-        it('should modify instance through PT event', () => {
+        it('should read instance state through a PT event handler', () => {
+            let captured: string | undefined;
+            fixture.componentRef.setInput('variant', 'on');
             fixture.componentRef.setInput('pt', {
                 root: ({ instance }: any) => ({
                     onclick: () => {
-                        instance.variant = 'on';
+                        captured = instance.variant();
                     }
                 })
             });
             fixture.detectChanges();
 
             hostElement.click();
-            expect(component.variant).toBe('on');
+            expect(captured).toBe('on');
         });
     });
 
