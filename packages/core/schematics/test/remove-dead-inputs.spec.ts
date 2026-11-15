@@ -45,6 +45,50 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-overlay [(visible)]="visible"></p-overlay>\n`);
     });
 
+    it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-overlayBadge size="large" badgeSize="large" severity="danger"><i class="pi pi-bell"></i></p-overlayBadge>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-overlayBadge badgeSize="large" severity="danger"><i class="pi pi-bell"></i></p-overlayBadge>\n`);
+    });
+
+    it('removes a bound [size] from p-overlay-badge', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-overlay-badge [size]="badgeSize" [value]="count"></p-overlay-badge>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-overlay-badge [value]="count"></p-overlay-badge>\n`);
+    });
+
+    it('removes the deprecated size from p-overlaybadge', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-overlaybadge value="2" size="xlarge"></p-overlaybadge>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-overlaybadge value="2"></p-overlaybadge>\n`);
+    });
+
+    it('does not report a programmatic size access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    count() {\n        return new Map().size;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
     it('does not remove a similarly-named attribute on an unrelated selector', async () => {
         const runner = createMigrationRunner();
         const content = `<p-other showTransformOptions="x"></p-other>\n`;

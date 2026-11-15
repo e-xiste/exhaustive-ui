@@ -12,23 +12,37 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * show/hide animation is driven by `motionOptions`, which has no transition-options equivalent.
  * `showTransitionOptions`/`hideTransitionOptions` on Overlay were stored but never read: its
  * show/hide animation is driven by `motionOptions` too.
+ * The deprecated `size` on OverlayBadge was stored and logged a deprecation warning but never
+ * forwarded to the inner badge: only `badgeSize` ever sized it.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-toastItem', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-message', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-overlay', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-overlay', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-overlayBadge', names: ['size'] },
+    { selector: 'p-overlay-badge', names: ['size'] },
+    { selector: 'p-overlaybadge', names: ['size'] }
 ];
+
+/**
+ * Removed input names whose programmatic reads/writes are reported for manual review. OverlayBadge's
+ * `size` is left out on purpose: a name-only scan cannot tell an OverlayBadge instance's `size` apart
+ * from the countless other `size` properties (Map#size, DOM sizes, option objects) in an application.
+ */
+const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size');
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
  * @exhaustive-ui/core in this version: Toast/ToastItem's showTransformOptions, hideTransformOptions,
  * showTransitionOptions and hideTransitionOptions, dead since the show/hide animation moved to the
  * shared Motion directive (which has no equivalent transform/transition-options input); and
- * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; and Overlay's
- * showTransitionOptions/hideTransitionOptions, stored but never read.
+ * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
+ * showTransitionOptions/hideTransitionOptions, stored but never read; and OverlayBadge's deprecated
+ * size, never forwarded to the inner badge (badgeSize is the input that sizes it).
  *
- * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay` are removed
+ * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
+ * `p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.
@@ -69,8 +83,7 @@ export default function (): Rule {
                     attrsRemoved += result.removed.length;
                     context.logger.info(`${path}: removed ${result.removed.join(', ')} binding(s) from inline template`);
                 }
-                const allNames = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names)));
-                const lines = findLeftoversInTypeScript(path, text, allNames);
+                const lines = findLeftoversInTypeScript(path, text, LEFTOVER_SCAN_NAMES);
                 for (const line of lines) {
                     leftovers.push(`${path}:${line}`);
                 }
