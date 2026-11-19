@@ -56,6 +56,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * sets its own `tabindex="-1"`.
  * `disabled`/`queryMatches` on MegaMenuSub were stored but never read: the parent MegaMenu applies the
  * disabled tabindex itself and the mobile classes read MegaMenu's own `queryMatches`.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` and `containerClass` on Galleria were
+ * stored but never read: its animations are driven by `motionOptions`/`maskMotionOptions` and no
+ * element ever received the container class.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -99,7 +102,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-panelmenu', names: ['transitionOptions', 'tabindex'] },
     { selector: 'p-panel-menu', names: ['transitionOptions', 'tabindex'] },
     { selector: 'p-megaMenuSub', names: ['disabled', 'queryMatches'] },
-    { selector: 'p-megamenu-sub', names: ['disabled', 'queryMatches'] }
+    { selector: 'p-megamenu-sub', names: ['disabled', 'queryMatches'] },
+    { selector: 'p-galleria', names: ['showTransitionOptions', 'hideTransitionOptions', 'containerClass'] }
 ];
 
 /**
@@ -151,8 +155,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation);
  * Menubar's autoZIndex/baseZIndex plus MenubarSub's autoZIndex/baseZIndex/mobileActive/ariaLabel/
  * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); PanelMenu's transitionOptions
- * and tabindex, forwarded to internal lists that never read them; and MegaMenuSub's disabled and
- * queryMatches, never read (MegaMenu handles both itself).
+ * and tabindex, forwarded to internal lists that never read them; MegaMenuSub's disabled and
+ * queryMatches, never read (MegaMenu handles both itself); and Galleria's deprecated
+ * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

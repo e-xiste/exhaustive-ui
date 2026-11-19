@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, TemplateRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { GalleriaResponsiveOptions } from '@exhaustive-ui/core/types/galleria';
-import { Galleria, GalleriaContent, GalleriaItem, GalleriaModule, GalleriaThumbnails } from './galleria';
+import { Galleria, GalleriaContent, GalleriaItem, GalleriaItemSlot, GalleriaModule, GalleriaThumbnails } from './galleria';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Mock data for testing
@@ -45,10 +45,7 @@ const mockImages = [
             [indicatorsPosition]="indicatorsPosition"
             [baseZIndex]="baseZIndex"
             [maskClass]="maskClass"
-            [containerClass]="containerClass"
             [containerStyle]="containerStyle"
-            [showTransitionOptions]="showTransitionOptions"
-            [hideTransitionOptions]="hideTransitionOptions"
             [visible]="visible"
             (activeIndexChange)="onActiveIndexChange($event)"
             (visibleChange)="onVisibleChange($event)"
@@ -85,10 +82,7 @@ class TestBasicGalleriaComponent {
     indicatorsPosition: 'bottom' | 'top' | 'left' | 'right' | undefined = 'bottom';
     baseZIndex: number = 0;
     maskClass: string | undefined;
-    containerClass: string | undefined;
     containerStyle: { [klass: string]: any } | null | undefined;
-    showTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
-    hideTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
     visible: boolean = false;
 
     // Event handlers
@@ -252,25 +246,25 @@ describe('Galleria', () => {
         });
 
         it('should have default values', () => {
-            expect(galleriaInstance.activeIndex).toBe(0);
-            expect(galleriaInstance.fullScreen).toBe(false);
-            expect(galleriaInstance.numVisible).toBe(3);
-            expect(galleriaInstance.showItemNavigators).toBe(false);
-            expect(galleriaInstance.showThumbnailNavigators).toBe(true);
-            expect(galleriaInstance.showItemNavigatorsOnHover).toBe(false);
-            expect(galleriaInstance.changeItemOnIndicatorHover).toBe(false);
-            expect(galleriaInstance.circular).toBe(false);
-            expect(galleriaInstance.autoPlay).toBe(false);
-            expect(galleriaInstance.shouldStopAutoplayByClick).toBe(true);
-            expect(galleriaInstance.transitionInterval).toBe(4000);
-            expect(galleriaInstance.showThumbnails).toBe(true);
-            expect(galleriaInstance.thumbnailsPosition).toBe('bottom');
-            expect(galleriaInstance.verticalThumbnailViewPortHeight).toBe('300px');
-            expect(galleriaInstance.showIndicators).toBe(false);
-            expect(galleriaInstance.showIndicatorsOnItem).toBe(false);
-            expect(galleriaInstance.indicatorsPosition).toBe('bottom');
-            expect(galleriaInstance.baseZIndex).toBe(0);
-            expect(galleriaInstance.visible).toBe(false);
+            expect(galleriaInstance.activeIndex()).toBe(0);
+            expect(galleriaInstance.fullScreen()).toBe(false);
+            expect(galleriaInstance.numVisible()).toBe(3);
+            expect(galleriaInstance.showItemNavigators()).toBe(false);
+            expect(galleriaInstance.showThumbnailNavigators()).toBe(true);
+            expect(galleriaInstance.showItemNavigatorsOnHover()).toBe(false);
+            expect(galleriaInstance.changeItemOnIndicatorHover()).toBe(false);
+            expect(galleriaInstance.circular()).toBe(false);
+            expect(galleriaInstance.autoPlay()).toBe(false);
+            expect(galleriaInstance.shouldStopAutoplayByClick()).toBe(true);
+            expect(galleriaInstance.transitionInterval()).toBe(4000);
+            expect(galleriaInstance.showThumbnails()).toBe(true);
+            expect(galleriaInstance.thumbnailsPosition()).toBe('bottom');
+            expect(galleriaInstance.verticalThumbnailViewPortHeight()).toBe('300px');
+            expect(galleriaInstance.showIndicators()).toBe(false);
+            expect(galleriaInstance.showIndicatorsOnItem()).toBe(false);
+            expect(galleriaInstance.indicatorsPosition()).toBe('bottom');
+            expect(galleriaInstance.baseZIndex()).toBe(0);
+            expect(galleriaInstance.visible()).toBe(false);
         });
 
         it('should accept input values', async () => {
@@ -286,20 +280,20 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.activeIndex).toBe(2);
-            expect(galleriaInstance.fullScreen).toBe(true);
-            expect(galleriaInstance.numVisible).toBe(5);
-            expect(galleriaInstance.showItemNavigators).toBe(true);
-            expect(galleriaInstance.circular).toBe(true);
-            expect(galleriaInstance.autoPlay).toBe(true);
-            expect(galleriaInstance.transitionInterval).toBe(2000);
-            expect(galleriaInstance.showIndicators).toBe(true);
-            expect(galleriaInstance.baseZIndex).toBe(1000);
+            expect(galleriaInstance.activeIndex()).toBe(2);
+            expect(galleriaInstance.fullScreen()).toBe(true);
+            expect(galleriaInstance.numVisible()).toBe(5);
+            expect(galleriaInstance.showItemNavigators()).toBe(true);
+            expect(galleriaInstance.circular()).toBe(true);
+            expect(galleriaInstance.autoPlay()).toBe(true);
+            expect(galleriaInstance.transitionInterval()).toBe(2000);
+            expect(galleriaInstance.showIndicators()).toBe(true);
+            expect(galleriaInstance.baseZIndex()).toBe(1000);
         });
 
         it('should initialize with value array', () => {
-            expect(galleriaInstance.value).toEqual(mockImages);
-            expect(galleriaInstance.value?.length).toBe(5);
+            expect(galleriaInstance.value()).toEqual(mockImages);
+            expect(galleriaInstance.value()?.length).toBe(5);
         });
 
         it('should set numVisibleLimit when value length is less than numVisible', async () => {
@@ -308,7 +302,7 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.numVisibleLimit).toBe(2);
+            expect(galleriaInstance.numVisibleLimit()).toBe(2);
         });
     });
 
@@ -326,22 +320,56 @@ describe('Galleria', () => {
             galleriaInstance = galleriaEl.componentInstance as Galleria;
         });
 
-        it('should handle activeIndex getter and setter', () => {
-            galleriaInstance.activeIndex = 3;
-            expect(galleriaInstance.activeIndex).toBe(3);
+        it('should handle activeIndex model writes', () => {
+            galleriaInstance.activeIndex.set(3);
+            expect(galleriaInstance.activeIndex()).toBe(3);
         });
 
-        it('should handle visible getter and setter', () => {
-            galleriaInstance.visible = true;
-            expect(galleriaInstance.visible).toBe(true);
-            expect(galleriaInstance.maskVisible).toBe(true);
+        it('should handle visible model writes', () => {
+            galleriaInstance.visible.set(true);
+            expect(galleriaInstance.visible()).toBe(true);
+            expect(galleriaInstance.maskVisible()).toBe(true);
         });
 
         it('should handle mask visibility correctly', () => {
-            expect(galleriaInstance.maskVisible).toBe(false);
+            expect(galleriaInstance.maskVisible()).toBe(false);
 
-            galleriaInstance.visible = true;
-            expect(galleriaInstance.maskVisible).toBe(true);
+            galleriaInstance.visible.set(true);
+            expect(galleriaInstance.maskVisible()).toBe(true);
+        });
+
+        it('should reset maskVisible from visible and keep a local override until visible changes again', async () => {
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(galleriaInstance.maskVisible()).toBe(true);
+
+            galleriaInstance.mask.set(document.createElement('div'));
+            galleriaInstance.onBeforeLeave();
+            expect(galleriaInstance.maskVisible()).toBe(false);
+            expect(galleriaInstance.visible()).toBe(true);
+
+            component.visible = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(galleriaInstance.maskVisible()).toBe(false);
+
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(galleriaInstance.maskVisible()).toBe(true);
+        });
+
+        it('should switch renderMask and renderContent on when visible becomes true', async () => {
+            expect(galleriaInstance.renderMask()).toBe(false);
+            expect(galleriaInstance.renderContent()).toBe(false);
+
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            expect(galleriaInstance.renderMask()).toBe(true);
+            expect(galleriaInstance.renderContent()).toBe(true);
         });
     });
 
@@ -365,43 +393,55 @@ describe('Galleria', () => {
             galleriaInstance.onActiveItemChange(2);
 
             expect(component.onActiveIndexChange).toHaveBeenCalledWith(2);
-            expect(galleriaInstance.activeIndex).toBe(2);
+            expect(galleriaInstance.activeIndex()).toBe(2);
         });
 
-        it('should not emit activeIndexChange if index is same', () => {
-            vi.spyOn(galleriaInstance.activeIndexChange, 'emit').mockImplementation(() => {});
+        it('should not emit activeIndexChange if index is same', async () => {
+            component.activeIndex = 1;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            galleriaInstance.activeIndex = 1;
+            const emitted: number[] = [];
+            galleriaInstance.activeIndex.subscribe((index) => emitted.push(index));
             galleriaInstance.onActiveItemChange(1);
 
-            expect(galleriaInstance.activeIndexChange.emit).not.toHaveBeenCalled();
+            expect(emitted).toEqual([]);
+            expect(galleriaInstance.activeIndex()).toBe(1);
         });
 
-        it('should emit visibleChange event', () => {
+        it('should emit visibleChange event', async () => {
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
             vi.spyOn(component, 'onVisibleChange').mockImplementation(() => {});
 
             galleriaInstance.onMaskHide();
 
             expect(component.onVisibleChange).toHaveBeenCalledWith(false);
-            expect(galleriaInstance.visible).toBe(false);
+            expect(galleriaInstance.visible()).toBe(false);
         });
 
-        it('should handle onMaskHide with event target check', () => {
+        it('should handle onMaskHide with event target check', async () => {
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
             const mockEvent = {
                 target: document.createElement('div'),
                 currentTarget: document.createElement('div')
             } as any;
 
-            vi.spyOn(galleriaInstance.visibleChange, 'emit').mockImplementation(() => {});
+            const emitted: boolean[] = [];
+            galleriaInstance.visible.subscribe((visible) => emitted.push(visible));
 
             // Different target and currentTarget - should not hide
             galleriaInstance.onMaskHide(mockEvent);
-            expect(galleriaInstance.visibleChange.emit).not.toHaveBeenCalled();
+            expect(emitted).toEqual([]);
 
             // Same target and currentTarget - should hide
             mockEvent.target = mockEvent.currentTarget;
             galleriaInstance.onMaskHide(mockEvent);
-            expect(galleriaInstance.visibleChange.emit).toHaveBeenCalledWith(false);
+            expect(emitted).toEqual([false]);
         });
     });
 
@@ -420,12 +460,12 @@ describe('Galleria', () => {
         });
 
         it('should enable fullScreen mode', () => {
-            expect(galleriaInstance.fullScreen).toBe(true);
+            expect(galleriaInstance.fullScreen()).toBe(true);
         });
 
         it('should show mask when in fullScreen and visible', () => {
-            expect(galleriaInstance.visible).toBe(true);
-            expect(galleriaInstance.maskVisible).toBe(true);
+            expect(galleriaInstance.visible()).toBe(true);
+            expect(galleriaInstance.maskVisible()).toBe(true);
         });
 
         it('should render fullScreen template structure', () => {
@@ -452,13 +492,13 @@ describe('Galleria', () => {
         });
 
         it('should enable autoPlay mode', () => {
-            expect(galleriaInstance.autoPlay).toBe(true);
-            expect(galleriaInstance.circular).toBe(true);
-            expect(galleriaInstance.transitionInterval).toBe(1000);
+            expect(galleriaInstance.autoPlay()).toBe(true);
+            expect(galleriaInstance.circular()).toBe(true);
+            expect(galleriaInstance.transitionInterval()).toBe(1000);
         });
 
         it('should have shouldStopAutoplayByClick enabled by default', () => {
-            expect(galleriaInstance.shouldStopAutoplayByClick).toBe(true);
+            expect(galleriaInstance.shouldStopAutoplayByClick()).toBe(true);
         });
     });
 
@@ -477,12 +517,12 @@ describe('Galleria', () => {
         });
 
         it('should accept responsive options', () => {
-            expect(galleriaInstance.responsiveOptions).toEqual(component.responsiveOptions);
-            expect(galleriaInstance.responsiveOptions?.length).toBe(3);
+            expect(galleriaInstance.responsiveOptions()).toEqual(component.responsiveOptions);
+            expect(galleriaInstance.responsiveOptions()?.length).toBe(3);
         });
 
         it('should have correct breakpoints and numVisible values', () => {
-            const options = galleriaInstance.responsiveOptions!;
+            const options = galleriaInstance.responsiveOptions()!;
             expect(options[0].breakpoint).toBe('1024px');
             expect(options[0].numVisible).toBe(3);
             expect(options[1].breakpoint).toBe('768px');
@@ -507,13 +547,13 @@ describe('Galleria', () => {
         });
 
         it('should enable indicators and disable thumbnails', () => {
-            expect(galleriaInstance.showIndicators).toBe(true);
-            expect(galleriaInstance.showThumbnails).toBe(false);
+            expect(galleriaInstance.showIndicators()).toBe(true);
+            expect(galleriaInstance.showThumbnails()).toBe(false);
         });
 
         it('should use default indicator position', () => {
-            expect(galleriaInstance.indicatorsPosition).toBe('bottom');
-            expect(galleriaInstance.showIndicatorsOnItem).toBe(false);
+            expect(galleriaInstance.indicatorsPosition()).toBe('bottom');
+            expect(galleriaInstance.showIndicatorsOnItem()).toBe(false);
         });
     });
 
@@ -583,11 +623,12 @@ describe('Galleria', () => {
         });
 
         it('should process pTemplate correctly', () => {
-            galleriaInstance.ngAfterContentInit();
-            fixture.detectChanges();
-
-            // Verify that template processing works
-            expect(galleriaInstance.ngAfterContentInit).toBeDefined();
+            expect(galleriaInstance.headerFacet()).toBeInstanceOf(TemplateRef);
+            expect(galleriaInstance.footerFacet()).toBeInstanceOf(TemplateRef);
+            expect(galleriaInstance.itemTemplate()).toBeInstanceOf(TemplateRef);
+            expect(galleriaInstance.thumbnailTemplate()).toBeInstanceOf(TemplateRef);
+            expect(galleriaInstance.captionFacet()).toBeUndefined();
+            expect(galleriaInstance.indicatorFacet()).toBeUndefined();
         });
 
         it('should render pTemplate content', () => {
@@ -604,13 +645,9 @@ describe('Galleria', () => {
         });
 
         it('should process all template types', () => {
-            const galleriaEl = fixture.debugElement.query(By.css('p-galleria'));
-            const instance = galleriaEl.componentInstance as Galleria;
-
-            instance.ngAfterContentInit();
-
-            // Check that the method exists and can be called without error
-            expect(() => instance.ngAfterContentInit()).not.toThrow();
+            const thumbnails = fixture.debugElement.queryAll(By.css('.ptemplate-thumbnail'));
+            expect(thumbnails.length).toBe(mockImages.length);
+            expect(thumbnails.map((thumbnail) => thumbnail.nativeElement.getAttribute('alt'))).toEqual(mockImages.map((image) => image.alt));
         });
     });
 
@@ -633,27 +670,18 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.maskClass).toBe('custom-mask-class');
+            expect(galleriaInstance.maskClass()).toBe('custom-mask-class');
         });
 
-        it('should apply custom container class and style', async () => {
-            component.containerClass = 'custom-container-class';
+        it('should apply custom container style', async () => {
             component.containerStyle = { width: '800px', height: '600px' };
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.containerClass).toBe('custom-container-class');
-            expect(galleriaInstance.containerStyle).toEqual({ width: '800px', height: '600px' });
-        });
-
-        it('should apply custom transition options', async () => {
-            component.showTransitionOptions = '300ms ease-in';
-            component.hideTransitionOptions = '200ms ease-out';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            expect(galleriaInstance.showTransitionOptions).toBe('300ms ease-in');
-            expect(galleriaInstance.hideTransitionOptions).toBe('200ms ease-out');
+            expect(galleriaInstance.containerStyle()).toEqual({ width: '800px', height: '600px' });
+            const root = fixture.debugElement.query(By.directive(GalleriaContent)).nativeElement as HTMLElement;
+            expect(root.style.width).toBe('800px');
+            expect(root.style.height).toBe('600px');
         });
 
         it('should have proper galleria root structure', () => {
@@ -683,7 +711,7 @@ describe('Galleria', () => {
                 component.thumbnailsPosition = position;
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
-                expect(galleriaInstance.thumbnailsPosition).toBe(position);
+                expect(galleriaInstance.thumbnailsPosition()).toBe(position);
             }
         });
 
@@ -694,7 +722,7 @@ describe('Galleria', () => {
                 component.indicatorsPosition = position;
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
-                expect(galleriaInstance.indicatorsPosition).toBe(position);
+                expect(galleriaInstance.indicatorsPosition()).toBe(position);
             }
         });
 
@@ -703,7 +731,7 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.verticalThumbnailViewPortHeight).toBe('400px');
+            expect(galleriaInstance.verticalThumbnailViewPortHeight()).toBe('400px');
         });
 
         it('should handle show indicators on item', async () => {
@@ -711,7 +739,7 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.showIndicatorsOnItem).toBe(true);
+            expect(galleriaInstance.showIndicatorsOnItem()).toBe(true);
         });
     });
 
@@ -796,7 +824,7 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.value).toEqual([]);
+            expect(galleriaInstance.value()).toEqual([]);
         });
 
         it('should handle null images', async () => {
@@ -804,7 +832,7 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.value).toBe(null as any);
+            expect(galleriaInstance.value()).toBe(null as any);
         });
 
         it('should handle single image', async () => {
@@ -812,24 +840,24 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.value?.length).toBe(1);
+            expect(galleriaInstance.value()?.length).toBe(1);
         });
 
         it('should handle activeIndex beyond bounds', () => {
-            galleriaInstance.activeIndex = 999;
-            expect(galleriaInstance.activeIndex).toBe(999); // Component should accept any value
+            galleriaInstance.activeIndex.set(999);
+            expect(galleriaInstance.activeIndex()).toBe(999); // Component should accept any value
         });
 
         it('should handle negative activeIndex', () => {
-            galleriaInstance.activeIndex = -1;
-            expect(galleriaInstance.activeIndex).toBe(-1);
+            galleriaInstance.activeIndex.set(-1);
+            expect(galleriaInstance.activeIndex()).toBe(-1);
         });
 
         it('should handle undefined id', () => {
             component.id = undefined as any;
             fixture.detectChanges();
 
-            expect(galleriaInstance.id).toBeUndefined();
+            expect(galleriaInstance.id()).toBeUndefined();
         });
 
         it('should handle custom id', async () => {
@@ -837,11 +865,11 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(galleriaInstance.id).toBe('custom-galleria-id');
+            expect(galleriaInstance.id()).toBe('custom-galleria-id');
         });
 
         it('should handle animation events with missing elements', () => {
-            galleriaInstance.mask = undefined as any;
+            galleriaInstance.mask.set(undefined);
 
             // const mockAnimationEvent = {
             //     toState: 'void'
@@ -852,16 +880,21 @@ describe('Galleria', () => {
             // }).not.toThrow();
         });
 
-        it('should handle mask hide without event', () => {
-            vi.spyOn(galleriaInstance.visibleChange, 'emit').mockImplementation(() => {});
+        it('should handle mask hide without event', async () => {
+            component.visible = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const emitted: boolean[] = [];
+            galleriaInstance.visible.subscribe((visible) => emitted.push(visible));
 
             galleriaInstance.onMaskHide();
 
-            expect(galleriaInstance.visibleChange.emit).toHaveBeenCalledWith(false);
+            expect(emitted).toEqual([false]);
         });
     });
 
-    describe('ngOnChanges Lifecycle', () => {
+    describe('numVisibleLimit', () => {
         let fixture: ComponentFixture<TestBasicGalleriaComponent>;
         let component: TestBasicGalleriaComponent;
         let galleriaInstance: Galleria;
@@ -882,17 +915,9 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            // Simulate ngOnChanges
-            galleriaInstance.ngOnChanges({
-                value: {
-                    currentValue: smallArray,
-                    previousValue: mockImages,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            });
-
-            expect(galleriaInstance.numVisibleLimit).toBe(2);
+            expect(galleriaInstance.numVisibleLimit()).toBe(2);
+            const thumbnails = fixture.debugElement.query(By.directive(GalleriaThumbnails)).componentInstance as GalleriaThumbnails;
+            expect(thumbnails.numVisible()).toBe(2);
         });
 
         it('should reset numVisibleLimit when value is sufficient', async () => {
@@ -901,16 +926,22 @@ describe('Galleria', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            galleriaInstance.ngOnChanges({
-                value: {
-                    currentValue: mockImages,
-                    previousValue: [],
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            });
+            expect(galleriaInstance.numVisibleLimit()).toBe(0);
+            const thumbnails = fixture.debugElement.query(By.directive(GalleriaThumbnails)).componentInstance as GalleriaThumbnails;
+            expect(thumbnails.numVisible()).toBe(3);
+        });
 
-            expect(galleriaInstance.numVisibleLimit).toBe(0);
+        it('should recompute numVisibleLimit when numVisible changes', async () => {
+            component.images = mockImages.slice(0, 4);
+            component.numVisible = 3;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(galleriaInstance.numVisibleLimit()).toBe(0);
+
+            component.numVisible = 6;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(galleriaInstance.numVisibleLimit()).toBe(4);
         });
     });
 
@@ -1342,15 +1373,187 @@ describe('Galleria Signal Query API', () => {
     });
 });
 
+describe('Galleria OnPush re-render', () => {
+    let fixture: ComponentFixture<TestBasicGalleriaComponent>;
+    let component: TestBasicGalleriaComponent;
+
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            declarations: [TestBasicGalleriaComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TestBasicGalleriaComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    async function update(changes: Partial<TestBasicGalleriaComponent>) {
+        Object.assign(component, changes);
+        fixture.changeDetectorRef.markForCheck();
+        await fixture.whenStable();
+    }
+
+    function query(selector: string): HTMLElement | null {
+        return fixture.nativeElement.querySelector(selector);
+    }
+
+    it('re-renders the active item when activeIndex changes', async () => {
+        expect(query('.test-item-image')?.getAttribute('alt')).toBe('Image 1');
+
+        await update({ activeIndex: 2 });
+
+        expect(query('.test-item-image')?.getAttribute('alt')).toBe('Image 3');
+        const thumbnailItems = fixture.nativeElement.querySelectorAll('[data-pc-section="thumbnailitem"][data-p-active]');
+        expect(Array.from(thumbnailItems).map((item: any) => item.getAttribute('data-p-active'))).toEqual(['false', 'false', 'true', 'false', 'false']);
+    });
+
+    it('re-renders the thumbnails when value changes', async () => {
+        expect(fixture.nativeElement.querySelectorAll('.test-thumbnail-image').length).toBe(5);
+
+        await update({ images: mockImages.slice(0, 2) });
+
+        expect(fixture.nativeElement.querySelectorAll('.test-thumbnail-image').length).toBe(2);
+    });
+
+    it('re-renders when showThumbnails changes', async () => {
+        expect(fixture.debugElement.query(By.directive(GalleriaThumbnails))).toBeTruthy();
+
+        await update({ showThumbnails: false });
+
+        expect(fixture.debugElement.query(By.directive(GalleriaThumbnails))).toBeNull();
+    });
+
+    it('re-renders when showThumbnailNavigators changes', async () => {
+        expect(query('[data-pc-section="thumbnailprevbutton"]')).toBeTruthy();
+
+        await update({ showThumbnailNavigators: false });
+
+        expect(query('[data-pc-section="thumbnailprevbutton"]')).toBeNull();
+    });
+
+    it('re-renders when showIndicators changes', async () => {
+        expect(query('[data-pc-section="indicatorlist"]')).toBeNull();
+
+        await update({ showIndicators: true });
+
+        expect(fixture.nativeElement.querySelectorAll('[data-pc-section="indicatorlist"] li').length).toBe(5);
+    });
+
+    it('re-renders when showItemNavigators changes', async () => {
+        expect(query('[data-pc-section="prevbutton"]')).toBeNull();
+
+        await update({ showItemNavigators: true });
+
+        expect(query('[data-pc-section="prevbutton"]')).toBeTruthy();
+        expect(query('[data-pc-section="nextbutton"]')).toBeTruthy();
+    });
+
+    it('re-renders the root classes when thumbnailsPosition, indicatorsPosition and the boolean flags change', async () => {
+        const root = fixture.debugElement.query(By.directive(GalleriaContent)).nativeElement as HTMLElement;
+        expect(root.classList.contains('p-galleria-thumbnails-bottom')).toBe(true);
+
+        await update({ thumbnailsPosition: 'left', showIndicators: true, indicatorsPosition: 'top', showIndicatorsOnItem: true, showItemNavigatorsOnHover: true });
+
+        expect(root.classList.contains('p-galleria-thumbnails-left')).toBe(true);
+        expect(root.classList.contains('p-galleria-thumbnails-bottom')).toBe(false);
+        expect(root.classList.contains('p-galleria-indicators-top')).toBe(true);
+        expect(root.classList.contains('p-galleria-inset-indicators')).toBe(true);
+        expect(root.classList.contains('p-galleria-hover-navigators')).toBe(true);
+    });
+
+    it('re-renders the vertical thumbnail viewport height', async () => {
+        await update({ thumbnailsPosition: 'left', verticalThumbnailViewPortHeight: '420px' });
+
+        expect(query('[data-pc-section="thumbnailsviewport"]')?.style.height).toBe('420px');
+    });
+
+    it('renders the fullscreen mask with maskClass when visible changes', async () => {
+        await update({ fullScreen: true, maskClass: 'custom-mask-class' });
+        expect(query('[data-pc-section="mask"]')).toBeNull();
+
+        await update({ visible: true });
+
+        const mask = query('[data-pc-section="mask"]');
+        expect(mask).toBeTruthy();
+        expect(mask?.classList.contains('custom-mask-class')).toBe(true);
+        expect(mask?.getAttribute('role')).toBe('dialog');
+        expect(query('[data-pc-section="closebutton"]')).toBeTruthy();
+    });
+
+    it('starts and stops the slideshow when autoPlay changes', async () => {
+        const content = fixture.debugElement.query(By.directive(GalleriaContent)).componentInstance as GalleriaContent;
+        expect(content.slideShowActive()).toBe(false);
+
+        await update({ autoPlay: true });
+
+        expect(content.slideShowActive()).toBe(true);
+        expect(content.interval()).toBeDefined();
+
+        await update({ autoPlay: false });
+
+        expect(content.slideShowActive()).toBe(false);
+    });
+});
+
+describe('Galleria id', () => {
+    it('uses the id input as the content id when it is set before the first render', async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        const fixture = TestBed.createComponent(Galleria);
+        fixture.componentRef.setInput('id', 'my-galleria');
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const content = fixture.debugElement.query(By.directive(GalleriaContent));
+        expect(content.componentInstance.id).toBe('my-galleria');
+        expect(content.nativeElement.getAttribute('id')).toBe('my-galleria');
+        expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnailitem"]').getAttribute('aria-controls')).toBe('my-galleria_item_0');
+    });
+});
+
 // GalleriaContent, GalleriaItem and GalleriaThumbnails are the internal building blocks that
 // p-galleria renders as child directives. They each `inject(Galleria)` unconditionally, so a
 // minimal Galleria stub is supplied wherever they are instantiated directly.
+function createGalleriaStub(): Galleria {
+    const none = () => undefined;
+    return {
+        id: none,
+        templates: () => [],
+        captionTemplate: none,
+        indicatorTemplate: none,
+        footerTemplate: none,
+        _itemTemplate: none,
+        itemTemplate: none,
+        captionFacet: none,
+        _thumbnailTemplate: none,
+        thumbnailTemplate: none,
+        _itemPreviousIconTemplate: none,
+        itemPreviousIconTemplate: none,
+        _itemNextIconTemplate: none,
+        itemNextIconTemplate: none,
+        _previousThumbnailIconTemplate: none,
+        previousThumbnailIconTemplate: none,
+        _nextThumbnailIconTemplate: none,
+        nextThumbnailIconTemplate: none,
+        config: { translation: {}, csp: none }
+    } as unknown as Galleria;
+}
+
 describe('GalleriaContent', () => {
     beforeEach(async () => {
         await TestBed.resetTestingModule();
         await TestBed.configureTestingModule({
             imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
-            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: createGalleriaStub() }]
         }).compileComponents();
     });
 
@@ -1378,24 +1581,45 @@ describe('GalleriaContent', () => {
     it('should emit activeItemChange when onActiveIndexChange is called with a new index', () => {
         const fixture = TestBed.createComponent(GalleriaContent);
         const instance = fixture.componentInstance;
-        instance.activeIndex = 0;
+        fixture.componentRef.setInput('activeIndex', 0);
 
         vi.spyOn(instance.activeItemChange, 'emit');
         instance.onActiveIndexChange(3);
 
         expect(instance.activeItemChange.emit).toHaveBeenCalledWith(3);
-        expect(instance.activeIndex).toBe(3);
+        expect(instance._activeIndex()).toBe(3);
     });
 
     it('should not emit activeItemChange when onActiveIndexChange is called with the same index', () => {
         const fixture = TestBed.createComponent(GalleriaContent);
         const instance = fixture.componentInstance;
-        instance.activeIndex = 2;
+        fixture.componentRef.setInput('activeIndex', 2);
 
         vi.spyOn(instance.activeItemChange, 'emit');
         instance.onActiveIndexChange(2);
 
         expect(instance.activeItemChange.emit).not.toHaveBeenCalled();
+    });
+
+    it('should reset _activeIndex from the activeIndex input and keep a local override until the input changes', () => {
+        const fixture = TestBed.createComponent(GalleriaContent);
+        const instance = fixture.componentInstance;
+
+        fixture.componentRef.setInput('activeIndex', 1);
+        expect(instance._activeIndex()).toBe(1);
+
+        instance.onActiveIndexChange(4);
+        expect(instance._activeIndex()).toBe(4);
+        expect(instance.activeIndex()).toBe(1);
+
+        fixture.componentRef.setInput('activeIndex', 2);
+        expect(instance._activeIndex()).toBe(2);
+    });
+
+    it('should generate an id when the galleria has none', () => {
+        const instance = TestBed.createComponent(GalleriaContent).componentInstance;
+
+        expect(instance.id).toMatch(/^pn_id_/);
     });
 });
 
@@ -1404,19 +1628,20 @@ describe('GalleriaItem', () => {
         await TestBed.resetTestingModule();
         await TestBed.configureTestingModule({
             imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
-            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: createGalleriaStub() }]
         }).compileComponents();
     });
 
-    function createInstance() {
-        return TestBed.createComponent(GalleriaItem).componentInstance;
+    function createFixture() {
+        return TestBed.createComponent(GalleriaItem);
     }
 
     it('should emit onActiveIndexChange when navigating to the next item', () => {
-        const instance = createInstance();
-        instance.value = mockImages;
-        instance.activeIndex = 0;
-        instance.circular = false;
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('activeIndex', 0);
+        fixture.componentRef.setInput('circular', false);
 
         vi.spyOn(instance.onActiveIndexChange, 'emit');
         instance.next();
@@ -1425,24 +1650,116 @@ describe('GalleriaItem', () => {
     });
 
     it('should emit startSlideShow when autoPlay changes to true', () => {
-        const instance = createInstance();
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
 
         vi.spyOn(instance.startSlideShow, 'emit');
-        instance.onChanges({
-            autoPlay: { currentValue: true, previousValue: false, firstChange: true, isFirstChange: () => true }
-        } as any);
+        fixture.componentRef.setInput('autoPlay', true);
+        fixture.detectChanges();
 
         expect(instance.startSlideShow.emit).toHaveBeenCalledWith(undefined);
     });
 
+    it('should emit stopSlideShow when autoPlay changes back to false, and only react to autoPlay', () => {
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('autoPlay', true);
+        fixture.detectChanges();
+
+        vi.spyOn(instance.startSlideShow, 'emit');
+        vi.spyOn(instance.stopSlideShow, 'emit');
+        fixture.componentRef.setInput('slideShowActive', false);
+        fixture.detectChanges();
+        expect(instance.startSlideShow.emit).not.toHaveBeenCalled();
+        expect(instance.stopSlideShow.emit).not.toHaveBeenCalled();
+
+        fixture.componentRef.setInput('slideShowActive', true);
+        fixture.componentRef.setInput('autoPlay', false);
+        fixture.detectChanges();
+        expect(instance.stopSlideShow.emit).toHaveBeenCalledWith(undefined);
+        expect(instance.startSlideShow.emit).not.toHaveBeenCalled();
+    });
+
     it('should emit stopSlideShow via stopTheSlideShow when the slideshow is active', () => {
-        const instance = createInstance();
-        instance.slideShowActive = true;
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('slideShowActive', true);
 
         vi.spyOn(instance.stopSlideShow, 'emit');
         instance.stopTheSlideShow();
 
         expect(instance.stopSlideShow.emit).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should derive activeItem and the nav disabled states from the inputs', () => {
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('activeIndex', 0);
+
+        expect(instance.activeItem()).toBe(mockImages[0]);
+        expect(instance.isNavBackwardDisabled()).toBe(true);
+        expect(instance.isNavForwardDisabled()).toBe(false);
+
+        fixture.componentRef.setInput('activeIndex', 4);
+        expect(instance.activeItem()).toBe(mockImages[4]);
+        expect(instance.isNavBackwardDisabled()).toBe(false);
+        expect(instance.isNavForwardDisabled()).toBe(true);
+
+        fixture.componentRef.setInput('circular', true);
+        expect(instance.isNavForwardDisabled()).toBe(false);
+    });
+
+    it('should re-render the indicators when value, activeIndex and showIndicators change', () => {
+        const fixture = createFixture();
+        fixture.componentRef.setInput('showIndicators', false);
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('[data-pc-section="indicatorlist"]')).toBeNull();
+
+        fixture.componentRef.setInput('showIndicators', true);
+        fixture.componentRef.setInput('activeIndex', 2);
+        fixture.detectChanges();
+        const indicators = fixture.nativeElement.querySelectorAll('[data-pc-section="indicatorlist"] li');
+        expect(indicators.length).toBe(5);
+        expect(indicators[2].getAttribute('aria-selected')).toBe('true');
+        expect(indicators[0].getAttribute('aria-selected')).toBe('false');
+
+        fixture.componentRef.setInput('showItemNavigators', true);
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('[data-pc-section="prevbutton"]')).toBeTruthy();
+    });
+});
+
+describe('GalleriaItemSlot', () => {
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: createGalleriaStub() }]
+        }).compileComponents();
+    });
+
+    it('should use the item for the context of every type but indicator, which uses the index', () => {
+        const fixture = TestBed.createComponent(GalleriaItemSlot);
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('item', mockImages[1]);
+        fixture.componentRef.setInput('index', 3);
+
+        fixture.componentRef.setInput('type', 'item');
+        expect(instance.context()).toEqual({ $implicit: mockImages[1] });
+
+        fixture.componentRef.setInput('type', 'indicator');
+        expect(instance.context()).toEqual({ $implicit: 3 });
+    });
+
+    it('should not render without a template', () => {
+        const fixture = TestBed.createComponent(GalleriaItemSlot);
+        fixture.componentRef.setInput('type', 'item');
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.contentTemplate()).toBeUndefined();
+        expect(fixture.componentInstance.shouldRender()).toBeFalsy();
     });
 });
 
@@ -1451,32 +1768,90 @@ describe('GalleriaThumbnails', () => {
         await TestBed.resetTestingModule();
         await TestBed.configureTestingModule({
             imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
-            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: {} as unknown as Galleria }]
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: createGalleriaStub() }]
         }).compileComponents();
     });
 
-    function createInstance() {
-        return TestBed.createComponent(GalleriaThumbnails).componentInstance;
+    function createFixture() {
+        return TestBed.createComponent(GalleriaThumbnails);
     }
 
     it('should emit onActiveIndexChange when a thumbnail item is clicked', () => {
-        const instance = createInstance();
-        instance.value = mockImages;
-        instance.activeIndex = 0;
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('activeIndex', 0);
 
         vi.spyOn(instance.onActiveIndexChange, 'emit');
         instance.onItemClick(2);
 
         expect(instance.onActiveIndexChange.emit).toHaveBeenCalledWith(2);
+        expect(instance._activeIndex()).toBe(2);
+        expect(instance._oldactiveIndex()).toBe(0);
     });
 
     it('should emit stopSlideShow via stopTheSlideShow when the slideshow is active', () => {
-        const instance = createInstance();
-        instance.slideShowActive = true;
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('slideShowActive', true);
 
         vi.spyOn(instance.stopSlideShow, 'emit');
         instance.stopTheSlideShow();
 
         expect(instance.stopSlideShow.emit).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should reset d_numVisible from numVisible and keep a responsive override until numVisible changes', () => {
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+
+        fixture.componentRef.setInput('numVisible', 4);
+        expect(instance.d_numVisible()).toBe(4);
+
+        instance.d_numVisible.set(2);
+        expect(instance.d_numVisible()).toBe(2);
+
+        fixture.componentRef.setInput('numVisible', 5);
+        expect(instance.d_numVisible()).toBe(5);
+    });
+
+    it('should follow the activeIndex input, shift the items and re-render the active thumbnail', async () => {
+        const fixture = createFixture();
+        const instance = fixture.componentInstance;
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('numVisible', 3);
+        fixture.componentRef.setInput('activeIndex', 0);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(instance.totalShiftedItems()).toBe(0);
+
+        fixture.componentRef.setInput('activeIndex', 3);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance._activeIndex()).toBe(3);
+        expect(instance._oldactiveIndex()).toBe(3);
+        expect(instance.totalShiftedItems()).toBe(-2);
+        expect(instance.itemsContainer()!.nativeElement.style.transform).toContain('translate3d(-66.6');
+        const items = fixture.nativeElement.querySelectorAll('[data-pc-section="thumbnailitem"][data-p-active]');
+        expect(items[3].getAttribute('data-p-active')).toBe('true');
+        expect(items[0].getAttribute('data-p-active')).toBe('false');
+    });
+
+    it('should re-render when isVertical, contentHeight and showThumbnailNavigators change', () => {
+        const fixture = createFixture();
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('[data-p-icon="chevron-left"]')).toBeTruthy();
+
+        fixture.componentRef.setInput('isVertical', true);
+        fixture.componentRef.setInput('contentHeight', '250px');
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('[data-p-icon="chevron-up"]')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnailsviewport"]').style.height).toBe('250px');
+
+        fixture.componentRef.setInput('showThumbnailNavigators', false);
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnailprevbutton"]')).toBeNull();
     });
 });

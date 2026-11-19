@@ -623,4 +623,32 @@ describe('remove-dead-inputs', () => {
         expect(infos.join('\n')).toContain('No bindings for the removed inputs were found to remove.');
         expect(warnings.join('\n')).toBe('');
     });
+
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions and the dead containerClass from p-galleria while keeping its live inputs', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-galleria [value]="images" showTransitionOptions=".12s ease" [hideTransitionOptions]="hideTf" containerClass="gallery" [containerStyle]="{ width: '640px' }" [maskClass]="mask" [motionOptions]="motion"></p-galleria>\n<p-galleria [value]="images" [containerClass]="cls" [(visible)]="visible" [fullScreen]="true"></p-galleria>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-galleria [value]="images" [containerStyle]="{ width: '640px' }" [maskClass]="mask" [motionOptions]="motion"></p-galleria>\n<p-galleria [value]="images" [(visible)]="visible" [fullScreen]="true"></p-galleria>\n`
+        );
+    });
+
+    it('reports a programmatic containerClass access on a galleria as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(galleria: { containerClass: string }) {\n        return galleria.containerClass;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings.join('\n')).toContain('/src/app/foo.ts:3');
+    });
 });
