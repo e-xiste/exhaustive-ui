@@ -71,7 +71,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-organizationchart',
     'p-organizationChart',
     'p-organization-chart',
-    'p-carousel'
+    'p-carousel',
+    'p-dataview',
+    'p-dataView',
+    'p-data-view'
 ];
 
 /**

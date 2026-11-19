@@ -1219,6 +1219,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-carousel class="existing my-carousel"></p-carousel>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-dataview', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dataview [value]="products" styleClass="my-dataview" [paginator]="true" [rows]="5"></p-dataview>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dataview [value]="products" class="my-dataview" [paginator]="true" [rows]="5"></p-dataview>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-dataView and p-data-view', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dataView [value]="products" [styleClass]="dataviewClass"></p-dataView>\n<p-data-view [value]="products" [styleClass]="dataviewClass"></p-data-view>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dataView [value]="products" [class]="dataviewClass"></p-dataView>\n<p-data-view [value]="products" [class]="dataviewClass"></p-data-view>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-dataview', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dataview class="existing" styleClass="my-dataview"></p-dataview>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dataview class="existing my-dataview"></p-dataview>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

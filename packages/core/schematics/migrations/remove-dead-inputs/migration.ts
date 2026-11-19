@@ -58,7 +58,7 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toggle-button', names: ['inputId'] },
     { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] },
     { selector: 'p-image', names: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'] },
-    { selector: 'p-drawer', names: ['transitionOptions'] }
+    { selector: 'p-drawer', names: ['transitionOptions'] },
     { selector: 'p-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
