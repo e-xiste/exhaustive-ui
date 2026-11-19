@@ -52,7 +52,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-blockui',
     'p-blockUI',
     'p-block-ui',
-    'p-badge'
+    'p-badge',
+    'p-checkbox',
+    'p-checkBox',
+    'p-check-box'
 ];
 
 /**

@@ -851,6 +851,42 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-badge class="existing my-badge"></p-badge>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-checkbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-checkbox styleClass="my-checkbox"></p-checkbox>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-checkbox class="my-checkbox"></p-checkbox>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-checkbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-checkbox [styleClass]="myClass"></p-checkbox>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-checkbox [class]="myClass"></p-checkbox>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-checkbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-checkbox class="existing" styleClass="my-checkbox"></p-checkbox>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-checkbox class="existing my-checkbox"></p-checkbox>\n`);
+    });
+
+    it('rewrites styleClass on the p-checkBox and p-check-box aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-checkBox styleClass="a"></p-checkBox>\n<p-check-box [styleClass]="b"></p-check-box>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-checkBox class="a"></p-checkBox>\n<p-check-box [class]="b"></p-check-box>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

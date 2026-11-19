@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -33,7 +33,7 @@ const mockIngredients = [
             [tabindex]="tabindex"
             [ariaLabel]="ariaLabel"
             [ariaLabelledBy]="ariaLabelledBy"
-            [styleClass]="styleClass"
+            [class]="styleClass"
             [inputStyle]="inputStyle"
             [inputClass]="inputClass"
             [checkboxIcon]="checkboxIcon"
@@ -185,7 +185,7 @@ class TestIndeterminateCheckboxComponent {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-checkbox [(ngModel)]="value" [binary]="true" [variant]="variant" [size]="size" inputId="styled-checkbox" [styleClass]="styleClass" [inputStyle]="inputStyle" [inputClass]="inputClass" (onChange)="onSelectionChange($event)"> </p-checkbox>
+        <p-checkbox [(ngModel)]="value" [binary]="true" [variant]="variant" [size]="size" inputId="styled-checkbox" [class]="styleClass" [inputStyle]="inputStyle" [inputClass]="inputClass" (onChange)="onSelectionChange($event)"> </p-checkbox>
     `
 })
 class TestStyledCheckboxComponent {
@@ -253,10 +253,57 @@ class TestCheckboxRefTemplateComponent {
     value: any = 'test-value';
 }
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Checkbox, ReactiveFormsModule],
+    template: `
+        <p-checkbox
+            [formControl]="control"
+            [binary]="binary()"
+            [value]="checkboxValue()"
+            [readonly]="readonly()"
+            [indeterminate]="indeterminate()"
+            [inputId]="inputId()"
+            [tabindex]="tabindex()"
+            [ariaLabel]="ariaLabel()"
+            [ariaLabelledBy]="ariaLabelledBy()"
+            [class]="styleClass()"
+            [inputStyle]="inputStyle()"
+            [inputClass]="inputClass()"
+            [checkboxIcon]="checkboxIcon()"
+            [autofocus]="autofocus()"
+            [trueValue]="trueValue()"
+            [falseValue]="falseValue()"
+            [variant]="variant()"
+            [size]="size()"
+        />
+    `
+})
+class TestOnPushCheckboxComponent {
+    control = new FormControl<any>(false);
+    binary = signal(true);
+    checkboxValue = signal<any>('test-value');
+    readonly = signal(false);
+    indeterminate = signal(false);
+    inputId = signal<string | undefined>('checkbox-a');
+    tabindex = signal<number | undefined>(0);
+    ariaLabel = signal<string | undefined>('Label A');
+    ariaLabelledBy = signal<string | undefined>('label-a');
+    styleClass = signal<string | undefined>(undefined);
+    inputStyle = signal<{ [klass: string]: any } | null | undefined>(undefined);
+    inputClass = signal<string | undefined>(undefined);
+    checkboxIcon = signal<string | undefined>(undefined);
+    autofocus = signal(false);
+    trueValue = signal<any>(true);
+    falseValue = signal<any>(false);
+    variant = signal<'filled' | 'outlined' | undefined>(undefined);
+    size = signal<'large' | 'small' | undefined>(undefined);
+}
+
 describe('Checkbox', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [FormsModule, ReactiveFormsModule, Checkbox, SharedModule],
+            imports: [FormsModule, ReactiveFormsModule, Checkbox, SharedModule, TestOnPushCheckboxComponent],
             declarations: [
                 TestBasicCheckboxComponent,
                 TestReactiveFormCheckboxComponent,
@@ -291,13 +338,13 @@ describe('Checkbox', () => {
         it('should have default values', async () => {
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
 
-            expect(checkboxInstance.binary).toBe(false);
+            expect(checkboxInstance.binary()).toBe(false);
             expect(checkboxInstance.disabled()).toBe(false);
-            expect(checkboxInstance.readonly).toBe(false);
+            expect(checkboxInstance.readonly()).toBe(false);
             expect(checkboxInstance.required()).toBe(false);
-            expect(checkboxInstance.indeterminate).toBe(false);
-            expect(checkboxInstance.trueValue).toBe(true);
-            expect(checkboxInstance.falseValue).toBe(false);
+            expect(checkboxInstance.indeterminate()).toBe(false);
+            expect(checkboxInstance.trueValue()).toBe(true);
+            expect(checkboxInstance.falseValue()).toBe(false);
         });
 
         it('should accept custom values', async () => {
@@ -313,13 +360,13 @@ describe('Checkbox', () => {
 
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
 
-            expect(checkboxInstance.binary).toBe(true);
+            expect(checkboxInstance.binary()).toBe(true);
             expect(checkboxInstance.disabled()).toBe(true);
-            expect(checkboxInstance.readonly).toBe(true);
+            expect(checkboxInstance.readonly()).toBe(true);
             expect(checkboxInstance.required()).toBe(true);
-            expect(checkboxInstance.indeterminate).toBe(true);
-            expect(checkboxInstance.trueValue).toBe('custom-true');
-            expect(checkboxInstance.falseValue).toBe('custom-false');
+            expect(checkboxInstance.indeterminate()).toBe(true);
+            expect(checkboxInstance.trueValue()).toBe('custom-true');
+            expect(checkboxInstance.falseValue()).toBe('custom-false');
         });
     });
 
@@ -341,13 +388,13 @@ describe('Checkbox', () => {
             const inputElement = testFixture.debugElement.query(By.css('input[type="checkbox"]'));
 
             expect(testComponent.value).toBeFalsy();
-            expect(checkboxInstance.checked).toBe(false);
+            expect(checkboxInstance.checked()).toBe(false);
 
             inputElement.nativeElement.click();
             await testFixture.whenStable();
 
             expect(testComponent.value).toBe(true);
-            expect(checkboxInstance.checked).toBe(true);
+            expect(checkboxInstance.checked()).toBe(true);
             expect(testComponent.changeEvent?.checked).toBe(true);
         });
 
@@ -373,7 +420,7 @@ describe('Checkbox', () => {
             await testFixture.whenStable();
 
             expect(checkboxInstance._indeterminate()).toBe(true);
-            expect(checkboxInstance.checked).toBe(false);
+            expect(checkboxInstance.checked()).toBe(false);
 
             const inputElement = testFixture.debugElement.query(By.css('input[type="checkbox"]'));
             inputElement.nativeElement.click();
@@ -691,20 +738,20 @@ describe('Checkbox', () => {
 
             // Check that component received the style input
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
-            expect(checkboxInstance.inputStyle).toEqual({ border: '2px solid red' });
+            expect(checkboxInstance.inputStyle()).toEqual({ border: '2px solid red' });
 
             // Manually apply styles to test the style binding works as expected
-            if (checkboxInstance.inputStyle) {
-                Object.keys(checkboxInstance.inputStyle).forEach((key) => {
-                    inputElement.nativeElement.style[key] = checkboxInstance.inputStyle[key];
+            if (checkboxInstance.inputStyle()) {
+                Object.keys(checkboxInstance.inputStyle()).forEach((key) => {
+                    inputElement.nativeElement.style[key] = checkboxInstance.inputStyle()[key];
                 });
             }
 
             expect(inputElement.nativeElement.style.border).toBe('2px solid red');
 
             // Also verify the template binding
-            expect(checkboxInstance.inputStyle).toBeTruthy();
-            expect(Object.keys(checkboxInstance.inputStyle)).toContain('border');
+            expect(checkboxInstance.inputStyle()).toBeTruthy();
+            expect(Object.keys(checkboxInstance.inputStyle())).toContain('border');
         });
 
         it('should apply input classes', async () => {
@@ -803,11 +850,11 @@ describe('Checkbox', () => {
             await testFixture.whenStable();
 
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
-            expect(checkboxInstance.checkboxIcon).toBe('pi pi-star');
+            expect(checkboxInstance.checkboxIcon()).toBe('pi pi-star');
 
             // The test is primarily to verify the checkboxIcon property is set correctly
             // The checked state depends on modelValue, not just the input value
-            expect(checkboxInstance.checkboxIcon).toBeDefined();
+            expect(checkboxInstance.checkboxIcon()).toBeDefined();
         });
     });
 
@@ -995,7 +1042,7 @@ describe('Checkbox', () => {
             const inputElement = testFixture.debugElement.query(By.css('input[type="checkbox"]'));
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
 
-            expect(checkboxInstance.value).toBe('قيمة الاختيار');
+            expect(checkboxInstance.value()).toBe('قيمة الاختيار');
             expect(inputElement.nativeElement.getAttribute('aria-label')).toBe('خانة الاختيار');
         });
 
@@ -1008,7 +1055,7 @@ describe('Checkbox', () => {
             const inputElement = testFixture.debugElement.query(By.css('input[type="checkbox"]'));
             const checkboxInstance = testFixture.debugElement.query(By.css('p-checkbox')).componentInstance;
 
-            expect(checkboxInstance.value).toBe('Valeur avec accents éàü');
+            expect(checkboxInstance.value()).toBe('Valeur avec accents éàü');
             expect(inputElement.nativeElement.getAttribute('aria-label')).toBe('Case à cocher spéciale');
         });
     });
@@ -1209,6 +1256,244 @@ describe('Checkbox', () => {
         });
     });
 
+    describe('OnPush Rendering Tests', () => {
+        let component: TestOnPushCheckboxComponent;
+        let fixture: ComponentFixture<TestOnPushCheckboxComponent>;
+        let checkboxInstance: Checkbox;
+        let rootElement: HTMLElement;
+        let inputElement: HTMLInputElement;
+
+        beforeEach(async () => {
+            fixture = TestBed.createComponent(TestOnPushCheckboxComponent);
+            component = fixture.componentInstance;
+            const checkboxElement = fixture.debugElement.query(By.directive(Checkbox));
+            checkboxInstance = checkboxElement.componentInstance;
+            rootElement = checkboxElement.nativeElement;
+            await fixture.whenStable();
+            inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
+        });
+
+        it('should render the checked state when the control value changes', async () => {
+            expect(rootElement.classList.contains('p-checkbox-checked')).toBe(false);
+            expect(rootElement.querySelector('[data-p-icon="check"]')).toBeNull();
+
+            component.control.setValue(true);
+            await fixture.whenStable();
+
+            expect(checkboxInstance.checked()).toBe(true);
+            expect(rootElement.classList.contains('p-checkbox-checked')).toBe(true);
+            expect(rootElement.getAttribute('data-p-checked')).toBe('true');
+            expect(rootElement.getAttribute('data-p-highlight')).toBe('true');
+            expect(rootElement.getAttribute('data-p')).toContain('checked');
+            expect(rootElement.querySelector('[data-p-icon="check"]')).not.toBeNull();
+            expect(inputElement.checked).toBe(true);
+
+            component.control.setValue(false);
+            await fixture.whenStable();
+
+            expect(checkboxInstance.checked()).toBe(false);
+            expect(rootElement.classList.contains('p-checkbox-checked')).toBe(false);
+            expect(rootElement.getAttribute('data-p-checked')).toBe('false');
+            expect(rootElement.querySelector('[data-p-icon="check"]')).toBeNull();
+            expect(inputElement.checked).toBe(false);
+        });
+
+        it('should render trueValue and falseValue changes', async () => {
+            component.control.setValue('yes');
+            await fixture.whenStable();
+            expect(inputElement.checked).toBe(false);
+
+            component.trueValue.set('yes');
+            component.falseValue.set('no');
+            await fixture.whenStable();
+
+            expect(inputElement.checked).toBe(true);
+            expect(rootElement.getAttribute('data-p-checked')).toBe('true');
+
+            inputElement.click();
+            await fixture.whenStable();
+
+            expect(component.control.value).toBe('no');
+            expect(inputElement.checked).toBe(false);
+        });
+
+        it('should render binary and value changes', async () => {
+            component.binary.set(false);
+            component.control.setValue(['other']);
+            await fixture.whenStable();
+
+            expect(inputElement.getAttribute('value')).toBe('test-value');
+            expect(inputElement.checked).toBe(false);
+
+            component.checkboxValue.set('other');
+            await fixture.whenStable();
+
+            expect(inputElement.getAttribute('value')).toBe('other');
+            expect(inputElement.checked).toBe(true);
+            expect(rootElement.getAttribute('data-p-checked')).toBe('true');
+        });
+
+        it('should render the indeterminate state and reset it on click', async () => {
+            expect(rootElement.querySelector('[data-p-icon="minus"]')).toBeNull();
+
+            component.indeterminate.set(true);
+            await fixture.whenStable();
+
+            expect(checkboxInstance._indeterminate()).toBe(true);
+            expect(rootElement.querySelector('[data-p-icon="minus"]')).not.toBeNull();
+            expect(inputElement.checked).toBe(false);
+
+            inputElement.click();
+            await fixture.whenStable();
+
+            expect(checkboxInstance._indeterminate()).toBe(false);
+            expect(rootElement.querySelector('[data-p-icon="minus"]')).toBeNull();
+            expect(component.control.value).toBe(true);
+            expect(inputElement.checked).toBe(true);
+
+            component.indeterminate.set(false);
+            await fixture.whenStable();
+            component.indeterminate.set(true);
+            await fixture.whenStable();
+
+            expect(checkboxInstance._indeterminate()).toBe(true);
+            expect(rootElement.querySelector('[data-p-icon="minus"]')).not.toBeNull();
+            expect(inputElement.checked).toBe(false);
+        });
+
+        it('should render inputId changes', async () => {
+            expect(inputElement.id).toBe('checkbox-a');
+
+            component.inputId.set('checkbox-b');
+            await fixture.whenStable();
+
+            expect(inputElement.id).toBe('checkbox-b');
+        });
+
+        it('should render tabindex changes', async () => {
+            expect(inputElement.getAttribute('tabindex')).toBe('0');
+
+            component.tabindex.set(-1);
+            await fixture.whenStable();
+
+            expect(inputElement.getAttribute('tabindex')).toBe('-1');
+        });
+
+        it('should render ariaLabel changes', async () => {
+            component.ariaLabel.set('Label B');
+            await fixture.whenStable();
+
+            expect(inputElement.getAttribute('aria-label')).toBe('Label B');
+        });
+
+        it('should render ariaLabelledBy changes', async () => {
+            component.ariaLabelledBy.set('label-b');
+            await fixture.whenStable();
+
+            expect(inputElement.getAttribute('aria-labelledby')).toBe('label-b');
+        });
+
+        it('should render readonly changes and ignore clicks while readonly', async () => {
+            expect(inputElement.hasAttribute('readonly')).toBe(false);
+
+            component.readonly.set(true);
+            await fixture.whenStable();
+
+            expect(inputElement.hasAttribute('readonly')).toBe(true);
+
+            inputElement.click();
+            await fixture.whenStable();
+
+            expect(component.control.value).toBe(false);
+        });
+
+        it('should render the host class next to the root class', async () => {
+            expect(rootElement.classList.contains('p-checkbox')).toBe(true);
+
+            component.styleClass.set('custom-host');
+            await fixture.whenStable();
+
+            expect(rootElement.classList.contains('p-checkbox')).toBe(true);
+            expect(rootElement.classList.contains('custom-host')).toBe(true);
+        });
+
+        it('should render inputStyle and inputClass changes', async () => {
+            component.inputStyle.set({ border: '2px solid red' });
+            component.inputClass.set('custom-input');
+            await fixture.whenStable();
+
+            expect(inputElement.style.border).toBe('2px solid red');
+            expect(inputElement.classList.contains('custom-input')).toBe(true);
+            expect(inputElement.classList.contains('p-checkbox-input')).toBe(true);
+        });
+
+        it('should render checkboxIcon changes when checked', async () => {
+            component.control.setValue(true);
+            component.checkboxIcon.set('pi pi-star');
+            await fixture.whenStable();
+
+            const iconElement = rootElement.querySelector('span.p-checkbox-icon') as HTMLElement;
+            expect(iconElement).not.toBeNull();
+            expect(iconElement.classList.contains('pi-star')).toBe(true);
+            expect(rootElement.querySelector('[data-p-icon="check"]')).toBeNull();
+
+            component.checkboxIcon.set(undefined);
+            await fixture.whenStable();
+
+            expect(rootElement.querySelector('span.p-checkbox-icon')).toBeNull();
+            expect(rootElement.querySelector('[data-p-icon="check"]')).not.toBeNull();
+        });
+
+        it('should render autofocus changes', async () => {
+            expect(inputElement.hasAttribute('autofocus')).toBe(false);
+
+            component.autofocus.set(true);
+            await fixture.whenStable();
+
+            expect(inputElement.hasAttribute('autofocus')).toBe(true);
+        });
+
+        it('should render variant and size changes', async () => {
+            component.variant.set('filled');
+            component.size.set('large');
+            await fixture.whenStable();
+
+            expect(checkboxInstance.$variant()).toBe('filled');
+            expect(rootElement.classList.contains('p-variant-filled')).toBe(true);
+            expect(rootElement.classList.contains('p-checkbox-lg')).toBe(true);
+            expect(rootElement.getAttribute('data-p')).toContain('filled');
+            expect(rootElement.getAttribute('data-p')).toContain('large');
+
+            component.size.set('small');
+            await fixture.whenStable();
+
+            expect(rootElement.classList.contains('p-checkbox-lg')).toBe(false);
+            expect(rootElement.classList.contains('p-checkbox-sm')).toBe(true);
+        });
+
+        it('should render the disabled state from the control', async () => {
+            component.control.disable();
+            await fixture.whenStable();
+
+            expect(inputElement.hasAttribute('disabled')).toBe(true);
+            expect(rootElement.getAttribute('data-p-disabled')).toBe('true');
+            expect(rootElement.classList.contains('p-disabled')).toBe(true);
+        });
+
+        it('should track the focused state on focus and blur', async () => {
+            expect(checkboxInstance.focused()).toBe(false);
+
+            inputElement.dispatchEvent(new FocusEvent('focus'));
+            await fixture.whenStable();
+            expect(checkboxInstance.focused()).toBe(true);
+
+            inputElement.dispatchEvent(new FocusEvent('blur'));
+            await fixture.whenStable();
+            expect(checkboxInstance.focused()).toBe(false);
+            expect(component.control.touched).toBe(true);
+        });
+    });
+
     describe('PassThrough (PT) Tests', () => {
         let fixture: ComponentFixture<Checkbox>;
         let checkboxElement: HTMLElement;
@@ -1361,7 +1646,7 @@ describe('Checkbox', () => {
                 fixture.componentRef.setInput('pt', {
                     root: ({ instance }) => ({
                         class: 'INSTANCE_ACCESSED',
-                        'data-binary': instance?.binary
+                        'data-binary': instance?.binary()
                     })
                 });
                 fixture.changeDetectorRef.markForCheck();
@@ -1391,7 +1676,7 @@ describe('Checkbox', () => {
                 fixture.componentRef.setInput('pt', {
                     input: ({ instance }) => ({
                         class: {
-                            READONLY_CLASS: instance?.readonly
+                            READONLY_CLASS: instance?.readonly()
                         }
                     })
                 });
@@ -1498,7 +1783,7 @@ describe('Checkbox', () => {
                         style: {
                             border: '1px solid green'
                         },
-                        'data-binary': instance?.binary
+                        'data-binary': instance?.binary()
                     }),
                     input: 'COMPLEX_INPUT'
                 });

@@ -3366,7 +3366,7 @@ export class TTContextMenuRow extends BaseComponent {
             [binary]="true"
             [disabled]="disabled"
             [indeterminate]="partialChecked"
-            [styleClass]="cx('pcNodeCheckbox')"
+            [class]="cx('pcNodeCheckbox')"
             [tabIndex]="-1"
             [unstyled]="unstyled()"
         >
