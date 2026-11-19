@@ -70,7 +70,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-paginator',
     'p-organizationchart',
     'p-organizationChart',
-    'p-organization-chart'
+    'p-organization-chart',
+    'p-carousel'
 ];
 
 /**

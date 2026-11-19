@@ -1192,6 +1192,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-organization-chart class="existing my-chart" [value]="data"></p-organization-chart>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-carousel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-carousel [value]="products" [numVisible]="3" styleClass="my-carousel"></p-carousel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-carousel [value]="products" [numVisible]="3" class="my-carousel"></p-carousel>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-carousel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-carousel [value]="products" [styleClass]="carouselClass"></p-carousel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-carousel [value]="products" [class]="carouselClass"></p-carousel>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-carousel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-carousel class="existing" styleClass="my-carousel"></p-carousel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-carousel class="existing my-carousel"></p-carousel>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
