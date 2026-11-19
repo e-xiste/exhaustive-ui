@@ -526,6 +526,8 @@ describe('styleclass-to-class', () => {
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-toggleSwitch class="camel"></p-toggleSwitch>\n<p-toggle-switch class="kebab"></p-toggle-switch>\n`);
+    });
+
     it('rewrites styleClass on p-colorpicker', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
