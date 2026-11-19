@@ -33,9 +33,9 @@ jobs:
               run: |
                   pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
-    # Formatting, the dependency audit, the schematics suite and the styled-package unit
-    # tests are all short and need no browser, so they share a job rather than each paying
-    # the setup cost.
+    # Formatting, the dependency audit, the schematics suite, the styled-package and the MCP
+    # server unit tests are all short and need no browser, so they share a job rather than
+    # each paying the setup cost.
     checks:
         runs-on: ubuntu-latest
 
@@ -58,6 +58,11 @@ jobs:
             - name: Styled Utils Tests
               run: |
                   pnpm run test:styled
+
+            # Runs against the fixture snapshot in packages/mcp/test/fixtures: no docs build, no network
+            - name: MCP Server Tests
+              run: |
+                  pnpm run test:mcp
 
     test-vitest:
         permissions:

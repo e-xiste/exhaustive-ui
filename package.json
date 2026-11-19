@@ -19,10 +19,11 @@
         "release:rc": "pnpm run build && pnpm recursive publish --filter './packages/*' --no-git-checks --report-summary --tag rc",
         "build": "cross-env NODE_ENV=production pnpm run build:check && pnpm run build:packages",
         "build:check": "pnpm run format:check && pnpm run security:check",
-        "build:packages": "pnpm run build:exhaustive-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:docs",
-        "build:exhaustive-ui": "pnpm --filter './packages/*' --filter '!@exhaustive-ui/core' build",
+        "build:packages": "pnpm run build:exhaustive-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:mcp && pnpm run build:docs",
+        "build:exhaustive-ui": "pnpm --filter './packages/*' --filter '!@exhaustive-ui/core' --filter '!@exhaustive-ui/mcp' build",
         "build:lib": "pnpm --filter @exhaustive-ui/core build",
         "build:themes": "pnpm --filter @exhaustive-ui/themes build",
+        "build:mcp": "pnpm --filter @exhaustive-ui/mcp build",
         "build:docs": "pnpm --filter docs build",
         "build:docs:content": "pnpm --filter docs build:docs",
         "dev": "pnpm --filter docs start",
@@ -34,7 +35,8 @@
         "lint:fix": "eslint --fix --ext \".js,.mjs,.ts,.mts\" --ignore-path .gitignore .",
         "test:unit": "pnpm run build:exhaustive-ui && pnpm --filter @exhaustive-ui/core test:unit",
         "test:coverage": "pnpm run build:exhaustive-ui && pnpm --filter @exhaustive-ui/core test:unit:coverage",
-        "test:styled": "pnpm --filter @exhaustive-ui/utils build && pnpm --filter @exhaustive-ui/styled test"
+        "test:styled": "pnpm --filter @exhaustive-ui/utils build && pnpm --filter @exhaustive-ui/styled test",
+        "test:mcp": "pnpm --filter @exhaustive-ui/mcp type:check && pnpm --filter @exhaustive-ui/mcp test"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "catalog:angular22",
