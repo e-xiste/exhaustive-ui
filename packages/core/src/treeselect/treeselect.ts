@@ -738,7 +738,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
                     break;
 
                 default: //TODO: @deprecated Use "value" template instead
-                    if (item.name) this.templateMap[item.name] = item.template;
+                    if (item.name()) this.templateMap[item.name()!] = item.template;
                     else this._valueTemplate = item.template;
                     break;
             }

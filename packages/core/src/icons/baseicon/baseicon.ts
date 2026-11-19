@@ -1,11 +1,10 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { cn } from '@exhaustive-ui/utils';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { BaseIconStyle } from './style/baseiconstyle';
 
 @Component({
     template: ` <ng-content></ng-content> `,
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     providers: [BaseIconStyle],
@@ -19,13 +18,13 @@ import { BaseIconStyle } from './style/baseiconstyle';
     }
 })
 export class BaseIcon extends BaseComponent {
-    @Input({ transform: booleanAttribute }) spin: boolean = false;
+    readonly spin = input<boolean, unknown>(false, { transform: booleanAttribute });
 
     _componentStyle = inject(BaseIconStyle);
 
-    getClassNames() {
-        return cn('p-icon', {
-            'p-icon-spin': this.spin
-        });
-    }
+    readonly getClassNames = computed(() =>
+        cn('p-icon', {
+            'p-icon-spin': this.spin()
+        })
+    );
 }
