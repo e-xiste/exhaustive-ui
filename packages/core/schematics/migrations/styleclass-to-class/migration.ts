@@ -77,7 +77,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-data-view',
     'p-splitbutton',
     'p-splitButton',
-    'p-split-button'
+    'p-split-button',
+    'p-password'
 ];
 
 /**

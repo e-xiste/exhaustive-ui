@@ -93,12 +93,19 @@ describe('remove-dead-inputs', () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
             '/src/app/app.html': `<p-splitbutton label="Save" [model]="items" showTransitionOptions=".12s cubic-bezier(0, 0, 0.2, 1)" [hideTransitionOptions]="hideTf" [plain]="true" [motionOptions]="motion" dir="rtl"></p-splitbutton>\n<p-splitButton [model]="items" plain [showTransitionOptions]="showTf"></p-splitButton>\n<p-split-button [model]="items" [dir]="direction" hideTransitionOptions=".1s linear"></p-split-button>\n`
+    });
+
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions from p-password while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-password [(ngModel)]="value" showTransitionOptions=".12s cubic-bezier(0, 0, 0.2, 1)" [hideTransitionOptions]="hideTf" [motionOptions]="motion" [toggleMask]="true"></p-password>\n<p-password [showTransitionOptions]="showTf" [feedback]="false"></p-password>\n`
         });
         const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
         const html = result.readContent('/src/app/app.html');
         expect(html).not.toContain('TransitionOptions');
         expect(html).not.toContain('plain');
         expect(html).toBe(`<p-splitbutton label="Save" [model]="items" [motionOptions]="motion" dir="rtl"></p-splitbutton>\n<p-splitButton [model]="items"></p-splitButton>\n<p-split-button [model]="items" [dir]="direction"></p-split-button>\n`);
+        expect(html).toBe(`<p-password [(ngModel)]="value" [motionOptions]="motion" [toggleMask]="true"></p-password>\n<p-password [feedback]="false"></p-password>\n`);
     });
 
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {

@@ -1273,6 +1273,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-splitbutton class="existing my-splitbutton"></p-splitbutton>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-password', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-password [(ngModel)]="value" styleClass="my-password"></p-password>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-password [(ngModel)]="value" class="my-password"></p-password>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-password', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-password [(ngModel)]="value" [toggleMask]="true" [styleClass]="passwordClass"></p-password>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-password [(ngModel)]="value" [toggleMask]="true" [class]="passwordClass"></p-password>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-password', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-password class="existing" styleClass="my-password" [(ngModel)]="value"></p-password>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-password class="existing my-password" [(ngModel)]="value"></p-password>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

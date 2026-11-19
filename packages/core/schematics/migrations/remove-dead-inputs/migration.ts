@@ -39,6 +39,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * read either: neither the root class nor the inner buttons ever received it. SplitButton's `dir`
  * was never read either, but it is deliberately left out of this list: a `dir`/`[dir]` binding on the
  * selector keeps working as the host element's native `dir` attribute, so there is nothing to remove.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Password were stored but never
+ * read: its overlay animation is driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -67,7 +69,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-splitbutton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
     { selector: 'p-splitButton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
-    { selector: 'p-split-button', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] }
+    { selector: 'p-split-button', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
+    { selector: 'p-password', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
@@ -88,6 +91,24 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * Removes usages of inputs that stopped doing anything before being deleted from
  * @exhaustive-ui/core in this version. The removed inputs are listed per selector in
  * {@link REMOVED_INPUT_GROUPS}; the header comment of this file explains why each of them was dead.
+ * @exhaustive-ui/core in this version: Toast/ToastItem's showTransformOptions, hideTransformOptions,
+ * showTransitionOptions and hideTransitionOptions, dead since the show/hide animation moved to the
+ * shared Motion directive (which has no equivalent transform/transition-options input); and
+ * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
+ * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
+ * showTransitionOptions/hideTransitionOptions, stored but never read either; OverlayBadge's
+ * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it);
+ * Fieldset's, Panel's and Accordion's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation);
+ * ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
+ * (motionOptions drives the show/hide animation); ToggleButton's inputId, stored but never read
+ * since the host element became the button itself; and Popover's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the show/hide animation) and
+ * ariaCloseLabel, stored but never read since the popover renders no close button; Image's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the preview animation) and
+ * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed;
+ * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
+ * animation); and Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
+ * read (motionOptions drives the overlay animation).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.
