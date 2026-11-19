@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 // Test Components
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false,
+    imports: [InputMask, FormsModule],
     template: `
         <p-inputmask
             [(ngModel)]="value"
@@ -79,7 +79,7 @@ class TestBasicInputMaskComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false,
+    imports: [InputMask, ReactiveFormsModule],
     template: `
         <form [formGroup]="form">
             <p-inputmask [mask]="mask" formControlName="maskedValue" [unmask]="unmask"> </p-inputmask>
@@ -97,7 +97,7 @@ class TestFormInputMaskComponent {
 // Comprehensive template test component with clearicon ContentChild projection
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false,
+    imports: [InputMask, FormsModule, SharedModule],
     template: `
         <p-inputmask [mask]="mask" [(ngModel)]="value" [showClear]="showClear" [placeholder]="placeholder" [autoClear]="autoClear" [unmask]="unmask">
             <!-- Clear icon template with both pTemplate and #template -->
@@ -118,7 +118,7 @@ class TestTemplateInputMaskComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false,
+    imports: [InputMask, FormsModule],
     template: `
         <div>
             <p-inputmask [mask]="phoneMask" [(ngModel)]="phoneValue" placeholder="Phone Number"> </p-inputmask>
@@ -156,92 +156,92 @@ describe('InputMask', () => {
         });
 
         it('should have default values', () => {
-            expect(component.type).toBe('text');
-            expect(component.slotChar).toBe('_');
-            expect(component.autoClear).toBe(true);
-            expect(component.showClear).toBe(false);
-            expect(component.characterPattern).toBe('[A-Za-z]');
-            expect(component.keepBuffer).toBe(false);
-            expect(component.androidChrome).toBe(true);
+            expect(component.type()).toBe('text');
+            expect(component.slotChar()).toBe('_');
+            expect(component.autoClear()).toBe(true);
+            expect(component.showClear()).toBe(false);
+            expect(component.characterPattern()).toBe('[A-Za-z]');
+            expect(component.keepBuffer()).toBe(false);
+            expect(component.androidChrome).toBe(/chrome/i.test(navigator.userAgent) && /android/i.test(navigator.userAgent));
         });
 
         it('should initialize mask when mask property is set', () => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            expect(component._mask).toBe('999-99-9999');
-            expect(component.tests).toBeDefined();
-            expect(component.buffer).toBeDefined();
-            expect(component.len).toBe(11);
+            expect(component.mask()).toBe('999-99-9999');
+            expect(component.tests()).toBeDefined();
+            expect(component.buffer()).toBeDefined();
+            expect(component.len()).toBe(11);
         });
 
         it('should set input properties correctly', () => {
-            component.mask = '999-99-9999'; // Set mask first to avoid initialization errors
-            component.type = 'tel';
-            component.slotChar = '*';
-            component.placeholder = 'Enter phone';
-            component.styleClass = 'custom-mask';
-            component.inputId = 'phone-input';
+            fixture.componentRef.setInput('mask', '999-99-9999'); // Set mask first to avoid initialization errors
+            fixture.componentRef.setInput('type', 'tel');
+            fixture.componentRef.setInput('slotChar', '*');
+            fixture.componentRef.setInput('placeholder', 'Enter phone');
+            fixture.componentRef.setInput('styleClass', 'custom-mask');
+            fixture.componentRef.setInput('inputId', 'phone-input');
 
             fixture.detectChanges();
 
-            expect(component.type).toBe('tel');
-            expect(component.slotChar).toBe('*');
-            expect(component.placeholder).toBe('Enter phone');
-            expect(component.styleClass).toBe('custom-mask');
-            expect(component.inputId).toBe('phone-input');
+            expect(component.type()).toBe('tel');
+            expect(component.slotChar()).toBe('*');
+            expect(component.placeholder()).toBe('Enter phone');
+            expect(component.styleClass()).toBe('custom-mask');
+            expect(component.inputId()).toBe('phone-input');
         });
     });
 
     describe('Mask Pattern Processing', () => {
         it('should process numeric mask pattern correctly', () => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            expect(component.len).toBe(11);
-            expect(component.tests.length).toBe(11);
-            expect(component.firstNonMaskPos).toBe(0);
-            expect(component.defaultBuffer).toBe('___-__-____');
+            expect(component.len()).toBe(11);
+            expect(component.tests().length).toBe(11);
+            expect(component.firstNonMaskPos()).toBe(0);
+            expect(component.defaultBuffer()).toBe('___-__-____');
         });
 
         it('should process alpha mask pattern correctly', () => {
-            component.mask = 'aaa-aaa';
+            fixture.componentRef.setInput('mask', 'aaa-aaa');
             fixture.detectChanges();
 
-            expect(component.len).toBe(7);
-            expect(component.tests.length).toBe(7);
-            expect(component.defaultBuffer).toBe('___-___');
+            expect(component.len()).toBe(7);
+            expect(component.tests().length).toBe(7);
+            expect(component.defaultBuffer()).toBe('___-___');
         });
 
         it('should process mixed mask pattern correctly', () => {
-            component.mask = '***-999';
+            fixture.componentRef.setInput('mask', '***-999');
             fixture.detectChanges();
 
-            expect(component.len).toBe(7);
-            expect(component.defaultBuffer).toBe('___-___');
+            expect(component.len()).toBe(7);
+            expect(component.defaultBuffer()).toBe('___-___');
         });
 
         it('should handle optional characters with ? correctly', () => {
-            component.mask = '999-99-9999?';
+            fixture.componentRef.setInput('mask', '999-99-9999?');
             fixture.detectChanges();
 
-            expect(component.len).toBe(11); // Original length before '?' processing
-            expect(component.partialPosition).toBe(11); // Position of '?' character
+            expect(component.len()).toBe(11); // Original length before '?' processing
+            expect(component.partialPosition()).toBe(11); // Position of '?' character
         });
 
         it('should handle custom character pattern', () => {
-            component.characterPattern = '[0-9A-Fa-f]';
-            component.mask = 'aaa';
+            fixture.componentRef.setInput('characterPattern', '[0-9A-Fa-f]');
+            fixture.componentRef.setInput('mask', 'aaa');
             fixture.detectChanges();
 
-            expect(component.characterPattern).toBe('[0-9A-Fa-f]');
-            expect(component.defs!['a']).toBe('[0-9A-Fa-f]');
+            expect(component.characterPattern()).toBe('[0-9A-Fa-f]');
+            expect(component.defs()!['a']).toBe('[0-9A-Fa-f]');
         });
     });
 
     describe('Public Methods', () => {
         beforeEach(() => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             const mockInputElement = {
                 nativeElement: {
                     value: '',
@@ -260,7 +260,7 @@ describe('InputMask', () => {
         it('should get placeholder character correctly', () => {
             expect(component.getPlaceholder(0)).toBe('_');
 
-            component.slotChar = '***';
+            fixture.componentRef.setInput('slotChar', '***');
             expect(component.getPlaceholder(0)).toBe('*');
             expect(component.getPlaceholder(1)).toBe('*');
             expect(component.getPlaceholder(2)).toBe('*');
@@ -285,22 +285,22 @@ describe('InputMask', () => {
 
         it('should check if mask is completed', () => {
             // Ensure mask is initialized properly first
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            component.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            component.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             expect(component.isCompleted()).toBe(true);
 
-            component.buffer = ['1', '2', '_', '-', '4', '5', '-', '6', '7', '8', '9'];
+            component.buffer.set(['1', '2', '_', '-', '4', '5', '-', '6', '7', '8', '9']);
             expect(component.isCompleted()).toBe(false);
         });
 
         it('should get unmasked value correctly', () => {
             // Ensure mask is initialized properly first
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            component.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            component.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             const unmaskedValue = component.getUnmaskedValue();
             expect(unmaskedValue).toBe('123456789'); // Only actual input characters, not separators
         });
@@ -317,7 +317,7 @@ describe('InputMask', () => {
             component.clear();
 
             expect(component.inputViewChild()?.nativeElement.value).toBe('' as any);
-            expect(component.value).toBeNull();
+            expect(component.value()).toBeNull();
             expect(component.onModelChange).toHaveBeenCalledWith(null);
             expect(component.onClear.emit).toHaveBeenCalled();
         });
@@ -360,7 +360,7 @@ describe('InputMask', () => {
         it('should emit onKeydown via the real onInputKeydown handler', () => {
             // Drive the real onInputKeydown() handler (which is what actually emits onKeydown)
             // instead of calling emit() directly, so the test exercises real component logic.
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             (component as any).inputViewChild = () =>
                 ({
                     nativeElement: {
@@ -400,7 +400,7 @@ describe('InputMask', () => {
             // A single-character mask completes after exactly one accepted keypress, letting the
             // real onKeyPress() handler (which is what actually emits onComplete) drive the test,
             // instead of calling emit() directly.
-            component.mask = '9';
+            fixture.componentRef.setInput('mask', '9');
             (component as any).inputViewChild = () =>
                 ({
                     nativeElement: {
@@ -445,7 +445,7 @@ describe('InputMask', () => {
 
     describe('Keyboard Input Processing', () => {
         beforeEach(() => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             const mockInputElement = {
                 nativeElement: {
                     value: '',
@@ -470,12 +470,12 @@ describe('InputMask', () => {
             const keyEvent = new KeyboardEvent('keypress', { keyCode: 49 }); // '1'
             component.onKeyPress(keyEvent as any);
 
-            expect(component.buffer[0]).toBe('1');
+            expect(component.buffer()[0]).toBe('1');
             expect(component.onInput.emit).toHaveBeenCalled();
         });
 
         it('should handle backspace correctly', () => {
-            component.buffer = ['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_'];
+            component.buffer.set(['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_']);
             vi.spyOn(component, 'caret').mockReturnValue({ begin: 6, end: 6 });
             vi.spyOn(component, 'updateModel').mockImplementation(() => {});
             vi.spyOn(component, 'clearBuffer').mockImplementation(() => {});
@@ -489,7 +489,7 @@ describe('InputMask', () => {
         });
 
         it('should handle delete key correctly', () => {
-            component.buffer = ['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_'];
+            component.buffer.set(['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_']);
             vi.spyOn(component, 'caret').mockReturnValue({ begin: 4, end: 4 });
             vi.spyOn(component, 'updateModel').mockImplementation(() => {});
             vi.spyOn(component, 'clearBuffer').mockImplementation(() => {});
@@ -503,7 +503,7 @@ describe('InputMask', () => {
         });
 
         it('should handle escape key correctly', () => {
-            component.focusText = '123-45-';
+            component.focusText.set('123-45-');
             vi.spyOn(component, 'caret').mockImplementation(() => {});
             vi.spyOn(component, 'checkVal').mockReturnValue(7);
             vi.spyOn(component, 'updateModel').mockImplementation(() => {});
@@ -529,7 +529,7 @@ describe('InputMask', () => {
         it('should ignore invalid characters', () => {
             vi.spyOn(component, 'caret').mockReturnValue({ begin: 0, end: 0 });
             vi.spyOn(component, 'updateModel').mockImplementation(() => {}); // Spy on updateModel to avoid null target error
-            const initialBuffer = component.buffer.slice();
+            const initialBuffer = component.buffer().slice();
 
             const mockEvent = {
                 target: { value: 'test' },
@@ -540,11 +540,11 @@ describe('InputMask', () => {
             component.onKeyPress(mockEvent);
 
             // Test that invalid character doesn't change buffer significantly
-            expect(component.buffer.length).toBe(initialBuffer.length);
+            expect(component.buffer().length).toBe(initialBuffer.length);
         });
 
         it('should not process input when readonly', () => {
-            component.readonly = true;
+            fixture.componentRef.setInput('readonly', true);
             vi.spyOn(component, 'updateModel').mockImplementation(() => {});
 
             const keyEvent = new KeyboardEvent('keypress', { keyCode: 49 });
@@ -608,9 +608,10 @@ describe('InputMask', () => {
             const templateComponent = TestBed.createComponent(TestTemplateInputMaskComponent);
             templateComponent.detectChanges();
 
-            const inputMaskInstance = templateComponent.debugElement.query(By.css('p-inputmask')).componentInstance;
+            const inputMaskInstance = templateComponent.debugElement.query(By.css('p-inputmask')).componentInstance as InputMask;
             expect(inputMaskInstance).toBeTruthy();
-            expect(inputMaskInstance._clearIconTemplate !== undefined || inputMaskInstance._clearIconTemplate === undefined).toBe(true);
+            expect(inputMaskInstance._clearIconTemplate()).toBeDefined();
+            expect(inputMaskInstance.clearIconTemplate()).toBeDefined();
         });
 
         it('should show custom clear icon when template is provided and showClear is true', async () => {
@@ -622,7 +623,8 @@ describe('InputMask', () => {
 
             // Clear icon should be visible when value exists and showClear is true
             const inputMaskInstance = templateComponent.debugElement.query(By.css('p-inputmask')).componentInstance;
-            expect(inputMaskInstance.showClear).toBe(true);
+            expect(inputMaskInstance.showClear()).toBe(true);
+            expect(templateComponent.debugElement.query(By.css('[data-testid="clear-icon-template"]'))).toBeTruthy();
         });
     });
 
@@ -656,27 +658,30 @@ describe('InputMask', () => {
     describe('Edge Cases and Error Handling', () => {
         it('should handle null/undefined mask gracefully', () => {
             // Initially set a valid mask, then set to null
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            component.mask = null as any;
-            expect(() => component.initMask()).not.toThrow(); // Now gracefully handled
+            fixture.componentRef.setInput('mask', null);
+            expect(() => component.buffer()).not.toThrow(); // Now gracefully handled
+            expect(component.len()).toBeUndefined();
 
-            component.mask = undefined as any;
-            expect(() => component.initMask()).not.toThrow(); // Now gracefully handled
+            fixture.componentRef.setInput('mask', undefined);
+            expect(() => component.buffer()).not.toThrow(); // Now gracefully handled
+            expect(component.len()).toBeUndefined();
         });
 
         it('should handle empty mask string', () => {
-            component.mask = '';
-            expect(() => component.initMask()).not.toThrow(); // Empty string is handled gracefully
+            fixture.componentRef.setInput('mask', '');
+            expect(() => component.buffer()).not.toThrow(); // Empty string is handled gracefully
+            expect(component.defaultBuffer()).toBeUndefined();
         });
 
         it('should handle invalid mask patterns', () => {
-            component.mask = 'invalid-pattern-with-no-valid-chars';
+            fixture.componentRef.setInput('mask', 'invalid-pattern-with-no-valid-chars');
             fixture.detectChanges();
 
             // With no valid mask chars, firstNonMaskPos might be set to a position
-            expect(component.firstNonMaskPos).toBeDefined();
+            expect(component.firstNonMaskPos()).toBeDefined();
         });
 
         it('should handle component destruction', () => {
@@ -719,38 +724,38 @@ describe('InputMask', () => {
         });
 
         it('should handle shift operations correctly', () => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             fixture.detectChanges();
 
-            component.buffer = ['1', '2', '3', '-', '_', '_', '-', '_', '_', '_', '_'];
+            component.buffer.set(['1', '2', '3', '-', '_', '_', '-', '_', '_', '_', '_']);
 
             // Test shiftL
             component.shiftL(4, 6);
-            expect(component.buffer[4]).toBe('_');
+            expect(component.buffer()[4]).toBe('_');
 
             // Test shiftR
-            component.buffer = ['_', '_', '_', '-', '_', '_', '-', '_', '_', '_', '_'];
+            component.buffer.set(['_', '_', '_', '-', '_', '_', '-', '_', '_', '_', '_']);
             component.shiftR(0);
-            expect(component.buffer[0]).toBe('_');
+            expect(component.buffer()[0]).toBe('_');
         });
 
         it('should handle keepBuffer option correctly', () => {
-            component.mask = '999-99-9999';
-            component.keepBuffer = true;
+            fixture.componentRef.setInput('mask', '999-99-9999');
+            fixture.componentRef.setInput('keepBuffer', true);
             fixture.detectChanges();
 
-            component.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            component.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             component.clearBuffer(0, 3);
 
             // With keepBuffer true, characters should remain
-            expect(component.buffer[0]).toBe('1');
-            expect(component.buffer[1]).toBe('2');
-            expect(component.buffer[2]).toBe('3');
+            expect(component.buffer()[0]).toBe('1');
+            expect(component.buffer()[1]).toBe('2');
+            expect(component.buffer()[2]).toBe('3');
         });
 
         it('should handle autoClear behavior on blur', () => {
-            component.mask = '999-99-9999';
-            component.autoClear = true;
+            fixture.componentRef.setInput('mask', '999-99-9999');
+            fixture.componentRef.setInput('autoClear', true);
             const mockInputElement3 = {
                 nativeElement: {
                     value: '12_-__-____'
@@ -768,7 +773,7 @@ describe('InputMask', () => {
         });
 
         it('should handle writeControlValue correctly', () => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             const mockInputElement4 = {
                 nativeElement: {
                     value: ''
@@ -782,13 +787,13 @@ describe('InputMask', () => {
 
             component.writeControlValue('123456789', mockSetValue);
 
-            expect(component.value).toBe('123456789');
+            expect(component.value()).toBe('123456789');
             expect(mockSetValue).toHaveBeenCalledWith('123456789');
             expect(component.checkVal).toHaveBeenCalled();
         });
 
         it('should handle null value in writeControlValue', () => {
-            component.mask = '999-99-9999';
+            fixture.componentRef.setInput('mask', '999-99-9999');
             const mockInputElement5 = {
                 nativeElement: {
                     value: 'test'
@@ -801,7 +806,7 @@ describe('InputMask', () => {
             component.writeControlValue(null, mockSetValue);
 
             expect(component.inputViewChild()!.nativeElement.value).toBe('' as any);
-            expect(component.value).toBeNull();
+            expect(component.value()).toBeNull();
         });
     });
 
@@ -870,7 +875,7 @@ describe('InputMask', () => {
 
     describe('Complex Mask Patterns', () => {
         it('should handle phone number mask correctly', async () => {
-            component.mask = '(999) 999-9999';
+            fixture.componentRef.setInput('mask', '(999) 999-9999');
             const mockInputElement6 = {
                 nativeElement: {
                     value: '',
@@ -885,32 +890,32 @@ describe('InputMask', () => {
             (component as any).inputViewChild = () => mockInputElement6 as any;
             fixture.detectChanges();
 
-            expect(component.defaultBuffer).toBe('(___) ___-____');
-            expect(component.len).toBe(14);
+            expect(component.defaultBuffer()).toBe('(___) ___-____');
+            expect(component.len()).toBe(14);
         });
 
         it('should handle date mask correctly', () => {
-            component.mask = '99/99/9999';
+            fixture.componentRef.setInput('mask', '99/99/9999');
             fixture.detectChanges();
 
-            expect(component.defaultBuffer).toBe('__/__/____');
-            expect(component.len).toBe(10);
+            expect(component.defaultBuffer()).toBe('__/__/____');
+            expect(component.len()).toBe(10);
         });
 
         it('should handle credit card mask correctly', () => {
-            component.mask = '9999-9999-9999-9999';
+            fixture.componentRef.setInput('mask', '9999-9999-9999-9999');
             fixture.detectChanges();
 
-            expect(component.defaultBuffer).toBe('____-____-____-____');
-            expect(component.len).toBe(19);
+            expect(component.defaultBuffer()).toBe('____-____-____-____');
+            expect(component.len()).toBe(19);
         });
 
         it('should handle custom alphanumeric mask correctly', () => {
-            component.mask = '***-***-999';
+            fixture.componentRef.setInput('mask', '***-***-999');
             fixture.detectChanges();
 
-            expect(component.defaultBuffer).toBe('___-___-___');
-            expect(component.len).toBe(11);
+            expect(component.defaultBuffer()).toBe('___-___-___');
+            expect(component.len()).toBe(11);
         });
     });
 
@@ -1028,11 +1033,9 @@ describe('InputMask', () => {
                 templatesFixture.detectChanges();
 
                 // Templates should be available for clearicon template
-                if (inputMaskComponent.templates) {
-                    inputMaskComponent.templates.forEach((template: any) => {
-                        expect(template).toBeTruthy();
-                    });
-                }
+                inputMaskComponent.templates().forEach((template: any) => {
+                    expect(template).toBeTruthy();
+                });
             }).not.toThrow();
         });
 
@@ -1106,7 +1109,7 @@ describe('InputMask', () => {
                 templatesFixture.detectChanges();
 
                 // Component should handle clearicon template
-                expect(inputMaskComponent.showClear).toBe(true);
+                expect(inputMaskComponent.showClear()).toBe(true);
                 // Test that clearicon template property can be accessed
                 inputMaskComponent.clearIconTemplate;
             }).not.toThrow();
@@ -1120,11 +1123,9 @@ describe('InputMask', () => {
                 templatesFixture.detectChanges();
 
                 // Component should process pTemplate directive for clearicon
-                if (inputMaskComponent.templates) {
-                    const clearIconTemplates = inputMaskComponent.templates.filter((t: any) => t.getType && t.getType() === 'clearicon');
-                    // Should find the clearicon template
-                    expect(clearIconTemplates.length).toBeGreaterThanOrEqual(0);
-                }
+                const clearIconTemplates = inputMaskComponent.templates().filter((t: any) => t.getType && t.getType() === 'clearicon');
+                // Should find the clearicon template
+                expect(clearIconTemplates.length).toBe(1);
             }).not.toThrow();
         });
 
@@ -1146,6 +1147,93 @@ describe('InputMask', () => {
                 expect(testComponent.value).toBe('555-123-4567');
                 expect(testComponent.mask).toBe('999-999-9999');
             }).not.toThrow();
+        });
+    });
+
+    describe('OnPush re-rendering', () => {
+        let inputEl: HTMLInputElement;
+
+        beforeEach(() => {
+            fixture.componentRef.setInput('mask', '999-99-9999');
+            fixture.detectChanges();
+            inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
+        });
+
+        it('should re-render the input attributes when the inputs change', () => {
+            fixture.componentRef.setInput('type', 'tel');
+            fixture.componentRef.setInput('inputId', 'phone-input');
+            fixture.componentRef.setInput('styleClass', 'custom-mask');
+            fixture.componentRef.setInput('style', { width: '200px' });
+            fixture.componentRef.setInput('placeholder', 'Enter phone');
+            fixture.componentRef.setInput('title', 'Phone');
+            fixture.componentRef.setInput('tabindex', '5');
+            fixture.componentRef.setInput('ariaLabel', 'Phone number');
+            fixture.componentRef.setInput('ariaLabelledBy', 'phone-label');
+            fixture.componentRef.setInput('ariaRequired', true);
+            fixture.componentRef.setInput('readonly', true);
+            fixture.componentRef.setInput('autocomplete', 'tel');
+            fixture.detectChanges();
+
+            expect(inputEl.getAttribute('type')).toBe('tel');
+            expect(inputEl.getAttribute('id')).toBe('phone-input');
+            expect(inputEl.classList.contains('custom-mask')).toBe(true);
+            expect(inputEl.style.width).toBe('200px');
+            expect(inputEl.getAttribute('placeholder')).toBe('Enter phone');
+            expect(inputEl.getAttribute('title')).toBe('Phone');
+            expect(inputEl.getAttribute('tabindex')).toBe('5');
+            expect(inputEl.getAttribute('aria-label')).toBe('Phone number');
+            expect(inputEl.getAttribute('aria-labelledby')).toBe('phone-label');
+            expect(inputEl.getAttribute('aria-required')).toBe('true');
+            expect(inputEl.hasAttribute('readonly')).toBe(true);
+            expect(inputEl.getAttribute('autocomplete')).toBe('tel');
+        });
+
+        it('should render the clear icon once showClear is enabled and a value is set', () => {
+            fixture.componentRef.setInput('showClear', true);
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('[data-p-icon="times"]'))).toBeNull();
+
+            component.writeValue('123-45-6789');
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('[data-p-icon="times"]'))).toBeTruthy();
+            expect(inputEl.value).toBe('123-45-6789');
+
+            component.clear();
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('[data-p-icon="times"]'))).toBeNull();
+        });
+
+        it('should re-parse the mask, reset the buffer and the value when the mask input changes', () => {
+            const onModelChange = vi.fn();
+            component.registerOnChange(onModelChange);
+            component.writeValue('123-45-6789');
+            fixture.detectChanges();
+
+            expect(onModelChange).not.toHaveBeenCalled();
+            expect(component.defaultBuffer()).toBe('___-__-____');
+            expect(inputEl.value).toBe('123-45-6789');
+
+            fixture.componentRef.setInput('mask', '(999) 999-9999');
+            fixture.detectChanges();
+
+            expect(component.len()).toBe(14);
+            expect(component.defaultBuffer()).toBe('(___) ___-____');
+            expect(component.buffer()).toEqual('(___) ___-____'.split(''));
+            expect(component.value()).toBe('');
+            expect(inputEl.value).toBe('');
+            expect(onModelChange).toHaveBeenCalledTimes(1);
+            expect(onModelChange).toHaveBeenCalledWith('');
+        });
+
+        it('should re-derive the placeholders when slotChar changes', () => {
+            fixture.componentRef.setInput('slotChar', '*');
+            fixture.detectChanges();
+
+            expect(component.defaultBuffer()).toBe('***-**-****');
+            expect(component.buffer()).toEqual('***-**-****'.split(''));
         });
     });
 
@@ -1264,8 +1352,8 @@ describe('InputMask', () => {
                         return {
                             root: {
                                 class: {
-                                    PT_DISABLED: instance?.disabled,
-                                    PT_READONLY: instance?.readonly
+                                    PT_DISABLED: instance?.disabled(),
+                                    PT_READONLY: instance?.readonly()
                                 }
                             }
                         };
@@ -1288,7 +1376,7 @@ describe('InputMask', () => {
                     clearIcon: ({ instance }: any) => {
                         return {
                             style: {
-                                color: instance?.showClear ? 'green' : 'red'
+                                color: instance?.showClear() ? 'green' : 'red'
                             }
                         };
                     }
@@ -1316,7 +1404,7 @@ describe('InputMask', () => {
                         return {
                             root: {
                                 onclick: () => {
-                                    clickedValue = instance.value || 'clicked';
+                                    clickedValue = instance.value() || 'clicked';
                                 }
                             }
                         };
@@ -1565,8 +1653,8 @@ describe('InputMask', () => {
                     host: ({ instance }: any) => {
                         capturedInstance = instance;
                         return {
-                            'data-has-disabled': instance?.disabled !== undefined ? 'true' : 'false',
-                            'data-has-readonly': instance?.readonly !== undefined ? 'true' : 'false'
+                            'data-has-disabled': instance?.disabled() !== undefined ? 'true' : 'false',
+                            'data-has-readonly': instance?.readonly() !== undefined ? 'true' : 'false'
                         };
                     }
                 };
@@ -1579,7 +1667,7 @@ describe('InputMask', () => {
 
                 const hostElement = fixture.debugElement.nativeElement;
                 expect(capturedInstance).toBeDefined();
-                expect(capturedInstance.disabled).toBeDefined();
+                expect(capturedInstance.disabled()).toBe(true);
                 expect(hostElement?.getAttribute('data-has-disabled')).toBe('true');
                 expect(hostElement?.getAttribute('data-has-readonly')).toBe('true');
             });
@@ -1702,8 +1790,8 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.len).toBe(11);
-            expect(directive.defaultBuffer).toBe('___-__-____');
+            expect(directive.len()).toBe(11);
+            expect(directive.defaultBuffer()).toBe('___-__-____');
         });
 
         it('should process phone mask pattern ((999) 999-9999)', async () => {
@@ -1715,8 +1803,8 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.len).toBe(14);
-            expect(directive.defaultBuffer).toBe('(___) ___-____');
+            expect(directive.len()).toBe(14);
+            expect(directive.defaultBuffer()).toBe('(___) ___-____');
         });
 
         it('should process date mask pattern (99/99/9999)', async () => {
@@ -1728,8 +1816,8 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.len).toBe(10);
-            expect(directive.defaultBuffer).toBe('__/__/____');
+            expect(directive.len()).toBe(10);
+            expect(directive.defaultBuffer()).toBe('__/__/____');
         });
 
         it('should process alpha mask pattern (aaa-aaa)', async () => {
@@ -1741,8 +1829,8 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.len).toBe(7);
-            expect(directive.defaultBuffer).toBe('___-___');
+            expect(directive.len()).toBe(7);
+            expect(directive.defaultBuffer()).toBe('___-___');
         });
 
         it('should process mixed alphanumeric mask (*9a-*9a)', async () => {
@@ -1754,7 +1842,7 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.len).toBe(7);
+            expect(directive.len()).toBe(7);
         });
 
         it('should handle optional characters with ?', async () => {
@@ -1766,7 +1854,7 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            expect(directive.partialPosition).toBe(11);
+            expect(directive.partialPosition()).toBe(11);
         });
 
         it('should use custom slot character', async () => {
@@ -1779,7 +1867,7 @@ describe('InputMaskDirective', () => {
             const directive = inputEl.injector.get(InputMaskDirective);
 
             expect(directive.slotChar()).toBe('*');
-            expect(directive.defaultBuffer).toBe('**/**/****');
+            expect(directive.defaultBuffer()).toBe('**/**/****');
         });
 
         it('should use custom character pattern for alpha', async () => {
@@ -1826,7 +1914,7 @@ describe('InputMaskDirective', () => {
             inputEl.dispatchEvent(new Event('focus'));
 
             // Type characters
-            directive.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             inputEl.value = '123-45-6789';
             inputEl.dispatchEvent(new Event('input'));
             inputEl.dispatchEvent(new Event('blur'));
@@ -1867,9 +1955,9 @@ describe('InputMaskDirective', () => {
             const directive = inputEl.injector.get(InputMaskDirective);
 
             // Set buffer to complete state
-            directive.buffer = ['1', '2', '3'];
-            directive.firstNonMaskPos = 0;
-            directive.lastRequiredNonMaskPos = 2;
+            directive.buffer.set(['1', '2', '3']);
+            expect(directive.firstNonMaskPos()).toBe(0);
+            expect(directive.lastRequiredNonMaskPos()).toBe(2);
 
             // Simulate input completion
             if (directive.isCompleted()) {
@@ -1891,7 +1979,7 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_'];
+            directive.buffer.set(['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_']);
             vi.spyOn(directive, 'shiftL').mockImplementation(() => {});
             vi.spyOn(directive, 'clearBuffer').mockImplementation(() => {});
 
@@ -1912,7 +2000,7 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_'];
+            directive.buffer.set(['1', '2', '3', '-', '4', '5', '-', '_', '_', '_', '_']);
             vi.spyOn(directive, 'shiftL').mockImplementation(() => {});
             vi.spyOn(directive, 'clearBuffer').mockImplementation(() => {});
 
@@ -1956,7 +2044,7 @@ describe('InputMaskDirective', () => {
             const directive = fixture.debugElement.query(By.css('input')).injector.get(InputMaskDirective);
 
             // Set incomplete value
-            directive.buffer = ['1', '2', '_', '/', '_', '_', '/', '_', '_', '_', '_'];
+            directive.buffer.set(['1', '2', '_', '/', '_', '_', '/', '_', '_', '_', '_']);
             inputEl.value = '12_/__/____';
 
             vi.spyOn(directive, 'checkVal');
@@ -1976,7 +2064,7 @@ describe('InputMaskDirective', () => {
             const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
             const directive = fixture.debugElement.query(By.css('input')).injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '_', '/', '_', '_', '/', '_', '_', '_', '_'];
+            directive.buffer.set(['1', '2', '_', '/', '_', '_', '/', '_', '_', '_', '_']);
             inputEl.value = '12_/__/____';
 
             inputEl.dispatchEvent(new Event('blur'));
@@ -1997,13 +2085,13 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '3', '/', '4', '5', '/', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '3', '/', '4', '5', '/', '6', '7', '8', '9']);
             directive.clearBuffer(0, 3);
 
             // With keepBuffer true, characters should remain
-            expect(directive.buffer[0]).toBe('1');
-            expect(directive.buffer[1]).toBe('2');
-            expect(directive.buffer[2]).toBe('3');
+            expect(directive.buffer()[0]).toBe('1');
+            expect(directive.buffer()[1]).toBe('2');
+            expect(directive.buffer()[2]).toBe('3');
         });
 
         it('should clear buffer when keepBuffer is false', async () => {
@@ -2015,12 +2103,12 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '3', '/', '4', '5', '/', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '3', '/', '4', '5', '/', '6', '7', '8', '9']);
             directive.clearBuffer(0, 3);
 
             // With keepBuffer false, characters should be replaced with slot char
-            expect(directive.buffer[0]).toBe('_');
-            expect(directive.buffer[1]).toBe('_');
+            expect(directive.buffer()[0]).toBe('_');
+            expect(directive.buffer()[1]).toBe('_');
         });
     });
 
@@ -2034,11 +2122,11 @@ describe('InputMaskDirective', () => {
             const directive = inputEl.injector.get(InputMaskDirective);
 
             // Complete buffer
-            directive.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             expect(directive.isCompleted()).toBe(true);
 
             // Incomplete buffer
-            directive.buffer = ['1', '2', '_', '-', '4', '5', '-', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '_', '-', '4', '5', '-', '6', '7', '8', '9']);
             expect(directive.isCompleted()).toBe(false);
         });
 
@@ -2050,7 +2138,7 @@ describe('InputMaskDirective', () => {
             const inputEl = fixture.debugElement.query(By.css('input'));
             const directive = inputEl.injector.get(InputMaskDirective);
 
-            directive.buffer = ['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9'];
+            directive.buffer.set(['1', '2', '3', '-', '4', '5', '-', '6', '7', '8', '9']);
             const unmasked = directive.getUnmaskedValue();
 
             expect(unmasked).toBe('123456789');
@@ -2067,7 +2155,7 @@ describe('InputMaskDirective', () => {
             const directive = inputEl.injector.get(InputMaskDirective);
 
             expect(directive.pInputMask()).toBe('999-99-9999');
-            expect(directive.len).toBe(11);
+            expect(directive.len()).toBe(11);
 
             // Change mask
             fixture.componentInstance.mask = '(999) 999-9999';
@@ -2075,7 +2163,8 @@ describe('InputMaskDirective', () => {
             await fixture.whenStable();
 
             expect(directive.pInputMask()).toBe('(999) 999-9999');
-            expect(directive.len).toBe(14);
+            expect(directive.len()).toBe(14);
+            expect(directive.buffer()).toEqual('(___) ___-____'.split(''));
         });
 
         it('should react to slotChar signal changes', async () => {
@@ -2127,5 +2216,7 @@ describe('InputMask initial form value', () => {
 
         const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
         expect(input.value).toBe('123-456');
+        expect(fixture.componentInstance.form.value.code).toBe('123456');
+        expect(fixture.componentInstance.form.pristine).toBe(true);
     });
 });
