@@ -83,6 +83,49 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-overlaybadge value="2"></p-overlaybadge>\n`);
     });
 
+    it('removes the deprecated transitionOptions from p-fieldset while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-fieldset legend="Header" [toggleable]="true" transitionOptions="200ms ease-in" [motionOptions]="motion"></p-fieldset>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-fieldset legend="Header" [toggleable]="true" [motionOptions]="motion"></p-fieldset>\n`);
+    });
+
+    it('removes a bound [transitionOptions] from p-fieldset', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-fieldset [transitionOptions]="transition" [(collapsed)]="collapsed"></p-fieldset>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-fieldset [(collapsed)]="collapsed"></p-fieldset>\n`);
+    });
+
+    it('does not remove transitionOptions from p-panel', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-panel header="Header" transitionOptions="200ms ease-in"></p-panel>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
+    it('does not report a programmatic transitionOptions access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(panel: { transitionOptions: string }) {\n        return panel.transitionOptions;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
     it('does not report a programmatic size access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    count() {\n        return new Map().size;\n    }\n}\n`;

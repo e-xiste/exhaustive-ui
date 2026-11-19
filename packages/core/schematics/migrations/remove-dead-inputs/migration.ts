@@ -16,6 +16,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * its overlay animation is driven by `motionOptions`.
  * The deprecated `size` on OverlayBadge was stored and logged a deprecation warning but never
  * forwarded to the inner badge: only `badgeSize` ever sized it.
+ * The deprecated `transitionOptions` on Fieldset was stored but never read: its toggle animation
+ * is driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -27,15 +29,18 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-color-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-overlayBadge', names: ['size'] },
     { selector: 'p-overlay-badge', names: ['size'] },
-    { selector: 'p-overlaybadge', names: ['size'] }
+    { selector: 'p-overlaybadge', names: ['size'] },
+    { selector: 'p-fieldset', names: ['transitionOptions'] }
 ];
 
 /**
  * Removed input names whose programmatic reads/writes are reported for manual review. OverlayBadge's
  * `size` is left out on purpose: a name-only scan cannot tell an OverlayBadge instance's `size` apart
  * from the countless other `size` properties (Map#size, DOM sizes, option objects) in an application.
+ * Fieldset's `transitionOptions` is left out too: the same input is still alive on other components
+ * (p-panel, p-accordion, p-dialog, ...), so a name-only scan cannot tell a Fieldset read apart.
  */
-const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size');
+const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions');
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
@@ -44,11 +49,12 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * shared Motion directive (which has no equivalent transform/transition-options input); and
  * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
  * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
- * showTransitionOptions/hideTransitionOptions, stored but never read either; and OverlayBadge's
- * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it).
+ * showTransitionOptions/hideTransitionOptions, stored but never read either; OverlayBadge's
+ * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it); and
+ * Fieldset's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation).
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
- * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge` are removed
+ * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.
