@@ -28,7 +28,7 @@ class TestBasicInputGroupComponent {
     standalone: true,
     imports: [InputGroup, InputGroupAddon, FormsModule],
     template: `
-        <p-inputgroup [styleClass]="customClass">
+        <p-inputgroup [class]="customClass">
             <p-inputgroup-addon>$</p-inputgroup-addon>
             <input type="number" [(ngModel)]="price" placeholder="Price" />
             <p-inputgroup-addon>.00</p-inputgroup-addon>
@@ -130,24 +130,23 @@ describe('InputGroup', () => {
             expect(inputElement.nativeElement.type).toBe('number');
         });
 
-        it('should apply custom styleClass to InputGroup', () => {
-            const inputGroupInstance = fixture.debugElement.query(By.directive(InputGroup)).componentInstance;
+        it('should apply custom class to InputGroup', () => {
             const inputGroupElement = fixture.debugElement.query(By.directive(InputGroup));
 
-            expect(inputGroupInstance.styleClass).toBe('custom-input-group');
             expect(inputGroupElement.nativeElement.classList.contains('custom-input-group')).toBe(true);
+            expect(inputGroupElement.nativeElement.classList.contains('p-inputgroup')).toBe(true);
         });
 
-        it('should update styleClass dynamically', async () => {
+        it('should update class dynamically', async () => {
             component.customClass = 'new-custom-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            const inputGroupInstance = fixture.debugElement.query(By.directive(InputGroup)).componentInstance;
             const inputGroupElement = fixture.debugElement.query(By.directive(InputGroup));
 
-            expect(inputGroupInstance.styleClass).toBe('new-custom-class');
             expect(inputGroupElement.nativeElement.classList.contains('new-custom-class')).toBe(true);
+            expect(inputGroupElement.nativeElement.classList.contains('custom-input-group')).toBe(false);
+            expect(inputGroupElement.nativeElement.classList.contains('p-inputgroup')).toBe(true);
         });
     });
 
@@ -170,7 +169,7 @@ describe('InputGroup', () => {
             const addonInstance = fixture.debugElement.query(By.directive(InputGroupAddon)).componentInstance;
             const addonElement = fixture.debugElement.query(By.directive(InputGroupAddon));
 
-            expect(addonInstance.style).toEqual({ 'background-color': '#f0f0f0' });
+            expect(addonInstance.style()).toEqual({ 'background-color': '#f0f0f0' });
             expect(addonElement.nativeElement.style.backgroundColor).toBe('rgb(240, 240, 240)');
         });
 
@@ -178,7 +177,7 @@ describe('InputGroup', () => {
             const addonInstance = fixture.debugElement.query(By.directive(InputGroupAddon)).componentInstance;
             const addonElement = fixture.debugElement.query(By.directive(InputGroupAddon));
 
-            expect(addonInstance.styleClass).toBe('custom-addon');
+            expect(addonInstance.styleClass()).toBe('custom-addon');
             expect(addonElement.nativeElement.classList.contains('custom-addon')).toBe(true);
         });
 
@@ -191,8 +190,8 @@ describe('InputGroup', () => {
             const addonInstance = fixture.debugElement.query(By.directive(InputGroupAddon)).componentInstance;
             const addonElement = fixture.debugElement.query(By.directive(InputGroupAddon));
 
-            expect(addonInstance.style).toEqual({ color: 'red' });
-            expect(addonInstance.styleClass).toBe('updated-addon');
+            expect(addonInstance.style()).toEqual({ color: 'red' });
+            expect(addonInstance.styleClass()).toBe('updated-addon');
             expect(addonElement.nativeElement.style.color).toBe('red');
             expect(addonElement.nativeElement.classList.contains('updated-addon')).toBe(true);
         });
@@ -266,15 +265,6 @@ describe('InputGroup', () => {
             const addonElement = emptyFixture.debugElement.query(By.directive(InputGroupAddon));
             expect(addonElement).toBeTruthy();
             expect(addonElement.nativeElement.textContent.trim()).toBe('' as any);
-        });
-
-        it('should handle undefined styleClass', async () => {
-            const inputGroupInstance = fixture.debugElement.query(By.directive(InputGroup)).componentInstance;
-            inputGroupInstance.styleClass = undefined as any;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            expect(inputGroupInstance.styleClass).toBeUndefined();
         });
     });
 });
@@ -364,18 +354,6 @@ describe('InputGroup PassThrough Tests', () => {
             fixture.detectChanges();
 
             expect(hostElement.classList.contains('HAS_INSTANCE')).toBe(true);
-        });
-
-        it('should use styleClass from instance in PT function', () => {
-            fixture.componentRef.setInput('styleClass', 'custom-class');
-            fixture.componentRef.setInput('pt', {
-                root: ({ instance }: any) => ({
-                    class: instance?.styleClass ? 'WITH_STYLE' : 'NO_STYLE'
-                })
-            });
-            fixture.detectChanges();
-
-            expect(hostElement.classList.contains('WITH_STYLE')).toBe(true);
         });
     });
 
