@@ -2,6 +2,7 @@ import { LlmsTxtDoc } from '@/doc/llms/llmstxt-doc';
 import { LlmsFullTxtDoc } from '@/doc/llms/llmsfulltxt-doc';
 import { MarkdownExtensionDoc } from '@/doc/llms/markdownextension-doc';
 import { AgentSkillDoc } from '@/doc/llms/agentskill-doc';
+import { McpDoc } from '@/doc/llms/mcp-doc';
 import { ManifestDoc } from '@/doc/llms/manifest-doc';
 import { Component } from '@angular/core';
 import { AppDoc } from '@/components/doc/app.doc';
@@ -33,6 +34,11 @@ export class LLMsDemo {
             id: 'agentskill',
             label: 'Agent Skill',
             component: AgentSkillDoc
+        },
+        {
+            id: 'mcp',
+            label: 'MCP Server',
+            component: McpDoc
         },
         {
             id: 'manifest',
