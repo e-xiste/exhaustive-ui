@@ -59,7 +59,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-panel',
     'p-dock',
     'p-accordion',
-    'p-knob'
+    'p-knob',
+    'p-splitter'
 ];
 
 /**
