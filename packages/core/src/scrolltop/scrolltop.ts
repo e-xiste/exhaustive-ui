@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, Input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { afterEveryRender, ChangeDetectionStrategy, Component, computed, inject, input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { getWindowScrollTop } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -12,15 +12,12 @@ import { ScrollTopIconTemplateContext, ScrollTopPassThrough } from '@exhaustive-
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { ScrollTopStyle } from './style/scrolltopstyle';
 
-const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
-
 /**
  * ScrollTop gets displayed after a certain scroll position and used to navigates to the top of the page quickly.
  * @group Components
  */
 @Component({
     selector: 'p-scrollTop, p-scrolltop, p-scroll-top',
-    standalone: true,
     imports: [CommonModule, ChevronUpIcon, Button, SharedModule, MotionDirective],
     template: `
         @if (render()) {
@@ -32,25 +29,25 @@ const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
                 (pMotionOnBeforeEnter)="onBeforeEnter($event)"
                 (pMotionOnBeforeLeave)="onBeforeLeave()"
                 (pMotionOnAfterLeave)="onAfterLeave()"
-                [attr.aria-label]="buttonAriaLabel"
+                [attr.aria-label]="buttonAriaLabel()"
                 (click)="onClick()"
                 [pt]="ptm('pcButton')"
-                [styleClass]="cn(cx('root'), styleClass)"
-                [ngStyle]="style"
+                [styleClass]="cn(cx('root'), styleClass())"
+                [ngStyle]="style()"
                 type="button"
-                [buttonProps]="buttonProps"
+                [buttonProps]="buttonProps()"
                 [unstyled]="unstyled()"
             >
                 <ng-template #icon>
-                    @if (!iconTemplate() && !_iconTemplate) {
-                        @if (_icon) {
-                            <span [class]="cn(cx('icon'), _icon)"></span>
+                    @if (!iconTemplate() && !_iconTemplate()) {
+                        @if (this.icon()) {
+                            <span [class]="cn(cx('icon'), this.icon())"></span>
                         }
-                        @if (!_icon) {
+                        @if (!this.icon()) {
                             <svg data-p-icon="chevron-up" [class]="cx('icon')" />
                         }
                     } @else {
-                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate; context: { styleClass: cx('icon') }"></ng-template>
+                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate(); context: { styleClass: cx('icon') }"></ng-template>
                     }
                 </ng-template>
             </p-button>
@@ -58,64 +55,49 @@ const SCROLLTOP_INSTANCE = new InjectionToken<ScrollTop>('SCROLLTOP_INSTANCE');
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [ScrollTopStyle, { provide: SCROLLTOP_INSTANCE, useExisting: ScrollTop }, { provide: PARENT_INSTANCE, useExisting: ScrollTop }],
+    providers: [ScrollTopStyle, { provide: PARENT_INSTANCE, useExisting: ScrollTop }],
     hostDirectives: [Bind]
 })
 export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
     componentName = 'ScrollTop';
 
-    $pcScrollTop: ScrollTop | undefined = inject(SCROLLTOP_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     /**
      * Class of the element.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    readonly styleClass = input<string | undefined>();
     /**
      * Inline style of the element.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
+    readonly style = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Target of the ScrollTop.
      * @group Props
      */
-    @Input() target: 'window' | 'parent' | undefined = 'window';
+    readonly target = input<'window' | 'parent' | undefined>('window');
     /**
      * Defines the threshold value of the vertical scroll position of the target to toggle the visibility.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) threshold: number = 400;
+    readonly threshold = input<number, unknown>(400, { transform: numberAttribute });
     /**
      * Name of the icon or JSX.Element for icon.
      * @group Props
      */
-    @Input() get icon(): string | undefined {
-        return this._icon;
-    }
+    readonly icon = input<string | undefined>();
     /**
      * Defines the scrolling behavior, "smooth" adds an animation and "auto" scrolls with a jump.
      * @group Props
      */
-    @Input() behavior: 'auto' | 'smooth' | undefined = 'smooth';
-    /**
-     * A string value used to determine the display transition options.
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() showTransitionOptions: string = '.15s';
-    /**
-     * A string value used to determine the hiding transition options.
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() hideTransitionOptions: string = '.15s';
+    readonly behavior = input<'auto' | 'smooth' | undefined>('smooth');
     /**
      * The motion options.
      * @group Props
@@ -132,12 +114,12 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
      * Establishes a string value that labels the scroll-top button.
      * @group Props
      */
-    @Input() buttonAriaLabel: string | undefined;
+    readonly buttonAriaLabel = input<string | undefined>();
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
      * @group Props
      */
-    @Input() buttonProps: ButtonProps = { rounded: true };
+    readonly buttonProps = input<ButtonProps>({ rounded: true });
     /**
      * Custom icon template.
      * @param {ScrollTopIconTemplateContext} context - icon context.
@@ -148,58 +130,48 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _iconTemplate: TemplateRef<ScrollTopIconTemplateContext> | undefined;
+    readonly _iconTemplate = computed<TemplateRef<ScrollTopIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'icon')
+                .at(-1)?.template
+    );
 
-    _icon: string | undefined;
+    documentScrollListener = signal<VoidFunction | null | undefined>(undefined);
 
-    set icon(value: string | undefined) {
-        this._icon = value;
-    }
-
-    documentScrollListener: VoidFunction | null | undefined;
-
-    parentScrollListener: VoidFunction | null | undefined;
+    parentScrollListener = signal<VoidFunction | null | undefined>(undefined);
 
     visible = signal<boolean>(false);
 
     render = signal<boolean>(false);
 
-    overlay: any;
+    overlay = signal<any>(undefined);
 
     _componentStyle = inject(ScrollTopStyle);
 
     onInit() {
-        if (this.target === 'window') this.bindDocumentScrollListener();
-        else if (this.target === 'parent') this.bindParentScrollListener();
-    }
-
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'icon':
-                    this._iconTemplate = item.template;
-                    break;
-            }
-        });
+        if (this.target() === 'window') this.bindDocumentScrollListener();
+        else if (this.target() === 'parent') this.bindParentScrollListener();
     }
 
     onClick() {
-        let scrollElement = this.target === 'window' ? this.document.defaultView : this.el.nativeElement.parentElement;
+        let scrollElement = this.target() === 'window' ? this.document.defaultView : this.el.nativeElement.parentElement;
         scrollElement.scroll({
             top: 0,
-            behavior: this.behavior
+            behavior: this.behavior()
         });
     }
 
     onBeforeEnter(event: MotionEvent) {
-        this.overlay = event.element as HTMLElement;
-        this.overlay.style.position = this.target === 'parent' ? 'sticky' : 'fixed';
-        ZIndexUtils.set('overlay', this.overlay, this.config.zIndex.overlay);
+        const overlay = event.element as HTMLElement;
+        this.overlay.set(overlay);
+        overlay.style.position = this.target() === 'parent' ? 'sticky' : 'fixed';
+        ZIndexUtils.set('overlay', overlay, this.config.zIndex.overlay);
     }
 
     onBeforeLeave() {
-        ZIndexUtils.clear(this.overlay);
-        this.overlay = null;
+        ZIndexUtils.clear(this.overlay());
+        this.overlay.set(null);
     }
 
     onAfterLeave() {
@@ -207,7 +179,7 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
     }
 
     checkVisibility(scrollY: number) {
-        if (scrollY > this.threshold) {
+        if (scrollY > this.threshold()) {
             this.visible.set(true);
             if (!this.render()) {
                 this.render.set(true);
@@ -219,41 +191,47 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
 
     bindParentScrollListener() {
         if (isPlatformBrowser(this.platformId)) {
-            this.parentScrollListener = this.renderer.listen(this.el.nativeElement.parentElement, 'scroll', () => {
-                this.checkVisibility(this.el.nativeElement.parentElement.scrollTop);
-            });
+            this.parentScrollListener.set(
+                this.renderer.listen(this.el.nativeElement.parentElement, 'scroll', () => {
+                    this.checkVisibility(this.el.nativeElement.parentElement.scrollTop);
+                })
+            );
         }
     }
 
     bindDocumentScrollListener() {
         if (isPlatformBrowser(this.platformId)) {
-            this.documentScrollListener = this.renderer.listen(this.document.defaultView, 'scroll', () => {
-                this.checkVisibility(getWindowScrollTop());
-            });
+            this.documentScrollListener.set(
+                this.renderer.listen(this.document.defaultView, 'scroll', () => {
+                    this.checkVisibility(getWindowScrollTop());
+                })
+            );
         }
     }
 
     unbindParentScrollListener() {
-        if (this.parentScrollListener) {
-            this.parentScrollListener();
-            this.parentScrollListener = null;
+        const parentScrollListener = this.parentScrollListener();
+        if (parentScrollListener) {
+            parentScrollListener();
+            this.parentScrollListener.set(null);
         }
     }
 
     unbindDocumentScrollListener() {
-        if (this.documentScrollListener) {
-            this.documentScrollListener();
-            this.documentScrollListener = null;
+        const documentScrollListener = this.documentScrollListener();
+        if (documentScrollListener) {
+            documentScrollListener();
+            this.documentScrollListener.set(null);
         }
     }
 
     onDestroy() {
-        if (this.target === 'window') this.unbindDocumentScrollListener();
-        else if (this.target === 'parent') this.unbindParentScrollListener();
+        if (this.target() === 'window') this.unbindDocumentScrollListener();
+        else if (this.target() === 'parent') this.unbindParentScrollListener();
 
-        if (this.overlay) {
-            ZIndexUtils.clear(this.overlay);
-            this.overlay = null;
+        if (this.overlay()) {
+            ZIndexUtils.clear(this.overlay());
+            this.overlay.set(null);
         }
     }
 }

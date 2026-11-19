@@ -64,20 +64,30 @@ class TestScrollTopWithTemplateComponent {}
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     selector: 'test-scrolltop-with-styles',
-    template: `
-        <p-scrolltop [threshold]="threshold" [style]="customStyle" [styleClass]="customClass" [behavior]="behavior" [showTransitionOptions]="showTransitionOptions" [hideTransitionOptions]="hideTransitionOptions" [buttonProps]="buttonProps">
-        </p-scrolltop>
-    `
+    template: ` <p-scrolltop [threshold]="threshold" [style]="customStyle" [styleClass]="customClass" [behavior]="behavior" [motionOptions]="motionOptions" [buttonProps]="buttonProps"> </p-scrolltop> `
 })
 class TestScrollTopWithStylesComponent {
     threshold = 200;
     customStyle = { position: 'fixed', bottom: '20px', right: '20px' };
     customClass = 'custom-scrolltop';
     behavior: 'auto' | 'smooth' = 'smooth';
-    showTransitionOptions = '.3s';
-    hideTransitionOptions = '.3s';
+    motionOptions = { duration: 300 };
     buttonProps = { rounded: false, severity: 'danger', size: 'large' };
 }
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    selector: 'test-scrolltop-with-ptemplate',
+    template: `
+        <p-scrolltop [threshold]="50">
+            <ng-template pTemplate="icon" let-styleClass="styleClass">
+                <span class="ptemplate-icon" [ngClass]="styleClass">↑</span>
+            </ng-template>
+        </p-scrolltop>
+    `
+})
+class TestScrollTopWithPTemplateComponent {}
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -106,7 +116,15 @@ describe('ScrollTop', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [ScrollTopModule],
-            declarations: [TestBasicScrollTopComponent, TestScrollTopWithParentComponent, TestScrollTopWithIconComponent, TestScrollTopWithTemplateComponent, TestScrollTopWithStylesComponent, TestScrollTopDynamicComponent],
+            declarations: [
+                TestBasicScrollTopComponent,
+                TestScrollTopWithParentComponent,
+                TestScrollTopWithIconComponent,
+                TestScrollTopWithTemplateComponent,
+                TestScrollTopWithStylesComponent,
+                TestScrollTopWithPTemplateComponent,
+                TestScrollTopDynamicComponent
+            ],
             providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'browser' }]
         });
     });
@@ -142,20 +160,24 @@ describe('ScrollTop', () => {
             const newFixture = TestBed.createComponent(TestBasicScrollTopComponent);
             const newScrollTop = newFixture.debugElement.query(By.directive(ScrollTop)).componentInstance;
 
-            expect(newScrollTop.target).toBe('window');
-            expect(newScrollTop.threshold).toBe(400);
-            expect(newScrollTop.behavior).toBe('smooth');
-            expect(newScrollTop.showTransitionOptions).toBe('.15s');
-            expect(newScrollTop.hideTransitionOptions).toBe('.15s');
+            expect(newScrollTop.target()).toBe('window');
+            expect(newScrollTop.threshold()).toBe(400);
+            expect(newScrollTop.behavior()).toBe('smooth');
+            expect(newScrollTop.icon()).toBeUndefined();
+            expect(newScrollTop.style()).toBeUndefined();
+            expect(newScrollTop.styleClass()).toBeUndefined();
+            expect(newScrollTop.buttonAriaLabel()).toBeUndefined();
+            expect(newScrollTop.motionOptions()).toBeUndefined();
             expect(newScrollTop.visible()).toBe(false);
+            expect(newScrollTop.render()).toBe(false);
         });
 
         it('should accept custom threshold', () => {
-            expect(scrollTop.threshold).toBe(component.threshold);
+            expect(scrollTop.threshold()).toBe(component.threshold);
         });
 
         it('should accept custom target', () => {
-            expect(scrollTop.target).toBe(component.target);
+            expect(scrollTop.target()).toBe(component.target);
         });
 
         it('should extend BaseComponent', () => {
@@ -179,8 +201,8 @@ describe('ScrollTop', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
+            expect(scrollTop.target()).toBe('parent');
             vi.spyOn(scrollTop, 'bindParentScrollListener').mockImplementation(() => {});
-            scrollTop.target = 'parent';
             scrollTop.ngOnInit();
             expect(scrollTop.bindParentScrollListener).toHaveBeenCalled();
         });
@@ -268,12 +290,15 @@ describe('ScrollTop', () => {
         });
 
         it('should scroll to top with auto behavior', () => {
-            scrollTop.behavior = 'auto';
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('behavior', 'auto');
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
             const scrollSpy = vi.fn();
             const mockWindow = { scroll: scrollSpy };
-            vi.spyOn(scrollTop.document, 'defaultView', 'get').mockReturnValue(mockWindow as any);
+            vi.spyOn(directScrollTop.document, 'defaultView', 'get').mockReturnValue(mockWindow as any);
 
-            scrollTop.onClick();
+            directScrollTop.onClick();
 
             expect(scrollSpy).toHaveBeenCalledWith({
                 top: 0,
@@ -282,14 +307,17 @@ describe('ScrollTop', () => {
         });
 
         it('should scroll parent element when target is parent', () => {
-            scrollTop.target = 'parent';
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('target', 'parent');
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
             const parentElement = document.createElement('div');
             const scrollSpy = vi.fn();
             parentElement.scroll = scrollSpy;
 
-            vi.spyOn(scrollTop.el.nativeElement, 'parentElement', 'get').mockReturnValue(parentElement);
+            vi.spyOn(directScrollTop.el.nativeElement, 'parentElement', 'get').mockReturnValue(parentElement);
 
-            scrollTop.onClick();
+            directScrollTop.onClick();
 
             expect(scrollSpy).toHaveBeenCalledWith({
                 top: 0,
@@ -315,7 +343,7 @@ describe('ScrollTop', () => {
             scrollTop.bindDocumentScrollListener();
 
             expect(scrollTop.renderer.listen).toHaveBeenCalledWith(scrollTop.document.defaultView, 'scroll', expect.any(Function));
-            expect(scrollTop.documentScrollListener).toBe(listenerSpy);
+            expect(scrollTop.documentScrollListener()).toBe(listenerSpy);
         });
 
         it('should bind parent scroll listener for parent target', () => {
@@ -325,27 +353,27 @@ describe('ScrollTop', () => {
             scrollTop.bindParentScrollListener();
 
             expect(scrollTop.renderer.listen).toHaveBeenCalledWith(scrollTop.el.nativeElement.parentElement, 'scroll', expect.any(Function));
-            expect(scrollTop.parentScrollListener).toBe(listenerSpy);
+            expect(scrollTop.parentScrollListener()).toBe(listenerSpy);
         });
 
         it('should unbind document scroll listener', () => {
             const listenerSpy = vi.fn();
-            scrollTop.documentScrollListener = listenerSpy;
+            scrollTop.documentScrollListener.set(listenerSpy);
 
             scrollTop.unbindDocumentScrollListener();
 
             expect(listenerSpy).toHaveBeenCalled();
-            expect(scrollTop.documentScrollListener).toBeNull();
+            expect(scrollTop.documentScrollListener()).toBeNull();
         });
 
         it('should unbind parent scroll listener', () => {
             const listenerSpy = vi.fn();
-            scrollTop.parentScrollListener = listenerSpy;
+            scrollTop.parentScrollListener.set(listenerSpy);
 
             scrollTop.unbindParentScrollListener();
 
             expect(listenerSpy).toHaveBeenCalled();
-            expect(scrollTop.parentScrollListener).toBeNull();
+            expect(scrollTop.parentScrollListener()).toBeNull();
         });
 
         it('should not bind listeners on server platform', () => {
@@ -379,7 +407,7 @@ describe('ScrollTop', () => {
             scrollTop.visible.set(true);
             fixture.detectChanges();
 
-            expect(scrollTop.icon).toBe(component.icon);
+            expect(scrollTop.icon()).toBe(component.icon);
 
             const iconElement = fixture.debugElement.query(By.css('.pi-arrow-up'));
             expect(iconElement).toBeTruthy();
@@ -410,20 +438,31 @@ describe('ScrollTop', () => {
             expect(customIcon.nativeElement.textContent).toBe('↑');
         });
 
-        it('should process templates in ngAfterContentInit', () => {
-            const fixture = TestBed.createComponent(TestScrollTopWithTemplateComponent);
+        it('should resolve the pTemplate icon template', () => {
+            const fixture = TestBed.createComponent(TestScrollTopWithPTemplateComponent);
+            fixture.detectChanges();
             const scrollTop = fixture.debugElement.query(By.directive(ScrollTop)).componentInstance;
 
-            // Mock the templates property to simulate template processing
-            const mockTemplate = { getType: () => 'icon', template: {} };
-            scrollTop.templates = () => ({ first: () => mockTemplate, forEach: (fn: Function) => fn(mockTemplate) });
+            expect(scrollTop.templates().length).toBe(1);
+            expect(scrollTop._iconTemplate()).toBeDefined();
+            expect(scrollTop.iconTemplate()).toBeUndefined();
 
-            expect(() => scrollTop.ngAfterContentInit()).not.toThrow();
-            if (scrollTop._iconTemplate) {
-                expect(scrollTop._iconTemplate).toBeDefined();
-            } else {
-                expect(scrollTop.templates).toBeDefined();
-            }
+            scrollTop.render.set(true);
+            scrollTop.visible.set(true);
+            fixture.detectChanges();
+
+            const customIcon = fixture.debugElement.query(By.css('.ptemplate-icon'));
+            expect(customIcon).toBeTruthy();
+            expect(customIcon.nativeElement.classList.contains('p-scrolltop-icon')).toBe(true);
+        });
+
+        it('should leave _iconTemplate undefined without a pTemplate', () => {
+            const fixture = TestBed.createComponent(TestScrollTopWithTemplateComponent);
+            fixture.detectChanges();
+            const scrollTop = fixture.debugElement.query(By.directive(ScrollTop)).componentInstance;
+
+            expect(scrollTop._iconTemplate()).toBeUndefined();
+            expect(scrollTop.iconTemplate()).toBeDefined();
         });
     });
 
@@ -449,14 +488,14 @@ describe('ScrollTop', () => {
                 expect(button.nativeElement.getAttribute('aria-label')).toBe(component.buttonAriaLabel);
             } else {
                 // If button component doesn't render, check component property
-                expect(scrollTop.buttonAriaLabel).toBe(component.buttonAriaLabel);
+                expect(scrollTop.buttonAriaLabel()).toBe(component.buttonAriaLabel);
             }
         });
 
         it('should apply default button props', () => {
             const defaultScrollTop = TestBed.createComponent(TestBasicScrollTopComponent).debugElement.query(By.directive(ScrollTop)).componentInstance;
 
-            expect(defaultScrollTop.buttonProps).toEqual({
+            expect(defaultScrollTop.buttonProps()).toEqual({
                 rounded: true
             });
         });
@@ -468,8 +507,8 @@ describe('ScrollTop', () => {
             const scrollTop = fixture.debugElement.query(By.directive(ScrollTop)).componentInstance;
 
             // Check if the component received the button props
-            if (scrollTop.buttonProps && scrollTop.buttonProps.severity === 'danger') {
-                expect(scrollTop.buttonProps).toEqual(
+            if (scrollTop.buttonProps() && scrollTop.buttonProps().severity === 'danger') {
+                expect(scrollTop.buttonProps()).toEqual(
                     expect.objectContaining({
                         rounded: false,
                         severity: 'danger'
@@ -499,16 +538,16 @@ describe('ScrollTop', () => {
         });
 
         it('should apply custom style', () => {
-            expect(scrollTop.style).toEqual(component.customStyle);
+            expect(scrollTop.style()).toEqual(component.customStyle);
         });
 
         it('should apply custom styleClass', () => {
-            expect(scrollTop.styleClass).toBe(component.customClass);
+            expect(scrollTop.styleClass()).toBe(component.customClass);
         });
 
-        it('should apply transition options', () => {
-            expect(scrollTop.showTransitionOptions).toBe(component.showTransitionOptions);
-            expect(scrollTop.hideTransitionOptions).toBe(component.hideTransitionOptions);
+        it('should apply motion options', () => {
+            expect(scrollTop.motionOptions()).toEqual(component.motionOptions);
+            expect(scrollTop.computedMotionOptions()).toEqual(expect.objectContaining({ duration: 300 }));
         });
     });
 
@@ -622,23 +661,26 @@ describe('ScrollTop', () => {
         it('should clean up on destroy for window target', () => {
             vi.spyOn(scrollTop, 'unbindDocumentScrollListener').mockImplementation(() => {});
             const overlayElement = document.createElement('div');
-            scrollTop.overlay = overlayElement;
+            scrollTop.overlay.set(overlayElement);
             vi.spyOn(ZIndexUtils, 'clear').mockImplementation(() => {});
 
             scrollTop.ngOnDestroy();
 
             expect(scrollTop.unbindDocumentScrollListener).toHaveBeenCalled();
             expect(ZIndexUtils.clear).toHaveBeenCalledWith(overlayElement);
-            expect(scrollTop.overlay).toBeNull();
+            expect(scrollTop.overlay()).toBeNull();
         });
 
         it('should clean up on destroy for parent target', () => {
-            scrollTop.target = 'parent';
-            vi.spyOn(scrollTop, 'unbindParentScrollListener').mockImplementation(() => {});
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('target', 'parent');
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
+            vi.spyOn(directScrollTop, 'unbindParentScrollListener').mockImplementation(() => {});
 
-            scrollTop.ngOnDestroy();
+            directScrollTop.ngOnDestroy();
 
-            expect(scrollTop.unbindParentScrollListener).toHaveBeenCalled();
+            expect(directScrollTop.unbindParentScrollListener).toHaveBeenCalled();
         });
 
         it('should call super.ngOnInit', () => {
@@ -665,12 +707,26 @@ describe('ScrollTop', () => {
         });
 
         it('should handle zero threshold', () => {
-            scrollTop.threshold = 0;
-            scrollTop.checkVisibility(1);
-            expect(scrollTop.visible()).toBe(true);
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('threshold', 0);
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
+            directScrollTop.checkVisibility(1);
+            expect(directScrollTop.visible()).toBe(true);
 
-            scrollTop.checkVisibility(0);
-            expect(scrollTop.visible()).toBe(false);
+            directScrollTop.checkVisibility(0);
+            expect(directScrollTop.visible()).toBe(false);
+        });
+
+        it('should coerce a string threshold', () => {
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('threshold', '250');
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
+            expect(directScrollTop.threshold()).toBe(250);
+
+            directScrollTop.checkVisibility(251);
+            expect(directScrollTop.visible()).toBe(true);
         });
 
         it('should handle negative scroll values', () => {
@@ -695,18 +751,21 @@ describe('ScrollTop', () => {
         });
 
         it('should handle missing parent element', () => {
-            scrollTop.target = 'parent';
-            vi.spyOn(scrollTop.el.nativeElement, 'parentElement', 'get').mockReturnValue(null);
+            const directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.componentRef.setInput('target', 'parent');
+            directFixture.detectChanges();
+            const directScrollTop = directFixture.componentInstance;
+            vi.spyOn(directScrollTop.el.nativeElement, 'parentElement', 'get').mockReturnValue(null);
 
             // Mock the scroll method on parent element to avoid null access
-            vi.spyOn(scrollTop, 'onClick').mockImplementation(() => {
+            vi.spyOn(directScrollTop, 'onClick').mockImplementation(() => {
                 // Simulate safe onClick behavior when parent is null
-                if (!scrollTop.el.nativeElement.parentElement) {
+                if (!directScrollTop.el.nativeElement.parentElement) {
                     return;
                 }
             });
 
-            expect(() => scrollTop.onClick()).not.toThrow();
+            expect(() => directScrollTop.onClick()).not.toThrow();
         });
 
         it('should handle null document.defaultView', () => {
@@ -718,7 +777,7 @@ describe('ScrollTop', () => {
                 try {
                     const defaultView = scrollTop.document.defaultView;
                     if (defaultView) {
-                        defaultView.scroll({ top: 0, behavior: scrollTop.behavior as ScrollBehavior });
+                        defaultView.scroll({ top: 0, behavior: scrollTop.behavior() as ScrollBehavior });
                     }
                 } catch (error) {
                     // Handle error gracefully
@@ -730,7 +789,7 @@ describe('ScrollTop', () => {
 
         it('should handle multiple unbind calls', () => {
             const listenerSpy = vi.fn();
-            scrollTop.documentScrollListener = listenerSpy;
+            scrollTop.documentScrollListener.set(listenerSpy);
 
             scrollTop.unbindDocumentScrollListener();
             scrollTop.unbindDocumentScrollListener();
@@ -739,26 +798,168 @@ describe('ScrollTop', () => {
         });
     });
 
-    describe('Icon Property Setter/Getter', () => {
-        let fixture: ComponentFixture<TestScrollTopWithIconComponent>;
+    describe('Icon Input', () => {
+        let fixture: ComponentFixture<ScrollTop>;
         let scrollTop: ScrollTop;
 
         beforeEach(() => {
-            fixture = TestBed.createComponent(TestScrollTopWithIconComponent);
+            fixture = TestBed.createComponent(ScrollTop);
             fixture.detectChanges();
-            scrollTop = fixture.debugElement.query(By.directive(ScrollTop)).componentInstance;
+            scrollTop = fixture.componentInstance;
         });
 
-        it('should set and get icon property', () => {
-            scrollTop.icon = 'pi pi-chevron-up';
-            expect(scrollTop.icon).toBe('pi pi-chevron-up');
-            expect(scrollTop._icon).toBe('pi pi-chevron-up');
+        it('should set and read the icon input', () => {
+            fixture.componentRef.setInput('icon', 'pi pi-chevron-up');
+            fixture.detectChanges();
+            expect(scrollTop.icon()).toBe('pi pi-chevron-up');
         });
 
         it('should handle undefined icon', () => {
-            scrollTop.icon = undefined as any;
-            expect(scrollTop.icon).toBeUndefined();
-            expect(scrollTop._icon).toBeUndefined();
+            fixture.componentRef.setInput('icon', 'pi pi-chevron-up');
+            fixture.detectChanges();
+            fixture.componentRef.setInput('icon', undefined);
+            fixture.detectChanges();
+            expect(scrollTop.icon()).toBeUndefined();
+        });
+    });
+
+    describe('OnPush Rendering', () => {
+        let directFixture: ComponentFixture<ScrollTop>;
+        let scrollTop: ScrollTop;
+
+        beforeEach(() => {
+            directFixture = TestBed.createComponent(ScrollTop);
+            directFixture.detectChanges();
+            scrollTop = directFixture.componentInstance;
+            scrollTop.render.set(true);
+            scrollTop.visible.set(true);
+            directFixture.detectChanges();
+        });
+
+        it('should render the button once render and visible are set', () => {
+            expect(directFixture.debugElement.query(By.directive(Button))).toBeTruthy();
+            expect(directFixture.debugElement.query(By.css('button')).nativeElement.classList.contains('p-scrolltop')).toBe(true);
+        });
+
+        it('should re-render when styleClass changes', () => {
+            const button = directFixture.debugElement.query(By.css('button'));
+            directFixture.componentRef.setInput('styleClass', 'first-class');
+            directFixture.detectChanges();
+            expect(button.nativeElement.classList.contains('first-class')).toBe(true);
+
+            directFixture.componentRef.setInput('styleClass', 'second-class');
+            directFixture.detectChanges();
+            expect(button.nativeElement.classList.contains('second-class')).toBe(true);
+            expect(button.nativeElement.classList.contains('first-class')).toBe(false);
+            expect(button.nativeElement.classList.contains('p-scrolltop')).toBe(true);
+        });
+
+        it('should re-render when style changes', () => {
+            const pButton = directFixture.debugElement.query(By.directive(Button));
+            directFixture.componentRef.setInput('style', { bottom: '10px' });
+            directFixture.detectChanges();
+            expect(pButton.nativeElement.style.bottom).toBe('10px');
+
+            directFixture.componentRef.setInput('style', { bottom: '20px' });
+            directFixture.detectChanges();
+            expect(pButton.nativeElement.style.bottom).toBe('20px');
+        });
+
+        it('should re-render when icon changes', () => {
+            expect(directFixture.debugElement.query(By.css('svg[data-p-icon="chevron-up"]'))).toBeTruthy();
+
+            directFixture.componentRef.setInput('icon', 'pi pi-arrow-up');
+            directFixture.detectChanges();
+            expect(directFixture.debugElement.query(By.css('svg[data-p-icon="chevron-up"]'))).toBeNull();
+            const icon = directFixture.debugElement.query(By.css('.pi-arrow-up'));
+            expect(icon).toBeTruthy();
+            expect(icon.nativeElement.classList.contains('p-scrolltop-icon')).toBe(true);
+
+            directFixture.componentRef.setInput('icon', 'pi pi-angle-up');
+            directFixture.detectChanges();
+            expect(directFixture.debugElement.query(By.css('.pi-arrow-up'))).toBeNull();
+            expect(directFixture.debugElement.query(By.css('.pi-angle-up'))).toBeTruthy();
+        });
+
+        it('should re-render when buttonAriaLabel changes', () => {
+            const button = directFixture.debugElement.query(By.directive(Button));
+            directFixture.componentRef.setInput('buttonAriaLabel', 'Back to top');
+            directFixture.detectChanges();
+            expect(button.nativeElement.getAttribute('aria-label')).toBe('Back to top');
+
+            directFixture.componentRef.setInput('buttonAriaLabel', 'Scroll up');
+            directFixture.detectChanges();
+            expect(button.nativeElement.getAttribute('aria-label')).toBe('Scroll up');
+        });
+
+        it('should re-render when buttonProps changes', () => {
+            const button = directFixture.debugElement.query(By.css('button'));
+            expect(button.nativeElement.getAttribute('data-p-severity')).toBeNull();
+
+            directFixture.componentRef.setInput('buttonProps', { rounded: true, severity: 'danger' });
+            directFixture.detectChanges();
+            expect(button.nativeElement.getAttribute('data-p-severity')).toBe('danger');
+
+            directFixture.componentRef.setInput('buttonProps', { rounded: true, severity: 'info' });
+            directFixture.detectChanges();
+            expect(button.nativeElement.getAttribute('data-p-severity')).toBe('info');
+        });
+
+        it('should re-render when target changes', () => {
+            const button = directFixture.debugElement.query(By.css('button'));
+            expect(button.nativeElement.classList.contains('p-scrolltop-sticky')).toBe(false);
+
+            directFixture.componentRef.setInput('target', 'parent');
+            directFixture.detectChanges();
+            expect(button.nativeElement.classList.contains('p-scrolltop-sticky')).toBe(true);
+
+            directFixture.componentRef.setInput('target', 'window');
+            directFixture.detectChanges();
+            expect(button.nativeElement.classList.contains('p-scrolltop-sticky')).toBe(false);
+        });
+
+        it('should follow threshold changes in checkVisibility', () => {
+            directFixture.componentRef.setInput('threshold', 100);
+            directFixture.detectChanges();
+            scrollTop.checkVisibility(150);
+            expect(scrollTop.visible()).toBe(true);
+
+            directFixture.componentRef.setInput('threshold', 200);
+            directFixture.detectChanges();
+            scrollTop.checkVisibility(150);
+            expect(scrollTop.visible()).toBe(false);
+        });
+
+        it('should follow behavior changes on click', () => {
+            const scrollSpy = vi.fn();
+            vi.spyOn(scrollTop.document, 'defaultView', 'get').mockReturnValue({ scroll: scrollSpy } as any);
+
+            directFixture.componentRef.setInput('behavior', 'auto');
+            directFixture.detectChanges();
+            directFixture.debugElement.query(By.css('button')).nativeElement.click();
+            expect(scrollSpy).toHaveBeenLastCalledWith({ top: 0, behavior: 'auto' });
+
+            directFixture.componentRef.setInput('behavior', 'smooth');
+            directFixture.detectChanges();
+            directFixture.debugElement.query(By.css('button')).nativeElement.click();
+            expect(scrollSpy).toHaveBeenLastCalledWith({ top: 0, behavior: 'smooth' });
+        });
+
+        it('should recompute motion options when motionOptions changes', () => {
+            directFixture.componentRef.setInput('motionOptions', { duration: 100 });
+            directFixture.detectChanges();
+            expect(scrollTop.computedMotionOptions()).toEqual(expect.objectContaining({ duration: 100 }));
+
+            directFixture.componentRef.setInput('motionOptions', { duration: 300 });
+            directFixture.detectChanges();
+            expect(scrollTop.computedMotionOptions()).toEqual(expect.objectContaining({ duration: 300 }));
+        });
+
+        it('should remove the button after render is reset', () => {
+            scrollTop.visible.set(false);
+            scrollTop.onAfterLeave();
+            directFixture.detectChanges();
+            expect(directFixture.debugElement.query(By.directive(Button))).toBeNull();
         });
     });
 
@@ -817,7 +1018,7 @@ describe('ScrollTop', () => {
             if (button) {
                 expect(button.nativeElement.getAttribute('aria-label')).toBe(component.buttonAriaLabel);
             } else {
-                expect(scrollTop.buttonAriaLabel).toBe(component.buttonAriaLabel);
+                expect(scrollTop.buttonAriaLabel()).toBe(component.buttonAriaLabel);
             }
         });
 
@@ -837,7 +1038,7 @@ describe('ScrollTop', () => {
                 expect(button.nativeElement.hasAttribute('aria-label')).toBe(false);
             } else {
                 // Button might not be rendered in test environment
-                expect(scrollTop.buttonAriaLabel).toBeUndefined();
+                expect(scrollTop.buttonAriaLabel()).toBeUndefined();
             }
         });
 
@@ -877,8 +1078,8 @@ describe('ScrollTop', () => {
 
             const scrollTops = fixture.debugElement.queryAll(By.directive(ScrollTop));
             expect(scrollTops.length).toBe(2);
-            expect(scrollTops[0].componentInstance.threshold).toBe(100);
-            expect(scrollTops[1].componentInstance.threshold).toBe(200);
+            expect(scrollTops[0].componentInstance.threshold()).toBe(100);
+            expect(scrollTops[1].componentInstance.threshold()).toBe(200);
         });
 
         it('should work with nested scrollable containers', () => {
@@ -947,7 +1148,7 @@ describe('ScrollTop', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            fixture.detectChanges(); // Trigger ngAfterViewChecked
+            fixture.detectChanges(); // Trigger afterEveryRender
 
             const scrollTopElement = fixture.debugElement.query(By.directive(ScrollTop));
             expect(scrollTopElement.nativeElement.classList.contains('HOST_CLASS')).toBe(true);
@@ -1101,8 +1302,8 @@ describe('ScrollTop', () => {
                 host: ({ instance }: any) => {
                     return {
                         class: {
-                            TARGET_PARENT: instance?.target === 'parent',
-                            TARGET_WINDOW: instance?.target === 'window'
+                            TARGET_PARENT: instance?.target() === 'parent',
+                            TARGET_WINDOW: instance?.target() === 'window'
                         }
                     };
                 }
@@ -1123,7 +1324,7 @@ describe('ScrollTop', () => {
                 root: ({ instance }: any) => {
                     return {
                         style: {
-                            opacity: instance?.threshold > 400 ? '1' : '0.5'
+                            opacity: instance?.threshold() > 400 ? '1' : '0.5'
                         }
                     };
                 }

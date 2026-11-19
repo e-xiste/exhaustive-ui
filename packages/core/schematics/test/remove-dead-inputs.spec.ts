@@ -56,6 +56,17 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-colorpicker [(ngModel)]="color"></p-colorpicker>\n<p-colorPicker [inline]="true"></p-colorPicker>\n<p-color-picker format="rgb"></p-color-picker>\n`);
     });
 
+    it('removes showTransitionOptions/hideTransitionOptions from p-scrolltop and its aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-scrolltop showTransitionOptions=".3s" [hideTransitionOptions]="hideTf" [threshold]="200"></p-scrolltop>\n<p-scrollTop [showTransitionOptions]="showTf" target="parent"></p-scrollTop>\n<p-scroll-top hideTransitionOptions=".1s linear" icon="pi pi-arrow-up"></p-scroll-top>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(`<p-scrolltop [threshold]="200"></p-scrolltop>\n<p-scrollTop target="parent"></p-scrollTop>\n<p-scroll-top icon="pi pi-arrow-up"></p-scroll-top>\n`);
+    });
+
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({

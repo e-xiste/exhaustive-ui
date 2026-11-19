@@ -18,6 +18,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * forwarded to the inner badge: only `badgeSize` ever sized it.
  * The deprecated `transitionOptions` on Fieldset was stored but never read: its toggle animation
  * is driven by `motionOptions`.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on ScrollTop were stored but never
+ * read: its show/hide animation is driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -30,7 +32,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-overlayBadge', names: ['size'] },
     { selector: 'p-overlay-badge', names: ['size'] },
     { selector: 'p-overlaybadge', names: ['size'] },
-    { selector: 'p-fieldset', names: ['transitionOptions'] }
+    { selector: 'p-fieldset', names: ['transitionOptions'] },
+    { selector: 'p-scrollTop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-scrolltop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-scroll-top', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
@@ -51,10 +56,13 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
  * showTransitionOptions/hideTransitionOptions, stored but never read either; OverlayBadge's
  * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it); and
- * Fieldset's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation).
+ * Fieldset's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation);
+ * and ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
+ * (motionOptions drives the show/hide animation).
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
- * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset` are removed
+ * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

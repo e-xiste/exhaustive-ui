@@ -14,7 +14,7 @@
         "remove-dead-inputs": {
             "version": "3.0.0",
             "factory": "./migrations/remove-dead-inputs/migration",
-            "description": "Remove usages of inputs removed in this version that had already stopped doing anything: p-toast/p-toastItem's showTransformOptions, hideTransformOptions, showTransitionOptions and hideTransitionOptions; p-message's showTransitionOptions and hideTransitionOptions; p-overlay's showTransitionOptions and hideTransitionOptions; p-colorpicker/p-colorPicker/p-color-picker's showTransitionOptions and hideTransitionOptions; the deprecated size of p-overlaybadge/p-overlayBadge/p-overlay-badge (use badgeSize); and the deprecated transitionOptions of p-fieldset (use motionOptions)."
+            "description": "Remove usages of inputs removed in this version that had already stopped doing anything: p-toast/p-toastItem's showTransformOptions, hideTransformOptions, showTransitionOptions and hideTransitionOptions; p-message's showTransitionOptions and hideTransitionOptions; p-overlay's showTransitionOptions and hideTransitionOptions; p-colorpicker/p-colorPicker/p-color-picker's showTransitionOptions and hideTransitionOptions; the deprecated size of p-overlaybadge/p-overlayBadge/p-overlay-badge (use badgeSize); the deprecated transitionOptions of p-fieldset (use motionOptions); and the deprecated showTransitionOptions and hideTransitionOptions of p-scrolltop/p-scrollTop/p-scroll-top (use motionOptions)."
         },
         "config-overlay-options-signal": {
             "version": "3.0.0",
