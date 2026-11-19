@@ -1246,6 +1246,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-dataview class="existing my-dataview"></p-dataview>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-splitbutton', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-splitbutton label="Save" [model]="items" styleClass="my-splitbutton"></p-splitbutton>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-splitbutton label="Save" [model]="items" class="my-splitbutton"></p-splitbutton>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-splitButton and p-split-button', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-splitButton label="Save" [model]="items" [styleClass]="myClass"></p-splitButton>\n<p-split-button [model]="items" [styleClass]="myClass" [menuStyleClass]="menuClass"></p-split-button>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-splitButton label="Save" [model]="items" [class]="myClass"></p-splitButton>\n<p-split-button [model]="items" [class]="myClass" [menuStyleClass]="menuClass"></p-split-button>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-splitbutton', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-splitbutton class="existing" styleClass="my-splitbutton"></p-splitbutton>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-splitbutton class="existing my-splitbutton"></p-splitbutton>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

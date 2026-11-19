@@ -89,6 +89,18 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-drawer [(visible)]="visible" [motionOptions]="motion" ariaCloseLabel="Close"></p-drawer>\n<p-drawer position="right"></p-drawer>\n`);
     });
 
+    it('removes showTransitionOptions/hideTransitionOptions and plain from p-splitbutton while keeping motionOptions and dir', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-splitbutton label="Save" [model]="items" showTransitionOptions=".12s cubic-bezier(0, 0, 0.2, 1)" [hideTransitionOptions]="hideTf" [plain]="true" [motionOptions]="motion" dir="rtl"></p-splitbutton>\n<p-splitButton [model]="items" plain [showTransitionOptions]="showTf"></p-splitButton>\n<p-split-button [model]="items" [dir]="direction" hideTransitionOptions=".1s linear"></p-split-button>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).not.toContain('plain');
+        expect(html).toBe(`<p-splitbutton label="Save" [model]="items" [motionOptions]="motion" dir="rtl"></p-splitbutton>\n<p-splitButton [model]="items"></p-splitButton>\n<p-split-button [model]="items" [dir]="direction"></p-split-button>\n`);
+    });
+
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
@@ -275,6 +287,23 @@ describe('remove-dead-inputs', () => {
     it('does not report a programmatic inputId access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    label(control: { inputId: string }) {\n        return control.inputId;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
+    it('does not report a programmatic plain access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    isPlain(button: { plain: boolean }) {\n        return button.plain;\n    }\n}\n`;
         const tree = createAppTree({ '/src/app/foo.ts': content });
 
         const warnings: string[] = [];

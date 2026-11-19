@@ -74,7 +74,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-carousel',
     'p-dataview',
     'p-dataView',
-    'p-data-view'
+    'p-data-view',
+    'p-splitbutton',
+    'p-splitButton',
+    'p-split-button'
 ];
 
 /**

@@ -34,6 +34,11 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * driven by `motionOptions`.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Menu were stored but never read:
  * its popup animation is driven by `motionOptions`.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on SplitButton were stored but never
+ * read: its menu animation is driven by `motionOptions`. `plain` on SplitButton was stored but never
+ * read either: neither the root class nor the inner buttons ever received it. SplitButton's `dir`
+ * was never read either, but it is deliberately left out of this list: a `dir`/`[dir]` binding on the
+ * selector keeps working as the host element's native `dir` attribute, so there is nothing to remove.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -59,7 +64,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] },
     { selector: 'p-image', names: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'] },
     { selector: 'p-drawer', names: ['transitionOptions'] },
-    { selector: 'p-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-splitbutton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
+    { selector: 'p-splitButton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
+    { selector: 'p-split-button', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] }
 ];
 
 /**
@@ -70,8 +78,11 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * other components (p-dialog, p-stepper, ...), so a name-only scan cannot tell their reads apart.
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
  * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
+ * SplitButton's `plain` is left out too: Button and pButton still expose a working `plain`.
  */
-const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel');
+const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
+    (name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel' && name !== 'plain'
+);
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
@@ -93,6 +104,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * and Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
  * animation).
  * and Menu's deprecated showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation).
+ * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
+ * animation); and SplitButton's deprecated showTransitionOptions/hideTransitionOptions (motionOptions
+ * drives the menu animation) and plain, stored but never read.
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/`p-accordion`/
