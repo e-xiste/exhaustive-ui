@@ -1,15 +1,12 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, InjectionToken, Input, NgModule, OnDestroy, ViewEncapsulation, viewChild } from '@angular/core';
+import { afterEveryRender, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, NgModule, signal, ViewEncapsulation, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { find } from '@exhaustive-ui/utils';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { TerminalPassThrough } from '@exhaustive-ui/core/types/terminal';
-import { Subscription } from 'rxjs';
 import { TerminalStyle } from './style/terminalstyle';
 import { TerminalService } from './terminalservice';
-
-const TERMINAL_INSTANCE = new InjectionToken<Terminal>('TERMINAL_INSTANCE');
 
 /**
  * Terminal is a text based user interface.
@@ -17,39 +14,37 @@ const TERMINAL_INSTANCE = new InjectionToken<Terminal>('TERMINAL_INSTANCE');
  */
 @Component({
     selector: 'p-terminal',
-    standalone: true,
     imports: [FormsModule, SharedModule, Bind],
     template: `
-        @if (welcomeMessage) {
-            <div [class]="cx('welcomeMessage')" [pBind]="ptm('welcomeMessage')">{{ welcomeMessage }}</div>
+        @if (welcomeMessage()) {
+            <div [class]="cx('welcomeMessage')" [pBind]="ptm('welcomeMessage')">{{ welcomeMessage() }}</div>
         }
         <div [class]="cx('commandList')" [pBind]="ptm('commandList')">
-            @for (command of commands; track command) {
+            @for (command of commands(); track command) {
                 <div [class]="cx('command')" [pBind]="ptm('command')">
-                    <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')">{{ prompt }}</span>
+                    <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')">{{ prompt() }}</span>
                     <span [class]="cx('commandValue')" [pBind]="ptm('commandValue')">{{ command.text }}</span>
                     <div [class]="cx('commandResponse')" [pBind]="ptm('commandResponse')" [attr.aria-live]="'polite'">{{ command.response }}</div>
                 </div>
             }
         </div>
         <div [class]="cx('prompt')" [pBind]="ptm('prompt')">
-            <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')">{{ prompt }}</span>
+            <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')">{{ prompt() }}</span>
             <input #in type="text" [(ngModel)]="command" [ngModelOptions]="{ standalone: true }" [class]="cx('promptValue')" [pBind]="ptm('promptValue')" autocomplete="off" (keydown)="handleCommand($event)" autofocus />
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [TerminalStyle, { provide: TERMINAL_INSTANCE, useExisting: Terminal }, { provide: PARENT_INSTANCE, useExisting: Terminal }],
+    providers: [TerminalStyle, { provide: PARENT_INSTANCE, useExisting: Terminal }],
     host: {
-        '[class]': "cn(cx('root'), styleClass)"
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind]
 })
-export class Terminal extends BaseComponent<TerminalPassThrough> implements AfterViewInit, AfterViewChecked, OnDestroy {
+export class Terminal extends BaseComponent<TerminalPassThrough> {
     terminalService = inject(TerminalService);
 
     componentName = 'Terminal';
-    $pcTerminal: Terminal | undefined = inject(TERMINAL_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
@@ -57,28 +52,20 @@ export class Terminal extends BaseComponent<TerminalPassThrough> implements Afte
      * Initial text to display on terminal.
      * @group Props
      */
-    @Input() welcomeMessage: string | undefined;
+    readonly welcomeMessage = input<string | undefined>();
     /**
      * Prompt text for each command.
      * @group Props
      */
-    @Input() prompt: string | undefined;
-    /**
-     * Style class of the component.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    readonly prompt = input<string | undefined>();
 
-    commands: any[] = [];
+    commands = signal<any[]>([]);
 
-    command!: string;
+    command = signal<string>(undefined!);
 
-    container!: Element;
+    container: Element = this.el.nativeElement;
 
-    commandProcessed!: boolean;
-
-    subscription: Subscription;
+    commandProcessed = signal<boolean>(undefined!);
 
     _componentStyle = inject(TerminalStyle);
 
@@ -91,49 +78,39 @@ export class Terminal extends BaseComponent<TerminalPassThrough> implements Afte
 
     constructor() {
         super();
-        this.subscription = this.terminalService.responseHandler.subscribe((response) => {
-            this.commands[this.commands.length - 1].response = response;
-            this.commandProcessed = true;
+        this.terminalService.responseHandler.pipe(takeUntilDestroyed()).subscribe((response) => {
+            this.commands.update((commands) => commands.map((command, index) => (index === commands.length - 1 ? { ...command, response } : command)));
+            this.commandProcessed.set(true);
+        });
+        effect(() => {
+            const value = this.response();
+            if (value) {
+                this.commands.update((commands) => commands.map((command, index) => (index === commands.length - 1 ? { ...command, response: value } : command)));
+                this.commandProcessed.set(true);
+            }
+        });
+        afterEveryRender(() => {
+            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+
+            if (this.commandProcessed()) {
+                this.container.scrollTop = this.container.scrollHeight;
+                this.commandProcessed.set(false);
+            }
         });
     }
 
-    onAfterViewInit() {
-        this.container = this.el.nativeElement;
-    }
-
-    onAfterViewChecked() {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-
-        if (this.commandProcessed) {
-            this.container.scrollTop = this.container.scrollHeight;
-            this.commandProcessed = false;
-        }
-    }
-
-    @Input()
-    set response(value: string) {
-        if (value) {
-            this.commands[this.commands.length - 1].response = value;
-            this.commandProcessed = true;
-        }
-    }
+    readonly response = input<string>();
 
     handleCommand(event: KeyboardEvent) {
         if (event.keyCode == 13) {
-            this.commands.push({ text: this.command });
-            this.terminalService.sendCommand(this.command);
-            this.command = '';
+            this.commands.update((commands) => [...commands, { text: this.command() }]);
+            this.terminalService.sendCommand(this.command());
+            this.command.set('');
         }
     }
 
     focus(element: HTMLElement) {
         element.focus();
-    }
-
-    onDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 }
 

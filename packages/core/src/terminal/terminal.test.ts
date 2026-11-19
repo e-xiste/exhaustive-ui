@@ -10,13 +10,14 @@ import { TerminalService } from './terminalservice';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    template: ` <p-terminal [welcomeMessage]="welcomeMessage" [prompt]="prompt" [styleClass]="styleClass" [style]="style"> </p-terminal> `
+    template: ` <p-terminal [welcomeMessage]="welcomeMessage" [prompt]="prompt" [class]="customClass" [style]="style" [response]="response"> </p-terminal> `
 })
 class TestBasicTerminalComponent {
     welcomeMessage: string | undefined = 'Welcome to Exhaustive Terminal';
     prompt: string | undefined = 'prime$ ';
-    styleClass: string | undefined;
+    customClass: string | undefined;
     style: { [key: string]: any } | undefined;
+    response: string | undefined;
 }
 
 @Component({
@@ -29,7 +30,7 @@ class TestStaticPropsTerminalComponent {}
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    template: ` <p-terminal [style]="customStyle" styleClass="custom-terminal"> </p-terminal> `
+    template: ` <p-terminal [style]="customStyle" class="custom-terminal"> </p-terminal> `
 })
 class TestStyledTerminalComponent {
     customStyle = {
@@ -70,6 +71,11 @@ describe('Terminal', () => {
     let terminalInstance: Terminal;
     let terminalService: TerminalService;
 
+    const welcomeMessageElement = (f: ComponentFixture<unknown> = fixture) => f.debugElement.query(By.css('.p-terminal-welcome-message'));
+    const promptLabelElements = (f: ComponentFixture<unknown> = fixture) => f.debugElement.queryAll(By.css('.p-terminal-prompt-label'));
+    const commandElements = (f: ComponentFixture<unknown> = fixture) => f.debugElement.queryAll(By.css('.p-terminal-command'));
+    const commandResponseElements = (f: ComponentFixture<unknown> = fixture) => f.debugElement.queryAll(By.css('.p-terminal-command-response'));
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [TestBasicTerminalComponent, TestStaticPropsTerminalComponent, TestStyledTerminalComponent, TestMinimalTerminalComponent, TestInteractiveTerminalComponent, TestDynamicTerminalComponent],
@@ -100,39 +106,44 @@ describe('Terminal', () => {
             const freshFixture = TestBed.createComponent(TestMinimalTerminalComponent);
             freshFixture.detectChanges();
 
-            const freshTerminal = freshFixture.debugElement.query(By.directive(Terminal)).componentInstance;
+            const freshTerminal = freshFixture.debugElement.query(By.directive(Terminal)).componentInstance as Terminal;
 
-            expect(freshTerminal.welcomeMessage).toBeUndefined();
-            expect(freshTerminal.prompt).toBeUndefined();
-            expect(freshTerminal.styleClass).toBeUndefined();
-            expect(freshTerminal.commands).toEqual([]);
-            expect(freshTerminal.command).toBeUndefined();
-            expect(freshTerminal.commandProcessed).toBeUndefined();
+            expect(freshTerminal.welcomeMessage()).toBeUndefined();
+            expect(freshTerminal.prompt()).toBeUndefined();
+            expect(freshTerminal.response()).toBeUndefined();
+            expect(freshTerminal.commands()).toEqual([]);
+            expect(freshTerminal.command()).toBeUndefined();
+            expect(freshTerminal.commandProcessed()).toBeUndefined();
+            expect(freshTerminal.container).toBe(freshFixture.debugElement.query(By.directive(Terminal)).nativeElement);
         });
 
         it('should accept custom values', async () => {
             component.welcomeMessage = 'Custom Welcome';
             component.prompt = 'custom$ ';
-            component.styleClass = 'custom-class';
+            component.customClass = 'custom-class';
             component.style = { color: 'red' };
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBe('Custom Welcome');
-            expect(terminalInstance.prompt).toBe('custom$ ');
-            expect(terminalInstance.styleClass).toBe('custom-class');
+            expect(terminalInstance.welcomeMessage()).toBe('Custom Welcome');
+            expect(terminalInstance.prompt()).toBe('custom$ ');
+            expect(terminalElement.nativeElement.classList.contains('custom-class')).toBe(true);
         });
 
         it('should initialize commands array', () => {
-            expect(terminalInstance.commands).toBeDefined();
-            expect(Array.isArray(terminalInstance.commands)).toBe(true);
-            expect(terminalInstance.commands.length).toBe(0);
+            expect(terminalInstance.commands()).toBeDefined();
+            expect(Array.isArray(terminalInstance.commands())).toBe(true);
+            expect(terminalInstance.commands().length).toBe(0);
         });
 
-        it('should initialize terminal service subscription', () => {
-            expect(terminalInstance.subscription).toBeTruthy();
-            expect(terminalInstance.subscription.closed).toBe(false);
+        it('should stop handling service responses once destroyed', () => {
+            terminalInstance.commands.set([{ text: 'test command' }]);
+            fixture.destroy();
+
+            expect(() => terminalService.sendResponse('Late response')).not.toThrow();
+            expect(terminalInstance.commands()[0].response).toBeUndefined();
+            expect(terminalInstance.commandProcessed()).toBeUndefined();
         });
 
         it('should have input reference after view init', () => {
@@ -147,7 +158,7 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.welcomeMessage).toBe('Updated Welcome');
+            expect(terminalInstance.welcomeMessage()).toBe('Updated Welcome');
         });
 
         it('should update prompt input', async () => {
@@ -155,41 +166,50 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.prompt).toBe('new> ');
+            expect(terminalInstance.prompt()).toBe('new> ');
         });
 
-        it('should update styleClass input', async () => {
-            component.styleClass = 'test-class';
+        it('should update the host class when the class binding changes', async () => {
+            component.customClass = 'test-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.styleClass).toBe('test-class');
+            expect(terminalElement.nativeElement.classList.contains('test-class')).toBe(true);
+            expect(terminalElement.nativeElement.classList.contains('p-terminal')).toBe(true);
+
+            component.customClass = 'other-class';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+            expect(terminalElement.nativeElement.classList.contains('other-class')).toBe(true);
+            expect(terminalElement.nativeElement.classList.contains('test-class')).toBe(false);
+            expect(terminalElement.nativeElement.classList.contains('p-terminal')).toBe(true);
         });
 
         it('should handle undefined inputs', async () => {
             component.welcomeMessage = undefined as any;
             component.prompt = undefined as any;
-            component.styleClass = undefined as any;
+            component.customClass = undefined as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBeUndefined();
-            expect(terminalInstance.prompt).toBeUndefined();
-            expect(terminalInstance.styleClass).toBeUndefined();
+            expect(terminalInstance.welcomeMessage()).toBeUndefined();
+            expect(terminalInstance.prompt()).toBeUndefined();
+            expect(terminalElement.nativeElement.classList.contains('p-terminal')).toBe(true);
         });
 
         it('should handle empty string inputs', async () => {
             component.welcomeMessage = '';
             component.prompt = '';
-            component.styleClass = '';
+            component.customClass = '';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBe('' as any);
-            expect(terminalInstance.prompt).toBe('' as any);
-            expect(terminalInstance.styleClass).toBe('' as any);
+            expect(terminalInstance.welcomeMessage()).toBe('' as any);
+            expect(terminalInstance.prompt()).toBe('' as any);
+            expect(terminalElement.nativeElement.classList.contains('p-terminal')).toBe(true);
         });
     });
 
@@ -200,13 +220,8 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            const welcomeElement = fixture.debugElement.query(By.css('[data-pc-section="welcomeMessage"], div:first-child'));
-            if (welcomeElement && welcomeElement.nativeElement.textContent.includes('Test Welcome Message')) {
-                expect(welcomeElement.nativeElement.textContent.trim()).toBe('Test Welcome Message');
-            } else {
-                // Fallback: verify component property
-                expect(terminalInstance.welcomeMessage).toBe('Test Welcome Message');
-            }
+            expect(welcomeMessageElement()).toBeTruthy();
+            expect(welcomeMessageElement().nativeElement.textContent.trim()).toBe('Test Welcome Message');
         });
 
         it('should not display welcome message element when not provided', async () => {
@@ -215,6 +230,7 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
+            expect(welcomeMessageElement()).toBeNull();
             const welcomeElements = fixture.debugElement.queryAll(By.css('div'));
             const hasWelcomeMessage = welcomeElements.some((el) => el.nativeElement.textContent && el.nativeElement.textContent.includes('Welcome'));
             expect(hasWelcomeMessage).toBe(false);
@@ -225,13 +241,15 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.welcomeMessage).toBe('Initial Message');
+            expect(terminalInstance.welcomeMessage()).toBe('Initial Message');
+            expect(welcomeMessageElement().nativeElement.textContent.trim()).toBe('Initial Message');
 
             component.welcomeMessage = 'Updated Message';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.welcomeMessage).toBe('Updated Message');
+            expect(terminalInstance.welcomeMessage()).toBe('Updated Message');
+            expect(welcomeMessageElement().nativeElement.textContent.trim()).toBe('Updated Message');
         });
 
         it('should handle special characters in welcome message', async () => {
@@ -241,7 +259,8 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBe(specialMessage);
+            expect(terminalInstance.welcomeMessage()).toBe(specialMessage);
+            expect(welcomeMessageElement().nativeElement.textContent.trim()).toBe(specialMessage);
         });
     });
 
@@ -252,17 +271,9 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            const promptElements = fixture.debugElement.queryAll(By.css('span'));
-            const promptElement = promptElements.find((el) => el.nativeElement.textContent && el.nativeElement.textContent.includes('test>'));
-
-            if (promptElement) {
-                // Handle whitespace differences in test environment
-                const text = promptElement.nativeElement.textContent.trim();
-                expect(text).toBe('test>');
-            } else {
-                // Fallback: verify component property
-                expect(terminalInstance.prompt).toBe('test> ');
-            }
+            const promptElement = promptLabelElements().at(-1);
+            expect(promptElement).toBeTruthy();
+            expect(promptElement!.nativeElement.textContent.trim()).toBe('test>');
         });
 
         it('should handle empty prompt', async () => {
@@ -270,7 +281,8 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.prompt).toBe('' as any);
+            expect(terminalInstance.prompt()).toBe('' as any);
+            expect(promptLabelElements().at(-1)!.nativeElement.textContent.trim()).toBe('');
         });
 
         it('should handle undefined prompt', async () => {
@@ -278,7 +290,8 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.prompt).toBeUndefined();
+            expect(terminalInstance.prompt()).toBeUndefined();
+            expect(promptLabelElements().at(-1)!.nativeElement.textContent.trim()).toBe('');
         });
 
         it('should update prompt when changed', async () => {
@@ -286,13 +299,15 @@ describe('Terminal', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.prompt).toBe('initial$ ');
+            expect(terminalInstance.prompt()).toBe('initial$ ');
+            expect(promptLabelElements().at(-1)!.nativeElement.textContent.trim()).toBe('initial$');
 
             component.prompt = 'updated> ';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(terminalInstance.prompt).toBe('updated> ');
+            expect(terminalInstance.prompt()).toBe('updated> ');
+            expect(promptLabelElements().at(-1)!.nativeElement.textContent.trim()).toBe('updated>');
         });
     });
 
@@ -302,7 +317,7 @@ describe('Terminal', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
             const inputElement = fixture.debugElement.query(By.css('input'));
-            terminalInstance.command = 'test command';
+            terminalInstance.command.set('test command');
 
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             inputElement.nativeElement.dispatchEvent(enterEvent);
@@ -313,56 +328,69 @@ describe('Terminal', () => {
         it('should add command to commands array on Enter', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
-            terminalInstance.command = 'ls -la';
+            terminalInstance.command.set('ls -la');
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands.length).toBe(1);
-            expect(terminalInstance.commands[0].text).toBe('ls -la');
+            expect(terminalInstance.commands().length).toBe(1);
+            expect(terminalInstance.commands()[0].text).toBe('ls -la');
+        });
+
+        it('should render the executed command on Enter', async () => {
+            vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
+
+            terminalInstance.command.set('ls -la');
+            terminalInstance.handleCommand(new KeyboardEvent('keydown', { keyCode: 13 }));
+            await fixture.whenStable();
+
+            expect(commandElements().length).toBe(1);
+            expect(commandElements()[0].query(By.css('.p-terminal-command-value')).nativeElement.textContent).toBe('ls -la');
         });
 
         it('should send command to terminal service', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
-            terminalInstance.command = 'pwd';
+            terminalInstance.command.set('pwd');
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
             expect(terminalService.sendCommand).toHaveBeenCalledWith('pwd');
         });
 
-        it('should clear command input after Enter', () => {
+        it('should clear command input after Enter', async () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
-            terminalInstance.command = 'clear';
+            terminalInstance.command.set('clear');
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.command).toBe('' as any);
+            expect(terminalInstance.command()).toBe('' as any);
+            await fixture.whenStable();
+            expect(terminalInstance.inputRef().nativeElement.value).toBe('');
         });
 
         it('should not process command on other key press', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
-            const initialCommandsLength = terminalInstance.commands.length;
+            const initialCommandsLength = terminalInstance.commands().length;
 
-            terminalInstance.command = 'test';
+            terminalInstance.command.set('test');
             const escapeEvent = new KeyboardEvent('keydown', { keyCode: 27 }); // Escape key
             terminalInstance.handleCommand(escapeEvent);
 
             expect(terminalService.sendCommand).not.toHaveBeenCalled();
-            expect(terminalInstance.commands.length).toBe(initialCommandsLength);
-            expect(terminalInstance.command).toBe('test'); // Should not be cleared
+            expect(terminalInstance.commands().length).toBe(initialCommandsLength);
+            expect(terminalInstance.command()).toBe('test'); // Should not be cleared
         });
 
         it('should handle empty command', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
-            terminalInstance.command = '';
+            terminalInstance.command.set('');
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands.length).toBe(1);
-            expect(terminalInstance.commands[0].text).toBe('' as any);
+            expect(terminalInstance.commands().length).toBe(1);
+            expect(terminalInstance.commands()[0].text).toBe('' as any);
             expect(terminalService.sendCommand).toHaveBeenCalledWith('');
         });
 
@@ -370,78 +398,88 @@ describe('Terminal', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
             // First command
-            terminalInstance.command = 'command1';
+            terminalInstance.command.set('command1');
             let enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
             // Second command
-            terminalInstance.command = 'command2';
+            terminalInstance.command.set('command2');
             enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands.length).toBe(2);
-            expect(terminalInstance.commands[0].text).toBe('command1');
-            expect(terminalInstance.commands[1].text).toBe('command2');
+            expect(terminalInstance.commands().length).toBe(2);
+            expect(terminalInstance.commands()[0].text).toBe('command1');
+            expect(terminalInstance.commands()[1].text).toBe('command2');
             expect(terminalService.sendCommand).toHaveBeenCalledTimes(2);
+        });
+
+        it('should sync the typed value from the input into command', async () => {
+            const inputElement = terminalInstance.inputRef().nativeElement;
+            inputElement.value = 'typed command';
+            inputElement.dispatchEvent(new Event('input'));
+            await fixture.whenStable();
+
+            expect(terminalInstance.command()).toBe('typed command');
         });
     });
 
     describe('Terminal Service Integration', () => {
-        it('should subscribe to response handler on initialization', () => {
-            expect(terminalInstance.subscription).toBeTruthy();
-            expect(terminalInstance.subscription.closed).toBe(false);
-        });
-
         it('should handle response from service', async () => {
             // Add a command first
-            terminalInstance.commands.push({ text: 'test command' });
+            terminalInstance.commands.update((commands) => [...commands, { text: 'test command' }]);
 
             // Send response
             terminalService.sendResponse('Command output');
 
-            // Wait for RxJS subscription to fire (synchronous but needs microtask)
-            await Promise.resolve();
+            expect(terminalInstance.commands()[0].response).toBe('Command output');
+            expect(terminalInstance.commandProcessed()).toBe(true);
 
-            expect(terminalInstance.commands[0].response).toBe('Command output');
-            expect(terminalInstance.commandProcessed).toBe(true);
+            await fixture.whenStable();
+            expect(commandResponseElements()[0].nativeElement.textContent).toBe('Command output');
         });
 
         it('should handle multiple responses', async () => {
             // Add commands
-            terminalInstance.commands.push({ text: 'command1' });
-            terminalInstance.commands.push({ text: 'command2' });
+            terminalInstance.commands.update((commands) => [...commands, { text: 'command1' }]);
+            terminalInstance.commands.update((commands) => [...commands, { text: 'command2' }]);
 
             // Send first response
             terminalService.sendResponse('Response 1');
-            await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            expect(terminalInstance.commands[1].response).toBe('Response 1');
+            expect(terminalInstance.commands()[1].response).toBe('Response 1');
+            expect(commandResponseElements()[1].nativeElement.textContent).toBe('Response 1');
 
             // Add another command and send response
-            terminalInstance.commands.push({ text: 'command3' });
+            terminalInstance.commands.update((commands) => [...commands, { text: 'command3' }]);
             terminalService.sendResponse('Response 2');
-            await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            expect(terminalInstance.commands[2].response).toBe('Response 2');
+            expect(terminalInstance.commands()[2].response).toBe('Response 2');
+            expect(commandResponseElements()[2].nativeElement.textContent).toBe('Response 2');
         });
 
-        it('should set response via property setter', () => {
-            terminalInstance.commands.push({ text: 'test' });
+        it('should set response via the response input', async () => {
+            terminalInstance.commands.update((commands) => [...commands, { text: 'test' }]);
 
-            terminalInstance.response = 'Direct response';
+            component.response = 'Direct response';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBe('Direct response');
-            expect(terminalInstance.commandProcessed).toBe(true);
+            expect(terminalInstance.response()).toBe('Direct response');
+            expect(terminalInstance.commands()[0].response).toBe('Direct response');
+            expect(terminalInstance.commandProcessed()).toBe(false);
+            expect(commandResponseElements()[0].nativeElement.textContent).toBe('Direct response');
         });
 
-        it('should not set response when value is empty', () => {
-            terminalInstance.commands.push({ text: 'test' });
-            terminalInstance.commandProcessed = false;
+        it('should not set response when value is empty', async () => {
+            terminalInstance.commands.update((commands) => [...commands, { text: 'test' }]);
+            terminalInstance.commandProcessed.set(false);
 
-            terminalInstance.response = '';
+            component.response = '';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBeUndefined();
-            expect(terminalInstance.commandProcessed).toBe(false);
+            expect(terminalInstance.commands()[0].response).toBeUndefined();
+            expect(terminalInstance.commandProcessed()).toBe(false);
         });
     });
 
@@ -478,14 +516,8 @@ describe('Terminal', () => {
     });
 
     describe('Lifecycle Methods', () => {
-        it('should call ngAfterViewInit', () => {
-            vi.spyOn(terminalInstance, 'ngAfterViewInit');
-
-            terminalInstance.ngAfterViewInit();
-
-            expect(terminalInstance.ngAfterViewInit).toHaveBeenCalled();
-            // Container may not be found in test environment due to CSS class differences
-            expect(terminalInstance.ngAfterViewInit).toHaveBeenCalled();
+        it('should use the host element as the scroll container', () => {
+            expect(terminalInstance.container).toBe(terminalElement.nativeElement);
         });
 
         it('should scroll to bottom after command processed', async () => {
@@ -495,51 +527,55 @@ describe('Terminal', () => {
                 scrollHeight: 1000
             };
             terminalInstance.container = mockContainer as any;
-            terminalInstance.commandProcessed = true;
-
-            terminalInstance.ngAfterViewChecked();
+            terminalInstance.commandProcessed.set(true);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
             expect(mockContainer.scrollTop).toBe(1000);
-            expect(terminalInstance.commandProcessed).toBe(false);
+            expect(terminalInstance.commandProcessed()).toBe(false);
         });
 
-        it('should not scroll when command not processed', () => {
+        it('should not scroll when command not processed', async () => {
             const mockContainer = {
                 scrollTop: 0,
                 scrollHeight: 1000
             };
             terminalInstance.container = mockContainer as any;
-            terminalInstance.commandProcessed = false;
-
-            terminalInstance.ngAfterViewChecked();
+            terminalInstance.commandProcessed.set(false);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
             expect(mockContainer.scrollTop).toBe(0);
+            expect(terminalInstance.commandProcessed()).toBe(false);
         });
 
-        it('should unsubscribe on destroy', () => {
-            vi.spyOn(terminalInstance.subscription, 'unsubscribe').mockImplementation(() => {});
+        it('should scroll to bottom after a service response is rendered', async () => {
+            const mockContainer = {
+                scrollTop: 0,
+                scrollHeight: 1000
+            };
+            terminalInstance.container = mockContainer as any;
+            terminalInstance.commands.set([{ text: 'ls' }]);
 
-            terminalInstance.ngOnDestroy();
+            terminalService.sendResponse('file1.txt');
+            await fixture.whenStable();
 
-            expect(terminalInstance.subscription.unsubscribe).toHaveBeenCalled();
-        });
-
-        it('should handle destroy when subscription is null', () => {
-            terminalInstance.subscription = null as any;
-
-            expect(() => terminalInstance.ngOnDestroy()).not.toThrow();
+            expect(mockContainer.scrollTop).toBe(1000);
+            expect(terminalInstance.commandProcessed()).toBe(false);
         });
     });
 
     describe('CSS Classes and Styling', () => {
-        it('should apply styleClass to root element', async () => {
-            component.styleClass = 'custom-terminal-class';
+        it('should apply a custom class to root element', async () => {
+            component.customClass = 'custom-terminal-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
             const rootElement = fixture.debugElement.query(By.directive(Terminal));
             expect(rootElement.nativeElement.classList.contains('custom-terminal-class')).toBe(true);
+            expect(rootElement.nativeElement.classList.contains('p-terminal')).toBe(true);
+            expect(rootElement.nativeElement.classList.contains('p-component')).toBe(true);
         });
 
         it('should apply custom styles', () => {
@@ -569,7 +605,7 @@ describe('Terminal', () => {
         });
 
         it('should combine multiple CSS classes correctly', async () => {
-            component.styleClass = 'class1 class2';
+            component.customClass = 'class1 class2';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
@@ -588,67 +624,76 @@ describe('Terminal', () => {
             expect(inputElement.nativeElement.hasAttribute('autofocus')).toBe(true);
         });
 
-        it('should render command list container', () => {
+        it('should render command list container', async () => {
             // Add some commands
-            terminalInstance.commands = [
+            terminalInstance.commands.set([
                 { text: 'ls', response: 'file1.txt file2.txt' },
                 { text: 'pwd', response: '/home/user' }
-            ];
-            fixture.detectChanges();
+            ]);
+            await fixture.whenStable();
 
-            const commandListElements = fixture.debugElement.queryAll(By.css('div'));
-            expect(commandListElements.length).toBeGreaterThan(0);
+            expect(fixture.debugElement.query(By.css('.p-terminal-command-list'))).toBeTruthy();
+            expect(commandElements().length).toBe(2);
         });
     });
 
     describe('Command History Display', () => {
         it('should display executed commands', async () => {
-            terminalInstance.commands = [
+            terminalInstance.commands.set([
                 { text: 'ls', response: 'file1.txt' },
                 { text: 'pwd', response: '/home/user' }
-            ];
+            ]);
             component.prompt = '$ ';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
             // Verify commands are in the component
-            expect(terminalInstance.commands.length).toBe(2);
-            expect(terminalInstance.commands[0].text).toBe('ls');
-            expect(terminalInstance.commands[0].response).toBe('file1.txt');
+            expect(terminalInstance.commands().length).toBe(2);
+            expect(terminalInstance.commands()[0].text).toBe('ls');
+            expect(terminalInstance.commands()[0].response).toBe('file1.txt');
+
+            const rendered = commandElements();
+            expect(rendered.length).toBe(2);
+            expect(rendered[0].query(By.css('.p-terminal-prompt-label')).nativeElement.textContent).toBe('$ ');
+            expect(rendered[0].query(By.css('.p-terminal-command-value')).nativeElement.textContent).toBe('ls');
+            expect(rendered[1].query(By.css('.p-terminal-command-value')).nativeElement.textContent).toBe('pwd');
         });
 
-        it('should display command responses', () => {
-            terminalInstance.commands = [{ text: 'echo hello', response: 'hello' }];
-            fixture.detectChanges();
+        it('should display command responses', async () => {
+            terminalInstance.commands.set([{ text: 'echo hello', response: 'hello' }]);
+            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBe('hello');
+            expect(terminalInstance.commands()[0].response).toBe('hello');
+            expect(commandResponseElements()[0].nativeElement.textContent).toBe('hello');
         });
 
-        it('should handle commands without responses', () => {
-            terminalInstance.commands = [{ text: 'command without response' }];
-            fixture.detectChanges();
+        it('should handle commands without responses', async () => {
+            terminalInstance.commands.set([{ text: 'command without response' }]);
+            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBeUndefined();
+            expect(terminalInstance.commands()[0].response).toBeUndefined();
+            expect(commandResponseElements()[0].nativeElement.textContent).toBe('');
         });
 
-        it('should display multiple command responses correctly', () => {
-            terminalInstance.commands = [
+        it('should display multiple command responses correctly', async () => {
+            terminalInstance.commands.set([
                 { text: 'echo first', response: 'first output' },
                 { text: 'echo second', response: 'second output' },
                 { text: 'echo third', response: 'third output' }
-            ];
-            fixture.detectChanges();
+            ]);
+            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBe('first output');
-            expect(terminalInstance.commands[1].response).toBe('second output');
-            expect(terminalInstance.commands[2].response).toBe('third output');
+            expect(terminalInstance.commands()[0].response).toBe('first output');
+            expect(terminalInstance.commands()[1].response).toBe('second output');
+            expect(terminalInstance.commands()[2].response).toBe('third output');
+            expect(commandResponseElements().map((el) => el.nativeElement.textContent)).toEqual(['first output', 'second output', 'third output']);
         });
     });
 
     describe('Edge Cases', () => {
         it('should handle null/undefined commands', () => {
-            terminalInstance.command = null as any;
+            terminalInstance.command.set(null as any);
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
 
             expect(() => terminalInstance.handleCommand(enterEvent)).not.toThrow();
@@ -656,25 +701,25 @@ describe('Terminal', () => {
 
         it('should handle very long commands', () => {
             const longCommand = 'a'.repeat(10000);
-            terminalInstance.command = longCommand;
+            terminalInstance.command.set(longCommand);
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
 
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands[0].text).toBe(longCommand);
+            expect(terminalInstance.commands()[0].text).toBe(longCommand);
             expect(terminalService.sendCommand).toHaveBeenCalledWith(longCommand);
         });
 
         it('should handle special characters in commands', () => {
             const specialCommand = 'echo "Hello @#$%^&*()[]{}|\\:";\'<>?,./`~';
-            terminalInstance.command = specialCommand;
+            terminalInstance.command.set(specialCommand);
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
 
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands[0].text).toBe(specialCommand);
+            expect(terminalInstance.commands()[0].text).toBe(specialCommand);
             expect(terminalService.sendCommand).toHaveBeenCalledWith(specialCommand);
         });
 
@@ -682,13 +727,19 @@ describe('Terminal', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
             for (let i = 0; i < 10; i++) {
-                terminalInstance.command = `command${i}`;
+                terminalInstance.command.set(`command${i}`);
                 const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
                 terminalInstance.handleCommand(enterEvent);
             }
 
-            expect(terminalInstance.commands.length).toBe(10);
+            expect(terminalInstance.commands().length).toBe(10);
             expect(terminalService.sendCommand).toHaveBeenCalledTimes(10);
+        });
+
+        it('should ignore a service response when no command was sent', () => {
+            expect(() => terminalService.sendResponse('orphan response')).not.toThrow();
+
+            expect(terminalInstance.commands()).toEqual([]);
         });
 
         it('should handle component creation and destruction gracefully', () => {
@@ -697,7 +748,6 @@ describe('Terminal', () => {
                 tempFixture.detectChanges();
                 const tempInstance = tempFixture.debugElement.query(By.directive(Terminal)).componentInstance;
                 expect(tempInstance).toBeTruthy();
-                tempInstance.ngOnDestroy();
                 tempFixture.destroy();
             }).not.toThrow();
         });
@@ -718,21 +768,16 @@ describe('Terminal', () => {
             await fixture2.whenStable();
             fixture2.detectChanges();
 
-            const instance1 = fixture1.debugElement.query(By.directive(Terminal)).componentInstance;
-            const instance2 = fixture2.debugElement.query(By.directive(Terminal)).componentInstance;
+            const instance1 = fixture1.debugElement.query(By.directive(Terminal)).componentInstance as Terminal;
+            const instance2 = fixture2.debugElement.query(By.directive(Terminal)).componentInstance as Terminal;
 
-            expect(instance1.welcomeMessage).toBe('Terminal 1');
-            expect(instance1.prompt).toBe('1> ');
-            expect(instance2.welcomeMessage).toBe('Terminal 2');
-            expect(instance2.prompt).toBe('2> ');
+            expect(instance1.welcomeMessage()).toBe('Terminal 1');
+            expect(instance1.prompt()).toBe('1> ');
+            expect(instance2.welcomeMessage()).toBe('Terminal 2');
+            expect(instance2.prompt()).toBe('2> ');
             expect(instance1).not.toBe(instance2);
-        });
-
-        it('should handle subscription errors gracefully', () => {
-            // Simulate subscription error
-            terminalInstance.subscription = null as any;
-
-            expect(() => terminalInstance.ngOnDestroy()).not.toThrow();
+            expect(welcomeMessageElement(fixture1).nativeElement.textContent.trim()).toBe('Terminal 1');
+            expect(welcomeMessageElement(fixture2).nativeElement.textContent.trim()).toBe('Terminal 2');
         });
     });
 
@@ -741,20 +786,22 @@ describe('Terminal', () => {
             const staticFixture = TestBed.createComponent(TestStaticPropsTerminalComponent);
             staticFixture.detectChanges();
 
-            const staticTerminal = staticFixture.debugElement.query(By.directive(Terminal)).componentInstance;
+            const staticTerminal = staticFixture.debugElement.query(By.directive(Terminal)).componentInstance as Terminal;
 
-            expect(staticTerminal.welcomeMessage).toBe('System Ready');
-            expect(staticTerminal.prompt).toBe('system> ');
+            expect(staticTerminal.welcomeMessage()).toBe('System Ready');
+            expect(staticTerminal.prompt()).toBe('system> ');
+            expect(welcomeMessageElement(staticFixture).nativeElement.textContent.trim()).toBe('System Ready');
+            expect(promptLabelElements(staticFixture).at(-1)!.nativeElement.textContent).toBe('system> ');
         });
 
         it('should work with styled component', () => {
             const styleFixture = TestBed.createComponent(TestStyledTerminalComponent);
             styleFixture.detectChanges();
 
-            const styleTerminal = styleFixture.debugElement.query(By.directive(Terminal)).componentInstance;
             const rootElement = styleFixture.debugElement.query(By.directive(Terminal));
 
             expect(rootElement.nativeElement.classList.contains('custom-terminal')).toBe(true);
+            expect(rootElement.nativeElement.classList.contains('p-terminal')).toBe(true);
         });
 
         it('should maintain state across property changes', async () => {
@@ -764,8 +811,8 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBe('Initial');
-            expect(terminalInstance.prompt).toBe('init> ');
+            expect(terminalInstance.welcomeMessage()).toBe('Initial');
+            expect(terminalInstance.prompt()).toBe('init> ');
 
             component.welcomeMessage = 'Updated';
             component.prompt = 'update> ';
@@ -773,8 +820,8 @@ describe('Terminal', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(terminalInstance.welcomeMessage).toBe('Updated');
-            expect(terminalInstance.prompt).toBe('update> ');
+            expect(terminalInstance.welcomeMessage()).toBe('Updated');
+            expect(terminalInstance.prompt()).toBe('update> ');
         });
 
         it('should work with dynamic properties', async () => {
@@ -782,10 +829,11 @@ describe('Terminal', () => {
             const dynamicComponent = dynamicFixture.componentInstance;
             dynamicFixture.detectChanges();
 
-            const dynamicTerminal = dynamicFixture.debugElement.query(By.directive(Terminal)).componentInstance;
+            const dynamicTerminal = dynamicFixture.debugElement.query(By.directive(Terminal)).componentInstance as Terminal;
 
-            expect(dynamicTerminal.welcomeMessage).toBe('Dynamic Welcome');
-            expect(dynamicTerminal.prompt).toBe('dynamic$ ');
+            expect(dynamicTerminal.welcomeMessage()).toBe('Dynamic Welcome');
+            expect(dynamicTerminal.prompt()).toBe('dynamic$ ');
+            expect(welcomeMessageElement(dynamicFixture).nativeElement.textContent.trim()).toBe('Dynamic Welcome');
 
             // Update properties dynamically
             dynamicComponent.message = 'Changed Welcome';
@@ -794,8 +842,10 @@ describe('Terminal', () => {
             await dynamicFixture.whenStable();
             dynamicFixture.detectChanges();
 
-            expect(dynamicTerminal.welcomeMessage).toBe('Changed Welcome');
-            expect(dynamicTerminal.prompt).toBe('changed> ');
+            expect(dynamicTerminal.welcomeMessage()).toBe('Changed Welcome');
+            expect(dynamicTerminal.prompt()).toBe('changed> ');
+            expect(welcomeMessageElement(dynamicFixture).nativeElement.textContent.trim()).toBe('Changed Welcome');
+            expect(promptLabelElements(dynamicFixture).at(-1)!.nativeElement.textContent).toBe('changed> ');
         });
 
         it('should handle complete workflow', async () => {
@@ -809,20 +859,25 @@ describe('Terminal', () => {
             fixture.detectChanges();
 
             // Execute command
-            terminalInstance.command = 'ls -la';
+            terminalInstance.command.set('ls -la');
             const enterEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(enterEvent);
 
-            expect(terminalInstance.commands.length).toBe(1);
-            expect(terminalInstance.commands[0].text).toBe('ls -la');
+            expect(terminalInstance.commands().length).toBe(1);
+            expect(terminalInstance.commands()[0].text).toBe('ls -la');
 
             // Simulate response
             terminalService.sendResponse('total 8\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .\ndrwxr-xr-x  3 user user 4096 Jan  1 12:00 ..');
-            await new Promise((resolve) => setTimeout(resolve, 100));
-            await fixture.whenStable();
 
-            expect(terminalInstance.commands[0].response).toBe('total 8\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .\ndrwxr-xr-x  3 user user 4096 Jan  1 12:00 ..');
-            expect(terminalInstance.commandProcessed).toBe(true);
+            expect(terminalInstance.commands()[0].response).toBe('total 8\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .\ndrwxr-xr-x  3 user user 4096 Jan  1 12:00 ..');
+            expect(terminalInstance.commandProcessed()).toBe(true);
+
+            await fixture.whenStable();
+            expect(commandElements().length).toBe(1);
+            expect(commandElements()[0].query(By.css('.p-terminal-prompt-label')).nativeElement.textContent).toBe('test> ');
+            expect(commandElements()[0].query(By.css('.p-terminal-command-value')).nativeElement.textContent).toBe('ls -la');
+            expect(commandResponseElements()[0].nativeElement.textContent).toBe('total 8\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .\ndrwxr-xr-x  3 user user 4096 Jan  1 12:00 ..');
+            expect(terminalInstance.commandProcessed()).toBe(false);
         });
     });
 
@@ -838,12 +893,12 @@ describe('Terminal', () => {
         it('should call handleCommand programmatically', () => {
             vi.spyOn(terminalService, 'sendCommand').mockImplementation(() => {});
 
-            terminalInstance.command = 'programmatic command';
+            terminalInstance.command.set('programmatic command');
             const mockEvent = new KeyboardEvent('keydown', { keyCode: 13 });
             terminalInstance.handleCommand(mockEvent);
 
             expect(terminalService.sendCommand).toHaveBeenCalledWith('programmatic command');
-            expect(terminalInstance.commands.length).toBe(1);
+            expect(terminalInstance.commands().length).toBe(1);
         });
 
         it('should call focus method programmatically', () => {
@@ -855,32 +910,23 @@ describe('Terminal', () => {
             expect(mockElement.focus).toHaveBeenCalled();
         });
 
-        it('should handle ngAfterViewInit programmatically', () => {
-            expect(() => terminalInstance.ngAfterViewInit()).not.toThrow();
-            // Container may not be found in test environment
-            expect(terminalInstance.ngAfterViewInit).toBeDefined();
-        });
+        it('should apply a changed response input to the latest command only', async () => {
+            terminalInstance.commands.set([{ text: 'first' }, { text: 'second' }]);
 
-        it('should handle ngAfterViewChecked programmatically', () => {
-            const mockContainer = {
-                scrollTop: 0,
-                scrollHeight: 500
-            };
-            terminalInstance.container = mockContainer as any;
-            terminalInstance.commandProcessed = true;
+            component.response = 'Test Response';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            expect(() => terminalInstance.ngAfterViewChecked()).not.toThrow();
-            expect(mockContainer.scrollTop).toBe(500);
-            expect(terminalInstance.commandProcessed).toBe(false);
-        });
+            expect(terminalInstance.commands()[0].response).toBeUndefined();
+            expect(terminalInstance.commands()[1].response).toBe('Test Response');
+            expect(commandResponseElements().map((el) => el.nativeElement.textContent)).toEqual(['', 'Test Response']);
 
-        it('should handle response setter programmatically', () => {
-            terminalInstance.commands.push({ text: 'test' });
+            component.response = 'Second Response';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            terminalInstance.response = 'Test Response';
-
-            expect(terminalInstance.commands[0].response).toBe('Test Response');
-            expect(terminalInstance.commandProcessed).toBe(true);
+            expect(terminalInstance.commands()[1].response).toBe('Second Response');
+            expect(commandResponseElements()[1].nativeElement.textContent).toBe('Second Response');
         });
     });
 
@@ -1063,19 +1109,19 @@ describe('Terminal', () => {
                 pt = {
                     root: ({ instance }: any) => {
                         return {
-                            class: instance?.welcomeMessage ? 'HAS-WELCOME' : 'NO-WELCOME'
+                            class: instance?.welcomeMessage() ? 'HAS-WELCOME' : 'NO-WELCOME'
                         };
                     },
                     welcomeMessage: ({ instance }: any) => {
                         return {
                             style: {
-                                'background-color': instance?.welcomeMessage ? 'yellow' : 'transparent'
+                                'background-color': instance?.welcomeMessage() ? 'yellow' : 'transparent'
                             }
                         };
                     },
                     prompt: ({ instance }: any) => {
                         return {
-                            class: instance?.prompt ? 'HAS_PROMPT_CLASS' : 'NO_PROMPT_CLASS'
+                            class: instance?.prompt() ? 'HAS_PROMPT_CLASS' : 'NO_PROMPT_CLASS'
                         };
                     }
                 };

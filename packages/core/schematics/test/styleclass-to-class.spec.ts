@@ -761,6 +761,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-inplace class="existing my-inplace"></p-inplace>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-terminal', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-terminal welcomeMessage="Welcome" prompt="$ " styleClass="my-terminal"></p-terminal>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-terminal welcomeMessage="Welcome" prompt="$ " class="my-terminal"></p-terminal>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-terminal', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-terminal [styleClass]="myClass"></p-terminal>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-terminal [class]="myClass"></p-terminal>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-terminal', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-terminal class="existing" styleClass="my-terminal"></p-terminal>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-terminal class="existing my-terminal"></p-terminal>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

@@ -9,7 +9,7 @@
         "styleclass-to-class": {
             "version": "3.0.0",
             "factory": "./migrations/styleclass-to-class/migration",
-            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute: p-toast, p-message, p-tag, p-skeleton, p-card, p-radiobutton/p-radioButton/p-radio-button, p-progressbar/p-progressBar/p-progress-bar, p-divider, p-progressspinner/p-progressSpinner/p-progress-spinner, p-timeline, p-toolbar, p-avatar, p-chip, p-inputgroup/p-inputGroup/p-input-group, p-iconfield/p-iconField/p-icon-field, p-inputicon/p-inputIcon/p-input-icon, p-toggleswitch/p-toggleSwitch/p-toggle-switch, p-colorpicker/p-colorPicker/p-color-picker, p-metergroup/p-meterGroup/p-meter-group, p-inplace and p-togglebutton/p-toggleButton/p-toggle-button."
+            "description": "Rewrite styleClass/[styleClass] to class/[class] on selectors whose styleClass input was removed in this version in favor of the native class attribute: p-toast, p-message, p-tag, p-skeleton, p-card, p-radiobutton/p-radioButton/p-radio-button, p-progressbar/p-progressBar/p-progress-bar, p-divider, p-progressspinner/p-progressSpinner/p-progress-spinner, p-timeline, p-toolbar, p-avatar, p-chip, p-inputgroup/p-inputGroup/p-input-group, p-iconfield/p-iconField/p-icon-field, p-inputicon/p-inputIcon/p-input-icon, p-toggleswitch/p-toggleSwitch/p-toggle-switch, p-colorpicker/p-colorPicker/p-color-picker, p-metergroup/p-meterGroup/p-meter-group, p-inplace, p-togglebutton/p-toggleButton/p-toggle-button and p-terminal."
         },
         "remove-dead-inputs": {
             "version": "3.0.0",
