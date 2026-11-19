@@ -1,0 +1,40 @@
+name: Deploy docs
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+concurrency:
+    group: deploy-docs
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+    deployments: write
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment:
+            name: docs
+            url: https://exhaustive-ui.e-xiste.com
+
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup
+
+            - name: Build packages and docs
+              env:
+                  NODE_ENV: production
+              run: |
+                  pnpm run build:packages
+
+            # The docs app is built with SSR enabled; Cloudflare Pages serves the browser bundle
+            # and falls back to index.html for client-side routes.
+            - name: Deploy to Cloudflare Pages
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: pages deploy apps/docs/dist/docs/browser --project-name=exhaustive-ui --branch=main --commit-dirty=true

@@ -1,0 +1,35 @@
+name: Release
+
+on:
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: npm dist-tag (latest, next, beta, rc)
+                required: true
+                default: next
+
+permissions:
+    contents: read
+    id-token: write
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        environment: npm
+
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/setup
+
+            - name: Build
+              env:
+                  NODE_ENV: production
+              run: |
+                  pnpm run build:packages
+
+            - name: Publish @exhaustive-ui/* to npm
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+                  pnpm recursive publish --filter './packages/*' --no-git-checks --report-summary --tag ${{ inputs.tag }}
