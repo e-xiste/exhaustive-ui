@@ -172,11 +172,11 @@ describe('InputOtp', () => {
         });
 
         it('should initialize with default properties', () => {
-            expect(inputOtpInstance.length).toBe(4);
-            expect(inputOtpInstance.mask).toBeFalsy();
-            expect(inputOtpInstance.integerOnly).toBeFalsy();
-            expect(inputOtpInstance.readonly).toBeFalsy();
-            expect(inputOtpInstance.tokens).toEqual([]);
+            expect(inputOtpInstance.length()).toBe(4);
+            expect(inputOtpInstance.mask()).toBeFalsy();
+            expect(inputOtpInstance.integerOnly()).toBeFalsy();
+            expect(inputOtpInstance.readonly()).toBeFalsy();
+            expect(inputOtpInstance.tokens()).toEqual([]);
         });
 
         it('should render correct number of input fields', () => {
@@ -211,7 +211,7 @@ describe('InputOtp', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputOtpInstance.tokens[0]).toBe('1');
+            expect(inputOtpInstance.tokens()[0]).toBe('1');
             expect(component.value).toBe('1');
         });
 
@@ -248,7 +248,7 @@ describe('InputOtp', () => {
             await fixture.whenStable();
 
             expect(component.value).toBe('1234');
-            expect(inputOtpInstance.tokens).toEqual(['1', '2', '3', '4']);
+            expect(inputOtpInstance.tokens()).toEqual(['1', '2', '3', '4']);
         });
     });
 
@@ -353,7 +353,7 @@ describe('InputOtp', () => {
             await fixture.whenStable();
 
             expect(pasteEvent.preventDefault).toHaveBeenCalled();
-            expect(inputOtpInstance.tokens).toEqual(['1', '2', '3', '4']);
+            expect(inputOtpInstance.tokens()).toEqual(['1', '2', '3', '4']);
             expect(component.value).toBe('1234');
         });
 
@@ -373,7 +373,7 @@ describe('InputOtp', () => {
             await fixture.whenStable();
 
             // Should only take characters up to length
-            expect(inputOtpInstance.tokens.length).toBeLessThanOrEqual(5);
+            expect(inputOtpInstance.tokens().length).toBeLessThanOrEqual(5);
             expect(component.value.length).toBeLessThanOrEqual(5);
         });
     });
@@ -398,14 +398,14 @@ describe('InputOtp', () => {
         it('should respect length property', () => {
             const inputs = fixture.debugElement.queryAll(By.css('input'));
             expect(inputs.length).toBe(6);
-            expect(inputOtpInstance.length).toBe(6);
+            expect(inputOtpInstance.length()).toBe(6);
         });
 
         it('should apply mask property', () => {
             component.mask = true;
             fixture.detectChanges();
 
-            expect(inputOtpInstance.inputType).toBe('password');
+            expect(inputOtpInstance.inputType()).toBe('password');
 
             const inputs = fixture.debugElement.queryAll(By.css('input'));
             inputs.forEach((input) => {
@@ -504,7 +504,7 @@ describe('InputOtp', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputOtpInstance.tokens).toEqual(['1', '2', '3', '4']);
+            expect(inputOtpInstance.tokens()).toEqual(['1', '2', '3', '4']);
         });
 
         it('should validate required and minLength', async () => {
@@ -549,13 +549,13 @@ describe('InputOtp', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputOtpInstance.tokens).toEqual([]);
+            expect(inputOtpInstance.tokens()).toEqual([]);
 
             component.value = undefined as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputOtpInstance.tokens).toEqual([]);
+            expect(inputOtpInstance.tokens()).toEqual([]);
         });
 
         it('should handle empty string values', async () => {
@@ -563,7 +563,7 @@ describe('InputOtp', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputOtpInstance.tokens).toEqual([]);
+            expect(inputOtpInstance.tokens()).toEqual([]);
 
             const inputs = fixture.debugElement.queryAll(By.css('input'));
             inputs.forEach((input) => {
@@ -774,6 +774,102 @@ describe('InputOtp', () => {
     });
 });
 
+describe('InputOtp OnPush Rendering Tests', () => {
+    let fixture: ComponentFixture<InputOtp>;
+    let component: InputOtp;
+
+    const queryInputs = () => fixture.debugElement.queryAll(By.css('input')).map((debugElement) => debugElement.nativeElement as HTMLInputElement);
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [InputOtp, FormsModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(InputOtp);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should re-render the number of inputs when length changes', () => {
+        expect(queryInputs().length).toBe(4);
+
+        fixture.componentRef.setInput('length', 6);
+        fixture.detectChanges();
+
+        expect(queryInputs().length).toBe(6);
+        expect(queryInputs()[0].getAttribute('maxlength')).toBe('6');
+    });
+
+    it('should re-render the input type when mask changes', () => {
+        expect(queryInputs().every((input) => input.type === 'text')).toBe(true);
+
+        fixture.componentRef.setInput('mask', true);
+        fixture.detectChanges();
+
+        expect(component.inputType()).toBe('password');
+        expect(queryInputs().every((input) => input.type === 'password')).toBe(true);
+    });
+
+    it('should re-render the inputmode when integerOnly changes', () => {
+        expect(queryInputs()[0].getAttribute('inputmode')).toBe('text');
+
+        fixture.componentRef.setInput('integerOnly', true);
+        fixture.detectChanges();
+
+        expect(component.inputMode()).toBe('numeric');
+        expect(queryInputs().every((input) => input.getAttribute('inputmode') === 'numeric')).toBe(true);
+    });
+
+    it('should re-render the readonly, tabindex and disabled attributes when the inputs change', () => {
+        expect(queryInputs()[0].hasAttribute('readonly')).toBe(false);
+        expect(queryInputs()[0].hasAttribute('tabindex')).toBe(false);
+        expect(queryInputs()[0].hasAttribute('disabled')).toBe(false);
+
+        fixture.componentRef.setInput('readonly', true);
+        fixture.componentRef.setInput('tabindex', 3);
+        fixture.componentRef.setInput('disabled', true);
+        fixture.detectChanges();
+
+        expect(queryInputs().every((input) => input.hasAttribute('readonly'))).toBe(true);
+        expect(queryInputs().every((input) => input.getAttribute('tabindex') === '3')).toBe(true);
+        expect(queryInputs().every((input) => input.hasAttribute('disabled'))).toBe(true);
+    });
+
+    it('should re-render the input class when styleClass changes', () => {
+        expect(queryInputs()[0].classList.contains('custom-otp')).toBe(false);
+
+        fixture.componentRef.setInput('styleClass', 'custom-otp');
+        fixture.detectChanges();
+
+        expect(queryInputs().every((input) => input.classList.contains('custom-otp'))).toBe(true);
+        expect(queryInputs().every((input) => input.classList.contains('p-inputotp-input'))).toBe(true);
+    });
+
+    it('should re-render the input values after writeValue', () => {
+        component.writeValue('12');
+        fixture.detectChanges();
+
+        expect(component.tokens()).toEqual(['1', '2']);
+        expect(queryInputs().map((input) => input.value)).toEqual(['1', '2', '', '']);
+
+        component.writeValue(null);
+        fixture.detectChanges();
+
+        expect(component.tokens()).toEqual([]);
+        expect(queryInputs().map((input) => input.value)).toEqual(['', '', '', '']);
+    });
+
+    it('should truncate the written value to length', () => {
+        component.writeValue('123456');
+        fixture.detectChanges();
+
+        expect(component.value()).toEqual(['1', '2', '3', '4']);
+        expect(component.tokens()).toEqual(['1', '2', '3', '4']);
+        expect(component.modelValue()).toEqual(['1', '2', '3', '4']);
+    });
+});
+
 describe('InputOtp PassThrough Tests', () => {
     let fixture: ComponentFixture<InputOtp>;
     let component: InputOtp;
@@ -826,10 +922,10 @@ describe('InputOtp PassThrough Tests', () => {
 
     describe('PT Case 3: Instance variables', () => {
         it('should access instance variables in PT function', () => {
-            component.length = 6;
+            fixture.componentRef.setInput('length', 6);
             fixture.componentRef.setInput('pt', {
                 root: ({ instance }: any) => ({
-                    class: instance?.length === 6 ? 'LENGTH_SIX' : ''
+                    class: instance?.length() === 6 ? 'LENGTH_SIX' : ''
                 })
             });
             fixture.detectChanges();

@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    AfterContentInit,
-    AfterViewChecked,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    forwardRef,
-    inject,
-    InjectionToken,
-    input,
-    Input,
-    NgModule,
-    TemplateRef,
-    ViewEncapsulation,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { AutoFocus } from '@exhaustive-ui/core/autofocus';
@@ -25,11 +7,8 @@ import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { InputText } from '@exhaustive-ui/core/inputtext';
-import { Nullable } from '@exhaustive-ui/core/ts-helpers';
 import { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpPassThrough } from '@exhaustive-ui/core/types/inputotp';
 import { InputOtpStyle } from './style/inputotpstyle';
-
-const INPUTOTP_INSTANCE = new InjectionToken<InputOtp>('INPUTOTP_INSTANCE');
 
 export const INPUT_OTP_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
@@ -46,26 +25,25 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
  */
 @Component({
     selector: 'p-inputOtp, p-inputotp, p-input-otp',
-    standalone: true,
     imports: [CommonModule, InputText, AutoFocus, SharedModule, BindModule],
     template: `
-        @for (i of getRange(length); track trackByFn($index)) {
-            @if (!inputTemplate() && !_inputTemplate) {
+        @for (i of getRange(length()); track trackByFn($index)) {
+            @if (!inputTemplate() && !_inputTemplate()) {
                 <input
                     type="text"
                     pInputText
                     [value]="getModelValue(i)"
-                    [attr.maxlength]="i === 1 ? length : 1"
-                    [attr.type]="inputType"
-                    [class]="cn(cx('pcInputText'), styleClass)"
+                    [attr.maxlength]="i === 1 ? length() : 1"
+                    [attr.type]="inputType()"
+                    [class]="cn(cx('pcInputText'), styleClass())"
                     [pSize]="size()"
                     [variant]="$variant()"
                     [invalid]="invalid()"
-                    [attr.inputmode]="inputMode"
+                    [attr.inputmode]="inputMode()"
                     [attr.name]="name()"
-                    [attr.tabindex]="tabindex"
+                    [attr.tabindex]="tabindex()"
                     [attr.required]="required() ? '' : undefined"
-                    [attr.readonly]="readonly ? '' : undefined"
+                    [attr.readonly]="readonly() ? '' : undefined"
                     [attr.disabled]="$disabled() ? '' : undefined"
                     (input)="onInput($event, i - 1)"
                     (focus)="onInputFocus($event)"
@@ -77,67 +55,66 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
                     [unstyled]="unstyled()"
                 />
             }
-            @if (inputTemplate() || _inputTemplate) {
-                <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate; context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i }"> </ng-container>
+            @if (inputTemplate() || _inputTemplate()) {
+                <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate(); context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i }"> </ng-container>
             }
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [INPUT_OTP_VALUE_ACCESSOR, InputOtpStyle, { provide: INPUTOTP_INSTANCE, useExisting: InputOtp }, { provide: PARENT_INSTANCE, useExisting: InputOtp }],
+    providers: [INPUT_OTP_VALUE_ACCESSOR, InputOtpStyle, { provide: PARENT_INSTANCE, useExisting: InputOtp }],
     hostDirectives: [Bind],
     host: {
         '[class]': "cx('root')"
     }
 })
-export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements AfterViewChecked {
+export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
     componentName = 'InputOtp';
 
     _componentStyle = inject(InputOtpStyle);
 
-    $pcInputOtp: InputOtp | undefined = inject(INPUTOTP_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     /**
      * When present, it specifies that an input field is read-only.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonly: boolean;
+    readonly readonly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Index of the element in tabbing order.
      * @group Props
      */
-    @Input() tabindex: number | null = null;
+    readonly tabindex = input<number | null>(null);
     /**
      * Number of characters to initiate.
      * @group Props
      */
-    @Input() length: number = 4;
+    readonly length = input<number>(4);
     /**
      * Style class of the input element.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    readonly styleClass = input<string | undefined>();
     /**
      * Mask pattern.
      * @group Props
      */
-    @Input() mask: boolean = false;
+    readonly mask = input<boolean>(false);
     /**
      * When present, it specifies that an input field is integer-only.
      * @group Props
      */
-    @Input() integerOnly: boolean = false;
+    readonly integerOnly = input<boolean>(false);
     /**
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocus: boolean | undefined;
+    readonly autofocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Specifies the input variant of the component.
      * @defaultValue undefined
@@ -177,37 +154,20 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _inputTemplate: TemplateRef<InputOtpInputTemplateContext> | undefined;
+    readonly _inputTemplate = computed<TemplateRef<InputOtpInputTemplateContext> | undefined>(() => this.templates().at(-1)?.template);
 
-    tokens: any = [];
+    tokens = signal<any>([]);
 
-    value: any;
+    value = signal<any>(undefined);
 
     $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
 
-    get inputMode(): string {
-        return this.integerOnly ? 'numeric' : 'text';
-    }
+    readonly inputMode = computed<string>(() => (this.integerOnly() ? 'numeric' : 'text'));
 
-    get inputType(): string {
-        return this.mask ? 'password' : 'text';
-    }
-
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'input':
-                    this._inputTemplate = item.template;
-                    break;
-                default:
-                    this._inputTemplate = item.template;
-                    break;
-            }
-        });
-    }
+    readonly inputType = computed<string>(() => (this.mask() ? 'password' : 'text'));
 
     getToken(index) {
-        return this.tokens[index];
+        return this.tokens()[index];
     }
 
     getTemplateEvents(index) {
@@ -227,7 +187,11 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
             event.stopPropagation();
             return;
         }
-        this.tokens[index] = value;
+        this.tokens.update((tokens) => {
+            const next = [...tokens];
+            next[index] = value;
+            return next;
+        });
         this.updateModel(event);
 
         if (event.inputType === 'deleteContentBackward') {
@@ -238,7 +202,7 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     }
 
     updateModel(event: any) {
-        const newValue = this.tokens.join('');
+        const newValue = this.tokens().join('');
         this.writeModelValue(newValue);
         this.onModelChange(newValue);
 
@@ -249,24 +213,25 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     }
 
     updateTokens() {
-        if (this.value !== null && this.value !== undefined) {
-            if (Array.isArray(this.value)) {
-                this.tokens = [...this.value];
+        const value = this.value();
+        if (value !== null && value !== undefined) {
+            if (Array.isArray(value)) {
+                this.tokens.set([...value]);
             } else {
-                this.tokens = this.value.toString().split('');
+                this.tokens.set(value.toString().split(''));
             }
         } else {
-            this.tokens = [];
+            this.tokens.set([]);
         }
     }
 
     getModelValue(i: number) {
-        return this.tokens[i - 1] || '';
+        return this.tokens()[i - 1] || '';
     }
 
     getAutofocus(i: number): boolean {
         if (i === 1) {
-            return this.autofocus || false;
+            return this.autofocus() || false;
         }
         return false;
     }
@@ -349,8 +314,8 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
             default:
                 const target = event.target;
                 const hasSelection = target.selectionStart !== target.selectionEnd;
-                const isAtMaxLength = this.tokens.join('').length >= this.length;
-                const isValidKey = this.integerOnly ? /^[0-9]$/.test(event.key) : true;
+                const isAtMaxLength = this.tokens().join('').length >= this.length();
+                const isValidKey = this.integerOnly() ? /^[0-9]$/.test(event.key) : true;
 
                 if (!isValidKey || (isAtMaxLength && event.key !== 'Delete' && !hasSelection)) {
                     event.preventDefault();
@@ -361,7 +326,7 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     }
 
     onPaste(event) {
-        if (!this.$disabled() && !this.readonly) {
+        if (!this.$disabled() && !this.readonly()) {
             let paste = event.clipboardData.getData('text');
 
             if (paste.length) {
@@ -373,10 +338,10 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     }
 
     handleOnPaste(paste, event) {
-        let pastedCode = paste.substring(0, this.length + 1);
+        let pastedCode = paste.substring(0, this.length() + 1);
 
-        if (!this.integerOnly || !isNaN(pastedCode)) {
-            this.tokens = pastedCode.split('');
+        if (!this.integerOnly() || !isNaN(pastedCode)) {
+            this.tokens.set(pastedCode.split(''));
             this.updateModel(event);
         }
     }
@@ -398,16 +363,15 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> implements
     writeControlValue(value: any, setModelValue: (value: any) => void): void {
         if (value) {
             if (Array.isArray(value) && value.length > 0) {
-                this.value = value.slice(0, this.length);
+                this.value.set(value.slice(0, this.length()));
             } else {
-                this.value = value.toString().split('').slice(0, this.length);
+                this.value.set(value.toString().split('').slice(0, this.length()));
             }
         } else {
-            this.value = value;
+            this.value.set(value);
         }
-        setModelValue(this.value);
+        setModelValue(this.value());
         this.updateTokens();
-        this.cd.markForCheck();
     }
 }
 
