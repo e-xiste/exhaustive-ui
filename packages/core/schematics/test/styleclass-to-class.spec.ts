@@ -1381,6 +1381,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-panelmenu class="existing my-menu" [model]="items"></p-panelmenu>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-megamenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-megamenu [model]="items" styleClass="my-megamenu"></p-megamenu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-megamenu [model]="items" class="my-megamenu"></p-megamenu>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-megaMenu and p-mega-menu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-megaMenu [model]="items" [styleClass]="menuClass"></p-megaMenu>\n<p-mega-menu orientation="vertical" [styleClass]="menuClass"></p-mega-menu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-megaMenu [model]="items" [class]="menuClass"></p-megaMenu>\n<p-mega-menu orientation="vertical" [class]="menuClass"></p-mega-menu>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-megamenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-megamenu class="existing" styleClass="my-megamenu" [model]="items"></p-megamenu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-megamenu class="existing my-megamenu" [model]="items"></p-megamenu>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

@@ -85,7 +85,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-menubar',
     'p-panelMenu',
     'p-panelmenu',
-    'p-panel-menu'
+    'p-panel-menu',
+    'p-megaMenu',
+    'p-megamenu',
+    'p-mega-menu'
 ];
 
 /**

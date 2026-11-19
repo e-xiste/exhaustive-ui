@@ -54,6 +54,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * The deprecated `transitionOptions` and `tabindex` on PanelMenu were only forwarded to its internal lists,
  * which never read them: the toggle animation is driven by `motionOptions` and the sub list host always
  * sets its own `tabindex="-1"`.
+ * `disabled`/`queryMatches` on MegaMenuSub were stored but never read: the parent MegaMenu applies the
+ * disabled tabindex itself and the mobile classes read MegaMenu's own `queryMatches`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -95,7 +97,9 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-menubarsub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] },
     { selector: 'p-panelMenu', names: ['transitionOptions', 'tabindex'] },
     { selector: 'p-panelmenu', names: ['transitionOptions', 'tabindex'] },
-    { selector: 'p-panel-menu', names: ['transitionOptions', 'tabindex'] }
+    { selector: 'p-panel-menu', names: ['transitionOptions', 'tabindex'] },
+    { selector: 'p-megaMenuSub', names: ['disabled', 'queryMatches'] },
+    { selector: 'p-megamenu-sub', names: ['disabled', 'queryMatches'] }
 ];
 
 /**
@@ -113,9 +117,11 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * out as well: Menu, TieredMenu, ContextMenu and most other components still expose working inputs of
  * the same names.
  * PanelMenu's `tabindex` is left out too: it is a native attribute and an input on many other components.
+ * MegaMenuSub's `disabled` and `queryMatches` are left out too: `disabled` is a live input almost
+ * everywhere and MegaMenu itself still exposes `queryMatches`.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex'].includes(name)
+    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'disabled', 'queryMatches', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex'].includes(name)
 );
 
 /**
@@ -144,8 +150,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * stored but never read (the parent ContextMenu handles layering); TieredMenu's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation);
  * Menubar's autoZIndex/baseZIndex plus MenubarSub's autoZIndex/baseZIndex/mobileActive/ariaLabel/
- * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); and PanelMenu's transitionOptions
- * and tabindex, forwarded to internal lists that never read them.
+ * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); PanelMenu's transitionOptions
+ * and tabindex, forwarded to internal lists that never read them; and MegaMenuSub's disabled and
+ * queryMatches, never read (MegaMenu handles both itself).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

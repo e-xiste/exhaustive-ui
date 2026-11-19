@@ -302,6 +302,24 @@ describe('remove-dead-inputs', () => {
         expect(warnings.join('\n')).not.toContain('tabindex');
     });
 
+    it('removes disabled/queryMatches from p-megamenu-sub and p-megaMenuSub while keeping them on p-megamenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-megamenu-sub [items]="items" [disabled]="true" queryMatches="true" [root]="true"></p-megamenu-sub>\n<p-megaMenuSub [items]="items" disabled [queryMatches]="matches"></p-megaMenuSub>\n<p-megamenu [model]="items" [disabled]="true"></p-megamenu>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).toBe(`<p-megamenu-sub [items]="items" [root]="true"></p-megamenu-sub>\n<p-megaMenuSub [items]="items"></p-megaMenuSub>\n<p-megamenu [model]="items" [disabled]="true"></p-megamenu>\n`);
+    });
+
+    it('does not report a programmatic disabled or queryMatches access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    check(menu: { disabled: boolean; queryMatches: () => boolean }) {\n        return menu.disabled || menu.queryMatches();\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+    });
+
     it('does not report a programmatic autoZIndex or popup access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    layer(menu: { autoZIndex: boolean; popup: boolean }) {\n        return menu.autoZIndex && menu.popup;\n    }\n}\n`;
