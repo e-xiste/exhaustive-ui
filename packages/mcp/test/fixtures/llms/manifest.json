@@ -1,0 +1,2208 @@
+{
+  "schemaVersion": 1,
+  "package": "@exhaustive-ui/core",
+  "version": "3.0.0-alpha.0",
+  "site": "https://exhaustive-ui.e-xiste.com",
+  "entryPoints": [
+    {
+      "name": "button",
+      "import": "@exhaustive-ui/core/button",
+      "description": "Button directive is an extension to button component.",
+      "modules": [
+        "ButtonModule"
+      ],
+      "declarations": [
+        {
+          "kind": "component",
+          "className": "Button",
+          "selector": "p-button",
+          "standalone": true,
+          "description": "Button is an extension to standard button element with icons and theming.",
+          "inputs": [
+            {
+              "name": "ariaLabel",
+              "type": "string | undefined",
+              "description": "Used to define a string that autocomplete attribute the current element."
+            },
+            {
+              "name": "autofocus",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should automatically get focus on load."
+            },
+            {
+              "name": "badge",
+              "type": "string | undefined",
+              "description": "Value of the badge."
+            },
+            {
+              "name": "badgeClass",
+              "type": "string | undefined",
+              "description": "Style class of the badge.",
+              "deprecated": "use badgeSeverity instead."
+            },
+            {
+              "name": "badgeSeverity",
+              "type": "\"success\" | \"info\" | \"warn\" | \"danger\" | \"secondary\" | \"contrast\" | \"help\" | \"primary\" | null | undefined",
+              "values": [
+                "success",
+                "info",
+                "warn",
+                "danger",
+                "secondary",
+                "contrast",
+                "help",
+                "primary"
+              ],
+              "default": "'secondary'",
+              "description": "Severity type of the badge."
+            },
+            {
+              "name": "buttonProps",
+              "type": "ButtonProps",
+              "description": "Used to pass all properties of the ButtonProps to the Button component."
+            },
+            {
+              "name": "disabled",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should be disabled."
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "fluid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Spans 100% width of the container when enabled."
+            },
+            {
+              "name": "hostName",
+              "type": "any",
+              "default": "''"
+            },
+            {
+              "name": "icon",
+              "type": "string | undefined",
+              "description": "Name of the icon."
+            },
+            {
+              "name": "iconPos",
+              "type": "ButtonIconPosition",
+              "values": [
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ],
+              "default": "'left'",
+              "description": "Position of the icon."
+            },
+            {
+              "name": "label",
+              "type": "string | undefined",
+              "description": "Text of the button."
+            },
+            {
+              "name": "link",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a link style to the button."
+            },
+            {
+              "name": "loading",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Whether the button is in loading state."
+            },
+            {
+              "name": "loadingIcon",
+              "type": "string | undefined",
+              "description": "Icon to display in loading state."
+            },
+            {
+              "name": "outlined",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a border class without a background initially."
+            },
+            {
+              "name": "plain",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a plain textual class to the button without a background initially."
+            },
+            {
+              "name": "pt",
+              "type": "ButtonPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "raised",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a shadow to indicate elevation."
+            },
+            {
+              "name": "rounded",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a circular border radius to the button."
+            },
+            {
+              "name": "severity",
+              "type": "ButtonSeverity",
+              "values": [
+                "success",
+                "info",
+                "warn",
+                "danger",
+                "secondary",
+                "contrast",
+                "help",
+                "primary"
+              ],
+              "description": "Defines the style of the button."
+            },
+            {
+              "name": "size",
+              "type": "\"large\" | \"small\" | undefined",
+              "values": [
+                "large",
+                "small"
+              ],
+              "description": "Defines the size of the button."
+            },
+            {
+              "name": "style",
+              "type": "{ [klass: string]: any; } | null | undefined",
+              "description": "Inline style of the element."
+            },
+            {
+              "name": "styleClass",
+              "type": "string | undefined",
+              "description": "Class of the element."
+            },
+            {
+              "name": "tabindex",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Add a tabindex to the button."
+            },
+            {
+              "name": "text",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a textual class to the button without a background initially."
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "default": "'button'",
+              "description": "Type of the button."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "variant",
+              "type": "\"outlined\" | \"text\" | undefined",
+              "values": [
+                "outlined",
+                "text"
+              ],
+              "description": "Specifies the variant of the component."
+            }
+          ],
+          "outputs": [
+            {
+              "name": "onBlur",
+              "payload": "FocusEvent",
+              "description": "Callback to execute when button loses focus.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (blur)."
+            },
+            {
+              "name": "onClick",
+              "payload": "MouseEvent",
+              "description": "Callback to execute when button is clicked.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (click)."
+            },
+            {
+              "name": "onFocus",
+              "payload": "FocusEvent",
+              "description": "Callback to execute when button is focused.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (focus)."
+            }
+          ],
+          "templates": [
+            {
+              "name": "content",
+              "description": "Custom content template."
+            },
+            {
+              "name": "loadingicon",
+              "context": "ButtonLoadingIconTemplateContext",
+              "description": "Custom loading icon template."
+            },
+            {
+              "name": "icon",
+              "context": "ButtonIconTemplateContext",
+              "description": "Custom icon template."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "host",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the host DOM element."
+            },
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLButtonElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            },
+            {
+              "name": "loadingIcon",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the loading icon's DOM element."
+            },
+            {
+              "name": "icon",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the icon's DOM element."
+            },
+            {
+              "name": "label",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the label's DOM element."
+            },
+            {
+              "name": "pcBadge",
+              "type": "BadgePassThrough",
+              "description": "Used to pass attributes to the Badge component."
+            }
+          ]
+        },
+        {
+          "kind": "directive",
+          "className": "ButtonDirective",
+          "selector": "[pButton]",
+          "standalone": true,
+          "description": "Button directive is an extension to button component.",
+          "inputs": [
+            {
+              "name": "buttonProps",
+              "type": "ButtonProps",
+              "description": "Used to pass all properties of the ButtonProps to the Button component.",
+              "deprecated": "assign props directly to the button element."
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "fluid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Spans 100% width of the container when enabled."
+            },
+            {
+              "name": "hostName",
+              "type": "any",
+              "default": "''"
+            },
+            {
+              "name": "icon",
+              "type": "string",
+              "description": "Name of the icon.",
+              "deprecated": "use pButtonIcon directive instead"
+            },
+            {
+              "name": "iconPos",
+              "type": "ButtonIconPosition",
+              "values": [
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ],
+              "default": "'left'",
+              "description": "Position of the icon."
+            },
+            {
+              "name": "label",
+              "type": "string | undefined",
+              "description": "Text of the button.",
+              "deprecated": "use pButtonLabel directive instead."
+            },
+            {
+              "name": "loading",
+              "type": "boolean",
+              "description": "Whether the button is in loading state."
+            },
+            {
+              "name": "loadingIcon",
+              "type": "string | undefined",
+              "description": "Icon to display in loading state."
+            },
+            {
+              "name": "outlined",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a border class without a background initially."
+            },
+            {
+              "name": "pButtonPT",
+              "type": "ButtonPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the Button component."
+            },
+            {
+              "name": "pButtonUnstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "plain",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a plain textual class to the button without a background initially."
+            },
+            {
+              "name": "pt",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptButtonDirective",
+              "type": "ButtonPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the Button component.",
+              "deprecated": "use pButtonPT instead."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "raised",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a shadow to indicate elevation."
+            },
+            {
+              "name": "rounded",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a circular border radius to the button."
+            },
+            {
+              "name": "severity",
+              "type": "ButtonSeverity",
+              "values": [
+                "success",
+                "info",
+                "warn",
+                "danger",
+                "secondary",
+                "contrast",
+                "help",
+                "primary"
+              ],
+              "description": "Defines the style of the button."
+            },
+            {
+              "name": "size",
+              "type": "\"large\" | \"small\" | undefined",
+              "values": [
+                "large",
+                "small"
+              ],
+              "description": "Defines the size of the button."
+            },
+            {
+              "name": "text",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Add a textual class to the button without a background initially."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ]
+        },
+        {
+          "kind": "directive",
+          "className": "ButtonIcon",
+          "selector": "[pButtonIcon]",
+          "standalone": true,
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "pButtonIconPT",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the pButtonIcon."
+            },
+            {
+              "name": "pButtonUnstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "pt",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptButtonIcon",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the pButtonIcon.",
+              "deprecated": "use pButtonIconPT instead."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ]
+        },
+        {
+          "kind": "directive",
+          "className": "ButtonLabel",
+          "selector": "[pButtonLabel]",
+          "standalone": true,
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "pButtonLabelPT",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the pButtonLabel."
+            },
+            {
+              "name": "pButtonLabelUnstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "pt",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptButtonLabel",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the pButtonLabel.",
+              "deprecated": "use pButtonLabelPT instead."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ]
+        }
+      ],
+      "types": [
+        {
+          "kind": "type",
+          "name": "ButtonIconPosition",
+          "definition": "'left' | 'right' | 'top' | 'bottom'",
+          "values": [
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "interface",
+          "name": "ButtonIconTemplateContext",
+          "description": "Custom icon template context.",
+          "properties": [
+            {
+              "name": "class",
+              "type": "string",
+              "description": "Style class of the icon."
+            },
+            {
+              "name": "pt",
+              "type": "any",
+              "description": "Pass-through options for the icon element."
+            }
+          ]
+        }
+      ],
+      "cssClasses": [
+        {
+          "class": "p-button",
+          "description": "Class name of the root element"
+        },
+        {
+          "class": "p-button-loading-icon",
+          "description": "Class name of the loading icon element"
+        },
+        {
+          "class": "p-button-icon",
+          "description": "Class name of the icon element"
+        }
+      ]
+    },
+    {
+      "name": "inputtext",
+      "import": "@exhaustive-ui/core/inputtext",
+      "description": "InputText directive is an extension to standard input element with theming.",
+      "modules": [
+        "InputTextModule"
+      ],
+      "declarations": [
+        {
+          "kind": "directive",
+          "className": "InputText",
+          "selector": "[pInputText]",
+          "standalone": true,
+          "description": "InputText directive is an extension to standard input element with theming.",
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "fluid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Spans 100% width of the container when enabled."
+            },
+            {
+              "name": "hostName",
+              "type": "any",
+              "default": "''"
+            },
+            {
+              "name": "invalid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should have invalid state style."
+            },
+            {
+              "name": "pInputTextPT",
+              "type": "InputTextPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the InputText component."
+            },
+            {
+              "name": "pInputTextUnstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "pSize",
+              "type": "\"large\" | \"small\" | undefined",
+              "values": [
+                "large",
+                "small"
+              ],
+              "description": "Defines the size of the component."
+            },
+            {
+              "name": "pt",
+              "type": "InputTextPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptInputText",
+              "type": "InputTextPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the InputText component.",
+              "deprecated": "use pInputTextPT instead."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "variant",
+              "type": "\"filled\" | \"outlined\" | undefined",
+              "values": [
+                "filled",
+                "outlined"
+              ],
+              "signal": true,
+              "description": "Specifies the input variant of the component."
+            }
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLInputElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            }
+          ]
+        }
+      ],
+      "cssClasses": [
+        {
+          "class": "p-inputtext",
+          "description": "The class of root element"
+        }
+      ],
+      "types": []
+    },
+    {
+      "name": "select",
+      "import": "@exhaustive-ui/core/select",
+      "description": "Select is used to choose an item from a collection of options.",
+      "modules": [
+        "SelectModule"
+      ],
+      "declarations": [
+        {
+          "kind": "component",
+          "className": "Select",
+          "selector": "p-select",
+          "standalone": true,
+          "description": "Select is used to choose an item from a collection of options.",
+          "inputs": [
+            {
+              "name": "appendTo",
+              "type": "any",
+              "signal": true,
+              "description": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name)."
+            },
+            {
+              "name": "ariaFilterLabel",
+              "type": "string | undefined",
+              "description": "Defines a string that labels the filter input."
+            },
+            {
+              "name": "ariaLabel",
+              "type": "string | undefined",
+              "description": "Used to define a aria label attribute the current element."
+            },
+            {
+              "name": "ariaLabelledBy",
+              "type": "string | undefined",
+              "description": "Establishes relationships between the component and label(s) where its value should be one or more element IDs."
+            },
+            {
+              "name": "autofocus",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should automatically get focus on load."
+            },
+            {
+              "name": "autofocusFilter",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "Applies focus to the filter element when the overlay is shown."
+            },
+            {
+              "name": "autoOptionFocus",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Whether to focus on the first visible or selected element when the overlay panel is shown."
+            },
+            {
+              "name": "checkmark",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Whether the selected option will be shown with a check mark."
+            },
+            {
+              "name": "dataKey",
+              "type": "string | undefined",
+              "description": "A property to uniquely identify a value in options."
+            },
+            {
+              "name": "disabled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should have disabled state style."
+            },
+            {
+              "name": "dropdownIcon",
+              "type": "string | undefined",
+              "description": "Icon class of the select icon."
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "editable",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When present, custom value instead of predefined options can be entered using the editable input field."
+            },
+            {
+              "name": "emptyFilterMessage",
+              "type": "string",
+              "default": "''",
+              "description": "Text to display when filtering does not return any results. Defaults to global value in i18n translation configuration."
+            },
+            {
+              "name": "emptyMessage",
+              "type": "string",
+              "default": "''",
+              "description": "Text to display when there is no data. Defaults to global value in i18n translation configuration."
+            },
+            {
+              "name": "filter",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When specified, displays an input field to filter the items on keyup."
+            },
+            {
+              "name": "filterBy",
+              "type": "string | undefined",
+              "description": "When filtering is enabled, filterBy decides which field or fields (comma separated) to search against."
+            },
+            {
+              "name": "filterFields",
+              "type": "any[] | undefined",
+              "description": "Fields used when filtering the options, defaults to optionLabel."
+            },
+            {
+              "name": "filterLocale",
+              "type": "string | undefined",
+              "description": "Locale to use in filtering. The default locale is the host environment's current locale."
+            },
+            {
+              "name": "filterMatchMode",
+              "type": "\"in\" | \"contains\" | \"startsWith\" | \"endsWith\" | \"equals\" | \"notEquals\" | \"lt\" | \"lte\" | \"gt\" | \"gte\"",
+              "values": [
+                "in",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "equals",
+                "notEquals",
+                "lt",
+                "lte",
+                "gt",
+                "gte"
+              ],
+              "default": "'contains'",
+              "description": "Defines how the items are filtered."
+            },
+            {
+              "name": "filterPlaceholder",
+              "type": "string | undefined",
+              "description": "Placeholder text to show when filter input is empty."
+            },
+            {
+              "name": "filterValue",
+              "type": "string | null | undefined",
+              "description": "When specified, filter displays with this value."
+            },
+            {
+              "name": "fluid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Spans 100% width of the container when enabled."
+            },
+            {
+              "name": "focusOnHover",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "Fields used when filtering the options, defaults to optionLabel."
+            },
+            {
+              "name": "group",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "Whether to display options as grouped when nested options are provided."
+            },
+            {
+              "name": "id",
+              "type": "string | undefined",
+              "description": "Unique identifier of the component"
+            },
+            {
+              "name": "inputId",
+              "type": "string | undefined",
+              "description": "Identifier of the accessible input element."
+            },
+            {
+              "name": "inputSize",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "Specifies the visible width of the input element in characters."
+            },
+            {
+              "name": "invalid",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component should have invalid state style."
+            },
+            {
+              "name": "lazy",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Defines if data is loaded and interacted with in lazy manner."
+            },
+            {
+              "name": "loading",
+              "type": "boolean | undefined",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Whether the select is in loading state."
+            },
+            {
+              "name": "loadingIcon",
+              "type": "string | undefined",
+              "description": "Icon to display in loading state."
+            },
+            {
+              "name": "max",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "The value must be less than or equal to the value."
+            },
+            {
+              "name": "maxlength",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "The number of characters (code points) must not exceed the value of the attribute."
+            },
+            {
+              "name": "min",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "The value must be greater than or equal to the value."
+            },
+            {
+              "name": "minlength",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "The number of characters (code points) must not be less than the value of the attribute, if non-empty."
+            },
+            {
+              "name": "motionOptions",
+              "type": "MotionOptions | undefined",
+              "signal": true,
+              "description": "The motion options."
+            },
+            {
+              "name": "name",
+              "type": "string | undefined",
+              "signal": true,
+              "description": "When present, it specifies that the name of the input."
+            },
+            {
+              "name": "optionDisabled",
+              "type": "string | undefined",
+              "description": "Name of the disabled field of an option."
+            },
+            {
+              "name": "optionGroupChildren",
+              "type": "string",
+              "default": "'items'",
+              "description": "Name of the options field of an option group."
+            },
+            {
+              "name": "optionGroupLabel",
+              "type": "string | undefined",
+              "default": "'label'",
+              "description": "Name of the label field of an option group."
+            },
+            {
+              "name": "optionLabel",
+              "type": "string | undefined",
+              "description": "Name of the label field of an option."
+            },
+            {
+              "name": "options",
+              "type": "any[] | null | undefined",
+              "description": "An array of objects to display as the available options."
+            },
+            {
+              "name": "optionValue",
+              "type": "string | undefined",
+              "description": "Name of the value field of an option."
+            },
+            {
+              "name": "overlayOptions",
+              "type": "OverlayOptions | undefined",
+              "description": "Whether to use overlay API feature. The properties of overlay API can be used like an object in it."
+            },
+            {
+              "name": "panelStyle",
+              "type": "{ [klass: string]: any; } | null | undefined",
+              "description": "Inline style of the overlay panel element."
+            },
+            {
+              "name": "panelStyleClass",
+              "type": "string | undefined",
+              "description": "Style class of the overlay panel element."
+            },
+            {
+              "name": "pattern",
+              "type": "string | null | undefined",
+              "signal": true,
+              "description": "Specifies the value must match the pattern."
+            },
+            {
+              "name": "placeholder",
+              "type": "Signal<string | undefined>",
+              "description": "Default text to display when no option is selected."
+            },
+            {
+              "name": "pt",
+              "type": "SelectPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "readonly",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When present, it specifies that the component cannot be edited."
+            },
+            {
+              "name": "required",
+              "type": "boolean | undefined",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "There must be a value (if set)."
+            },
+            {
+              "name": "resetFilterOnHide",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Clears the filter value when hiding the select."
+            },
+            {
+              "name": "scrollHeight",
+              "type": "string",
+              "default": "'200px'",
+              "description": "Height of the viewport in pixels, a scrollbar is defined if height of list exceeds this value."
+            },
+            {
+              "name": "selectOnFocus",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Determines if the option will be selected on focus."
+            },
+            {
+              "name": "showClear",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "When enabled, a clear icon is displayed to clear the value."
+            },
+            {
+              "name": "size",
+              "type": "\"large\" | \"small\" | undefined",
+              "values": [
+                "large",
+                "small"
+              ],
+              "signal": true,
+              "description": "Specifies the size of the component."
+            },
+            {
+              "name": "step",
+              "type": "number | null | undefined",
+              "signal": true,
+              "description": "Unless the step is set to the any literal, the value must be min + an integral multiple of the step."
+            },
+            {
+              "name": "styleClass",
+              "type": "string | undefined",
+              "description": "Style class of the element.",
+              "deprecated": "since v20.0.0, use `class` instead."
+            },
+            {
+              "name": "tabindex",
+              "type": "number | undefined",
+              "default": "0",
+              "transform": "numberAttribute",
+              "description": "Index of the element in tabbing order."
+            },
+            {
+              "name": "tooltip",
+              "type": "string",
+              "default": "''",
+              "description": "Advisory information to display in a tooltip on hover."
+            },
+            {
+              "name": "tooltipPosition",
+              "type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
+              "values": [
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ],
+              "default": "'right'",
+              "description": "Position of the tooltip."
+            },
+            {
+              "name": "tooltipPositionStyle",
+              "type": "string",
+              "default": "'absolute'",
+              "description": "Type of CSS position."
+            },
+            {
+              "name": "tooltipStyleClass",
+              "type": "string | undefined",
+              "description": "Style class of the tooltip."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "variant",
+              "type": "\"filled\" | \"outlined\" | undefined",
+              "values": [
+                "filled",
+                "outlined"
+              ],
+              "default": "'outlined'",
+              "signal": true,
+              "description": "Specifies the input variant of the component."
+            },
+            {
+              "name": "virtualScroll",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute",
+              "description": "Whether the data should be loaded on demand during scroll."
+            },
+            {
+              "name": "virtualScrollItemSize",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Height of an item in the list for VirtualScrolling."
+            },
+            {
+              "name": "virtualScrollOptions",
+              "type": "ScrollerOptions | undefined",
+              "description": "Whether to use the scroller feature. The properties of scroller component can be used like an object in it."
+            }
+          ],
+          "outputs": [
+            {
+              "name": "onBlur",
+              "payload": "Event",
+              "description": "Callback to invoke when select loses focus."
+            },
+            {
+              "name": "onChange",
+              "payload": "SelectChangeEvent",
+              "description": "Callback to invoke when value of select changes."
+            },
+            {
+              "name": "onClear",
+              "payload": "Event | undefined",
+              "description": "Callback to invoke when select clears the value."
+            },
+            {
+              "name": "onClick",
+              "payload": "MouseEvent",
+              "description": "Callback to invoke when component is clicked."
+            },
+            {
+              "name": "onFilter",
+              "payload": "SelectFilterEvent",
+              "description": "Callback to invoke when data is filtered."
+            },
+            {
+              "name": "onFocus",
+              "payload": "Event",
+              "description": "Callback to invoke when select gets focus."
+            },
+            {
+              "name": "onHide",
+              "payload": "AnimationEvent",
+              "description": "Callback to invoke when select overlay gets hidden."
+            },
+            {
+              "name": "onLazyLoad",
+              "payload": "SelectLazyLoadEvent",
+              "description": "Callback to invoke in lazy mode to load new data."
+            },
+            {
+              "name": "onShow",
+              "payload": "AnimationEvent",
+              "description": "Callback to invoke when select overlay gets visible."
+            }
+          ],
+          "templates": [
+            {
+              "name": "item",
+              "context": "SelectItemTemplateContext<any>",
+              "description": "Custom item template."
+            },
+            {
+              "name": "group",
+              "context": "SelectGroupTemplateContext<any>",
+              "description": "Custom group template."
+            },
+            {
+              "name": "loader",
+              "context": "SelectLoaderTemplateContext",
+              "description": "Custom loader template."
+            },
+            {
+              "name": "selecteditem",
+              "context": "SelectSelectedItemTemplateContext<any>",
+              "description": "Custom selected item template."
+            },
+            {
+              "name": "header",
+              "description": "Custom header template."
+            },
+            {
+              "name": "filter",
+              "context": "SelectFilterTemplateContext",
+              "description": "Custom filter template."
+            },
+            {
+              "name": "footer",
+              "description": "Custom footer template."
+            },
+            {
+              "name": "emptyfilter",
+              "description": "Custom empty filter template."
+            },
+            {
+              "name": "empty",
+              "description": "Custom empty template."
+            },
+            {
+              "name": "dropdownicon",
+              "context": "SelectIconTemplateContext",
+              "description": "Custom dropdown icon template."
+            },
+            {
+              "name": "loadingicon",
+              "description": "Custom loading icon template."
+            },
+            {
+              "name": "clearicon",
+              "context": "SelectIconTemplateContext",
+              "description": "Custom clear icon template."
+            },
+            {
+              "name": "filtericon",
+              "description": "Custom filter icon template."
+            }
+          ],
+          "methods": [
+            {
+              "name": "resetFilter",
+              "description": "Callback to invoke on filter reset."
+            },
+            {
+              "name": "show",
+              "parameters": [
+                {
+                  "name": "isFocus",
+                  "type": "any"
+                }
+              ],
+              "description": "Displays the panel."
+            },
+            {
+              "name": "hide",
+              "parameters": [
+                {
+                  "name": "isFocus",
+                  "type": "any"
+                }
+              ],
+              "description": "Hides the panel."
+            },
+            {
+              "name": "focus",
+              "description": "Applies focus."
+            },
+            {
+              "name": "clear",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": "Event"
+                }
+              ],
+              "description": "Clears the model."
+            }
+          ],
+          "forms": true,
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            },
+            {
+              "name": "label",
+              "type": "PassThroughOption<HTMLInputElement | HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the label's DOM element."
+            },
+            {
+              "name": "clearIcon",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the clear icon's DOM element."
+            },
+            {
+              "name": "dropdown",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the dropdown's DOM element."
+            },
+            {
+              "name": "loadingIcon",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the loading icon's DOM element."
+            },
+            {
+              "name": "dropdownIcon",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the dropdown icon's DOM element."
+            },
+            {
+              "name": "pcOverlay",
+              "type": "OverlayPassThrough",
+              "description": "Used to pass attributes to the Overlay component."
+            },
+            {
+              "name": "header",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the header's DOM element."
+            },
+            {
+              "name": "pcFilterContainer",
+              "type": "IconFieldPassThrough",
+              "description": "Used to pass attributes to the filter container's DOM element."
+            },
+            {
+              "name": "pcFilter",
+              "type": "InputTextPassThrough",
+              "description": "Used to pass attributes to the filter input's DOM element."
+            },
+            {
+              "name": "pcFilterIconContainer",
+              "type": "InputIconPassThrough",
+              "description": "Used to pass attributes to the filter icon container's DOM element."
+            },
+            {
+              "name": "filterIcon",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the filter icon's DOM element."
+            },
+            {
+              "name": "listContainer",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the list container's DOM element."
+            },
+            {
+              "name": "virtualScroller",
+              "type": "VirtualScrollerPassThrough",
+              "description": "Used to pass attributes to the VirtualScroller component."
+            },
+            {
+              "name": "list",
+              "type": "PassThroughOption<HTMLUListElement, I>",
+              "description": "Used to pass attributes to the list's DOM element."
+            },
+            {
+              "name": "optionGroup",
+              "type": "PassThroughOption<HTMLLIElement, I>",
+              "description": "Used to pass attributes to the option group's DOM element."
+            },
+            {
+              "name": "optionGroupLabel",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the option group label's DOM element."
+            },
+            {
+              "name": "option",
+              "type": "PassThroughOption<HTMLLIElement, I>",
+              "description": "Used to pass attributes to the option's DOM element."
+            },
+            {
+              "name": "optionCheckIcon",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the option check icon's DOM element."
+            },
+            {
+              "name": "optionBlankIcon",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the option blank icon's DOM element."
+            },
+            {
+              "name": "optionLabel",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the option label's DOM element."
+            },
+            {
+              "name": "emptyMessage",
+              "type": "PassThroughOption<HTMLLIElement, I>",
+              "description": "Used to pass attributes to the empty message's DOM element."
+            },
+            {
+              "name": "hiddenFirstFocusableEl",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the hidden first focusable element's DOM element."
+            },
+            {
+              "name": "hiddenFilterResult",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the hidden filter result's DOM element."
+            },
+            {
+              "name": "hiddenEmptyMessage",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the hidden empty message's DOM element."
+            },
+            {
+              "name": "hiddenSelectedMessage",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the hidden selected message's DOM element."
+            },
+            {
+              "name": "hiddenLastFocusableEl",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the hidden last focusable element's DOM element."
+            }
+          ]
+        },
+        {
+          "kind": "component",
+          "className": "SelectItem",
+          "selector": "p-selectItem",
+          "standalone": true,
+          "inputs": [
+            {
+              "name": "ariaPosInset",
+              "type": "string | undefined"
+            },
+            {
+              "name": "ariaSetSize",
+              "type": "string | undefined"
+            },
+            {
+              "name": "checkmark",
+              "type": "boolean",
+              "transform": "booleanAttribute"
+            },
+            {
+              "name": "disabled",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute"
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "focused",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute"
+            },
+            {
+              "name": "id",
+              "type": "string | undefined"
+            },
+            {
+              "name": "index",
+              "type": "number | undefined"
+            },
+            {
+              "name": "itemSize",
+              "type": "number | undefined",
+              "transform": "numberAttribute"
+            },
+            {
+              "name": "label",
+              "type": "string | undefined"
+            },
+            {
+              "name": "option",
+              "type": "any"
+            },
+            {
+              "name": "pt",
+              "type": "any",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "scrollerOptions",
+              "type": "any"
+            },
+            {
+              "name": "selected",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute"
+            },
+            {
+              "name": "template",
+              "type": "TemplateRef<any> | undefined"
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "visible",
+              "type": "boolean | undefined",
+              "transform": "booleanAttribute"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "onClick",
+              "payload": "any"
+            },
+            {
+              "name": "onMouseEnter",
+              "payload": "any"
+            }
+          ]
+        }
+      ],
+      "types": [
+        {
+          "kind": "interface",
+          "name": "SelectChangeEvent",
+          "description": "Custom change event.",
+          "properties": [
+            {
+              "name": "originalEvent",
+              "type": "Event | undefined",
+              "optional": true,
+              "description": "Browser event."
+            },
+            {
+              "name": "value",
+              "type": "any",
+              "description": "Selected option value"
+            }
+          ]
+        },
+        {
+          "kind": "interface",
+          "name": "SelectFilterEvent",
+          "description": "Custom filter event.",
+          "properties": [
+            {
+              "name": "originalEvent",
+              "type": "Event",
+              "description": "Browser event."
+            },
+            {
+              "name": "filter",
+              "type": "any",
+              "description": "Filter value."
+            }
+          ]
+        }
+      ],
+      "cssClasses": [
+        {
+          "class": "p-select",
+          "description": "Class name of the root element"
+        },
+        {
+          "class": "p-select-label",
+          "description": "Class name of the label element"
+        },
+        {
+          "class": "p-select-clear-icon",
+          "description": "Class name of the clear icon element"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "import": "@exhaustive-ui/core/tabs",
+      "description": "Tabs facilitates seamless switching between different views.",
+      "modules": [
+        "TabsModule"
+      ],
+      "declarations": [
+        {
+          "kind": "component",
+          "className": "Tab",
+          "selector": "p-tab",
+          "standalone": true,
+          "description": "Defines valid properties in Tab component.",
+          "inputs": [
+            {
+              "name": "disabled",
+              "type": "boolean",
+              "default": "false",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Whether the tab is disabled."
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "pt",
+              "type": "TabPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "value",
+              "type": "string | number | undefined",
+              "twoWay": true,
+              "signal": true,
+              "description": "Value of tab."
+            }
+          ],
+          "outputs": [
+            {
+              "name": "valueChange",
+              "payload": "string | number | undefined",
+              "description": "Value of tab."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            }
+          ]
+        },
+        {
+          "kind": "component",
+          "className": "TabList",
+          "selector": "p-tablist",
+          "standalone": true,
+          "description": "TabList is a helper component for Tabs component.",
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "pt",
+              "type": "TabListPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            },
+            {
+              "name": "prevButton",
+              "type": "PassThroughOption<HTMLButtonElement, I>",
+              "description": "Used to pass attributes to the previous button's DOM element."
+            },
+            {
+              "name": "content",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the content's DOM element."
+            },
+            {
+              "name": "tabList",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the tab list's DOM element."
+            },
+            {
+              "name": "activeBar",
+              "type": "PassThroughOption<HTMLSpanElement, I>",
+              "description": "Used to pass attributes to the active bar's DOM element."
+            },
+            {
+              "name": "nextButton",
+              "type": "PassThroughOption<HTMLButtonElement, I>",
+              "description": "Used to pass attributes to the next button's DOM element."
+            }
+          ]
+        },
+        {
+          "kind": "component",
+          "className": "TabPanel",
+          "selector": "p-tabpanel",
+          "standalone": true,
+          "description": "TabPanel is a helper component for Tabs component.",
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "lazy",
+              "type": "boolean",
+              "default": "false",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When enabled, tab is not rendered until activation."
+            },
+            {
+              "name": "pt",
+              "type": "TabPanelPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "value",
+              "type": "string | number | undefined",
+              "twoWay": true,
+              "signal": true,
+              "description": "Value of the active tab."
+            }
+          ],
+          "outputs": [
+            {
+              "name": "valueChange",
+              "payload": "string | number | undefined",
+              "description": "Value of the active tab."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            }
+          ]
+        },
+        {
+          "kind": "component",
+          "className": "TabPanels",
+          "selector": "p-tabpanels",
+          "standalone": true,
+          "description": "TabPanels is a helper component for Tabs component.",
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "pt",
+              "type": "TabPanelsPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            }
+          ]
+        },
+        {
+          "kind": "component",
+          "className": "Tabs",
+          "selector": "p-tabs",
+          "standalone": true,
+          "description": "Tabs facilitates seamless switching between different views.",
+          "inputs": [
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "lazy",
+              "type": "boolean",
+              "default": "false",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When enabled, tabs are not rendered until activation."
+            },
+            {
+              "name": "pt",
+              "type": "TabsPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "scrollable",
+              "type": "boolean",
+              "default": "false",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When specified, enables horizontal and/or vertical scrolling."
+            },
+            {
+              "name": "selectOnFocus",
+              "type": "boolean",
+              "default": "false",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "When enabled, the focused tab is activated."
+            },
+            {
+              "name": "showNavigators",
+              "type": "boolean",
+              "default": "true",
+              "signal": true,
+              "transform": "booleanAttribute",
+              "description": "Whether to display navigation buttons in container when scrollable is enabled."
+            },
+            {
+              "name": "tabindex",
+              "type": "number",
+              "default": "0",
+              "signal": true,
+              "transform": "numberAttribute",
+              "description": "Tabindex of the tab buttons."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "value",
+              "type": "string | number | undefined",
+              "twoWay": true,
+              "signal": true,
+              "description": "Value of the active tab."
+            }
+          ],
+          "outputs": [
+            {
+              "name": "valueChange",
+              "payload": "string | number | undefined",
+              "description": "Value of the active tab."
+            }
+          ],
+          "contentProjection": [
+            "*"
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            }
+          ]
+        }
+      ],
+      "cssClasses": [
+        {
+          "class": "p-tabs",
+          "description": "Class name of the root element"
+        },
+        {
+          "class": "p-tablist",
+          "description": "Class name of the wrapper element"
+        },
+        {
+          "class": "p-tablist-content",
+          "description": "Class name of the content element"
+        }
+      ],
+      "types": []
+    },
+    {
+      "name": "tooltip",
+      "import": "@exhaustive-ui/core/tooltip",
+      "description": "Tooltip directive provides advisory information for a component.",
+      "modules": [
+        "TooltipModule"
+      ],
+      "declarations": [
+        {
+          "kind": "directive",
+          "className": "Tooltip",
+          "selector": "[pTooltip]",
+          "standalone": true,
+          "description": "Tooltip directive provides advisory information for a component.",
+          "inputs": [
+            {
+              "name": "appendTo",
+              "type": "any",
+              "signal": true,
+              "description": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name)."
+            },
+            {
+              "name": "autoHide",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "Whether to hide tooltip when hovering over tooltip content."
+            },
+            {
+              "name": "dt",
+              "type": "Object | undefined",
+              "signal": true,
+              "description": "Defines scoped design tokens of the component."
+            },
+            {
+              "name": "escape",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "By default the tooltip contents are rendered as text. Set to false to support html tags in the content."
+            },
+            {
+              "name": "fitContent",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "Automatically adjusts the element position when there is not enough space on the selected position."
+            },
+            {
+              "name": "hideDelay",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Delay to hide the tooltip in milliseconds."
+            },
+            {
+              "name": "hideOnEscape",
+              "type": "boolean",
+              "default": "true",
+              "transform": "booleanAttribute",
+              "description": "Whether to hide tooltip on escape key press."
+            },
+            {
+              "name": "life",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Time to wait in milliseconds to hide the tooltip even it is active."
+            },
+            {
+              "name": "positionLeft",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Specifies the additional horizontal offset of the tooltip from its default position."
+            },
+            {
+              "name": "positionStyle",
+              "type": "string | undefined",
+              "description": "Type of CSS position."
+            },
+            {
+              "name": "positionTop",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Specifies the additional vertical offset of the tooltip from its default position."
+            },
+            {
+              "name": "pt",
+              "type": "TooltipPassThroughOptions<unknown> | undefined",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the component."
+            },
+            {
+              "name": "pTooltip",
+              "property": "content",
+              "type": "string | TemplateRef<HTMLElement> | undefined",
+              "description": "Content of the tooltip."
+            },
+            {
+              "name": "pTooltipPT",
+              "type": "TooltipPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the Tooltip component."
+            },
+            {
+              "name": "pTooltipUnstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            },
+            {
+              "name": "ptOptions",
+              "type": "PassThroughOptions | undefined",
+              "signal": true,
+              "description": "Used to configure passthrough(pt) options of the component."
+            },
+            {
+              "name": "ptTooltip",
+              "type": "TooltipPassThrough",
+              "signal": true,
+              "description": "Used to pass attributes to DOM elements inside the Tooltip component.",
+              "deprecated": "use pTooltipPT instead."
+            },
+            {
+              "name": "showDelay",
+              "type": "number | undefined",
+              "transform": "numberAttribute",
+              "description": "Delay to show the tooltip in milliseconds."
+            },
+            {
+              "name": "showOnEllipsis",
+              "type": "boolean",
+              "default": "false",
+              "transform": "booleanAttribute",
+              "description": "Whether to show the tooltip only when the target text overflows (e.g., ellipsis is active)."
+            },
+            {
+              "name": "tooltipDisabled",
+              "property": "disabled",
+              "type": "boolean",
+              "default": "false",
+              "description": "When present, it specifies that the component should be disabled."
+            },
+            {
+              "name": "tooltipEvent",
+              "type": "\"both\" | \"hover\" | \"focus\"",
+              "values": [
+                "both",
+                "hover",
+                "focus"
+              ],
+              "default": "'hover'",
+              "description": "Event to show the tooltip."
+            },
+            {
+              "name": "tooltipOptions",
+              "type": "TooltipOptions | undefined",
+              "description": "Specifies the tooltip configuration options for the component."
+            },
+            {
+              "name": "tooltipPosition",
+              "type": "string | undefined",
+              "description": "Position of the tooltip."
+            },
+            {
+              "name": "tooltipStyleClass",
+              "type": "string | undefined",
+              "description": "Style class of the tooltip."
+            },
+            {
+              "name": "tooltipZIndex",
+              "type": "string | undefined",
+              "description": "Whether the z-index should be managed automatically to always go on top or have a fixed value."
+            },
+            {
+              "name": "unstyled",
+              "type": "boolean | undefined",
+              "signal": true,
+              "description": "Indicates whether the component should be rendered without styles."
+            }
+          ],
+          "passThrough": [
+            {
+              "name": "root",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the root's DOM element."
+            },
+            {
+              "name": "arrow",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the arrow's DOM element."
+            },
+            {
+              "name": "text",
+              "type": "PassThroughOption<HTMLDivElement, I>",
+              "description": "Used to pass attributes to the text's DOM element."
+            }
+          ]
+        }
+      ],
+      "cssClasses": [
+        {
+          "class": "p-tooltip",
+          "description": "Class name of the root element"
+        },
+        {
+          "class": "p-tooltip-arrow",
+          "description": "Class name of the arrow element"
+        },
+        {
+          "class": "p-tooltip-text",
+          "description": "Class name of the text element"
+        }
+      ],
+      "types": []
+    }
+  ]
+}

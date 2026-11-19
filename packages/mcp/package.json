@@ -1,0 +1,57 @@
+{
+    "name": "@exhaustive-ui/mcp",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "description": "Model Context Protocol (MCP) server for the ExhaustiveUI Angular component library",
+    "keywords": ["exhaustive-ui", "mcp", "model-context-protocol", "ai", "llm", "angular", "components"],
+    "homepage": "https://exhaustive-ui.e-xiste.com/llms",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/e-xiste/exhaustive-ui.git",
+        "directory": "packages/mcp"
+    },
+    "bugs": {
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
+    },
+    "type": "module",
+    "bin": {
+        "exhaustive-ui-mcp": "./dist/index.mjs"
+    },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.mjs"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": ["data", "dist", "README.md", "LICENSE"],
+    "scripts": {
+        "build": "cross-env NODE_ENV=production pnpm run build:package",
+        "build:dev": "cross-env NODE_ENV=development pnpm run build:dev:package",
+        "build:package": "pnpm run build:prebuild && tsdown",
+        "build:dev:package": "pnpm run build:prebuild && tsdown --watch",
+        "build:prebuild": "node ./scripts/prebuild.mjs",
+        "type:check": "tsc --noEmit -p tsconfig.json",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "dev:link": "pnpm link --global && npm link"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.32.2",
+        "zod": "^4.6.6"
+    },
+    "devDependencies": {
+        "@types/node": "^26.2.0",
+        "vitest": "^4.1.11"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}

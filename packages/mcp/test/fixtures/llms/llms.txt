@@ -1,0 +1,12 @@
+# ExhaustiveUI
+
+> A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.
+
+Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.e-xiste.com/llms/manifest.json
+
+## Guides
+
+- [Installation](https://exhaustive-ui.e-xiste.com/installation): Setting up ExhaustiveUI in an Angular CLI project.
+- [Configuration](https://exhaustive-ui.e-xiste.com/configuration): Application wide configuration for ExhaustiveUI.
+- [Styled Mode](https://exhaustive-ui.e-xiste.com/theming/styled): Choose from a variety of pre-styled themes or develop your own.
+- [Unstyled Mode](https://exhaustive-ui.e-xiste.com/theming/unstyled): Theming ExhaustiveUI with alternative styling approaches.

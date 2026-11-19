@@ -105,5 +105,5 @@
         "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
     },
     "include": ["**/src/**/*", "**/dist/**/*", "**/types/**/*"],
-    "exclude": ["**/node_modules", "packages/themes", "packages/styled", "packages/styles", "packages/tailwindcss", "packages/locale", "packages/motion", "packages/utils"]
+    "exclude": ["**/node_modules", "packages/themes", "packages/styled", "packages/styles", "packages/tailwindcss", "packages/locale", "packages/motion", "packages/utils", "packages/mcp"]
 }

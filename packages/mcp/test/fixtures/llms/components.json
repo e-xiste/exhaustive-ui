@@ -1,0 +1,3761 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-11-19",
+  "components": [
+    {
+      "name": "button",
+      "title": "Angular Button Component",
+      "description": "Button is an extension to standard button element with icons and theming.",
+      "sections": [
+        {
+          "id": "accessibility",
+          "label": "Accessibility",
+          "description": "Screen Reader Button component renders a native button element that implicitly includes any passed prop. Text to describe the button is defined with the aria-label prop, if not present label prop is used as the value. If the button is icon only or custom templating is used, it is recommended to use aria-label so that screen readers would be able to read the element properly.",
+          "examples": null
+        },
+        {
+          "id": "badge",
+          "label": "Badge",
+          "description": "Buttons have built-in badge support with badge and badgeClass properties.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center flex-wrap gap-4\">\n            <p-button label=\"Emails\" badge=\"2\" styleClass=\"m-0\" />\n            <p-button label=\"Messages\" icon=\"pi pi-users\" badge=\"2\" badgeSeverity=\"contrast\" styleClass=\"m-0\" [outlined]=\"true\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonBadgeDemo {}"
+          }
+        },
+        {
+          "id": "basic",
+          "label": "Basic",
+          "description": "Text to display on a button is defined with the label property.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-button label=\"Submit\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonBasicDemo {}"
+          }
+        },
+        {
+          "id": "buttongroup",
+          "label": "Button Group",
+          "description": "Multiple buttons are grouped when wrapped inside an element with ButtonGroup component.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-buttongroup>\n                <p-button label=\"Save\" icon=\"pi pi-check\" />\n                <p-button label=\"Delete\" icon=\"pi pi-trash\" />\n                <p-button label=\"Cancel\" icon=\"pi pi-times\" />\n            </p-buttongroup>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonButtongroupDemo {}"
+          }
+        },
+        {
+          "id": "buttonset",
+          "label": "buttonset-doc",
+          "description": "Multiple buttons are grouped when wrapped inside an element with p-buttonset class.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\nimport { RippleModule } from '@exhaustive-ui/core/ripple';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <span class=\"p-buttonset\">\n                <button pButton pRipple label=\"Save\" icon=\"pi pi-check\"></button>\n                <button pButton pRipple label=\"Delete\" icon=\"pi pi-trash\"></button>\n                <button pButton pRipple label=\"Cancel\" icon=\"pi pi-times\"></button>\n            </span>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule, RippleModule]\n})\nexport class ButtonButtonsetDemo {}"
+          }
+        },
+        {
+          "id": "directive",
+          "label": "Directive",
+          "description": "Button can also be used as directive using pButton along with pButtonLabel and pButtonIcon helper directives.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <button pButton>\n                <i class=\"pi pi-check\" pButtonIcon></i>\n                <span pButtonLabel>Save</span>\n            </button>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonDirectiveDemo {}"
+          }
+        },
+        {
+          "id": "disabled",
+          "label": "Disabled",
+          "description": "When disabled is present, the element cannot be edited and focused.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-button label=\"Submit\" [disabled]=\"true\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonDisabledDemo {}"
+          }
+        },
+        {
+          "id": "icons",
+          "label": "Icons",
+          "description": "Icon of a button is specified with icon property and position is configured using iconPos attribute.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-col items-center gap-4\">\n            <div class=\"flex flex-wrap gap-4 justify-center\">\n                <p-button icon=\"pi pi-home\" aria-label=\"Save\" />\n                <p-button label=\"Profile\" icon=\"pi pi-user\" />\n                <p-button label=\"Save\" icon=\"pi pi-check\" iconPos=\"right\" />\n            </div>\n            <div class=\"flex flex-wrap gap-4 justify-center\">\n                <p-button label=\"Search\" icon=\"pi pi-search\" iconPos=\"top\" />\n                <p-button label=\"Update\" icon=\"pi pi-refresh\" iconPos=\"bottom\" />\n            </div>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule]\n})\nexport class ButtonIconsDemo {}"
+          }
+        }
+      ],
+      "api": {
+        "props": [
+          {
+            "name": "dt",
+            "type": "InputSignal<Object>",
+            "default": "undefined",
+            "description": "Defines scoped design tokens of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "unstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pt",
+            "type": "InputSignal<ButtonPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptOptions",
+            "type": "InputSignal<PassThroughOptions>",
+            "default": "undefined",
+            "description": "Used to configure passthrough(pt) options of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "default": "button",
+            "description": "Type of the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "badge",
+            "type": "string",
+            "default": "-",
+            "description": "Value of the badge.",
+            "deprecated": ""
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "default": "false",
+            "description": "When present, it specifies that the component should be disabled.",
+            "deprecated": ""
+          },
+          {
+            "name": "raised",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a shadow to indicate elevation.",
+            "deprecated": ""
+          },
+          {
+            "name": "rounded",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a circular border radius to the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "text",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a textual class to the button without a background initially.",
+            "deprecated": ""
+          },
+          {
+            "name": "plain",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a plain textual class to the button without a background initially.",
+            "deprecated": ""
+          },
+          {
+            "name": "outlined",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a border class without a background initially.",
+            "deprecated": ""
+          },
+          {
+            "name": "link",
+            "type": "boolean",
+            "default": "false",
+            "description": "Add a link style to the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "tabindex",
+            "type": "number",
+            "default": "-",
+            "description": "Add a tabindex to the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "size",
+            "type": "\"small\" | \"large\"",
+            "default": "-",
+            "description": "Defines the size of the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "variant",
+            "type": "\"text\" | \"outlined\"",
+            "default": "-",
+            "description": "Specifies the variant of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "style",
+            "type": "{ [klass: string]: any }",
+            "default": "-",
+            "description": "Inline style of the element.",
+            "deprecated": ""
+          },
+          {
+            "name": "styleClass",
+            "type": "string",
+            "default": "-",
+            "description": "Class of the element.",
+            "deprecated": ""
+          },
+          {
+            "name": "badgeClass",
+            "type": "string",
+            "default": "-",
+            "description": "Style class of the badge.",
+            "deprecated": "use badgeSeverity instead."
+          },
+          {
+            "name": "badgeSeverity",
+            "type": "\"success\" | \"info\" | \"warn\" | \"danger\" | \"secondary\" | \"contrast\" | \"help\" | \"primary\"",
+            "default": "secondary",
+            "description": "Severity type of the badge.",
+            "deprecated": ""
+          },
+          {
+            "name": "ariaLabel",
+            "type": "string",
+            "default": "-",
+            "description": "Used to define a string that autocomplete attribute the current element.",
+            "deprecated": ""
+          },
+          {
+            "name": "autofocus",
+            "type": "boolean",
+            "default": "false",
+            "description": "When present, it specifies that the component should automatically get focus on load.",
+            "deprecated": ""
+          },
+          {
+            "name": "iconPos",
+            "type": "ButtonIconPosition",
+            "default": "left",
+            "description": "Position of the icon.",
+            "deprecated": ""
+          },
+          {
+            "name": "icon",
+            "type": "string",
+            "default": "-",
+            "description": "Name of the icon.",
+            "deprecated": ""
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "default": "-",
+            "description": "Text of the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether the button is in loading state.",
+            "deprecated": ""
+          },
+          {
+            "name": "loadingIcon",
+            "type": "string",
+            "default": "-",
+            "description": "Icon to display in loading state.",
+            "deprecated": ""
+          },
+          {
+            "name": "severity",
+            "type": "ButtonSeverity",
+            "default": "-",
+            "description": "Defines the style of the button.",
+            "deprecated": ""
+          },
+          {
+            "name": "buttonProps",
+            "type": "ButtonProps",
+            "default": "-",
+            "description": "Used to pass all properties of the ButtonProps to the Button component.",
+            "deprecated": ""
+          },
+          {
+            "name": "fluid",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "undefined",
+            "description": "Spans 100% width of the container when enabled.",
+            "deprecated": ""
+          }
+        ],
+        "templates": [
+          {
+            "name": "content",
+            "type": "TemplateRef<void>",
+            "description": "Custom content template."
+          },
+          {
+            "name": "loadingicon",
+            "type": "TemplateRef<ButtonLoadingIconTemplateContext>",
+            "description": "Custom loading icon template."
+          },
+          {
+            "name": "icon",
+            "type": "TemplateRef<ButtonIconTemplateContext>",
+            "description": "Custom icon template."
+          }
+        ],
+        "emits": [
+          {
+            "name": "onClick",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "MouseEvent"
+              }
+            ],
+            "description": "Callback to execute when button is clicked.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (click)."
+          },
+          {
+            "name": "onFocus",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "FocusEvent"
+              }
+            ],
+            "description": "Callback to execute when button is focused.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (focus)."
+          },
+          {
+            "name": "onBlur",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "FocusEvent"
+              }
+            ],
+            "description": "Callback to execute when button loses focus.\nThis event is intended to be used with the <p-button> component. Using a regular <button> element, use (blur)."
+          }
+        ],
+        "methods": null,
+        "pt": [
+          {
+            "name": "host",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the host DOM element."
+          },
+          {
+            "name": "root",
+            "type": "PassThroughOption<HTMLButtonElement, I>",
+            "description": "Used to pass attributes to the root's DOM element."
+          },
+          {
+            "name": "loadingIcon",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the loading icon's DOM element."
+          },
+          {
+            "name": "icon",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the icon's DOM element."
+          },
+          {
+            "name": "label",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the label's DOM element."
+          },
+          {
+            "name": "pcBadge",
+            "type": "BadgePassThrough",
+            "description": "Used to pass attributes to the Badge component."
+          }
+        ],
+        "styles": [
+          {
+            "class": "p-button",
+            "description": "Class name of the root element"
+          },
+          {
+            "class": "p-button-loading-icon",
+            "description": "Class name of the loading icon element"
+          },
+          {
+            "class": "p-button-icon",
+            "description": "Class name of the icon element"
+          },
+          {
+            "class": "p-button-label",
+            "description": "Class name of the label element"
+          }
+        ],
+        "tokens": [
+          {
+            "token": "button.border.radius",
+            "variable": "--p-button-border-radius",
+            "description": "Border radius of root"
+          },
+          {
+            "token": "button.rounded.border.radius",
+            "variable": "--p-button-rounded-border-radius",
+            "description": "Rounded border radius of root"
+          },
+          {
+            "token": "button.gap",
+            "variable": "--p-button-gap",
+            "description": "Gap of root"
+          },
+          {
+            "token": "button.padding.x",
+            "variable": "--p-button-padding-x",
+            "description": "Padding x of root"
+          },
+          {
+            "token": "button.padding.y",
+            "variable": "--p-button-padding-y",
+            "description": "Padding y of root"
+          },
+          {
+            "token": "button.icon.only.width",
+            "variable": "--p-button-icon-only-width",
+            "description": "Icon only width of root"
+          },
+          {
+            "token": "button.sm.font.size",
+            "variable": "--p-button-sm-font-size",
+            "description": "Sm font size of root"
+          },
+          {
+            "token": "button.sm.padding.x",
+            "variable": "--p-button-sm-padding-x",
+            "description": "Sm padding x of root"
+          },
+          {
+            "token": "button.sm.padding.y",
+            "variable": "--p-button-sm-padding-y",
+            "description": "Sm padding y of root"
+          },
+          {
+            "token": "button.sm.icon.only.width",
+            "variable": "--p-button-sm-icon-only-width",
+            "description": "Sm icon only width of root"
+          },
+          {
+            "token": "button.lg.font.size",
+            "variable": "--p-button-lg-font-size",
+            "description": "Lg font size of root"
+          },
+          {
+            "token": "button.lg.padding.x",
+            "variable": "--p-button-lg-padding-x",
+            "description": "Lg padding x of root"
+          },
+          {
+            "token": "button.lg.padding.y",
+            "variable": "--p-button-lg-padding-y",
+            "description": "Lg padding y of root"
+          },
+          {
+            "token": "button.lg.icon.only.width",
+            "variable": "--p-button-lg-icon-only-width",
+            "description": "Lg icon only width of root"
+          },
+          {
+            "token": "button.label.font.weight",
+            "variable": "--p-button-label-font-weight",
+            "description": "Label font weight of root"
+          },
+          {
+            "token": "button.raised.shadow",
+            "variable": "--p-button-raised-shadow",
+            "description": "Raised shadow of root"
+          },
+          {
+            "token": "button.focus.ring.width",
+            "variable": "--p-button-focus-ring-width",
+            "description": "Focus ring width of root"
+          },
+          {
+            "token": "button.focus.ring.style",
+            "variable": "--p-button-focus-ring-style",
+            "description": "Focus ring style of root"
+          },
+          {
+            "token": "button.focus.ring.offset",
+            "variable": "--p-button-focus-ring-offset",
+            "description": "Focus ring offset of root"
+          },
+          {
+            "token": "button.badge.size",
+            "variable": "--p-button-badge-size",
+            "description": "Badge size of root"
+          },
+          {
+            "token": "button.transition.duration",
+            "variable": "--p-button-transition-duration",
+            "description": "Transition duration of root"
+          },
+          {
+            "token": "button.primary.background",
+            "variable": "--p-button-primary-background",
+            "description": "Primary background of root"
+          },
+          {
+            "token": "button.primary.hover.background",
+            "variable": "--p-button-primary-hover-background",
+            "description": "Primary hover background of root"
+          },
+          {
+            "token": "button.primary.active.background",
+            "variable": "--p-button-primary-active-background",
+            "description": "Primary active background of root"
+          },
+          {
+            "token": "button.primary.border.color",
+            "variable": "--p-button-primary-border-color",
+            "description": "Primary border color of root"
+          },
+          {
+            "token": "button.primary.hover.border.color",
+            "variable": "--p-button-primary-hover-border-color",
+            "description": "Primary hover border color of root"
+          },
+          {
+            "token": "button.primary.active.border.color",
+            "variable": "--p-button-primary-active-border-color",
+            "description": "Primary active border color of root"
+          },
+          {
+            "token": "button.primary.color",
+            "variable": "--p-button-primary-color",
+            "description": "Primary color of root"
+          },
+          {
+            "token": "button.primary.hover.color",
+            "variable": "--p-button-primary-hover-color",
+            "description": "Primary hover color of root"
+          },
+          {
+            "token": "button.primary.active.color",
+            "variable": "--p-button-primary-active-color",
+            "description": "Primary active color of root"
+          },
+          {
+            "token": "button.primary.focus.ring.color",
+            "variable": "--p-button-primary-focus-ring-color",
+            "description": "Primary focus ring color of root"
+          },
+          {
+            "token": "button.primary.focus.ring.shadow",
+            "variable": "--p-button-primary-focus-ring-shadow",
+            "description": "Primary focus ring shadow of root"
+          },
+          {
+            "token": "button.secondary.background",
+            "variable": "--p-button-secondary-background",
+            "description": "Secondary background of root"
+          },
+          {
+            "token": "button.secondary.hover.background",
+            "variable": "--p-button-secondary-hover-background",
+            "description": "Secondary hover background of root"
+          },
+          {
+            "token": "button.secondary.active.background",
+            "variable": "--p-button-secondary-active-background",
+            "description": "Secondary active background of root"
+          },
+          {
+            "token": "button.secondary.border.color",
+            "variable": "--p-button-secondary-border-color",
+            "description": "Secondary border color of root"
+          },
+          {
+            "token": "button.secondary.hover.border.color",
+            "variable": "--p-button-secondary-hover-border-color",
+            "description": "Secondary hover border color of root"
+          },
+          {
+            "token": "button.secondary.active.border.color",
+            "variable": "--p-button-secondary-active-border-color",
+            "description": "Secondary active border color of root"
+          },
+          {
+            "token": "button.secondary.color",
+            "variable": "--p-button-secondary-color",
+            "description": "Secondary color of root"
+          },
+          {
+            "token": "button.secondary.hover.color",
+            "variable": "--p-button-secondary-hover-color",
+            "description": "Secondary hover color of root"
+          },
+          {
+            "token": "button.secondary.active.color",
+            "variable": "--p-button-secondary-active-color",
+            "description": "Secondary active color of root"
+          },
+          {
+            "token": "button.secondary.focus.ring.color",
+            "variable": "--p-button-secondary-focus-ring-color",
+            "description": "Secondary focus ring color of root"
+          },
+          {
+            "token": "button.secondary.focus.ring.shadow",
+            "variable": "--p-button-secondary-focus-ring-shadow",
+            "description": "Secondary focus ring shadow of root"
+          },
+          {
+            "token": "button.info.background",
+            "variable": "--p-button-info-background",
+            "description": "Info background of root"
+          },
+          {
+            "token": "button.info.hover.background",
+            "variable": "--p-button-info-hover-background",
+            "description": "Info hover background of root"
+          },
+          {
+            "token": "button.info.active.background",
+            "variable": "--p-button-info-active-background",
+            "description": "Info active background of root"
+          },
+          {
+            "token": "button.info.border.color",
+            "variable": "--p-button-info-border-color",
+            "description": "Info border color of root"
+          },
+          {
+            "token": "button.info.hover.border.color",
+            "variable": "--p-button-info-hover-border-color",
+            "description": "Info hover border color of root"
+          },
+          {
+            "token": "button.info.active.border.color",
+            "variable": "--p-button-info-active-border-color",
+            "description": "Info active border color of root"
+          },
+          {
+            "token": "button.info.color",
+            "variable": "--p-button-info-color",
+            "description": "Info color of root"
+          },
+          {
+            "token": "button.info.hover.color",
+            "variable": "--p-button-info-hover-color",
+            "description": "Info hover color of root"
+          },
+          {
+            "token": "button.info.active.color",
+            "variable": "--p-button-info-active-color",
+            "description": "Info active color of root"
+          },
+          {
+            "token": "button.info.focus.ring.color",
+            "variable": "--p-button-info-focus-ring-color",
+            "description": "Info focus ring color of root"
+          },
+          {
+            "token": "button.info.focus.ring.shadow",
+            "variable": "--p-button-info-focus-ring-shadow",
+            "description": "Info focus ring shadow of root"
+          },
+          {
+            "token": "button.success.background",
+            "variable": "--p-button-success-background",
+            "description": "Success background of root"
+          },
+          {
+            "token": "button.success.hover.background",
+            "variable": "--p-button-success-hover-background",
+            "description": "Success hover background of root"
+          },
+          {
+            "token": "button.success.active.background",
+            "variable": "--p-button-success-active-background",
+            "description": "Success active background of root"
+          },
+          {
+            "token": "button.success.border.color",
+            "variable": "--p-button-success-border-color",
+            "description": "Success border color of root"
+          },
+          {
+            "token": "button.success.hover.border.color",
+            "variable": "--p-button-success-hover-border-color",
+            "description": "Success hover border color of root"
+          },
+          {
+            "token": "button.success.active.border.color",
+            "variable": "--p-button-success-active-border-color",
+            "description": "Success active border color of root"
+          },
+          {
+            "token": "button.success.color",
+            "variable": "--p-button-success-color",
+            "description": "Success color of root"
+          },
+          {
+            "token": "button.success.hover.color",
+            "variable": "--p-button-success-hover-color",
+            "description": "Success hover color of root"
+          },
+          {
+            "token": "button.success.active.color",
+            "variable": "--p-button-success-active-color",
+            "description": "Success active color of root"
+          },
+          {
+            "token": "button.success.focus.ring.color",
+            "variable": "--p-button-success-focus-ring-color",
+            "description": "Success focus ring color of root"
+          },
+          {
+            "token": "button.success.focus.ring.shadow",
+            "variable": "--p-button-success-focus-ring-shadow",
+            "description": "Success focus ring shadow of root"
+          },
+          {
+            "token": "button.warn.background",
+            "variable": "--p-button-warn-background",
+            "description": "Warn background of root"
+          },
+          {
+            "token": "button.warn.hover.background",
+            "variable": "--p-button-warn-hover-background",
+            "description": "Warn hover background of root"
+          },
+          {
+            "token": "button.warn.active.background",
+            "variable": "--p-button-warn-active-background",
+            "description": "Warn active background of root"
+          },
+          {
+            "token": "button.warn.border.color",
+            "variable": "--p-button-warn-border-color",
+            "description": "Warn border color of root"
+          },
+          {
+            "token": "button.warn.hover.border.color",
+            "variable": "--p-button-warn-hover-border-color",
+            "description": "Warn hover border color of root"
+          },
+          {
+            "token": "button.warn.active.border.color",
+            "variable": "--p-button-warn-active-border-color",
+            "description": "Warn active border color of root"
+          },
+          {
+            "token": "button.warn.color",
+            "variable": "--p-button-warn-color",
+            "description": "Warn color of root"
+          },
+          {
+            "token": "button.warn.hover.color",
+            "variable": "--p-button-warn-hover-color",
+            "description": "Warn hover color of root"
+          },
+          {
+            "token": "button.warn.active.color",
+            "variable": "--p-button-warn-active-color",
+            "description": "Warn active color of root"
+          },
+          {
+            "token": "button.warn.focus.ring.color",
+            "variable": "--p-button-warn-focus-ring-color",
+            "description": "Warn focus ring color of root"
+          },
+          {
+            "token": "button.warn.focus.ring.shadow",
+            "variable": "--p-button-warn-focus-ring-shadow",
+            "description": "Warn focus ring shadow of root"
+          },
+          {
+            "token": "button.help.background",
+            "variable": "--p-button-help-background",
+            "description": "Help background of root"
+          },
+          {
+            "token": "button.help.hover.background",
+            "variable": "--p-button-help-hover-background",
+            "description": "Help hover background of root"
+          },
+          {
+            "token": "button.help.active.background",
+            "variable": "--p-button-help-active-background",
+            "description": "Help active background of root"
+          },
+          {
+            "token": "button.help.border.color",
+            "variable": "--p-button-help-border-color",
+            "description": "Help border color of root"
+          },
+          {
+            "token": "button.help.hover.border.color",
+            "variable": "--p-button-help-hover-border-color",
+            "description": "Help hover border color of root"
+          },
+          {
+            "token": "button.help.active.border.color",
+            "variable": "--p-button-help-active-border-color",
+            "description": "Help active border color of root"
+          },
+          {
+            "token": "button.help.color",
+            "variable": "--p-button-help-color",
+            "description": "Help color of root"
+          },
+          {
+            "token": "button.help.hover.color",
+            "variable": "--p-button-help-hover-color",
+            "description": "Help hover color of root"
+          },
+          {
+            "token": "button.help.active.color",
+            "variable": "--p-button-help-active-color",
+            "description": "Help active color of root"
+          },
+          {
+            "token": "button.help.focus.ring.color",
+            "variable": "--p-button-help-focus-ring-color",
+            "description": "Help focus ring color of root"
+          },
+          {
+            "token": "button.help.focus.ring.shadow",
+            "variable": "--p-button-help-focus-ring-shadow",
+            "description": "Help focus ring shadow of root"
+          },
+          {
+            "token": "button.danger.background",
+            "variable": "--p-button-danger-background",
+            "description": "Danger background of root"
+          },
+          {
+            "token": "button.danger.hover.background",
+            "variable": "--p-button-danger-hover-background",
+            "description": "Danger hover background of root"
+          },
+          {
+            "token": "button.danger.active.background",
+            "variable": "--p-button-danger-active-background",
+            "description": "Danger active background of root"
+          },
+          {
+            "token": "button.danger.border.color",
+            "variable": "--p-button-danger-border-color",
+            "description": "Danger border color of root"
+          },
+          {
+            "token": "button.danger.hover.border.color",
+            "variable": "--p-button-danger-hover-border-color",
+            "description": "Danger hover border color of root"
+          },
+          {
+            "token": "button.danger.active.border.color",
+            "variable": "--p-button-danger-active-border-color",
+            "description": "Danger active border color of root"
+          },
+          {
+            "token": "button.danger.color",
+            "variable": "--p-button-danger-color",
+            "description": "Danger color of root"
+          },
+          {
+            "token": "button.danger.hover.color",
+            "variable": "--p-button-danger-hover-color",
+            "description": "Danger hover color of root"
+          },
+          {
+            "token": "button.danger.active.color",
+            "variable": "--p-button-danger-active-color",
+            "description": "Danger active color of root"
+          },
+          {
+            "token": "button.danger.focus.ring.color",
+            "variable": "--p-button-danger-focus-ring-color",
+            "description": "Danger focus ring color of root"
+          },
+          {
+            "token": "button.danger.focus.ring.shadow",
+            "variable": "--p-button-danger-focus-ring-shadow",
+            "description": "Danger focus ring shadow of root"
+          },
+          {
+            "token": "button.contrast.background",
+            "variable": "--p-button-contrast-background",
+            "description": "Contrast background of root"
+          },
+          {
+            "token": "button.contrast.hover.background",
+            "variable": "--p-button-contrast-hover-background",
+            "description": "Contrast hover background of root"
+          },
+          {
+            "token": "button.contrast.active.background",
+            "variable": "--p-button-contrast-active-background",
+            "description": "Contrast active background of root"
+          },
+          {
+            "token": "button.contrast.border.color",
+            "variable": "--p-button-contrast-border-color",
+            "description": "Contrast border color of root"
+          },
+          {
+            "token": "button.contrast.hover.border.color",
+            "variable": "--p-button-contrast-hover-border-color",
+            "description": "Contrast hover border color of root"
+          },
+          {
+            "token": "button.contrast.active.border.color",
+            "variable": "--p-button-contrast-active-border-color",
+            "description": "Contrast active border color of root"
+          },
+          {
+            "token": "button.contrast.color",
+            "variable": "--p-button-contrast-color",
+            "description": "Contrast color of root"
+          },
+          {
+            "token": "button.contrast.hover.color",
+            "variable": "--p-button-contrast-hover-color",
+            "description": "Contrast hover color of root"
+          },
+          {
+            "token": "button.contrast.active.color",
+            "variable": "--p-button-contrast-active-color",
+            "description": "Contrast active color of root"
+          },
+          {
+            "token": "button.contrast.focus.ring.color",
+            "variable": "--p-button-contrast-focus-ring-color",
+            "description": "Contrast focus ring color of root"
+          },
+          {
+            "token": "button.contrast.focus.ring.shadow",
+            "variable": "--p-button-contrast-focus-ring-shadow",
+            "description": "Contrast focus ring shadow of root"
+          },
+          {
+            "token": "button.outlined.primary.hover.background",
+            "variable": "--p-button-outlined-primary-hover-background",
+            "description": "Primary hover background of outlined"
+          },
+          {
+            "token": "button.outlined.primary.active.background",
+            "variable": "--p-button-outlined-primary-active-background",
+            "description": "Primary active background of outlined"
+          },
+          {
+            "token": "button.outlined.primary.border.color",
+            "variable": "--p-button-outlined-primary-border-color",
+            "description": "Primary border color of outlined"
+          },
+          {
+            "token": "button.outlined.primary.color",
+            "variable": "--p-button-outlined-primary-color",
+            "description": "Primary color of outlined"
+          },
+          {
+            "token": "button.outlined.secondary.hover.background",
+            "variable": "--p-button-outlined-secondary-hover-background",
+            "description": "Secondary hover background of outlined"
+          },
+          {
+            "token": "button.outlined.secondary.active.background",
+            "variable": "--p-button-outlined-secondary-active-background",
+            "description": "Secondary active background of outlined"
+          },
+          {
+            "token": "button.outlined.secondary.border.color",
+            "variable": "--p-button-outlined-secondary-border-color",
+            "description": "Secondary border color of outlined"
+          },
+          {
+            "token": "button.outlined.secondary.color",
+            "variable": "--p-button-outlined-secondary-color",
+            "description": "Secondary color of outlined"
+          },
+          {
+            "token": "button.outlined.success.hover.background",
+            "variable": "--p-button-outlined-success-hover-background",
+            "description": "Success hover background of outlined"
+          },
+          {
+            "token": "button.outlined.success.active.background",
+            "variable": "--p-button-outlined-success-active-background",
+            "description": "Success active background of outlined"
+          },
+          {
+            "token": "button.outlined.success.border.color",
+            "variable": "--p-button-outlined-success-border-color",
+            "description": "Success border color of outlined"
+          },
+          {
+            "token": "button.outlined.success.color",
+            "variable": "--p-button-outlined-success-color",
+            "description": "Success color of outlined"
+          },
+          {
+            "token": "button.outlined.info.hover.background",
+            "variable": "--p-button-outlined-info-hover-background",
+            "description": "Info hover background of outlined"
+          },
+          {
+            "token": "button.outlined.info.active.background",
+            "variable": "--p-button-outlined-info-active-background",
+            "description": "Info active background of outlined"
+          },
+          {
+            "token": "button.outlined.info.border.color",
+            "variable": "--p-button-outlined-info-border-color",
+            "description": "Info border color of outlined"
+          },
+          {
+            "token": "button.outlined.info.color",
+            "variable": "--p-button-outlined-info-color",
+            "description": "Info color of outlined"
+          },
+          {
+            "token": "button.outlined.warn.hover.background",
+            "variable": "--p-button-outlined-warn-hover-background",
+            "description": "Warn hover background of outlined"
+          },
+          {
+            "token": "button.outlined.warn.active.background",
+            "variable": "--p-button-outlined-warn-active-background",
+            "description": "Warn active background of outlined"
+          },
+          {
+            "token": "button.outlined.warn.border.color",
+            "variable": "--p-button-outlined-warn-border-color",
+            "description": "Warn border color of outlined"
+          },
+          {
+            "token": "button.outlined.warn.color",
+            "variable": "--p-button-outlined-warn-color",
+            "description": "Warn color of outlined"
+          },
+          {
+            "token": "button.outlined.help.hover.background",
+            "variable": "--p-button-outlined-help-hover-background",
+            "description": "Help hover background of outlined"
+          },
+          {
+            "token": "button.outlined.help.active.background",
+            "variable": "--p-button-outlined-help-active-background",
+            "description": "Help active background of outlined"
+          },
+          {
+            "token": "button.outlined.help.border.color",
+            "variable": "--p-button-outlined-help-border-color",
+            "description": "Help border color of outlined"
+          },
+          {
+            "token": "button.outlined.help.color",
+            "variable": "--p-button-outlined-help-color",
+            "description": "Help color of outlined"
+          },
+          {
+            "token": "button.outlined.danger.hover.background",
+            "variable": "--p-button-outlined-danger-hover-background",
+            "description": "Danger hover background of outlined"
+          },
+          {
+            "token": "button.outlined.danger.active.background",
+            "variable": "--p-button-outlined-danger-active-background",
+            "description": "Danger active background of outlined"
+          },
+          {
+            "token": "button.outlined.danger.border.color",
+            "variable": "--p-button-outlined-danger-border-color",
+            "description": "Danger border color of outlined"
+          },
+          {
+            "token": "button.outlined.danger.color",
+            "variable": "--p-button-outlined-danger-color",
+            "description": "Danger color of outlined"
+          },
+          {
+            "token": "button.outlined.contrast.hover.background",
+            "variable": "--p-button-outlined-contrast-hover-background",
+            "description": "Contrast hover background of outlined"
+          },
+          {
+            "token": "button.outlined.contrast.active.background",
+            "variable": "--p-button-outlined-contrast-active-background",
+            "description": "Contrast active background of outlined"
+          },
+          {
+            "token": "button.outlined.contrast.border.color",
+            "variable": "--p-button-outlined-contrast-border-color",
+            "description": "Contrast border color of outlined"
+          },
+          {
+            "token": "button.outlined.contrast.color",
+            "variable": "--p-button-outlined-contrast-color",
+            "description": "Contrast color of outlined"
+          },
+          {
+            "token": "button.outlined.plain.hover.background",
+            "variable": "--p-button-outlined-plain-hover-background",
+            "description": "Plain hover background of outlined"
+          },
+          {
+            "token": "button.outlined.plain.active.background",
+            "variable": "--p-button-outlined-plain-active-background",
+            "description": "Plain active background of outlined"
+          },
+          {
+            "token": "button.outlined.plain.border.color",
+            "variable": "--p-button-outlined-plain-border-color",
+            "description": "Plain border color of outlined"
+          },
+          {
+            "token": "button.outlined.plain.color",
+            "variable": "--p-button-outlined-plain-color",
+            "description": "Plain color of outlined"
+          },
+          {
+            "token": "button.text.primary.hover.background",
+            "variable": "--p-button-text-primary-hover-background",
+            "description": "Primary hover background of text"
+          },
+          {
+            "token": "button.text.primary.active.background",
+            "variable": "--p-button-text-primary-active-background",
+            "description": "Primary active background of text"
+          },
+          {
+            "token": "button.text.primary.color",
+            "variable": "--p-button-text-primary-color",
+            "description": "Primary color of text"
+          },
+          {
+            "token": "button.text.secondary.hover.background",
+            "variable": "--p-button-text-secondary-hover-background",
+            "description": "Secondary hover background of text"
+          },
+          {
+            "token": "button.text.secondary.active.background",
+            "variable": "--p-button-text-secondary-active-background",
+            "description": "Secondary active background of text"
+          },
+          {
+            "token": "button.text.secondary.color",
+            "variable": "--p-button-text-secondary-color",
+            "description": "Secondary color of text"
+          },
+          {
+            "token": "button.text.success.hover.background",
+            "variable": "--p-button-text-success-hover-background",
+            "description": "Success hover background of text"
+          },
+          {
+            "token": "button.text.success.active.background",
+            "variable": "--p-button-text-success-active-background",
+            "description": "Success active background of text"
+          },
+          {
+            "token": "button.text.success.color",
+            "variable": "--p-button-text-success-color",
+            "description": "Success color of text"
+          },
+          {
+            "token": "button.text.info.hover.background",
+            "variable": "--p-button-text-info-hover-background",
+            "description": "Info hover background of text"
+          },
+          {
+            "token": "button.text.info.active.background",
+            "variable": "--p-button-text-info-active-background",
+            "description": "Info active background of text"
+          },
+          {
+            "token": "button.text.info.color",
+            "variable": "--p-button-text-info-color",
+            "description": "Info color of text"
+          },
+          {
+            "token": "button.text.warn.hover.background",
+            "variable": "--p-button-text-warn-hover-background",
+            "description": "Warn hover background of text"
+          },
+          {
+            "token": "button.text.warn.active.background",
+            "variable": "--p-button-text-warn-active-background",
+            "description": "Warn active background of text"
+          },
+          {
+            "token": "button.text.warn.color",
+            "variable": "--p-button-text-warn-color",
+            "description": "Warn color of text"
+          },
+          {
+            "token": "button.text.help.hover.background",
+            "variable": "--p-button-text-help-hover-background",
+            "description": "Help hover background of text"
+          },
+          {
+            "token": "button.text.help.active.background",
+            "variable": "--p-button-text-help-active-background",
+            "description": "Help active background of text"
+          },
+          {
+            "token": "button.text.help.color",
+            "variable": "--p-button-text-help-color",
+            "description": "Help color of text"
+          },
+          {
+            "token": "button.text.danger.hover.background",
+            "variable": "--p-button-text-danger-hover-background",
+            "description": "Danger hover background of text"
+          },
+          {
+            "token": "button.text.danger.active.background",
+            "variable": "--p-button-text-danger-active-background",
+            "description": "Danger active background of text"
+          },
+          {
+            "token": "button.text.danger.color",
+            "variable": "--p-button-text-danger-color",
+            "description": "Danger color of text"
+          },
+          {
+            "token": "button.text.contrast.hover.background",
+            "variable": "--p-button-text-contrast-hover-background",
+            "description": "Contrast hover background of text"
+          },
+          {
+            "token": "button.text.contrast.active.background",
+            "variable": "--p-button-text-contrast-active-background",
+            "description": "Contrast active background of text"
+          },
+          {
+            "token": "button.text.contrast.color",
+            "variable": "--p-button-text-contrast-color",
+            "description": "Contrast color of text"
+          },
+          {
+            "token": "button.text.plain.hover.background",
+            "variable": "--p-button-text-plain-hover-background",
+            "description": "Plain hover background of text"
+          },
+          {
+            "token": "button.text.plain.active.background",
+            "variable": "--p-button-text-plain-active-background",
+            "description": "Plain active background of text"
+          },
+          {
+            "token": "button.text.plain.color",
+            "variable": "--p-button-text-plain-color",
+            "description": "Plain color of text"
+          },
+          {
+            "token": "button.link.color",
+            "variable": "--p-button-link-color",
+            "description": "Color of link"
+          },
+          {
+            "token": "button.link.hover.color",
+            "variable": "--p-button-link-hover-color",
+            "description": "Hover color of link"
+          },
+          {
+            "token": "button.link.active.color",
+            "variable": "--p-button-link-active-color",
+            "description": "Active color of link"
+          }
+        ]
+      }
+    },
+    {
+      "name": "inputtext",
+      "title": "Angular InputText Component",
+      "description": "InputText is an extension to standard input element with theming and keyfiltering.",
+      "sections": [
+        {
+          "id": "accessibility",
+          "label": "Accessibility",
+          "description": "Screen Reader InputText component renders a native input element that implicitly includes any passed prop. Value to describe the component can either be provided via label tag combined with id prop or using aria-labelledby , aria-label props.",
+          "examples": null
+        },
+        {
+          "id": "basic",
+          "label": "Basic",
+          "description": "InputText is used as a controlled input with ngModel property.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <input type=\"text\" pInputText [(ngModel)]=\"value\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextBasicDemo {\n    value: string;\n}"
+          }
+        },
+        {
+          "id": "disabled",
+          "label": "Disabled",
+          "description": "When disabled is present, the element cannot be edited and focused.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <input pInputText [disabled]=\"true\" [(ngModel)]=\"value\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextDisabledDemo {\n    value: string | undefined = 'Disabled';\n}"
+          }
+        },
+        {
+          "id": "filled",
+          "label": "Filled",
+          "description": "Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <input type=\"text\" pInputText [(ngModel)]=\"value\" variant=\"filled\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextFilledDemo {\n    value: string;\n}"
+          }
+        },
+        {
+          "id": "floatlabel",
+          "label": "Float Label",
+          "description": "FloatLabel visually integrates a label with its form element. Visit FloatLabel documentation for more information.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-wrap justify-center items-end gap-4\">\n            <p-floatlabel>\n                <input pInputText id=\"over_label\" [(ngModel)]=\"value1\" autocomplete=\"off\" />\n                <label for=\"over_label\">Over Label</label>\n            </p-floatlabel>\n            <p-floatlabel variant=\"in\">\n                <input pInputText id=\"in_label\" [(ngModel)]=\"value2\" autocomplete=\"off\" />\n                <label for=\"in_label\">In Label</label>\n            </p-floatlabel>\n            <p-floatlabel variant=\"on\">\n                <input pInputText id=\"on_label\" [(ngModel)]=\"value3\" autocomplete=\"off\" />\n                <label for=\"on_label\">On Label</label>\n            </p-floatlabel>\n        </div>\n    `,\n    standalone: true,\n    imports: [FloatLabelModule, InputTextModule, FormsModule]\n})\nexport class InputtextFloatlabelDemo {\n    value1: string | undefined;\n    value2: string | undefined;\n    value3: string | undefined;\n}"
+          }
+        },
+        {
+          "id": "fluid",
+          "label": "Fluid",
+          "description": "The fluid prop makes the component take up the full width of its container when set to true.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <input type=\"text\" pInputText [(ngModel)]=\"value\" fluid />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextFluidDemo {\n    value: string;\n}"
+          }
+        },
+        {
+          "id": "helptext",
+          "label": "Help Text",
+          "description": "An advisory text can be defined with the semantic small tag.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <div class=\"flex flex-col gap-2\">\n                <label for=\"username\">Username</label>\n                <input pInputText id=\"username\" aria-describedby=\"username-help\" [(ngModel)]=\"value\" />\n                <small id=\"username-help\">Enter your username to reset your password.</small>\n            </div>\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextHelptextDemo {\n    value: string | undefined;\n}"
+          }
+        },
+        {
+          "id": "icons",
+          "label": "icons-doc",
+          "description": "Icons can be placed inside an input element by wrapping both the input and the icon with an element that has either .p-input-icon-left or p-input-icon-right class.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-wrap justify-center gap-4\">\n            <span class=\"p-input-icon-left\">\n                <i class=\"pi pi-search\"></i>\n                <input type=\"text\" pInputText [(ngModel)]=\"value\" />\n            </span>\n            <span class=\"p-input-icon-right\">\n                <i class=\"pi pi-spin pi-spinner\"></i>\n                <input type=\"text\" pInputText [(ngModel)]=\"value2\" />\n            </span>\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, FormsModule]\n})\nexport class InputtextIconsDemo {\n    value: string | undefined;\n    value2: string | undefined;\n}"
+          }
+        }
+      ],
+      "api": {
+        "props": [
+          {
+            "name": "dt",
+            "type": "InputSignal<Object>",
+            "default": "undefined",
+            "description": "Defines scoped design tokens of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "unstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pt",
+            "type": "InputSignal<InputTextPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptOptions",
+            "type": "InputSignal<PassThroughOptions>",
+            "default": "undefined",
+            "description": "Used to configure passthrough(pt) options of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptInputText",
+            "type": "InputSignal<InputTextPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the InputText component.",
+            "deprecated": "use pInputTextPT instead."
+          },
+          {
+            "name": "pInputTextPT",
+            "type": "InputSignal<InputTextPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the InputText component.",
+            "deprecated": ""
+          },
+          {
+            "name": "pInputTextUnstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pSize",
+            "type": "\"small\" | \"large\"",
+            "default": "-",
+            "description": "Defines the size of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "variant",
+            "type": "InputSignal<\"outlined\" | \"filled\">",
+            "default": "undefined",
+            "description": "Specifies the input variant of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "fluid",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "undefined",
+            "description": "Spans 100% width of the container when enabled.",
+            "deprecated": ""
+          },
+          {
+            "name": "invalid",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When present, it specifies that the component should have invalid state style.",
+            "deprecated": ""
+          }
+        ],
+        "templates": null,
+        "emits": null,
+        "methods": null,
+        "pt": [
+          {
+            "name": "root",
+            "type": "PassThroughOption<HTMLInputElement, I>",
+            "description": "Used to pass attributes to the root's DOM element."
+          }
+        ],
+        "styles": [
+          {
+            "class": "p-inputtext",
+            "description": "The class of root element"
+          }
+        ],
+        "tokens": [
+          {
+            "token": "inputtext.background",
+            "variable": "--p-inputtext-background",
+            "description": "Background of root"
+          },
+          {
+            "token": "inputtext.disabled.background",
+            "variable": "--p-inputtext-disabled-background",
+            "description": "Disabled background of root"
+          },
+          {
+            "token": "inputtext.filled.background",
+            "variable": "--p-inputtext-filled-background",
+            "description": "Filled background of root"
+          },
+          {
+            "token": "inputtext.filled.hover.background",
+            "variable": "--p-inputtext-filled-hover-background",
+            "description": "Filled hover background of root"
+          },
+          {
+            "token": "inputtext.filled.focus.background",
+            "variable": "--p-inputtext-filled-focus-background",
+            "description": "Filled focus background of root"
+          },
+          {
+            "token": "inputtext.border.color",
+            "variable": "--p-inputtext-border-color",
+            "description": "Border color of root"
+          },
+          {
+            "token": "inputtext.hover.border.color",
+            "variable": "--p-inputtext-hover-border-color",
+            "description": "Hover border color of root"
+          },
+          {
+            "token": "inputtext.focus.border.color",
+            "variable": "--p-inputtext-focus-border-color",
+            "description": "Focus border color of root"
+          },
+          {
+            "token": "inputtext.invalid.border.color",
+            "variable": "--p-inputtext-invalid-border-color",
+            "description": "Invalid border color of root"
+          },
+          {
+            "token": "inputtext.color",
+            "variable": "--p-inputtext-color",
+            "description": "Color of root"
+          },
+          {
+            "token": "inputtext.disabled.color",
+            "variable": "--p-inputtext-disabled-color",
+            "description": "Disabled color of root"
+          },
+          {
+            "token": "inputtext.placeholder.color",
+            "variable": "--p-inputtext-placeholder-color",
+            "description": "Placeholder color of root"
+          },
+          {
+            "token": "inputtext.invalid.placeholder.color",
+            "variable": "--p-inputtext-invalid-placeholder-color",
+            "description": "Invalid placeholder color of root"
+          },
+          {
+            "token": "inputtext.shadow",
+            "variable": "--p-inputtext-shadow",
+            "description": "Shadow of root"
+          },
+          {
+            "token": "inputtext.padding.x",
+            "variable": "--p-inputtext-padding-x",
+            "description": "Padding x of root"
+          },
+          {
+            "token": "inputtext.padding.y",
+            "variable": "--p-inputtext-padding-y",
+            "description": "Padding y of root"
+          },
+          {
+            "token": "inputtext.border.radius",
+            "variable": "--p-inputtext-border-radius",
+            "description": "Border radius of root"
+          },
+          {
+            "token": "inputtext.focus.ring.width",
+            "variable": "--p-inputtext-focus-ring-width",
+            "description": "Focus ring width of root"
+          },
+          {
+            "token": "inputtext.focus.ring.style",
+            "variable": "--p-inputtext-focus-ring-style",
+            "description": "Focus ring style of root"
+          },
+          {
+            "token": "inputtext.focus.ring.color",
+            "variable": "--p-inputtext-focus-ring-color",
+            "description": "Focus ring color of root"
+          },
+          {
+            "token": "inputtext.focus.ring.offset",
+            "variable": "--p-inputtext-focus-ring-offset",
+            "description": "Focus ring offset of root"
+          },
+          {
+            "token": "inputtext.focus.ring.shadow",
+            "variable": "--p-inputtext-focus-ring-shadow",
+            "description": "Focus ring shadow of root"
+          },
+          {
+            "token": "inputtext.transition.duration",
+            "variable": "--p-inputtext-transition-duration",
+            "description": "Transition duration of root"
+          },
+          {
+            "token": "inputtext.sm.font.size",
+            "variable": "--p-inputtext-sm-font-size",
+            "description": "Sm font size of root"
+          },
+          {
+            "token": "inputtext.sm.padding.x",
+            "variable": "--p-inputtext-sm-padding-x",
+            "description": "Sm padding x of root"
+          },
+          {
+            "token": "inputtext.sm.padding.y",
+            "variable": "--p-inputtext-sm-padding-y",
+            "description": "Sm padding y of root"
+          },
+          {
+            "token": "inputtext.lg.font.size",
+            "variable": "--p-inputtext-lg-font-size",
+            "description": "Lg font size of root"
+          },
+          {
+            "token": "inputtext.lg.padding.x",
+            "variable": "--p-inputtext-lg-padding-x",
+            "description": "Lg padding x of root"
+          },
+          {
+            "token": "inputtext.lg.padding.y",
+            "variable": "--p-inputtext-lg-padding-y",
+            "description": "Lg padding y of root"
+          }
+        ]
+      }
+    },
+    {
+      "name": "llms",
+      "title": "LLMs.txt",
+      "description": "LLM-optimized documentation endpoints for ExhaustiveUI components.",
+      "sections": [
+        {
+          "id": "agentskill",
+          "label": "Agent Skill",
+          "description": "The markdown files above are also bundled as an Agent Skill , the SKILL.md format supported by coding agents such as Claude Code, Codex, Cursor and OpenCode. Once installed, the agent reads the component docs, API tables and guides from disk whenever it works on ExhaustiveUI code, instead of fetching them from this site each time. Install it with the skills CLI , which asks which agents to set it up for. By default the skill is installed into the current project, so your team gets it too. Add -g to install it for your user instead. You can also download the zip and extract it into a folder named exhaustive-ui in your agent's skills directory.",
+          "examples": null
+        },
+        {
+          "id": "llmsfulltxt",
+          "label": "/llms-full.txt",
+          "description": "The llms-full.txt file is a complete list of all the pages in the ExhaustiveUI documentation. It is used to help AI models understand the entire documentation set.",
+          "examples": null
+        },
+        {
+          "id": "llmstxt",
+          "label": "/llms.txt",
+          "description": "The llms.txt file is an industry standard that helps AI models better understand and navigate the ExhaustiveUI documentation. It lists key pages in a structured format, making it easier for LLMs to retrieve relevant information.",
+          "examples": null
+        },
+        {
+          "id": "manifest",
+          "label": "Manifest",
+          "description": "/llms/manifest.json describes every component, directive, NgModule, service and exported type as structured data, for tools that need exact facts rather than prose: MCP servers, code generators, linters and design tool integrations. It is generated from the Angular metadata in the compiled library, so selectors and inputs match what the compiler accepts. Each entry point lists its import path, NgModule, services and exported types. Each component or directive lists its selector, inputs with type, allowed values, default, transform and two-way binding, outputs with payload type, templates with their context type, methods, forms support and pass-through keys.",
+          "examples": null
+        },
+        {
+          "id": "markdownextension",
+          "label": "markdownextension-doc",
+          "description": "Add a .md to a page's URL to display a Markdown version of that page.",
+          "examples": null
+        }
+      ],
+      "api": {
+        "props": null,
+        "templates": null,
+        "emits": null,
+        "methods": null,
+        "pt": null,
+        "styles": null,
+        "tokens": null
+      }
+    },
+    {
+      "name": "select",
+      "title": "Angular Select Component",
+      "description": "Select is used to choose an item from a collection of options.",
+      "sections": [
+        {
+          "id": "accessibility",
+          "label": "Accessibility",
+          "description": "Screen Reader Value to describe the component can either be provided with ariaLabelledBy or ariaLabel props. The select element has a combobox role in addition to aria-haspopup and aria-expanded attributes. If the editable option is enabled aria-autocomplete is also added. The relation between the combobox and the popup is created with aria-controls and aria-activedescendant attribute is used to instruct screen reader which option to read during keyboard navigation within the popup list. The popup list has an id that refers to the aria-controls attribute of the combobox element and uses listbox as the role. Each list item has an option role, an id to match the aria-activedescendant of the input element along with aria-label , aria-selected and aria-disabled attributes. If filtering is enabled, filterInputProps can be defined to give aria-* props to the filter input element.",
+          "examples": null
+        },
+        {
+          "id": "basic",
+          "label": "Basic",
+          "description": "Select is used as a controlled component with ngModel property along with an options collection. Label and value of an option are defined with the optionLabel and optionValue properties respectively. Note that, when options are simple primitive values such as a string array, no optionLabel and optionValue would be necessary.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" optionLabel=\"name\" placeholder=\"Select a City\" class=\"w-full md:w-56\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectBasicDemo implements OnInit {\n    cities: City[];\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "checkmark",
+          "label": "Checkmark",
+          "description": "An alternative way to highlight the selected option is displaying a checkmark instead.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" [checkmark]=\"true\" optionLabel=\"name\" [showClear]=\"true\" placeholder=\"Select a City\" class=\"w-full md:w-56\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectCheckmarkDemo implements OnInit {\n    cities: City[];\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "clearicon",
+          "label": "Clear Icon",
+          "description": "When showClear is enabled, a clear icon is displayed to clear the value.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" optionLabel=\"name\" placeholder=\"Select a City\" class=\"w-full md:w-56\" [showClear]=\"true\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectCleariconDemo implements OnInit {\n    cities: City[];\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "customfilter",
+          "label": "customfilter-doc",
+          "description": "Custom filter can be applied with the filterTemplate .",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\nimport { SelectModule } from '@exhaustive-ui/core/select';\nimport { InputGroupModule } from '@exhaustive-ui/core/inputgroup';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\nimport { Country } from '@/domain/customer';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"countries\" [(ngModel)]=\"selectedCountry\" optionLabel=\"name\" [filter]=\"true\" filterBy=\"name\" [showClear]=\"true\" placeholder=\"Select a Country\">\n                <ng-template pTemplate=\"filter\" let-options=\"options\">\n                    <div class=\"flex gap-1\">\n                        <p-inputgroup (click)=\"$event.stopPropagation()\">\n                            <p-inputgroup-addon><i class=\"pi pi-search\"></i></p-inputgroup-addon>\n                            <input type=\"text\" pInputText placeholder=\"Filter\" [(ngModel)]=\"filterValue\" (keyup)=\"customFilterFunction($event, options)\" />\n                        </p-inputgroup>\n                        <p-button icon=\"pi pi-times\" (click)=\"resetFunction(options)\" severity=\"secondary\" />\n                    </div>\n                </ng-template>\n                <ng-template pTemplate=\"selectedItem\" let-selectedOption>\n                    <div class=\"flex items-center gap-2\">\n                        <img src=\"https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png\" [class]=\"'flag flag-' + selectedCountry.code.toLowerCase()\" style=\"width: 18px\" />\n                        <div>{{ selectedOption.name }}</div>\n                    </div>\n                </ng-template>\n                <ng-template let-country pTemplate=\"item\">\n                    <div class=\"flex items-center gap-2\">\n                        <img src=\"https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png\" [class]=\"'flag flag-' + country.code.toLowerCase()\" style=\"width: 18px\" />\n                        <div>{{ country.name }}</div>\n                    </div>\n                </ng-template>\n            </p-select>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule, SelectModule, InputGroupModule, InputTextModule, FormsModule]\n})\nexport class SelectCustomfilterDemo implements OnInit {\n    countries: City[] | undefined;\n    selectedCountry: string | undefined;\n    filterValue: string | undefined = '';\n\n    ngOnInit() {\n        this.countries = [\n            { name: 'Australia', code: 'AU' },\n            { name: 'Brazil', code: 'BR' },\n            { name: 'China', code: 'CN' },\n            { name: 'Egypt', code: 'EG' },\n            { name: 'France', code: 'FR' },\n            { name: 'Germany', code: 'DE' },\n            { name: 'India', code: 'IN' },\n            { name: 'Japan', code: 'JP' },\n            { name: 'Spain', code: 'ES' },\n            { name: 'United States', code: 'US' }\n        ];\n    }\n\n    resetFunction(options: SelectFilterOptions) {\n        options.reset();\n        this.filterValue = '';\n    }\n\n    customFilterFunction(event: KeyboardEvent, options: SelectFilterOptions) {\n        options.filter(event);\n    }\n}"
+          }
+        },
+        {
+          "id": "disabled",
+          "label": "Disabled",
+          "description": "When disabled is present, the element cannot be edited and focused.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" placeholder=\"Select a City\" optionLabel=\"name\" [disabled]=\"true\" class=\"w-full md:w-56\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectDisabledDemo implements OnInit {\n    cities: City[] | undefined;\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "editable",
+          "label": "Editable",
+          "description": "When editable is present, the input can also be entered with typing.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" placeholder=\"Select a City\" [editable]=\"true\" optionLabel=\"name\" class=\"w-full md:w-56\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectEditableDemo implements OnInit {\n    cities: City[] | undefined;\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "filled",
+          "label": "Filled",
+          "description": "Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { SelectModule } from '@exhaustive-ui/core/select';\n\ninterface City {\n    name: string;\n    code: string;\n}\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-select [options]=\"cities\" [(ngModel)]=\"selectedCity\" variant=\"filled\" optionLabel=\"name\" placeholder=\"Select a City\" class=\"w-full md:w-56\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [SelectModule, FormsModule]\n})\nexport class SelectFilledDemo implements OnInit {\n    cities: City[];\n    selectedCity: City | undefined;\n\n    ngOnInit() {\n        this.cities = [\n            { name: 'New York', code: 'NY' },\n            { name: 'Rome', code: 'RM' },\n            { name: 'London', code: 'LDN' },\n            { name: 'Istanbul', code: 'IST' },\n            { name: 'Paris', code: 'PRS' }\n        ];\n    }\n}"
+          }
+        }
+      ],
+      "api": {
+        "props": [
+          {
+            "name": "dt",
+            "type": "InputSignal<Object>",
+            "default": "undefined",
+            "description": "Defines scoped design tokens of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "unstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pt",
+            "type": "InputSignal<SelectPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptOptions",
+            "type": "InputSignal<PassThroughOptions>",
+            "default": "undefined",
+            "description": "Used to configure passthrough(pt) options of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "required",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "There must be a value (if set).",
+            "deprecated": ""
+          },
+          {
+            "name": "invalid",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When present, it specifies that the component should have invalid state style.",
+            "deprecated": ""
+          },
+          {
+            "name": "disabled",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When present, it specifies that the component should have disabled state style.",
+            "deprecated": ""
+          },
+          {
+            "name": "name",
+            "type": "InputSignal<string>",
+            "default": "undefined",
+            "description": "When present, it specifies that the name of the input.",
+            "deprecated": ""
+          },
+          {
+            "name": "fluid",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "Spans 100% width of the container when enabled.",
+            "deprecated": ""
+          },
+          {
+            "name": "variant",
+            "type": "InputSignal<\"outlined\" | \"filled\">",
+            "default": "'outlined'",
+            "description": "Specifies the input variant of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "size",
+            "type": "InputSignal<\"small\" | \"large\">",
+            "default": "undefined",
+            "description": "Specifies the size of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "inputSize",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "Specifies the visible width of the input element in characters.",
+            "deprecated": ""
+          },
+          {
+            "name": "pattern",
+            "type": "InputSignal<string>",
+            "default": "undefined",
+            "description": "Specifies the value must match the pattern.",
+            "deprecated": ""
+          },
+          {
+            "name": "min",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "The value must be greater than or equal to the value.",
+            "deprecated": ""
+          },
+          {
+            "name": "max",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "The value must be less than or equal to the value.",
+            "deprecated": ""
+          },
+          {
+            "name": "step",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "Unless the step is set to the any literal, the value must be min + an integral multiple of the step.",
+            "deprecated": ""
+          },
+          {
+            "name": "minlength",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "The number of characters (code points) must not be less than the value of the attribute, if non-empty.",
+            "deprecated": ""
+          },
+          {
+            "name": "maxlength",
+            "type": "InputSignal<number>",
+            "default": "undefined",
+            "description": "The number of characters (code points) must not exceed the value of the attribute.",
+            "deprecated": ""
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "default": "-",
+            "description": "Unique identifier of the component",
+            "deprecated": ""
+          },
+          {
+            "name": "scrollHeight",
+            "type": "string",
+            "default": "200px",
+            "description": "Height of the viewport in pixels, a scrollbar is defined if height of list exceeds this value.",
+            "deprecated": ""
+          },
+          {
+            "name": "filter",
+            "type": "boolean",
+            "default": "false",
+            "description": "When specified, displays an input field to filter the items on keyup.",
+            "deprecated": ""
+          },
+          {
+            "name": "panelStyle",
+            "type": "{ [klass: string]: any }",
+            "default": "-",
+            "description": "Inline style of the overlay panel element.",
+            "deprecated": ""
+          },
+          {
+            "name": "styleClass",
+            "type": "string",
+            "default": "-",
+            "description": "Style class of the element.",
+            "deprecated": "since v20.0.0, use "
+          },
+          {
+            "name": "panelStyleClass",
+            "type": "string",
+            "default": "-",
+            "description": "Style class of the overlay panel element.",
+            "deprecated": ""
+          },
+          {
+            "name": "readonly",
+            "type": "boolean",
+            "default": "false",
+            "description": "When present, it specifies that the component cannot be edited.",
+            "deprecated": ""
+          },
+          {
+            "name": "editable",
+            "type": "boolean",
+            "default": "false",
+            "description": "When present, custom value instead of predefined options can be entered using the editable input field.",
+            "deprecated": ""
+          },
+          {
+            "name": "tabindex",
+            "type": "number",
+            "default": "0",
+            "description": "Index of the element in tabbing order.",
+            "deprecated": ""
+          },
+          {
+            "name": "placeholder",
+            "type": "Signal<string>",
+            "default": "-",
+            "description": "Default text to display when no option is selected.",
+            "deprecated": ""
+          },
+          {
+            "name": "loadingIcon",
+            "type": "string",
+            "default": "-",
+            "description": "Icon to display in loading state.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterPlaceholder",
+            "type": "string",
+            "default": "-",
+            "description": "Placeholder text to show when filter input is empty.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterLocale",
+            "type": "string",
+            "default": "-",
+            "description": "Locale to use in filtering. The default locale is the host environment's current locale.",
+            "deprecated": ""
+          },
+          {
+            "name": "inputId",
+            "type": "string",
+            "default": "-",
+            "description": "Identifier of the accessible input element.",
+            "deprecated": ""
+          },
+          {
+            "name": "dataKey",
+            "type": "string",
+            "default": "-",
+            "description": "A property to uniquely identify a value in options.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterBy",
+            "type": "string",
+            "default": "-",
+            "description": "When filtering is enabled, filterBy decides which field or fields (comma separated) to search against.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterFields",
+            "type": "any[]",
+            "default": "-",
+            "description": "Fields used when filtering the options, defaults to optionLabel.",
+            "deprecated": ""
+          },
+          {
+            "name": "autofocus",
+            "type": "boolean",
+            "default": "false",
+            "description": "When present, it specifies that the component should automatically get focus on load.",
+            "deprecated": ""
+          },
+          {
+            "name": "resetFilterOnHide",
+            "type": "boolean",
+            "default": "false",
+            "description": "Clears the filter value when hiding the select.",
+            "deprecated": ""
+          },
+          {
+            "name": "checkmark",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether the selected option will be shown with a check mark.",
+            "deprecated": ""
+          },
+          {
+            "name": "dropdownIcon",
+            "type": "string",
+            "default": "-",
+            "description": "Icon class of the select icon.",
+            "deprecated": ""
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether the select is in loading state.",
+            "deprecated": ""
+          },
+          {
+            "name": "optionLabel",
+            "type": "string",
+            "default": "-",
+            "description": "Name of the label field of an option.",
+            "deprecated": ""
+          },
+          {
+            "name": "optionValue",
+            "type": "string",
+            "default": "-",
+            "description": "Name of the value field of an option.",
+            "deprecated": ""
+          },
+          {
+            "name": "optionDisabled",
+            "type": "string",
+            "default": "-",
+            "description": "Name of the disabled field of an option.",
+            "deprecated": ""
+          },
+          {
+            "name": "optionGroupLabel",
+            "type": "string",
+            "default": "label",
+            "description": "Name of the label field of an option group.",
+            "deprecated": ""
+          },
+          {
+            "name": "optionGroupChildren",
+            "type": "string",
+            "default": "items",
+            "description": "Name of the options field of an option group.",
+            "deprecated": ""
+          },
+          {
+            "name": "group",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether to display options as grouped when nested options are provided.",
+            "deprecated": ""
+          },
+          {
+            "name": "showClear",
+            "type": "boolean",
+            "default": "false",
+            "description": "When enabled, a clear icon is displayed to clear the value.",
+            "deprecated": ""
+          },
+          {
+            "name": "emptyFilterMessage",
+            "type": "string",
+            "default": "-",
+            "description": "Text to display when filtering does not return any results. Defaults to global value in i18n translation configuration.",
+            "deprecated": ""
+          },
+          {
+            "name": "emptyMessage",
+            "type": "string",
+            "default": "-",
+            "description": "Text to display when there is no data. Defaults to global value in i18n translation configuration.",
+            "deprecated": ""
+          },
+          {
+            "name": "lazy",
+            "type": "boolean",
+            "default": "false",
+            "description": "Defines if data is loaded and interacted with in lazy manner.",
+            "deprecated": ""
+          },
+          {
+            "name": "virtualScroll",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether the data should be loaded on demand during scroll.",
+            "deprecated": ""
+          },
+          {
+            "name": "virtualScrollItemSize",
+            "type": "number",
+            "default": "-",
+            "description": "Height of an item in the list for VirtualScrolling.",
+            "deprecated": ""
+          },
+          {
+            "name": "virtualScrollOptions",
+            "type": "ScrollerOptions",
+            "default": "-",
+            "description": "Whether to use the scroller feature. The properties of scroller component can be used like an object in it.",
+            "deprecated": ""
+          },
+          {
+            "name": "overlayOptions",
+            "type": "OverlayOptions",
+            "default": "-",
+            "description": "Whether to use overlay API feature. The properties of overlay API can be used like an object in it.",
+            "deprecated": ""
+          },
+          {
+            "name": "ariaFilterLabel",
+            "type": "string",
+            "default": "-",
+            "description": "Defines a string that labels the filter input.",
+            "deprecated": ""
+          },
+          {
+            "name": "ariaLabel",
+            "type": "string",
+            "default": "-",
+            "description": "Used to define a aria label attribute the current element.",
+            "deprecated": ""
+          },
+          {
+            "name": "ariaLabelledBy",
+            "type": "string",
+            "default": "-",
+            "description": "Establishes relationships between the component and label(s) where its value should be one or more element IDs.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterMatchMode",
+            "type": "\"gt\" | \"lt\" | \"in\" | \"startsWith\" | \"contains\" | \"endsWith\" | \"equals\" | \"notEquals\" | \"lte\" | \"gte\"",
+            "default": "contains",
+            "description": "Defines how the items are filtered.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltip",
+            "type": "string",
+            "default": "-",
+            "description": "Advisory information to display in a tooltip on hover.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipPosition",
+            "type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
+            "default": "right",
+            "description": "Position of the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipPositionStyle",
+            "type": "string",
+            "default": "absolute",
+            "description": "Type of CSS position.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipStyleClass",
+            "type": "string",
+            "default": "-",
+            "description": "Style class of the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "focusOnHover",
+            "type": "boolean",
+            "default": "true",
+            "description": "Fields used when filtering the options, defaults to optionLabel.",
+            "deprecated": ""
+          },
+          {
+            "name": "selectOnFocus",
+            "type": "boolean",
+            "default": "false",
+            "description": "Determines if the option will be selected on focus.",
+            "deprecated": ""
+          },
+          {
+            "name": "autoOptionFocus",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether to focus on the first visible or selected element when the overlay panel is shown.",
+            "deprecated": ""
+          },
+          {
+            "name": "autofocusFilter",
+            "type": "boolean",
+            "default": "true",
+            "description": "Applies focus to the filter element when the overlay is shown.",
+            "deprecated": ""
+          },
+          {
+            "name": "filterValue",
+            "type": "string",
+            "default": "-",
+            "description": "When specified, filter displays with this value.",
+            "deprecated": ""
+          },
+          {
+            "name": "options",
+            "type": "any[]",
+            "default": "-",
+            "description": "An array of objects to display as the available options.",
+            "deprecated": ""
+          },
+          {
+            "name": "appendTo",
+            "type": "InputSignal<any>",
+            "default": "'self'",
+            "description": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name).",
+            "deprecated": ""
+          },
+          {
+            "name": "motionOptions",
+            "type": "InputSignal<MotionOptions>",
+            "default": "...",
+            "description": "The motion options.",
+            "deprecated": ""
+          }
+        ],
+        "templates": [
+          {
+            "name": "item",
+            "type": "TemplateRef<SelectItemTemplateContext<any>>",
+            "description": "Custom item template."
+          },
+          {
+            "name": "group",
+            "type": "TemplateRef<SelectGroupTemplateContext<any>>",
+            "description": "Custom group template."
+          },
+          {
+            "name": "loader",
+            "type": "TemplateRef<SelectLoaderTemplateContext>",
+            "description": "Custom loader template."
+          },
+          {
+            "name": "selecteditem",
+            "type": "TemplateRef<SelectSelectedItemTemplateContext<any>>",
+            "description": "Custom selected item template."
+          },
+          {
+            "name": "header",
+            "type": "TemplateRef<void>",
+            "description": "Custom header template."
+          },
+          {
+            "name": "filter",
+            "type": "TemplateRef<SelectFilterTemplateContext>",
+            "description": "Custom filter template."
+          },
+          {
+            "name": "footer",
+            "type": "TemplateRef<void>",
+            "description": "Custom footer template."
+          },
+          {
+            "name": "emptyfilter",
+            "type": "TemplateRef<void>",
+            "description": "Custom empty filter template."
+          },
+          {
+            "name": "empty",
+            "type": "TemplateRef<void>",
+            "description": "Custom empty template."
+          },
+          {
+            "name": "dropdownicon",
+            "type": "TemplateRef<SelectIconTemplateContext>",
+            "description": "Custom dropdown icon template."
+          },
+          {
+            "name": "loadingicon",
+            "type": "TemplateRef<void>",
+            "description": "Custom loading icon template."
+          },
+          {
+            "name": "clearicon",
+            "type": "TemplateRef<SelectIconTemplateContext>",
+            "description": "Custom clear icon template."
+          },
+          {
+            "name": "filtericon",
+            "type": "TemplateRef<void>",
+            "description": "Custom filter icon template."
+          }
+        ],
+        "emits": [
+          {
+            "name": "onChange",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "SelectChangeEvent"
+              }
+            ],
+            "description": "Callback to invoke when value of select changes."
+          },
+          {
+            "name": "onFilter",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "SelectFilterEvent"
+              }
+            ],
+            "description": "Callback to invoke when data is filtered."
+          },
+          {
+            "name": "onFocus",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "Event"
+              }
+            ],
+            "description": "Callback to invoke when select gets focus."
+          },
+          {
+            "name": "onBlur",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "Event"
+              }
+            ],
+            "description": "Callback to invoke when select loses focus."
+          },
+          {
+            "name": "onClick",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "MouseEvent"
+              }
+            ],
+            "description": "Callback to invoke when component is clicked."
+          },
+          {
+            "name": "onShow",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "AnimationEvent"
+              }
+            ],
+            "description": "Callback to invoke when select overlay gets visible."
+          },
+          {
+            "name": "onHide",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "AnimationEvent"
+              }
+            ],
+            "description": "Callback to invoke when select overlay gets hidden."
+          },
+          {
+            "name": "onClear",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "Event"
+              }
+            ],
+            "description": "Callback to invoke when select clears the value."
+          },
+          {
+            "name": "onLazyLoad",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "SelectLazyLoadEvent"
+              }
+            ],
+            "description": "Callback to invoke in lazy mode to load new data."
+          }
+        ],
+        "methods": [
+          {
+            "name": "resetFilter",
+            "parameters": [],
+            "returnType": "void",
+            "description": "Callback to invoke on filter reset."
+          },
+          {
+            "name": "show",
+            "parameters": [
+              {
+                "name": "isFocus",
+                "type": "any"
+              }
+            ],
+            "returnType": "void",
+            "description": "Displays the panel."
+          },
+          {
+            "name": "hide",
+            "parameters": [
+              {
+                "name": "isFocus",
+                "type": "any"
+              }
+            ],
+            "returnType": "void",
+            "description": "Hides the panel."
+          },
+          {
+            "name": "focus",
+            "parameters": [],
+            "returnType": "void",
+            "description": "Applies focus."
+          },
+          {
+            "name": "clear",
+            "parameters": [
+              {
+                "name": "event",
+                "type": "Event"
+              }
+            ],
+            "returnType": "void",
+            "description": "Clears the model."
+          }
+        ],
+        "pt": [
+          {
+            "name": "root",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the root's DOM element."
+          },
+          {
+            "name": "label",
+            "type": "PassThroughOption<HTMLInputElement | HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the label's DOM element."
+          },
+          {
+            "name": "clearIcon",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the clear icon's DOM element."
+          },
+          {
+            "name": "dropdown",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the dropdown's DOM element."
+          },
+          {
+            "name": "loadingIcon",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the loading icon's DOM element."
+          },
+          {
+            "name": "dropdownIcon",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the dropdown icon's DOM element."
+          },
+          {
+            "name": "pcOverlay",
+            "type": "OverlayPassThrough",
+            "description": "Used to pass attributes to the Overlay component."
+          },
+          {
+            "name": "header",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the header's DOM element."
+          },
+          {
+            "name": "pcFilterContainer",
+            "type": "IconFieldPassThrough",
+            "description": "Used to pass attributes to the filter container's DOM element."
+          },
+          {
+            "name": "pcFilter",
+            "type": "InputTextPassThrough",
+            "description": "Used to pass attributes to the filter input's DOM element."
+          },
+          {
+            "name": "pcFilterIconContainer",
+            "type": "InputIconPassThrough",
+            "description": "Used to pass attributes to the filter icon container's DOM element."
+          },
+          {
+            "name": "filterIcon",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the filter icon's DOM element."
+          },
+          {
+            "name": "listContainer",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the list container's DOM element."
+          },
+          {
+            "name": "virtualScroller",
+            "type": "VirtualScrollerPassThrough",
+            "description": "Used to pass attributes to the VirtualScroller component."
+          },
+          {
+            "name": "list",
+            "type": "PassThroughOption<HTMLUListElement, I>",
+            "description": "Used to pass attributes to the list's DOM element."
+          },
+          {
+            "name": "optionGroup",
+            "type": "PassThroughOption<HTMLLIElement, I>",
+            "description": "Used to pass attributes to the option group's DOM element."
+          },
+          {
+            "name": "optionGroupLabel",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the option group label's DOM element."
+          },
+          {
+            "name": "option",
+            "type": "PassThroughOption<HTMLLIElement, I>",
+            "description": "Used to pass attributes to the option's DOM element."
+          },
+          {
+            "name": "optionCheckIcon",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the option check icon's DOM element."
+          },
+          {
+            "name": "optionBlankIcon",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the option blank icon's DOM element."
+          },
+          {
+            "name": "optionLabel",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the option label's DOM element."
+          },
+          {
+            "name": "emptyMessage",
+            "type": "PassThroughOption<HTMLLIElement, I>",
+            "description": "Used to pass attributes to the empty message's DOM element."
+          },
+          {
+            "name": "hiddenFirstFocusableEl",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the hidden first focusable element's DOM element."
+          },
+          {
+            "name": "hiddenFilterResult",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the hidden filter result's DOM element."
+          },
+          {
+            "name": "hiddenEmptyMessage",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the hidden empty message's DOM element."
+          },
+          {
+            "name": "hiddenSelectedMessage",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the hidden selected message's DOM element."
+          },
+          {
+            "name": "hiddenLastFocusableEl",
+            "type": "PassThroughOption<HTMLSpanElement, I>",
+            "description": "Used to pass attributes to the hidden last focusable element's DOM element."
+          }
+        ],
+        "styles": [
+          {
+            "class": "p-select",
+            "description": "Class name of the root element"
+          },
+          {
+            "class": "p-select-label",
+            "description": "Class name of the label element"
+          },
+          {
+            "class": "p-select-clear-icon",
+            "description": "Class name of the clear icon element"
+          },
+          {
+            "class": "p-select-dropdown",
+            "description": "Class name of the dropdown element"
+          },
+          {
+            "class": "p-select-loading-icon",
+            "description": "Class name of the loadingicon element"
+          },
+          {
+            "class": "p-select-dropdown-icon",
+            "description": "Class name of the dropdown icon element"
+          },
+          {
+            "class": "p-select-overlay",
+            "description": "Class name of the overlay element"
+          },
+          {
+            "class": "p-select-header",
+            "description": "Class name of the header element"
+          },
+          {
+            "class": "p-select-filter",
+            "description": "Class name of the filter element"
+          },
+          {
+            "class": "p-select-list-container",
+            "description": "Class name of the list container element"
+          },
+          {
+            "class": "p-select-list",
+            "description": "Class name of the list element"
+          },
+          {
+            "class": "p-select-option-group",
+            "description": "Class name of the option group element"
+          },
+          {
+            "class": "p-select-option-group-label",
+            "description": "Class name of the option group label element"
+          },
+          {
+            "class": "p-select-option",
+            "description": "Class name of the option element"
+          },
+          {
+            "class": "p-select-option-label",
+            "description": "Class name of the option label element"
+          },
+          {
+            "class": "p-select-option-check-icon",
+            "description": "Class name of the option check icon element"
+          },
+          {
+            "class": "p-select-option-blank-icon",
+            "description": "Class name of the option blank icon element"
+          },
+          {
+            "class": "p-select-empty-message",
+            "description": "Class name of the empty message element"
+          }
+        ],
+        "tokens": [
+          {
+            "token": "select.background",
+            "variable": "--p-select-background",
+            "description": "Background of root"
+          },
+          {
+            "token": "select.disabled.background",
+            "variable": "--p-select-disabled-background",
+            "description": "Disabled background of root"
+          },
+          {
+            "token": "select.filled.background",
+            "variable": "--p-select-filled-background",
+            "description": "Filled background of root"
+          },
+          {
+            "token": "select.filled.hover.background",
+            "variable": "--p-select-filled-hover-background",
+            "description": "Filled hover background of root"
+          },
+          {
+            "token": "select.filled.focus.background",
+            "variable": "--p-select-filled-focus-background",
+            "description": "Filled focus background of root"
+          },
+          {
+            "token": "select.border.color",
+            "variable": "--p-select-border-color",
+            "description": "Border color of root"
+          },
+          {
+            "token": "select.hover.border.color",
+            "variable": "--p-select-hover-border-color",
+            "description": "Hover border color of root"
+          },
+          {
+            "token": "select.focus.border.color",
+            "variable": "--p-select-focus-border-color",
+            "description": "Focus border color of root"
+          },
+          {
+            "token": "select.invalid.border.color",
+            "variable": "--p-select-invalid-border-color",
+            "description": "Invalid border color of root"
+          },
+          {
+            "token": "select.color",
+            "variable": "--p-select-color",
+            "description": "Color of root"
+          },
+          {
+            "token": "select.disabled.color",
+            "variable": "--p-select-disabled-color",
+            "description": "Disabled color of root"
+          },
+          {
+            "token": "select.placeholder.color",
+            "variable": "--p-select-placeholder-color",
+            "description": "Placeholder color of root"
+          },
+          {
+            "token": "select.invalid.placeholder.color",
+            "variable": "--p-select-invalid-placeholder-color",
+            "description": "Invalid placeholder color of root"
+          },
+          {
+            "token": "select.shadow",
+            "variable": "--p-select-shadow",
+            "description": "Shadow of root"
+          },
+          {
+            "token": "select.padding.x",
+            "variable": "--p-select-padding-x",
+            "description": "Padding x of root"
+          },
+          {
+            "token": "select.padding.y",
+            "variable": "--p-select-padding-y",
+            "description": "Padding y of root"
+          },
+          {
+            "token": "select.border.radius",
+            "variable": "--p-select-border-radius",
+            "description": "Border radius of root"
+          },
+          {
+            "token": "select.focus.ring.width",
+            "variable": "--p-select-focus-ring-width",
+            "description": "Focus ring width of root"
+          },
+          {
+            "token": "select.focus.ring.style",
+            "variable": "--p-select-focus-ring-style",
+            "description": "Focus ring style of root"
+          },
+          {
+            "token": "select.focus.ring.color",
+            "variable": "--p-select-focus-ring-color",
+            "description": "Focus ring color of root"
+          },
+          {
+            "token": "select.focus.ring.offset",
+            "variable": "--p-select-focus-ring-offset",
+            "description": "Focus ring offset of root"
+          },
+          {
+            "token": "select.focus.ring.shadow",
+            "variable": "--p-select-focus-ring-shadow",
+            "description": "Focus ring shadow of root"
+          },
+          {
+            "token": "select.transition.duration",
+            "variable": "--p-select-transition-duration",
+            "description": "Transition duration of root"
+          },
+          {
+            "token": "select.sm.font.size",
+            "variable": "--p-select-sm-font-size",
+            "description": "Sm font size of root"
+          },
+          {
+            "token": "select.sm.padding.x",
+            "variable": "--p-select-sm-padding-x",
+            "description": "Sm padding x of root"
+          },
+          {
+            "token": "select.sm.padding.y",
+            "variable": "--p-select-sm-padding-y",
+            "description": "Sm padding y of root"
+          },
+          {
+            "token": "select.lg.font.size",
+            "variable": "--p-select-lg-font-size",
+            "description": "Lg font size of root"
+          },
+          {
+            "token": "select.lg.padding.x",
+            "variable": "--p-select-lg-padding-x",
+            "description": "Lg padding x of root"
+          },
+          {
+            "token": "select.lg.padding.y",
+            "variable": "--p-select-lg-padding-y",
+            "description": "Lg padding y of root"
+          },
+          {
+            "token": "select.dropdown.width",
+            "variable": "--p-select-dropdown-width",
+            "description": "Width of dropdown"
+          },
+          {
+            "token": "select.dropdown.color",
+            "variable": "--p-select-dropdown-color",
+            "description": "Color of dropdown"
+          },
+          {
+            "token": "select.overlay.background",
+            "variable": "--p-select-overlay-background",
+            "description": "Background of overlay"
+          },
+          {
+            "token": "select.overlay.border.color",
+            "variable": "--p-select-overlay-border-color",
+            "description": "Border color of overlay"
+          },
+          {
+            "token": "select.overlay.border.radius",
+            "variable": "--p-select-overlay-border-radius",
+            "description": "Border radius of overlay"
+          },
+          {
+            "token": "select.overlay.color",
+            "variable": "--p-select-overlay-color",
+            "description": "Color of overlay"
+          },
+          {
+            "token": "select.overlay.shadow",
+            "variable": "--p-select-overlay-shadow",
+            "description": "Shadow of overlay"
+          },
+          {
+            "token": "select.list.padding",
+            "variable": "--p-select-list-padding",
+            "description": "Padding of list"
+          },
+          {
+            "token": "select.list.gap",
+            "variable": "--p-select-list-gap",
+            "description": "Gap of list"
+          },
+          {
+            "token": "select.list.header.padding",
+            "variable": "--p-select-list-header-padding",
+            "description": "Header padding of list"
+          },
+          {
+            "token": "select.option.focus.background",
+            "variable": "--p-select-option-focus-background",
+            "description": "Focus background of option"
+          },
+          {
+            "token": "select.option.selected.background",
+            "variable": "--p-select-option-selected-background",
+            "description": "Selected background of option"
+          },
+          {
+            "token": "select.option.selected.focus.background",
+            "variable": "--p-select-option-selected-focus-background",
+            "description": "Selected focus background of option"
+          },
+          {
+            "token": "select.option.color",
+            "variable": "--p-select-option-color",
+            "description": "Color of option"
+          },
+          {
+            "token": "select.option.focus.color",
+            "variable": "--p-select-option-focus-color",
+            "description": "Focus color of option"
+          },
+          {
+            "token": "select.option.selected.color",
+            "variable": "--p-select-option-selected-color",
+            "description": "Selected color of option"
+          },
+          {
+            "token": "select.option.selected.focus.color",
+            "variable": "--p-select-option-selected-focus-color",
+            "description": "Selected focus color of option"
+          },
+          {
+            "token": "select.option.padding",
+            "variable": "--p-select-option-padding",
+            "description": "Padding of option"
+          },
+          {
+            "token": "select.option.border.radius",
+            "variable": "--p-select-option-border-radius",
+            "description": "Border radius of option"
+          },
+          {
+            "token": "select.option.group.background",
+            "variable": "--p-select-option-group-background",
+            "description": "Background of option group"
+          },
+          {
+            "token": "select.option.group.color",
+            "variable": "--p-select-option-group-color",
+            "description": "Color of option group"
+          },
+          {
+            "token": "select.option.group.font.weight",
+            "variable": "--p-select-option-group-font-weight",
+            "description": "Font weight of option group"
+          },
+          {
+            "token": "select.option.group.padding",
+            "variable": "--p-select-option-group-padding",
+            "description": "Padding of option group"
+          },
+          {
+            "token": "select.clear.icon.color",
+            "variable": "--p-select-clear-icon-color",
+            "description": "Color of clear icon"
+          },
+          {
+            "token": "select.checkmark.color",
+            "variable": "--p-select-checkmark-color",
+            "description": "Color of checkmark"
+          },
+          {
+            "token": "select.checkmark.gutter.start",
+            "variable": "--p-select-checkmark-gutter-start",
+            "description": "Gutter start of checkmark"
+          },
+          {
+            "token": "select.checkmark.gutter.end",
+            "variable": "--p-select-checkmark-gutter-end",
+            "description": "Gutter end of checkmark"
+          },
+          {
+            "token": "select.empty.message.padding",
+            "variable": "--p-select-empty-message-padding",
+            "description": "Padding of empty message"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tabs",
+      "title": "Angular Tabs Component",
+      "description": "Tabs is a container component to group content with tabs.",
+      "sections": [
+        {
+          "id": "accessibility",
+          "label": "Accessibility",
+          "description": "Screen Reader Tabs container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Tabs. Each tab header has a tab role along with aria-selected state attribute and aria-controls to refer to the corresponding tab content element. The content element of each tab has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name. Tab Header Keyboard Support Key Function tab Moves focus through the header. enter Activates the focused tab header. space Activates the focused tab header. right arrow Moves focus to the next header. left arrow Moves focus to the previous header. home Moves focus to the last header. end Moves focus to the first header.",
+          "examples": null
+        },
+        {
+          "id": "basic",
+          "label": "Basic",
+          "description": "Tabs is defined using TabList , Tab , TabPanels and TabPanel components. Tab and TabPanel components are associated with their value properties",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs value=\"0\">\n                <p-tablist>\n                    <p-tab value=\"0\">Header I</p-tab>\n                    <p-tab value=\"1\">Header II</p-tab>\n                    <p-tab value=\"2\">Header III</p-tab>\n                </p-tablist>\n                <p-tabpanels>\n                    <p-tabpanel value=\"0\">\n                        <p class=\"m-0\">\n                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n                            laborum.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"1\">\n                        <p class=\"m-0\">\n                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo\n                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"2\">\n                        <p class=\"m-0\">\n                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in\n                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.\n                        </p>\n                    </p-tabpanel>\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [TabsModule]\n})\nexport class TabsBasicDemo {}"
+          }
+        },
+        {
+          "id": "controlled",
+          "label": "Controlled",
+          "description": "Tabs can be controlled programmatically using value property as a model.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <div class=\"flex mb-2 gap-2 justify-end\">\n                <p-button (onClick)=\"value = 0\" rounded=\"true\" styleClass=\"w-8 h-8 p-0\" [outlined]=\"value !== 0\" label=\"1\" />\n                <p-button (onClick)=\"value = 1\" rounded=\"true\" styleClass=\"w-8 h-8 p-0\" [outlined]=\"value !== 1\" label=\"2\" />\n                <p-button (onClick)=\"value = 2\" rounded=\"true\" styleClass=\"w-8 h-8 p-0\" [outlined]=\"value !== 2\" label=\"3\" />\n            </div>\n            <p-tabs [(value)]=\"value\">\n                <p-tablist>\n                    <p-tab [value]=\"0\">Header I</p-tab>\n                    <p-tab [value]=\"1\">Header II</p-tab>\n                    <p-tab [value]=\"2\">Header III</p-tab>\n                </p-tablist>\n                <p-tabpanels>\n                    <p-tabpanel [value]=\"0\">\n                        <p class=\"m-0\">\n                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n                            laborum.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel [value]=\"1\">\n                        <p class=\"m-0\">\n                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo\n                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel [value]=\"2\">\n                        <p class=\"m-0\">\n                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in\n                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.\n                        </p>\n                    </p-tabpanel>\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule, TabsModule]\n})\nexport class TabsControlledDemo {\n    value: number = 0;\n}"
+          }
+        },
+        {
+          "id": "customtemplate",
+          "label": "customtemplate-doc",
+          "description": "Custom content for a tab is defined with the default ng-content.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { AvatarModule } from '@exhaustive-ui/core/avatar';\nimport { BadgeModule } from '@exhaustive-ui/core/badge';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs value=\"0\" scrollable>\n                <p-tablist>\n                    <ng-template #previcon>\n                        <i class=\"pi pi-minus\"></i>\n                    </ng-template>\n                    <p-tab value=\"0\" class=\"flex items-center !gap-2\">\n                        <p-avatar image=\"https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png\" shape=\"circle\" />\n                        <span class=\"font-bold whitespace-nowrap\">Amy Elsner</span>\n                    </p-tab>\n                    <p-tab value=\"1\" class=\"flex items-center !gap-2\">\n                        <p-avatar image=\"https://exhaustive-ui.e-xiste.com/demo/avatar/onyamalimba.png\" shape=\"circle\" />\n                        <span class=\"font-bold whitespace-nowrap\">Onyama Limba</span>\n                    </p-tab>\n                    <p-tab value=\"2\" class=\"flex items-center !gap-2\">\n                        <p-avatar image=\"https://exhaustive-ui.e-xiste.com/demo/avatar/ionibowcher.png\" shape=\"circle\" />\n                        <span class=\"font-bold whitespace-nowrap\">Ioni Bowcher</span>\n                        <p-badge value=\"2\" />\n                    </p-tab>\n                    <ng-template #nexticon>\n                        <i class=\"pi pi-plus\"></i>\n                    </ng-template>\n                </p-tablist>\n                <p-tabpanels>\n                    <p-tabpanel value=\"0\">\n                        <p class=\"m-0\">\n                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n                            laborum.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"1\">\n                        <p class=\"m-0\">\n                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo\n                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"2\">\n                        <p class=\"m-0\">\n                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in\n                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.\n                        </p>\n                    </p-tabpanel>\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [AvatarModule, BadgeModule, TabsModule]\n})\nexport class TabsCustomtemplateDemo {}"
+          }
+        },
+        {
+          "id": "disabled",
+          "label": "Disabled",
+          "description": "Setting the disabled property prevents tab activation or selection, while pointer-based interactions such as pTooltip hover remain available.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs value=\"0\">\n                <p-tablist>\n                    <p-tab value=\"0\">Header I</p-tab>\n                    <p-tab value=\"1\">Header II</p-tab>\n                    <p-tab value=\"2\">Header III</p-tab>\n                    <p-tab disabled>Header IV</p-tab>\n                </p-tablist>\n                <p-tabpanels>\n                    <p-tabpanel value=\"0\">\n                        <p class=\"m-0\">\n                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n                            laborum.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"1\">\n                        <p class=\"m-0\">\n                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo\n                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"2\">\n                        <p class=\"m-0\">\n                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in\n                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.\n                        </p>\n                    </p-tabpanel>\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [TabsModule]\n})\nexport class TabsDisabledDemo {}"
+          }
+        },
+        {
+          "id": "dynamic",
+          "label": "Dynamic",
+          "description": "Tabs can be generated dynamically using the standard &#64;for block.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs value=\"0\">\n                <p-tablist>\n                    @for (tab of tabs; track tab.value) {\n                        <p-tab [value]=\"tab.value\">{{ tab.title }}</p-tab>\n                    }\n                </p-tablist>\n                <p-tabpanels>\n                    @for (tab of tabs; track tab.value) {\n                        <p-tabpanel [value]=\"tab.value\">\n                            <p class=\"m-0\">{{ tab.content }}</p>\n                        </p-tabpanel>\n                    }\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [TabsModule]\n})\nexport class TabsDynamicDemo implements OnInit {\n    ngOnInit() {\n        this.tabs = [\n            { title: 'Tab 1', value: '0', content: 'Tab 1 Content' },\n            { title: 'Tab 2', value: '1', content: 'Tab 2 Content' },\n            { title: 'Tab 3', value: '2', content: 'Tab 3 Content' }\n        ];\n    }\n}"
+          }
+        },
+        {
+          "id": "lazy",
+          "label": "Lazy",
+          "description": "By default, inactive tab's content is rendered (but hidden). You can use the lazy input (either globally on Tabs or individually on a TabPanel ) to change this behavior so that content is only rendered when the tab becomes active. If a lazy tab contains complex components that should only be initialized when the tab is activated, you should wrap the content inside: &lt;ng-template #content&gt;your content&lt;/ng-template&gt; .",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs lazy value=\"0\">\n                <p-tablist>\n                    <p-tab value=\"0\">Header I</p-tab>\n                    <p-tab value=\"1\">Header II</p-tab>\n                    <p-tab value=\"2\">Header III</p-tab>\n                </p-tablist>\n                <p-tabpanels>\n                    <p-tabpanel value=\"0\">\n                        <p class=\"m-0\">\n                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n                            laborum.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"1\">\n                        <p class=\"m-0\">\n                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo\n                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.\n                        </p>\n                    </p-tabpanel>\n                    <p-tabpanel value=\"2\">\n                        <ng-template #content>Complex components that should only be initialized when the tab becomes active</ng-template>\n                    </p-tabpanel>\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [TabsModule]\n})\nexport class TabsLazyDemo {}"
+          }
+        },
+        {
+          "id": "scrollable",
+          "label": "Scrollable",
+          "description": "Adding scrollable property displays navigational buttons at each side to scroll between tabs.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { TabsModule } from '@exhaustive-ui/core/tabs';\n\n@Component({\n    template: `\n        <div class=\"card\">\n            <p-tabs value=\"0\" scrollable>\n                <p-tablist>\n                    @for (tab of scrollableTabs; track tab.value) {\n                        <p-tab [value]=\"tab.value\">\n                            {{ tab.title }}\n                        </p-tab>\n                    }\n                </p-tablist>\n                <p-tabpanels>\n                    @for (tab of scrollableTabs; track tab.value) {\n                        <p-tabpanel [value]=\"tab.value\">\n                            <p class=\"m-0\">{{ tab.content }}</p>\n                        </p-tabpanel>\n                    }\n                </p-tabpanels>\n            </p-tabs>\n        </div>\n    `,\n    standalone: true,\n    imports: [TabsModule]\n})\nexport class TabsScrollableDemo {\n    scrollableTabs: any[];\n}"
+          }
+        }
+      ],
+      "api": {
+        "props": [
+          {
+            "name": "dt",
+            "type": "InputSignal<Object>",
+            "default": "undefined",
+            "description": "Defines scoped design tokens of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "unstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pt",
+            "type": "InputSignal<TabsPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptOptions",
+            "type": "InputSignal<PassThroughOptions>",
+            "default": "undefined",
+            "description": "Used to configure passthrough(pt) options of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "value",
+            "type": "ModelSignal<string | number>",
+            "default": "undefined",
+            "description": "Value of the active tab.",
+            "deprecated": ""
+          },
+          {
+            "name": "scrollable",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When specified, enables horizontal and/or vertical scrolling.",
+            "deprecated": ""
+          },
+          {
+            "name": "lazy",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When enabled, tabs are not rendered until activation.",
+            "deprecated": ""
+          },
+          {
+            "name": "selectOnFocus",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "false",
+            "description": "When enabled, the focused tab is activated.",
+            "deprecated": ""
+          },
+          {
+            "name": "showNavigators",
+            "type": "InputSignalWithTransform<boolean, unknown>",
+            "default": "true",
+            "description": "Whether to display navigation buttons in container when scrollable is enabled.",
+            "deprecated": ""
+          },
+          {
+            "name": "tabindex",
+            "type": "InputSignalWithTransform<number, unknown>",
+            "default": "0",
+            "description": "Tabindex of the tab buttons.",
+            "deprecated": ""
+          }
+        ],
+        "templates": null,
+        "emits": null,
+        "methods": null,
+        "pt": [
+          {
+            "name": "root",
+            "type": "PassThroughOption<HTMLElement, I>",
+            "description": "Used to pass attributes to the root's DOM element."
+          }
+        ],
+        "styles": [
+          {
+            "class": "p-tabs",
+            "description": "Class name of the root element"
+          },
+          {
+            "class": "p-tablist",
+            "description": "Class name of the wrapper element"
+          },
+          {
+            "class": "p-tablist-content",
+            "description": "Class name of the content element"
+          },
+          {
+            "class": "p-tablist-tab-list",
+            "description": "Class name of the tab list element"
+          },
+          {
+            "class": "p-tab",
+            "description": "Class name of the tab list element"
+          },
+          {
+            "class": "p-tablist-active-bar",
+            "description": "Class name of the inkbar element"
+          },
+          {
+            "class": "p-tablist-nav-button",
+            "description": "Class name of the navigation buttons"
+          },
+          {
+            "class": "p-tabpanels",
+            "description": "Class name of the tab panels wrapper"
+          },
+          {
+            "class": "p-tabs-panel",
+            "description": "Class name of the tab panel element"
+          }
+        ],
+        "tokens": [
+          {
+            "token": "tabs.transition.duration",
+            "variable": "--p-tabs-transition-duration",
+            "description": "Transition duration of root"
+          },
+          {
+            "token": "tabs.tablist.border.width",
+            "variable": "--p-tabs-tablist-border-width",
+            "description": "Border width of tablist"
+          },
+          {
+            "token": "tabs.tablist.background",
+            "variable": "--p-tabs-tablist-background",
+            "description": "Background of tablist"
+          },
+          {
+            "token": "tabs.tablist.border.color",
+            "variable": "--p-tabs-tablist-border-color",
+            "description": "Border color of tablist"
+          },
+          {
+            "token": "tabs.tab.background",
+            "variable": "--p-tabs-tab-background",
+            "description": "Background of tab"
+          },
+          {
+            "token": "tabs.tab.hover.background",
+            "variable": "--p-tabs-tab-hover-background",
+            "description": "Hover background of tab"
+          },
+          {
+            "token": "tabs.tab.active.background",
+            "variable": "--p-tabs-tab-active-background",
+            "description": "Active background of tab"
+          },
+          {
+            "token": "tabs.tab.border.width",
+            "variable": "--p-tabs-tab-border-width",
+            "description": "Border width of tab"
+          },
+          {
+            "token": "tabs.tab.border.color",
+            "variable": "--p-tabs-tab-border-color",
+            "description": "Border color of tab"
+          },
+          {
+            "token": "tabs.tab.hover.border.color",
+            "variable": "--p-tabs-tab-hover-border-color",
+            "description": "Hover border color of tab"
+          },
+          {
+            "token": "tabs.tab.active.border.color",
+            "variable": "--p-tabs-tab-active-border-color",
+            "description": "Active border color of tab"
+          },
+          {
+            "token": "tabs.tab.color",
+            "variable": "--p-tabs-tab-color",
+            "description": "Color of tab"
+          },
+          {
+            "token": "tabs.tab.hover.color",
+            "variable": "--p-tabs-tab-hover-color",
+            "description": "Hover color of tab"
+          },
+          {
+            "token": "tabs.tab.active.color",
+            "variable": "--p-tabs-tab-active-color",
+            "description": "Active color of tab"
+          },
+          {
+            "token": "tabs.tab.padding",
+            "variable": "--p-tabs-tab-padding",
+            "description": "Padding of tab"
+          },
+          {
+            "token": "tabs.tab.font.weight",
+            "variable": "--p-tabs-tab-font-weight",
+            "description": "Font weight of tab"
+          },
+          {
+            "token": "tabs.tab.margin",
+            "variable": "--p-tabs-tab-margin",
+            "description": "Margin of tab"
+          },
+          {
+            "token": "tabs.tab.gap",
+            "variable": "--p-tabs-tab-gap",
+            "description": "Gap of tab"
+          },
+          {
+            "token": "tabs.tab.focus.ring.width",
+            "variable": "--p-tabs-tab-focus-ring-width",
+            "description": "Focus ring width of tab"
+          },
+          {
+            "token": "tabs.tab.focus.ring.style",
+            "variable": "--p-tabs-tab-focus-ring-style",
+            "description": "Focus ring style of tab"
+          },
+          {
+            "token": "tabs.tab.focus.ring.color",
+            "variable": "--p-tabs-tab-focus-ring-color",
+            "description": "Focus ring color of tab"
+          },
+          {
+            "token": "tabs.tab.focus.ring.offset",
+            "variable": "--p-tabs-tab-focus-ring-offset",
+            "description": "Focus ring offset of tab"
+          },
+          {
+            "token": "tabs.tab.focus.ring.shadow",
+            "variable": "--p-tabs-tab-focus-ring-shadow",
+            "description": "Focus ring shadow of tab"
+          },
+          {
+            "token": "tabs.tabpanel.background",
+            "variable": "--p-tabs-tabpanel-background",
+            "description": "Background of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.color",
+            "variable": "--p-tabs-tabpanel-color",
+            "description": "Color of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.padding",
+            "variable": "--p-tabs-tabpanel-padding",
+            "description": "Padding of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.focus.ring.width",
+            "variable": "--p-tabs-tabpanel-focus-ring-width",
+            "description": "Focus ring width of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.focus.ring.style",
+            "variable": "--p-tabs-tabpanel-focus-ring-style",
+            "description": "Focus ring style of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.focus.ring.color",
+            "variable": "--p-tabs-tabpanel-focus-ring-color",
+            "description": "Focus ring color of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.focus.ring.offset",
+            "variable": "--p-tabs-tabpanel-focus-ring-offset",
+            "description": "Focus ring offset of tabpanel"
+          },
+          {
+            "token": "tabs.tabpanel.focus.ring.shadow",
+            "variable": "--p-tabs-tabpanel-focus-ring-shadow",
+            "description": "Focus ring shadow of tabpanel"
+          },
+          {
+            "token": "tabs.nav.button.background",
+            "variable": "--p-tabs-nav-button-background",
+            "description": "Background of nav button"
+          },
+          {
+            "token": "tabs.nav.button.color",
+            "variable": "--p-tabs-nav-button-color",
+            "description": "Color of nav button"
+          },
+          {
+            "token": "tabs.nav.button.hover.color",
+            "variable": "--p-tabs-nav-button-hover-color",
+            "description": "Hover color of nav button"
+          },
+          {
+            "token": "tabs.nav.button.width",
+            "variable": "--p-tabs-nav-button-width",
+            "description": "Width of nav button"
+          },
+          {
+            "token": "tabs.nav.button.focus.ring.width",
+            "variable": "--p-tabs-nav-button-focus-ring-width",
+            "description": "Focus ring width of nav button"
+          },
+          {
+            "token": "tabs.nav.button.focus.ring.style",
+            "variable": "--p-tabs-nav-button-focus-ring-style",
+            "description": "Focus ring style of nav button"
+          },
+          {
+            "token": "tabs.nav.button.focus.ring.color",
+            "variable": "--p-tabs-nav-button-focus-ring-color",
+            "description": "Focus ring color of nav button"
+          },
+          {
+            "token": "tabs.nav.button.focus.ring.offset",
+            "variable": "--p-tabs-nav-button-focus-ring-offset",
+            "description": "Focus ring offset of nav button"
+          },
+          {
+            "token": "tabs.nav.button.focus.ring.shadow",
+            "variable": "--p-tabs-nav-button-focus-ring-shadow",
+            "description": "Focus ring shadow of nav button"
+          },
+          {
+            "token": "tabs.nav.button.shadow",
+            "variable": "--p-tabs-nav-button-shadow",
+            "description": "Shadow of nav button"
+          },
+          {
+            "token": "tabs.active.bar.height",
+            "variable": "--p-tabs-active-bar-height",
+            "description": "Height of active bar"
+          },
+          {
+            "token": "tabs.active.bar.bottom",
+            "variable": "--p-tabs-active-bar-bottom",
+            "description": "Bottom of active bar"
+          },
+          {
+            "token": "tabs.active.bar.background",
+            "variable": "--p-tabs-active-bar-background",
+            "description": "Background of active bar"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tooltip",
+      "title": "Angular Tooltip Component",
+      "description": "Tooltip directive provides advisory information for a component. Tooltip is integrated within various ExhaustiveUI components.",
+      "sections": [
+        {
+          "id": "accessibility",
+          "label": "Accessibility",
+          "description": "Screen Reader Tooltip component uses tooltip role and when it becomes visible the generated id of the tooltip is defined as the aria-describedby of the target. Keyboard Support Key Function escape Closes the tooltip when focus is on the target.",
+          "examples": null
+        },
+        {
+          "id": "autohide",
+          "label": "Auto Hide",
+          "description": "Tooltip is hidden when mouse leaves the target element, in cases where tooltip needs to be interacted with, set autoHide to false to change the default behavior.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-wrap justify-center gap-2\">\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" [autoHide]=\"false\" placeholder=\"autoHide: false\" />\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" placeholder=\"autoHide: true\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, TooltipModule]\n})\nexport class TooltipAutohideDemo {}"
+          }
+        },
+        {
+          "id": "custom",
+          "label": "Custom",
+          "description": "Tooltip can use either a string or a TemplateRef .",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-button [pTooltip]=\"tooltipContent\" severity=\"secondary\" tooltipPosition=\"bottom\" label=\"Button\" />\n            <ng-template #tooltipContent>\n                <div class=\"flex items-center\">\n                    <img src=\"https://exhaustive-ui.e-xiste.com/logo-icon.svg\" alt=\"ExhaustiveUI\" width=\"32\" height=\"32\" class=\"mr-2\" />\n                    <span> <b>ExhaustiveUI</b> rocks! </span>\n                </div>\n            </ng-template>\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule, TooltipModule]\n})\nexport class TooltipCustomDemo {}"
+          }
+        },
+        {
+          "id": "delay",
+          "label": "Delay",
+          "description": "Adding delays to the show and hide events are defined with showDelay and hideDelay options respectively.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { ButtonModule } from '@exhaustive-ui/core/button';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <p-button pTooltip=\"Confirm to proceed\" showDelay=\"1000\" hideDelay=\"300\" label=\"Save\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [ButtonModule, TooltipModule]\n})\nexport class TooltipDelayDemo {}"
+          }
+        },
+        {
+          "id": "event",
+          "label": "Event",
+          "description": "Tooltip gets displayed on hover event of its target by default, other option is the focus event to display and blur to hide.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-wrap justify-center gap-2\">\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" tooltipEvent=\"focus\" placeholder=\"focus to display tooltip\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, TooltipModule]\n})\nexport class TooltipEventDemo {}"
+          }
+        },
+        {
+          "id": "options",
+          "label": "Tooltip Options",
+          "description": "Tooltip is also configurable by using tooltipOptions property.",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex justify-center\">\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" [tooltipOptions]=\"tooltipOptions\" placeholder=\"hover to display tooltip\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, TooltipModule]\n})\nexport class TooltipOptionsDemo {\n    tooltipOptions: any;\n}"
+          }
+        },
+        {
+          "id": "position",
+          "label": "Position",
+          "description": "Position of the tooltip is specified using tooltipPosition attribute. Valid values are top , bottom , right and left . Default position of the tooltip is right .",
+          "examples": {
+            "typescript": "import { Component } from '@angular/core';\nimport { InputTextModule } from '@exhaustive-ui/core/inputtext';\nimport { TooltipModule } from '@exhaustive-ui/core/tooltip';\n\n@Component({\n    template: `\n        <div class=\"card flex flex-wrap justify-center gap-2\">\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" tooltipPosition=\"right\" placeholder=\"Right\" />\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" tooltipPosition=\"top\" placeholder=\"Top\" />\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" tooltipPosition=\"bottom\" placeholder=\"Bottom\" />\n            <input type=\"text\" pInputText pTooltip=\"Enter your username\" tooltipPosition=\"left\" placeholder=\"Left\" />\n        </div>\n    `,\n    standalone: true,\n    imports: [InputTextModule, TooltipModule]\n})\nexport class TooltipPositionDemo {}"
+          }
+        }
+      ],
+      "api": {
+        "props": [
+          {
+            "name": "dt",
+            "type": "InputSignal<Object>",
+            "default": "undefined",
+            "description": "Defines scoped design tokens of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "unstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          },
+          {
+            "name": "pt",
+            "type": "InputSignal<TooltipPassThroughOptions<unknown>>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "ptOptions",
+            "type": "InputSignal<PassThroughOptions>",
+            "default": "undefined",
+            "description": "Used to configure passthrough(pt) options of the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipPosition",
+            "type": "string",
+            "default": "-",
+            "description": "Position of the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipEvent",
+            "type": "\"focus\" | \"hover\" | \"both\"",
+            "default": "hover",
+            "description": "Event to show the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "positionStyle",
+            "type": "string",
+            "default": "-",
+            "description": "Type of CSS position.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipStyleClass",
+            "type": "string",
+            "default": "-",
+            "description": "Style class of the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipZIndex",
+            "type": "string",
+            "default": "-",
+            "description": "Whether the z-index should be managed automatically to always go on top or have a fixed value.",
+            "deprecated": ""
+          },
+          {
+            "name": "escape",
+            "type": "boolean",
+            "default": "true",
+            "description": "By default the tooltip contents are rendered as text. Set to false to support html tags in the content.",
+            "deprecated": ""
+          },
+          {
+            "name": "showDelay",
+            "type": "number",
+            "default": "-",
+            "description": "Delay to show the tooltip in milliseconds.",
+            "deprecated": ""
+          },
+          {
+            "name": "hideDelay",
+            "type": "number",
+            "default": "-",
+            "description": "Delay to hide the tooltip in milliseconds.",
+            "deprecated": ""
+          },
+          {
+            "name": "life",
+            "type": "number",
+            "default": "-",
+            "description": "Time to wait in milliseconds to hide the tooltip even it is active.",
+            "deprecated": ""
+          },
+          {
+            "name": "positionTop",
+            "type": "number",
+            "default": "-",
+            "description": "Specifies the additional vertical offset of the tooltip from its default position.",
+            "deprecated": ""
+          },
+          {
+            "name": "positionLeft",
+            "type": "number",
+            "default": "-",
+            "description": "Specifies the additional horizontal offset of the tooltip from its default position.",
+            "deprecated": ""
+          },
+          {
+            "name": "autoHide",
+            "type": "boolean",
+            "default": "true",
+            "description": "Whether to hide tooltip when hovering over tooltip content.",
+            "deprecated": ""
+          },
+          {
+            "name": "fitContent",
+            "type": "boolean",
+            "default": "true",
+            "description": "Automatically adjusts the element position when there is not enough space on the selected position.",
+            "deprecated": ""
+          },
+          {
+            "name": "hideOnEscape",
+            "type": "boolean",
+            "default": "true",
+            "description": "Whether to hide tooltip on escape key press.",
+            "deprecated": ""
+          },
+          {
+            "name": "showOnEllipsis",
+            "type": "boolean",
+            "default": "false",
+            "description": "Whether to show the tooltip only when the target text overflows (e.g., ellipsis is active).",
+            "deprecated": ""
+          },
+          {
+            "name": "content",
+            "type": "string | TemplateRef<HTMLElement>",
+            "default": "-",
+            "description": "Content of the tooltip.",
+            "deprecated": ""
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "default": "-",
+            "description": "When present, it specifies that the component should be disabled.",
+            "deprecated": ""
+          },
+          {
+            "name": "tooltipOptions",
+            "type": "TooltipOptions",
+            "default": "-",
+            "description": "Specifies the tooltip configuration options for the component.",
+            "deprecated": ""
+          },
+          {
+            "name": "appendTo",
+            "type": "InputSignal<any>",
+            "default": "'self'",
+            "description": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name).",
+            "deprecated": ""
+          },
+          {
+            "name": "ptTooltip",
+            "type": "InputSignal<TooltipPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the Tooltip component.",
+            "deprecated": "use pTooltipPT instead."
+          },
+          {
+            "name": "pTooltipPT",
+            "type": "InputSignal<TooltipPassThrough>",
+            "default": "undefined",
+            "description": "Used to pass attributes to DOM elements inside the Tooltip component.",
+            "deprecated": ""
+          },
+          {
+            "name": "pTooltipUnstyled",
+            "type": "InputSignal<boolean>",
+            "default": "undefined",
+            "description": "Indicates whether the component should be rendered without styles.",
+            "deprecated": ""
+          }
+        ],
+        "templates": null,
+        "emits": null,
+        "methods": null,
+        "pt": [
+          {
+            "name": "root",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the root's DOM element."
+          },
+          {
+            "name": "arrow",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the arrow's DOM element."
+          },
+          {
+            "name": "text",
+            "type": "PassThroughOption<HTMLDivElement, I>",
+            "description": "Used to pass attributes to the text's DOM element."
+          }
+        ],
+        "styles": [
+          {
+            "class": "p-tooltip",
+            "description": "Class name of the root element"
+          },
+          {
+            "class": "p-tooltip-arrow",
+            "description": "Class name of the arrow element"
+          },
+          {
+            "class": "p-tooltip-text",
+            "description": "Class name of the text element"
+          }
+        ],
+        "tokens": [
+          {
+            "token": "tooltip.max.width",
+            "variable": "--p-tooltip-max-width",
+            "description": "Max width of root"
+          },
+          {
+            "token": "tooltip.gutter",
+            "variable": "--p-tooltip-gutter",
+            "description": "Gutter of root"
+          },
+          {
+            "token": "tooltip.shadow",
+            "variable": "--p-tooltip-shadow",
+            "description": "Shadow of root"
+          },
+          {
+            "token": "tooltip.padding",
+            "variable": "--p-tooltip-padding",
+            "description": "Padding of root"
+          },
+          {
+            "token": "tooltip.border.radius",
+            "variable": "--p-tooltip-border-radius",
+            "description": "Border radius of root"
+          },
+          {
+            "token": "tooltip.background",
+            "variable": "--p-tooltip-background",
+            "description": "Background of root"
+          },
+          {
+            "token": "tooltip.color",
+            "variable": "--p-tooltip-color",
+            "description": "Color of root"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "installation",
+      "path": "installation",
+      "title": "Installation",
+      "description": "Setting up ExhaustiveUI in an Angular CLI project.",
+      "sections": [
+        {
+          "id": "download-",
+          "label": "Download-",
+          "description": "Prefer to wire things up yourself? Install the packages from the npm registry directly. The next section covers the provider setup that ng add would have written for you.",
+          "examples": {
+            "command": "# Using npm\nnpm install @exhaustive-ui/core @exhaustive-ui/themes\n\n# Using yarn\nyarn add @exhaustive-ui/core @exhaustive-ui/themes\n\n# Using pnpm\npnpm add @exhaustive-ui/core @exhaustive-ui/themes"
+          }
+        },
+        {
+          "id": "examples-",
+          "label": "Examples-",
+          "description": "Every example in this documentation opens in StackBlitz from the code toolbar above each demo, already wired up with the current version. The source repository is the reference for how the library itself is built and consumed.",
+          "examples": null
+        },
+        {
+          "id": "icons-",
+          "label": "Icons-",
+          "description": "ExhaustiveUI components accept any icon through templating, so an icon library is optional. That said, every example in this documentation uses the pi pi-&#123;icon&#125; classes from OpenNG Icons , and component defaults such as the DatePicker arrows reference them too. Install it if you want the demos to look the way they do here. Then import the stylesheet, either from your global stylesheet or from the styles array in angular.json .",
+          "examples": null
+        },
+        {
+          "id": "nextsteps-",
+          "label": "Nextsteps-",
+          "description": "Once you have ExhaustiveUI up and running, we recommend exploring the following resources to gain a deeper understanding of the library. Global configuration Styled mode and unstyled mode Tailwind CSS integration Pass Through for direct access to the underlying elements Philosophy — what this project promises, and what it does not FAQ",
+          "examples": null
+        }
+      ]
+    },
+    {
+      "name": "configuration",
+      "path": "configuration",
+      "title": "Configuration",
+      "description": "Application wide configuration for ExhaustiveUI.",
+      "sections": [
+        {
+          "id": "csp-",
+          "label": "Csp-",
+          "description": "The nonce value to use on dynamically generated style elements in core.",
+          "examples": {
+            "typescript": "provideExhaustive({\n    csp: {\n        nonce: '...'\n    }\n})"
+          }
+        },
+        {
+          "id": "dynamic-",
+          "label": "Dynamic-",
+          "description": "Inject the Exhaustive to your application to update the initial configuration at runtime.",
+          "examples": {
+            "typescript": "import { Component, OnInit } from '@angular/core';\nimport { Exhaustive } from '@exhaustive-ui/core/config';\n\n@Component({\n    selector: 'app-root',\n    templateUrl: './app.component.html'\n})\nexport class AppComponent implements OnInit {\n\n    constructor(private config: Exhaustive) {}\n\n    ngOnInit() {\n        this.config.ripple.set(true);\n    }\n}"
+          }
+        },
+        {
+          "id": "filtermode-",
+          "label": "Filtermode-",
+          "description": "Default filter modes to display on DataTable filter menus.",
+          "examples": {
+            "typescript": "import { ExhaustiveConfig } from '@exhaustive-ui/core/api';\n\n@Component({\n    selector: 'app-root',\n    templateUrl: './app.component.html'\n})\nexport class AppComponent implements OnInit {\n\n    constructor(private exhaustiveConfig: ExhaustiveConfig) {}\n\n    ngOnInit() {\n        exhaustiveConfig.filterMatchModeOptions = {\n            text: [FilterMatchMode.STARTS_WITH, FilterMatchMode.CONTAINS, FilterMatchMode.NOT_CONTAINS, FilterMatchMode.ENDS_WITH, FilterMatchMode.EQUALS, FilterMatchMode.NOT_EQUALS],\n            numeric: [FilterMatchMode.EQUALS, FilterMatchMode.NOT_EQUALS, FilterMatchMode.LESS_THAN, FilterMatchMode.LESS_THAN_OR_EQUAL_TO, FilterMatchMode.GREATER_THAN, FilterMatchMode.GREATER_THAN_OR_EQUAL_TO],\n            date: [FilterMatchMode.DATE_IS, FilterMatchMode.DATE_IS_NOT, FilterMatchMode.DATE_BEFORE, FilterMatchMode.DATE_AFTER]\n        };\n    }\n}"
+          }
+        },
+        {
+          "id": "inputvariant-",
+          "label": "Inputvariant-",
+          "description": "Input fields come in two styles, default is outlined with borders around the field whereas filled alternative adds a background color to the field. A theme such as Material may add more additional design changes per each variant.",
+          "examples": null
+        }
+      ]
+    },
+    {
+      "name": "styled",
+      "path": "theming/styled",
+      "title": "Styled Mode",
+      "description": "Choose from a variety of pre-styled themes or develop your own.",
+      "sections": [
+        {
+          "id": "architecture-",
+          "label": "Architecture-",
+          "description": "ExhaustiveUI is a design agnostic library so unlike some other UI libraries it does not enforce a certain styling such as material design. Styling is decoupled from the components using the themes instead. A theme consists of two parts; base and preset . The base is the style rules with CSS variables as placeholders whereas the preset is a set of design tokens to feed a base by mapping the tokens to CSS variables. A base may be configured with different presets, currently Aura, Material, Lara and Nora are the available built-in options. The core of the styled mode architecture is based on a concept named design token , a preset defines the token configuration in 3 tiers; primitive , semantic and component . Primitive Tokens Primitive tokens have no context, a color palette is a good example for a primitive token such as blue-50 to blue-900 . A token named blue-500 may be used as the primary color, the background of a message however on its own, the name of the token does not indicate context. Usually they are utilized by the semantic tokens. Semantic Tokens Semantic tokens define content and their names indicate where they are utilized, a well known example of a semantic token is the primary.color . Semantic tokens map to primitive tokens or other semantic tokens. The colorScheme token group is a special variable to define tokens based on the color scheme active in the application, this allows defining different tokens based on the color scheme like dark mode. Component Tokens Component tokens are isolated tokens per component such as inputtext.background or button.color that map to the semantic tokens. As an example, button.background component token maps to the primary.color semantic token which maps to the green.500 primitive token. Best Practices Use primitive tokens when defining the core color palette and semantic tokens to specify the common design elements such as focus ring, primary colors and surfaces. Components tokens should only be used when customizing a specific component. By defining your own design tokens as a custom preset, you'll be able to define your own style without touching CSS. Overriding the ExhaustiveUI components using style classes is not a best practice and should be the last resort, design tokens are the suggested approach.",
+          "examples": null
+        },
+        {
+          "id": "bootstrap-",
+          "label": "Bootstrap-",
+          "description": "Bootstrap has a reboot utility to reset the CSS of the standard elements. If you are including this utility, you may give it a layer while importing it.",
+          "examples": null
+        },
+        {
+          "id": "colors-",
+          "label": "Colors-",
+          "description": "Color palette of a preset is defined by the primitive design token group. You can access colors using CSS variables or the $dt utility. @for (color of colors; track color) { {{ color }} @for (shade of shades; track shade) { {{ shade }} } }",
+          "examples": null
+        },
+        {
+          "id": "colorscheme-",
+          "label": "Colorscheme-",
+          "description": "A token can be defined per color scheme using light and dark properties of the colorScheme property. Each token can have specific values based on the current color scheme. Common Pitfall When customizing an existing preset, your token overrides may be ignored if you don't properly account for color scheme variations. If the original preset defines a token using the colorScheme property, but your customization only provides a direct value, your override will be ignored because the colorScheme property takes precedence over direct values and the system will continue using the preset's scheme-specific values. When customizing tokens that are not defined with colorScheme in the original preset, your customizations will be applied successfully regardless of how you structure them; whether direct or under colorScheme. Best Practices Check how tokens are defined in the preset before customizing from the source . Always maintain the same structure (direct value or colorScheme) as the original preset. Consider both light and dark mode values when overriding scheme-dependent tokens. This approach ensures your customizations will be applied correctly regardless of the user's selected color scheme.",
+          "examples": null
+        }
+      ]
+    },
+    {
+      "name": "tailwind",
+      "path": "tailwind",
+      "title": "Tailwind CSS",
+      "description": "Integration between ExhaustiveUI and Tailwind CSS.",
+      "sections": [
+        {
+          "id": "animations-",
+          "label": "Animations-",
+          "description": "The plugin also adds extended animation utilities that can be used with the styleclass and animateonscroll directives.",
+          "examples": null
+        },
+        {
+          "id": "colorpalette-",
+          "label": "Colorpalette-",
+          "description": "ExhaustiveUI color palette as utility classes.",
+          "examples": null
+        },
+        {
+          "id": "darkmode-",
+          "label": "Darkmode-",
+          "description": "In styled mode, ExhaustiveUI uses the system as the default darkModeSelector in theme configuration. If you have a dark mode switch in your application, ensure that darkModeSelector is aligned with the Tailwind dark variant for seamless integration. Note that, this particular configuration isn't required if you're utilizing the default system color scheme. Suppose that, the darkModeSelector is set as my-app-dark in ExhaustiveUI. Tailwind v4 Add a custom variant for dark with a custom selector. Tailwind v3 Use the plugins option in your Tailwind config file to configure the plugin.",
+          "examples": null
+        },
+        {
+          "id": "extensions-",
+          "label": "Extensions-",
+          "description": "The plugin extends the default configuration with a new set of utilities. All variants and breakpoints are supported e.g. dark:sm:hover:bg-primary . Color Palette Class Property primary-[50-950] Primary color palette. surface-[0-950] Surface color palette. primary Default primary color. primary-contrast Default primary contrast color. primary-emphasis Default primary emphasis color. border-surface Default primary emphasis color. bg-emphasis Emphasis background e.g. hovered element. bg-highlight Highlight background. bg-highlight-emphasis Highlight background with emphasis. rounded-border Border radius. text-color Text color with emphasis. text-color-emphasis Default primary emphasis color. text-muted-color Secondary text color. text-muted-color-emphasis Secondary text color with emphasis.",
+          "examples": null
+        }
+      ]
+    }
+  ]
+}
