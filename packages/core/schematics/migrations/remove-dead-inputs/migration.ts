@@ -41,6 +41,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * selector keeps working as the host element's native `dir` attribute, so there is nothing to remove.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Password were stored but never
  * read: its overlay animation is driven by `motionOptions`.
+ * The deprecated `badgeClass` on Button was stored but never read: the inner badge is styled through
+ * `badgeSeverity` only.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -70,7 +72,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-splitbutton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
     { selector: 'p-splitButton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
     { selector: 'p-split-button', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
-    { selector: 'p-password', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-password', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-button', names: ['badgeClass'] }
 ];
 
 /**
@@ -107,8 +110,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the preview animation) and
  * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed;
  * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
- * animation); and Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
- * read (motionOptions drives the overlay animation).
+ * animation); Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
+ * read (motionOptions drives the overlay animation); and Button's deprecated badgeClass, stored but
+ * never read (badgeSeverity styles the inner badge).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

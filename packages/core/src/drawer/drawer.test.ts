@@ -816,7 +816,7 @@ describe('Drawer', () => {
 
             const closeButton = testFixture.debugElement.query(By.css('p-button'));
             if (closeButton) {
-                const ariaLabel = closeButton.componentInstance.ariaLabel || closeButton.nativeElement.getAttribute('aria-label') || closeButton.nativeElement.getAttribute('ng-reflect-aria-label');
+                const ariaLabel = closeButton.componentInstance.ariaLabel() || closeButton.nativeElement.getAttribute('aria-label') || closeButton.nativeElement.getAttribute('ng-reflect-aria-label');
                 // Check that some form of aria label is set
                 expect(ariaLabel).toBeTruthy();
             }

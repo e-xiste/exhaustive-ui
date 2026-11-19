@@ -9,7 +9,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [AppCode, AppDocSectionText, ButtonModule],
     template: `
         <app-docsectiontext>
-            <p>Buttons have built-in <i>badge</i> support with badge and <i>badgeClass</i> properties.</p>
+            <p>Buttons have built-in <i>badge</i> support with <i>badge</i> and <i>badgeSeverity</i> properties.</p>
         </app-docsectiontext>
         <div class="card flex justify-center flex-wrap gap-4">
             <p-button label="Emails" badge="2" styleClass="m-0" />
