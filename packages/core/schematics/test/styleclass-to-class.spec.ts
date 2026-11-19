@@ -429,6 +429,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-timeline class="existing customized-timeline"></p-timeline>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-toolbar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-toolbar styleClass="my-toolbar"></p-toolbar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-toolbar class="my-toolbar"></p-toolbar>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-toolbar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-toolbar [styleClass]="myClass"></p-toolbar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-toolbar [class]="myClass"></p-toolbar>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-toolbar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-toolbar class="existing" styleClass="my-toolbar"></p-toolbar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-toolbar class="existing my-toolbar"></p-toolbar>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

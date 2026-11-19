@@ -190,6 +190,15 @@ class TestPTToolbarComponent {
     @Input() pt: any;
 }
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    template: ` <p-toolbar class="static-class" [class]="dynamicClass"></p-toolbar> `
+})
+class TestClassToolbarComponent {
+    dynamicClass: string | undefined;
+}
+
 describe('Toolbar', () => {
     let fixture: ComponentFixture<TestBasicToolbarComponent>;
     let component: TestBasicToolbarComponent;
@@ -209,7 +218,8 @@ describe('Toolbar', () => {
                 TestStartOnlyToolbarComponent,
                 TestCenterOnlyToolbarComponent,
                 TestEndOnlyToolbarComponent,
-                TestPTToolbarComponent
+                TestPTToolbarComponent,
+                TestClassToolbarComponent
             ],
             providers: [provideZonelessChangeDetection()]
         });
@@ -441,6 +451,26 @@ describe('Toolbar', () => {
             dynamicFixture.detectChanges();
             expect(toolbar.nativeElement.getAttribute('aria-labelledby')).toBe('new-label');
         });
+
+        it('should add and remove sections when pTemplates change after the first render', async () => {
+            const dynamicFixture = TestBed.createComponent(TestDynamicToolbarComponent);
+            const dynamicComponent = dynamicFixture.componentInstance;
+            dynamicComponent.showCenter = false;
+            await dynamicFixture.whenStable();
+
+            expect(dynamicFixture.debugElement.query(By.css('.p-toolbar-start'))).toBeTruthy();
+            expect(dynamicFixture.debugElement.query(By.css('.p-toolbar-center'))).toBeNull();
+            expect(dynamicFixture.debugElement.query(By.css('.p-toolbar-end'))).toBeTruthy();
+
+            dynamicComponent.showCenter = true;
+            dynamicComponent.showEnd = false;
+            dynamicFixture.changeDetectorRef.markForCheck();
+            await dynamicFixture.whenStable();
+
+            expect(dynamicFixture.debugElement.query(By.css('.p-toolbar-center'))).toBeTruthy();
+            expect(dynamicFixture.debugElement.query(By.css('.dynamic-center')).nativeElement.textContent).toBe('Dynamic Center');
+            expect(dynamicFixture.debugElement.query(By.css('.p-toolbar-end'))).toBeNull();
+        });
     });
 
     describe('BlockableUI Interface', () => {
@@ -586,11 +616,10 @@ describe('Toolbar', () => {
 
             const toolbarInstance = templateFixture.debugElement.query(By.directive(Toolbar)).componentInstance;
 
-            // ngAfterContentInit is already called during detectChanges
             // Verify that templates are processed correctly
-            expect(toolbarInstance._startTemplate || toolbarInstance.startTemplate).toBeTruthy();
-            expect(toolbarInstance._centerTemplate || toolbarInstance.centerTemplate).toBeTruthy();
-            expect(toolbarInstance._endTemplate || toolbarInstance.endTemplate).toBeTruthy();
+            expect(toolbarInstance._startTemplate() || toolbarInstance.startTemplate()).toBeTruthy();
+            expect(toolbarInstance._centerTemplate() || toolbarInstance.centerTemplate()).toBeTruthy();
+            expect(toolbarInstance._endTemplate() || toolbarInstance.endTemplate()).toBeTruthy();
         });
 
         it('should handle pTemplate directives', () => {
@@ -644,9 +673,9 @@ describe('Toolbar', () => {
             const toolbarInstance = contentChildFixture.debugElement.query(By.directive(Toolbar)).componentInstance;
 
             // ContentChild templates should be available
-            expect(toolbarInstance.startTemplate).toBeDefined();
-            expect(toolbarInstance.centerTemplate).toBeDefined();
-            expect(toolbarInstance.endTemplate).toBeDefined();
+            expect(toolbarInstance.startTemplate()).toBeDefined();
+            expect(toolbarInstance.centerTemplate()).toBeDefined();
+            expect(toolbarInstance.endTemplate()).toBeDefined();
         });
 
         it('should have correct template references in component', () => {
@@ -790,8 +819,7 @@ describe('Toolbar', () => {
             ptComponent.pt = {
                 root: ({ instance }) => {
                     return {
-                        class: instance?.ariaLabelledBy ? 'HAS_ARIA' : 'NO_ARIA',
-                        'data-styleclass': instance?.styleClass
+                        class: instance?.ariaLabelledBy() ? 'HAS_ARIA' : 'NO_ARIA'
                     };
                 }
             };
@@ -844,6 +872,50 @@ describe('Toolbar', () => {
 
             expect(toolbarEl.nativeElement.className).toContain('SETINPUT_ROOT_CLASS');
             expect(startSection.nativeElement.className).toContain('SETINPUT_START_CLASS');
+        });
+    });
+
+    describe('Class Attribute', () => {
+        let classFixture: ComponentFixture<TestClassToolbarComponent>;
+        let classComponent: TestClassToolbarComponent;
+
+        beforeEach(() => {
+            classFixture = TestBed.createComponent(TestClassToolbarComponent);
+            classComponent = classFixture.componentInstance;
+        });
+
+        it('should apply a static class alongside the root classes', async () => {
+            classFixture.changeDetectorRef.markForCheck();
+            await classFixture.whenStable();
+
+            const toolbarElement = classFixture.debugElement.query(By.directive(Toolbar));
+            expect(toolbarElement.nativeElement.classList.contains('static-class')).toBe(true);
+            expect(toolbarElement.nativeElement.classList.contains('p-toolbar')).toBe(true);
+        });
+
+        it('should apply multiple bound classes', async () => {
+            classComponent.dynamicClass = 'class-one class-two';
+            classFixture.changeDetectorRef.markForCheck();
+            await classFixture.whenStable();
+
+            const toolbarElement = classFixture.debugElement.query(By.directive(Toolbar));
+            expect(toolbarElement.nativeElement.classList.contains('class-one')).toBe(true);
+            expect(toolbarElement.nativeElement.classList.contains('class-two')).toBe(true);
+            expect(toolbarElement.nativeElement.classList.contains('p-toolbar')).toBe(true);
+        });
+
+        it('should update a bound class dynamically', async () => {
+            classFixture.changeDetectorRef.markForCheck();
+            await classFixture.whenStable();
+            const toolbarElement = classFixture.debugElement.query(By.directive(Toolbar));
+
+            expect(toolbarElement.nativeElement.className).not.toContain('dynamic-class');
+
+            classComponent.dynamicClass = 'dynamic-class';
+            classFixture.changeDetectorRef.markForCheck();
+            await classFixture.whenStable();
+            expect(toolbarElement.nativeElement.className).toContain('dynamic-class');
+            expect(toolbarElement.nativeElement.classList.contains('p-toolbar')).toBe(true);
         });
     });
 });
