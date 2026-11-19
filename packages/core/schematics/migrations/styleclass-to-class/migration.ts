@@ -28,7 +28,13 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-chip',
     'p-inputgroup',
     'p-inputGroup',
-    'p-input-group'
+    'p-input-group',
+    'p-iconfield',
+    'p-iconField',
+    'p-icon-field',
+    'p-inputicon',
+    'p-inputIcon',
+    'p-input-icon'
 ];
 
 /**

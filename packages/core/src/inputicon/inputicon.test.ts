@@ -28,7 +28,7 @@ class TestBasicInputIconComponent {
     imports: [IconField, InputIcon, InputText, FormsModule],
     template: `
         <p-iconfield>
-            <p-inputicon [styleClass]="customClass" class="pi pi-user" />
+            <p-inputicon class="pi pi-user" [class]="customClass" />
             <input type="text" pInputText [(ngModel)]="username" />
         </p-iconfield>
     `
@@ -70,10 +70,9 @@ describe('InputIcon', () => {
         });
     });
 
-    describe('Style Class Tests', () => {
+    describe('Class Tests', () => {
         let component: TestStyledInputIconComponent;
         let fixture: ComponentFixture<TestStyledInputIconComponent>;
-        let inputIconInstance: InputIcon;
 
         beforeEach(async () => {
             await TestBed.configureTestingModule({
@@ -83,26 +82,26 @@ describe('InputIcon', () => {
 
             fixture = TestBed.createComponent(TestStyledInputIconComponent);
             component = fixture.componentInstance;
-            inputIconInstance = fixture.debugElement.query(By.directive(InputIcon)).componentInstance;
             fixture.detectChanges();
         });
 
-        it('should apply custom styleClass', () => {
-            expect(inputIconInstance.styleClass).toBe('custom-icon');
-
+        it('should apply custom class', () => {
             const iconElement = fixture.debugElement.query(By.directive(InputIcon));
             expect(iconElement.nativeElement.classList.contains('custom-icon')).toBe(true);
+            expect(iconElement.nativeElement.classList.contains('pi-user')).toBe(true);
+            expect(iconElement.nativeElement.classList.contains('p-inputicon')).toBe(true);
         });
 
-        it('should update styleClass dynamically', async () => {
+        it('should update class dynamically', async () => {
             component.customClass = 'new-icon-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(inputIconInstance.styleClass).toBe('new-icon-class');
-
             const iconElement = fixture.debugElement.query(By.directive(InputIcon));
             expect(iconElement.nativeElement.classList.contains('new-icon-class')).toBe(true);
+            expect(iconElement.nativeElement.classList.contains('custom-icon')).toBe(false);
+            expect(iconElement.nativeElement.classList.contains('pi-user')).toBe(true);
+            expect(iconElement.nativeElement.classList.contains('p-inputicon')).toBe(true);
         });
     });
 });
@@ -158,15 +157,16 @@ describe('InputIcon PassThrough Tests', () => {
 
     describe('PT Case 3: Instance variables', () => {
         it('should access instance variables in PT function', () => {
-            component.styleClass = 'custom-icon';
+            fixture.componentRef.setInput('hostName', 'listbox');
             fixture.componentRef.setInput('pt', {
                 root: ({ instance }: any) => ({
-                    class: instance?.styleClass ? 'HAS_STYLE' : ''
+                    class: instance?.hostName() === 'listbox' ? 'HAS_HOST' : ''
                 })
             });
             fixture.detectChanges();
 
-            expect(hostElement.classList.contains('HAS_STYLE')).toBe(true);
+            expect(component.hostName()).toBe('listbox');
+            expect(hostElement.classList.contains('HAS_HOST')).toBe(true);
         });
     });
 
