@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, SimpleChange } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -944,7 +944,7 @@ describe('Table', () => {
 
         describe('Context menu outputs', () => {
             it('emits contextMenuSelectionChange and onContextMenuSelect via handleRowRightClick', () => {
-                outputComponent.contextMenu = { show: vi.fn() };
+                outputComponent.contextMenu = { show: vi.fn(), hideCallback: signal(undefined) };
                 outputComponent.dataKey = 'id';
                 const rowData = { id: '1', name: 'Row 1' };
                 outputComponent.value = [rowData];

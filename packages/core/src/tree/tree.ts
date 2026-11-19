@@ -1530,9 +1530,9 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
 
             const onContextMenuCallback = () => {
                 this.contextMenu.show(event);
-                this.contextMenu.hideCallback = () => {
+                this.contextMenu.hideCallback.set(() => {
                     this.contextMenuSelection.set(null);
-                };
+                });
 
                 this.onNodeContextMenuSelect.emit({ originalEvent: event, node: node });
             };

@@ -1824,11 +1824,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
 
             const showContextMenu = () => {
                 this.contextMenu.show(event.originalEvent);
-                this.contextMenu.hideCallback = () => {
+                this.contextMenu.hideCallback.set(() => {
                     this.contextMenuSelection = null;
                     this.contextMenuSelectionChange.emit(null);
                     this.tableService.onContextMenu(null);
-                };
+                });
             };
 
             if (this.contextMenuSelectionMode === 'separate') {

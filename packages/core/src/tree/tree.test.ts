@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -2589,7 +2589,8 @@ describe('Tree', () => {
 
             // Mock context menu
             mockContextMenu = {
-                show: vi.fn()
+                show: vi.fn(),
+                hideCallback: signal(undefined)
             };
 
             component.nodes = [

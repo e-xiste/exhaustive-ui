@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -2906,7 +2906,7 @@ describe('TreeTable', () => {
         describe('contextMenuSelectionChange & onContextMenuSelect (via handleRowRightClick)', () => {
             beforeEach(async () => {
                 component.value = basicTreeData;
-                treetable.contextMenu = { show: vi.fn() };
+                treetable.contextMenu = { show: vi.fn(), hideCallback: signal(undefined) };
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
                 fixture.detectChanges();

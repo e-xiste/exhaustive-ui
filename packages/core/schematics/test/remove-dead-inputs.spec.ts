@@ -264,6 +264,24 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-button label="Emails" badge="2"></p-button>\n<p-button [label]="label" [badge]="count" badgeSeverity="contrast"></p-button>\n`);
     });
 
+    it('removes autoZIndex/baseZIndex/popup from p-contextmenu-sub and p-contextMenuSub while keeping them on p-contextmenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-contextmenu-sub [items]="items" [autoZIndex]="false" baseZIndex="100" [popup]="true" [root]="true"></p-contextmenu-sub>\n<p-contextMenuSub [items]="items" autoZIndex="false" [baseZIndex]="zIndex" popup="true"></p-contextMenuSub>\n<p-contextmenu [model]="items" [autoZIndex]="false" [baseZIndex]="100"></p-contextmenu>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).toBe(`<p-contextmenu-sub [items]="items" [root]="true"></p-contextmenu-sub>\n<p-contextMenuSub [items]="items"></p-contextMenuSub>\n<p-contextmenu [model]="items" [autoZIndex]="false" [baseZIndex]="100"></p-contextmenu>\n`);
+    });
+
+    it('does not report a programmatic autoZIndex or popup access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    layer(menu: { autoZIndex: boolean; popup: boolean }) {\n        return menu.autoZIndex && menu.popup;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+    });
+
     it('keeps ariaCloseLabel on components that still read it', async () => {
         const runner = createMigrationRunner();
         const content = `<p-drawer ariaCloseLabel="Close drawer"></p-drawer>\n<p-dialog [ariaCloseLabel]="closeLabel"></p-dialog>\n`;

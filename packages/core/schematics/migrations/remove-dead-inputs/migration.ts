@@ -43,6 +43,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * read: its overlay animation is driven by `motionOptions`.
  * The deprecated `badgeClass` on Button was stored but never read: the inner badge is styled through
  * `badgeSeverity` only.
+ * `autoZIndex`/`baseZIndex`/`popup` on ContextMenuSub were stored but never read: the layering of the
+ * context menu overlay is handled by the parent ContextMenu, and a context menu sub list is never a popup.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -73,7 +75,9 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-splitButton', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
     { selector: 'p-split-button', names: ['showTransitionOptions', 'hideTransitionOptions', 'plain'] },
     { selector: 'p-password', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-button', names: ['badgeClass'] }
+    { selector: 'p-button', names: ['badgeClass'] },
+    { selector: 'p-contextMenuSub', names: ['autoZIndex', 'baseZIndex', 'popup'] },
+    { selector: 'p-contextmenu-sub', names: ['autoZIndex', 'baseZIndex', 'popup'] }
 ];
 
 /**
@@ -85,9 +89,11 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
  * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
  * SplitButton's `plain` is left out too: Button and pButton still expose a working `plain`.
+ * ContextMenuSub's `autoZIndex`, `baseZIndex` and `popup` are left out too: ContextMenu itself and every
+ * other overlay component still expose them.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel' && name !== 'plain'
+    (name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel' && name !== 'plain' && name !== 'autoZIndex' && name !== 'baseZIndex' && name !== 'popup'
 );
 
 /**
@@ -111,8 +117,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed;
  * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
  * animation); Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
- * read (motionOptions drives the overlay animation); and Button's deprecated badgeClass, stored but
- * never read (badgeSeverity styles the inner badge).
+ * read (motionOptions drives the overlay animation); Button's deprecated badgeClass, stored but
+ * never read (badgeSeverity styles the inner badge); and ContextMenuSub's autoZIndex/baseZIndex/popup,
+ * stored but never read (the parent ContextMenu handles layering).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

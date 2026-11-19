@@ -1908,11 +1908,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
             const showContextMenu = () => {
                 this.contextMenu.show(event.originalEvent);
-                this.contextMenu.hideCallback = () => {
+                this.contextMenu.hideCallback.set(() => {
                     this.contextMenuSelection = null;
                     this.contextMenuSelectionChange.emit(null);
                     this.tableService.onContextMenu(null);
-                };
+                });
             };
 
             if (this.contextMenuSelectionMode === 'separate') {
