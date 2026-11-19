@@ -671,6 +671,42 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-inputIcon class="a"></p-inputIcon>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-metergroup', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-metergroup styleClass="my-meter"></p-metergroup>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-metergroup class="my-meter"></p-metergroup>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-metergroup', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-metergroup [styleClass]="myClass"></p-metergroup>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-metergroup [class]="myClass"></p-metergroup>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-metergroup', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-metergroup class="existing" styleClass="my-meter"></p-metergroup>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-metergroup class="existing my-meter"></p-metergroup>\n`);
+    });
+
+    it('rewrites styleClass on the p-meterGroup and p-meter-group aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-meterGroup styleClass="a"></p-meterGroup>\n<p-meter-group [styleClass]="b"></p-meter-group>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-meterGroup class="a"></p-meterGroup>\n<p-meter-group [class]="b"></p-meter-group>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

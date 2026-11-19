@@ -40,7 +40,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-toggle-switch',
     'p-colorPicker',
     'p-colorpicker',
-    'p-color-picker'
+    'p-color-picker',
+    'p-metergroup',
+    'p-meterGroup',
+    'p-meter-group'
 ];
 
 /**
