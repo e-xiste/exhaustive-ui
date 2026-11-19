@@ -3,11 +3,11 @@ import { style } from '@exhaustive-ui/styles/organizationchart';
 import { BaseStyle } from '@exhaustive-ui/core/base';
 
 const classes = {
-    root: ({ instance }) => ['p-organizationchart p-component', { 'p-organizationchart-preservespace': instance.preserveSpace }],
+    root: ({ instance }) => ['p-organizationchart p-component', { 'p-organizationchart-preservespace': instance.preserveSpace() }],
     table: 'p-organizationchart-table',
     node: ({ instance }) => [
         'p-organizationchart-node',
-        { 'p-organizationchart-node': true, 'p-organizationchart-node-selectable': instance.chart.selectionMode && instance.node.selectable !== false, 'p-organizationchart-node-selected': instance.isSelected() }
+        { 'p-organizationchart-node': true, 'p-organizationchart-node-selectable': instance.chart.selectionMode() && instance.node().selectable !== false, 'p-organizationchart-node-selected': instance.isSelected() }
     ],
     nodeToggleButton: 'p-organizationchart-node-toggle-button',
     nodeToggleButtonIcon: 'p-organizationchart-node-toggle-button-icon',

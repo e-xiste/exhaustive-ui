@@ -67,7 +67,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-image',
     'p-editor',
     'p-slider',
-    'p-paginator'
+    'p-paginator',
+    'p-organizationchart',
+    'p-organizationChart',
+    'p-organization-chart'
 ];
 
 /**

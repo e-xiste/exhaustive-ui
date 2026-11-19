@@ -1165,6 +1165,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-paginator class="existing my-paginator"></p-paginator>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-organizationchart', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-organizationchart [value]="data" styleClass="my-chart"></p-organizationchart>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-organizationchart [value]="data" class="my-chart"></p-organizationchart>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-organizationChart', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-organizationChart [value]="data" [collapsible]="true" [styleClass]="chartClass"></p-organizationChart>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-organizationChart [value]="data" [collapsible]="true" [class]="chartClass"></p-organizationChart>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-organization-chart', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-organization-chart class="existing" styleClass="my-chart" [value]="data"></p-organization-chart>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-organization-chart class="existing my-chart" [value]="data"></p-organization-chart>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
