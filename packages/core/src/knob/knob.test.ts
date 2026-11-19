@@ -55,7 +55,7 @@ class TestReactiveFormKnobComponent {
             [rangeColor]="rangeColor"
             [textColor]="textColor"
             [valueTemplate]="valueTemplate"
-            [styleClass]="styleClass"
+            [class]="styleClass"
             [ariaLabel]="ariaLabel"
             [tabindex]="tabindex"
             (onChange)="onKnobChange($event)"
@@ -134,14 +134,17 @@ describe('Knob', () => {
         });
 
         it('should initialize with default properties', () => {
-            expect(knobInstance.min).toBe(0);
-            expect(knobInstance.max).toBe(100);
-            expect(knobInstance.step).toBe(1);
-            expect(knobInstance.size).toBe(100);
-            expect(knobInstance.strokeWidth).toBe(14);
-            expect(knobInstance.showValue).toBe(true);
-            expect(knobInstance.readonly).toBe(false);
-            expect(knobInstance.valueTemplate).toBe('{value}');
+            expect(knobInstance.min()).toBe(0);
+            expect(knobInstance.max()).toBe(100);
+            expect(knobInstance.step()).toBe(1);
+            expect(knobInstance.size()).toBe(100);
+            expect(knobInstance.strokeWidth()).toBe(14);
+            expect(knobInstance.showValue()).toBe(true);
+            expect(knobInstance.readonly()).toBe(false);
+            expect(knobInstance.valueTemplate()).toBe('{value}');
+            expect(knobInstance.tabindex()).toBe(0);
+            expect(knobInstance.ariaLabel()).toBeUndefined();
+            expect(knobInstance.ariaLabelledBy()).toBeUndefined();
         });
 
         it('should render SVG element with correct attributes', () => {
@@ -193,7 +196,7 @@ describe('Knob', () => {
             await fixture.whenStable();
 
             expect(knobInstance.value()).toBe(75);
-            expect(knobInstance._value).toBe(75);
+            expect(knobInstance._value()).toBe(75);
         });
 
         it('should update displayed value', async () => {
@@ -344,8 +347,8 @@ describe('Knob', () => {
             svgElement.nativeElement.dispatchEvent(mouseDownEvent);
 
             expect(mouseDownEvent.preventDefault).toHaveBeenCalled();
-            expect(knobInstance.windowMouseMoveListener).toBeTruthy();
-            expect(knobInstance.windowMouseUpListener).toBeTruthy();
+            expect(knobInstance.windowMouseMoveListener()).toBeTruthy();
+            expect(knobInstance.windowMouseUpListener()).toBeTruthy();
         });
 
         it('should handle mouseup event', () => {
@@ -359,6 +362,8 @@ describe('Knob', () => {
             svgElement.nativeElement.dispatchEvent(mouseUpEvent);
 
             expect(mouseUpEvent.preventDefault).toHaveBeenCalled();
+            expect(knobInstance.windowMouseMoveListener()).toBeNull();
+            expect(knobInstance.windowMouseUpListener()).toBeNull();
         });
     });
 
@@ -385,8 +390,8 @@ describe('Knob', () => {
             svgElement.nativeElement.dispatchEvent(touchStartEvent);
 
             expect(touchStartEvent.preventDefault).toHaveBeenCalled();
-            expect(knobInstance.windowTouchMoveListener).toBeTruthy();
-            expect(knobInstance.windowTouchEndListener).toBeTruthy();
+            expect(knobInstance.windowTouchMoveListener()).toBeTruthy();
+            expect(knobInstance.windowTouchEndListener()).toBeTruthy();
         });
 
         it('should handle touchend event', () => {
@@ -400,6 +405,8 @@ describe('Knob', () => {
             svgElement.nativeElement.dispatchEvent(touchEndEvent);
 
             expect(touchEndEvent.preventDefault).toHaveBeenCalled();
+            expect(knobInstance.windowTouchMoveListener()).toBeNull();
+            expect(knobInstance.windowTouchEndListener()).toBeNull();
         });
     });
 
@@ -425,8 +432,8 @@ describe('Knob', () => {
             component.max = 90;
             fixture.detectChanges();
 
-            expect(knobInstance.min).toBe(10);
-            expect(knobInstance.max).toBe(90);
+            expect(knobInstance.min()).toBe(10);
+            expect(knobInstance.max()).toBe(90);
 
             const svgElement = fixture.debugElement.query(By.css('svg'));
             expect(svgElement.nativeElement.getAttribute('aria-valuemin')).toBe('10');
@@ -434,11 +441,11 @@ describe('Knob', () => {
         });
 
         it('should apply custom step value', () => {
-            expect(knobInstance.step).toBe(5);
+            expect(knobInstance.step()).toBe(5);
         });
 
         it('should apply custom size', () => {
-            expect(knobInstance.size).toBe(150);
+            expect(knobInstance.size()).toBe(150);
 
             const svgElement = fixture.debugElement.query(By.css('svg'));
             expect(svgElement.nativeElement.style.width).toBe('150px');
@@ -446,7 +453,7 @@ describe('Knob', () => {
         });
 
         it('should apply custom stroke width', () => {
-            expect(knobInstance.strokeWidth).toBe(20);
+            expect(knobInstance.strokeWidth()).toBe(20);
 
             const paths = fixture.debugElement.queryAll(By.css('path'));
             paths.forEach((path) => {
@@ -455,9 +462,9 @@ describe('Knob', () => {
         });
 
         it('should apply custom colors', () => {
-            expect(knobInstance.valueColor).toBe('#007ad9');
-            expect(knobInstance.rangeColor).toBe('#f1f1f1');
-            expect(knobInstance.textColor).toBe('#333');
+            expect(knobInstance.valueColor()).toBe('#007ad9');
+            expect(knobInstance.rangeColor()).toBe('#f1f1f1');
+            expect(knobInstance.textColor()).toBe('#333');
 
             const paths = fixture.debugElement.queryAll(By.css('path'));
             expect(paths[0].nativeElement.getAttribute('stroke')).toBe('#f1f1f1');
@@ -480,6 +487,8 @@ describe('Knob', () => {
         it('should apply custom style class', () => {
             const knobElement = fixture.debugElement.query(By.directive(Knob));
             expect(knobElement.nativeElement.classList.contains('custom-knob')).toBe(true);
+            expect(knobElement.nativeElement.classList.contains('p-knob')).toBe(true);
+            expect(knobElement.nativeElement.classList.contains('p-component')).toBe(true);
         });
 
         it('should apply accessibility attributes', () => {
@@ -649,13 +658,13 @@ describe('Knob', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(knobInstance._value).toBe(0); // Should default to min value
+            expect(knobInstance._value()).toBe(0); // Should default to min value
 
             component.value = undefined as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(knobInstance._value).toBe(0);
+            expect(knobInstance._value()).toBe(0);
         });
 
         it('should clamp values to min/max bounds', () => {
@@ -678,7 +687,7 @@ describe('Knob', () => {
             expect(knobInstance.value()).toBe(48); // Direct value assignment
 
             // Test that step property is correctly set
-            expect(knobInstance.step).toBe(5);
+            expect(knobInstance.step()).toBe(5);
         });
 
         it('should prevent interaction when disabled', () => {
@@ -792,6 +801,202 @@ describe('Knob', () => {
 
             // Should complete within reasonable time (adjust threshold as needed)
             expect(duration).toBeLessThan(1000);
+        });
+    });
+
+    describe('OnPush re-render', () => {
+        let fixture: ComponentFixture<Knob>;
+        let knobInstance: Knob;
+
+        const svg = () => fixture.nativeElement.querySelector('svg') as SVGElement;
+        const paths = () => Array.from(fixture.nativeElement.querySelectorAll('path')) as SVGPathElement[];
+        const text = () => fixture.nativeElement.querySelector('text') as SVGTextElement | null;
+
+        beforeEach(async () => {
+            await TestBed.configureTestingModule({
+                imports: [Knob],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            fixture = TestBed.createComponent(Knob);
+            knobInstance = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('re-renders the svg size when size changes', () => {
+            expect(svg().style.width).toBe('100px');
+
+            fixture.componentRef.setInput('size', 200);
+            fixture.detectChanges();
+
+            expect(svg().style.width).toBe('200px');
+            expect(svg().style.height).toBe('200px');
+        });
+
+        it('re-renders the stroke width of both paths when strokeWidth changes', () => {
+            expect(paths().map((p) => p.getAttribute('stroke-width'))).toEqual(['14', '14']);
+
+            fixture.componentRef.setInput('strokeWidth', '6');
+            fixture.detectChanges();
+
+            expect(knobInstance.strokeWidth()).toBe(6);
+            expect(paths().map((p) => p.getAttribute('stroke-width'))).toEqual(['6', '6']);
+        });
+
+        it('re-renders the colors when rangeColor, valueColor and textColor change', () => {
+            fixture.componentRef.setInput('rangeColor', 'red');
+            fixture.componentRef.setInput('valueColor', 'green');
+            fixture.componentRef.setInput('textColor', 'blue');
+            fixture.detectChanges();
+
+            expect(paths()[0].getAttribute('stroke')).toBe('red');
+            expect(paths()[1].getAttribute('stroke')).toBe('green');
+            expect(text()?.getAttribute('fill')).toBe('blue');
+        });
+
+        it('re-renders the displayed value when valueTemplate changes', () => {
+            knobInstance.writeValue(42);
+            fixture.detectChanges();
+            expect(text()?.textContent?.trim()).toBe('42');
+
+            fixture.componentRef.setInput('valueTemplate', '{value}%');
+            fixture.detectChanges();
+
+            expect(knobInstance.valueToDisplay()).toBe('42%');
+            expect(text()?.textContent?.trim()).toBe('42%');
+        });
+
+        it('re-renders the displayed value and aria-valuenow when the value is written', () => {
+            expect(svg().getAttribute('aria-valuenow')).toBe('0');
+
+            knobInstance.writeValue(63);
+            fixture.detectChanges();
+
+            expect(knobInstance.value()).toBe(63);
+            expect(svg().getAttribute('aria-valuenow')).toBe('63');
+            expect(text()?.textContent?.trim()).toBe('63');
+        });
+
+        it('re-renders the value path when the value changes', () => {
+            const initialPath = paths()[1].getAttribute('d');
+
+            knobInstance.updateModelValue(80);
+            fixture.detectChanges();
+
+            expect(paths()[1].getAttribute('d')).not.toBe(initialPath);
+            expect(paths()[1].getAttribute('d')).toBe(knobInstance.valuePath());
+        });
+
+        it('re-renders the aria range and the paths when min and max change', () => {
+            const initialValuePath = paths()[1].getAttribute('d');
+
+            fixture.componentRef.setInput('min', 20);
+            fixture.componentRef.setInput('max', 40);
+            fixture.detectChanges();
+
+            expect(svg().getAttribute('aria-valuemin')).toBe('20');
+            expect(svg().getAttribute('aria-valuemax')).toBe('40');
+            expect(knobInstance._value()).toBe(0);
+            expect(paths()[1].getAttribute('d')).not.toBe(initialValuePath);
+        });
+
+        it('falls back to min for the displayed value when the model value is null', () => {
+            fixture.componentRef.setInput('min', 10);
+            knobInstance.writeValue(null);
+            fixture.detectChanges();
+
+            expect(knobInstance._value()).toBe(10);
+            expect(svg().getAttribute('aria-valuenow')).toBe('10');
+            expect(text()?.textContent?.trim()).toBe('10');
+        });
+
+        it('re-renders the step when step changes', () => {
+            fixture.componentRef.setInput('step', 10);
+            fixture.detectChanges();
+
+            expect(knobInstance.step()).toBe(10);
+            knobInstance.updateModel(0, -Math.PI / 2 - Math.PI / 6);
+            fixture.detectChanges();
+            expect(knobInstance.value() % 10).toBe(0);
+        });
+
+        it('toggles the value text when showValue changes', () => {
+            expect(text()).not.toBeNull();
+
+            fixture.componentRef.setInput('showValue', false);
+            fixture.detectChanges();
+            expect(text()).toBeNull();
+
+            fixture.componentRef.setInput('showValue', true);
+            fixture.detectChanges();
+            expect(text()).not.toBeNull();
+        });
+
+        it('re-renders tabindex and ignores interaction when readonly changes', () => {
+            expect(svg().getAttribute('tabindex')).toBe('0');
+
+            fixture.componentRef.setInput('readonly', true);
+            fixture.detectChanges();
+            expect(svg().getAttribute('tabindex')).toBe('-1');
+
+            svg().dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowUp' }));
+            expect(knobInstance.value()).toBe(0);
+
+            fixture.componentRef.setInput('readonly', false);
+            fixture.detectChanges();
+            expect(svg().getAttribute('tabindex')).toBe('0');
+
+            svg().dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowUp' }));
+            expect(knobInstance.value()).toBe(1);
+        });
+
+        it('re-renders tabindex when tabindex changes', () => {
+            fixture.componentRef.setInput('tabindex', '3');
+            fixture.detectChanges();
+
+            expect(knobInstance.tabindex()).toBe(3);
+            expect(svg().getAttribute('tabindex')).toBe('3');
+        });
+
+        it('re-renders the aria attributes when ariaLabel and ariaLabelledBy change', () => {
+            expect(svg().hasAttribute('aria-label')).toBe(false);
+            expect(svg().hasAttribute('aria-labelledby')).toBe(false);
+
+            fixture.componentRef.setInput('ariaLabel', 'Volume');
+            fixture.componentRef.setInput('ariaLabelledBy', 'volume-label');
+            fixture.detectChanges();
+
+            expect(svg().getAttribute('aria-label')).toBe('Volume');
+            expect(svg().getAttribute('aria-labelledby')).toBe('volume-label');
+        });
+
+        it('re-renders the name attribute of the text when name changes', () => {
+            fixture.componentRef.setInput('name', 'volume');
+            fixture.detectChanges();
+
+            expect(text()?.getAttribute('name')).toBe('volume');
+        });
+
+        it('re-renders the required attribute when required changes', () => {
+            expect(svg().hasAttribute('required')).toBe(false);
+
+            fixture.componentRef.setInput('required', true);
+            fixture.detectChanges();
+
+            expect(svg().hasAttribute('required')).toBe(true);
+        });
+
+        it('re-renders the host class and tabindex when the control is disabled', () => {
+            expect(fixture.nativeElement.classList.contains('p-disabled')).toBe(false);
+
+            knobInstance.setDisabledState(true);
+            fixture.detectChanges();
+
+            expect(fixture.nativeElement.classList.contains('p-disabled')).toBe(true);
+            expect(svg().getAttribute('tabindex')).toBe('-1');
+
+            svg().dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowUp' }));
+            expect(knobInstance.value()).toBe(0);
         });
     });
 

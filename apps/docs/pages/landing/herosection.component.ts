@@ -340,7 +340,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         <div class="font-medium text-color p-2">Customer Satisfaction Score</div>
                                     </div>
                                     <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
-                                        <p-knob [(ngModel)]="customerSatisfaction" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" styleClass="pointer-events-none" />
+                                        <p-knob [(ngModel)]="customerSatisfaction" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
                                     </div>
                                 </div>
                                 <div class="w-full h-full flex flex-col p-3 rounded-xl bg-emphasis">

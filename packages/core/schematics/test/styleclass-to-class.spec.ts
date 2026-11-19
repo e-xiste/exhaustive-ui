@@ -976,6 +976,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion class="existing my-accordion"></p-accordion>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-knob', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-knob [(ngModel)]="value" [size]="150" styleClass="pointer-events-none"></p-knob>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-knob [(ngModel)]="value" [size]="150" class="pointer-events-none"></p-knob>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-knob', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-knob [(ngModel)]="value" [styleClass]="myClass"></p-knob>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-knob [(ngModel)]="value" [class]="myClass"></p-knob>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-knob', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-knob class="existing" styleClass="my-knob"></p-knob>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-knob class="existing my-knob"></p-knob>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
