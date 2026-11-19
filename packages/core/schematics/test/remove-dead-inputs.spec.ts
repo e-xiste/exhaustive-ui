@@ -282,6 +282,19 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/foo.ts')).toBe(content);
     });
 
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions from every p-tieredmenu selector while keeping motionOptions and styleClass', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-tieredmenu #menu [model]="items" [popup]="true" showTransitionOptions=".12s ease" [hideTransitionOptions]="hideTf" [motionOptions]="motion" styleClass="w-full"></p-tieredmenu>\n<p-tieredMenu [model]="items" [showTransitionOptions]="showTf" [appendTo]="'body'"></p-tieredMenu>\n<p-tiered-menu [model]="items" hideTransitionOptions=".1s linear" [breakpoint]="'768px'"></p-tiered-menu>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(
+            `<p-tieredmenu #menu [model]="items" [popup]="true" [motionOptions]="motion" styleClass="w-full"></p-tieredmenu>\n<p-tieredMenu [model]="items" [appendTo]="'body'"></p-tieredMenu>\n<p-tiered-menu [model]="items" [breakpoint]="'768px'"></p-tiered-menu>\n`
+        );
+    });
+
     it('keeps ariaCloseLabel on components that still read it', async () => {
         const runner = createMigrationRunner();
         const content = `<p-drawer ariaCloseLabel="Close drawer"></p-drawer>\n<p-dialog [ariaCloseLabel]="closeLabel"></p-dialog>\n`;

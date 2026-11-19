@@ -45,6 +45,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `badgeSeverity` only.
  * `autoZIndex`/`baseZIndex`/`popup` on ContextMenuSub were stored but never read: the layering of the
  * context menu overlay is handled by the parent ContextMenu, and a context menu sub list is never a popup.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on TieredMenu were stored but never
+ * read: its popup animation is driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -77,7 +79,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-password', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-button', names: ['badgeClass'] },
     { selector: 'p-contextMenuSub', names: ['autoZIndex', 'baseZIndex', 'popup'] },
-    { selector: 'p-contextmenu-sub', names: ['autoZIndex', 'baseZIndex', 'popup'] }
+    { selector: 'p-contextmenu-sub', names: ['autoZIndex', 'baseZIndex', 'popup'] },
+    { selector: 'p-tieredMenu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-tieredmenu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-tiered-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
@@ -118,8 +123,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
  * animation); Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
  * read (motionOptions drives the overlay animation); Button's deprecated badgeClass, stored but
- * never read (badgeSeverity styles the inner badge); and ContextMenuSub's autoZIndex/baseZIndex/popup,
- * stored but never read (the parent ContextMenu handles layering).
+ * never read (badgeSeverity styles the inner badge); ContextMenuSub's autoZIndex/baseZIndex/popup,
+ * stored but never read (the parent ContextMenu handles layering); and TieredMenu's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

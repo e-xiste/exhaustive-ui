@@ -7,14 +7,14 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { Tooltip } from '@exhaustive-ui/core/tooltip';
-import { TieredMenu } from './tieredmenu';
+import { TieredMenu, TieredMenuSub } from './tieredmenu';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    template: `<p-tieredmenu [model]="model" [styleClass]="styleClass" [style]="style" [popup]="popup" [disabled]="disabled" [autoDisplay]="autoDisplay"></p-tieredmenu>`
+    template: `<p-tieredmenu [model]="model" [styleClass]="styleClass" [style]="style" [popup]="popup" [disabled]="disabled" [autoDisplay]="autoDisplay" [id]="id"></p-tieredmenu>`
 })
 class TestBasicTieredMenuComponent {
     model: MenuItem[] = [
@@ -36,6 +36,7 @@ class TestBasicTieredMenuComponent {
     popup = false;
     disabled = false;
     autoDisplay = true;
+    id: string | undefined;
 }
 
 @Component({
@@ -135,6 +136,21 @@ class TestContentTemplateTieredMenuComponent {
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
+    template: `
+        <p-tieredmenu [model]="model">
+            <ng-template pTemplate="whatever" let-item>
+                <span class="fallback-item">{{ item.label }}</span>
+            </ng-template>
+        </p-tieredmenu>
+    `
+})
+class TestUnknownPTemplateTieredMenuComponent {
+    model: MenuItem[] = [{ label: 'Fallback Item' }];
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
     selector: 'test-disabled-tieredmenu',
     template: `<p-tieredmenu [model]="model"></p-tieredmenu>`
 })
@@ -197,6 +213,7 @@ describe('TieredMenu', () => {
         await TestBed.configureTestingModule({
             imports: [
                 TieredMenu,
+                SharedModule,
                 RouterTestingModule.withRoutes([
                     { path: 'home', component: TestBasicTieredMenuComponent },
                     { path: 'about', component: TestBasicTieredMenuComponent },
@@ -208,6 +225,7 @@ describe('TieredMenu', () => {
                 TestPopupTieredMenuComponent,
                 TestTemplateTieredMenuComponent,
                 TestContentTemplateTieredMenuComponent,
+                TestUnknownPTemplateTieredMenuComponent,
                 TestDisabledTieredMenuComponent,
                 TestRouterTieredMenuComponent,
                 TestBreakpointTieredMenuComponent
@@ -229,24 +247,46 @@ describe('TieredMenu', () => {
         });
 
         it('should have default property values', () => {
-            expect(tieredMenu.popup).toBeFalsy();
-            expect(tieredMenu.disabled).toBe(false);
-            expect(tieredMenu.autoDisplay).toBe(true);
-            expect(tieredMenu.autoZIndex).toBe(true);
-            expect(tieredMenu.baseZIndex).toBe(0);
-            expect(tieredMenu.tabindex).toBe(0);
+            expect(tieredMenu.popup()).toBeFalsy();
+            expect(tieredMenu.disabled()).toBe(false);
+            expect(tieredMenu.autoDisplay()).toBe(true);
+            expect(tieredMenu.autoZIndex()).toBe(true);
+            expect(tieredMenu.baseZIndex()).toBe(0);
+            expect(tieredMenu.tabindex()).toBe(0);
+            expect(tieredMenu.breakpoint()).toBe('960px');
+            expect(tieredMenu.visible()).toBeUndefined();
+            expect(tieredMenu.dirty()).toBe(false);
         });
 
         it('should generate unique id', () => {
-            expect(tieredMenu.id).toBeDefined();
-            expect(tieredMenu.id).toMatch(/^pn_id_/);
+            expect(tieredMenu.id()).toBeUndefined();
+            expect(tieredMenu._id()).toBeDefined();
+            expect(tieredMenu._id()).toMatch(/^pn_id_/);
+
+            const container = fixture.debugElement.query(By.css('.p-tieredmenu'));
+            expect(container.nativeElement.getAttribute('id')).toBe(tieredMenu._id());
+        });
+
+        it('should use the provided id', async () => {
+            component.id = 'my-menu';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(tieredMenu.id()).toBe('my-menu');
+            expect(tieredMenu._id()).toBe('my-menu');
+
+            const container = fixture.debugElement.query(By.css('.p-tieredmenu'));
+            expect(container.nativeElement.getAttribute('id')).toBe('my-menu');
+            const list = fixture.debugElement.query(By.css('ul[role="menu"]'));
+            expect(list.nativeElement.getAttribute('id')).toBe('my-menu_list');
         });
 
         it('should process menu items correctly', () => {
-            expect(tieredMenu.processedItems).toBeDefined();
-            expect(tieredMenu.processedItems.length).toBe(2);
-            expect(tieredMenu.processedItems[0].item.label).toBe('File');
-            expect(tieredMenu.processedItems[1].item.label).toBe('Edit');
+            expect(tieredMenu.processedItems()).toBeDefined();
+            expect(tieredMenu.processedItems().length).toBe(2);
+            expect(tieredMenu.processedItems()[0].item.label).toBe('File');
+            expect(tieredMenu.processedItems()[1].item.label).toBe('Edit');
         });
     });
 
@@ -258,8 +298,9 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.model).toEqual(newModel);
-            expect(tieredMenu.processedItems.length).toBe(1);
+            expect(tieredMenu.model()).toEqual(newModel);
+            expect(tieredMenu.processedItems().length).toBe(1);
+            expect(fixture.debugElement.queryAll(By.css('ul[role="menu"] > li[role="menuitem"]')).length).toBe(1);
         });
 
         it('should bind styleClass', async () => {
@@ -268,7 +309,7 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.styleClass).toBe('custom-class');
+            expect(tieredMenu.styleClass()).toBe('custom-class');
         });
 
         it('should bind style object', async () => {
@@ -278,7 +319,7 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.style).toEqual(customStyle);
+            expect(tieredMenu.style()).toEqual(customStyle);
         });
 
         it('should bind popup property', async () => {
@@ -287,16 +328,20 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.popup).toBe(true);
+            expect(tieredMenu.popup()).toBe(true);
+            expect(fixture.debugElement.query(By.css('.p-tieredmenu'))).toBeNull();
         });
 
         it('should bind disabled property', async () => {
+            expect(fixture.debugElement.query(By.css('ul[role="menu"]')).nativeElement.getAttribute('tabindex')).toBe('0');
+
             component.disabled = true;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.disabled).toBe(true);
+            expect(tieredMenu.disabled()).toBe(true);
+            expect(fixture.debugElement.query(By.css('ul[role="menu"]')).nativeElement.getAttribute('tabindex')).toBe('-1');
         });
 
         it('should bind autoDisplay property', async () => {
@@ -305,7 +350,8 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.autoDisplay).toBe(false);
+            expect(tieredMenu.autoDisplay()).toBe(false);
+            expect(tieredMenu.rootmenu()!.autoDisplay()).toBe(false);
         });
     });
 
@@ -319,6 +365,45 @@ describe('TieredMenu', () => {
             const firstMenuItem = fixture.debugElement.query(By.css('li[role="menuitem"]'));
             const submenu = firstMenuItem.query(By.css('p-tieredmenusub'));
             expect(submenu).toBeTruthy();
+        });
+
+        it('should render a nested submenu list once its parent item is activated', async () => {
+            const nestedSub: TieredMenuSub = fixture.debugElement.query(By.css('li[role="menuitem"] p-tieredmenusub')).componentInstance;
+            expect(nestedSub.root()).toBe(false);
+            expect(nestedSub.visible()).toBe(false);
+            expect(nestedSub.render()).toBe(false);
+            expect(fixture.debugElement.queryAll(By.css('ul[role="menu"]')).length).toBe(1);
+
+            const menuItem = fixture.debugElement.query(By.css('li[role="menuitem"] .p-tieredmenu-item-content'));
+            menuItem.triggerEventHandler('click', { preventDefault: () => {} });
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(tieredMenu.activeItemPath().length).toBe(1);
+            expect(nestedSub.visible()).toBe(true);
+            expect(nestedSub.render()).toBe(true);
+            expect(fixture.debugElement.queryAll(By.css('ul[role="menu"]')).length).toBe(2);
+            expect(fixture.debugElement.queryAll(By.css('ul[role="menu"]'))[1].nativeElement.getAttribute('aria-labelledby')).toBe(`${tieredMenu._id()}_0`);
+        });
+
+        it('should keep the nested submenu rendered until its leave transition ends', async () => {
+            const nestedSub: TieredMenuSub = fixture.debugElement.query(By.css('li[role="menuitem"] p-tieredmenusub')).componentInstance;
+            const menuItem = fixture.debugElement.query(By.css('li[role="menuitem"] .p-tieredmenu-item-content'));
+            menuItem.triggerEventHandler('click', { preventDefault: () => {} });
+            await fixture.whenStable();
+            fixture.detectChanges();
+            expect(nestedSub.render()).toBe(true);
+
+            tieredMenu.hide();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(nestedSub.visible()).toBe(false);
+            expect(nestedSub.render()).toBe(true);
+
+            nestedSub.onAfterLeave();
+            expect(nestedSub.render()).toBe(false);
         });
 
         it('should handle menu item click', async () => {
@@ -373,8 +458,10 @@ describe('TieredMenu', () => {
         });
 
         it('should create popup menu', () => {
-            expect(popupTieredMenu.popup).toBe(true);
-            expect(popupTieredMenu.visible).toBeFalsy();
+            expect(popupTieredMenu.popup()).toBe(true);
+            expect(popupTieredMenu.visible()).toBeFalsy();
+            expect(popupTieredMenu.render()).toBe(false);
+            expect(popupFixture.debugElement.query(By.css('.p-tieredmenu'))).toBeNull();
         });
 
         it('should toggle menu visibility', async () => {
@@ -384,13 +471,16 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
 
-            expect(popupTieredMenu.visible).toBe(true);
+            expect(popupTieredMenu.visible()).toBe(true);
+            expect(popupTieredMenu.render()).toBe(true);
+            expect(popupFixture.debugElement.query(By.css('.p-tieredmenu'))).toBeTruthy();
+            expect(popupFixture.debugElement.query(By.css('.p-tieredmenu')).nativeElement.classList.contains('p-tieredmenu-overlay')).toBe(true);
 
             popupTieredMenu.toggle(mockEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
 
-            expect(popupTieredMenu.visible).toBeFalsy();
+            expect(popupTieredMenu.visible()).toBeFalsy();
         });
 
         it('should show menu with show method', async () => {
@@ -400,8 +490,8 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
 
-            expect(popupTieredMenu.visible).toBe(true);
-            expect(popupTieredMenu.target).toBe(mockEvent.currentTarget);
+            expect(popupTieredMenu.visible()).toBe(true);
+            expect(popupTieredMenu.target()).toBe(mockEvent.currentTarget);
         });
 
         it('should hide menu with hide method', async () => {
@@ -410,13 +500,13 @@ describe('TieredMenu', () => {
             popupTieredMenu.show(mockEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
-            expect(popupTieredMenu.visible).toBe(true);
+            expect(popupTieredMenu.visible()).toBe(true);
 
             popupTieredMenu.hide();
             await new Promise((resolve) => setTimeout(resolve, 100));
             await popupFixture.whenStable();
 
-            expect(popupTieredMenu.visible).toBeFalsy();
+            expect(popupTieredMenu.visible()).toBeFalsy();
         });
 
         it('should execute command on item click', async () => {
@@ -427,7 +517,7 @@ describe('TieredMenu', () => {
             await popupFixture.whenStable();
 
             // Directly trigger the command on the save item
-            const saveItem = popupTieredMenu.processedItems[0].items[0]; // Actions -> Save
+            const saveItem = popupTieredMenu.processedItems()[0].items[0]; // Actions -> Save
             const mockClickEvent = {
                 originalEvent: { preventDefault: () => {} },
                 processedItem: saveItem
@@ -458,13 +548,14 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await pTemplateFixture.whenStable();
 
-            const tieredMenuInstance = pTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+            const tieredMenuInstance: TieredMenu = pTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
 
-            // Test that component handles pTemplate without errors
-            expect(() => tieredMenuInstance.ngAfterContentInit()).not.toThrow();
-
-            // Test that templates property exists and is processed
-            expect(tieredMenuInstance.templates).toBeDefined();
+            expect(tieredMenuInstance.templates().length).toBe(2);
+            expect(tieredMenuInstance.itemTemplate()).toBeUndefined();
+            expect(tieredMenuInstance._itemTemplate()).toBeDefined();
+            expect(tieredMenuInstance.submenuIconTemplate()).toBeUndefined();
+            expect(tieredMenuInstance._submenuIconTemplate()).toBeDefined();
+            expect(tieredMenuInstance._itemTemplate()).not.toBe(tieredMenuInstance._submenuIconTemplate());
 
             // Verify pTemplate item container is rendered
             const menuList = pTemplateFixture.debugElement.query(By.css('ul[role="menu"]'));
@@ -477,13 +568,13 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await itemTemplateFixture.whenStable();
 
-            const tieredMenuInstance = itemTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+            const tieredMenuInstance: TieredMenu = itemTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
 
-            // Test that component handles #item template without errors
-            expect(() => tieredMenuInstance.ngAfterContentInit()).not.toThrow();
-
-            // Test that itemTemplate property exists (might be undefined in test environment)
-            expect(tieredMenuInstance.itemTemplate).toBeDefined();
+            expect(tieredMenuInstance.templates().length).toBe(0);
+            expect(tieredMenuInstance.itemTemplate()).toBeDefined();
+            expect(tieredMenuInstance._itemTemplate()).toBeUndefined();
+            expect(tieredMenuInstance.submenuIconTemplate()).toBeDefined();
+            expect(tieredMenuInstance._submenuIconTemplate()).toBeUndefined();
 
             // Verify item container is rendered
             const menuList = itemTemplateFixture.debugElement.query(By.css('ul[role="menu"]'));
@@ -499,9 +590,10 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await pTemplateFixture.whenStable();
 
-            const pTemplateTieredMenu = pTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
-            expect(pTemplateTieredMenu.templates).toBeDefined();
-            expect(() => pTemplateTieredMenu.ngAfterContentInit()).not.toThrow();
+            const pTemplateTieredMenu: TieredMenu = pTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+            expect(pTemplateTieredMenu.templates().length).toBe(2);
+            expect(pTemplateFixture.debugElement.queryAll(By.css('.custom-item')).length).toBe(1);
+            expect(pTemplateFixture.debugElement.queryAll(By.css('.custom-submenu-icon')).length).toBe(0);
 
             // Test #item template rendering
             const itemTemplateFixture = TestBed.createComponent(TestContentTemplateTieredMenuComponent);
@@ -509,8 +601,21 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await itemTemplateFixture.whenStable();
 
-            const itemTemplateTieredMenu = itemTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
-            expect(itemTemplateTieredMenu.itemTemplate).toBeDefined();
+            const itemTemplateTieredMenu: TieredMenu = itemTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+            expect(itemTemplateTieredMenu.itemTemplate()).toBeDefined();
+            expect(itemTemplateFixture.debugElement.queryAll(By.css('.content-template-item')).length).toBe(1);
+        });
+
+        it('should fall back to the item template for a pTemplate of an unknown type', async () => {
+            const fallbackFixture = TestBed.createComponent(TestUnknownPTemplateTieredMenuComponent);
+            fallbackFixture.detectChanges();
+            await fallbackFixture.whenStable();
+
+            const fallbackMenu: TieredMenu = fallbackFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+
+            expect(fallbackMenu._itemTemplate()).toBe(fallbackMenu.templates()[0].template);
+            expect(fallbackMenu._submenuIconTemplate()).toBeUndefined();
+            expect(fallbackFixture.debugElement.queryAll(By.css('.fallback-item')).length).toBe(1);
         });
 
         it('should render custom item template with pTemplate', async () => {
@@ -520,21 +625,18 @@ describe('TieredMenu', () => {
 
             const customItems = templateFixture.debugElement.queryAll(By.css('.custom-item'));
             const customLabels = templateFixture.debugElement.queryAll(By.css('.custom-label'));
-            // Either custom items or at least custom labels should exist
-            expect(customItems.length + customLabels.length).toBeGreaterThanOrEqual(0);
+            expect(customItems.length).toBe(1);
+            expect(customLabels.length).toBe(1);
+            expect(customLabels[0].nativeElement.textContent).toBe('Templates');
+            expect(templateFixture.debugElement.queryAll(By.css('.custom-arrow')).length).toBe(1);
         });
 
         it('should render custom submenu icon template with pTemplate', async () => {
-            const tieredMenuInstance = templateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
+            const tieredMenuInstance: TieredMenu = templateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
 
-            // Test that submenu icon template is processed
-            expect(() => tieredMenuInstance.ngAfterContentInit()).not.toThrow();
-            expect(tieredMenuInstance.templates).toBeDefined();
-
-            const customIcons = templateFixture.debugElement.queryAll(By.css('.custom-submenu-icon'));
-            const angelIcons = templateFixture.debugElement.queryAll(By.css('.pi-angle-right'));
-            // Either custom icons or at least angle right icons should exist
-            expect(customIcons.length + angelIcons.length).toBeGreaterThanOrEqual(0);
+            expect(tieredMenuInstance._submenuIconTemplate()).toBeDefined();
+            expect(tieredMenuInstance.rootmenu()!.itemTemplate()).toBe(tieredMenuInstance._itemTemplate());
+            expect(templateFixture.debugElement.queryAll(By.css('svg[data-p-icon="angle-right"]')).length).toBe(0);
         });
 
         it('should handle template context parameters', async () => {
@@ -544,14 +646,11 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await contextTemplateFixture.whenStable();
 
-            const tieredMenuInstance = contextTemplateFixture.debugElement.query(By.directive(TieredMenu)).componentInstance;
-
-            // Test that template context is processed correctly
-            expect(() => tieredMenuInstance.ngAfterContentInit()).not.toThrow();
-
             // Verify template context variables are available
             const contentTemplateItems = contextTemplateFixture.debugElement.queryAll(By.css('.content-template-item'));
-            expect(contentTemplateItems.length).toBeGreaterThanOrEqual(0);
+            expect(contentTemplateItems.length).toBe(1);
+            expect(contextTemplateFixture.debugElement.query(By.css('.item-label')).nativeElement.textContent).toBe('Content Template Menu');
+            expect(contextTemplateFixture.debugElement.queryAll(By.css('.submenu-indicator')).length).toBe(1);
         });
 
         it('should use default templates when custom ones are not provided', () => {
@@ -561,6 +660,7 @@ describe('TieredMenu', () => {
 
             const defaultItems = fixture.debugElement.queryAll(By.css('li[role="menuitem"]'));
             expect(defaultItems.length).toBeGreaterThan(0);
+            expect(fixture.debugElement.queryAll(By.css('svg[data-p-icon="angle-right"]')).length).toBe(2);
         });
     });
 
@@ -583,6 +683,9 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(keydownSpy).toHaveBeenCalled();
+            expect(tieredMenu.focusedItemInfo().index).toBe(1);
+            expect(tieredMenu.focusedItemId()).toBe(`${tieredMenu._id()}_1`);
+            expect(menuList.nativeElement.getAttribute('aria-activedescendant')).toBe(`${tieredMenu._id()}_1`);
         });
 
         it('should handle arrow up key', async () => {
@@ -605,6 +708,9 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(keydownSpy).toHaveBeenCalled();
+            expect(tieredMenu.activeItemPath().length).toBe(1);
+            expect(tieredMenu.focusedItemInfo().parentKey).toBe('0');
+            expect(tieredMenu.visibleItems()).toBe(tieredMenu.processedItems()[0].items);
         });
 
         it('should handle arrow left key', async () => {
@@ -649,6 +755,8 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(keydownSpy).toHaveBeenCalled();
+            expect(tieredMenu.focusedItemInfo().index).toBe(0);
+            expect(tieredMenu.activeItemPath()).toEqual([]);
         });
 
         it('should handle tab key', async () => {
@@ -682,17 +790,25 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(keydownSpy).toHaveBeenCalled();
+            expect(tieredMenu.focusedItemInfo().index).toBe(1);
         });
 
         it('should search items with character keys', async () => {
             const searchSpy = vi.spyOn(tieredMenu, 'searchItems');
             const menuList = fixture.debugElement.query(By.css('ul[role="menu"]'));
 
-            menuList.triggerEventHandler('keydown', { code: 'KeyF', key: 'f', metaKey: false, ctrlKey: false, preventDefault: () => {} });
+            menuList.triggerEventHandler('keydown', { code: 'KeyE', key: 'e', metaKey: false, ctrlKey: false, preventDefault: () => {} });
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(searchSpy).toHaveBeenCalledWith(expect.any(Object), 'f');
+            expect(searchSpy).toHaveBeenCalledWith(expect.any(Object), 'e');
+            expect(tieredMenu.searchValue()).toBe('e');
+            expect(tieredMenu.searchTimeout()).toBeTruthy();
+            expect(tieredMenu.focusedItemInfo().index).toBe(1);
+
+            await new Promise((resolve) => setTimeout(resolve, 600));
+            expect(tieredMenu.searchValue()).toBe('');
+            expect(tieredMenu.searchTimeout()).toBeNull();
         });
     });
 
@@ -715,13 +831,17 @@ describe('TieredMenu', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            // Verify the style is set on the component
-            expect(tieredMenu.style).toEqual({ 'background-color': 'red', border: '1px solid blue' });
+            expect(tieredMenu.style()).toEqual({ 'background-color': 'red', border: '1px solid blue' });
+
+            const container = fixture.debugElement.query(By.css('.p-tieredmenu'));
+            expect(container.nativeElement.style.backgroundColor).toBe('red');
+            expect(container.nativeElement.style.border).toBe('1px solid blue');
         });
 
         it('should have default CSS classes', () => {
             const container = fixture.debugElement.query(By.css('.p-tieredmenu'));
             expect(container).toBeTruthy();
+            expect(container.nativeElement.classList.contains('p-tieredmenu-overlay')).toBe(false);
         });
     });
 
@@ -823,7 +943,7 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(focusSpy).toHaveBeenCalled();
-            expect(tieredMenu.focused).toBe(true);
+            expect(tieredMenu.focused()).toBe(true);
         });
 
         it('should handle blur management', async () => {
@@ -838,7 +958,23 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
 
             expect(blurSpy).toHaveBeenCalled();
-            expect(tieredMenu.focused).toBe(false);
+            expect(tieredMenu.focused()).toBe(false);
+        });
+
+        it('should only expose aria-activedescendant while focused', async () => {
+            const menu = fixture.debugElement.query(By.css('ul[role="menu"]'));
+            tieredMenu.onMenuBlur({});
+            tieredMenu.focusedItemInfo.set({ index: 0, level: 0, parentKey: '', item: null });
+            await fixture.whenStable();
+            fixture.detectChanges();
+            expect(tieredMenu.focused()).toBe(false);
+            expect(menu.nativeElement.getAttribute('aria-activedescendant')).toBeNull();
+
+            tieredMenu.onMenuFocus({});
+            await fixture.whenStable();
+            fixture.detectChanges();
+            expect(menu.nativeElement.getAttribute('aria-activedescendant')).toBe(`${tieredMenu._id()}_0`);
+            expect(fixture.debugElement.query(By.css('li[role="menuitem"]')).nativeElement.getAttribute('data-p-focused')).toBe('true');
         });
 
         it('should set aria-setsize and aria-posinset', () => {
@@ -862,13 +998,28 @@ describe('TieredMenu', () => {
         });
 
         it('should handle breakpoint property', () => {
-            expect(breakpointTieredMenu.breakpoint).toBe('768px');
+            expect(breakpointTieredMenu.breakpoint()).toBe('768px');
         });
 
         it('should bind media query listener', () => {
             const bindSpy = vi.spyOn(breakpointTieredMenu, 'bindMatchMediaListener');
             breakpointTieredMenu.ngOnInit();
             expect(bindSpy).toHaveBeenCalled();
+        });
+
+        it('should bind the media query listener once and toggle the mobile class on match', () => {
+            const matchMediaSpy = vi.spyOn(window, 'matchMedia');
+            breakpointTieredMenu.ngOnInit();
+            expect(matchMediaSpy).not.toHaveBeenCalled();
+            expect(breakpointTieredMenu.queryMatches()).toBe(window.matchMedia('(max-width: 768px)').matches);
+
+            breakpointTieredMenu.queryMatches.set(false);
+            breakpointFixture.detectChanges();
+            expect(breakpointFixture.debugElement.query(By.css('.p-tieredmenu')).nativeElement.classList.contains('p-tieredmenu-mobile')).toBe(false);
+
+            breakpointTieredMenu.queryMatches.set(true);
+            breakpointFixture.detectChanges();
+            expect(breakpointFixture.debugElement.query(By.css('.p-tieredmenu')).nativeElement.classList.contains('p-tieredmenu-mobile')).toBe(true);
         });
     });
 
@@ -896,7 +1047,7 @@ describe('TieredMenu', () => {
             await popupFixture.whenStable();
 
             // Verify visible state instead of testing internal animation
-            expect(popupTieredMenu.visible).toBe(true);
+            expect(popupTieredMenu.visible()).toBe(true);
         });
 
         it('should emit onHide event', async () => {
@@ -961,8 +1112,9 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.model).toEqual([]);
-            expect(tieredMenu.processedItems.length).toBe(0);
+            expect(tieredMenu.model()).toEqual([]);
+            expect(tieredMenu.processedItems().length).toBe(0);
+            expect(fixture.debugElement.queryAll(By.css('li[role="menuitem"]')).length).toBe(0);
         });
 
         it('should handle null/undefined model', async () => {
@@ -971,7 +1123,8 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.model).toBeNull();
+            expect(tieredMenu.model()).toBeNull();
+            expect(tieredMenu.processedItems()).toEqual([]);
         });
 
         it('should handle items with no subitems', async () => {
@@ -980,8 +1133,8 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.processedItems.length).toBe(1);
-            expect(tieredMenu.processedItems[0].items.length).toBe(0);
+            expect(tieredMenu.processedItems().length).toBe(1);
+            expect(tieredMenu.processedItems()[0].items.length).toBe(0);
         });
 
         it('should handle deeply nested items', async () => {
@@ -1005,7 +1158,7 @@ describe('TieredMenu', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tieredMenu.processedItems[0].items[0].items[0].items.length).toBe(1);
+            expect(tieredMenu.processedItems()[0].items[0].items[0].items.length).toBe(1);
         });
     });
 
@@ -1038,6 +1191,31 @@ describe('TieredMenu', () => {
             const unbindSpy = vi.spyOn(tieredMenu, 'unbindMatchMediaListener').mockImplementation(() => {});
             tieredMenu.ngOnDestroy();
             expect(unbindSpy).toHaveBeenCalled();
+        });
+
+        it('should unbind the outside click and resize listeners once every submenu is closed', async () => {
+            const menuItem = fixture.debugElement.query(By.css('li[role="menuitem"] .p-tieredmenu-item-content'));
+            menuItem.triggerEventHandler('click', { preventDefault: () => {} });
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(tieredMenu.activeItemPath().length).toBe(1);
+            expect(tieredMenu.outsideClickListener()).toBeTruthy();
+            expect(tieredMenu.resizeListener()).toBeTruthy();
+
+            const unlistenClick = vi.fn();
+            const unlistenResize = vi.fn();
+            tieredMenu.outsideClickListener.set(unlistenClick);
+            tieredMenu.resizeListener.set(unlistenResize);
+
+            tieredMenu.hide();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(unlistenClick).toHaveBeenCalledTimes(1);
+            expect(unlistenResize).toHaveBeenCalledTimes(1);
+            expect(tieredMenu.outsideClickListener()).toBeNull();
+            expect(tieredMenu.resizeListener()).toBeNull();
         });
     });
 
@@ -1264,12 +1442,12 @@ describe('TieredMenu', () => {
                 pt = {
                     root: ({ instance }: any) => ({
                         class: {
-                            DISABLED: instance?.disabled
+                            DISABLED: instance?.disabled?.()
                         }
                     }),
                     item: ({ instance }: any) => ({
                         style: {
-                            'background-color': instance?.disabled ? 'yellow' : 'red'
+                            'background-color': instance?.disabled?.() ? 'yellow' : 'red'
                         }
                     })
                 };
