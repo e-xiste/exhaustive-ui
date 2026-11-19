@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, Directive, ElementRef, forwardRef, HostListener, Input, NgModule, PLATFORM_ID, Provider, inject, output } from '@angular/core';
+import { booleanAttribute, computed, Directive, ElementRef, forwardRef, HostListener, inject, input, NgModule, output, PLATFORM_ID, Provider, signal } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
 import { getBrowser, isAndroid } from '@exhaustive-ui/utils';
 
@@ -68,7 +68,6 @@ const SAFARI_KEYS: SafariKeys = {
  */
 @Directive({
     selector: '[pKeyFilter]',
-    standalone: true,
     providers: [KEYFILTER_VALIDATOR]
 })
 export class KeyFilter implements Validator {
@@ -80,26 +79,12 @@ export class KeyFilter implements Validator {
      * When enabled, instead of blocking keys, input is validated internally to test against the regular expression.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) pValidateOnly: boolean | undefined;
+    pValidateOnly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Sets the pattern for key filtering.
      * @group Props
      */
-
-    @Input('pKeyFilter') set pattern(_pattern: RegExp | KeyFilterPattern | null | undefined) {
-        this._pattern = _pattern;
-
-        if (_pattern instanceof RegExp) {
-            this.regex = _pattern;
-        } else if (_pattern && _pattern in DEFAULT_MASKS) {
-            this.regex = DEFAULT_MASKS[_pattern as keyof typeof DEFAULT_MASKS];
-        } else {
-            this.regex = /./;
-        }
-    }
-    get pattern(): RegExp | KeyFilterPattern | null | undefined {
-        return this._pattern;
-    }
+    pattern = input<RegExp | KeyFilterPattern | null | undefined>(undefined, { alias: 'pKeyFilter' });
 
     /**
      * Emits a value whenever the ngModel of the component changes.
@@ -108,21 +93,21 @@ export class KeyFilter implements Validator {
      */
     readonly ngModelChange = output<string | number>();
 
-    regex: RegExp = /./;
+    regex = computed<RegExp>(() => {
+        const _pattern = this.pattern();
 
-    _pattern: RegExp | KeyFilterPattern | null | undefined;
-
-    isAndroid: boolean;
-
-    lastValue: any;
-
-    constructor() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.isAndroid = isAndroid();
+        if (_pattern instanceof RegExp) {
+            return _pattern;
+        } else if (_pattern && _pattern in DEFAULT_MASKS) {
+            return DEFAULT_MASKS[_pattern as keyof typeof DEFAULT_MASKS];
         } else {
-            this.isAndroid = false;
+            return /./;
         }
-    }
+    });
+
+    isAndroid = isPlatformBrowser(this.platformId) ? isAndroid() : false;
+
+    lastValue = signal<any>(undefined);
 
     isNavKeyPress(e: KeyboardEvent) {
         let k = e.keyCode;
@@ -159,7 +144,7 @@ export class KeyFilter implements Validator {
     }
 
     isValidChar(c: string) {
-        return (<RegExp>this.regex).test(c);
+        return this.regex().test(c);
     }
 
     isValidString(str: string) {
@@ -174,9 +159,9 @@ export class KeyFilter implements Validator {
 
     @HostListener('input', ['$event'])
     onInput(e: KeyboardEvent) {
-        if (this.isAndroid && !this.pValidateOnly) {
+        if (this.isAndroid && !this.pValidateOnly()) {
             let val = this.el.nativeElement.value;
-            let lastVal = this.lastValue || '';
+            let lastVal = this.lastValue() || '';
 
             let inserted = this.findDelta(val, lastVal);
             let removed = this.findDelta(lastVal, val);
@@ -196,14 +181,14 @@ export class KeyFilter implements Validator {
 
             val = this.el.nativeElement.value;
             if (this.isValidString(val)) {
-                this.lastValue = val;
+                this.lastValue.set(val);
             }
         }
     }
 
     @HostListener('keypress', ['$event'])
     onKeyPress(e: KeyboardEvent) {
-        if (this.isAndroid || this.pValidateOnly) {
+        if (this.isAndroid || this.pValidateOnly()) {
             return;
         }
 
@@ -232,7 +217,7 @@ export class KeyFilter implements Validator {
         let existingValue = this.el.nativeElement.value || '';
         let combinedValue = existingValue + cc;
 
-        ok = (<RegExp>this.regex).test(combinedValue);
+        ok = this.regex().test(combinedValue);
 
         if (!ok) {
             e.preventDefault();
@@ -256,14 +241,14 @@ export class KeyFilter implements Validator {
         if (clipboardData) {
             let pattern = /\{[0-9]+\}/;
             const pastedText = clipboardData.getData('text');
-            if (pattern.test(this.regex.toString())) {
-                if (!this.regex.test(pastedText)) {
+            if (pattern.test(this.regex().toString())) {
+                if (!this.regex().test(pastedText)) {
                     e.preventDefault();
                     return;
                 }
             } else {
                 for (let char of pastedText.toString()) {
-                    if (!this.regex.test(char)) {
+                    if (!this.regex().test(char)) {
                         e.preventDefault();
                         return;
                     }
@@ -273,9 +258,9 @@ export class KeyFilter implements Validator {
     }
 
     validate(_c: AbstractControl): { [key: string]: any } | any {
-        if (this.pValidateOnly) {
+        if (this.pValidateOnly()) {
             let value = this.el.nativeElement.value;
-            if (value && !this.regex.test(value)) {
+            if (value && !this.regex().test(value)) {
                 return {
                     validatePattern: false
                 };
