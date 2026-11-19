@@ -58,3 +58,11 @@ minimumReleaseAgeExclude:
 overrides:
   # GHSA-mrhx-c7xc-m3w5 (high): pulled in by @angular/forms, which declares zod ^4.0.10.
   zod: ^4.6.6
+  # GHSA (high) host confusion in fast-uri <3.1.7: pulled in by @modelcontextprotocol/sdk through ajv.
+  fast-uri: ^3.1.7
+  # Advisories (high/critical) in the HTTP transport dependencies of @modelcontextprotocol/sdk;
+  # @exhaustive-ui/mcp only uses the stdio transport, but pnpm audit --prod still flags them.
+  hono: ^4.12.25
+  ip-address: ^10.3.1
+  proxy-addr: ^2.0.8
+  body-parser@>=2.0.0: ^2.4.0
