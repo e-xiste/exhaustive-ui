@@ -788,6 +788,42 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-terminal class="existing my-terminal"></p-terminal>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-blockui', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-blockui styleClass="my-blockui"></p-blockui>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-blockui class="my-blockui"></p-blockui>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-blockui', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-blockui [styleClass]="myClass"></p-blockui>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-blockui [class]="myClass"></p-blockui>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-blockui', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-blockui class="existing" styleClass="my-blockui"></p-blockui>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-blockui class="existing my-blockui"></p-blockui>\n`);
+    });
+
+    it('rewrites styleClass on the p-blockUI and p-block-ui aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-blockUI styleClass="a"></p-blockUI>\n<p-block-ui [styleClass]="b"></p-block-ui>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-blockUI class="a"></p-blockUI>\n<p-block-ui [class]="b"></p-block-ui>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

@@ -48,7 +48,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-togglebutton',
     'p-toggleButton',
     'p-toggle-button',
-    'p-terminal'
+    'p-terminal',
+    'p-blockui',
+    'p-blockUI',
+    'p-block-ui'
 ];
 
 /**
