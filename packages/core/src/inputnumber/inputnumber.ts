@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     ElementRef,
     forwardRef,
     inject,
     InjectionToken,
     Injector,
-    Input,
+    input,
     NgModule,
     numberAttribute,
-    SimpleChanges,
+    signal,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
@@ -45,40 +47,39 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
  */
 @Component({
     selector: 'p-inputNumber, p-inputnumber, p-input-number',
-    standalone: true,
     imports: [CommonModule, InputText, AutoFocus, TimesIcon, AngleUpIcon, AngleDownIcon, SharedModule, BindModule],
     template: `
         <input
             pInputText
             #input
-            [attr.id]="inputId"
+            [attr.id]="inputId()"
             role="spinbutton"
-            [class]="cn(cx('pcInputText'), inputStyleClass)"
+            [class]="cn(cx('pcInputText'), inputStyleClass())"
             [value]="formattedValue()"
-            [ngStyle]="inputStyle"
+            [ngStyle]="inputStyle()"
             [variant]="$variant()"
             [invalid]="invalid()"
             [attr.aria-valuemin]="min()"
             [attr.aria-valuemax]="max()"
-            [attr.aria-valuenow]="value"
-            [attr.placeholder]="placeholder"
-            [attr.aria-label]="ariaLabel"
-            [attr.aria-labelledby]="ariaLabelledBy"
-            [attr.aria-describedby]="ariaDescribedBy"
-            [attr.title]="title"
+            [attr.aria-valuenow]="value()"
+            [attr.placeholder]="placeholder()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-labelledby]="ariaLabelledBy()"
+            [attr.aria-describedby]="ariaDescribedBy()"
+            [attr.title]="title()"
             [pSize]="size()"
             [attr.size]="inputSize()"
             [attr.name]="name()"
-            [attr.autocomplete]="autocomplete"
+            [attr.autocomplete]="autocomplete()"
             [attr.maxlength]="maxlength()"
             [attr.minlength]="minlength()"
-            [attr.tabindex]="tabindex"
-            [attr.aria-required]="ariaRequired"
+            [attr.tabindex]="tabindex()"
+            [attr.aria-required]="ariaRequired()"
             [attr.min]="min()"
             [attr.max]="max()"
             [attr.step]="step() ?? 1"
             [attr.required]="required() ? '' : undefined"
-            [attr.readonly]="readonly ? '' : undefined"
+            [attr.readonly]="readonly() ? '' : undefined"
             [attr.disabled]="$disabled() ? '' : undefined"
             inputmode="decimal"
             (input)="onUserInput($event)"
@@ -90,26 +91,26 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
             (blur)="onInputBlur($event)"
             [pt]="ptm('pcInputText')"
             [unstyled]="unstyled()"
-            [pAutoFocus]="autofocus"
+            [pAutoFocus]="autofocus()"
             [fluid]="hasFluid"
-            [attr.data-p]="dataP"
+            [attr.data-p]="dataP()"
         />
-        @if (buttonLayout != 'vertical' && showClear && value) {
-            @if (!clearIconTemplate() && !_clearIconTemplate) {
+        @if (buttonLayout() != 'vertical' && showClear() && value()) {
+            @if (!clearIconTemplate() && !_clearIconTemplate()) {
                 <svg data-p-icon="times" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear()" />
             }
-            @if (clearIconTemplate() || _clearIconTemplate) {
+            @if (clearIconTemplate() || _clearIconTemplate()) {
                 <span [pBind]="ptm('clearIcon')" (click)="clear()" [class]="cx('clearIcon')">
-                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate()"></ng-template>
                 </span>
             }
         }
-        @if (showButtons && buttonLayout === 'stacked') {
-            <span [pBind]="ptm('buttonGroup')" [class]="cx('buttonGroup')" [attr.data-p]="dataP">
+        @if (showButtons() && buttonLayout() === 'stacked') {
+            <span [pBind]="ptm('buttonGroup')" [class]="cx('buttonGroup')" [attr.data-p]="dataP()">
                 <button
                     type="button"
                     [pBind]="ptm('incrementButton')"
-                    [class]="cn(cx('incrementButton'), incrementButtonClass)"
+                    [class]="cn(cx('incrementButton'), incrementButtonClass())"
                     [attr.disabled]="$disabled() ? '' : undefined"
                     tabindex="-1"
                     (mousedown)="onUpButtonMouseDown($event)"
@@ -118,22 +119,22 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                     (keydown)="onUpButtonKeyDown($event)"
                     (keyup)="onUpButtonKeyUp()"
                     [attr.aria-hidden]="true"
-                    [attr.data-p]="dataP"
+                    [attr.data-p]="dataP()"
                 >
-                    @if (incrementButtonIcon) {
-                        <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon"></span>
+                    @if (incrementButtonIcon()) {
+                        <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon()"></span>
                     }
-                    @if (!incrementButtonIcon) {
-                        @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate) {
+                    @if (!incrementButtonIcon()) {
+                        @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate()) {
                             <svg data-p-icon="angle-up" [pBind]="ptm('incrementButtonIcon')" />
                         }
-                        <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate()"></ng-template>
                     }
                 </button>
                 <button
                     type="button"
                     [pBind]="ptm('decrementButton')"
-                    [class]="cn(cx('decrementButton'), decrementButtonClass)"
+                    [class]="cn(cx('decrementButton'), decrementButtonClass())"
                     [attr.disabled]="$disabled() ? '' : undefined"
                     tabindex="-1"
                     [attr.aria-hidden]="true"
@@ -142,25 +143,25 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                     (mouseleave)="onDownButtonMouseLeave()"
                     (keydown)="onDownButtonKeyDown($event)"
                     (keyup)="onDownButtonKeyUp()"
-                    [attr.data-p]="dataP"
+                    [attr.data-p]="dataP()"
                 >
-                    @if (decrementButtonIcon) {
-                        <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon"></span>
+                    @if (decrementButtonIcon()) {
+                        <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon()"></span>
                     }
-                    @if (!decrementButtonIcon) {
-                        @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate) {
+                    @if (!decrementButtonIcon()) {
+                        @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate()) {
                             <svg data-p-icon="angle-down" [pBind]="ptm('decrementButtonIcon')" />
                         }
-                        <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate()"></ng-template>
                     }
                 </button>
             </span>
         }
-        @if (showButtons && buttonLayout !== 'stacked') {
+        @if (showButtons() && buttonLayout() !== 'stacked') {
             <button
                 type="button"
                 [pBind]="ptm('incrementButton')"
-                [class]="cn(cx('incrementButton'), incrementButtonClass)"
+                [class]="cn(cx('incrementButton'), incrementButtonClass())"
                 [attr.disabled]="$disabled() ? '' : undefined"
                 tabindex="-1"
                 [attr.aria-hidden]="true"
@@ -169,24 +170,24 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                 (mouseleave)="onUpButtonMouseLeave()"
                 (keydown)="onUpButtonKeyDown($event)"
                 (keyup)="onUpButtonKeyUp()"
-                [attr.data-p]="dataP"
+                [attr.data-p]="dataP()"
             >
-                @if (incrementButtonIcon) {
-                    <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon"></span>
+                @if (incrementButtonIcon()) {
+                    <span [pBind]="ptm('incrementButtonIcon')" [ngClass]="incrementButtonIcon()"></span>
                 }
-                @if (!incrementButtonIcon) {
-                    @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate) {
+                @if (!incrementButtonIcon()) {
+                    @if (!incrementButtonIconTemplate() && !_incrementButtonIconTemplate()) {
                         <svg data-p-icon="angle-up" [pBind]="ptm('incrementButtonIcon')" />
                     }
-                    <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="incrementButtonIconTemplate() || _incrementButtonIconTemplate()"></ng-template>
                 }
             </button>
         }
-        @if (showButtons && buttonLayout !== 'stacked') {
+        @if (showButtons() && buttonLayout() !== 'stacked') {
             <button
                 type="button"
                 [pBind]="ptm('decrementButton')"
-                [class]="cn(cx('decrementButton'), decrementButtonClass)"
+                [class]="cn(cx('decrementButton'), decrementButtonClass())"
                 [attr.disabled]="$disabled() ? '' : undefined"
                 tabindex="-1"
                 [attr.aria-hidden]="true"
@@ -195,16 +196,16 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
                 (mouseleave)="onDownButtonMouseLeave()"
                 (keydown)="onDownButtonKeyDown($event)"
                 (keyup)="onDownButtonKeyUp()"
-                [attr.data-p]="dataP"
+                [attr.data-p]="dataP()"
             >
-                @if (decrementButtonIcon) {
-                    <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon"></span>
+                @if (decrementButtonIcon()) {
+                    <span [pBind]="ptm('decrementButtonIcon')" [ngClass]="decrementButtonIcon()"></span>
                 }
-                @if (!decrementButtonIcon) {
-                    @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate) {
+                @if (!decrementButtonIcon()) {
+                    @if (!decrementButtonIconTemplate() && !_decrementButtonIconTemplate()) {
                         <svg data-p-icon="angle-down" [pBind]="ptm('decrementButtonIcon')" />
                     }
-                    <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="decrementButtonIconTemplate() || _decrementButtonIconTemplate()"></ng-template>
                 }
             </button>
         }
@@ -213,8 +214,8 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
     providers: [INPUTNUMBER_VALUE_ACCESSOR, InputNumberStyle, { provide: INPUTNUMBER_INSTANCE, useExisting: InputNumber }, { provide: PARENT_INSTANCE, useExisting: InputNumber }],
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': "cn(cx('root'), styleClass)",
-        '[attr.data-p]': 'dataP'
+        '[class]': "cx('root')",
+        '[attr.data-p]': 'dataP()'
     },
     hostDirectives: [Bind]
 })
@@ -229,176 +230,171 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     /**
      * Displays spinner buttons.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showButtons: boolean = false;
+    showButtons = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to format the value.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) format: boolean = true;
+    format = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Layout of the buttons, valid values are "stacked" (default), "horizontal" and "vertical".
      * @group Props
      */
-    @Input() buttonLayout: string = 'stacked';
+    buttonLayout = input<string>('stacked');
     /**
      * Identifier of the focus input to match a label defined for the component.
      * @group Props
      */
-    @Input() inputId: string | undefined;
-    /**
-     * Style class of the component.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    inputId = input<string | undefined>();
     /**
      * Advisory information to display on input.
      * @group Props
      */
-    @Input() placeholder: string | undefined;
+    placeholder = input<string | undefined>();
     /**
      * Specifies tab order of the element.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) tabindex: number | undefined;
+    tabindex = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Title text of the input text.
      * @group Props
      */
-    @Input() title: string | undefined;
+    title = input<string | undefined>();
     /**
      * Specifies one or more IDs in the DOM that labels the input field.
      * @group Props
      */
-    @Input() ariaLabelledBy: string | undefined;
+    ariaLabelledBy = input<string | undefined>();
     /**
      * Specifies one or more IDs in the DOM that describes the input field.
      * @group Props
      */
-    @Input() ariaDescribedBy: string | undefined;
+    ariaDescribedBy = input<string | undefined>();
     /**
      * Used to define a string that labels the input element.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    ariaLabel = input<string | undefined>();
     /**
      * Used to indicate that user input is required on an element before a form can be submitted.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) ariaRequired: boolean | undefined;
+    ariaRequired = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Used to define a string that autocomplete attribute the current element.
      * @group Props
      */
-    @Input() autocomplete: string | undefined;
+    autocomplete = input<string | undefined>();
     /**
      * Style class of the increment button.
      * @group Props
      */
-    @Input() incrementButtonClass: string | undefined;
+    incrementButtonClass = input<string | undefined>();
     /**
      * Style class of the decrement button.
      * @group Props
      */
-    @Input() decrementButtonClass: string | undefined;
+    decrementButtonClass = input<string | undefined>();
     /**
      * Style class of the increment button.
      * @group Props
      */
-    @Input() incrementButtonIcon: string | undefined;
+    incrementButtonIcon = input<string | undefined>();
     /**
      * Style class of the decrement button.
      * @group Props
      */
-    @Input() decrementButtonIcon: string | undefined;
+    decrementButtonIcon = input<string | undefined>();
     /**
      * When present, it specifies that an input field is read-only.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonly: boolean | undefined;
+    readonly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Determines whether the input field is empty.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) allowEmpty: boolean = true;
+    allowEmpty = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Locale to be used in formatting.
      * @group Props
      */
-    @Input() locale: string | undefined;
+    locale = input<string | undefined>();
     /**
      * The locale matching algorithm to use. Possible values are "lookup" and "best fit"; the default is "best fit". See Locale Negotiation for details.
      * @group Props
      */
-    @Input() localeMatcher: any;
+    localeMatcher = input<any>();
     /**
      * Defines the behavior of the component, valid values are "decimal" and "currency".
      * @group Props
      */
-    @Input() mode: string | any = 'decimal';
+    mode = input<string | any>('decimal');
     /**
      * The currency to use in currency formatting. Possible values are the ISO 4217 currency codes, such as "USD" for the US dollar, "EUR" for the euro, or "CNY" for the Chinese RMB. There is no default value; if the style is "currency", the currency property must be provided.
      * @group Props
      */
-    @Input() currency: string | undefined;
+    currency = input<string | undefined>();
     /**
      * How to display the currency in currency formatting. Possible values are "symbol" to use a localized currency symbol such as €, ü"code" to use the ISO currency code, "name" to use a localized currency name such as "dollar"; the default is "symbol".
      * @group Props
      */
-    @Input() currencyDisplay: string | undefined | any;
+    currencyDisplay = input<string | undefined | any>();
     /**
      * Whether to use grouping separators, such as thousands separators or thousand/lakh/crore separators.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) useGrouping: boolean = true;
+    useGrouping = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * The minimum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number and percent formatting is 0; the default for currency formatting is the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information).
      * @group Props
      */
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) }) minFractionDigits: number | undefined;
+    minFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
     /**
      * The maximum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number formatting is the larger of minimumFractionDigits and 3; the default for currency formatting is the larger of minimumFractionDigits and the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information).
      * @group Props
      */
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) }) maxFractionDigits: number | undefined;
+    maxFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
     /**
      * Text to display before the value.
      * @group Props
      */
-    @Input() prefix: string | undefined;
+    prefix = input<string | undefined>();
     /**
      * Text to display after the value.
      * @group Props
      */
-    @Input() suffix: string | undefined;
+    suffix = input<string | undefined>();
     /**
      * Inline style of the input field.
      * @group Props
      */
-    @Input() inputStyle: any;
+    inputStyle = input<any>();
     /**
      * Style class of the input field.
      * @group Props
      */
-    @Input() inputStyleClass: string | undefined;
+    inputStyleClass = input<string | undefined>();
     /**
      * When enabled, a clear icon is displayed to clear the value.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showClear: boolean = false;
+    showClear = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocus: boolean | undefined;
+    autofocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Callback to invoke on input.
      * @param {InputNumberInputEvent} event - Custom input event.
@@ -450,86 +446,106 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     readonly input = viewChild.required<ElementRef<HTMLInputElement>>('input');
 
-    _clearIconTemplate: TemplateRef<void> | undefined;
+    readonly _clearIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'clearicon')
+                .at(-1)?.template
+    );
 
-    _incrementButtonIconTemplate: TemplateRef<void> | undefined;
+    readonly _incrementButtonIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'incrementbuttonicon')
+                .at(-1)?.template
+    );
 
-    _decrementButtonIconTemplate: TemplateRef<void> | undefined;
+    readonly _decrementButtonIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'decrementbuttonicon')
+                .at(-1)?.template
+    );
 
-    value: Nullable<number>;
+    value = signal<Nullable<number>>(undefined);
 
-    focused: Nullable<boolean>;
+    focused = signal<Nullable<boolean>>(undefined);
 
-    initialized: Nullable<boolean>;
+    groupChar = computed<string>(() => new Intl.NumberFormat(this.locale(), { useGrouping: true }).format(1000000).trim().replace(this._numeral(), '').charAt(0));
 
-    groupChar: string = '';
-
-    prefixChar: string = '';
-
-    suffixChar: string = '';
-
-    isSpecialChar: Nullable<boolean>;
-
-    timer: any;
-
-    lastValue: Nullable<string>;
-
-    _numeral: any;
-
-    numberFormat: any;
-
-    _decimal: any;
-
-    _decimalChar: string = '';
-
-    _group: any;
-
-    _minusSign: any;
-
-    _currency: Nullable<RegExp | string>;
-
-    _prefix: Nullable<RegExp>;
-
-    _suffix: Nullable<RegExp>;
-
-    _index: number | any;
-
-    private ngControl: NgControl | null = null;
-
-    onChanges(simpleChange: SimpleChanges) {
-        const props = ['locale', 'localeMatcher', 'mode', 'currency', 'currencyDisplay', 'useGrouping', 'minFractionDigits', 'maxFractionDigits', 'prefix', 'suffix'];
-        if (props.some((p) => !!simpleChange[p])) {
-            this.updateConstructParser();
+    prefixChar = computed<string>(() => {
+        if (this.prefix()) {
+            return this.prefix() as string;
         }
-    }
+
+        const formatter = new Intl.NumberFormat(this.locale(), {
+            style: this.mode(),
+            currency: this.currency(),
+            currencyDisplay: this.currencyDisplay()
+        });
+        return formatter.format(1).split('1')[0];
+    });
+
+    suffixChar = computed<string>(() => {
+        if (this.suffix()) {
+            return this.suffix() as string;
+        }
+
+        const formatter = new Intl.NumberFormat(this.locale(), {
+            style: this.mode(),
+            currency: this.currency(),
+            currencyDisplay: this.currencyDisplay(),
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+        return formatter.format(1).split('1')[1];
+    });
+
+    isSpecialChar = signal<Nullable<boolean>>(undefined);
+
+    timer = signal<any>(undefined);
+
+    lastValue = signal<Nullable<string>>(undefined);
+
+    _numeral = computed<RegExp>(() => {
+        const numerals = [...new Intl.NumberFormat(this.locale(), { useGrouping: false }).format(9876543210)].reverse();
+        return new RegExp(`[${numerals.join('')}]`, 'g');
+    });
+
+    numberFormat = computed<any>(() => {
+        const options = this.getOptions();
+        // Remove any properties with undefined or invalid values to let Intl.NumberFormat use defaults
+        const cleanOptions = Object.fromEntries(Object.entries(options).filter(([_key, value]) => value !== undefined));
+        return new Intl.NumberFormat(this.locale(), cleanOptions);
+    });
+
+    _decimal = computed<RegExp>(() => this.getDecimalExpression());
+
+    _decimalChar = computed<string>(() => this.getDecimalChar());
+
+    _group = computed<RegExp>(() => this.getGroupingExpression());
+
+    _minusSign = computed<RegExp>(() => this.getMinusSignExpression());
+
+    _currency = computed<RegExp>(() => this.getCurrencyExpression());
+
+    _prefix = computed<RegExp>(() => this.getPrefixExpression());
+
+    _suffix = computed<RegExp>(() => this.getSuffixExpression());
+
+    _index = computed<(d: any) => number | undefined>(() => {
+        const numerals = [...new Intl.NumberFormat(this.locale(), { useGrouping: false }).format(9876543210)].reverse();
+        const index = new Map(numerals.map((d, i) => [d, i]));
+        return (d: any) => index.get(d);
+    });
+
+    private ngControl = signal<NgControl | null>(null);
 
     onInit() {
-        this.ngControl = this.injector.get(NgControl, null, { optional: true });
-
-        this.constructParser();
-
-        this.initialized = true;
+        this.ngControl.set(this.injector.get(NgControl, null, { optional: true }));
     }
 
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'clearicon':
-                    this._clearIconTemplate = item.template;
-                    break;
-
-                case 'incrementbuttonicon':
-                    this._incrementButtonIconTemplate = item.template;
-                    break;
-
-                case 'decrementbuttonicon':
-                    this._decrementButtonIconTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
-    getOptions() {
+    getOptions = computed(() => {
         // Validate fraction digits according to Intl.NumberFormat specifications
         // Handle potential NaN, Infinity, or invalid values
         const validateFractionDigits = (value: number | undefined, min: number, max: number) => {
@@ -539,46 +555,22 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             return Math.max(min, Math.min(max, Math.floor(value)));
         };
 
-        const minFractionDigits = validateFractionDigits(this.minFractionDigits, 0, 20);
-        const maxFractionDigits = validateFractionDigits(this.maxFractionDigits, 0, 100);
+        const minFractionDigits = validateFractionDigits(this.minFractionDigits(), 0, 20);
+        const maxFractionDigits = validateFractionDigits(this.maxFractionDigits(), 0, 100);
 
         // Ensure minFractionDigits <= maxFractionDigits
         const validatedMinFractionDigits = minFractionDigits != null && maxFractionDigits != null && minFractionDigits > maxFractionDigits ? maxFractionDigits : minFractionDigits;
 
         return {
-            localeMatcher: this.localeMatcher,
-            style: this.mode,
-            currency: this.currency,
-            currencyDisplay: this.currencyDisplay,
-            useGrouping: this.useGrouping,
+            localeMatcher: this.localeMatcher(),
+            style: this.mode(),
+            currency: this.currency(),
+            currencyDisplay: this.currencyDisplay(),
+            useGrouping: this.useGrouping(),
             minimumFractionDigits: validatedMinFractionDigits,
             maximumFractionDigits: maxFractionDigits
         };
-    }
-
-    constructParser() {
-        const options = this.getOptions();
-        // Remove any properties with undefined or invalid values to let Intl.NumberFormat use defaults
-        const cleanOptions = Object.fromEntries(Object.entries(options).filter(([_key, value]) => value !== undefined));
-        this.numberFormat = new Intl.NumberFormat(this.locale, cleanOptions);
-        const numerals = [...new Intl.NumberFormat(this.locale, { useGrouping: false }).format(9876543210)].reverse();
-        const index = new Map(numerals.map((d, i) => [d, i]));
-        this._numeral = new RegExp(`[${numerals.join('')}]`, 'g');
-        this._group = this.getGroupingExpression();
-        this._minusSign = this.getMinusSignExpression();
-        this._currency = this.getCurrencyExpression();
-        this._decimal = this.getDecimalExpression();
-        this._decimalChar = this.getDecimalChar();
-        this._suffix = this.getSuffixExpression();
-        this._prefix = this.getPrefixExpression();
-        this._index = (d: any) => index.get(d);
-    }
-
-    updateConstructParser() {
-        if (this.initialized) {
-            this.constructParser();
-        }
-    }
+    });
 
     escapeRegExp(text: string): string {
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -589,70 +581,44 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         return new RegExp(`[${decimalChar}]`, 'g');
     }
     getDecimalChar(): string {
-        const formatter = new Intl.NumberFormat(this.locale, { ...this.getOptions(), useGrouping: false });
+        const formatter = new Intl.NumberFormat(this.locale(), { ...this.getOptions(), useGrouping: false });
         return formatter
             .format(1.1)
-            .replace(this._currency as RegExp | string, '')
+            .replace(this._currency() as RegExp | string, '')
             .trim()
-            .replace(this._numeral, '');
+            .replace(this._numeral(), '');
     }
 
     getGroupingExpression(): RegExp {
-        const formatter = new Intl.NumberFormat(this.locale, { useGrouping: true });
-        this.groupChar = formatter.format(1000000).trim().replace(this._numeral, '').charAt(0);
-        return new RegExp(`[${this.groupChar}]`, 'g');
+        return new RegExp(`[${this.groupChar()}]`, 'g');
     }
 
     getMinusSignExpression(): RegExp {
-        const formatter = new Intl.NumberFormat(this.locale, { useGrouping: false });
-        return new RegExp(`[${formatter.format(-1).trim().replace(this._numeral, '')}]`, 'g');
+        const formatter = new Intl.NumberFormat(this.locale(), { useGrouping: false });
+        return new RegExp(`[${formatter.format(-1).trim().replace(this._numeral(), '')}]`, 'g');
     }
 
     getCurrencyExpression(): RegExp {
-        if (this.currency) {
-            const formatter = new Intl.NumberFormat(this.locale, {
+        if (this.currency()) {
+            const formatter = new Intl.NumberFormat(this.locale(), {
                 style: 'currency',
-                currency: this.currency,
-                currencyDisplay: this.currencyDisplay,
+                currency: this.currency(),
+                currencyDisplay: this.currencyDisplay(),
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
             });
-            return new RegExp(`[${formatter.format(1).replace(/\s/g, '').replace(this._numeral, '').replace(this._group, '')}]`, 'g');
+            return new RegExp(`[${formatter.format(1).replace(/\s/g, '').replace(this._numeral(), '').replace(this._group(), '')}]`, 'g');
         }
 
         return new RegExp(`[]`, 'g');
     }
 
     getPrefixExpression(): RegExp {
-        if (this.prefix) {
-            this.prefixChar = this.prefix;
-        } else {
-            const formatter = new Intl.NumberFormat(this.locale, {
-                style: this.mode,
-                currency: this.currency,
-                currencyDisplay: this.currencyDisplay
-            });
-            this.prefixChar = formatter.format(1).split('1')[0];
-        }
-
-        return new RegExp(`${this.escapeRegExp(this.prefixChar || '')}`, 'g');
+        return new RegExp(`${this.escapeRegExp(this.prefixChar() || '')}`, 'g');
     }
 
     getSuffixExpression(): RegExp {
-        if (this.suffix) {
-            this.suffixChar = this.suffix;
-        } else {
-            const formatter = new Intl.NumberFormat(this.locale, {
-                style: this.mode,
-                currency: this.currency,
-                currencyDisplay: this.currencyDisplay,
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            });
-            this.suffixChar = formatter.format(1).split('1')[1];
-        }
-
-        return new RegExp(`${this.escapeRegExp(this.suffixChar || '')}`, 'g');
+        return new RegExp(`${this.escapeRegExp(this.suffixChar() || '')}`, 'g');
     }
 
     formatValue(value: any) {
@@ -662,16 +628,16 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 return value;
             }
 
-            if (this.format) {
-                let formatter = new Intl.NumberFormat(this.locale, this.getOptions());
+            if (this.format()) {
+                let formatter = new Intl.NumberFormat(this.locale(), this.getOptions());
                 let formattedValue = formatter.format(value);
 
-                if (this.prefix && value != this.prefix) {
-                    formattedValue = this.prefix + formattedValue;
+                if (this.prefix() && value != this.prefix()) {
+                    formattedValue = this.prefix() + formattedValue;
                 }
 
-                if (this.suffix && value != this.suffix) {
-                    formattedValue = formattedValue + this.suffix;
+                if (this.suffix() && value != this.suffix()) {
+                    formattedValue = formattedValue + this.suffix();
                 }
 
                 return formattedValue;
@@ -684,9 +650,9 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     parseValue(text: any) {
-        const suffixRegex = this._suffix ? new RegExp(this._suffix, '') : /(?:)/;
-        const prefixRegex = this._prefix ? new RegExp(this._prefix, '') : /(?:)/;
-        const currencyRegex = this._currency ? new RegExp(this._currency as RegExp | string, '') : /(?:)/;
+        const suffixRegex = this._suffix() ? new RegExp(this._suffix(), '') : /(?:)/;
+        const prefixRegex = this._prefix() ? new RegExp(this._prefix(), '') : /(?:)/;
+        const currencyRegex = this._currency() ? new RegExp(this._currency() as RegExp | string, '') : /(?:)/;
 
         let filteredText = text
             .replace(suffixRegex, '')
@@ -694,10 +660,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             .trim()
             .replace(/\s/g, '')
             .replace(currencyRegex, '')
-            .replace(this._group, '')
-            .replace(this._minusSign, '-')
-            .replace(this._decimal, '.')
-            .replace(this._numeral, this._index);
+            .replace(this._group(), '')
+            .replace(this._minusSign(), '-')
+            .replace(this._decimal(), '.')
+            .replace(this._numeral(), this._index());
 
         if (filteredText) {
             if (filteredText === '-')
@@ -712,16 +678,18 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     repeat(event: Event, interval: number | null, dir: number) {
-        if (this.readonly) {
+        if (this.readonly()) {
             return;
         }
 
         let i = interval || 500;
 
         this.clearTimer();
-        this.timer = setTimeout(() => {
-            this.repeat(event, 40, dir);
-        }, i);
+        this.timer.set(
+            setTimeout(() => {
+                this.repeat(event, 40, dir);
+            }, i)
+        );
 
         this.spin(event, dir);
     }
@@ -742,8 +710,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     clear() {
-        this.value = null;
-        this.onModelChange(this.value);
+        this.value.set(null);
+        this.onModelChange(this.value());
         this.onClear.emit();
     }
 
@@ -821,24 +789,24 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onUserInput(event: Event) {
-        if (this.readonly) {
+        if (this.readonly()) {
             return;
         }
 
-        if (this.isSpecialChar) {
-            (event.target as HTMLInputElement).value = this.lastValue as string;
+        if (this.isSpecialChar()) {
+            (event.target as HTMLInputElement).value = this.lastValue() as string;
         }
-        this.isSpecialChar = false;
+        this.isSpecialChar.set(false);
     }
 
     onInputKeyDown(event: KeyboardEvent) {
-        if (this.readonly) {
+        if (this.readonly()) {
             return;
         }
 
-        this.lastValue = (event.target as HTMLInputElement).value;
+        this.lastValue.set((event.target as HTMLInputElement).value);
         if ((event as KeyboardEvent).shiftKey || (event as KeyboardEvent).altKey) {
-            this.isSpecialChar = true;
+            this.isSpecialChar.set(true);
             return;
         }
 
@@ -894,7 +862,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 event.preventDefault();
 
                 if (selectionStart === selectionEnd) {
-                    if ((selectionStart == 1 && this.prefix) || (selectionStart == inputValue.length && this.suffix)) {
+                    if ((selectionStart == 1 && this.prefix()) || (selectionStart == inputValue.length && this.suffix())) {
                         break;
                     }
 
@@ -904,11 +872,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                     if (this.isNumeralChar(deleteChar)) {
                         const decimalLength = this.getDecimalLength(inputValue);
 
-                        if (this._group.test(deleteChar)) {
-                            this._group.lastIndex = 0;
+                        if (this._group().test(deleteChar)) {
+                            this._group().lastIndex = 0;
                             newValueStr = inputValue.slice(0, selectionStart - 2) + inputValue.slice(selectionStart - 1);
-                        } else if (this._decimal.test(deleteChar)) {
-                            this._decimal.lastIndex = 0;
+                        } else if (this._decimal().test(deleteChar)) {
+                            this._decimal().lastIndex = 0;
 
                             if (decimalLength) {
                                 this.input().nativeElement.setSelectionRange(selectionStart - 1, selectionStart - 1);
@@ -916,7 +884,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + inputValue.slice(selectionStart);
                             }
                         } else if (decimalCharIndex > 0 && selectionStart > decimalCharIndex) {
-                            const insertedText = this.isDecimalMode() && (this.minFractionDigits || 0) < decimalLength ? '' : '0';
+                            const insertedText = this.isDecimalMode() && (this.minFractionDigits() || 0) < decimalLength ? '' : '0';
                             newValueStr = inputValue.slice(0, selectionStart - 1) + insertedText + inputValue.slice(selectionStart);
                         } else if (decimalCharIndexWithoutPrefix === 1) {
                             newValueStr = inputValue.slice(0, selectionStart - 1) + '0' + inputValue.slice(selectionStart);
@@ -924,7 +892,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                         } else {
                             newValueStr = inputValue.slice(0, selectionStart - 1) + inputValue.slice(selectionStart);
                         }
-                    } else if (this.mode === 'currency' && this._currency && deleteChar.search(this._currency as RegExp) != -1) {
+                    } else if (this.mode() === 'currency' && this._currency() && deleteChar.search(this._currency() as RegExp) != -1) {
                         newValueStr = inputValue.slice(1);
                     }
 
@@ -941,7 +909,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 event.preventDefault();
 
                 if (selectionStart === selectionEnd) {
-                    if ((selectionStart == 0 && this.prefix) || (selectionStart == inputValue.length - 1 && this.suffix)) {
+                    if ((selectionStart == 0 && this.prefix()) || (selectionStart == inputValue.length - 1 && this.suffix())) {
                         break;
                     }
                     const deleteChar = inputValue.charAt(selectionStart);
@@ -950,11 +918,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                     if (this.isNumeralChar(deleteChar)) {
                         const decimalLength = this.getDecimalLength(inputValue);
 
-                        if (this._group.test(deleteChar)) {
-                            this._group.lastIndex = 0;
+                        if (this._group().test(deleteChar)) {
+                            this._group().lastIndex = 0;
                             newValueStr = inputValue.slice(0, selectionStart) + inputValue.slice(selectionStart + 2);
-                        } else if (this._decimal.test(deleteChar)) {
-                            this._decimal.lastIndex = 0;
+                        } else if (this._decimal().test(deleteChar)) {
+                            this._decimal().lastIndex = 0;
 
                             if (decimalLength) {
                                 this.input().nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
@@ -962,7 +930,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                                 newValueStr = inputValue.slice(0, selectionStart) + inputValue.slice(selectionStart + 1);
                             }
                         } else if (decimalCharIndex > 0 && selectionStart > decimalCharIndex) {
-                            const insertedText = this.isDecimalMode() && (this.minFractionDigits || 0) < decimalLength ? '' : '0';
+                            const insertedText = this.isDecimalMode() && (this.minFractionDigits() || 0) < decimalLength ? '' : '0';
                             newValueStr = inputValue.slice(0, selectionStart) + insertedText + inputValue.slice(selectionStart + 1);
                         } else if (decimalCharIndexWithoutPrefix === 1) {
                             newValueStr = inputValue.slice(0, selectionStart) + '0' + inputValue.slice(selectionStart + 1);
@@ -1001,7 +969,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onInputKeyPress(event: KeyboardEvent) {
-        if (this.readonly) {
+        if (this.readonly()) {
             return;
         }
 
@@ -1017,7 +985,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
         if (!isDecimalSign && event.code === 'NumpadDecimal') {
             isDecimalSign = true;
-            char = this._decimalChar;
+            char = this._decimalChar();
             code = char.charCodeAt(0);
         }
         const { value, selectionStart, selectionEnd } = this.input().nativeElement;
@@ -1044,10 +1012,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onPaste(event: ClipboardEvent) {
-        if (!this.$disabled() && !this.readonly) {
+        if (!this.$disabled() && !this.readonly()) {
             event.preventDefault();
             let data = (event.clipboardData || (this.document as any).defaultView['clipboardData']).getData('Text');
-            if (this.inputId === 'integeronly' && /[^\d-]/.test(data)) {
+            if (this.inputId() === 'integeronly' && /[^\d-]/.test(data)) {
                 return;
             }
             if (data) {
@@ -1063,15 +1031,15 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         }
     }
 
-    allowMinusSign() {
+    allowMinusSign = computed(() => {
         const min = this.min();
 
         return min == null || min < 0;
-    }
+    });
 
     isMinusSign(char: string) {
-        if (this._minusSign.test(char) || char === '-') {
-            this._minusSign.lastIndex = 0;
+        if (this._minusSign().test(char) || char === '-') {
+            this._minusSign().lastIndex = 0;
             return true;
         }
 
@@ -1079,49 +1047,47 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     isDecimalSign(char: string) {
-        if (this._decimal.test(char)) {
-            this._decimal.lastIndex = 0;
+        if (this._decimal().test(char)) {
+            this._decimal().lastIndex = 0;
             return true;
         }
 
         return false;
     }
 
-    isDecimalMode() {
-        return this.mode === 'decimal';
-    }
+    isDecimalMode = computed(() => this.mode() === 'decimal');
 
     getDecimalCharIndexes(val: string) {
-        let decimalCharIndex = val.search(this._decimal);
-        this._decimal.lastIndex = 0;
+        let decimalCharIndex = val.search(this._decimal());
+        this._decimal().lastIndex = 0;
 
         const filteredVal = val
-            .replace(this._prefix as RegExp, '')
+            .replace(this._prefix() as RegExp, '')
             .trim()
             .replace(/\s/g, '')
-            .replace(this._currency as RegExp, '');
-        const decimalCharIndexWithoutPrefix = filteredVal.search(this._decimal);
-        this._decimal.lastIndex = 0;
+            .replace(this._currency() as RegExp, '');
+        const decimalCharIndexWithoutPrefix = filteredVal.search(this._decimal());
+        this._decimal().lastIndex = 0;
 
         return { decimalCharIndex, decimalCharIndexWithoutPrefix };
     }
 
     getCharIndexes(val: string) {
-        const decimalCharIndex = val.search(this._decimal);
-        this._decimal.lastIndex = 0;
-        const minusCharIndex = val.search(this._minusSign);
-        this._minusSign.lastIndex = 0;
-        const suffixCharIndex = val.search(this._suffix as RegExp);
-        (this._suffix as RegExp).lastIndex = 0;
-        const currencyCharIndex = val.search(this._currency as RegExp);
-        (this._currency as RegExp).lastIndex = 0;
+        const decimalCharIndex = val.search(this._decimal());
+        this._decimal().lastIndex = 0;
+        const minusCharIndex = val.search(this._minusSign());
+        this._minusSign().lastIndex = 0;
+        const suffixCharIndex = val.search(this._suffix() as RegExp);
+        (this._suffix() as RegExp).lastIndex = 0;
+        const currencyCharIndex = val.search(this._currency() as RegExp);
+        (this._currency() as RegExp).lastIndex = 0;
 
         return { decimalCharIndex, minusCharIndex, suffixCharIndex, currencyCharIndex };
     }
 
     insert(event: Event, text: string, sign = { isDecimalSign: false, isMinusSign: false }) {
-        const minusCharIndexOnText = text.search(this._minusSign);
-        this._minusSign.lastIndex = 0;
+        const minusCharIndexOnText = text.search(this._minusSign());
+        this._minusSign().lastIndex = 0;
         if (!this.allowMinusSign() && minusCharIndexOnText !== -1) {
             return;
         }
@@ -1148,12 +1114,12 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             } else if (decimalCharIndex > selectionStart && decimalCharIndex < selectionEnd) {
                 newValueStr = this.insertText(inputValue, text, selectionStart, selectionEnd);
                 this.updateValue(event, newValueStr, text, 'insert');
-            } else if (decimalCharIndex === -1 && this.maxFractionDigits) {
+            } else if (decimalCharIndex === -1 && this.maxFractionDigits()) {
                 newValueStr = this.insertText(inputValue, text, selectionStart, selectionEnd);
                 this.updateValue(event, newValueStr, text, 'insert');
             }
         } else {
-            const maxFractionDigits = this.numberFormat.resolvedOptions().maximumFractionDigits;
+            const maxFractionDigits = this.numberFormat().resolvedOptions().maximumFractionDigits;
             const operation = selectionStart !== selectionEnd ? 'range-insert' : 'insert';
 
             if (decimalCharIndex > 0 && selectionStart > decimalCharIndex) {
@@ -1174,8 +1140,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         let textSplit = text === '.' ? text : text.split('.');
 
         if (textSplit.length === 2) {
-            const decimalCharIndex = value.slice(start, end).search(this._decimal);
-            this._decimal.lastIndex = 0;
+            const decimalCharIndex = value.slice(start, end).search(this._decimal());
+            this._decimal().lastIndex = 0;
             return decimalCharIndex > 0 ? value.slice(0, start) + this.formatValue(text) + value.slice(end) : value || this.formatValue(text);
         } else if (end - start === value.length) {
             return this.formatValue(text);
@@ -1208,8 +1174,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         let index: any = null;
 
         // remove prefix
-        let prefixLength = (this.prefixChar || '').length;
-        inputValue = inputValue.replace(this._prefix as RegExp, '');
+        let prefixLength = (this.prefixChar() || '').length;
+        inputValue = inputValue.replace(this._prefix() as RegExp, '');
 
         // Will allow selecting whole prefix. But not a part of it.
         // Negative values will trigger clauses after this to fix the cursor position.
@@ -1259,13 +1225,13 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     onInputClick() {
         const currentValue = this.input().nativeElement.value;
 
-        if (!this.readonly && currentValue !== getSelection()) {
+        if (!this.readonly() && currentValue !== getSelection()) {
             this.initCursor();
         }
     }
 
     isNumeralChar(char: string) {
-        if (char.length === 1 && (this._numeral.test(char) || this._decimal.test(char) || this._group.test(char) || this._minusSign.test(char))) {
+        if (char.length === 1 && (this._numeral().test(char) || this._decimal().test(char) || this._group().test(char) || this._minusSign().test(char))) {
             this.resetRegex();
             return true;
         }
@@ -1274,10 +1240,10 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     resetRegex() {
-        this._numeral.lastIndex = 0;
-        this._decimal.lastIndex = 0;
-        this._group.lastIndex = 0;
-        this._minusSign.lastIndex = 0;
+        this._numeral().lastIndex = 0;
+        this._decimal().lastIndex = 0;
+        this._group().lastIndex = 0;
+        this._minusSign().lastIndex = 0;
     }
 
     updateValue(event: Event, valueStr: Nullable<string>, insertedValueStr: Nullable<string>, operation: Nullable<string>) {
@@ -1286,7 +1252,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
         if (valueStr != null) {
             newValue = this.parseValue(valueStr);
-            newValue = !newValue && !this.allowEmpty ? 0 : newValue;
+            newValue = !newValue && !this.allowEmpty() ? 0 : newValue;
             this.updateInput(newValue, insertedValueStr, operation, valueStr);
 
             this.handleOnInput(event, currentValue, newValue);
@@ -1371,11 +1337,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             if (operation === 'range-insert') {
                 const startValue = this.parseValue((inputValue || '').slice(0, selectionStart));
                 const startValueStr = startValue !== null ? startValue.toString() : '';
-                const startExpr = startValueStr.split('').join(`(${this.groupChar})?`);
+                const startExpr = startValueStr.split('').join(`(${this.groupChar()})?`);
                 const sRegex = new RegExp(startExpr, 'g');
                 sRegex.test(newValue);
 
-                const tExpr = insertedValueStr.split('').join(`(${this.groupChar})?`);
+                const tExpr = insertedValueStr.split('').join(`(${this.groupChar()})?`);
                 const tRegex = new RegExp(tExpr, 'g');
                 tRegex.test(newValue.slice(sRegex.lastIndex));
 
@@ -1389,7 +1355,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 let prevChar = inputValue.charAt(selectionEnd - 1);
                 let nextChar = inputValue.charAt(selectionEnd);
                 let diff = currentLength - newLength;
-                let isGroupChar = this._group.test(nextChar);
+                let isGroupChar = this._group().test(nextChar);
 
                 if (isGroupChar && diff === 1) {
                     selectionEnd += 1;
@@ -1397,7 +1363,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                     selectionEnd += -1 * diff + 1;
                 }
 
-                this._group.lastIndex = 0;
+                this._group().lastIndex = 0;
                 input.nativeElement.setSelectionRange(selectionEnd, selectionEnd);
             } else if (inputValue === '-' && operation === 'insert') {
                 input.nativeElement.setSelectionRange(0, 0);
@@ -1415,13 +1381,13 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     concatValues(val1: string, val2: string) {
         if (val1 && val2) {
-            let decimalCharIndex = val2.search(this._decimal);
-            this._decimal.lastIndex = 0;
+            let decimalCharIndex = val2.search(this._decimal());
+            this._decimal().lastIndex = 0;
 
-            if (this.suffixChar) {
-                return decimalCharIndex !== -1 ? val1.replace(this.suffixChar, '').split(this._decimal)[0] + val2.replace(this.suffixChar, '').slice(decimalCharIndex) + this.suffixChar : val1;
+            if (this.suffixChar()) {
+                return decimalCharIndex !== -1 ? val1.replace(this.suffixChar(), '').split(this._decimal())[0] + val2.replace(this.suffixChar(), '').slice(decimalCharIndex) + this.suffixChar() : val1;
             } else {
-                return decimalCharIndex !== -1 ? val1.split(this._decimal)[0] + val2.slice(decimalCharIndex) : val1;
+                return decimalCharIndex !== -1 ? val1.split(this._decimal())[0] + val2.slice(decimalCharIndex) : val1;
             }
         }
         return val1;
@@ -1429,14 +1395,14 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     getDecimalLength(value: string) {
         if (value) {
-            const valueSplit = value.split(this._decimal);
+            const valueSplit = value.split(this._decimal());
 
             if (valueSplit.length === 2) {
                 return valueSplit[1]
-                    .replace(this._suffix as RegExp, '')
+                    .replace(this._suffix() as RegExp, '')
                     .trim()
                     .replace(/\s/g, '')
-                    .replace(this._currency as RegExp, '').length;
+                    .replace(this._currency() as RegExp, '').length;
             }
         }
 
@@ -1444,12 +1410,12 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     }
 
     onInputFocus(event: Event) {
-        this.focused = true;
+        this.focused.set(true);
         this.onFocus.emit(event);
     }
 
     onInputBlur(event: Event) {
-        this.focused = false;
+        this.focused.set(false);
 
         const newValueNumber = this.validateValue(this.parseValue(this.input().nativeElement.value));
         const newValueString: any = newValueNumber?.toString();
@@ -1460,18 +1426,18 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         this.onBlur.emit(event);
     }
 
-    formattedValue() {
-        const val = !this.value && !this.allowEmpty ? 0 : this.value;
+    formattedValue = computed(() => {
+        const val = !this.value() && !this.allowEmpty() ? 0 : this.value();
         return this.formatValue(val);
-    }
+    });
 
     updateModel(event: Event, value: any) {
-        const isBlurUpdateOnMode = this.ngControl?.control?.updateOn === 'blur';
+        const isBlurUpdateOnMode = this.ngControl()?.control?.updateOn === 'blur';
 
-        if (this.value !== value) {
-            this.value = value;
+        if (this.value() !== value) {
+            this.value.set(value);
 
-            if (!(isBlurUpdateOnMode && this.focused)) {
+            if (!(isBlurUpdateOnMode && this.focused())) {
                 this.onModelChange(value);
             }
         } else if (isBlurUpdateOnMode) {
@@ -1486,29 +1452,28 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
      * Writes the value to the control.
      */
     writeControlValue(value: any, setModelValue: (value: any) => void): void {
-        this.value = value ? Number(value) : value;
+        this.value.set(value ? Number(value) : value);
         setModelValue(value);
-        this.cd.markForCheck();
     }
 
     clearTimer() {
-        if (this.timer) {
-            clearInterval(this.timer);
+        if (this.timer()) {
+            clearInterval(this.timer());
         }
     }
 
-    get dataP() {
-        return this.cn({
+    dataP = computed(() =>
+        this.cn({
             invalid: this.invalid(),
             disabled: this.$disabled(),
-            focus: this.focused,
+            focus: this.focused(),
             fluid: this.hasFluid,
             filled: this.$variant() === 'filled',
             empty: !this.$filled(),
             [this.size() as string]: this.size(),
-            [this.buttonLayout]: this.showButtons && this.buttonLayout
-        });
-    }
+            [this.buttonLayout()]: this.showButtons() && this.buttonLayout()
+        })
+    );
 }
 
 @NgModule({

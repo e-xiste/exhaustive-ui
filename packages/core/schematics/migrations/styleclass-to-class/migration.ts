@@ -78,7 +78,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-splitbutton',
     'p-splitButton',
     'p-split-button',
-    'p-password'
+    'p-password',
+    'p-inputnumber',
+    'p-inputNumber',
+    'p-input-number'
 ];
 
 /**

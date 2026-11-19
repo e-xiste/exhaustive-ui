@@ -1300,6 +1300,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-password class="existing my-password" [(ngModel)]="value"></p-password>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-inputnumber', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-inputnumber [(ngModel)]="value" styleClass="my-inputnumber"></p-inputnumber>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-inputnumber [(ngModel)]="value" class="my-inputnumber"></p-inputnumber>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-inputNumber', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-inputNumber [(ngModel)]="value" [showButtons]="true" [styleClass]="inputNumberClass"></p-inputNumber>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-inputNumber [(ngModel)]="value" [showButtons]="true" [class]="inputNumberClass"></p-inputNumber>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-input-number', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-input-number class="existing" styleClass="my-inputnumber" [(ngModel)]="value"></p-input-number>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-input-number class="existing my-inputnumber" [(ngModel)]="value"></p-input-number>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

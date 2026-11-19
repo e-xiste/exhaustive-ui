@@ -39,7 +39,7 @@ import { SharedModule } from '@exhaustive-ui/core/api';
             [allowEmpty]="allowEmpty"
             [autofocus]="autofocus"
             [inputId]="inputId"
-            [styleClass]="styleClass"
+            [class]="styleClass"
             [inputStyleClass]="inputStyleClass"
             [incrementButtonClass]="incrementButtonClass"
             [decrementButtonClass]="decrementButtonClass"
@@ -204,13 +204,13 @@ describe('InputNumber', () => {
         });
 
         it('should have default values', () => {
-            expect(component.showButtons).toBe(false);
-            expect(component.format).toBe(true);
-            expect(component.buttonLayout).toBe('stacked');
-            expect(component.mode).toBe('decimal');
-            expect(component.useGrouping).toBe(true);
-            expect(component.allowEmpty).toBe(true);
-            expect(component.showClear).toBe(false);
+            expect(component.showButtons()).toBe(false);
+            expect(component.format()).toBe(true);
+            expect(component.buttonLayout()).toBe('stacked');
+            expect(component.mode()).toBe('decimal');
+            expect(component.useGrouping()).toBe(true);
+            expect(component.allowEmpty()).toBe(true);
+            expect(component.showClear()).toBe(false);
             expect(component.step()).toBeUndefined();
         });
 
@@ -221,9 +221,9 @@ describe('InputNumber', () => {
         });
 
         it('should handle null/undefined value initialization', () => {
-            component.value = null as any;
+            component.value.set(null);
             fixture.detectChanges();
-            expect(component.value).toBeNull();
+            expect(component.value()).toBeNull();
             expect(component.formattedValue()).toBe('' as any);
         });
     });
@@ -241,9 +241,9 @@ describe('InputNumber', () => {
         // });
 
         it('should format currency correctly', () => {
-            component.mode = 'currency';
-            component.currency = 'USD';
-            component.locale = 'en-US';
+            fixture.componentRef.setInput('mode', 'currency');
+            fixture.componentRef.setInput('currency', 'USD');
+            fixture.componentRef.setInput('locale', 'en-US');
             fixture.detectChanges();
 
             const formatted = component.formatValue(1234.56);
@@ -251,10 +251,10 @@ describe('InputNumber', () => {
         });
 
         it('should handle prefix and suffix', () => {
-            component.prefix = '$ ';
-            component.suffix = ' USD';
-            component.format = true;
-            component.value = 100;
+            fixture.componentRef.setInput('prefix', '$ ');
+            fixture.componentRef.setInput('suffix', ' USD');
+            fixture.componentRef.setInput('format', true);
+            component.value.set(100);
             fixture.detectChanges();
 
             const formatted = component.formattedValue();
@@ -278,9 +278,9 @@ describe('InputNumber', () => {
         });
 
         it('should handle fraction digits correctly', () => {
-            component.minFractionDigits = 2;
-            component.maxFractionDigits = 4;
-            component.value = 123.1;
+            fixture.componentRef.setInput('minFractionDigits', 2);
+            fixture.componentRef.setInput('maxFractionDigits', 4);
+            component.value.set(123.1);
             fixture.detectChanges();
 
             const formatted = component.formatValue(123.1);
@@ -725,8 +725,8 @@ describe('InputNumber', () => {
 
         it('should handle currency formatting with pTemplates', () => {
             const inputNumberInstance = inputNumberElement.componentInstance;
-            expect(inputNumberInstance.mode).toBe('currency');
-            expect(inputNumberInstance.currency).toBe('USD');
+            expect(inputNumberInstance.mode()).toBe('currency');
+            expect(inputNumberInstance.currency()).toBe('USD');
             expect(templateComponent.value).toBe(1234.56);
         });
     });
@@ -810,8 +810,8 @@ describe('InputNumber', () => {
 
         it('should handle currency formatting with #templates', () => {
             const inputNumberInstance = inputNumberElement.componentInstance;
-            expect(inputNumberInstance.mode).toBe('currency');
-            expect(inputNumberInstance.currency).toBe('USD');
+            expect(inputNumberInstance.mode()).toBe('currency');
+            expect(inputNumberInstance.currency()).toBe('USD');
             expect(templateComponent.value).toBe(1234.56);
         });
     });
@@ -974,8 +974,8 @@ describe('InputNumber', () => {
 
             // Test that currency mode is set correctly
             const inputNumberInstance = testFixture.debugElement.query(By.css('p-inputNumber')).componentInstance;
-            expect(inputNumberInstance.mode).toBe('currency');
-            expect(inputNumberInstance.currency).toBe('USD');
+            expect(inputNumberInstance.mode()).toBe('currency');
+            expect(inputNumberInstance.currency()).toBe('USD');
         });
 
         it('should format EUR currency correctly', async () => {
@@ -988,8 +988,8 @@ describe('InputNumber', () => {
 
             // Test that EUR currency mode is set correctly
             const inputNumberInstance = testFixture.debugElement.query(By.css('p-inputNumber')).componentInstance;
-            expect(inputNumberInstance.mode).toBe('currency');
-            expect(inputNumberInstance.currency).toBe('EUR');
+            expect(inputNumberInstance.mode()).toBe('currency');
+            expect(inputNumberInstance.currency()).toBe('EUR');
         });
 
         it('should handle different currency display modes', async () => {
@@ -1002,8 +1002,8 @@ describe('InputNumber', () => {
 
             // Test that currency display mode is set correctly
             const inputNumberInstance = testFixture.debugElement.query(By.css('p-inputNumber')).componentInstance;
-            expect(inputNumberInstance.currencyDisplay).toBe('code');
-            expect(inputNumberInstance.currency).toBe('USD');
+            expect(inputNumberInstance.currencyDisplay()).toBe('code');
+            expect(inputNumberInstance.currency()).toBe('USD');
         });
 
         it('should handle different locales', async () => {
@@ -1547,5 +1547,242 @@ describe('InputNumber Signal Query API', () => {
 
         expect(instance.input()).toBeDefined();
         expect(instance.templates().length).toBeGreaterThan(0);
+        expect(instance._incrementButtonIconTemplate()).toBeDefined();
+        expect(instance._decrementButtonIconTemplate()).toBeUndefined();
+        expect(instance._clearIconTemplate()).toBeUndefined();
+    });
+});
+
+describe('InputNumber OnPush Rendering Tests', () => {
+    let fixture: ComponentFixture<InputNumber>;
+    let component: InputNumber;
+
+    const queryInput = () => fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+    const queryButtons = () => fixture.debugElement.queryAll(By.css('button')).map((debugElement) => debugElement.nativeElement as HTMLButtonElement);
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [InputNumber, FormsModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(InputNumber);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should re-render the spinner buttons when showButtons and buttonLayout change', () => {
+        expect(queryButtons().length).toBe(0);
+
+        fixture.componentRef.setInput('showButtons', true);
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.query(By.css('.p-inputnumber-button-group'))).toBeTruthy();
+        expect(queryButtons().length).toBe(2);
+        expect(fixture.nativeElement.classList.contains('p-inputnumber-stacked')).toBe(true);
+        expect(fixture.nativeElement.getAttribute('data-p')).toContain('stacked');
+
+        fixture.componentRef.setInput('buttonLayout', 'horizontal');
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.query(By.css('.p-inputnumber-button-group'))).toBeFalsy();
+        expect(queryButtons().length).toBe(2);
+        expect(fixture.nativeElement.classList.contains('p-inputnumber-horizontal')).toBe(true);
+        expect(fixture.nativeElement.getAttribute('data-p')).toContain('horizontal');
+    });
+
+    it('should re-render the input attributes when the inputs change', () => {
+        expect(queryInput().hasAttribute('readonly')).toBe(false);
+        expect(queryInput().getAttribute('placeholder')).toBeNull();
+
+        fixture.componentRef.setInput('inputId', 'amount');
+        fixture.componentRef.setInput('placeholder', 'Amount');
+        fixture.componentRef.setInput('readonly', true);
+        fixture.componentRef.setInput('tabindex', 3);
+        fixture.componentRef.setInput('title', 'Amount title');
+        fixture.componentRef.setInput('ariaLabel', 'Amount label');
+        fixture.componentRef.setInput('ariaLabelledBy', 'amount-label');
+        fixture.componentRef.setInput('ariaDescribedBy', 'amount-description');
+        fixture.componentRef.setInput('autocomplete', 'off');
+        fixture.componentRef.setInput('ariaRequired', true);
+        fixture.detectChanges();
+
+        expect(queryInput().id).toBe('amount');
+        expect(queryInput().getAttribute('placeholder')).toBe('Amount');
+        expect(queryInput().hasAttribute('readonly')).toBe(true);
+        expect(queryInput().getAttribute('tabindex')).toBe('3');
+        expect(queryInput().getAttribute('title')).toBe('Amount title');
+        expect(queryInput().getAttribute('aria-label')).toBe('Amount label');
+        expect(queryInput().getAttribute('aria-labelledby')).toBe('amount-label');
+        expect(queryInput().getAttribute('aria-describedby')).toBe('amount-description');
+        expect(queryInput().getAttribute('autocomplete')).toBe('off');
+        expect(queryInput().getAttribute('aria-required')).toBe('true');
+    });
+
+    it('should re-render the input and button classes when the style inputs change', () => {
+        fixture.componentRef.setInput('showButtons', true);
+        fixture.componentRef.setInput('inputStyleClass', 'custom-input');
+        fixture.componentRef.setInput('inputStyle', { width: '100px' });
+        fixture.componentRef.setInput('incrementButtonClass', 'custom-increment');
+        fixture.componentRef.setInput('decrementButtonClass', 'custom-decrement');
+        fixture.componentRef.setInput('incrementButtonIcon', 'pi pi-plus');
+        fixture.componentRef.setInput('decrementButtonIcon', 'pi pi-minus');
+        fixture.detectChanges();
+
+        const [increment, decrement] = queryButtons();
+        expect(queryInput().classList.contains('custom-input')).toBe(true);
+        expect(queryInput().style.width).toBe('100px');
+        expect(increment.classList.contains('custom-increment')).toBe(true);
+        expect(decrement.classList.contains('custom-decrement')).toBe(true);
+        expect(increment.querySelector('span.pi-plus')).toBeTruthy();
+        expect(decrement.querySelector('span.pi-minus')).toBeTruthy();
+    });
+
+    it('should re-render the formatted value when the formatting inputs change', () => {
+        fixture.componentRef.setInput('locale', 'en-US');
+        component.writeValue(1234.5);
+        fixture.detectChanges();
+
+        expect(queryInput().value).toBe('1,234.5');
+
+        fixture.componentRef.setInput('mode', 'currency');
+        fixture.componentRef.setInput('currency', 'USD');
+        fixture.detectChanges();
+
+        expect(component.formattedValue()).toBe('$1,234.50');
+        expect(queryInput().value).toBe('$1,234.50');
+
+        fixture.componentRef.setInput('mode', 'decimal');
+        fixture.componentRef.setInput('useGrouping', false);
+        fixture.componentRef.setInput('minFractionDigits', 2);
+        fixture.componentRef.setInput('prefix', '~');
+        fixture.componentRef.setInput('suffix', ' kg');
+        fixture.detectChanges();
+
+        expect(queryInput().value).toBe('~1234.50 kg');
+
+        fixture.componentRef.setInput('format', false);
+        fixture.detectChanges();
+
+        expect(queryInput().value).toBe('1234.5');
+    });
+
+    it('should rebuild the parser when the locale changes', () => {
+        fixture.componentRef.setInput('locale', 'en-US');
+        fixture.detectChanges();
+
+        expect(component.groupChar()).toBe(',');
+        expect(component._decimalChar()).toBe('.');
+        expect(component.parseValue('1,234.5')).toBe(1234.5);
+
+        fixture.componentRef.setInput('locale', 'de-DE');
+        fixture.detectChanges();
+
+        expect(component.groupChar()).toBe('.');
+        expect(component._decimalChar()).toBe(',');
+        expect(component.parseValue('1.234,5')).toBe(1234.5);
+    });
+
+    it('should derive the prefix and suffix characters from the inputs', () => {
+        fixture.componentRef.setInput('locale', 'en-US');
+        fixture.componentRef.setInput('mode', 'currency');
+        fixture.componentRef.setInput('currency', 'USD');
+        fixture.detectChanges();
+
+        expect(component.prefixChar()).toBe('$');
+        expect(component.suffixChar()).toBe('');
+        expect(component.parseValue('$1,234.56')).toBe(1234.56);
+
+        fixture.componentRef.setInput('prefix', '~');
+        fixture.componentRef.setInput('suffix', ' kg');
+        fixture.detectChanges();
+
+        expect(component.prefixChar()).toBe('~');
+        expect(component.suffixChar()).toBe(' kg');
+        expect(component.parseValue('~1,234.56 kg')).toBe(1234.56);
+    });
+
+    it('should derive isDecimalMode and allowMinusSign from the inputs', () => {
+        expect(component.isDecimalMode()).toBe(true);
+        expect(component.allowMinusSign()).toBe(true);
+
+        fixture.componentRef.setInput('mode', 'currency');
+        fixture.componentRef.setInput('min', 0);
+        fixture.detectChanges();
+
+        expect(component.isDecimalMode()).toBe(false);
+        expect(component.allowMinusSign()).toBe(false);
+    });
+
+    it('should re-render the clear icon when showClear and the value change', () => {
+        fixture.componentRef.setInput('showClear', true);
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.query(By.css('.p-inputnumber-clear-icon'))).toBeFalsy();
+
+        component.writeValue(42);
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.query(By.css('.p-inputnumber-clear-icon'))).toBeTruthy();
+
+        fixture.debugElement.query(By.css('.p-inputnumber-clear-icon')).nativeElement.dispatchEvent(new Event('click'));
+        fixture.detectChanges();
+
+        expect(component.value()).toBeNull();
+        expect(fixture.debugElement.query(By.css('.p-inputnumber-clear-icon'))).toBeFalsy();
+    });
+
+    it('should re-render the focus state when the input is focused and blurred', () => {
+        expect(fixture.nativeElement.classList.contains('p-inputwrapper-focus')).toBe(false);
+
+        queryInput().dispatchEvent(new Event('focus'));
+        fixture.detectChanges();
+
+        expect(component.focused()).toBe(true);
+        expect(fixture.nativeElement.classList.contains('p-inputwrapper-focus')).toBe(true);
+        expect(fixture.nativeElement.getAttribute('data-p')).toContain('focus');
+
+        queryInput().dispatchEvent(new Event('blur'));
+        fixture.detectChanges();
+
+        expect(component.focused()).toBe(false);
+        expect(fixture.nativeElement.classList.contains('p-inputwrapper-focus')).toBe(false);
+    });
+
+    it('should re-render the input value after writeValue', () => {
+        fixture.componentRef.setInput('locale', 'en-US');
+        component.writeValue('42');
+        fixture.detectChanges();
+
+        expect(component.value()).toBe(42);
+        expect(queryInput().value).toBe('42');
+        expect(queryInput().getAttribute('aria-valuenow')).toBe('42');
+
+        component.writeValue(null);
+        fixture.detectChanges();
+
+        expect(component.value()).toBeNull();
+        expect(queryInput().value).toBe('');
+
+        fixture.componentRef.setInput('allowEmpty', false);
+        fixture.detectChanges();
+
+        expect(queryInput().value).toBe('0');
+        expect(fixture.nativeElement.classList.contains('p-inputwrapper-filled')).toBe(true);
+    });
+
+    it('should re-render the disabled state after setDisabledState', () => {
+        fixture.componentRef.setInput('showButtons', true);
+        fixture.detectChanges();
+
+        expect(queryInput().hasAttribute('disabled')).toBe(false);
+
+        component.setDisabledState(true);
+        fixture.detectChanges();
+
+        expect(queryInput().hasAttribute('disabled')).toBe(true);
+        expect(queryButtons().every((button) => button.hasAttribute('disabled'))).toBe(true);
+        expect(fixture.nativeElement.getAttribute('data-p')).toContain('disabled');
     });
 });
