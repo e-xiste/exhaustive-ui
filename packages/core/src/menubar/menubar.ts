@@ -1,21 +1,20 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
+    computed,
     effect,
     ElementRef,
     inject,
     Injectable,
-    InjectionToken,
-    Input,
+    input,
     NgModule,
     numberAttribute,
-    PLATFORM_ID,
-    Renderer2,
     signal,
     TemplateRef,
+    untracked,
     ViewEncapsulation,
     viewChild,
     contentChild,
@@ -38,8 +37,6 @@ import { interval, Subject, Subscription } from 'rxjs';
 import { debounce, filter } from 'rxjs/operators';
 import { MenuBarStyle } from './style/menubarstyle';
 
-const MENUBAR_INSTANCE = new InjectionToken<Menubar>('MENUBAR_INSTANCE');
-
 @Injectable()
 export class MenubarService {
     autoHide: boolean | undefined;
@@ -55,12 +52,11 @@ export class MenubarService {
 }
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-menubarSub, p-menubarsub, [pMenubarSub]',
-    standalone: true,
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, BindModule],
     template: `
-        @for (processedItem of items; track processedItem; let index = $index) {
+        @for (processedItem of items(); track processedItem; let index = $index) {
             @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
                 <li [attr.id]="getItemId(processedItem)" [style]="getItemProp(processedItem, 'style')" [class]="cn(cx('separator'), processedItem?.styleClass)" role="separator" [pBind]="ptm('separator')"></li>
             }
@@ -86,7 +82,7 @@ export class MenubarService {
                     [pTooltipUnstyled]="unstyled()"
                 >
                     <div [class]="cx('itemContent')" [pBind]="getPTOptions(processedItem, index, 'itemContent')" (click)="onItemClick($event, processedItem)" (mouseenter)="onItemMouseEnter({ $event, processedItem })">
-                        @if (!itemTemplate) {
+                        @if (!itemTemplate()) {
                             @if (!getItemProp(processedItem, 'routerLink')) {
                                 <a
                                     [attr.href]="getItemProp(processedItem, 'url')"
@@ -130,15 +126,15 @@ export class MenubarService {
                                         <p-badge [class]="getItemProp(processedItem, 'badgeStyleClass')" [value]="getItemProp(processedItem, 'badge')" [pt]="getPTOptions(processedItem, index, 'pcBadge')" [unstyled]="unstyled()" />
                                     }
                                     @if (isItemGroup(processedItem)) {
-                                        @if (!submenuiconTemplate) {
-                                            @if (root) {
+                                        @if (!submenuiconTemplate()) {
+                                            @if (root()) {
                                                 <svg data-p-icon="angle-down" [class]="cx('submenuIcon')" [pBind]="getPTOptions(processedItem, index, 'submenuIcon')" />
                                             }
-                                            @if (!root) {
+                                            @if (!root()) {
                                                 <svg data-p-icon="angle-right" [class]="cx('submenuIcon')" [pBind]="getPTOptions(processedItem, index, 'submenuIcon')" />
                                             }
                                         }
-                                        <ng-template *ngTemplateOutlet="submenuiconTemplate"></ng-template>
+                                        <ng-template *ngTemplateOutlet="submenuiconTemplate()"></ng-template>
                                     }
                                 </a>
                             }
@@ -187,34 +183,33 @@ export class MenubarService {
                                         <p-badge [class]="getItemProp(processedItem, 'badgeStyleClass')" [value]="getItemProp(processedItem, 'badge')" [pt]="getPTOptions(processedItem, index, 'pcBadge')" [unstyled]="unstyled()" />
                                     }
                                     @if (isItemGroup(processedItem)) {
-                                        @if (!submenuiconTemplate) {
-                                            @if (root) {
+                                        @if (!submenuiconTemplate()) {
+                                            @if (root()) {
                                                 <svg data-p-icon="angle-down" [class]="cx('submenuIcon')" [pBind]="getPTOptions(processedItem, index, 'submenuIcon')" />
                                             }
-                                            @if (!root) {
+                                            @if (!root()) {
                                                 <svg data-p-icon="angle-right" [class]="cx('submenuIcon')" [pBind]="getPTOptions(processedItem, index, 'submenuIcon')" />
                                             }
                                         }
-                                        <ng-template *ngTemplateOutlet="submenuiconTemplate"></ng-template>
+                                        <ng-template *ngTemplateOutlet="submenuiconTemplate()"></ng-template>
                                     }
                                 </a>
                             }
                         }
-                        @if (itemTemplate) {
-                            <ng-template *ngTemplateOutlet="itemTemplate; context: { $implicit: processedItem.item, root: root }"></ng-template>
+                        @if (itemTemplate()) {
+                            <ng-template *ngTemplateOutlet="itemTemplate(); context: { $implicit: processedItem.item, root: root() }"></ng-template>
                         }
                     </div>
                     @if (isItemVisible(processedItem) && isItemGroup(processedItem)) {
                         <ul
                             pMenubarSub
-                            [itemTemplate]="itemTemplate"
+                            [itemTemplate]="itemTemplate()"
                             [items]="processedItem.items"
-                            [mobileActive]="mobileActive"
-                            [autoDisplay]="autoDisplay"
-                            [menuId]="menuId"
-                            [activeItemPath]="activeItemPath"
-                            [focusedItemId]="focusedItemId"
-                            [level]="level + 1"
+                            [autoDisplay]="autoDisplay()"
+                            [menuId]="menuId()"
+                            [activeItemPath]="activeItemPath()"
+                            [focusedItemId]="focusedItemId()"
+                            [level]="level() + 1"
                             [attr.aria-labelledby]="getItemLabelId(processedItem)"
                             (itemClick)="itemClick.emit($event)"
                             (itemMouseEnter)="onItemMouseEnter($event)"
@@ -230,61 +225,41 @@ export class MenubarService {
     `,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[attr.id]': 'root ? menuId : null',
-        '[attr.aria-activedescendant]': 'focusedItemId',
-        '[class]': "level === 0 ? cx('rootList') : cx('submenu')",
+        '[attr.id]': 'root() ? menuId() : null',
+        '[attr.aria-activedescendant]': 'focusedItemId()',
+        '[class]': "level() === 0 ? cx('rootList') : cx('submenu')",
         '[attr.role]': "'menubar'",
-        '[style]': 'inlineStyles'
+        '[style]': 'inlineStyles()'
     }
 })
 export class MenubarSub extends BaseComponent<MenubarPassThrough> {
-    @Input() items: any[];
+    readonly items = input.required<any[]>();
 
-    @Input() itemTemplate: TemplateRef<MenubarItemTemplateContext> | undefined;
+    readonly itemTemplate = input<TemplateRef<MenubarItemTemplateContext> | undefined>(undefined);
 
-    @Input({ transform: booleanAttribute }) root: boolean = false;
+    readonly root = input<boolean, unknown>(false, { transform: booleanAttribute });
 
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
+    readonly autoDisplay = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
+    readonly menuId = input<string | undefined>(undefined);
 
-    @Input({ transform: booleanAttribute }) mobileActive: boolean | undefined;
+    readonly level = input<number, unknown>(0, { transform: numberAttribute });
 
-    @Input({ transform: booleanAttribute }) autoDisplay: boolean | undefined;
+    readonly focusedItemId = input<string | undefined>(undefined);
 
-    @Input() menuId: string | undefined;
+    readonly activeItemPath = input<any[]>();
 
-    @Input() ariaLabel: string | undefined;
+    readonly inlineStyles = input<any>();
 
-    @Input() ariaLabelledBy: string | undefined;
-
-    @Input({ transform: numberAttribute }) level: number = 0;
-
-    @Input() focusedItemId: string | undefined;
-
-    @Input() activeItemPath: any[];
-
-    @Input() inlineStyles: any;
-
-    @Input() submenuiconTemplate: TemplateRef<void> | undefined;
+    readonly submenuiconTemplate = input<TemplateRef<void> | undefined>(undefined);
 
     readonly itemClick = output<any>();
 
     readonly itemMouseEnter = output<any>();
 
-    mouseLeaveSubscriber: Subscription | undefined;
-
-    menubarService = inject(MenubarService);
-
     _componentStyle = inject(MenuBarStyle);
 
     hostName = 'Menubar';
-
-    onInit() {
-        this.mouseLeaveSubscriber = this.menubarService.mouseLeft$.subscribe(() => {
-            this.cd.markForCheck();
-        });
-    }
 
     onItemClick(event: any, processedItem: any) {
         this.getItemProp(processedItem, 'command', { originalEvent: event, item: processedItem.item });
@@ -296,11 +271,11 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     }
 
     getItemId(processedItem: any): string {
-        return processedItem.item && processedItem.item?.id ? processedItem.item.id : `${this.menuId}_${processedItem.key}`;
+        return processedItem.item && processedItem.item?.id ? processedItem.item.id : `${this.menuId()}_${processedItem.key}`;
     }
 
     getItemLabelId(processedItem: any): string {
-        return `${this.menuId}_${processedItem.key}_label`;
+        return `${this.menuId()}_${processedItem.key}_label`;
     }
 
     getItemLabel(processedItem: any): string {
@@ -312,8 +287,9 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     }
 
     isItemActive(processedItem: any): boolean {
-        if (this.activeItemPath) {
-            return this.activeItemPath.some((path) => path.key === processedItem.key);
+        const activeItemPath = this.activeItemPath();
+        if (activeItemPath) {
+            return activeItemPath.some((path) => path.key === processedItem.key);
         }
         return false;
     }
@@ -323,7 +299,7 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     }
 
     isItemFocused(processedItem: any): boolean {
-        return this.focusedItemId === this.getItemId(processedItem);
+        return this.focusedItemId() === this.getItemId(processedItem);
     }
 
     isItemGroup(processedItem: any): boolean {
@@ -331,15 +307,21 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     }
 
     getAriaSetSize() {
-        return this.items.filter((processedItem) => this.isItemVisible(processedItem) && !this.getItemProp(processedItem, 'separator')).length;
+        return this.items().filter((processedItem) => this.isItemVisible(processedItem) && !this.getItemProp(processedItem, 'separator')).length;
     }
 
     getAriaPosInset(index: number) {
-        return index - this.items.slice(0, index).filter((processedItem) => this.isItemVisible(processedItem) && this.getItemProp(processedItem, 'separator')).length + 1;
+        return (
+            index -
+            this.items()
+                .slice(0, index)
+                .filter((processedItem) => this.isItemVisible(processedItem) && this.getItemProp(processedItem, 'separator')).length +
+            1
+        );
     }
 
     onItemMouseEnter(param: any) {
-        if (this.autoDisplay) {
+        if (this.autoDisplay()) {
             const { event, processedItem } = param;
             this.itemMouseEnter.emit({ originalEvent: event, processedItem });
         }
@@ -353,13 +335,9 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
                 active: this.isItemActive(processedItem),
                 focused: this.isItemFocused(processedItem),
                 disabled: this.isItemDisabled(processedItem),
-                level: this.level
+                level: this.level()
             }
         });
-    }
-
-    onDestroy() {
-        this.mouseLeaveSubscriber?.unsubscribe();
     }
 }
 /**
@@ -368,50 +346,46 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
  */
 @Component({
     selector: 'p-menubar',
-    standalone: true,
     imports: [CommonModule, RouterModule, MenubarSub, TooltipModule, BarsIcon, BadgeModule, SharedModule, BindModule],
     template: `
-        @if (startTemplate() || _startTemplate) {
+        @if (startTemplate() || _startTemplate()) {
             <div [class]="cx('start')" [pBind]="ptm('start')">
-                <ng-container *ngTemplateOutlet="startTemplate() || _startTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="startTemplate() || _startTemplate()"></ng-container>
             </div>
         }
-        @if (model && model.length > 0) {
+        @if (model() && model()!.length > 0) {
             <a
                 #menubutton
                 tabindex="0"
                 role="button"
-                [attr.aria-haspopup]="model.length && model.length > 0 ? true : false"
-                [attr.aria-expanded]="mobileActive"
-                [attr.aria-controls]="id"
+                [attr.aria-haspopup]="model()!.length > 0 ? true : false"
+                [attr.aria-expanded]="mobileActive()"
+                [attr.aria-controls]="_id()"
                 [attr.aria-label]="config.translation.aria.navigation"
                 [class]="cx('button')"
                 [pBind]="ptm('button')"
                 (click)="menuButtonClick($event)"
                 (keydown)="menuButtonKeydown($event)"
             >
-                @if (!menuIconTemplate() && !_menuIconTemplate) {
+                @if (!menuIconTemplate() && !_menuIconTemplate()) {
                     <svg data-p-icon="bars" [pBind]="ptm('buttonIcon')" />
                 }
-                <ng-template *ngTemplateOutlet="menuIconTemplate() || _menuIconTemplate"></ng-template>
+                <ng-template *ngTemplateOutlet="menuIconTemplate() || _menuIconTemplate()"></ng-template>
             </a>
         }
         <ul
             pMenubarSub
             #rootmenu
-            [items]="processedItems"
-            [itemTemplate]="itemTemplate()"
+            [items]="processedItems()"
+            [itemTemplate]="itemTemplate() || _itemTemplate()"
             tabindex="0"
-            [menuId]="id"
+            [menuId]="_id()"
             [root]="true"
-            [baseZIndex]="baseZIndex"
-            [autoZIndex]="autoZIndex"
-            [mobileActive]="mobileActive"
-            [autoDisplay]="autoDisplay"
-            [attr.aria-label]="ariaLabel"
-            [attr.aria-labelledby]="ariaLabelledBy"
-            [focusedItemId]="focused ? focusedItemId : undefined"
-            [submenuiconTemplate]="submenuIconTemplate() || _submenuIconTemplate"
+            [autoDisplay]="autoDisplay()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-labelledby]="ariaLabelledBy()"
+            [focusedItemId]="focused() ? focusedItemId() : undefined"
+            [submenuiconTemplate]="submenuIconTemplate() || _submenuIconTemplate()"
             [activeItemPath]="activeItemPath()"
             (itemClick)="onItemClick($event)"
             (mousedown)="onMenuMouseDown($event)"
@@ -424,9 +398,9 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
             [pBind]="ptm('rootList')"
             [unstyled]="unstyled()"
         ></ul>
-        @if (endTemplate() || _endTemplate) {
+        @if (endTemplate() || _endTemplate()) {
             <div [class]="cx('end')" [pBind]="ptm('end')">
-                <ng-container *ngTemplateOutlet="endTemplate() || _endTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="endTemplate() || _endTemplate()"></ng-container>
             </div>
         } @else {
             <div [class]="cx('end')">
@@ -436,93 +410,62 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [MenubarService, MenuBarStyle, { provide: MENUBAR_INSTANCE, useExisting: Menubar }, { provide: PARENT_INSTANCE, useExisting: Menubar }],
+    providers: [MenubarService, MenuBarStyle, { provide: PARENT_INSTANCE, useExisting: Menubar }],
     host: {
-        '[class]': 'cn(cx("root"), styleClass)'
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind]
 })
 export class Menubar extends BaseComponent<MenubarPassThrough> {
-    document = inject<Document>(DOCUMENT);
-    platformId = inject(PLATFORM_ID);
-    el = inject(ElementRef);
-    renderer = inject(Renderer2);
-    cd = inject(ChangeDetectorRef);
     private menubarService = inject(MenubarService);
 
     componentName = 'Menubar';
 
-    $pcMenubar: Menubar | undefined = inject(MENUBAR_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
-
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
 
     /**
      * An array of menuitems.
      * @group Props
      */
-    @Input() set model(value: MenuItem[] | undefined) {
-        this._model = value;
-        this._processedItems = this.createProcessedItems(this._model || []);
-    }
-    get model(): MenuItem[] | undefined {
-        return this._model;
-    }
-    /**
-     * Class of the element.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
-    /**
-     * Whether to automatically manage layering.
-     * @group Props
-     */
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
-    /**
-     * Base zIndex value to use in layering.
-     * @group Props
-     */
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
+    readonly model = input<MenuItem[] | undefined>(undefined);
     /**
      * Whether to show a root submenu on mouse over.
      * @defaultValue true
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoDisplay: boolean | undefined = true;
+    readonly autoDisplay = input<boolean | undefined, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to hide a root submenu when mouse leaves.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoHide: boolean | undefined;
+    readonly autoHide = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * The breakpoint to define the maximum width boundary.
      * @group Props
      */
-    @Input() breakpoint: string = '960px';
+    readonly breakpoint = input<string>('960px');
     /**
      * Delay to hide the root submenu in milliseconds when mouse leaves.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) autoHideDelay: number = 100;
+    readonly autoHideDelay = input<number, unknown>(100, { transform: numberAttribute });
     /**
      * Current id state as a string.
      * @group Props
      */
-    @Input() id: string | undefined;
+    readonly id = input<string | undefined>(undefined);
+
+    readonly _id = computed(() => this.id() || uuid('pn_id_'));
     /**
      * Defines a string value that labels an interactive element.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>(undefined);
     /**
      * Identifier of the underlying input element.
      * @group Props
      */
-    @Input() ariaLabelledBy: string | undefined;
+    readonly ariaLabelledBy = input<string | undefined>(undefined);
     /**
      * Callback to execute when button is focused.
      * @param {FocusEvent} event - Focus event.
@@ -540,81 +483,76 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     readonly rootmenu = viewChild.required<MenubarSub>('rootmenu');
 
-    mobileActive: boolean | undefined;
+    mobileActive = signal<boolean | undefined>(undefined);
 
-    private matchMediaListener: () => void;
+    private matchMediaListener = signal<(() => void) | null | undefined>(undefined);
 
-    private query: MediaQueryList;
+    private query = signal<MediaQueryList | undefined>(undefined);
 
     public queryMatches = signal<boolean>(false);
 
-    outsideClickListener: VoidListener;
+    outsideClickListener = signal<VoidListener>(undefined);
 
-    resizeListener: VoidListener;
+    resizeListener = signal<VoidListener>(undefined);
 
-    mouseLeaveSubscriber: Subscription | undefined;
+    mouseLeaveSubscriber = signal<Subscription | undefined>(undefined);
 
-    dirty: boolean = false;
+    dirty = signal<boolean>(false);
 
-    focused: boolean = false;
+    focused = signal<boolean>(false);
 
     activeItemPath = signal<any>([]);
 
-    number = signal<number>(0);
-
     focusedItemInfo = signal<any>({ index: -1, level: 0, parentKey: '', item: null });
 
-    searchValue: string = '';
+    searchValue = signal<string>('');
 
-    searchTimeout: any;
-
-    _processedItems: any[];
+    searchTimeout = signal<any>(undefined);
 
     _componentStyle = inject(MenuBarStyle);
 
-    _model: MenuItem[] | undefined;
-
-    get visibleItems() {
+    readonly visibleItems = computed(() => {
         const processedItem = this.activeItemPath().find((p) => p.key === this.focusedItemInfo().parentKey);
 
-        return processedItem ? processedItem.items : this.processedItems;
-    }
+        return processedItem ? processedItem.items : this.processedItems();
+    });
 
-    get processedItems() {
-        if (!this._processedItems || !this._processedItems.length) {
-            this._processedItems = this.createProcessedItems(this.model || []);
-        }
-        return this._processedItems;
-    }
+    readonly processedItems = computed(() => this.createProcessedItems(this.model() || []));
 
-    get focusedItemId() {
+    readonly focusedItemId = computed(() => {
         const focusedItem = this.focusedItemInfo();
-        return focusedItem.item && focusedItem.item?.id ? focusedItem.item.id : focusedItem.index !== -1 ? `${this.id}${isNotEmpty(focusedItem.parentKey) ? '_' + focusedItem.parentKey : ''}_${focusedItem.index}` : null;
-    }
+        return focusedItem.item && focusedItem.item?.id ? focusedItem.item.id : focusedItem.index !== -1 ? `${this._id()}${isNotEmpty(focusedItem.parentKey) ? '_' + focusedItem.parentKey : ''}_${focusedItem.index}` : null;
+    });
 
     constructor() {
         super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
         effect(() => {
             const path = this.activeItemPath();
 
-            if (isNotEmpty(path)) {
-                this.bindOutsideClickListener();
-                this.bindResizeListener();
-            } else {
-                this.unbindOutsideClickListener();
-                this.unbindResizeListener();
-            }
+            untracked(() => {
+                if (isNotEmpty(path)) {
+                    this.bindOutsideClickListener();
+                    this.bindResizeListener();
+                } else {
+                    this.unbindOutsideClickListener();
+                    this.unbindResizeListener();
+                }
+            });
+        });
+        effect(() => {
+            this.menubarService.autoHide = this.autoHide();
+            this.menubarService.autoHideDelay = this.autoHideDelay();
         });
     }
 
     onInit(): void {
         this.bindMatchMediaListener();
-        this.menubarService.autoHide = this.autoHide;
-        this.menubarService.autoHideDelay = this.autoHideDelay;
-        this.mouseLeaveSubscriber = this.menubarService.mouseLeft$.subscribe(() => {
-            this.hide();
-        });
-        this.id = this.id || uuid('pn_id_');
+        this.mouseLeaveSubscriber.set(
+            this.menubarService.mouseLeft$.subscribe(() => {
+                this.hide();
+            })
+        );
     }
 
     /**
@@ -649,45 +587,40 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _startTemplate: TemplateRef<void> | undefined;
+    readonly _startTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'start')
+                .at(-1)?.template
+    );
 
-    _endTemplate: TemplateRef<void> | undefined;
+    readonly _endTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'end')
+                .at(-1)?.template
+    );
 
-    _itemTemplate: TemplateRef<MenubarItemTemplateContext> | undefined;
+    readonly _itemTemplate = computed<TemplateRef<MenubarItemTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => !['start', 'end', 'menuicon', 'submenuicon'].includes(item.getType()))
+                .at(-1)?.template
+    );
 
-    _menuIconTemplate: TemplateRef<void> | undefined;
+    readonly _menuIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'menuicon')
+                .at(-1)?.template
+    );
 
-    _submenuIconTemplate: TemplateRef<void> | undefined;
-
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'start':
-                    this._startTemplate = item.template;
-                    break;
-
-                case 'end':
-                    this._endTemplate = item.template;
-                    break;
-
-                case 'menuicon':
-                    this._menuIconTemplate = item.template;
-                    break;
-
-                case 'submenuicon':
-                    this._submenuIconTemplate = item.template;
-                    break;
-
-                case 'item':
-                    this._itemTemplate = item.template;
-                    break;
-
-                default:
-                    this._itemTemplate = item.template;
-                    break;
-            }
-        });
-    }
+    readonly _submenuIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'submenuicon')
+                .at(-1)?.template
+    );
 
     createProcessedItems(items: any, level: number = 0, parent: any = {}, parentKey: any = '') {
         const processedItems: any[] = [];
@@ -713,27 +646,28 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     bindMatchMediaListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.matchMediaListener) {
-                const query = window.matchMedia(`(max-width: ${this.breakpoint})`);
+            if (!this.matchMediaListener()) {
+                const query = window.matchMedia(`(max-width: ${this.breakpoint()})`);
 
-                this.query = query;
+                this.query.set(query);
                 this.queryMatches.set(query.matches);
 
-                this.matchMediaListener = () => {
+                const matchMediaListener = () => {
                     this.queryMatches.set(query.matches);
-                    this.mobileActive = false;
-                    this.cd.markForCheck();
+                    this.mobileActive.set(false);
                 };
+                this.matchMediaListener.set(matchMediaListener);
 
-                query.addEventListener('change', this.matchMediaListener);
+                query.addEventListener('change', matchMediaListener);
             }
         }
     }
 
     unbindMatchMediaListener() {
-        if (this.matchMediaListener) {
-            this.query.removeEventListener('change', this.matchMediaListener);
-            this.matchMediaListener = null!;
+        const matchMediaListener = this.matchMediaListener();
+        if (matchMediaListener) {
+            this.query()?.removeEventListener('change', matchMediaListener);
+            this.matchMediaListener.set(null);
         }
     }
 
@@ -750,7 +684,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onItemClick(event: any) {
-        this.dirty = true;
+        this.dirty.set(true);
         const { originalEvent, processedItem } = event;
         const grouped = this.isProcessedItemGroup(processedItem);
         const root = isEmpty(processedItem.parent);
@@ -762,7 +696,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             this.activeItemPath.set(this.activeItemPath().filter((p) => key !== p.key && key.startsWith(p.key)));
             this.focusedItemInfo.set({ index, level, parentKey, item });
 
-            this.dirty = !root;
+            this.dirty.set(!root);
             focus(this.rootmenu().el.nativeElement);
         } else {
             if (grouped) {
@@ -772,7 +706,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
                 this.hide(originalEvent);
                 this.changeFocusedItemIndex(originalEvent, rootProcessedItem ? rootProcessedItem.index : -1);
 
-                this.mobileActive = false;
+                this.mobileActive.set(false);
                 focus(this.rootmenu().el.nativeElement);
             }
         }
@@ -780,11 +714,11 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     onItemMouseEnter(event: any) {
         if (!isTouchDevice()) {
-            if (this.dirty) {
+            if (this.dirty()) {
                 this.onItemChange(event, 'hover');
             }
         } else {
-            this.onItemChange({ event, processedItem: event.processedItem, focus: this.autoDisplay }, 'hover');
+            this.onItemChange({ event, processedItem: event.processedItem, focus: this.autoDisplay() }, 'hover');
         }
     }
 
@@ -809,7 +743,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     scrollInView(index: number = -1) {
-        const id = index !== -1 ? `${this.id}_${index}` : this.focusedItemId;
+        const id = index !== -1 ? `${this._id()}_${index}` : this.focusedItemId();
         const element = findSingle(this.rootmenu().el.nativeElement, `li[id="${id}"]`);
 
         if (element) {
@@ -829,7 +763,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         grouped && activeItemPath.push(processedItem);
         this.focusedItemInfo.set({ index, level, parentKey, item });
 
-        grouped && (this.dirty = true);
+        grouped && this.dirty.set(true);
         isFocus && focus(this.rootmenu().el.nativeElement);
 
         if (type === 'hover' && this.queryMatches()) {
@@ -840,12 +774,12 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     toggle(event: MouseEvent) {
-        if (this.mobileActive) {
-            this.mobileActive = false;
+        if (this.mobileActive()) {
+            this.mobileActive.set(false);
             ZIndexUtils.clear(this.rootmenu().el.nativeElement);
             this.hide();
         } else {
-            this.mobileActive = true;
+            this.mobileActive.set(true);
             ZIndexUtils.set('menu', this.rootmenu().el.nativeElement, this.config.zIndex.menu);
             setTimeout(() => {
                 this.show();
@@ -857,7 +791,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     hide(event?, isFocus?: boolean) {
-        if (this.mobileActive) {
+        if (this.mobileActive()) {
             setTimeout(() => {
                 focus(this.menubutton()?.nativeElement);
             }, 0);
@@ -867,7 +801,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
 
         isFocus && focus(this.rootmenu().el.nativeElement);
-        this.dirty = false;
+        this.dirty.set(false);
     }
 
     show() {
@@ -877,16 +811,16 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onMenuMouseDown(event: any) {
-        this.dirty = true;
+        this.dirty.set(true);
     }
 
     onMenuFocus(event: any) {
-        this.focused = true;
+        this.focused.set(true);
 
         const relatedTarget = event.relatedTarget;
         const isFromOutside = !relatedTarget || !this.el.nativeElement.contains(relatedTarget);
 
-        if (isFromOutside && this.focusedItemInfo().index === -1 && !this.activeItemPath().length && !this.dirty) {
+        if (isFromOutside && this.focusedItemInfo().index === -1 && !this.activeItemPath().length && !this.dirty()) {
             const processedItem = this.findVisibleItem(this.findFirstFocusedItemIndex());
             this.focusedItemInfo.set({ index: this.findFirstFocusedItemIndex(), level: 0, parentKey: '', item: processedItem?.item });
         }
@@ -906,10 +840,10 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
                 return;
             }
 
-            this.focused = false;
+            this.focused.set(false);
             this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
-            this.searchValue = '';
-            this.dirty = false;
+            this.searchValue.set('');
+            this.dirty.set(false);
             this.onBlur.emit(event);
         });
     }
@@ -976,7 +910,8 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     findVisibleItem(index) {
-        return isNotEmpty(this.visibleItems) ? this.visibleItems[index] : null;
+        const visibleItems = this.visibleItems();
+        return isNotEmpty(visibleItems) ? visibleItems[index] : null;
     }
 
     findFirstFocusedItemIndex() {
@@ -986,11 +921,11 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     findFirstItemIndex() {
-        return this.visibleItems.findIndex((processedItem) => this.isValidItem(processedItem));
+        return this.visibleItems().findIndex((processedItem) => this.isValidItem(processedItem));
     }
 
     findSelectedItemIndex() {
-        return this.visibleItems.findIndex((processedItem) => this.isValidSelectedItem(processedItem));
+        return this.visibleItems().findIndex((processedItem) => this.isValidSelectedItem(processedItem));
     }
 
     isProcessedItemGroup(processedItem: any): boolean {
@@ -1018,7 +953,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     isItemMatched(processedItem: any): boolean {
-        return this.isValidItem(processedItem) && this.getProccessedItemLabel(processedItem).toLocaleLowerCase().startsWith(this.searchValue.toLocaleLowerCase());
+        return this.isValidItem(processedItem) && this.getProccessedItemLabel(processedItem).toLocaleLowerCase().startsWith(this.searchValue().toLocaleLowerCase());
     }
 
     isProccessedItemGroup(processedItem: any): boolean {
@@ -1026,16 +961,18 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     searchItems(event: any, char: string) {
-        this.searchValue = (this.searchValue || '') + char;
+        this.searchValue.update((searchValue) => (searchValue || '') + char);
 
         let itemIndex = -1;
         let matched = false;
 
+        const visibleItems = this.visibleItems();
+
         if (this.focusedItemInfo().index !== -1) {
-            itemIndex = this.visibleItems.slice(this.focusedItemInfo().index).findIndex((processedItem) => this.isItemMatched(processedItem));
-            itemIndex = itemIndex === -1 ? this.visibleItems.slice(0, this.focusedItemInfo().index).findIndex((processedItem) => this.isItemMatched(processedItem)) : itemIndex + this.focusedItemInfo().index;
+            itemIndex = visibleItems.slice(this.focusedItemInfo().index).findIndex((processedItem) => this.isItemMatched(processedItem));
+            itemIndex = itemIndex === -1 ? visibleItems.slice(0, this.focusedItemInfo().index).findIndex((processedItem) => this.isItemMatched(processedItem)) : itemIndex + this.focusedItemInfo().index;
         } else {
-            itemIndex = this.visibleItems.findIndex((processedItem) => this.isItemMatched(processedItem));
+            itemIndex = visibleItems.findIndex((processedItem) => this.isItemMatched(processedItem));
         }
 
         if (itemIndex !== -1) {
@@ -1050,14 +987,16 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             this.changeFocusedItemIndex(event, itemIndex);
         }
 
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
+        if (this.searchTimeout()) {
+            clearTimeout(this.searchTimeout());
         }
 
-        this.searchTimeout = setTimeout(() => {
-            this.searchValue = '';
-            this.searchTimeout = null;
-        }, 500);
+        this.searchTimeout.set(
+            setTimeout(() => {
+                this.searchValue.set('');
+                this.searchTimeout.set(null);
+            }, 500)
+        );
 
         return matched;
     }
@@ -1071,7 +1010,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onArrowDownKey(event: KeyboardEvent) {
-        const processedItem = this.visibleItems[this.focusedItemInfo().index];
+        const processedItem = this.visibleItems()[this.focusedItemInfo().index];
         const root = processedItem ? isEmpty(processedItem.parent) : null;
 
         if (root) {
@@ -1091,7 +1030,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onArrowRightKey(event: KeyboardEvent) {
-        const processedItem = this.visibleItems[this.focusedItemInfo().index];
+        const processedItem = this.visibleItems()[this.focusedItemInfo().index];
         const parentItem = processedItem ? this.activeItemPath().find((p) => p.key === processedItem.parentKey) : null;
 
         if (parentItem) {
@@ -1111,7 +1050,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onArrowUpKey(event: KeyboardEvent) {
-        const processedItem = this.visibleItems[this.focusedItemInfo().index];
+        const processedItem = this.visibleItems()[this.focusedItemInfo().index];
         const root = isEmpty(processedItem.parent);
 
         if (root) {
@@ -1128,7 +1067,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             const parentItem = this.activeItemPath().find((p) => p.key === processedItem.parentKey);
             if (this.focusedItemInfo().index === 0) {
                 this.focusedItemInfo.set({ index: -1, parentKey: parentItem ? parentItem.parentKey : '', item: processedItem.item });
-                this.searchValue = '';
+                this.searchValue.set('');
                 this.onArrowLeftKey(event);
                 const activeItemPath = this.activeItemPath().filter((p) => p.parentKey !== this.focusedItemInfo().parentKey);
                 this.activeItemPath.set(activeItemPath);
@@ -1142,7 +1081,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onArrowLeftKey(event: KeyboardEvent) {
-        const processedItem = this.visibleItems[this.focusedItemInfo().index];
+        const processedItem = this.visibleItems()[this.focusedItemInfo().index];
         const parentItem = processedItem ? this.activeItemPath().find((p) => p.key === processedItem.parentKey) : null;
 
         if (parentItem) {
@@ -1174,14 +1113,15 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     onEscapeKey(event: KeyboardEvent) {
         this.hide(event, true);
-        this.focusedItemInfo().index = this.findFirstFocusedItemIndex();
+        const index = this.findFirstFocusedItemIndex();
+        this.focusedItemInfo.update((focusedItemInfo) => ({ ...focusedItemInfo, index }));
 
         event.preventDefault();
     }
 
     onTabKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const processedItem = this.visibleItems[this.focusedItemInfo().index];
+            const processedItem = this.visibleItems()[this.focusedItemInfo().index];
             const grouped = this.isProccessedItemGroup(processedItem);
 
             !grouped && this.onItemChange({ originalEvent: event, processedItem });
@@ -1192,7 +1132,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     onEnterKey(event: KeyboardEvent) {
         if (this.focusedItemInfo().index !== -1) {
-            const element = <any>findSingle(this.rootmenu().el.nativeElement, `li[id="${`${this.focusedItemId}`}"]`);
+            const element = <any>findSingle(this.rootmenu().el.nativeElement, `li[id="${`${this.focusedItemId()}`}"]`);
             const anchorElement = element && (<any>findSingle(element, '[data-pc-section="itemlink"]') || findSingle(element, 'a,button'));
 
             anchorElement ? anchorElement.click() : element && element.click();
@@ -1207,68 +1147,75 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     findLastItemIndex() {
-        return findLastIndex(this.visibleItems, (processedItem) => this.isValidItem(processedItem));
+        return findLastIndex(this.visibleItems(), (processedItem) => this.isValidItem(processedItem));
     }
 
     findPrevItemIndex(index: number) {
-        const matchedItemIndex = index > 0 ? findLastIndex(this.visibleItems.slice(0, index), (processedItem) => this.isValidItem(processedItem)) : -1;
+        const matchedItemIndex = index > 0 ? findLastIndex(this.visibleItems().slice(0, index), (processedItem) => this.isValidItem(processedItem)) : -1;
 
         return matchedItemIndex > -1 ? matchedItemIndex : index;
     }
 
     findNextItemIndex(index: number) {
-        const matchedItemIndex = index < this.visibleItems.length - 1 ? this.visibleItems.slice(index + 1).findIndex((processedItem) => this.isValidItem(processedItem)) : -1;
+        const visibleItems = this.visibleItems();
+        const matchedItemIndex = index < visibleItems.length - 1 ? visibleItems.slice(index + 1).findIndex((processedItem) => this.isValidItem(processedItem)) : -1;
 
         return matchedItemIndex > -1 ? matchedItemIndex + index + 1 : index;
     }
 
     bindResizeListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.resizeListener) {
-                this.resizeListener = this.renderer.listen(this.document.defaultView, 'resize', (event) => {
-                    if (!isTouchDevice()) {
-                        this.hide(event, true);
-                    }
+            if (!this.resizeListener()) {
+                this.resizeListener.set(
+                    this.renderer.listen(this.document.defaultView, 'resize', (event) => {
+                        if (!isTouchDevice()) {
+                            this.hide(event, true);
+                        }
 
-                    this.mobileActive = false;
-                });
+                        this.mobileActive.set(false);
+                    })
+                );
             }
         }
     }
 
     bindOutsideClickListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.outsideClickListener) {
-                this.outsideClickListener = this.renderer.listen(this.document, 'click', (event) => {
-                    const rootmenu = this.rootmenu();
-                    const isOutsideContainer = rootmenu.el.nativeElement !== event.target && !rootmenu.el.nativeElement?.contains(event.target);
-                    const menubutton = this.menubutton();
-                    const isOutsideMenuButton = this.mobileActive && menubutton?.nativeElement !== event.target && !menubutton?.nativeElement?.contains(event.target);
+            if (!this.outsideClickListener()) {
+                this.outsideClickListener.set(
+                    this.renderer.listen(this.document, 'click', (event) => {
+                        const rootmenu = this.rootmenu();
+                        const isOutsideContainer = rootmenu.el.nativeElement !== event.target && !rootmenu.el.nativeElement?.contains(event.target);
+                        const menubutton = this.menubutton();
+                        const isOutsideMenuButton = this.mobileActive() && menubutton?.nativeElement !== event.target && !menubutton?.nativeElement?.contains(event.target);
 
-                    if (isOutsideContainer) {
-                        isOutsideMenuButton ? (this.mobileActive = false) : this.hide();
-                    }
-                });
+                        if (isOutsideContainer) {
+                            isOutsideMenuButton ? this.mobileActive.set(false) : this.hide();
+                        }
+                    })
+                );
             }
         }
     }
 
     unbindOutsideClickListener() {
-        if (this.outsideClickListener) {
-            this.outsideClickListener();
-            this.outsideClickListener = null;
+        const outsideClickListener = this.outsideClickListener();
+        if (outsideClickListener) {
+            outsideClickListener();
+            this.outsideClickListener.set(null);
         }
     }
 
     unbindResizeListener() {
-        if (this.resizeListener) {
-            this.resizeListener();
-            this.resizeListener = null;
+        const resizeListener = this.resizeListener();
+        if (resizeListener) {
+            resizeListener();
+            this.resizeListener.set(null);
         }
     }
 
     onDestroy() {
-        this.mouseLeaveSubscriber?.unsubscribe();
+        this.mouseLeaveSubscriber()?.unsubscribe();
         this.unbindOutsideClickListener();
         this.unbindResizeListener();
         this.unbindMatchMediaListener();

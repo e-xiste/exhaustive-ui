@@ -81,7 +81,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-password',
     'p-inputnumber',
     'p-inputNumber',
-    'p-input-number'
+    'p-input-number',
+    'p-menubar'
 ];
 
 /**

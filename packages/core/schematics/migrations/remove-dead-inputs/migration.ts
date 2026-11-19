@@ -47,6 +47,10 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * context menu overlay is handled by the parent ContextMenu, and a context menu sub list is never a popup.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on TieredMenu were stored but never
  * read: its popup animation is driven by `motionOptions`.
+ * `autoZIndex`/`baseZIndex` on Menubar were only forwarded to MenubarSub, which never read them (the
+ * mobile menu layers with the configured `zIndex.menu` directly), and MenubarSub's own `autoZIndex`/
+ * `baseZIndex`/`mobileActive`/`ariaLabel`/`ariaLabelledBy` were never read either (Menubar sets the aria
+ * attributes on the root list itself and `mobileActive` was only passed down to nested submenus).
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -82,7 +86,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-contextmenu-sub', names: ['autoZIndex', 'baseZIndex', 'popup'] },
     { selector: 'p-tieredMenu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-tieredmenu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-tiered-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-tiered-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-menubar', names: ['autoZIndex', 'baseZIndex'] },
+    { selector: 'p-menubarSub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] },
+    { selector: 'p-menubarsub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] }
 ];
 
 /**
@@ -96,9 +103,12 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * SplitButton's `plain` is left out too: Button and pButton still expose a working `plain`.
  * ContextMenuSub's `autoZIndex`, `baseZIndex` and `popup` are left out too: ContextMenu itself and every
  * other overlay component still expose them.
+ * Menubar's and MenubarSub's `autoZIndex`/`baseZIndex`/`mobileActive`/`ariaLabel`/`ariaLabelledBy` are left
+ * out as well: Menu, TieredMenu, ContextMenu and most other components still expose working inputs of
+ * the same names.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel' && name !== 'plain' && name !== 'autoZIndex' && name !== 'baseZIndex' && name !== 'popup'
+    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'].includes(name)
 );
 
 /**
@@ -124,8 +134,10 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * animation); Password's deprecated showTransitionOptions/hideTransitionOptions, stored but never
  * read (motionOptions drives the overlay animation); Button's deprecated badgeClass, stored but
  * never read (badgeSeverity styles the inner badge); ContextMenuSub's autoZIndex/baseZIndex/popup,
- * stored but never read (the parent ContextMenu handles layering); and TieredMenu's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation).
+ * stored but never read (the parent ContextMenu handles layering); TieredMenu's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation); and
+ * Menubar's autoZIndex/baseZIndex plus MenubarSub's autoZIndex/baseZIndex/mobileActive/ariaLabel/
+ * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

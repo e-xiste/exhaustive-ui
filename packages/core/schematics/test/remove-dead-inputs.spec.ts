@@ -295,6 +295,43 @@ describe('remove-dead-inputs', () => {
         );
     });
 
+    it('removes the never-read autoZIndex/baseZIndex from p-menubar and the never-read inputs of p-menubarSub while keeping the live ones', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-menubar [model]="items" [autoZIndex]="false" baseZIndex="100" [autoDisplay]="false" ariaLabel="Main"></p-menubar>\n<p-menubarSub [items]="items" [autoZIndex]="true" [baseZIndex]="10" [mobileActive]="mobile" ariaLabel="Menu" [ariaLabelledBy]="labelId" [level]="1"></p-menubarSub>\n<p-menubarsub [items]="items" mobileActive [autoDisplay]="true"></p-menubarsub>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('ZIndex');
+        expect(html).not.toContain('mobileActive');
+        expect(html).toBe(`<p-menubar [model]="items" [autoDisplay]="false" ariaLabel="Main"></p-menubar>\n<p-menubarSub [items]="items" [level]="1"></p-menubarSub>\n<p-menubarsub [items]="items" [autoDisplay]="true"></p-menubarsub>\n`);
+    });
+
+    it('keeps autoZIndex/baseZIndex and ariaLabel on components that still read them', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-menu [model]="items" [autoZIndex]="false" baseZIndex="100" ariaLabel="Menu"></p-menu>\n<p-menu [model]="items" [popup]="true" [ariaLabelledBy]="labelId"></p-menu>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
+    it('does not report a programmatic autoZIndex or ariaLabel access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    layer(menu: { autoZIndex: boolean; ariaLabel: string }) {\n        return menu.autoZIndex ? menu.ariaLabel : '';\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
     it('keeps ariaCloseLabel on components that still read it', async () => {
         const runner = createMigrationRunner();
         const content = `<p-drawer ariaCloseLabel="Close drawer"></p-drawer>\n<p-dialog [ariaCloseLabel]="closeLabel"></p-dialog>\n`;

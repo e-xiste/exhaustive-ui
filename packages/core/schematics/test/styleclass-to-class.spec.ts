@@ -1327,6 +1327,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-input-number class="existing my-inputnumber" [(ngModel)]="value"></p-input-number>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-menubar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-menubar [model]="items" styleClass="my-menubar"></p-menubar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-menubar [model]="items" class="my-menubar"></p-menubar>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-menubar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-menubar [model]="items" [styleClass]="menubarClass" [autoDisplay]="false"></p-menubar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-menubar [model]="items" [class]="menubarClass" [autoDisplay]="false"></p-menubar>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-menubar', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-menubar class="existing" styleClass="my-menubar"></p-menubar>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-menubar class="existing my-menubar"></p-menubar>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
