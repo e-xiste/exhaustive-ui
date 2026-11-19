@@ -887,6 +887,41 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-checkBox class="a"></p-checkBox>\n<p-check-box [class]="b"></p-check-box>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-panel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panel header="Header" styleClass="my-panel"></p-panel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panel header="Header" class="my-panel"></p-panel>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-panel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panel [styleClass]="myClass" [toggleable]="true"></p-panel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panel [class]="myClass" [toggleable]="true"></p-panel>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-panel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panel class="existing" styleClass="my-panel"></p-panel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panel class="existing my-panel"></p-panel>\n`);
+    });
+
+    it('does not rewrite styleClass on p-panelmenu', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-panelmenu [model]="items" styleClass="my-menu"></p-panelmenu>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

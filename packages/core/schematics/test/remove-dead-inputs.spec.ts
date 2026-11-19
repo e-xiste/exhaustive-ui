@@ -112,9 +112,27 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-fieldset [(collapsed)]="collapsed"></p-fieldset>\n`);
     });
 
-    it('does not remove transitionOptions from p-panel', async () => {
+    it('removes the deprecated transitionOptions from p-panel while keeping motionOptions', async () => {
         const runner = createMigrationRunner();
-        const content = `<p-panel header="Header" transitionOptions="200ms ease-in"></p-panel>\n`;
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panel header="Header" [toggleable]="true" transitionOptions="200ms ease-in" [motionOptions]="motion"></p-panel>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panel header="Header" [toggleable]="true" [motionOptions]="motion"></p-panel>\n`);
+    });
+
+    it('removes a bound [transitionOptions] from p-panel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panel [transitionOptions]="transition" [(collapsed)]="collapsed"></p-panel>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panel [(collapsed)]="collapsed"></p-panel>\n`);
+    });
+
+    it('does not remove transitionOptions from p-accordion', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-accordion transitionOptions="200ms ease-in"></p-accordion>\n`;
         const tree = createAppTree({ '/src/app/app.html': content });
         const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(content);
