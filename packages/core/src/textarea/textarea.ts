@@ -1,14 +1,12 @@
-import { booleanAttribute, computed, Directive, effect, HostListener, inject, InjectionToken, input, Input, NgModule, output } from '@angular/core';
+import { afterEveryRender, booleanAttribute, computed, DestroyRef, Directive, effect, HostListener, inject, input, NgModule, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { BaseModelHolder } from '@exhaustive-ui/core/basemodelholder';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { Fluid } from '@exhaustive-ui/core/fluid';
 import { TextareaPassThrough } from '@exhaustive-ui/core/types/textarea';
-import { Subscription } from 'rxjs';
 import { TextareaStyle } from './style/textareastyle';
-
-const TEXTAREA_INSTANCE = new InjectionToken<Textarea>('TEXTAREA_INSTANCE');
 
 /**
  * Textarea adds styling and autoResize functionality to standard textarea element.
@@ -16,19 +14,16 @@ const TEXTAREA_INSTANCE = new InjectionToken<Textarea>('TEXTAREA_INSTANCE');
  */
 @Directive({
     selector: '[pTextarea], [pInputTextarea]',
-    standalone: true,
     host: {
         '[class]': "cx('root')"
     },
-    providers: [TextareaStyle, { provide: TEXTAREA_INSTANCE, useExisting: Textarea }, { provide: PARENT_INSTANCE, useExisting: Textarea }],
+    providers: [TextareaStyle, { provide: PARENT_INSTANCE, useExisting: Textarea }],
     hostDirectives: [Bind]
 })
 export class Textarea extends BaseModelHolder<TextareaPassThrough> {
     componentName = 'Textarea';
 
     bindDirectiveInstance = inject(Bind, { self: true });
-
-    $pcTextarea: Textarea | undefined = inject(TEXTAREA_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
     /**
      * Used to pass attributes to DOM elements inside the Textarea component.
@@ -47,12 +42,12 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
      * When present, textarea size changes as being typed.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoResize: boolean | undefined;
+    readonly autoResize = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Defines the size of the component.
      * @group Props
      */
-    @Input() pSize: 'large' | 'small';
+    readonly pSize = input<'large' | 'small' | undefined>();
     /**
      * Specifies the input variant of the component.
      * @defaultValue undefined
@@ -80,7 +75,7 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
      */
     readonly onResize = output<Event | {}>();
 
-    ngControlSubscription: Subscription | undefined;
+    destroyRef = inject(DestroyRef);
 
     _componentStyle = inject(TextareaStyle);
 
@@ -88,9 +83,7 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
 
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
-    get hasFluid() {
-        return this.fluid() ?? !!this.pcFluid;
-    }
+    readonly hasFluid = computed(() => this.fluid() ?? !!this.pcFluid);
 
     constructor() {
         super();
@@ -102,28 +95,28 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
         effect(() => {
             this.pTextareaUnstyled() && this.directiveUnstyled.set(this.pTextareaUnstyled());
         });
+
+        afterEveryRender(() => {
+            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+        });
     }
 
     onInit() {
         if (this.ngControl) {
-            this.ngControlSubscription = (this.ngControl as any).valueChanges.subscribe(() => {
+            (this.ngControl as any).valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
                 this.updateState();
             });
         }
     }
 
-    onAfterViewInit() {
-        if (this.autoResize) this.resize();
-
-        this.cd.detectChanges();
+    onDoCheck() {
+        this.writeModelValue(this.ngControl?.value ?? this.el.nativeElement.value);
     }
 
     onAfterViewChecked() {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-        if (this.autoResize) {
+        if (this.autoResize()) {
             this.resize();
         }
-        this.writeModelValue(this.ngControl?.value ?? this.el.nativeElement.value);
     }
 
     @HostListener('input', ['$event'])
@@ -147,14 +140,8 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
     }
 
     updateState() {
-        if (this.autoResize) {
+        if (this.autoResize()) {
             this.resize();
-        }
-    }
-
-    onDestroy() {
-        if (this.ngControlSubscription) {
-            this.ngControlSubscription.unsubscribe();
         }
     }
 }

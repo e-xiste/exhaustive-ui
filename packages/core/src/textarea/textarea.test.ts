@@ -145,7 +145,8 @@ describe('Textarea', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(textareaDirective.autoResize).toBe(true);
+            expect(textareaDirective.autoResize()).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-resizable')).toBe(true);
 
             // Simulate text input that would require resize
             component.content = 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5';
@@ -164,14 +165,19 @@ describe('Textarea', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(textareaDirective.pSize).toBe('large');
+            expect(textareaDirective.pSize()).toBe('large');
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-lg')).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-inputfield-lg')).toBe(true);
 
             component.size = 'small';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(textareaDirective.pSize).toBe('small');
+            expect(textareaDirective.pSize()).toBe('small');
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-sm')).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-inputfield-sm')).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-lg')).toBe(false);
         });
 
         it('should apply variant styles', async () => {
@@ -181,6 +187,7 @@ describe('Textarea', () => {
             fixture.detectChanges();
 
             expect(textareaDirective.variant()).toBe('filled');
+            expect(textareaEl.nativeElement.classList.contains('p-variant-filled')).toBe(true);
 
             component.variant = 'outlined';
             fixture.changeDetectorRef.markForCheck();
@@ -188,20 +195,45 @@ describe('Textarea', () => {
             fixture.detectChanges();
 
             expect(textareaDirective.variant()).toBe('outlined');
+            expect(textareaEl.nativeElement.classList.contains('p-variant-filled')).toBe(false);
         });
 
-        it('should apply fluid styling', () => {
+        it('should apply fluid styling', async () => {
             component.fluid = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
             fixture.detectChanges();
 
             expect(textareaDirective.fluid()).toBe(true);
+            expect(textareaDirective.hasFluid()).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-fluid')).toBe(true);
+
+            component.fluid = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(textareaDirective.fluid()).toBe(false);
+            expect(textareaDirective.hasFluid()).toBe(false);
+            expect(textareaEl.nativeElement.classList.contains('p-textarea-fluid')).toBe(false);
         });
 
-        it('should apply invalid state', () => {
+        it('should apply invalid state', async () => {
             component.invalid = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
             fixture.detectChanges();
 
             expect(textareaDirective.invalid()).toBe(true);
+            expect(textareaEl.nativeElement.classList.contains('p-invalid')).toBe(true);
+
+            component.invalid = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(textareaDirective.invalid()).toBe(false);
+            expect(textareaEl.nativeElement.classList.contains('p-invalid')).toBe(false);
         });
 
         it('should emit resize events', async () => {
@@ -470,12 +502,12 @@ describe('Textarea', () => {
                 let instanceAccessed = false;
                 component.pt = {
                     root: ({ instance }) => {
-                        if ((instance as any)?.autoResize) {
+                        if ((instance as any)?.autoResize()) {
                             instanceAccessed = true;
                         }
                         return {
                             class: {
-                                AUTO_RESIZE_ENABLED: (instance as any)?.autoResize
+                                AUTO_RESIZE_ENABLED: (instance as any)?.autoResize()
                             }
                         };
                     }
