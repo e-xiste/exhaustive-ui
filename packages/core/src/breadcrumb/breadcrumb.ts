@@ -55,7 +55,7 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                                         }
                                     }
                                     @if (home.badge) {
-                                        <p-badge [styleClass]="home.badgeStyleClass" [value]="home.badge" [pt]="ptm('pcBadge')" [unstyled]="unstyled()" />
+                                        <p-badge [class]="home.badgeStyleClass" [value]="home.badge" [pt]="ptm('pcBadge')" [unstyled]="unstyled()" />
                                     }
                                 </a>
                             }
@@ -95,7 +95,7 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                                         }
                                     }
                                     @if (home.badge) {
-                                        <p-badge [styleClass]="home.badgeStyleClass" [value]="home.badge" [pt]="ptm('pcBadge')" [unstyled]="unstyled()" />
+                                        <p-badge [class]="home.badgeStyleClass" [value]="home.badge" [pt]="ptm('pcBadge')" [unstyled]="unstyled()" />
                                     }
                                 </a>
                             }
@@ -149,7 +149,7 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                                                 }
                                             }
                                             @if (menuitem?.badge) {
-                                                <p-badge [styleClass]="menuitem?.badgeStyleClass" [value]="menuitem?.badge" [pt]="getPTOptions(menuitem, i, 'pcBadge')" [unstyled]="unstyled()" />
+                                                <p-badge [class]="menuitem?.badgeStyleClass" [value]="menuitem?.badge" [pt]="getPTOptions(menuitem, i, 'pcBadge')" [unstyled]="unstyled()" />
                                             }
                                         }
                                     </a>
@@ -187,7 +187,7 @@ const BREADCRUMB_INSTANCE = new InjectionToken<Breadcrumb>('BREADCRUMB_INSTANCE'
                                             }
                                         }
                                         @if (menuitem?.badge) {
-                                            <p-badge [styleClass]="menuitem?.badgeStyleClass" [value]="menuitem?.badge" [pt]="getPTOptions(menuitem, i, 'pcBadge')" [unstyled]="unstyled()" />
+                                            <p-badge [class]="menuitem?.badgeStyleClass" [value]="menuitem?.badge" [pt]="getPTOptions(menuitem, i, 'pcBadge')" [unstyled]="unstyled()" />
                                         }
                                     </a>
                                 }

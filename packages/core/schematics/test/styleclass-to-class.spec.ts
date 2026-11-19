@@ -824,6 +824,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-blockUI class="a"></p-blockUI>\n<p-block-ui [class]="b"></p-block-ui>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-badge', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-badge value="2" severity="danger" styleClass="my-badge"></p-badge>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-badge value="2" severity="danger" class="my-badge"></p-badge>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-badge', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-badge [styleClass]="item.badgeStyleClass" [value]="item.badge" />\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-badge [class]="item.badgeStyleClass" [value]="item.badge" />\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-badge', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-badge class="existing" styleClass="my-badge"></p-badge>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-badge class="existing my-badge"></p-badge>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

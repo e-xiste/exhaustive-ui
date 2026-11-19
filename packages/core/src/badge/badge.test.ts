@@ -56,10 +56,38 @@ class TestDisabledBadgeComponent {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     selector: 'test-style-class-badge',
-    template: `<p-badge [styleClass]="styleClass" value="1"></p-badge>`
+    template: `<p-badge [class]="styleClass" value="1"></p-badge>`
 })
 class TestStyleClassBadgeComponent {
     styleClass = 'custom-badge';
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    selector: 'test-legacy-size-badge',
+    template: `<p-badge [size]="size" value="1"></p-badge>`
+})
+class TestLegacySizeBadgeComponent {
+    size: 'small' | 'large' | 'xlarge' | null = null as any;
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    selector: 'test-host-element',
+    template: `<span class="inner">Host</span>`
+})
+class TestHostElementComponent {}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    selector: 'test-directive-host-element-badge',
+    template: `<test-host-element pBadge [value]="value"></test-host-element>`
+})
+class TestDirectiveHostElementBadgeComponent {
+    value: string | number = '3';
 }
 
 @Component({
@@ -82,6 +110,17 @@ class TestDirectiveBadgeComponent {
 class TestDirectiveSizeBadgeComponent {
     value: string | number = '1';
     size: 'large' | 'xlarge' | 'small' | null | undefined;
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    selector: 'test-directive-badge-size-badge',
+    template: `<button pBadge [value]="value" [badgeSize]="badgeSize">Button</button>`
+})
+class TestDirectiveBadgeSizeBadgeComponent {
+    value: string | number = '1';
+    badgeSize: 'large' | 'xlarge' | 'small' | null | undefined;
 }
 
 @Component({
@@ -133,7 +172,7 @@ class TestDeprecatedSizeBadgeComponent {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     selector: 'test-dynamic-badge',
-    template: ` <p-badge [value]="value" [badgeSize]="badgeSize" [severity]="severity" [badgeDisabled]="disabled" [styleClass]="styleClass"> </p-badge> `
+    template: ` <p-badge [value]="value" [badgeSize]="badgeSize" [severity]="severity" [badgeDisabled]="disabled" [class]="styleClass"> </p-badge> `
 })
 class TestDynamicBadgeComponent {
     value: string | number | null = '1';
@@ -154,8 +193,12 @@ describe('Badge', () => {
                 TestSeverityBadgeComponent,
                 TestDisabledBadgeComponent,
                 TestStyleClassBadgeComponent,
+                TestLegacySizeBadgeComponent,
+                TestHostElementComponent,
+                TestDirectiveHostElementBadgeComponent,
                 TestDirectiveBadgeComponent,
                 TestDirectiveSizeBadgeComponent,
+                TestDirectiveBadgeSizeBadgeComponent,
                 TestDirectiveSeverityBadgeComponent,
                 TestDirectiveDisabledBadgeComponent,
                 TestDirectiveStyleBadgeComponent,
@@ -191,7 +234,6 @@ describe('Badge', () => {
                 expect(component.size()).toBeUndefined();
                 expect(component.severity()).toBeUndefined();
                 expect(component.badgeDisabled()).toBe(false);
-                expect(component.styleClass()).toBeUndefined();
             });
 
             it('should apply base CSS classes', () => {
@@ -328,6 +370,41 @@ describe('Badge', () => {
                 await fixture.whenStable();
                 expect(element.classList.contains('p-badge-lg')).toBe(false);
                 expect(element.classList.contains('p-badge-sm')).toBe(true);
+            });
+        });
+
+        describe('Legacy Size Input', () => {
+            let fixture: ComponentFixture<TestLegacySizeBadgeComponent>;
+            let component: TestLegacySizeBadgeComponent;
+            let badge: Badge;
+            let element: HTMLElement;
+
+            beforeEach(async () => {
+                fixture = TestBed.createComponent(TestLegacySizeBadgeComponent);
+                component = fixture.componentInstance;
+                await fixture.whenStable();
+
+                const badgeDebugElement = fixture.debugElement.query(By.directive(Badge));
+                badge = badgeDebugElement.componentInstance;
+                element = badgeDebugElement.nativeElement;
+            });
+
+            it('should apply the size class and data-p through the size input', async () => {
+                component.size = 'large';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(badge.size()).toBe('large');
+                expect(element.classList.contains('p-badge-lg')).toBe(true);
+                expect(element.getAttribute('data-p')).toContain('large');
+
+                component.size = 'xlarge';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(element.classList.contains('p-badge-lg')).toBe(false);
+                expect(element.classList.contains('p-badge-xl')).toBe(true);
+                expect(element.getAttribute('data-p')).toContain('xlarge');
             });
         });
 
@@ -534,6 +611,103 @@ describe('Badge', () => {
 
                 const badgeElement = buttonElement.querySelector('.p-badge');
                 expect(badgeElement?.classList.contains('p-badge-circle')).toBe(true);
+            });
+
+            it('should expose the inputs and the created badge element as signals', async () => {
+                expect(directive.value()).toBe('5');
+                expect(directive.badgeSize()).toBeUndefined();
+                expect(directive.size()).toBeUndefined();
+                expect(directive.severity()).toBeUndefined();
+                expect(directive.disabled()).toBeUndefined();
+                expect(directive.badgeStyle()).toBeUndefined();
+                expect(directive.badgeStyleClass()).toBeUndefined();
+                expect(directive.badgeEl()).toBe(buttonElement.querySelector('.p-badge') as HTMLElement);
+
+                component.value = '10';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(directive.value()).toBe('10');
+            });
+
+            it('should create a single badge element', () => {
+                expect(buttonElement.querySelectorAll('.p-badge').length).toBe(1);
+            });
+        });
+
+        describe('Directive on a component host', () => {
+            let fixture: ComponentFixture<TestDirectiveHostElementBadgeComponent>;
+            let component: TestDirectiveHostElementBadgeComponent;
+            let hostElement: HTMLElement;
+
+            beforeEach(async () => {
+                fixture = TestBed.createComponent(TestDirectiveHostElementBadgeComponent);
+                component = fixture.componentInstance;
+                await fixture.whenStable();
+
+                hostElement = fixture.debugElement.query(By.directive(BadgeDirective)).nativeElement;
+            });
+
+            it('should render the badge inside the first child of the component host', () => {
+                const inner = hostElement.querySelector('.inner') as HTMLElement;
+                expect(inner.classList.contains('p-overlay-badge')).toBe(true);
+                expect(inner.querySelector('.p-badge')?.textContent?.trim()).toBe('3');
+                expect(hostElement.classList.contains('p-overlay-badge')).toBe(false);
+            });
+
+            it('should update the badge value inside the component host', async () => {
+                component.value = '42';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(hostElement.querySelector('.inner .p-badge')?.textContent?.trim()).toBe('42');
+            });
+        });
+
+        describe('Directive Badge Size Variants', () => {
+            let fixture: ComponentFixture<TestDirectiveBadgeSizeBadgeComponent>;
+            let component: TestDirectiveBadgeSizeBadgeComponent;
+            let buttonElement: HTMLElement;
+
+            beforeEach(async () => {
+                fixture = TestBed.createComponent(TestDirectiveBadgeSizeBadgeComponent);
+                component = fixture.componentInstance;
+                await fixture.whenStable();
+
+                buttonElement = fixture.debugElement.query(By.directive(BadgeDirective)).nativeElement;
+            });
+
+            it('should apply large size class', async () => {
+                component.badgeSize = 'large';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const badgeElement = buttonElement.querySelector('.p-badge');
+                expect(badgeElement?.classList.contains('p-badge-lg')).toBe(true);
+            });
+
+            it('should change size classes dynamically', async () => {
+                component.badgeSize = 'large';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const badgeElement = buttonElement.querySelector('.p-badge');
+                expect(badgeElement?.classList.contains('p-badge-lg')).toBe(true);
+                expect(badgeElement?.classList.contains('p-badge-xl')).toBe(false);
+
+                component.badgeSize = 'xlarge';
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(badgeElement?.classList.contains('p-badge-lg')).toBe(false);
+                expect(badgeElement?.classList.contains('p-badge-xl')).toBe(true);
+
+                component.badgeSize = null;
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(badgeElement?.classList.contains('p-badge-lg')).toBe(false);
+                expect(badgeElement?.classList.contains('p-badge-xl')).toBe(false);
             });
         });
 

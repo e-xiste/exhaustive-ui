@@ -85,7 +85,7 @@ const DOCK_INSTANCE = new InjectionToken<Dock>('DOCK_INSTANCE');
                                         }
                                         <ng-container *ngTemplateOutlet="itemTemplate() || itemTemplate(); context: { $implicit: item }"></ng-container>
                                         @if (item.badge) {
-                                            <p-badge [styleClass]="item.badgeStyleClass" [value]="item.badge" [pt]="getPTOptions(item, i, 'pcBadge')" [unstyled]="unstyled()" />
+                                            <p-badge [class]="item.badgeStyleClass" [value]="item.badge" [pt]="getPTOptions(item, i, 'pcBadge')" [unstyled]="unstyled()" />
                                         }
                                     </a>
                                 } @else {
@@ -110,7 +110,7 @@ const DOCK_INSTANCE = new InjectionToken<Dock>('DOCK_INSTANCE');
                                         }
                                         <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item }"></ng-container>
                                         @if (item.badge) {
-                                            <p-badge [styleClass]="item.badgeStyleClass" [value]="item.badge" [pt]="getPTOptions(item, i, 'pcBadge')" [unstyled]="unstyled()" />
+                                            <p-badge [class]="item.badgeStyleClass" [value]="item.badge" [pt]="getPTOptions(item, i, 'pcBadge')" [unstyled]="unstyled()" />
                                         }
                                     </a>
                                 }

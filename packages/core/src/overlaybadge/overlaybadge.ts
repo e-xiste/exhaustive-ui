@@ -17,7 +17,7 @@ import { OverlayBadgeStyle } from './style/overlaybadgestyle';
     template: `
         <div [class]="cx('root')" [pBind]="ptm('root')">
             <ng-content></ng-content>
-            <p-badge [pt]="ptm('pcBadge')" [styleClass]="styleClass()" [style]="style()" [badgeSize]="badgeSize()" [severity]="severity()" [value]="value()" [badgeDisabled]="badgeDisabled()" />
+            <p-badge [pt]="ptm('pcBadge')" [class]="styleClass()" [style]="style()" [badgeSize]="badgeSize()" [severity]="severity()" [value]="value()" [badgeDisabled]="badgeDisabled()" />
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,

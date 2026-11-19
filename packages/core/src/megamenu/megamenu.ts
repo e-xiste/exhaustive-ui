@@ -167,7 +167,7 @@ const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INST
                                         ></span>
                                     }
                                     @if (getItemProp(processedItem, 'badge')) {
-                                        <p-badge [styleClass]="getItemProp(processedItem, 'badgeStyleClass')" [value]="getItemProp(processedItem, 'badge')" [unstyled]="unstyled()" />
+                                        <p-badge [class]="getItemProp(processedItem, 'badgeStyleClass')" [value]="getItemProp(processedItem, 'badge')" [unstyled]="unstyled()" />
                                     }
                                     @if (isItemGroup(processedItem)) {
                                         @if (!megaMenu.submenuIconTemplate() && !megaMenu._submenuIconTemplate) {
