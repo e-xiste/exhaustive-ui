@@ -1057,6 +1057,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-scrollpanel class="existing my-panel"></p-scrollpanel>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-image', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-image src="image.jpg" alt="Image" width="250" styleClass="my-image"></p-image>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-image src="image.jpg" alt="Image" width="250" class="my-image"></p-image>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-image', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-image [src]="src" [preview]="true" [styleClass]="imageClass"></p-image>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-image [src]="src" [preview]="true" [class]="imageClass"></p-image>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-image', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-image class="existing" styleClass="my-image"></p-image>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-image class="existing my-image"></p-image>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

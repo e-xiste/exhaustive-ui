@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -7,9 +8,7 @@ import {
     ElementRef,
     HostListener,
     inject,
-    InjectionToken,
     input,
-    Input,
     NgModule,
     signal,
     TemplateRef,
@@ -34,39 +33,36 @@ import { ImageImageTemplateContext, ImagePassThrough, ImagePreviewTemplateContex
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { ImageStyle } from './style/imagestyle';
 
-const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
-
 /**
  * Displays an image with preview and tranformation options. For multiple image, see Galleria.
  * @group Components
  */
 @Component({
     selector: 'p-image',
-    standalone: true,
     imports: [CommonModule, RefreshIcon, EyeIcon, UndoIcon, SearchMinusIcon, SearchPlusIcon, TimesIcon, FocusTrap, SharedModule, BindModule, MotionModule],
     template: `
-        @if (!imageTemplate() && !_imageTemplate) {
+        @if (!imageTemplate() && !_imageTemplate()) {
             <img
-                [attr.src]="src"
-                [attr.srcset]="srcSet"
-                [attr.sizes]="sizes"
-                [attr.alt]="alt"
-                [attr.width]="width"
-                [attr.height]="height"
-                [attr.loading]="loading"
-                [ngStyle]="imageStyle"
-                [class]="imageClass"
+                [attr.src]="src()"
+                [attr.srcset]="srcSet()"
+                [attr.sizes]="sizes()"
+                [attr.alt]="alt()"
+                [attr.width]="width()"
+                [attr.height]="height()"
+                [attr.loading]="loading()"
+                [ngStyle]="imageStyle()"
+                [class]="imageClass()"
                 (error)="imageError($event)"
                 [pBind]="ptm('image')"
             />
         }
 
-        <ng-container *ngTemplateOutlet="imageTemplate() || _imageTemplate; context: { errorCallback: imageError.bind(this) }"></ng-container>
+        <ng-container *ngTemplateOutlet="imageTemplate() || _imageTemplate(); context: { errorCallback: imageError.bind(this) }"></ng-container>
 
-        @if (preview) {
-            <button [attr.aria-label]="zoomImageAriaLabel" type="button" [class]="cx('previewMask')" (click)="onImageClick()" #previewButton [ngStyle]="{ height: height + 'px', width: width + 'px' }" [pBind]="ptm('previewMask')">
-                @if (indicatorTemplate() || _indicatorTemplate) {
-                    <ng-container *ngTemplateOutlet="indicatorTemplate() || _indicatorTemplate"></ng-container>
+        @if (preview()) {
+            <button [attr.aria-label]="zoomImageAriaLabel" type="button" [class]="cx('previewMask')" (click)="onImageClick()" #previewButton [ngStyle]="{ height: height() + 'px', width: width() + 'px' }" [pBind]="ptm('previewMask')">
+                @if (indicatorTemplate() || _indicatorTemplate()) {
+                    <ng-container *ngTemplateOutlet="indicatorTemplate() || _indicatorTemplate()"></ng-container>
                 } @else {
                     <svg data-p-icon="eye" [class]="cx('previewIcon')" [pBind]="ptm('previewIcon')" />
                 }
@@ -76,13 +72,13 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
             <div
                 #mask
                 [class]="cx('mask')"
-                [attr.aria-modal]="maskVisible"
+                [attr.aria-modal]="maskVisible()"
                 role="dialog"
                 (click)="onMaskClick()"
                 (keydown)="onMaskKeydown($event)"
                 pFocusTrap
                 [pBind]="ptm('mask')"
-                [pMotion]="maskVisible"
+                [pMotion]="maskVisible()"
                 [pMotionAppear]="true"
                 [pMotionEnterActiveClass]="'p-overlay-mask-enter-active'"
                 [pMotionLeaveActiveClass]="'p-overlay-mask-leave-active'"
@@ -91,43 +87,51 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
             >
                 <div [class]="cx('toolbar')" (click)="handleToolbarClick($event)" [pBind]="ptm('toolbar')">
                     <button [class]="cx('rotateRightButton')" (click)="rotateRight()" type="button" [attr.aria-label]="rightAriaLabel()" [pBind]="ptm('rotateRightButton')">
-                        @if (!rotateRightIconTemplate() && !_rotateRightIconTemplate) {
+                        @if (!rotateRightIconTemplate() && !_rotateRightIconTemplate()) {
                             <svg data-p-icon="refresh" />
                         }
-                        <ng-template *ngTemplateOutlet="rotateRightIconTemplate() || _rotateRightIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="rotateRightIconTemplate() || _rotateRightIconTemplate()"></ng-template>
                     </button>
                     <button [class]="cx('rotateLeftButton')" (click)="rotateLeft()" type="button" [attr.aria-label]="leftAriaLabel()" [pBind]="ptm('rotateLeftButton')">
-                        @if (!rotateLeftIconTemplate() && !_rotateLeftIconTemplate) {
+                        @if (!rotateLeftIconTemplate() && !_rotateLeftIconTemplate()) {
                             <svg data-p-icon="undo" />
                         }
-                        <ng-template *ngTemplateOutlet="rotateLeftIconTemplate() || _rotateLeftIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="rotateLeftIconTemplate() || _rotateLeftIconTemplate()"></ng-template>
                     </button>
-                    <button [class]="cx('zoomOutButton')" (click)="zoomOut()" type="button" [disabled]="isZoomOutDisabled" [attr.aria-label]="zoomOutAriaLabel()" [pBind]="ptm('zoomOutButton')">
-                        @if (!zoomOutIconTemplate() && !_zoomOutIconTemplate) {
+                    <button [class]="cx('zoomOutButton')" (click)="zoomOut()" type="button" [disabled]="isZoomOutDisabled()" [attr.aria-label]="zoomOutAriaLabel()" [pBind]="ptm('zoomOutButton')">
+                        @if (!zoomOutIconTemplate() && !_zoomOutIconTemplate()) {
                             <svg data-p-icon="search-minus" />
                         }
-                        <ng-template *ngTemplateOutlet="zoomOutIconTemplate() || _zoomOutIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="zoomOutIconTemplate() || _zoomOutIconTemplate()"></ng-template>
                     </button>
-                    <button [class]="cx('zoomInButton')" (click)="zoomIn()" type="button" [disabled]="isZoomInDisabled" [attr.aria-label]="zoomInAriaLabel()" [pBind]="ptm('zoomInButton')">
-                        @if (!zoomInIconTemplate() && !_zoomInIconTemplate) {
+                    <button [class]="cx('zoomInButton')" (click)="zoomIn()" type="button" [disabled]="isZoomInDisabled()" [attr.aria-label]="zoomInAriaLabel()" [pBind]="ptm('zoomInButton')">
+                        @if (!zoomInIconTemplate() && !_zoomInIconTemplate()) {
                             <svg data-p-icon="search-plus" />
                         }
-                        <ng-template *ngTemplateOutlet="zoomInIconTemplate() || _zoomInIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="zoomInIconTemplate() || _zoomInIconTemplate()"></ng-template>
                     </button>
                     <button [class]="cx('closeButton')" type="button" (click)="closePreview()" [attr.aria-label]="closeAriaLabel()" #closeButton [pBind]="ptm('closeButton')">
-                        @if (!closeIconTemplate() && !_closeIconTemplate) {
+                        @if (!closeIconTemplate() && !_closeIconTemplate()) {
                             <svg data-p-icon="times" />
                         }
-                        <ng-template *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate"></ng-template>
+                        <ng-template *ngTemplateOutlet="closeIconTemplate() || _closeIconTemplate()"></ng-template>
                     </button>
                 </div>
                 @if (renderPreview()) {
-                    <p-motion [visible]="previewVisible" name="p-image-original" [appear]="true" [options]="computedMotionOptions()" (onBeforeEnter)="onAnimationStart($event)" (onBeforeLeave)="onBeforeLeave()" (onAfterLeave)="onAnimationEnd($event)">
-                        @if (!previewTemplate() && !_previewTemplate) {
+                    <p-motion
+                        [visible]="previewVisible()"
+                        name="p-image-original"
+                        [appear]="true"
+                        [options]="computedMotionOptions()"
+                        (onBeforeEnter)="onAnimationStart($event)"
+                        (onBeforeLeave)="onBeforeLeave()"
+                        (onAfterLeave)="onAnimationEnd($event)"
+                    >
+                        @if (!previewTemplate() && !_previewTemplate()) {
                             <img
-                                [attr.src]="previewImageSrc ? previewImageSrc : src"
-                                [attr.srcset]="previewImageSrcSet"
-                                [attr.sizes]="previewImageSizes"
+                                [attr.src]="previewImageSrc() ? previewImageSrc() : src()"
+                                [attr.srcset]="previewImageSrcSet()"
+                                [attr.sizes]="previewImageSizes()"
                                 [class]="cx('original')"
                                 [ngStyle]="imagePreviewStyle()"
                                 (click)="onPreviewImageClick()"
@@ -136,7 +140,7 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
                         }
                         <ng-container
                             *ngTemplateOutlet="
-                                previewTemplate() || _previewTemplate;
+                                previewTemplate() || _previewTemplate();
                                 context: {
                                     class: cx('original'),
                                     style: imagePreviewStyle(),
@@ -152,113 +156,86 @@ const IMAGE_INSTANCE = new InjectionToken<Image>('IMAGE_INSTANCE');
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [ImageStyle, { provide: IMAGE_INSTANCE, useExisting: Image }, { provide: PARENT_INSTANCE, useExisting: Image }],
+    providers: [ImageStyle, { provide: PARENT_INSTANCE, useExisting: Image }],
     host: {
-        '[class]': "cn(cx('root'),styleClass)"
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind]
 })
 export class Image extends BaseComponent<ImagePassThrough> {
     componentName = 'Image';
 
-    $pcImage: Image | undefined = inject(IMAGE_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
+
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+    }
     /**
      * Style class of the image element.
      * @group Props
      */
-    @Input() imageClass: string | undefined;
+    imageClass = input<string | undefined>(undefined);
     /**
      * Inline style of the image element.
      * @group Props
      */
-    @Input() imageStyle: { [klass: string]: any } | null | undefined;
-    /**
-     * Class of the element.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    imageStyle = input<{ [klass: string]: any } | null | undefined>(undefined);
     /**
      * The source path for the main image.
      * @group Props
      */
-    @Input() src: string | SafeUrl | undefined;
+    src = input<string | SafeUrl | undefined>(undefined);
     /**
      * The srcset definition for the main image.
      * @group Props
      */
-    @Input() srcSet: string | SafeUrl | undefined;
+    srcSet = input<string | SafeUrl | undefined>(undefined);
     /**
      * The sizes definition for the main image.
      * @group Props
      */
-    @Input() sizes: string | undefined;
+    sizes = input<string | undefined>(undefined);
     /**
      * The source path for the preview image.
      * @group Props
      */
-    @Input() previewImageSrc: string | SafeUrl | undefined;
+    previewImageSrc = input<string | SafeUrl | undefined>(undefined);
     /**
      * The srcset definition for the preview image.
      * @group Props
      */
-    @Input() previewImageSrcSet: string | SafeUrl | undefined;
+    previewImageSrcSet = input<string | SafeUrl | undefined>(undefined);
     /**
      * The sizes definition for the preview image.
      * @group Props
      */
-    @Input() previewImageSizes: string | undefined;
+    previewImageSizes = input<string | undefined>(undefined);
     /**
      * Attribute of the preview image element.
      * @group Props
      */
-    @Input() alt: string | undefined;
+    alt = input<string | undefined>(undefined);
     /**
      * Attribute of the image element.
      * @group Props
      */
-    @Input() width: string | undefined;
+    width = input<string | undefined>(undefined);
     /**
      * Attribute of the image element.
      * @group Props
      */
-    @Input() height: string | undefined;
+    height = input<string | undefined>(undefined);
     /**
      * Attribute of the image element.
      * @group Props
      */
-    @Input() loading: 'lazy' | 'eager' | undefined;
+    loading = input<'lazy' | 'eager' | undefined>(undefined);
     /**
      * Controls the preview functionality.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) preview: boolean = false;
-    /**
-     * Transition options of the show animation
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() showTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
-    /**
-     * Transition options of the hide animation
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() hideTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
-    /**
-     * Enter animation class name of modal.
-     * @defaultValue 'p-modal-enter'
-     * @group Props
-     */
-    modalEnterAnimation = input<string | null | undefined>('p-modal-enter');
-    /**
-     * Leave animation class name of modal.
-     * @defaultValue 'p-modal-leave'
-     * @group Props
-     */
-    modalLeaveAnimation = input<string | null | undefined>('p-modal-leave');
+    preview = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Target element to attach the overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @defaultValue 'self'
@@ -362,31 +339,27 @@ export class Image extends BaseComponent<ImagePassThrough> {
 
     renderPreview = signal<boolean>(false);
 
-    maskVisible: boolean = false;
+    maskVisible = signal<boolean>(false);
 
-    previewVisible: boolean = false;
+    previewVisible = signal<boolean>(false);
 
-    rotate: number = 0;
+    rotate = signal<number>(0);
 
-    scale: number = 1;
+    scale = signal<number>(1);
 
-    previewClick: boolean = false;
+    previewClick = signal<boolean>(false);
 
-    container: Nullable<HTMLElement>;
+    container = signal<Nullable<HTMLElement>>(undefined);
 
-    wrapper: Nullable<HTMLElement>;
+    wrapper = signal<Nullable<HTMLElement>>(undefined);
 
     _componentStyle = inject(ImageStyle);
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    public get isZoomOutDisabled(): boolean {
-        return this.scale - this.zoomSettings.step <= this.zoomSettings.min;
-    }
+    public isZoomOutDisabled = computed<boolean>(() => this.scale() - this.zoomSettings.step <= this.zoomSettings.min);
 
-    public get isZoomInDisabled(): boolean {
-        return this.scale + this.zoomSettings.step >= this.zoomSettings.max;
-    }
+    public isZoomInDisabled = computed<boolean>(() => this.scale() + this.zoomSettings.step >= this.zoomSettings.max);
 
     private zoomSettings = {
         default: 1,
@@ -397,72 +370,66 @@ export class Image extends BaseComponent<ImagePassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _indicatorTemplate: TemplateRef<void> | undefined;
+    readonly _indicatorTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => !['rotaterighticon', 'rotatelefticon', 'zoomouticon', 'zoominicon', 'closeicon', 'image', 'preview'].includes(item.getType()))
+                .at(-1)?.template
+    );
 
-    _rotateRightIconTemplate: TemplateRef<void> | undefined;
+    readonly _rotateRightIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'rotaterighticon')
+                .at(-1)?.template
+    );
 
-    _rotateLeftIconTemplate: TemplateRef<void> | undefined;
+    readonly _rotateLeftIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'rotatelefticon')
+                .at(-1)?.template
+    );
 
-    _zoomOutIconTemplate: TemplateRef<void> | undefined;
+    readonly _zoomOutIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'zoomouticon')
+                .at(-1)?.template
+    );
 
-    _zoomInIconTemplate: TemplateRef<void> | undefined;
+    readonly _zoomInIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'zoominicon')
+                .at(-1)?.template
+    );
 
-    _closeIconTemplate: TemplateRef<void> | undefined;
+    readonly _closeIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'closeicon')
+                .at(-1)?.template
+    );
 
-    _imageTemplate: TemplateRef<ImageImageTemplateContext> | undefined;
+    readonly _imageTemplate = computed<TemplateRef<ImageImageTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'image')
+                .at(-1)?.template
+    );
 
-    _previewTemplate: TemplateRef<ImagePreviewTemplateContext> | undefined;
-
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
-
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'indicator':
-                    this._indicatorTemplate = item.template;
-                    break;
-
-                case 'rotaterighticon':
-                    this._rotateRightIconTemplate = item.template;
-                    break;
-
-                case 'rotatelefticon':
-                    this._rotateLeftIconTemplate = item.template;
-                    break;
-
-                case 'zoomouticon':
-                    this._zoomOutIconTemplate = item.template;
-                    break;
-
-                case 'zoominicon':
-                    this._zoomInIconTemplate = item.template;
-                    break;
-
-                case 'closeicon':
-                    this._closeIconTemplate = item.template;
-                    break;
-
-                case 'image':
-                    this._imageTemplate = item.template;
-                    break;
-
-                case 'preview':
-                    this._previewTemplate = item.template;
-                    break;
-
-                default:
-                    this._indicatorTemplate = item.template;
-                    break;
-            }
-        });
-    }
+    readonly _previewTemplate = computed<TemplateRef<ImagePreviewTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'preview')
+                .at(-1)?.template
+    );
 
     onImageClick() {
-        if (this.preview) {
-            this.maskVisible = true;
-            this.previewVisible = true;
+        if (this.preview()) {
+            this.maskVisible.set(true);
+            this.previewVisible.set(true);
             this.renderMask.set(true);
             this.renderPreview.set(true);
             blockBodyScroll();
@@ -470,11 +437,11 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     onMaskClick() {
-        if (!this.previewClick) {
+        if (!this.previewClick()) {
             this.closePreview();
         }
 
-        this.previewClick = false;
+        this.previewClick.set(false);
     }
 
     onMaskKeydown(event: KeyboardEvent) {
@@ -494,33 +461,33 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     onPreviewImageClick() {
-        this.previewClick = true;
+        this.previewClick.set(true);
     }
 
     rotateRight() {
-        this.rotate += 90;
-        this.previewClick = true;
+        this.rotate.update((rotate) => rotate + 90);
+        this.previewClick.set(true);
     }
 
     rotateLeft() {
-        this.rotate -= 90;
-        this.previewClick = true;
+        this.rotate.update((rotate) => rotate - 90);
+        this.previewClick.set(true);
     }
 
     zoomIn() {
-        this.scale = this.scale + this.zoomSettings.step;
-        this.previewClick = true;
+        this.scale.update((scale) => scale + this.zoomSettings.step);
+        this.previewClick.set(true);
     }
 
     zoomOut() {
-        this.scale = this.scale - this.zoomSettings.step;
-        this.previewClick = true;
+        this.scale.update((scale) => scale - this.zoomSettings.step);
+        this.previewClick.set(true);
     }
 
     onAnimationStart(event: MotionEvent) {
-        this.container = event.element as HTMLDivElement;
-        this.wrapper = this.container?.parentElement;
-        this.$attrSelector && this.wrapper?.setAttribute(this.$attrSelector, '');
+        this.container.set(event.element as HTMLDivElement);
+        this.wrapper.set(this.container()?.parentElement);
+        this.$attrSelector && this.wrapper()?.setAttribute(this.$attrSelector, '');
         this.appendContainer();
         this.moveOnTop();
         this.onShow.emit({});
@@ -530,7 +497,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     onBeforeLeave() {
-        this.maskVisible = false;
+        this.maskVisible.set(false);
     }
 
     onAnimationEnd() {
@@ -541,33 +508,33 @@ export class Image extends BaseComponent<ImagePassThrough> {
         if (!this.renderPreview()) {
             this.renderMask.set(false);
         }
-        ZIndexUtils.clear(this.wrapper);
-        this.container = null;
-        this.wrapper = null;
-        this.rotate = 0;
-        this.scale = this.zoomSettings.default;
+        ZIndexUtils.clear(this.wrapper());
+        this.container.set(null);
+        this.wrapper.set(null);
+        this.rotate.set(0);
+        this.scale.set(this.zoomSettings.default);
         unblockBodyScroll();
         this.onHide.emit({});
-        this.cd.markForCheck();
     }
 
     moveOnTop() {
-        ZIndexUtils.set('modal', this.wrapper, this.config.zIndex.modal);
+        ZIndexUtils.set('modal', this.wrapper(), this.config.zIndex.modal);
     }
 
     appendContainer() {
+        const wrapper = this.wrapper();
         if (this.$appendTo() && this.$appendTo() !== 'self') {
-            if (this.$appendTo() === 'body' && this.wrapper) {
-                this.document.body.appendChild(this.wrapper as HTMLElement);
-            } else if (this.wrapper) {
-                appendChild(this.$appendTo(), this.wrapper);
+            if (this.$appendTo() === 'body' && wrapper) {
+                this.document.body.appendChild(wrapper as HTMLElement);
+            } else if (wrapper) {
+                appendChild(this.$appendTo(), wrapper);
             }
         }
     }
 
-    imagePreviewStyle() {
-        return { transform: 'rotate(' + this.rotate + 'deg) scale(' + this.scale + ')' };
-    }
+    imagePreviewStyle = computed(() => {
+        return { transform: 'rotate(' + this.rotate() + 'deg) scale(' + this.scale() + ')' };
+    });
 
     get zoomImageAriaLabel() {
         return this.config.translation.aria ? this.config.translation.aria.zoomImage : undefined;
@@ -578,7 +545,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     closePreview(): void {
-        this.previewVisible = false;
+        this.previewVisible.set(false);
     }
 
     imageError(event: Event) {
@@ -606,7 +573,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
     }
 
     @HostListener('document:keydown.escape') onKeydownHandler() {
-        if (this.previewVisible) {
+        if (this.previewVisible()) {
             this.closePreview();
         }
     }

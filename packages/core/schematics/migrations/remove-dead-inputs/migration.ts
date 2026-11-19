@@ -27,6 +27,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Popover were stored but never
  * read: its show/hide animation is driven by `motionOptions`. `ariaCloseLabel` on Popover was stored
  * but never read either: the popover renders no close button to label.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Image were stored but never read:
+ * its preview animation is driven by `motionOptions`/`maskMotionOptions`. `modalEnterAnimation`/
+ * `modalLeaveAnimation` on Image were stored but never read either: the mask motion classes are fixed.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -49,7 +52,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-togglebutton', names: ['inputId'] },
     { selector: 'p-toggleButton', names: ['inputId'] },
     { selector: 'p-toggle-button', names: ['inputId'] },
-    { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] }
+    { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] },
+    { selector: 'p-image', names: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'] }
 ];
 
 /**
@@ -77,7 +81,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * (motionOptions drives the show/hide animation); ToggleButton's inputId, stored but never read
  * since the host element became the button itself; and Popover's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the show/hide animation) and
- * ariaCloseLabel, stored but never read since the popover renders no close button.
+ * ariaCloseLabel, stored but never read since the popover renders no close button; and Image's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the preview animation) and
+ * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed.
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/`p-accordion`/
@@ -92,6 +98,7 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
  * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-confirmpopup`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover`/`p-image` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

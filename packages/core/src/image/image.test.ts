@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, TemplateRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -14,7 +14,7 @@ const mockPreviewImageSrc = 'https://primefaces.org/cdn/primeng/images/galleria/
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-image [src]="src" [alt]="alt" [width]="width" [height]="height" [srcSet]="srcSet" [sizes]="sizes" [loading]="loading" [imageClass]="imageClass" [imageStyle]="imageStyle" [styleClass]="styleClass" (onImageError)="onImageError($event)">
+        <p-image [src]="src" [alt]="alt" [width]="width" [height]="height" [srcSet]="srcSet" [sizes]="sizes" [loading]="loading" [imageClass]="imageClass" [imageStyle]="imageStyle" [class]="styleClass" (onImageError)="onImageError($event)">
         </p-image>
     `
 })
@@ -40,19 +40,7 @@ class TestBasicImageComponent {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-image
-            [src]="src"
-            [alt]="alt"
-            [width]="width"
-            [preview]="true"
-            [previewImageSrc]="previewImageSrc"
-            [previewImageSrcSet]="previewImageSrcSet"
-            [previewImageSizes]="previewImageSizes"
-            [showTransitionOptions]="showTransitionOptions"
-            [hideTransitionOptions]="hideTransitionOptions"
-            (onShow)="onShow($event)"
-            (onHide)="onHide($event)"
-        >
+        <p-image [src]="src" [alt]="alt" [width]="width" [preview]="true" [previewImageSrc]="previewImageSrc" [previewImageSrcSet]="previewImageSrcSet" [previewImageSizes]="previewImageSizes" (onShow)="onShow($event)" (onHide)="onHide($event)">
         </p-image>
     `
 })
@@ -63,8 +51,6 @@ class TestPreviewImageComponent {
     previewImageSrc: string = mockPreviewImageSrc;
     previewImageSrcSet: string = '';
     previewImageSizes: string = '';
-    showTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
-    hideTransitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
     showEvent: any = null as any;
     hideEvent: any = null as any;
 
@@ -176,14 +162,17 @@ describe('Image', () => {
         });
 
         it('should have default values', () => {
-            expect(component.preview).toBe(false);
-            expect(component.maskVisible).toBe(false);
-            expect(component.previewVisible).toBe(false);
-            expect(component.rotate).toBe(0);
-            expect(component.scale).toBe(1);
-            expect(component.previewClick).toBe(false);
-            expect(component.showTransitionOptions).toBe('150ms cubic-bezier(0, 0, 0.2, 1)');
-            expect(component.hideTransitionOptions).toBe('150ms cubic-bezier(0, 0, 0.2, 1)');
+            expect(component.preview()).toBe(false);
+            expect(component.maskVisible()).toBe(false);
+            expect(component.previewVisible()).toBe(false);
+            expect(component.rotate()).toBe(0);
+            expect(component.scale()).toBe(1);
+            expect(component.previewClick()).toBe(false);
+            expect(component.renderMask()).toBe(false);
+            expect(component.renderPreview()).toBe(false);
+            expect(component.appendTo()).toBeUndefined();
+            expect(component.motionOptions()).toBeUndefined();
+            expect(component.maskMotionOptions()).toBeUndefined();
         });
 
         it('should accept custom input values', () => {
@@ -198,13 +187,12 @@ describe('Image', () => {
             expect(imageElement.nativeElement.height).toBeGreaterThan(190);
         });
 
-        it('should render image element with proper attributes', async () => {
-            component.src = mockImageSrc;
-            component.alt = 'Test Image';
-            component.width = '300';
-            component.height = '200';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
+        it('should render image element with proper attributes', () => {
+            fixture.componentRef.setInput('src', mockImageSrc);
+            fixture.componentRef.setInput('alt', 'Test Image');
+            fixture.componentRef.setInput('width', '300');
+            fixture.componentRef.setInput('height', '200');
+            fixture.detectChanges();
 
             const imageElement = fixture.debugElement.query(By.css('img'));
             expect(imageElement).toBeTruthy();
@@ -238,8 +226,8 @@ describe('Image', () => {
             previewButton.nativeElement.click();
             await testFixture.whenStable();
 
-            expect(imageInstance.maskVisible).toBe(true);
-            expect(imageInstance.previewVisible).toBe(true);
+            expect(imageInstance.maskVisible()).toBe(true);
+            expect(imageInstance.previewVisible()).toBe(true);
         });
 
         it('should show mask overlay when preview is opened', async () => {
@@ -257,7 +245,7 @@ describe('Image', () => {
             testFixture.detectChanges();
 
             imageInstance.onMaskClick();
-            expect(imageInstance.previewVisible).toBe(false);
+            expect(imageInstance.previewVisible()).toBe(false);
         });
 
         it('should close preview on Escape key', async () => {
@@ -267,7 +255,7 @@ describe('Image', () => {
 
             const escapeEvent = new KeyboardEvent('keydown', { code: 'Escape' });
             imageInstance.onMaskKeydown(escapeEvent);
-            expect(imageInstance.previewVisible).toBe(false);
+            expect(imageInstance.previewVisible()).toBe(false);
         });
     });
 
@@ -282,46 +270,46 @@ describe('Image', () => {
         });
 
         it('should rotate right', () => {
-            const initialRotate = imageInstance.rotate;
+            const initialRotate = imageInstance.rotate();
             imageInstance.rotateRight();
-            expect(imageInstance.rotate).toBe(initialRotate + 90);
-            expect(imageInstance.previewClick).toBe(true);
+            expect(imageInstance.rotate()).toBe(initialRotate + 90);
+            expect(imageInstance.previewClick()).toBe(true);
         });
 
         it('should rotate left', () => {
-            const initialRotate = imageInstance.rotate;
+            const initialRotate = imageInstance.rotate();
             imageInstance.rotateLeft();
-            expect(imageInstance.rotate).toBe(initialRotate - 90);
-            expect(imageInstance.previewClick).toBe(true);
+            expect(imageInstance.rotate()).toBe(initialRotate - 90);
+            expect(imageInstance.previewClick()).toBe(true);
         });
 
         it('should zoom in', () => {
-            const initialScale = imageInstance.scale;
+            const initialScale = imageInstance.scale();
             imageInstance.zoomIn();
-            expect(imageInstance.scale).toBe(initialScale + 0.1);
-            expect(imageInstance.previewClick).toBe(true);
+            expect(imageInstance.scale()).toBe(initialScale + 0.1);
+            expect(imageInstance.previewClick()).toBe(true);
         });
 
         it('should zoom out', () => {
-            const initialScale = imageInstance.scale;
+            const initialScale = imageInstance.scale();
             imageInstance.zoomOut();
-            expect(imageInstance.scale).toBe(initialScale - 0.1);
-            expect(imageInstance.previewClick).toBe(true);
+            expect(imageInstance.scale()).toBe(initialScale - 0.1);
+            expect(imageInstance.previewClick()).toBe(true);
         });
 
         it('should disable zoom out at minimum scale', () => {
-            imageInstance.scale = 0.5; // minimum scale
-            expect(imageInstance.isZoomOutDisabled).toBe(true);
+            imageInstance.scale.set(0.5); // minimum scale
+            expect(imageInstance.isZoomOutDisabled()).toBe(true);
         });
 
         it('should disable zoom in at maximum scale', () => {
-            imageInstance.scale = 1.5; // maximum scale
-            expect(imageInstance.isZoomInDisabled).toBe(true);
+            imageInstance.scale.set(1.5); // maximum scale
+            expect(imageInstance.isZoomInDisabled()).toBe(true);
         });
 
         it('should calculate image preview style correctly', () => {
-            imageInstance.rotate = 90;
-            imageInstance.scale = 1.2;
+            imageInstance.rotate.set(90);
+            imageInstance.scale.set(1.2);
             const style = imageInstance.imagePreviewStyle();
             expect(style.transform).toBe('rotate(90deg) scale(1.2)');
         });
@@ -383,8 +371,8 @@ describe('Image', () => {
         it('should emit onHide event when preview is closed', () => {
             vi.spyOn(imageInstance.onHide, 'emit').mockImplementation(() => {});
 
-            imageInstance.previewVisible = false;
-            imageInstance.wrapper = document.createElement('div');
+            imageInstance.previewVisible.set(false);
+            imageInstance.wrapper.set(document.createElement('div'));
             // onHide is now emitted in onMaskAfterLeave, not onAnimationEnd
             imageInstance.onMaskAfterLeave();
             expect(imageInstance.onHide.emit).toHaveBeenCalled();
@@ -414,7 +402,7 @@ describe('Image', () => {
 
         it('should handle preview image click', () => {
             imageInstance.onPreviewImageClick();
-            expect(imageInstance.previewClick).toBe(true);
+            expect(imageInstance.previewClick()).toBe(true);
         });
     });
 
@@ -463,55 +451,78 @@ describe('Image', () => {
     });
 
     describe('Component Lifecycle', () => {
-        let testFixture: ComponentFixture<TestTemplateImageComponent>;
-        let imageInstance: Image;
-
-        beforeEach(() => {
-            testFixture = TestBed.createComponent(TestTemplateImageComponent);
+        it('should resolve the pTemplate fallbacks from the projected templates', () => {
+            const testFixture = TestBed.createComponent(TestPTemplateImageComponent);
             testFixture.detectChanges();
-            imageInstance = testFixture.debugElement.query(By.directive(Image)).componentInstance;
+            const imageInstance: Image = testFixture.debugElement.query(By.directive(Image)).componentInstance;
+
+            expect(imageInstance._indicatorTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._imageTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._previewTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._rotateRightIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._rotateLeftIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._zoomOutIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._zoomInIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance._closeIconTemplate()).toBeInstanceOf(TemplateRef);
+
+            expect(imageInstance.indicatorTemplate()).toBeUndefined();
+            expect(imageInstance.imageTemplate()).toBeUndefined();
+            expect(imageInstance.previewTemplate()).toBeUndefined();
         });
 
-        it('should process templates on ngAfterContentInit', () => {
-            // Mock templates
-            const mockIndicatorTemplate = {} as any;
-            const mockImageTemplate = {} as any;
-            const mockPreviewTemplate = {} as any;
-            const mockRotateRightTemplate = {} as any;
-            const mockRotateLeftTemplate = {} as any;
-            const mockZoomOutTemplate = {} as any;
-            const mockZoomInTemplate = {} as any;
-            const mockCloseTemplate = {} as any;
+        it('should leave the pTemplate fallbacks empty when templates use the #reference approach', () => {
+            const testFixture = TestBed.createComponent(TestTemplateImageComponent);
+            testFixture.detectChanges();
+            const imageInstance: Image = testFixture.debugElement.query(By.directive(Image)).componentInstance;
 
-            const mockTemplates = [
-                { getType: () => 'indicator', template: mockIndicatorTemplate },
-                { getType: () => 'image', template: mockImageTemplate },
-                { getType: () => 'preview', template: mockPreviewTemplate },
-                { getType: () => 'rotaterighticon', template: mockRotateRightTemplate },
-                { getType: () => 'rotatelefticon', template: mockRotateLeftTemplate },
-                { getType: () => 'zoomouticon', template: mockZoomOutTemplate },
-                { getType: () => 'zoominicon', template: mockZoomInTemplate },
-                { getType: () => 'closeicon', template: mockCloseTemplate }
-            ];
+            expect(imageInstance._indicatorTemplate()).toBeUndefined();
+            expect(imageInstance._imageTemplate()).toBeUndefined();
+            expect(imageInstance._previewTemplate()).toBeUndefined();
+            expect(imageInstance._rotateRightIconTemplate()).toBeUndefined();
+            expect(imageInstance._rotateLeftIconTemplate()).toBeUndefined();
+            expect(imageInstance._zoomOutIconTemplate()).toBeUndefined();
+            expect(imageInstance._zoomInIconTemplate()).toBeUndefined();
+            expect(imageInstance._closeIconTemplate()).toBeUndefined();
 
-            // Mock templates QueryList
-            const mockQueryList = {
-                forEach: (callback: (template: any) => void) => {
-                    mockTemplates.forEach(callback);
-                }
-            };
+            expect(imageInstance.indicatorTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.imageTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.previewTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.rotateRightIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.rotateLeftIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.zoomOutIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.zoomInIconTemplate()).toBeInstanceOf(TemplateRef);
+            expect(imageInstance.closeIconTemplate()).toBeInstanceOf(TemplateRef);
+        });
 
-            (imageInstance as any).templates = () => mockQueryList as any;
-            imageInstance.ngAfterContentInit();
+        it('should use a pTemplate of an unknown type as the indicator fallback', () => {
+            @Component({
+                changeDetection: ChangeDetectionStrategy.Eager,
+                standalone: false,
+                template: `
+                    <p-image [src]="src" [preview]="true">
+                        <ng-template pTemplate="custom">
+                            <i class="pi pi-star custom-fallback-indicator"></i>
+                        </ng-template>
+                    </p-image>
+                `
+            })
+            class TestUnknownTemplateComponent {
+                src = mockImageSrc;
+            }
 
-            expect(imageInstance._indicatorTemplate).toBe(mockIndicatorTemplate);
-            expect(imageInstance._imageTemplate).toBe(mockImageTemplate);
-            expect(imageInstance._previewTemplate).toBe(mockPreviewTemplate);
-            expect(imageInstance._rotateRightIconTemplate).toBe(mockRotateRightTemplate);
-            expect(imageInstance._rotateLeftIconTemplate).toBe(mockRotateLeftTemplate);
-            expect(imageInstance._zoomOutIconTemplate).toBe(mockZoomOutTemplate);
-            expect(imageInstance._zoomInIconTemplate).toBe(mockZoomInTemplate);
-            expect(imageInstance._closeIconTemplate).toBe(mockCloseTemplate);
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                imports: [ImageModule, SharedModule],
+                declarations: [TestUnknownTemplateComponent],
+                providers: [provideZonelessChangeDetection()]
+            });
+
+            const testFixture = TestBed.createComponent(TestUnknownTemplateComponent);
+            testFixture.detectChanges();
+            const imageInstance: Image = testFixture.debugElement.query(By.directive(Image)).componentInstance;
+
+            expect(imageInstance._indicatorTemplate()).toBeInstanceOf(TemplateRef);
+            expect(testFixture.debugElement.query(By.css('.custom-fallback-indicator'))).toBeTruthy();
         });
     });
 
@@ -526,19 +537,19 @@ describe('Image', () => {
         });
 
         it('should close preview and reset values', () => {
-            imageInstance.rotate = 90;
-            imageInstance.scale = 1.2;
-            imageInstance.previewVisible = true;
-            imageInstance.wrapper = document.createElement('div');
+            imageInstance.rotate.set(90);
+            imageInstance.scale.set(1.2);
+            imageInstance.previewVisible.set(true);
+            imageInstance.wrapper.set(document.createElement('div'));
 
             // closePreview only sets previewVisible to false
             imageInstance.closePreview();
-            expect(imageInstance.previewVisible).toBe(false);
+            expect(imageInstance.previewVisible()).toBe(false);
 
             // rotate and scale are reset in onMaskAfterLeave (after animation completes)
             imageInstance.onMaskAfterLeave();
-            expect(imageInstance.rotate).toBe(0);
-            expect(imageInstance.scale).toBe(1);
+            expect(imageInstance.rotate()).toBe(0);
+            expect(imageInstance.scale()).toBe(1);
         });
 
         it('should handle image error', () => {
@@ -552,7 +563,7 @@ describe('Image', () => {
 
         it('should move overlay to top with proper z-index', () => {
             const mockWrapper = document.createElement('div');
-            imageInstance.wrapper = mockWrapper;
+            imageInstance.wrapper.set(mockWrapper);
 
             imageInstance.moveOnTop();
 
@@ -562,7 +573,7 @@ describe('Image', () => {
 
         it('should append container to specified target', () => {
             const mockWrapper = document.createElement('div');
-            imageInstance.wrapper = mockWrapper;
+            imageInstance.wrapper.set(mockWrapper);
 
             // Mock the appendTo computed signal
             vi.spyOn(imageInstance, '$appendTo').mockReturnValue('body');
@@ -584,7 +595,7 @@ describe('Image', () => {
         });
 
         it('should close preview on document escape key', () => {
-            imageInstance.previewVisible = true;
+            imageInstance.previewVisible.set(true);
             vi.spyOn(imageInstance, 'closePreview').mockImplementation(() => {});
 
             imageInstance.onKeydownHandler();
@@ -593,7 +604,7 @@ describe('Image', () => {
         });
 
         it('should not close preview on escape if not visible', () => {
-            imageInstance.previewVisible = false;
+            imageInstance.previewVisible.set(false);
             vi.spyOn(imageInstance, 'closePreview').mockImplementation(() => {});
 
             imageInstance.onKeydownHandler();
@@ -638,6 +649,158 @@ describe('Image', () => {
             // Test that the method exists and can be called
             expect(imageInstance.onAnimationStart).toBeDefined();
             expect(imageInstance.onAnimationEnd).toBeDefined();
+        });
+    });
+
+    describe('OnPush Rendering', () => {
+        let directFixture: ComponentFixture<Image>;
+
+        const img = () => directFixture.nativeElement.querySelector('img') as HTMLImageElement | null;
+        const mask = () => directFixture.nativeElement.querySelector('[role="dialog"]') as HTMLDivElement | null;
+        const original = () => directFixture.nativeElement.querySelector('.p-image-original') as HTMLImageElement | null;
+
+        const openPreview = async () => {
+            directFixture.componentInstance.onImageClick();
+            await directFixture.whenStable();
+            directFixture.detectChanges();
+        };
+
+        beforeEach(() => {
+            directFixture = TestBed.createComponent(Image);
+            directFixture.componentRef.setInput('src', mockImageSrc);
+            directFixture.componentRef.setInput('appendTo', 'self');
+            directFixture.detectChanges();
+        });
+
+        it('should re-render the image attributes when their inputs change', () => {
+            expect(img()!.getAttribute('src')).toBe(mockImageSrc);
+            expect(img()!.hasAttribute('alt')).toBe(false);
+
+            directFixture.componentRef.setInput('src', mockPreviewImageSrc);
+            directFixture.componentRef.setInput('alt', 'Updated alt');
+            directFixture.componentRef.setInput('width', '320');
+            directFixture.componentRef.setInput('height', '240');
+            directFixture.componentRef.setInput('loading', 'lazy');
+            directFixture.componentRef.setInput('srcSet', `${mockImageSrc} 1x, ${mockPreviewImageSrc} 2x`);
+            directFixture.componentRef.setInput('sizes', '(max-width: 600px) 100vw, 50vw');
+            directFixture.detectChanges();
+
+            expect(img()!.getAttribute('src')).toBe(mockPreviewImageSrc);
+            expect(img()!.getAttribute('alt')).toBe('Updated alt');
+            expect(img()!.getAttribute('width')).toBe('320');
+            expect(img()!.getAttribute('height')).toBe('240');
+            expect(img()!.getAttribute('loading')).toBe('lazy');
+            expect(img()!.getAttribute('srcset')).toBe(`${mockImageSrc} 1x, ${mockPreviewImageSrc} 2x`);
+            expect(img()!.getAttribute('sizes')).toBe('(max-width: 600px) 100vw, 50vw');
+        });
+
+        it('should re-render imageClass and imageStyle when they change', () => {
+            directFixture.componentRef.setInput('imageClass', 'first-class');
+            directFixture.componentRef.setInput('imageStyle', { border: '1px solid red' });
+            directFixture.detectChanges();
+            expect(img()!.classList.contains('first-class')).toBe(true);
+            expect(img()!.style.border).toBe('1px solid red');
+
+            directFixture.componentRef.setInput('imageClass', 'second-class');
+            directFixture.componentRef.setInput('imageStyle', { opacity: '0.5' });
+            directFixture.detectChanges();
+            expect(img()!.classList.contains('first-class')).toBe(false);
+            expect(img()!.classList.contains('second-class')).toBe(true);
+            expect(img()!.style.border).toBe('');
+            expect(img()!.style.opacity).toBe('0.5');
+        });
+
+        it('should render the preview button and root preview class when preview is toggled', () => {
+            expect(directFixture.nativeElement.querySelector('button')).toBeNull();
+            expect(directFixture.nativeElement.classList.contains('p-image-preview')).toBe(false);
+
+            directFixture.componentRef.setInput('preview', true);
+            directFixture.componentRef.setInput('width', '250');
+            directFixture.componentRef.setInput('height', '200');
+            directFixture.detectChanges();
+
+            const previewButton = directFixture.nativeElement.querySelector('button') as HTMLButtonElement;
+            expect(previewButton).toBeTruthy();
+            expect(previewButton.classList.contains('p-image-preview-mask')).toBe(true);
+            expect(previewButton.style.width).toBe('250px');
+            expect(previewButton.style.height).toBe('200px');
+            expect(directFixture.nativeElement.classList.contains('p-image-preview')).toBe(true);
+
+            directFixture.componentRef.setInput('preview', false);
+            directFixture.detectChanges();
+            expect(directFixture.nativeElement.querySelector('button')).toBeNull();
+            expect(directFixture.nativeElement.classList.contains('p-image-preview')).toBe(false);
+        });
+
+        it('should render the mask and the preview image once the preview is opened', async () => {
+            directFixture.componentRef.setInput('preview', true);
+            directFixture.componentRef.setInput('previewImageSrc', mockPreviewImageSrc);
+            directFixture.detectChanges();
+            expect(mask()).toBeNull();
+
+            await openPreview();
+
+            expect(mask()).toBeTruthy();
+            expect(mask()!.getAttribute('aria-modal')).toBe('true');
+            expect(original()).toBeTruthy();
+            expect(original()!.getAttribute('src')).toBe(mockPreviewImageSrc);
+            expect(original()!.style.transform).toBe('rotate(0deg) scale(1)');
+
+            directFixture.componentRef.setInput('previewImageSrc', undefined);
+            directFixture.detectChanges();
+            expect(original()!.getAttribute('src')).toBe(mockImageSrc);
+        });
+
+        it('should re-render the preview transform when rotating and zooming', async () => {
+            directFixture.componentRef.setInput('preview', true);
+            directFixture.detectChanges();
+            await openPreview();
+
+            directFixture.componentInstance.rotateRight();
+            directFixture.componentInstance.zoomIn();
+            directFixture.detectChanges();
+            expect(original()!.style.transform).toBe('rotate(90deg) scale(1.1)');
+
+            directFixture.componentInstance.rotateLeft();
+            directFixture.componentInstance.rotateLeft();
+            directFixture.componentInstance.zoomOut();
+            directFixture.componentInstance.zoomOut();
+            directFixture.detectChanges();
+            expect(original()!.style.transform).toBe('rotate(-90deg) scale(0.9)');
+        });
+
+        it('should disable the zoom buttons at the scale limits', async () => {
+            directFixture.componentRef.setInput('preview', true);
+            directFixture.detectChanges();
+            await openPreview();
+
+            const zoomIn = () => mask()!.querySelector('.p-image-zoom-in-button') as HTMLButtonElement;
+            const zoomOut = () => mask()!.querySelector('.p-image-zoom-out-button') as HTMLButtonElement;
+            expect(zoomIn().disabled).toBe(false);
+            expect(zoomOut().disabled).toBe(false);
+
+            directFixture.componentInstance.scale.set(1.5);
+            directFixture.detectChanges();
+            expect(zoomIn().disabled).toBe(true);
+            expect(zoomIn().classList.contains('p-disabled')).toBe(true);
+            expect(zoomOut().disabled).toBe(false);
+
+            directFixture.componentInstance.scale.set(0.5);
+            directFixture.detectChanges();
+            expect(zoomIn().disabled).toBe(false);
+            expect(zoomOut().disabled).toBe(true);
+            expect(zoomOut().classList.contains('p-disabled')).toBe(true);
+        });
+
+        it('should drop aria-modal when the mask starts leaving', async () => {
+            directFixture.componentRef.setInput('preview', true);
+            directFixture.detectChanges();
+            await openPreview();
+            expect(mask()!.getAttribute('aria-modal')).toBe('true');
+
+            directFixture.componentInstance.onBeforeLeave();
+            directFixture.detectChanges();
+            expect(mask()!.getAttribute('aria-modal')).toBe('false');
         });
     });
 
@@ -850,7 +1013,7 @@ describe('Image', () => {
                     previewMask: ({ instance }: any) => {
                         return {
                             onclick: () => {
-                                instance.scale = 2.0;
+                                instance.scale.set(2.0);
                             }
                         };
                     }
@@ -865,7 +1028,7 @@ describe('Image', () => {
                 previewButton.nativeElement.click();
                 await testFixture.whenStable();
 
-                expect(testComponent.scale).toBe(2.0);
+                expect(testComponent.scale()).toBe(2.0);
             });
         });
 

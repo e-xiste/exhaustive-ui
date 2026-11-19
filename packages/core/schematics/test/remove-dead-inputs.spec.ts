@@ -196,6 +196,18 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-popover #op [motionOptions]="motion" [dismissable]="false"></p-popover>\n<p-popover [appendTo]="'body'"></p-popover>\n`);
     });
 
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions and modalEnterAnimation/modalLeaveAnimation from p-image while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-image src="image.jpg" [preview]="true" showTransitionOptions=".12s ease" [hideTransitionOptions]="hideTf" modalEnterAnimation="my-enter" [modalLeaveAnimation]="leave" [motionOptions]="motion"></p-image>\n<p-image [src]="src" [modalEnterAnimation]="enter" [imageClass]="cls"></p-image>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).not.toContain('Animation');
+        expect(html).toBe(`<p-image src="image.jpg" [preview]="true" [motionOptions]="motion"></p-image>\n<p-image [src]="src" [imageClass]="cls"></p-image>\n`);
+    });
+
     it('keeps ariaCloseLabel on components that still read it', async () => {
         const runner = createMigrationRunner();
         const content = `<p-drawer ariaCloseLabel="Close drawer"></p-drawer>\n<p-dialog [ariaCloseLabel]="closeLabel"></p-dialog>\n`;
