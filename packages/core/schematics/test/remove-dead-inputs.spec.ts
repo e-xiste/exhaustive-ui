@@ -130,9 +130,9 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-panel [(collapsed)]="collapsed"></p-panel>\n`);
     });
 
-    it('does not remove transitionOptions from p-accordion', async () => {
+    it('does not remove transitionOptions from p-dialog', async () => {
         const runner = createMigrationRunner();
-        const content = `<p-accordion transitionOptions="200ms ease-in"></p-accordion>\n`;
+        const content = `<p-dialog transitionOptions="200ms ease-in"></p-dialog>\n`;
         const tree = createAppTree({ '/src/app/app.html': content });
         const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(content);
