@@ -1,4 +1,4 @@
-import { booleanAttribute, Directive, ElementRef, HostListener, Input, NgModule, NgZone, OnDestroy, Renderer2, inject } from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, HostListener, NgModule, NgZone, OnDestroy, Renderer2, inject, input, signal } from '@angular/core';
 import { addClass, getTargetElement, hasClass, isElement, removeClass } from '@exhaustive-ui/utils';
 import { VoidListener } from '@exhaustive-ui/core/ts-helpers';
 
@@ -7,8 +7,7 @@ import { VoidListener } from '@exhaustive-ui/core/ts-helpers';
  * @group Components
  */
 @Directive({
-    selector: '[pStyleClass]',
-    standalone: true
+    selector: '[pStyleClass]'
 })
 export class StyleClass implements OnDestroy {
     el = inject(ElementRef);
@@ -19,245 +18,263 @@ export class StyleClass implements OnDestroy {
      * Selector to define the target element. Available selectors are '@next', '@prev', '@parent' and '@grandparent'.
      * @group Props
      */
-    @Input('pStyleClass') selector: string | undefined;
+    readonly selector = input<string | undefined>(undefined, { alias: 'pStyleClass' });
     /**
      * Style class to add when item begins to get displayed.
      * @group Props
      */
-    @Input() enterFromClass: string | undefined;
+    readonly enterFromClass = input<string | undefined>();
     /**
      * Style class to add during enter animation.
      * @group Props
      */
-    @Input() enterActiveClass: string | undefined;
+    readonly enterActiveClass = input<string | undefined>();
     /**
      * Style class to add when item begins to get displayed.
      * @group Props
      */
-    @Input() enterToClass: string | undefined;
+    readonly enterToClass = input<string | undefined>();
     /**
      * Style class to add when item begins to get hidden.
      * @group Props
      */
-    @Input() leaveFromClass: string | undefined;
+    readonly leaveFromClass = input<string | undefined>();
     /**
      * Style class to add during leave animation.
      * @group Props
      */
-    @Input() leaveActiveClass: string | undefined;
+    readonly leaveActiveClass = input<string | undefined>();
     /**
      * Style class to add when leave animation is completed.
      * @group Props
      */
-    @Input() leaveToClass: string | undefined;
+    readonly leaveToClass = input<string | undefined>();
     /**
      * Whether to trigger leave animation when outside of the element is clicked.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnOutsideClick: boolean | undefined;
+    readonly hideOnOutsideClick = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Adds or removes a class when no enter-leave animation is required.
      * @group Props
      */
-    @Input() toggleClass: string | undefined;
+    readonly toggleClass = input<string | undefined>();
     /**
      * Whether to trigger leave animation when escape key pressed.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnEscape: boolean | undefined;
+    readonly hideOnEscape = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to trigger leave animation when the target element resized.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnResize: boolean | undefined;
+    readonly hideOnResize = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Target element to listen resize. Valid values are "window", "document" or target element selector.
      * @group Props
      */
-    @Input() resizeSelector: string | undefined;
+    readonly resizeSelector = input<string | undefined>();
 
-    eventListener: VoidListener;
+    documentClickListener = signal<VoidListener>(undefined);
 
-    documentClickListener: VoidListener;
+    documentKeydownListener = signal<VoidListener>(undefined);
 
-    documentKeydownListener: VoidListener;
+    windowResizeListener = signal<VoidListener>(undefined);
 
-    windowResizeListener: VoidListener;
+    resizeObserver = signal<ResizeObserver | undefined>(undefined);
 
-    resizeObserver: ResizeObserver | undefined;
+    target = signal<HTMLElement | null | undefined>(undefined);
 
-    target: HTMLElement | null | undefined;
+    enterListener = signal<VoidListener>(undefined);
 
-    enterListener: VoidListener;
+    leaveListener = signal<VoidListener>(undefined);
 
-    leaveListener: VoidListener;
+    animating = signal<boolean | undefined>(undefined);
 
-    animating: boolean | undefined;
-
-    _enterClass: string | undefined;
-
-    _leaveClass: string | undefined;
-
-    _resizeTarget: any;
+    _resizeTarget = signal<any>(undefined);
 
     @HostListener('click')
     clickListener() {
-        this.target ||= getTargetElement(this.selector, this.el.nativeElement) as HTMLElement;
+        if (!this.target()) {
+            this.target.set(getTargetElement(this.selector(), this.el.nativeElement) as HTMLElement);
+        }
 
-        if (this.toggleClass) {
+        if (this.toggleClass()) {
             this.toggle();
         } else {
-            if ((this.target as HTMLElement)?.offsetParent === null) this.enter();
+            if ((this.target() as HTMLElement)?.offsetParent === null) this.enter();
             else this.leave();
         }
     }
 
     toggle() {
-        if (hasClass(this.target!, this.toggleClass as string)) removeClass(this.target!, this.toggleClass as string);
-        else addClass(this.target!, this.toggleClass as string);
+        if (hasClass(this.target()!, this.toggleClass() as string)) removeClass(this.target()!, this.toggleClass() as string);
+        else addClass(this.target()!, this.toggleClass() as string);
     }
 
     enter() {
-        if (this.enterActiveClass) {
-            if (!this.animating) {
-                this.animating = true;
+        const enterFromClass = this.enterFromClass();
+        const enterActiveClass = this.enterActiveClass();
 
-                if (this.enterActiveClass.includes('slidedown')) {
-                    (this.target as HTMLElement).style.height = '0px';
-                    removeClass(this.target!, this.enterFromClass || 'hidden');
-                    (this.target as HTMLElement).style.maxHeight = (this.target as HTMLElement).scrollHeight + 'px';
-                    addClass(this.target!, this.enterFromClass || 'hidden');
-                    (this.target as HTMLElement).style.height = '';
+        if (enterActiveClass) {
+            if (!this.animating()) {
+                this.animating.set(true);
+
+                if (enterActiveClass.includes('slidedown')) {
+                    (this.target() as HTMLElement).style.height = '0px';
+                    removeClass(this.target()!, enterFromClass || 'hidden');
+                    (this.target() as HTMLElement).style.maxHeight = (this.target() as HTMLElement).scrollHeight + 'px';
+                    addClass(this.target()!, enterFromClass || 'hidden');
+                    (this.target() as HTMLElement).style.height = '';
                 }
 
-                addClass(this.target!, this.enterActiveClass);
-                if (this.enterFromClass) {
-                    removeClass(this.target!, this.enterFromClass);
+                addClass(this.target()!, enterActiveClass);
+                if (enterFromClass) {
+                    removeClass(this.target()!, enterFromClass);
                 }
 
-                this.enterListener = this.renderer.listen(this.target!, 'animationend', () => {
-                    removeClass(this.target!, this.enterActiveClass as string);
-                    if (this.enterToClass) {
-                        addClass(this.target!, this.enterToClass);
-                    }
-                    this.enterListener && this.enterListener();
+                this.enterListener.set(
+                    this.renderer.listen(this.target()!, 'animationend', () => {
+                        removeClass(this.target()!, this.enterActiveClass() as string);
+                        const enterToClass = this.enterToClass();
+                        if (enterToClass) {
+                            addClass(this.target()!, enterToClass);
+                        }
+                        const enterListener = this.enterListener();
+                        enterListener && enterListener();
 
-                    if (this.enterActiveClass?.includes('slidedown')) {
-                        (this.target as HTMLElement).style.maxHeight = '';
-                    }
-                    this.animating = false;
-                });
+                        if (this.enterActiveClass()?.includes('slidedown')) {
+                            (this.target() as HTMLElement).style.maxHeight = '';
+                        }
+                        this.animating.set(false);
+                    })
+                );
             }
         } else {
-            if (this.enterFromClass) {
-                removeClass(this.target!, this.enterFromClass);
+            if (enterFromClass) {
+                removeClass(this.target()!, enterFromClass);
             }
 
-            if (this.enterToClass) {
-                addClass(this.target!, this.enterToClass);
+            const enterToClass = this.enterToClass();
+            if (enterToClass) {
+                addClass(this.target()!, enterToClass);
             }
         }
 
-        if (this.hideOnOutsideClick) {
+        if (this.hideOnOutsideClick()) {
             this.bindDocumentClickListener();
         }
 
-        if (this.hideOnEscape) {
+        if (this.hideOnEscape()) {
             this.bindDocumentKeydownListener();
         }
 
-        if (this.hideOnResize) {
+        if (this.hideOnResize()) {
             this.bindResizeListener();
         }
     }
 
     leave() {
-        if (this.leaveActiveClass) {
-            if (!this.animating) {
-                this.animating = true;
-                addClass(this.target!, this.leaveActiveClass);
-                if (this.leaveFromClass) {
-                    removeClass(this.target!, this.leaveFromClass);
+        const leaveFromClass = this.leaveFromClass();
+        const leaveActiveClass = this.leaveActiveClass();
+
+        if (leaveActiveClass) {
+            if (!this.animating()) {
+                this.animating.set(true);
+                addClass(this.target()!, leaveActiveClass);
+                if (leaveFromClass) {
+                    removeClass(this.target()!, leaveFromClass);
                 }
 
-                this.leaveListener = this.renderer.listen(this.target!, 'animationend', () => {
-                    removeClass(this.target!, this.leaveActiveClass as string);
-                    if (this.leaveToClass) {
-                        addClass(this.target!, this.leaveToClass);
-                    }
-                    this.leaveListener && this.leaveListener();
-                    this.animating = false;
-                });
+                this.leaveListener.set(
+                    this.renderer.listen(this.target()!, 'animationend', () => {
+                        removeClass(this.target()!, this.leaveActiveClass() as string);
+                        const leaveToClass = this.leaveToClass();
+                        if (leaveToClass) {
+                            addClass(this.target()!, leaveToClass);
+                        }
+                        const leaveListener = this.leaveListener();
+                        leaveListener && leaveListener();
+                        this.animating.set(false);
+                    })
+                );
             }
         } else {
-            if (this.leaveFromClass) {
-                removeClass(this.target!, this.leaveFromClass);
+            if (leaveFromClass) {
+                removeClass(this.target()!, leaveFromClass);
             }
 
-            if (this.leaveToClass) {
-                addClass(this.target!, this.leaveToClass);
+            const leaveToClass = this.leaveToClass();
+            if (leaveToClass) {
+                addClass(this.target()!, leaveToClass);
             }
         }
 
-        if (this.hideOnOutsideClick) {
+        if (this.hideOnOutsideClick()) {
             this.unbindDocumentClickListener();
         }
 
-        if (this.hideOnEscape) {
+        if (this.hideOnEscape()) {
             this.unbindDocumentKeydownListener();
         }
 
-        if (this.hideOnResize) {
+        if (this.hideOnResize()) {
             this.unbindResizeListener();
         }
     }
 
     bindDocumentClickListener() {
-        if (!this.documentClickListener) {
-            this.documentClickListener = this.renderer.listen(this.el.nativeElement.ownerDocument, 'click', (event) => {
-                if (!this.isVisible() || getComputedStyle(this.target as HTMLElement).getPropertyValue('position') === 'static') this.unbindDocumentClickListener();
-                else if (this.isOutsideClick(event)) this.leave();
-            });
+        if (!this.documentClickListener()) {
+            this.documentClickListener.set(
+                this.renderer.listen(this.el.nativeElement.ownerDocument, 'click', (event) => {
+                    if (!this.isVisible() || getComputedStyle(this.target() as HTMLElement).getPropertyValue('position') === 'static') this.unbindDocumentClickListener();
+                    else if (this.isOutsideClick(event)) this.leave();
+                })
+            );
         }
     }
 
     bindDocumentKeydownListener() {
-        if (!this.documentKeydownListener) {
+        if (!this.documentKeydownListener()) {
             this.zone.runOutsideAngular(() => {
-                this.documentKeydownListener = this.renderer.listen(this.el.nativeElement.ownerDocument, 'keydown', (event) => {
-                    const { key, keyCode, which, type } = event;
-                    if (!this.isVisible() || getComputedStyle(this.target as HTMLElement).getPropertyValue('position') === 'static') this.unbindDocumentKeydownListener();
-                    if (this.isVisible() && key === 'Escape' && keyCode === 27 && which === 27) this.leave();
-                });
+                this.documentKeydownListener.set(
+                    this.renderer.listen(this.el.nativeElement.ownerDocument, 'keydown', (event) => {
+                        const { key, keyCode, which, type } = event;
+                        if (!this.isVisible() || getComputedStyle(this.target() as HTMLElement).getPropertyValue('position') === 'static') this.unbindDocumentKeydownListener();
+                        if (this.isVisible() && key === 'Escape' && keyCode === 27 && which === 27) this.leave();
+                    })
+                );
             });
         }
     }
 
     isVisible() {
-        return (this.target as HTMLElement).offsetParent !== null;
+        return (this.target() as HTMLElement).offsetParent !== null;
     }
 
     isOutsideClick(event: MouseEvent) {
-        return !this.el.nativeElement.isSameNode(event.target) && !this.el.nativeElement.contains(event.target) && !(this.target as HTMLElement).contains(<HTMLElement>event.target);
+        return !this.el.nativeElement.isSameNode(event.target) && !this.el.nativeElement.contains(event.target) && !(this.target() as HTMLElement).contains(<HTMLElement>event.target);
     }
 
     unbindDocumentClickListener() {
-        if (this.documentClickListener) {
-            this.documentClickListener();
-            this.documentClickListener = null;
+        const documentClickListener = this.documentClickListener();
+        if (documentClickListener) {
+            documentClickListener();
+            this.documentClickListener.set(null);
         }
     }
 
     unbindDocumentKeydownListener() {
-        if (this.documentKeydownListener) {
-            this.documentKeydownListener();
-            this.documentKeydownListener = null;
+        const documentKeydownListener = this.documentKeydownListener();
+        if (documentKeydownListener) {
+            documentKeydownListener();
+            this.documentKeydownListener.set(null);
         }
     }
 
     bindResizeListener() {
-        this._resizeTarget = getTargetElement(this.resizeSelector);
-        if (isElement(this._resizeTarget)) {
+        this._resizeTarget.set(getTargetElement(this.resizeSelector()));
+        if (isElement(this._resizeTarget())) {
             this.bindElementResizeListener();
         } else {
             this.bindWindowResizeListener();
@@ -270,30 +287,33 @@ export class StyleClass implements OnDestroy {
     }
 
     bindWindowResizeListener() {
-        if (!this.windowResizeListener) {
+        if (!this.windowResizeListener()) {
             this.zone.runOutsideAngular(() => {
-                this.windowResizeListener = this.renderer.listen(window, 'resize', () => {
-                    if (!this.isVisible()) {
-                        this.unbindWindowResizeListener();
-                    } else {
-                        this.leave();
-                    }
-                });
+                this.windowResizeListener.set(
+                    this.renderer.listen(window, 'resize', () => {
+                        if (!this.isVisible()) {
+                            this.unbindWindowResizeListener();
+                        } else {
+                            this.leave();
+                        }
+                    })
+                );
             });
         }
     }
 
     unbindWindowResizeListener() {
-        if (this.windowResizeListener) {
-            this.windowResizeListener();
-            this.windowResizeListener = null;
+        const windowResizeListener = this.windowResizeListener();
+        if (windowResizeListener) {
+            windowResizeListener();
+            this.windowResizeListener.set(null);
         }
     }
 
     bindElementResizeListener() {
-        if (!this.resizeObserver && this._resizeTarget) {
+        if (!this.resizeObserver() && this._resizeTarget()) {
             let isFirstResize = true;
-            this.resizeObserver = new ResizeObserver(() => {
+            const resizeObserver = new ResizeObserver(() => {
                 if (isFirstResize) {
                     isFirstResize = false;
                     return;
@@ -303,24 +323,23 @@ export class StyleClass implements OnDestroy {
                     this.leave();
                 }
             });
-            this.resizeObserver.observe(this._resizeTarget);
+            resizeObserver.observe(this._resizeTarget());
+            this.resizeObserver.set(resizeObserver);
         }
     }
 
     unbindElementResizeListener() {
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-            this.resizeObserver = undefined;
+        const resizeObserver = this.resizeObserver();
+        if (resizeObserver) {
+            resizeObserver.disconnect();
+            this.resizeObserver.set(undefined);
         }
     }
 
     ngOnDestroy() {
-        this.target = null;
-        this._resizeTarget = null;
+        this.target.set(null);
+        this._resizeTarget.set(null);
 
-        if (this.eventListener) {
-            this.eventListener();
-        }
         this.unbindDocumentClickListener();
         this.unbindDocumentKeydownListener();
         this.unbindResizeListener();
