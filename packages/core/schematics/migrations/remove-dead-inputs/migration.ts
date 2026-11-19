@@ -30,6 +30,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Image were stored but never read:
  * its preview animation is driven by `motionOptions`/`maskMotionOptions`. `modalEnterAnimation`/
  * `modalLeaveAnimation` on Image were stored but never read either: the mask motion classes are fixed.
+ * The deprecated `transitionOptions` on Drawer was stored but never read: its slide animation is
+ * driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -53,15 +55,16 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toggleButton', names: ['inputId'] },
     { selector: 'p-toggle-button', names: ['inputId'] },
     { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] },
-    { selector: 'p-image', names: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'] }
+    { selector: 'p-image', names: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'] },
+    { selector: 'p-drawer', names: ['transitionOptions'] }
 ];
 
 /**
  * Removed input names whose programmatic reads/writes are reported for manual review. OverlayBadge's
  * `size` is left out on purpose: a name-only scan cannot tell an OverlayBadge instance's `size` apart
  * from the countless other `size` properties (Map#size, DOM sizes, option objects) in an application.
- * Fieldset's, Panel's and Accordion's `transitionOptions` is left out too: the same input is still alive on other
- * components (p-dialog, p-drawer, ...), so a name-only scan cannot tell their reads apart.
+ * Fieldset's, Panel's, Accordion's and Drawer's `transitionOptions` is left out too: the same input is still alive on
+ * other components (p-dialog, p-stepper, ...), so a name-only scan cannot tell their reads apart.
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
  * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
  */
@@ -81,15 +84,17 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * (motionOptions drives the show/hide animation); ToggleButton's inputId, stored but never read
  * since the host element became the button itself; and Popover's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the show/hide animation) and
- * ariaCloseLabel, stored but never read since the popover renders no close button; and Image's deprecated
+ * ariaCloseLabel, stored but never read since the popover renders no close button; Image's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the preview animation) and
- * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed.
+ * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed;
+ * and Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
+ * animation).
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/`p-accordion`/
  * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover` are removed
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover`/`p-drawer` are removed
  * (motionOptions drives the show/hide animation); ConfirmPopup's deprecated
  * showTransitionOptions/hideTransitionOptions, stored but never read (motionOptions drives the
  * overlay animation); and ToggleButton's inputId, stored but never read since the host element
