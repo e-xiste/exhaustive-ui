@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, forwardRef, inject, InjectionToken, Input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
+import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { focus, getFirstFocusableElement, uuid } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -14,8 +14,6 @@ import { RatingIconTemplateContext, RatingPassThrough } from '@exhaustive-ui/cor
 import type { RatingRateEvent } from '@exhaustive-ui/core/types/rating';
 import { RatingStyle } from './style/ratingstyle';
 
-const RATING_INSTANCE = new InjectionToken<Rating>('RATING_INSTANCE');
-
 export const RATING_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => Rating),
@@ -28,10 +26,9 @@ export const RATING_VALUE_ACCESSOR: any = {
 @Component({
     selector: 'p-rating',
     imports: [CommonModule, AutoFocus, StarFillIcon, StarIcon, SharedModule, BindModule],
-    standalone: true,
     template: `
-        @for (star of starsArray; track star; let i = $index) {
-            <div [class]="cx('option', { star, value })" (click)="onOptionClick($event, star + 1)" [pBind]="ptm('option')">
+        @for (star of starsArray(); track star; let i = $index) {
+            <div [class]="cx('option', { star, value: value() })" (click)="onOptionClick($event, star + 1)" [pBind]="ptm('option')">
                 <span class="p-hidden-accessible" [attr.data-p-hidden-accessible]="true" [pBind]="ptm('hiddenOptionInputContainer')">
                     <input
                         type="radio"
@@ -39,98 +36,97 @@ export const RATING_VALUE_ACCESSOR: any = {
                         [attr.name]="name() || nameattr + '_name'"
                         [attr.value]="modelValue()"
                         [attr.required]="required() ? '' : undefined"
-                        [attr.readonly]="readonly ? '' : undefined"
+                        [attr.readonly]="readonly() ? '' : undefined"
                         [attr.disabled]="$disabled() ? '' : undefined"
-                        [checked]="value === star + 1"
+                        [checked]="value() === star + 1"
                         [attr.aria-label]="starAriaLabel(star + 1)"
                         (focus)="onInputFocus($event, star + 1)"
                         (blur)="onInputBlur($event)"
                         (change)="onChange($event, star + 1)"
-                        [pAutoFocus]="autofocus"
+                        [pAutoFocus]="autofocus()"
                         [pBind]="ptm('hiddenOptionInput')"
                     />
                 </span>
-                @if (star + 1 <= value) {
-                    @if (onIconTemplate() || _onIconTemplate) {
-                        <ng-container *ngTemplateOutlet="onIconTemplate() || _onIconTemplate; context: { $implicit: star + 1, class: cx('onIcon') }"></ng-container>
+                @if (star + 1 <= value()) {
+                    @if (onIconTemplate() || _onIconTemplate()) {
+                        <ng-container *ngTemplateOutlet="onIconTemplate() || _onIconTemplate(); context: { $implicit: star + 1, class: cx('onIcon') }"></ng-container>
                     } @else {
-                        @if (iconOnClass) {
-                            <span [class]="cx('onIcon')" [ngStyle]="iconOnStyle" [ngClass]="iconOnClass" [pBind]="ptm('onIcon')"></span>
+                        @if (iconOnClass()) {
+                            <span [class]="cx('onIcon')" [ngStyle]="iconOnStyle()" [ngClass]="iconOnClass()" [pBind]="ptm('onIcon')"></span>
                         }
-                        @if (!iconOnClass) {
-                            <svg data-p-icon="star-fill" [ngStyle]="iconOnStyle" [class]="cx('onIcon')" [pBind]="ptm('onIcon')" />
+                        @if (!iconOnClass()) {
+                            <svg data-p-icon="star-fill" [ngStyle]="iconOnStyle()" [class]="cx('onIcon')" [pBind]="ptm('onIcon')" />
                         }
                     }
                 } @else {
-                    @if (offIconTemplate() || _offIconTemplate) {
-                        <ng-container *ngTemplateOutlet="offIconTemplate() || _offIconTemplate; context: { $implicit: star + 1, class: cx('offIcon') }"></ng-container>
+                    @if (offIconTemplate() || _offIconTemplate()) {
+                        <ng-container *ngTemplateOutlet="offIconTemplate() || _offIconTemplate(); context: { $implicit: star + 1, class: cx('offIcon') }"></ng-container>
                     } @else {
-                        @if (iconOffClass) {
-                            <span [class]="cx('offIcon')" [ngStyle]="iconOffStyle" [ngClass]="iconOffClass" [pBind]="ptm('offIcon')"></span>
+                        @if (iconOffClass()) {
+                            <span [class]="cx('offIcon')" [ngStyle]="iconOffStyle()" [ngClass]="iconOffClass()" [pBind]="ptm('offIcon')"></span>
                         }
-                        @if (!iconOffClass) {
-                            <svg data-p-icon="star" [ngStyle]="iconOffStyle" [class]="cx('offIcon')" [pBind]="ptm('offIcon')" />
+                        @if (!iconOffClass()) {
+                            <svg data-p-icon="star" [ngStyle]="iconOffStyle()" [class]="cx('offIcon')" [pBind]="ptm('offIcon')" />
                         }
                     }
                 }
             </div>
         }
     `,
-    providers: [RATING_VALUE_ACCESSOR, RatingStyle, { provide: RATING_INSTANCE, useExisting: Rating }, { provide: PARENT_INSTANCE, useExisting: Rating }],
+    providers: [RATING_VALUE_ACCESSOR, RatingStyle, { provide: PARENT_INSTANCE, useExisting: Rating }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
         '[class]': "cx('root')",
-        '[attr.data-p]': 'dataP'
+        '[attr.data-p]': 'dataP()'
     },
     hostDirectives: [Bind]
 })
 export class Rating extends BaseEditableHolder<RatingPassThrough> {
     componentName = 'Rating';
 
-    $pcRating: Rating | undefined = inject(RATING_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     /**
      * When present, changing the value is not possible.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonly: boolean | undefined;
+    readonly readonly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Number of stars.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) stars: number = 5;
+    readonly stars = input<number, unknown>(5, { transform: numberAttribute });
     /**
      * Style class of the on icon.
      * @group Props
      */
-    @Input() iconOnClass: string | undefined;
+    readonly iconOnClass = input<string | undefined>();
     /**
      * Inline style of the on icon.
      * @group Props
      */
-    @Input() iconOnStyle: { [klass: string]: any } | null | undefined;
+    readonly iconOnStyle = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Style class of the off icon.
      * @group Props
      */
-    @Input() iconOffClass: string | undefined;
+    readonly iconOffClass = input<string | undefined>();
     /**
      * Inline style of the off icon.
      * @group Props
      */
-    @Input() iconOffStyle: { [klass: string]: any } | null | undefined;
+    readonly iconOffStyle = input<{ [klass: string]: any } | null | undefined>();
     /**
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocus: boolean | undefined;
+    readonly autofocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Emitted on value change.
      * @param {RatingRateEvent} value - Custom rate event.
@@ -166,48 +162,36 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    value: Nullable<number>;
+    value = signal<Nullable<number>>(undefined);
 
-    public starsArray: Nullable<number[]>;
+    public starsArray = computed<Nullable<number[]>>(() => Array.from({ length: this.stars() }, (_, i) => i));
 
-    isFocusVisibleItem: boolean = true;
+    isFocusVisibleItem = signal<boolean>(true);
 
     focusedOptionIndex = signal<number>(-1);
 
-    nameattr: string | undefined;
+    nameattr = uuid('pn_id_');
 
     _componentStyle = inject(RatingStyle);
 
-    _onIconTemplate: TemplateRef<RatingIconTemplateContext> | undefined;
+    readonly _onIconTemplate = computed<TemplateRef<RatingIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'onicon')
+                .at(-1)?.template
+    );
 
-    _offIconTemplate: TemplateRef<RatingIconTemplateContext> | undefined;
-
-    onInit() {
-        this.nameattr = this.nameattr || uuid('pn_id_');
-        this.starsArray = [];
-        for (let i = 0; i < this.stars; i++) {
-            this.starsArray[i] = i;
-        }
-    }
-
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'onicon':
-                    this._onIconTemplate = item.template;
-                    break;
-
-                case 'officon':
-                    this._offIconTemplate = item.template;
-                    break;
-            }
-        });
-    }
+    readonly _offIconTemplate = computed<TemplateRef<RatingIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'officon')
+                .at(-1)?.template
+    );
 
     onOptionClick(event, value) {
-        if (!this.readonly && !this.$disabled()) {
+        if (!this.readonly() && !this.$disabled()) {
             this.onOptionSelect(event, value);
-            this.isFocusVisibleItem = false;
+            this.isFocusVisibleItem.set(false);
             const firstFocusableEl = <any>getFirstFocusableElement(event.currentTarget, '');
 
             firstFocusableEl && focus(firstFocusableEl);
@@ -215,8 +199,8 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
     }
 
     onOptionSelect(event, value) {
-        if (!this.readonly && !this.$disabled()) {
-            if (this.focusedOptionIndex() === value || value === this.value) {
+        if (!this.readonly() && !this.$disabled()) {
+            if (this.focusedOptionIndex() === value || value === this.value()) {
                 this.focusedOptionIndex.set(-1);
                 this.updateModel(event, null);
             } else {
@@ -228,7 +212,7 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
 
     onChange(event, value) {
         this.onOptionSelect(event, value);
-        this.isFocusVisibleItem = true;
+        this.isFocusVisibleItem.set(true);
     }
 
     onInputBlur(event) {
@@ -237,9 +221,9 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
     }
 
     onInputFocus(event, value) {
-        if (!this.readonly && !this.$disabled()) {
+        if (!this.readonly() && !this.$disabled()) {
             this.focusedOptionIndex.set(value);
-            this.isFocusVisibleItem = event.sourceCapabilities?.firesTouchEvents === false;
+            this.isFocusVisibleItem.set(event.sourceCapabilities?.firesTouchEvents === false);
 
             this.onFocus.emit(event);
         }
@@ -247,7 +231,7 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
 
     updateModel(event, value) {
         this.writeValue(value);
-        this.onModelChange(this.value);
+        this.onModelChange(this.value());
         this.onModelTouched();
 
         this.onRate.emit({
@@ -260,10 +244,6 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
         return value === 1 ? this.config.translation.aria?.star : this.config.translation.aria?.stars?.replace(/{star}/g, value);
     }
 
-    getIconTemplate(i: number): Nullable<TemplateRef<RatingIconTemplateContext>> {
-        return !this.value || i >= this.value ? this.offIconTemplate() || this._offIconTemplate : this.onIconTemplate() || this.offIconTemplate();
-    }
-
     /**
      * @override
      *
@@ -271,20 +251,16 @@ export class Rating extends BaseEditableHolder<RatingPassThrough> {
      * Writes the value to the control.
      */
     writeControlValue(value: any, setModelValue: (value: any) => void): void {
-        this.value = value;
+        this.value.set(value);
         setModelValue(value);
     }
 
-    get isCustomIcon(): boolean {
-        return !!(this.onIconTemplate() || this._onIconTemplate || this.offIconTemplate() || this._offIconTemplate);
-    }
-
-    get dataP() {
-        return this.cn({
-            readonly: this.readonly,
+    readonly dataP = computed(() =>
+        this.cn({
+            readonly: this.readonly(),
             disabled: this.$disabled()
-        });
-    }
+        })
+    );
 }
 
 @NgModule({

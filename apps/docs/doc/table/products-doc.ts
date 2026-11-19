@@ -155,7 +155,7 @@ interface ExportColumn {
                             <td>{{ product.price | currency: 'USD' }}</td>
                             <td>{{ product.category }}</td>
                             <td>
-                                <p-rating [(ngModel)]="product.rating" [readonly]="true" [cancel]="false" />
+                                <p-rating [(ngModel)]="product.rating" [readonly]="true" />
                             </td>
                             <td>
                                 <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" />

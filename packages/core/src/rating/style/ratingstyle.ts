@@ -15,7 +15,7 @@ const classes = {
     root: ({ instance }) => [
         'p-rating',
         {
-            'p-readonly': instance.readonly,
+            'p-readonly': instance.readonly(),
             'p-disabled': instance.$disabled()
         }
     ],
@@ -24,7 +24,7 @@ const classes = {
 
         {
             'p-rating-option-active': star + 1 <= value,
-            'p-focus-visible': star + 1 === instance.focusedOptionIndex() && instance.isFocusVisibleItem
+            'p-focus-visible': star + 1 === instance.focusedOptionIndex() && instance.isFocusVisibleItem()
         }
     ],
     onIcon: ({ instance }) => ['p-rating-icon p-rating-on-icon', { 'p-invalid': instance.invalid() }],
