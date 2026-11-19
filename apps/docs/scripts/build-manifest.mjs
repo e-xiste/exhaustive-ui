@@ -5,14 +5,14 @@ import { collectApi, PACKAGE_NAME } from './manifest/api.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SITE_URL = 'https://optimus.openng.org';
+const SITE_URL = 'https://exhaustive-ui.e-xiste.com';
 const SCHEMA_VERSION = 1;
-const LIB_DIR = path.resolve(__dirname, '../../../packages/optimus-ui');
+const LIB_DIR = path.resolve(__dirname, '../../../packages/core');
 const API_DOC_PATH = path.resolve(__dirname, '../doc/apidoc/index.json');
 export const MANIFEST_PATH = path.resolve(__dirname, '../public/llms/manifest.json');
 
 /**
- * Build `public/llms/manifest.json`: a machine-readable description of every entry point of @openng/optimus-ui,
+ * Build `public/llms/manifest.json`: a machine-readable description of every entry point of @exhaustive-ui/core,
  * with its components, directives, NgModules, services and exported types (manifest/api.mjs).
  */
 export function buildManifest() {
@@ -28,7 +28,7 @@ export function buildManifest() {
 }
 
 function main() {
-    console.log('🧭 Building the Optimus UI manifest...\n');
+    console.log('🧭 Building the ExhaustiveUI manifest...\n');
     const manifest = buildManifest();
 
     fs.mkdirSync(path.dirname(MANIFEST_PATH), { recursive: true });

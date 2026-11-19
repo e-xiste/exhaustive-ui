@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MeterGroupModule } from '@openng/optimus-ui/metergroup';
-import { CardModule } from '@openng/optimus-ui/card';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
+import { CardModule } from '@exhaustive-ui/core/card';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

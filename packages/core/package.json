@@ -1,0 +1,94 @@
+{
+    "name": "@exhaustive-ui/core",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "description": "ExhaustiveUI is a community-maintained, MIT licensed UI library for Angular with 80+ accessible components and design-agnostic theming, including Aura, Material, Lara and Nora presets.",
+    "homepage": "https://exhaustive-ui.e-xiste.com/",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/e-xiste/exhaustive-ui.git",
+        "directory": "packages/core"
+    },
+    "bugs": {
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
+    },
+    "keywords": [
+        "exhaustive",
+        "exhaustiveui",
+        "angular",
+        "ui library",
+        "component library",
+        "material",
+        "bootstrap",
+        "fluent",
+        "tailwind"
+    ],
+    "publishConfig": {
+        "directory": "dist",
+        "linkDirectory": false,
+        "access": "public"
+    },
+    "schematics": "./schematics/collection.json",
+    "ng-add": {
+        "save": "dependencies"
+    },
+    "ng-update": {
+        "migrations": "./schematics/migrations.json",
+        "packageGroup": [
+            "@exhaustive-ui/core",
+            "@exhaustive-ui/locale",
+            "@exhaustive-ui/motion",
+            "@exhaustive-ui/styled",
+            "@exhaustive-ui/styles",
+            "@exhaustive-ui/tailwindcss",
+            "@exhaustive-ui/themes",
+            "@exhaustive-ui/utils"
+        ]
+    },
+    "scripts": {
+        "build": "cross-env NODE_ENV=production INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:package",
+        "build:package": "pnpm run build:prebuild && ng build exhaustive-ui && pnpm run build:postbuild",
+        "build:prebuild": "node ./scripts/prebuild.mjs",
+        "build:postbuild": "node ./scripts/postbuild.mjs",
+        "build:schematics": "node ./scripts/build-schematics.mjs",
+        "test:schematics": "node ./scripts/build-schematics.mjs && vitest run --config vitest.schematics.config.mts",
+        "dev:link": "pnpm link --global && npm link",
+        "lint": "ng lint",
+        "test:unit": "ng run exhaustive-ui:test-vitest --watch=false",
+        "test:unit:watch": "ng run exhaustive-ui:test-vitest --watch",
+        "test:unit:coverage": "ng run exhaustive-ui:test-vitest --watch=false --coverage"
+    },
+    "devDependencies": {
+        "@angular-devkit/schematics": "^22.1.6",
+        "@angular/build": "catalog:angular22",
+        "@schematics/angular": "^22.1.6",
+        "@types/node": "^26.2.0",
+        "@vitest/browser-playwright": "^4.1.11",
+        "@vitest/coverage-v8": "^4.1.11",
+        "tslib": "^2.8.1",
+        "typescript": "catalog:angular22",
+        "vitest": "^4.1.11"
+    },
+    "peerDependencies": {
+        "@angular/cdk": "catalog:angular22",
+        "@angular/common": "catalog:angular22",
+        "@angular/core": "catalog:angular22",
+        "@angular/forms": "catalog:angular22",
+        "@angular/platform-browser": "catalog:angular22",
+        "@angular/router": "catalog:angular22",
+        "chart.js": "^4.0.0",
+        "rxjs": "^6.0.0 || ^7.8.1"
+    },
+    "dependencies": {
+        "@exhaustive-ui/motion": "workspace:*",
+        "@exhaustive-ui/styled": "workspace:*",
+        "@exhaustive-ui/styles": "workspace:*",
+        "@exhaustive-ui/utils": "workspace:*"
+    },
+    "peerDependenciesMeta": {
+        "chart.js": {
+            "optional": true
+        }
+    }
+}

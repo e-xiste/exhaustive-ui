@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ContextMenuModule } from '@openng/optimus-ui/contextmenu';
+import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
 
 @Component({
     selector: 'contextmenu-pt-viewer',
@@ -9,7 +9,7 @@ import { ContextMenuModule } from '@openng/optimus-ui/contextmenu';
     imports: [CommonModule, AppDocPtViewer, ContextMenuModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <img #image src="https://optimus.openng.org/demo/nature/nature2.jpg" alt="Logo" aria-haspopup="true" class="w-full md:w-80 rounded shadow-lg" (contextmenu)="cm.show($event)" />
+            <img #image src="https://exhaustive-ui.e-xiste.com/demo/nature/nature2.jpg" alt="Logo" aria-haspopup="true" class="w-full md:w-80 rounded shadow-lg" (contextmenu)="cm.show($event)" />
             <p-contextMenu #cm [target]="image" [model]="items" />
         </app-docptviewer>
     `

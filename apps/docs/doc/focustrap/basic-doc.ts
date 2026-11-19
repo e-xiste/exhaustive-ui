@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { AutoFocusModule } from '@openng/optimus-ui/autofocus';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { CheckboxModule } from '@openng/optimus-ui/checkbox';
-import { FocusTrapModule } from '@openng/optimus-ui/focustrap';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { AutoFocusModule } from '@exhaustive-ui/core/autofocus';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+import { FocusTrapModule } from '@exhaustive-ui/core/focustrap';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'basic-doc',

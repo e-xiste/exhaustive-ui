@@ -1,11 +1,11 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { Popover, PopoverModule } from '@openng/optimus-ui/popover';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { Popover, PopoverModule } from '@exhaustive-ui/core/popover';
 
 interface Member {
     name: string;
@@ -26,7 +26,7 @@ interface Member {
                     <div>
                         <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2">Share this document</span>
                         <p-inputgroup>
-                            <input pInputText value="https://optimus.openng.org/s/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly class="w-[25rem]" />
+                            <input pInputText value="https://exhaustive-ui.e-xiste.com/s/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly class="w-[25rem]" />
                             <p-inputgroup-addon>
                                 <i class="pi pi-copy"></i>
                             </p-inputgroup-addon>
@@ -46,7 +46,7 @@ interface Member {
                         <ul class="list-none p-0 m-0 flex flex-col gap-4">
                             @for (member of members; track member) {
                                 <li class="flex items-center gap-2">
-                                    <img [src]="'https://optimus.openng.org/demo/avatar/' + member.image" style="width: 32px" />
+                                    <img [src]="'https://exhaustive-ui.e-xiste.com/demo/avatar/' + member.image" style="width: 32px" />
                                     <div>
                                         <span class="font-medium">{{ member.name }}</span>
                                         <div class="text-sm text-muted-color">{{ member.email }}</div>

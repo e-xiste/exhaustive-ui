@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';`
+        typescript: `import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';`
     };
 }

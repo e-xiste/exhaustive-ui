@@ -3,9 +3,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { TreeModule } from '@openng/optimus-ui/tree';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TreeModule } from '@exhaustive-ui/core/tree';
 
 @Component({
     selector: 'multiple-doc',

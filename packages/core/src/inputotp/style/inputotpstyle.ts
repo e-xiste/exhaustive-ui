@@ -1,0 +1,40 @@
+import { Injectable } from '@angular/core';
+import { style } from '@exhaustive-ui/styles/inputotp';
+import { BaseStyle } from '@exhaustive-ui/core/base';
+
+const classes = {
+    root: 'p-inputotp p-component',
+    pcInputText: 'p-inputotp-input'
+};
+
+@Injectable()
+export class InputOtpStyle extends BaseStyle {
+    name = 'inputotp';
+
+    style = style;
+
+    classes = classes;
+}
+
+/**
+ *
+ * InputOtp is used to enter one time passwords.
+ *
+ * [Live Demo](https://exhaustive-ui.e-xiste.com/inputotp/)
+ *
+ * @module inputotpstyle
+ *
+ */
+
+export enum InputOtpClasses {
+    /**
+     * Class name of the root element
+     */
+    root = 'p-inputotp',
+    /**
+     * Class name of the input element
+     */
+    pcInputText = 'p-inputotp-input'
+}
+
+export interface InputOtpStyle extends BaseStyle {}

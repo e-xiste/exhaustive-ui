@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { TimelineModule } from '@openng/optimus-ui/timeline';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { TimelineModule } from '@exhaustive-ui/core/timeline';
 
 @Component({
     standalone: true,
@@ -44,26 +44,26 @@ export class RoadmapDemo {
         private titleService: Title,
         private metaService: Meta
     ) {
-        this.titleService.setTitle('Roadmap - Optimus UI');
-        this.metaService.updateTag({ name: 'description', content: 'Optimus UI Roadmap' });
+        this.titleService.setTitle('Roadmap - ExhaustiveUI');
+        this.metaService.updateTag({ name: 'description', content: 'ExhaustiveUI Roadmap' });
 
         this.events = [
             {
                 title: 'v1',
                 shipped: true,
                 features: ['Rebranded from PrimeNG', 'Angular v21 compatible', 'ng add support for seamless installation', 'Schematic to migrate from PrimeNG'],
-                link: 'https://github.com/openng-org/optimus-ui/milestone/8'
+                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/8'
             },
             {
                 title: 'v2',
                 shipped: true,
                 features: ['Angular v22 compatible'],
-                link: 'https://github.com/openng-org/optimus-ui/milestone/10'
+                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/10'
             },
             {
                 title: 'Catchup step',
                 features: ['Triage and address existing 900+ open issues', 'Modernize the library to Angular modern APIs'],
-                link: 'https://github.com/openng-org/optimus-ui/milestone/9'
+                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/9'
             },
             {
                 title: 'Enhancement step',

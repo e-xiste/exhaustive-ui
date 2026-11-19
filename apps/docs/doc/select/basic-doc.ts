@@ -2,7 +2,7 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { SelectModule } from '@exhaustive-ui/core/select';
 
 interface City {
     name: string;

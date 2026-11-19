@@ -12,7 +12,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     imports: [AppDoc],
     template: `
         <app-doc
-            docTitle="Angular Float Label Component - Optimus UI"
+            docTitle="Angular Float Label Component - ExhaustiveUI"
             header="FloatLabel"
             description="FloatLabel appears on top of the input field when focused."
             [docs]="docs"

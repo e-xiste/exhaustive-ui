@@ -1,9 +1,9 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'headless-doc',
@@ -11,7 +11,7 @@ import { InputTextModule } from '@openng/optimus-ui/inputtext';
     imports: [AppDocSectionText, AppCode, ButtonModule, DialogModule, InputTextModule],
     template: `
         <app-docsectiontext>
-            <p>A headless Optimus UI dialog with a custom UI.</p>
+            <p>A headless ExhaustiveUI dialog with a custom UI.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-button (click)="showDialog()" icon="pi pi-user" label="Login" />

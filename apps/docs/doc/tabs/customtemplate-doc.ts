@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TabsModule } from '@openng/optimus-ui/tabs';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { BadgeModule } from '@openng/optimus-ui/badge';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
 
 @Component({
     selector: 'customtemplate-doc',
@@ -20,15 +20,15 @@ import { BadgeModule } from '@openng/optimus-ui/badge';
                         <i class="pi pi-minus"></i>
                     </ng-template>
                     <p-tab value="0" class="flex items-center !gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Amy Elsner</span>
                     </p-tab>
                     <p-tab value="1" class="flex items-center !gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/onyamalimba.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/onyamalimba.png" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Onyama Limba</span>
                     </p-tab>
                     <p-tab value="2" class="flex items-center !gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/ionibowcher.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/ionibowcher.png" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Ioni Bowcher</span>
                         <p-badge value="2" />
                     </p-tab>

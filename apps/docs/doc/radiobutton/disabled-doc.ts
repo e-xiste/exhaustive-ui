@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

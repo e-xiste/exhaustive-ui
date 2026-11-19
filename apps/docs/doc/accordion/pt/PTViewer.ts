@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AccordionModule } from '@openng/optimus-ui/accordion';
+import { AccordionModule } from '@exhaustive-ui/core/accordion';
 
 @Component({
     selector: 'accordion-pt-viewer',

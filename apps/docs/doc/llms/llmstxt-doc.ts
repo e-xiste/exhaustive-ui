@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'llmstxt-doc',
@@ -9,7 +9,7 @@ import { ButtonModule } from '@openng/optimus-ui/button';
     template: `
         <app-docsectiontext>
             <p>
-                The <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">llms.txt</a> file is an industry standard that helps AI models better understand and navigate the Optimus UI documentation. It lists key pages in a
+                The <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">llms.txt</a> file is an industry standard that helps AI models better understand and navigate the ExhaustiveUI documentation. It lists key pages in a
                 structured format, making it easier for LLMs to retrieve relevant information.
             </p>
             <a href="/llms/llms.txt" target="_blank">

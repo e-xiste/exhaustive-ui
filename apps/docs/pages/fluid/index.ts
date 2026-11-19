@@ -10,7 +10,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     imports: [AppDoc],
     template: `
         <app-doc
-            docTitle="Angular Fluid Component - Optimus UI"
+            docTitle="Angular Fluid Component - ExhaustiveUI"
             header="Fluid"
             description="Fluid is a layout component to make descendant components span full width of their container."
             [docs]="docs"

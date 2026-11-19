@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'severity-doc',

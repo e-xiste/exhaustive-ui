@@ -10,14 +10,14 @@ import { RouterModule } from '@angular/router';
         <app-docsectiontext>
             <h3>Which Angular versions are supported?</h3>
             <p>
-                Angular v21 and newer. Our majors follow Angular's — when a new Angular major ships, a compatible Optimus UI major is the first thing we work on. See the
+                Angular v21 and newer. Our majors follow Angular's — when a new Angular major ships, a compatible ExhaustiveUI major is the first thing we work on. See the
                 <a [routerLink]="'/migration/update'" fragment="angular-compatibility" class="doc-link">version compatibility table</a> in the update guide.
             </p>
 
             <h3>How do I migrate from PrimeNG? Is it automatic?</h3>
             <p>
-                Mostly, but not through <i>ng add</i>, which only sets up new projects and fails without changing anything when it finds an existing <i>primeng</i> dependency. Install <i>&#64;openng/optimus-ui</i>, then run
-                <i>ng generate &#64;openng/optimus-ui:migrate-from-primeng</i> in a PrimeNG v21 workspace: packages swapped, imports rewritten, dependencies installed. It then prints a report of anything it could not rewrite, with file and line
+                Mostly, but not through <i>ng add</i>, which only sets up new projects and fails without changing anything when it finds an existing <i>primeng</i> dependency. Install <i>&#64;exhaustive-ui/core</i>, then run
+                <i>ng generate &#64;exhaustive-ui/core:migrate-from-primeng</i> in a PrimeNG v21 workspace: packages swapped, imports rewritten, dependencies installed. It then prints a report of anything it could not rewrite, with file and line
                 numbers. The <a href="https://v1.optimus.openng.org/migration/primeng" target="_blank" rel="noopener noreferrer" class="doc-link">migration guide</a> covers the details and the manual cases.
             </p>
 
@@ -26,7 +26,7 @@ import { RouterModule } from '@angular/router';
 
             <h3>What happens to my PrimeNG license?</h3>
             <p>
-                Nothing — it is unrelated. A PrimeNG v22 commercial license covers PrimeNG. Optimus UI needs no license at all. If you hold a PrimeTek subscription for their templates or theme designer, those remain their products and do not carry
+                Nothing — it is unrelated. A PrimeNG v22 commercial license covers PrimeNG. ExhaustiveUI needs no license at all. If you hold a PrimeTek subscription for their templates or theme designer, those remain their products and do not carry
                 over here.
             </p>
 
@@ -36,7 +36,7 @@ import { RouterModule } from '@angular/router';
                 cleanly.
             </p>
 
-            <h3>Can I run PrimeNG and Optimus UI side by side?</h3>
+            <h3>Can I run PrimeNG and ExhaustiveUI side by side?</h3>
             <p>
                 Technically yes, since the package names and the CSS cascade layer differ, but you will ship two copies of the same components and two theme runtimes. Treat it as a temporary state during migration rather than a supported
                 configuration.

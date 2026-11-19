@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
 
 @Component({
     selector: 'buttonbar-doc',

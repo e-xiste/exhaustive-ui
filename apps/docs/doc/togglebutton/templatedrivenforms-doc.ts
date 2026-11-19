@@ -3,11 +3,11 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ToggleButtonModule } from '@openng/optimus-ui/togglebutton';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
 
 @Component({
     selector: 'templatedrivenforms-doc',

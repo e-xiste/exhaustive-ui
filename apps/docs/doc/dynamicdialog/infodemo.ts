@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DialogService, DynamicDialog, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DialogService, DynamicDialog, DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
 
 @Component({
     standalone: true,

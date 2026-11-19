@@ -2,11 +2,11 @@ import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MegaMenuItem } from '@openng/optimus-ui/api';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { MegaMenuModule } from '@openng/optimus-ui/megamenu';
-import { RippleModule } from '@openng/optimus-ui/ripple';
+import { MegaMenuItem } from '@exhaustive-ui/core/api';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MegaMenuModule } from '@exhaustive-ui/core/megamenu';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
 
 @Component({
     selector: 'template-doc',
@@ -70,7 +70,7 @@ import { RippleModule } from '@openng/optimus-ui/ripple';
                     </div>
                 </ng-template>
                 <ng-template #end>
-                    <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                 </ng-template>
             </p-megamenu>
         </div>

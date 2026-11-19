@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
-import { InputText } from '@openng/optimus-ui/inputtext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { FluidModule } from '@openng/optimus-ui/fluid';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

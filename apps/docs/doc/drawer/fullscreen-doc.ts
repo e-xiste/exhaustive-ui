@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
 
 @Component({
     selector: 'fullscreen-doc',

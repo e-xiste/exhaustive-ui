@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { BreadcrumbModule } from '@exhaustive-ui/core/breadcrumb';
 
 @Component({
     selector: 'breadcrumb-pt-viewer',

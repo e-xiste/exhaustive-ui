@@ -1,8 +1,8 @@
 import { PhotoService } from '@/service/photoservice';
 import { Component, inject, model, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

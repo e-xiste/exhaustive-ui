@@ -12,7 +12,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: ` <app-doc
-        docTitle="Angular FileUpload Component - Optimus UI"
+        docTitle="Angular FileUpload Component - ExhaustiveUI"
         header="FileUpload"
         description="FileUpload is an advanced uploader with dragdrop support, multi file uploads, auto uploading, progress tracking and validations."
         [docs]="docs"

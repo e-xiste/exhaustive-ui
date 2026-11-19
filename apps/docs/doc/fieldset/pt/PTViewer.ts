@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FieldsetModule } from '@openng/optimus-ui/fieldset';
+import { FieldsetModule } from '@exhaustive-ui/core/fieldset';
 
 @Component({
     selector: 'fieldset-pt-viewer',

@@ -4,8 +4,8 @@ import { AppConfigService } from '@/service/appconfigservice';
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { DomHandler } from '@openng/optimus-ui/dom';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DomHandler } from '@exhaustive-ui/core/dom';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { Subscription } from 'rxjs';
 import { FeaturesSectionComponent } from './featuressection.component';
 import { FooterSectionComponent } from './footersection.component';
@@ -48,7 +48,7 @@ export class LandingComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.titleService.setTitle('Optimus UI - Angular UI Component Library');
+        this.titleService.setTitle('ExhaustiveUI - Angular UI Component Library');
         this.metaService.updateTag({
             name: 'description',
             content: 'The ultimate collection of design-agnostic, flexible and accessible Angular UI Components.'

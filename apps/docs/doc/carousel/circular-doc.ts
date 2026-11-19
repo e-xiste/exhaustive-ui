@@ -4,9 +4,9 @@ import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { CarouselModule } from '@openng/optimus-ui/carousel';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CarouselModule } from '@exhaustive-ui/core/carousel';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'circular-doc',
@@ -22,7 +22,7 @@ import { TagModule } from '@openng/optimus-ui/tag';
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <img src="https://optimus.openng.org/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
+                                <img src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
                                 <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
                             </div>
                         </div>

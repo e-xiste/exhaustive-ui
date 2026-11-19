@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { MenubarModule } from '@openng/optimus-ui/menubar';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { MenubarModule } from '@exhaustive-ui/core/menubar';
 
 @Component({
     selector: 'menubar-pt-viewer',

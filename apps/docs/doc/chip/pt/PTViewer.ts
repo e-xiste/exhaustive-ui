@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ChipModule } from '@openng/optimus-ui/chip';
+import { ChipModule } from '@exhaustive-ui/core/chip';
 
 @Component({
     selector: 'chip-pt-viewer',

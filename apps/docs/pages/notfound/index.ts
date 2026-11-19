@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ export class NotFoundDemo implements OnInit {
     private metaService = inject(Meta);
 
     ngOnInit() {
-        this.titleService.setTitle('Page Not Found - Optimus UI');
+        this.titleService.setTitle('Page Not Found - ExhaustiveUI');
         this.metaService.updateTag({ name: 'robots', content: 'noindex' });
     }
 }

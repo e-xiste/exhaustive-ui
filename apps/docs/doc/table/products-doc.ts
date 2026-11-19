@@ -6,23 +6,23 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ConfirmDialogModule } from '@openng/optimus-ui/confirmdialog';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { FileUploadModule } from '@openng/optimus-ui/fileupload';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
-import { RatingModule } from '@openng/optimus-ui/rating';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { Table, TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { TextareaModule } from '@openng/optimus-ui/textarea';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ToolbarModule } from '@openng/optimus-ui/toolbar';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ConfirmDialogModule } from '@exhaustive-ui/core/confirmdialog';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { Table, TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ToolbarModule } from '@exhaustive-ui/core/toolbar';
 
 interface Column {
     field: string;
@@ -150,7 +150,7 @@ interface ExportColumn {
                             <td style="min-width: 12rem">{{ product.code }}</td>
                             <td style="min-width: 16rem">{{ product.name }}</td>
                             <td>
-                                <img [src]="'https://optimus.openng.org/demo/product/' + product.image" [alt]="product.name" style="width: 64px" class="rounded" />
+                                <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.name" style="width: 64px" class="rounded" />
                             </td>
                             <td>{{ product.price | currency: 'USD' }}</td>
                             <td>{{ product.category }}</td>
@@ -171,7 +171,7 @@ interface ExportColumn {
                 <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true">
                     <ng-template #content>
                         <div class="flex flex-col gap-6">
-                            <img [src]="'https://optimus.openng.org/demo/product/' + product.image" [alt]="product.image" class="block m-auto pb-4" *ngIf="product.image" />
+                            <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.image" class="block m-auto pb-4" *ngIf="product.image" />
                             <div>
                                 <label for="name" class="block font-bold mb-3">Name</label>
                                 <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid />

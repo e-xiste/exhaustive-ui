@@ -3,7 +3,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Product } from '@/domain/product';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { DragDropModule } from '@openng/optimus-ui/dragdrop';
+import { DragDropModule } from '@exhaustive-ui/core/dragdrop';
 
 @Component({
     selector: 'basic-doc',

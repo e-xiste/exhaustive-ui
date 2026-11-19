@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

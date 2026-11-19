@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
+import { TreeNode } from '@exhaustive-ui/core/api';
 
 @Injectable()
 export class NodeService {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
+import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

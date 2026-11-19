@@ -11,7 +11,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     imports: [AppDoc],
     template: `
         <app-doc
-            docTitle="Angular Ifta Label Component - Optimus UI"
+            docTitle="Angular Ifta Label Component - ExhaustiveUI"
             header="IftaLabel"
             description="IftaLabel is used to create infield top aligned labels."
             [docs]="docs"

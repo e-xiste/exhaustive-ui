@@ -1,7 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, viewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { addClass, find, removeClass } from '@openng/optimus-ui-utils/dom';
+import { addClass, find, removeClass } from '@exhaustive-ui/utils/dom';
 import { AppConfigService } from '../../service/appconfigservice';
 import { AppDocSectionText } from './app.docsectiontext';
 
@@ -45,7 +45,7 @@ type PtTableData = PtOptionItem[] | DocData[];
             @if (showViewer() && isNestedData()) {
                 <app-docsectiontext>
                     <p>
-                        Some sections may not be visible due to the availability of the particular feature. Section names that start with the <i>pc</i> prefix indicate that the element is a Optimus UI component not a DOM element. Visit the
+                        Some sections may not be visible due to the availability of the particular feature. Section names that start with the <i>pc</i> prefix indicate that the element is a ExhaustiveUI component not a DOM element. Visit the
                         <a routerLink="/passthrough">pass-through</a> documentation for more information.
                     </p>
                 </app-docsectiontext>

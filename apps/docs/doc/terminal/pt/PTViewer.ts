@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TerminalModule, TerminalService } from '@openng/optimus-ui/terminal';
+import { TerminalModule, TerminalService } from '@exhaustive-ui/core/terminal';
 
 @Component({
     selector: 'terminal-pt-viewer',
@@ -15,7 +15,7 @@ import { TerminalModule, TerminalService } from '@openng/optimus-ui/terminal';
                     Enter "<strong>date</strong>" to display the current date, "<strong>greet {{ '{0}' }}</strong
                     >" for a message and "<strong>random</strong>" to get a random number.
                 </p>
-                <p-terminal welcomeMessage="Welcome to Optimus UI" prompt="optimus $" aria-label="Optimus UI Terminal Service"></p-terminal>
+                <p-terminal welcomeMessage="Welcome to ExhaustiveUI" prompt="exhaustive $" aria-label="ExhaustiveUI Terminal Service"></p-terminal>
             </div>
         </app-docptviewer>
     `

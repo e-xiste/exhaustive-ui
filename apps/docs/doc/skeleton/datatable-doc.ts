@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { SkeletonModule } from '@openng/optimus-ui/skeleton';
-import { TableModule } from '@openng/optimus-ui/table';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
+import { TableModule } from '@exhaustive-ui/core/table';
 import { CommonModule } from '@angular/common';
 
 @Component({

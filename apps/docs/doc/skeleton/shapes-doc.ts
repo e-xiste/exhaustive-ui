@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { SkeletonModule } from '@openng/optimus-ui/skeleton';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
 
 @Component({
     selector: 'shapes-doc',

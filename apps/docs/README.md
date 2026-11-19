@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://optimus.openng.org/large-icon.svg" alt="Optimus UI" width="140" />
+  <img src="https://exhaustive-ui.e-xiste.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
 </div>
 
-## Optimus UI
+## ExhaustiveUI
 
-Optimus UI is a rich set of open source UI Components for Angular. Visit the [Optimus UI website](https://optimus.openng.org/) for interactive demos, comprehensive documentation and additional resources.
+ExhaustiveUI is a rich set of open source UI Components for Angular. Visit the [ExhaustiveUI website](https://exhaustive-ui.e-xiste.com/) for interactive demos, comprehensive documentation and additional resources.

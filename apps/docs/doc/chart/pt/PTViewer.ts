@@ -3,7 +3,7 @@ import { AppConfigService } from '@/service/appconfigservice';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectorRef, Component, effect, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChartModule } from '@openng/optimus-ui/chart';
+import { ChartModule } from '@exhaustive-ui/core/chart';
 
 @Component({
     selector: 'chart-pt-viewer',

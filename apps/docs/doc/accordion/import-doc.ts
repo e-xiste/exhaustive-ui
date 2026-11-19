@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { AccordionModule } from '@openng/optimus-ui/accordion';`
+        typescript: `import { AccordionModule } from '@exhaustive-ui/core/accordion';`
     };
 }

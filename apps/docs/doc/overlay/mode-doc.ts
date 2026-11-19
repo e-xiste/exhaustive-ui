@@ -16,8 +16,8 @@ import { Component } from '@angular/core';
 })
 export class ModeDoc {
     code2 = {
-        typescript: `import { OverlayOptions, ResponsiveOverlayDirectionType } from '@openng/optimus-ui/api';
-import { Optimus } from '@openng/optimus-ui/config';
+        typescript: `import { OverlayOptions, ResponsiveOverlayDirectionType } from '@exhaustive-ui/core/api';
+import { Exhaustive } from '@exhaustive-ui/core/config';
 
 const responsiveOptions: ResponsiveOverlayOptions = {
     // style?: any;                                     // Style of component in given breakpoint or media query

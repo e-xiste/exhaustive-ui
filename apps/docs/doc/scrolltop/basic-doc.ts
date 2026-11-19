@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ScrollTop, ScrollTopModule } from '@openng/optimus-ui/scrolltop';
+import { ScrollTop, ScrollTopModule } from '@exhaustive-ui/core/scrolltop';
 
 @Component({
     selector: 'basic-doc',

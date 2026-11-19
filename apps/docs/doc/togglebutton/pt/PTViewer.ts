@@ -3,7 +3,7 @@ import { AppDocPtViewer } from '@/components/doc/app.docptviewer';
 import { getPTOptions } from '@/components/doc/app.docptviewer';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToggleButtonModule } from '@openng/optimus-ui/togglebutton';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
 
 @Component({
     selector: 'togglebutton-pt-viewer',

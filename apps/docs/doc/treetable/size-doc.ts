@@ -5,9 +5,9 @@ import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 @Component({
     selector: 'size-doc',

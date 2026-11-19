@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ChipModule } from '@openng/optimus-ui/chip';`
+        typescript: `import { ChipModule } from '@exhaustive-ui/core/chip';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TreeSelectModule } from '@openng/optimus-ui/treeselect';`
+        typescript: `import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';`
     };
 }

@@ -1,0 +1,55 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "target": "es2016",
+        "paths": {
+            "@exhaustive-ui/utils": [
+                "../utils/src"
+            ],
+            "@exhaustive-ui/utils/*": [
+                "../utils/src/*"
+            ],
+            "@exhaustive-ui/styled": [
+                "../styled/src"
+            ],
+            "@exhaustive-ui/styled/*": [
+                "../styled/src/*"
+            ],
+            "@exhaustive-ui/styles": [
+                "../styles/src"
+            ],
+            "@exhaustive-ui/styles/*": [
+                "../styles/src/*"
+            ],
+            "@exhaustive-ui/motion": [
+                "../motion/src"
+            ],
+            "@exhaustive-ui/motion/*": [
+                "../motion/src/*",
+                "../motion/types/*"
+            ],
+            "@exhaustive-ui/themes": [
+                "../themes/src"
+            ],
+            "@exhaustive-ui/themes/types": [
+                "../themes/types"
+            ],
+            "@exhaustive-ui/themes/types/*": [
+                "../themes/types/*"
+            ],
+            "@exhaustive-ui/themes/*": [
+                "../themes/src/*",
+                "../themes/src/presets/*",
+                "../themes/types/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*",
+        "types/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

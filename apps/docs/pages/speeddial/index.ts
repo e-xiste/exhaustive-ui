@@ -13,7 +13,7 @@ import { Component } from '@angular/core';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Speed Dial Component - Optimus UI"
+        docTitle="Angular Speed Dial Component - ExhaustiveUI"
         header="Speed Dial"
         description="SpeedDial is a floating button with a popup menu."
         [docs]="docs"

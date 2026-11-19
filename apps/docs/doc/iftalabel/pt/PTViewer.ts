@@ -2,8 +2,8 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'iftalabel-pt-viewer',

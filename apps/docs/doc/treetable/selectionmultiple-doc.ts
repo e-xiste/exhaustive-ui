@@ -5,9 +5,9 @@ import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 interface Column {
     field: string;

@@ -9,20 +9,20 @@ import { Component } from '@angular/core';
     template: `
         <app-docsectiontext>
             <p>
-                The <a href="https://www.npmjs.com/package/@openng/optimus-ui-tailwindcss" target="_blank" rel="noopener noreferrer">@openng/optimus-ui-tailwindcss</a> is a plugin to provide first class integration between Optimus UI and Tailwind
-                CSS. It is designed to work both in styled and unstyled modes. In styled mode, for instance the semantic colors such as primary and surfaces are provided as Tailwind utilities e.g. <i>bg-primary</i>, <i>text-surface-500</i>,
+                The <a href="https://www.npmjs.com/package/@exhaustive-ui/tailwindcss" target="_blank" rel="noopener noreferrer">@exhaustive-ui/tailwindcss</a> is a plugin to provide first class integration between ExhaustiveUI and Tailwind CSS. It
+                is designed to work both in styled and unstyled modes. In styled mode, for instance the semantic colors such as primary and surfaces are provided as Tailwind utilities e.g. <i>bg-primary</i>, <i>text-surface-500</i>,
                 <i>text-muted-color</i>.
             </p>
             <p>
                 If you haven't already done so, start by integrating Tailwind into your project. Detailed steps for this process can be found in the Tailwind
-                <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">documentation</a>. After successfully installing Tailwind, proceed with the installation of the OptimusUiTailwind plugin. This single npm package comes with
-                two libraries: the CSS version is compatible with Tailwind v4, while the JS version is designed for Tailwind v3.
+                <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">documentation</a>. After successfully installing Tailwind, proceed with the installation of the ExhaustiveUiTailwind plugin. This single npm package comes
+                with two libraries: the CSS version is compatible with Tailwind v4, while the JS version is designed for Tailwind v3.
             </p>
             <app-code [code]="code1" [hideToggleCode]="true" [hideStackBlitz]="true" />
             <h3>Tailwind v4</h3>
-            <p>In the CSS file that contains the tailwindcss import, add the <i>@openng/optimus-ui-tailwindcss</i> import as well.</p>
+            <p>In the CSS file that contains the tailwindcss import, add the <i>@exhaustive-ui/tailwindcss</i> import as well.</p>
             <app-code [code]="code2" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" />
-            <p class="mt-4">For a comprehensive starter guide, review the <a href="https://github.com/openng-org/optimus-ui" target="_blank" rel="noopener noreferrer">Optimus UI</a> repository which demonstrates the integration.</p>
+            <p class="mt-4">For a comprehensive starter guide, review the <a href="https://github.com/e-xiste/exhaustive-ui" target="_blank" rel="noopener noreferrer">ExhaustiveUI</a> repository which demonstrates the integration.</p>
             <h3>Tailwind v3</h3>
             <p>Use the plugins option in your Tailwind config file to configure the plugin.</p>
             <app-code [code]="code3" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" />
@@ -31,21 +31,21 @@ import { Component } from '@angular/core';
 })
 export class PluginDoc {
     code1 = {
-        typescript: `npm i @openng/optimus-ui-tailwindcss`
+        typescript: `npm i @exhaustive-ui/tailwindcss`
     };
 
     code2 = {
         typescript: `@import "tailwindcss";
-@import "@openng/optimus-ui-tailwindcss";`
+@import "@exhaustive-ui/tailwindcss";`
     };
 
     code3 = {
         typescript: `// tailwind.config.js
-import OptimusUiTailwind from '@openng/optimus-ui-tailwindcss';
+import ExhaustiveUiTailwind from '@exhaustive-ui/tailwindcss';
 
 export default {
     // ...
-    plugins: [OptimusUiTailwind]
+    plugins: [ExhaustiveUiTailwind]
 };`
     };
 }

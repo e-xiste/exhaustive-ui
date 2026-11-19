@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SelectButton } from '@openng/optimus-ui/selectbutton';
-import { Slider } from '@openng/optimus-ui/slider';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
-import { IconField } from '@openng/optimus-ui/iconfield';
-import { InputIcon } from '@openng/optimus-ui/inputicon';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { ProgressBar } from '@openng/optimus-ui/progressbar';
-import { Carousel } from '@openng/optimus-ui/carousel';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+import { Slider } from '@exhaustive-ui/core/slider';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+import { IconField } from '@exhaustive-ui/core/iconfield';
+import { InputIcon } from '@exhaustive-ui/core/inputicon';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { ProgressBar } from '@exhaustive-ui/core/progressbar';
+import { Carousel } from '@exhaustive-ui/core/carousel';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
 
 @Component({
     selector: 'movies-app',

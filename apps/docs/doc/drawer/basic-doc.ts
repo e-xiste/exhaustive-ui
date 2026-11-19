@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

@@ -1,5 +1,5 @@
-import { definePreset } from '@openng/optimus-ui-themes';
-import Aura from '@openng/optimus-ui-themes/aura';
+import { definePreset } from '@exhaustive-ui/themes';
+import Aura from '@exhaustive-ui/themes/aura';
 
 const Noir = definePreset(Aura, {
     semantic: {

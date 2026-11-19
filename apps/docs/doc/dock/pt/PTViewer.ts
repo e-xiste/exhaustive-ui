@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { DockModule } from '@openng/optimus-ui/dock';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { DockModule } from '@exhaustive-ui/core/dock';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'dock-pt-viewer',
@@ -24,19 +24,19 @@ export class PTViewer {
     items = [
         {
             label: 'Finder',
-            icon: 'https://optimus.openng.org/demo/dock/finder.svg'
+            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/finder.svg'
         },
         {
             label: 'App Store',
-            icon: 'https://optimus.openng.org/demo/dock/appstore.svg'
+            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/appstore.svg'
         },
         {
             label: 'Photos',
-            icon: 'https://optimus.openng.org/demo/dock/photos.svg'
+            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/photos.svg'
         },
         {
             label: 'Trash',
-            icon: 'https://optimus.openng.org/demo/dock/trash.png'
+            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/trash.png'
         }
     ];
 

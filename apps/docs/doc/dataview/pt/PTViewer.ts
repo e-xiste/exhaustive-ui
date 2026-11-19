@@ -1,9 +1,9 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { DataViewModule } from '@openng/optimus-ui/dataview';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DataViewModule } from '@exhaustive-ui/core/dataview';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { ProductService } from '@/service/productservice';
 
 interface Product {
@@ -31,7 +31,7 @@ interface Product {
                         <div *ngFor="let item of items; let i = index">
                             <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                                 <div class="md:w-40 relative">
-                                    <img class="rounded w-36" [src]="'https://optimus.openng.org/demo/product/' + item.image" [alt]="item.name" />
+                                    <img class="rounded w-36" [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + item.image" [alt]="item.name" />
                                     <div class="dark:bg-surface-900 absolute rounded-border" style="left: 4px; top: 4px">
                                         <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"></p-tag>
                                     </div>

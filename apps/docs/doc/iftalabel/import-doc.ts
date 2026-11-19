@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';`
+        typescript: `import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';`
     };
 }

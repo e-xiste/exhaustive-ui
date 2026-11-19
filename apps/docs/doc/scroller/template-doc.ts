@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrollerModule } from '@openng/optimus-ui/scroller';
-import { SkeletonModule } from '@openng/optimus-ui/skeleton';
+import { ScrollerModule } from '@exhaustive-ui/core/scroller';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
 
 @Component({
     selector: 'template-doc',

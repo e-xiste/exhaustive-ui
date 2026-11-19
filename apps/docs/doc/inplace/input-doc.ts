@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { InplaceModule } from '@openng/optimus-ui/inplace';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { AutoFocusModule } from '@openng/optimus-ui/autofocus';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { InplaceModule } from '@exhaustive-ui/core/inplace';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { AutoFocusModule } from '@exhaustive-ui/core/autofocus';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

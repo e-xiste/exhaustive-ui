@@ -3,10 +3,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
 
 @Component({
     selector: 'form-doc',
@@ -14,7 +14,7 @@ import { TextareaModule } from '@openng/optimus-ui/textarea';
     imports: [CommonModule, FormsModule, AppDocSectionText, AppCode, InputTextModule, SelectModule, DatePickerModule, TextareaModule],
     template: `
         <app-docsectiontext>
-            <p>Using Tailwind utilities for the responsive layout of a form with Optimus UI components.</p>
+            <p>Using Tailwind utilities for the responsive layout of a form with ExhaustiveUI components.</p>
         </app-docsectiontext>
         <div class="card flex sm:justify-center">
             <div class="flex flex-col gap-6 w-full sm:w-auto">
@@ -38,13 +38,13 @@ import { TextareaModule } from '@openng/optimus-ui/textarea';
                         <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [showClear]="true" placeholder="Select a Country">
                             <ng-template pTemplate="selectedItem">
                                 <div class="flex items-center gap-2" *ngIf="selectedCountry">
-                                    <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
+                                    <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
                                     <div>{{ selectedCountry.name }}</div>
                                 </div>
                             </ng-template>
                             <ng-template let-country pTemplate="item">
                                 <div class="flex items-center gap-2">
-                                    <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                                    <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
                                     <div>{{ country.name }}</div>
                                 </div>
                             </ng-template>

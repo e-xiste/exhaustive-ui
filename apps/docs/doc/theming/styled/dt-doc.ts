@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 })
 export class DtDoc {
     code1 = {
-        typescript: `import { $dt } from '@openng/optimus-ui-themes';`
+        typescript: `import { $dt } from '@exhaustive-ui/themes';`
     };
 
     code2 = {

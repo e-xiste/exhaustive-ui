@@ -4,8 +4,8 @@ import { Car } from '@/domain/car';
 import { CarService } from '@/service/carservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FilterMatchMode, FilterService, SelectItem } from '@openng/optimus-ui/api';
-import { TableModule } from '@openng/optimus-ui/table';
+import { FilterMatchMode, FilterService, SelectItem } from '@exhaustive-ui/core/api';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'tableintegration-doc',

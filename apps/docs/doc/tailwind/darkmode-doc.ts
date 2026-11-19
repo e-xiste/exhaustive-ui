@@ -9,10 +9,10 @@ import { Component } from '@angular/core';
     template: `
         <app-docsectiontext>
             <p>
-                In styled mode, Optimus UI uses the <i>system</i> as the default <i>darkModeSelector</i> in theme configuration. If you have a dark mode switch in your application, ensure that <i>darkModeSelector</i> is aligned with the Tailwind dark
-                variant for seamless integration. Note that, this particular configuration isn't required if you're utilizing the default system color scheme.
+                In styled mode, ExhaustiveUI uses the <i>system</i> as the default <i>darkModeSelector</i> in theme configuration. If you have a dark mode switch in your application, ensure that <i>darkModeSelector</i> is aligned with the Tailwind
+                dark variant for seamless integration. Note that, this particular configuration isn't required if you're utilizing the default system color scheme.
             </p>
-            <p>Suppose that, the darkModeSelector is set as <i>my-app-dark</i> in Optimus UI.</p>
+            <p>Suppose that, the darkModeSelector is set as <i>my-app-dark</i> in ExhaustiveUI.</p>
             <app-code [code]="code1" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" />
             <h3>Tailwind v4</h3>
             <p>Add a custom variant for dark with a custom selector.</p>
@@ -25,7 +25,7 @@ import { Component } from '@angular/core';
 })
 export class DarkModeDoc {
     code1 = {
-        typescript: `provideOptimus({
+        typescript: `provideExhaustive({
     theme: {
         preset: Aura,
         options: {
@@ -37,17 +37,17 @@ export class DarkModeDoc {
 
     code2 = {
         typescript: `@import "tailwindcss";
-@import "@openng/optimus-ui-tailwindcss";
+@import "@exhaustive-ui/tailwindcss";
 @custom-variant dark (&:where(.my-app-dark, .my-app-dark *));     //dark mode configuration`
     };
 
     code3 = {
         typescript: `// tailwind.config.js
-import OptimusUiTailwind from '@openng/optimus-ui-tailwindcss';
+import ExhaustiveUiTailwind from '@exhaustive-ui/tailwindcss';
 
 export default {
     darkMode: ['selector', '[class~="my-app-dark"]'],           //dark mode configuration
-    plugins: [OptimusUiTailwind]
+    plugins: [ExhaustiveUiTailwind]
 };`
     };
 }

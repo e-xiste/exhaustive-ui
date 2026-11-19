@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { CheckboxModule } from '@openng/optimus-ui/checkbox';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

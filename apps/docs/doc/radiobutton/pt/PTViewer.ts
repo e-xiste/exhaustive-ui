@@ -2,7 +2,7 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 
 @Component({
     selector: 'radiobutton-pt-viewer',

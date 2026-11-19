@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

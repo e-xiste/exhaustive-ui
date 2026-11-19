@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MessageService } from '@openng/optimus-ui/api';
-import { Optimus } from '@openng/optimus-ui/config';
-import { FileUploadModule } from '@openng/optimus-ui/fileupload';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         >
         <div class="card">
             <p-toast />
-            <p-fileupload name="myfile[]" url="https://optimus.openng.org/api/upload" [multiple]="true" accept="image/*" maxFileSize="1000000" (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
+            <p-fileupload name="myfile[]" url="https://exhaustive-ui.e-xiste.com/api/upload" [multiple]="true" accept="image/*" maxFileSize="1000000" (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
                 <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                     <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                         <div class="flex gap-2">
@@ -90,7 +90,7 @@ export class TemplateDoc {
     totalSizePercent: number = 0;
 
     constructor(
-        private config: Optimus,
+        private config: Exhaustive,
         private messageService: MessageService
     ) {}
 

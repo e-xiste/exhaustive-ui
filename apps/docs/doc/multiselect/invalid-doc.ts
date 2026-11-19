@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

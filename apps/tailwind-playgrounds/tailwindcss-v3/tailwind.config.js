@@ -1,4 +1,4 @@
-import OptimusUiTailwind from '@openng/optimus-ui-tailwindcss';
+import ExhaustiveUiTailwind from '@exhaustive-ui/tailwindcss';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -8,5 +8,5 @@ export default {
             colors: {}
         }
     },
-    plugins: [OptimusUiTailwind]
+    plugins: [ExhaustiveUiTailwind]
 };

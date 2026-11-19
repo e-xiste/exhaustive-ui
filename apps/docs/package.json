@@ -1,7 +1,7 @@
 {
     "name": "docs",
     "private": true,
-    "version": "2.0.2",
+    "version": "3.0.0-alpha.0",
     "license": "MIT",
     "type": "module",
     "scripts": {
@@ -10,7 +10,7 @@
         "start:ssr": "ng serve --configuration=development-ssr",
         "e2e": "ng e2e",
         "lint": "ng lint",
-        "build": "pnpm --filter @openng/optimus-ui-themes build && npm run build:apidoc && npm run build:democode && npm run build:manifest && npm run build:llm-docs && npm run build:routes && npm run build:sitemap && ng build",
+        "build": "pnpm --filter @exhaustive-ui/themes build && npm run build:apidoc && npm run build:democode && npm run build:manifest && npm run build:llm-docs && npm run build:routes && npm run build:sitemap && ng build",
         "build:apidoc": "node scripts/build-apidoc.mjs",
         "build:routes": "node scripts/build-routes.mjs",
         "build:sitemap": "node scripts/build-sitemap.mjs",
@@ -24,13 +24,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/openng-org/optimus-ui.git"
+        "url": "https://github.com/e-xiste/exhaustive-ui.git"
     },
     "devDependencies": {
         "@angular/ssr": "catalog:angular22",
-        "@docsearch/css": "^5.0.3",
-        "@docsearch/js": "^3.3.4",
-        "@openng/optimus-ui-themes": "workspace:*",
+        "@exhaustive-ui/themes": "workspace:*",
         "@angular/cdk": "catalog:angular22",
         "@stackblitz/sdk": "1.11.1",
         "@types/express": "^5.0.6",
@@ -38,7 +36,7 @@
         "chart.js": "4.5.1",
         "express": "^5.2.1",
         "@openng/icons": "catalog:",
-        "@openng/optimus-ui": "workspace:*",
+        "@exhaustive-ui/core": "workspace:*",
         "prismjs": "^1.29.0",
         "quill": "2.0.3",
         "rxjs": "~7.8.2",
@@ -49,6 +47,6 @@
         "tailwindcss": "^3.4.10"
     },
     "dependencies": {
-        "@openng/optimus-ui-tailwindcss": "workspace:*"
+        "@exhaustive-ui/tailwindcss": "workspace:*"
     }
 }

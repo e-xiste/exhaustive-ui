@@ -16,7 +16,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: ` <app-doc
-        docTitle="Angular Avatar Component - Optimus UI"
+        docTitle="Angular Avatar Component - ExhaustiveUI"
         header="Avatar"
         description="Avatar represents people using icons, labels and images."
         [docs]="docs"

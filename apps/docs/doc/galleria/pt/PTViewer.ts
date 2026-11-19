@@ -2,7 +2,7 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { PhotoService } from '@/service/photoservice';
 import { CommonModule } from '@angular/common';
 import { Component, model } from '@angular/core';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
 
 @Component({
     selector: 'galleria-pt-viewer',

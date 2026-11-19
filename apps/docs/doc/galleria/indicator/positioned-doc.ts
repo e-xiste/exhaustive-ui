@@ -2,9 +2,9 @@ import { PhotoService } from '@/service/photoservice';
 import { Component, inject, model, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
-import { CheckboxModule } from '@openng/optimus-ui/checkbox';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

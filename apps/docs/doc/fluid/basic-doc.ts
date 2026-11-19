@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { Fluid } from '@openng/optimus-ui/fluid';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { Fluid } from '@exhaustive-ui/core/fluid';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'basic-doc',

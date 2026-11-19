@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FilterService, SelectItemGroup } from '@openng/optimus-ui/api';
+import { FilterService, SelectItemGroup } from '@exhaustive-ui/core/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 
@@ -22,7 +22,7 @@ interface AutoCompleteCompleteEvent {
             <p-autocomplete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups" (completeMethod)="filterGroupedCity($event)" placeholder="Hint: type 'a'">
                 <ng-template let-group #group>
                     <div class="flex items-center">
-                        <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
                         <span>{{ group.label }}</span>
                     </div>
                 </ng-template>

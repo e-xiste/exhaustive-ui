@@ -4,7 +4,7 @@ import { Code } from '@/domain/code';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 interface City {
     name: string;
@@ -18,8 +18,8 @@ interface City {
     template: `
         <app-docsectiontext>
             <p>
-                Unstyled components require styling using your preferred approach. We recommend using Tailwind CSS with PassThrough attributes, a combination that works seamlessly together. The <i>@openng/optimus-ui-tailwindcss</i> even provides
-                special variants such as <i>p-outlined:</i>, <i>p-vertical</i> for the Optimus UI components.
+                Unstyled components require styling using your preferred approach. We recommend using Tailwind CSS with PassThrough attributes, a combination that works seamlessly together. The <i>@exhaustive-ui/tailwindcss</i> even provides special
+                variants such as <i>p-outlined:</i>, <i>p-vertical</i> for the ExhaustiveUI components.
             </p>
             <p>
                 The example below demonstrates how to style a button component with Tailwind CSS using PassThrough attributes. Before you begin, refer to the

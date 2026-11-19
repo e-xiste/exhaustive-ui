@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';`
+        typescript: `import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';`
     };
 }

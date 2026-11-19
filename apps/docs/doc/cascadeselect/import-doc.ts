@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { CascadeSelectModule } from '@openng/optimus-ui/cascadeselect';`
+        typescript: `import { CascadeSelectModule } from '@exhaustive-ui/core/cascadeselect';`
     };
 }

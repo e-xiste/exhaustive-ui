@@ -10,7 +10,7 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { AvatarGroupModule } from '@openng/optimus-ui/avatargroup';`
+        typescript: `import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';`
     };
 }

@@ -2,9 +2,9 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { SplitButtonModule } from '@openng/optimus-ui/splitbutton';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'sizes-doc',

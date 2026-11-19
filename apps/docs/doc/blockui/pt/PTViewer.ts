@@ -1,9 +1,9 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BlockUIModule } from '@openng/optimus-ui/blockui';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { PanelModule } from '@openng/optimus-ui/panel';
+import { BlockUIModule } from '@exhaustive-ui/core/blockui';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { PanelModule } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'blockui-pt-viewer',

@@ -4,10 +4,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MenuItem, MessageService, TreeNode } from '@openng/optimus-ui/api';
-import { ContextMenuModule } from '@openng/optimus-ui/contextmenu';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { MenuItem, MessageService, TreeNode } from '@exhaustive-ui/core/api';
+import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 interface Column {
     field: string;

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { DataViewModule } from '@openng/optimus-ui/dataview';`
+        typescript: `import { DataViewModule } from '@exhaustive-ui/core/dataview';`
     };
 }

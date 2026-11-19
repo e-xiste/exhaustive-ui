@@ -2,15 +2,15 @@ import { default as MenuData } from '@/assets/data/menu.json';
 import { default as Versions } from '@/assets/data/versions.json';
 import { AppConfiguratorComponent } from '@/components/layout/configurator/app.configurator.component';
 import { AppConfigService } from '@/service/appconfigservice';
-import { DISCORD_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
+import { GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, computed, ElementRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { AutoComplete } from '@openng/optimus-ui/autocomplete';
-import { DomHandler } from '@openng/optimus-ui/dom';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { StyleClass } from '@openng/optimus-ui/styleclass';
+import { AutoComplete } from '@exhaustive-ui/core/autocomplete';
+import { DomHandler } from '@exhaustive-ui/core/dom';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { StyleClass } from '@exhaustive-ui/core/styleclass';
 import { Subscription } from 'rxjs';
 import { AppMenuItemComponent } from './app.menuitem.component';
 
@@ -35,14 +35,6 @@ export interface MenuItem {
                             <i class="pi pi-github"></i>
                         </div>
                         <span>GitHub</span>
-                    </a>
-                </li>
-                <li class="drawer-quickaction">
-                    <a [href]="discordUrl" target="_blank" rel="noopener noreferrer" aria-label="Optimus UI Discord" title="Optimus UI Discord">
-                        <div class="menu-icon">
-                            <i class="pi pi-discord"></i>
-                        </div>
-                        <span>Discord</span>
                     </a>
                 </li>
                 <li class="drawer-quickaction">
@@ -102,7 +94,6 @@ export class AppMenuComponent implements OnDestroy {
 
     readonly githubRepoUrl = GITHUB_REPO_URL;
     readonly githubDiscussionsUrl = GITHUB_DISCUSSIONS_URL;
-    readonly discordUrl = DISCORD_URL;
 
     versions: any[] = Versions;
     selectedVersion = this.versions[0].items[0].value;

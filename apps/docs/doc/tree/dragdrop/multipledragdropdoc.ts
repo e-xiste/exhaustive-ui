@@ -1,8 +1,8 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component, OnInit, signal } from '@angular/core';
-import { TreeDragDropService, TreeNode } from '@openng/optimus-ui/api';
-import { TreeModule } from '@openng/optimus-ui/tree';
+import { TreeDragDropService, TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
 
 @Component({
     selector: 'multiple-drag-drop-doc',

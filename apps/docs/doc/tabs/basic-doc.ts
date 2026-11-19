@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TabsModule } from '@openng/optimus-ui/tabs';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
 
 @Component({
     selector: 'basic-doc',

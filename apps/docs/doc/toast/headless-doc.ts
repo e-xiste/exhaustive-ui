@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ProgressBar } from '@openng/optimus-ui/progressbar';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ProgressBar } from '@exhaustive-ui/core/progressbar';
 
 @Component({
     selector: 'headless-doc',

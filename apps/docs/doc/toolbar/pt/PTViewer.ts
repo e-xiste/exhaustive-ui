@@ -1,11 +1,11 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { ToolbarModule } from '@openng/optimus-ui/toolbar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { ToolbarModule } from '@exhaustive-ui/core/toolbar';
 
 @Component({
     selector: 'toolbar-pt-viewer',

@@ -3,8 +3,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 interface Column {
     field: string;

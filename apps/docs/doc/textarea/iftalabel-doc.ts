@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
-import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
 
 @Component({
     selector: 'iftalabel-doc',

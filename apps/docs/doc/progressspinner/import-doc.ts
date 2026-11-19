@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ProgressSpinnerModule } from '@openng/optimus-ui/progressspinner';`
+        typescript: `import { ProgressSpinnerModule } from '@exhaustive-ui/core/progressspinner';`
     };
 }

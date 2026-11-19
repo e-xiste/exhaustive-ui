@@ -1,7 +1,7 @@
 import { NodeService } from '@/service/nodeservice';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { SortEvent, TreeNode } from '@openng/optimus-ui/api';
-import { TreeTable, TreeTableModule } from '@openng/optimus-ui/treetable';
+import { SortEvent, TreeNode } from '@exhaustive-ui/core/api';
+import { TreeTable, TreeTableModule } from '@exhaustive-ui/core/treetable';
 import { CommonModule } from '@angular/common';
 import { DeferredDemo } from '@/components/demo/deferreddemo';
 import { AppCode } from '@/components/doc/app.code';

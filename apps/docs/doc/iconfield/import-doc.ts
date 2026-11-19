@@ -10,7 +10,7 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';`
+        typescript: `import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';`
     };
 }

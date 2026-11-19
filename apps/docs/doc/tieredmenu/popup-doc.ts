@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
+import { MenuItem } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TieredMenuModule } from '@openng/optimus-ui/tieredmenu';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'popup-doc',

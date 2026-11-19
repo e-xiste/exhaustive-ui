@@ -3,8 +3,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
 
 @Component({
     selector: 'floatlabel-doc',

@@ -18,7 +18,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 })
 export class UpdateSurfacePaletteDoc {
     code1 = {
-        typescript: `import { updateSurfacePalette } from '@openng/optimus-ui-themes';`
+        typescript: `import { updateSurfacePalette } from '@exhaustive-ui/themes';`
     };
 
     code2 = {

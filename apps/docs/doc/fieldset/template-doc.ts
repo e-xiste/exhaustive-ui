@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FieldsetModule } from '@openng/optimus-ui/fieldset';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { FieldsetModule } from '@exhaustive-ui/core/fieldset';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-fieldset>
                 <ng-template #header>
                     <div class="flex items-center gap-2 px-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold">Amy Elsner</span>
                     </div>
                 </ng-template>

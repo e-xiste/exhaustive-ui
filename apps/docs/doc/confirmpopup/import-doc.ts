@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ConfirmPopupModule } from '@openng/optimus-ui/confirmpopup';`
+        typescript: `import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';`
     };
 }

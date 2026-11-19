@@ -1,7 +1,7 @@
 import { AppConfigService } from '@/service/appconfigservice';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AnimateOnScrollModule } from '@openng/optimus-ui/animateonscroll';
+import { AnimateOnScrollModule } from '@exhaustive-ui/core/animateonscroll';
 
 @Component({
     selector: 'features-section',

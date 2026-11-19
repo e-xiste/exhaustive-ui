@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { BadgeModule } from '@openng/optimus-ui/badge';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
             <p>A <i>badge</i> can be added to an Avatar with the <a href="#" [routerLink]="['/badge']">Badge</a> directive.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" pBadge value="4" severity="danger" />
+            <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" pBadge value="4" severity="danger" />
         </div>
         <app-code></app-code>
     `

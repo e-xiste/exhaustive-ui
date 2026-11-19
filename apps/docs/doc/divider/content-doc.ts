@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DividerModule } from '@openng/optimus-ui/divider';
+import { DividerModule } from '@exhaustive-ui/core/divider';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

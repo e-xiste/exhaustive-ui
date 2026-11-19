@@ -6,8 +6,8 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { TableModule } from '@openng/optimus-ui/table';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'celledit-doc',

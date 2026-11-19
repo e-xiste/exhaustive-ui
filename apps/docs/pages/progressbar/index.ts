@@ -10,7 +10,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular ProgressBar Component - Optimus UI"
+        docTitle="Angular ProgressBar Component - ExhaustiveUI"
         header="ProgressBar"
         description="ProgressBar is a process status indicator."
         [docs]="docs"

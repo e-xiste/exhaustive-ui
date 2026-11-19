@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { MenuModule } from '@openng/optimus-ui/menu';`
+        typescript: `import { MenuModule } from '@exhaustive-ui/core/menu';`
     };
 }

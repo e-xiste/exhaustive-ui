@@ -3,7 +3,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@openng/optimus-ui/treeselect';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
 
 @Component({
     selector: 'multiple-doc',

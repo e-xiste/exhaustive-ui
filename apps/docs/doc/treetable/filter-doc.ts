@@ -5,12 +5,12 @@ import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 interface Column {
     field: string;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 
 @Component({
     selector: 'size-doc',

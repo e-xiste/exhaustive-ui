@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { CommonModule } from '@angular/common';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

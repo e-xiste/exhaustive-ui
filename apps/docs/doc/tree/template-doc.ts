@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeModule } from '@openng/optimus-ui/tree';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
 
 @Component({
     selector: 'template-doc',

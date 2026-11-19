@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { TimesIcon } from '@openng/optimus-ui/icons';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { TimesIcon } from '@exhaustive-ui/core/icons';
 
 @Component({
     selector: 'drawer-pt-viewer',

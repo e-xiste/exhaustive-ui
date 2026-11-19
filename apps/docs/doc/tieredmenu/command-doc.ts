@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TieredMenuModule } from '@openng/optimus-ui/tieredmenu';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'command-doc',

@@ -1,5 +1,5 @@
 import APIDocs from '@/doc/apidoc/index.json';
-import ComponentTokens from '@openng/optimus-ui-themes/tokens';
+import ComponentTokens from '@exhaustive-ui/themes/tokens';
 
 interface PropInfo {
     name: string;

@@ -36,7 +36,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular TreeTable Component - Optimus UI"
+        docTitle="Angular TreeTable Component - ExhaustiveUI"
         header="TreeTable"
         description="TreeTable is used to display hierarchical data in tabular format."
         [docs]="docs"

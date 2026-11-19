@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TextareaModule } from '@openng/optimus-ui/textarea';`
+        typescript: `import { TextareaModule } from '@exhaustive-ui/core/textarea';`
     };
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AccordionModule } from '@openng/optimus-ui/accordion';
+import { AccordionModule } from '@exhaustive-ui/core/accordion';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

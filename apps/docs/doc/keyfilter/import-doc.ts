@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { KeyFilterModule } from '@openng/optimus-ui/keyfilter';`
+        typescript: `import { KeyFilterModule } from '@exhaustive-ui/core/keyfilter';`
     };
 }

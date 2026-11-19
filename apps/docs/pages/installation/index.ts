@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
 @Component({
     standalone: true,
     imports: [CommonModule, AppDoc],
-    template: `<app-doc docTitle="Getting Started - Optimus UI" header="Installation" description="Setting up Optimus UI in an Angular CLI project." [docs]="docs" docType="page"></app-doc>`
+    template: `<app-doc docTitle="Getting Started - ExhaustiveUI" header="Installation" description="Setting up ExhaustiveUI in an Angular CLI project." [docs]="docs" docType="page"></app-doc>`
 })
 export class InstallationDemo {
     docs = [

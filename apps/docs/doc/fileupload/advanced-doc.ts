@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { FileUploadModule } from '@openng/optimus-ui/fileupload';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 interface UploadEvent {
     originalEvent: Event;
@@ -20,7 +20,7 @@ interface UploadEvent {
         </app-docsectiontext>
         <div class="card">
             <p-toast />
-            <p-fileupload name="demo[]" url="https://optimus.openng.org/api/upload" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
+            <p-fileupload name="demo[]" url="https://exhaustive-ui.e-xiste.com/api/upload" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
                 <ng-template #empty>
                     <div>Drag and drop files to here to upload.</div>
                 </ng-template>

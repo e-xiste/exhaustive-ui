@@ -2,28 +2,28 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MessageService } from '@openng/optimus-ui/api';
-import { AutoComplete } from '@openng/optimus-ui/autocomplete';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { AvatarGroupModule } from '@openng/optimus-ui/avatargroup';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { Checkbox } from '@openng/optimus-ui/checkbox';
-import { Optimus } from '@openng/optimus-ui/config';
-import { DividerModule } from '@openng/optimus-ui/divider';
-import { FileUpload } from '@openng/optimus-ui/fileupload';
-import { InputNumber } from '@openng/optimus-ui/inputnumber';
-import { InputOtp } from '@openng/optimus-ui/inputotp';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MenuModule } from '@openng/optimus-ui/menu';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
-import { RadioButton } from '@openng/optimus-ui/radiobutton';
-import { Select } from '@openng/optimus-ui/select';
-import { SelectButton } from '@openng/optimus-ui/selectbutton';
-import { Slider } from '@openng/optimus-ui/slider';
-import { Tag } from '@openng/optimus-ui/tag';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { AutoComplete } from '@exhaustive-ui/core/autocomplete';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Checkbox } from '@exhaustive-ui/core/checkbox';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+import { FileUpload } from '@exhaustive-ui/core/fileupload';
+import { InputNumber } from '@exhaustive-ui/core/inputnumber';
+import { InputOtp } from '@exhaustive-ui/core/inputotp';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { RadioButton } from '@exhaustive-ui/core/radiobutton';
+import { Select } from '@exhaustive-ui/core/select';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+import { Slider } from '@exhaustive-ui/core/slider';
+import { Tag } from '@exhaustive-ui/core/tag';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'cards-app',
@@ -501,7 +501,7 @@ export class CardsApp {
     items: any;
 
     constructor(
-        private config: Optimus,
+        private config: Exhaustive,
         private messageService: MessageService
     ) {}
 

@@ -1,9 +1,9 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { SplitButtonModule } from '@openng/optimus-ui/splitbutton';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'splitbutton-pt-viewer',

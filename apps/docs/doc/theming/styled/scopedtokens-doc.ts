@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
 
 @Component({
     selector: 'scopedtokens-doc',
@@ -58,7 +58,7 @@ export class ScopedTokensDoc {
     code = {
         typescript: `import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
+import { ToggleSwitch } from '@exhaustive-ui/core/toggleswitch';
 
 @Component({
     template: \`

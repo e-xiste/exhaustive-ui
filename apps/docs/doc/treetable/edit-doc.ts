@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { AppCodeComponent } from '@/components/doc/app.code.component';
 import { AppDocSectionTextComponent } from '@/components/doc/app.docsectiontext.component';
 import { DeferredDemo } from '@/components/demo/deferreddemo';
 import { NodeService } from '@/service/nodeservice';
-import { TreeNode } from '@openng/optimus-ui/api';
+import { TreeNode } from '@exhaustive-ui/core/api';
 
 interface Column {
     field: string;

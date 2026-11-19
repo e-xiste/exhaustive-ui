@@ -139,9 +139,9 @@ function testStackBlitzFileGeneration(demos) {
             // Test: theme-switcher added to template
             allPassed &= logTest('theme-switcher added to template', modified.includes('<theme-switcher />'));
 
-            // Test: Optimus UI module imports removed
-            const hasNoDirectModuleImport = !modified.includes("from '@openng/optimus-ui/select';") || modified.includes('ImportsModule');
-            allPassed &= logTest('Optimus UI direct imports removed', !modified.match(/import\s+\{[^}]*Module[^}]*\}\s+from\s+'@openng\/optimus-ui\//));
+            // Test: ExhaustiveUI module imports removed
+            const hasNoDirectModuleImport = !modified.includes("from '@exhaustive-ui/core/select';") || modified.includes('ImportsModule');
+            allPassed &= logTest('ExhaustiveUI direct imports removed', !modified.match(/import\s+\{[^}]*Module[^}]*\}\s+from\s+'@exhaustive-ui\/core\//));
         }
 
         // Test: Metadata has services if needed
@@ -275,7 +275,7 @@ function testStackBlitzProjectStructure(demos) {
     allPassed &= logTest(`No separate ${selector}.html file`, true, 'Using inline template');
 
     // Test: package.json would have correct dependencies
-    const requiredDeps = ['@openng/optimus-ui', '@angular/core', '@openng/optimus-ui-themes', 'tailwindcss'];
+    const requiredDeps = ['@exhaustive-ui/core', '@angular/core', '@exhaustive-ui/themes', 'tailwindcss'];
     allPassed &= logTest('Required dependencies present', true, requiredDeps.join(', '));
 
     return allPassed;
@@ -296,14 +296,14 @@ function testContentMatching(demos) {
 
         const { typescript } = demo.code;
 
-        // Test: TypeScript has inline template with Optimus UI components
+        // Test: TypeScript has inline template with ExhaustiveUI components
         if (typescript) {
             const hasTemplate = typescript.includes('template:') && typescript.includes('`');
             allPassed &= logTest('TypeScript has inline template', hasTemplate);
 
-            // Check for Optimus UI component in template
+            // Check for ExhaustiveUI component in template
             const hasPrimeNGComponent = /p-[\w-]+/.test(typescript);
-            allPassed &= logTest('Template contains Optimus UI component', hasPrimeNGComponent);
+            allPassed &= logTest('Template contains ExhaustiveUI component', hasPrimeNGComponent);
         }
 
         // Test: Component class name matches selector

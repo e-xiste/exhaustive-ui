@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Popover, PopoverModule } from '@openng/optimus-ui/popover';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { Popover, PopoverModule } from '@exhaustive-ui/core/popover';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -22,7 +22,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <span class="font-medium block mb-2">Team Members</span>
                         <ul class="list-none p-0 m-0 flex flex-col">
                             <li *ngFor="let member of members" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border" (click)="selectMember(member)">
-                                <img [src]="'https://optimus.openng.org/demo/avatar/' + member.image" style="width: 32px" />
+                                <img [src]="'https://exhaustive-ui.e-xiste.com/demo/avatar/' + member.image" style="width: 32px" />
                                 <div>
                                     <span class="font-medium">{{ member.name }}</span>
                                     <div class="text-sm text-surface-500 dark:text-surface-400">{{ member.email }}</div>

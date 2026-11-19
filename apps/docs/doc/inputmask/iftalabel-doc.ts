@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
-import { InputText } from '@openng/optimus-ui/inputtext';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

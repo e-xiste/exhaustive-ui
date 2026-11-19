@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TabsModule } from '@openng/optimus-ui/tabs';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
 
 @Component({
     selector: 'dynamic-doc',

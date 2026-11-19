@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

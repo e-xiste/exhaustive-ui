@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { TimelineModule } from '@openng/optimus-ui/timeline';
+import { TimelineModule } from '@exhaustive-ui/core/timeline';
 
 @Component({
     selector: 'timeline-pt-viewer',

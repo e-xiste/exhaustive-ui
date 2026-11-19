@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SplitterModule } from '@openng/optimus-ui/splitter';`
+        typescript: `import { SplitterModule } from '@exhaustive-ui/core/splitter';`
     };
 }

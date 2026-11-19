@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CascadeSelectModule } from '@openng/optimus-ui/cascadeselect';
+import { CascadeSelectModule } from '@exhaustive-ui/core/cascadeselect';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

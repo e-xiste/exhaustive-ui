@@ -8,7 +8,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 @Component({
     standalone: true,
     imports: [AppDoc],
-    template: `<app-doc docTitle="Update Optimus UI - Optimus UI" header="Update Optimus UI" description="Updating an Optimus UI project to a newer version with ng update." [docs]="docs" docType="page"></app-doc>`
+    template: `<app-doc docTitle="Update ExhaustiveUI - ExhaustiveUI" header="Update ExhaustiveUI" description="Updating an ExhaustiveUI project to a newer version with ng update." [docs]="docs" docType="page"></app-doc>`
 })
 export class MigrationUpdateDemo {
     docs = [

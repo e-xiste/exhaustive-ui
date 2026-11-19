@@ -2,7 +2,7 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
-import { ClassNamesModule } from '@openng/optimus-ui/classnames';
+import { ClassNamesModule } from '@exhaustive-ui/core/classnames';
 
 @Component({
     selector: 'examples-doc',

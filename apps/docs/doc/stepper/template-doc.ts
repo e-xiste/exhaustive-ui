@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { StepperModule } from '@openng/optimus-ui/stepper';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { PasswordModule } from '@openng/optimus-ui/password';
-import { ToggleButtonModule } from '@openng/optimus-ui/togglebutton';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { StepperModule } from '@exhaustive-ui/core/stepper';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'template-doc',
@@ -119,7 +119,7 @@ import { InputTextModule } from '@openng/optimus-ui/inputtext';
                             <div class="flex flex-col items-center gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">Account created successfully</div>
                                 <div class="text-center">
-                                    <img alt="logo" src="https://optimus.openng.org/demo/stepper/content.svg" />
+                                    <img alt="logo" src="https://exhaustive-ui.e-xiste.com/demo/stepper/content.svg" />
                                 </div>
                             </div>
                             <div class="flex pt-6 justify-start">

@@ -89,7 +89,7 @@ function generateStackBlitzProject(demo, selector) {
         .join('');
 
     const packageJson = {
-        name: `optimus-ui-${selector}`,
+        name: `exhaustive-ui-${selector}`,
         version: '1.0.0',
         scripts: {
             ng: 'ng',
@@ -105,12 +105,12 @@ function generateStackBlitzProject(demo, selector) {
             '@angular/platform-browser': '^21.0.0',
             '@angular/platform-browser-dynamic': '^21.0.0',
             '@angular/router': '^21.0.0',
-            '@openng/optimus-ui-themes': '^2.0.2',
+            '@exhaustive-ui/themes': '^2.0.2',
             '@openng/icons': '^1.0.0',
-            '@openng/optimus-ui': '21.0.0',
+            '@exhaustive-ui/core': '21.0.0',
             rxjs: '~7.8.0',
             tailwindcss: '^3.4.10',
-            '@openng/optimus-ui-tailwindcss': '^1.0.0',
+            '@exhaustive-ui/tailwindcss': '^1.0.0',
             tslib: '^2.3.0',
             'zone.js': '~0.15.0'
         },
@@ -127,13 +127,13 @@ function generateStackBlitzProject(demo, selector) {
 import { ${componentName} } from './app/${selector}';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
-import { provideOptimus } from '@openng/optimus-ui/config';
-import Aura from '@openng/optimus-ui-themes/aura';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideHttpClient(withFetch()),
-        provideOptimus({
+        provideExhaustive({
             theme: { preset: Aura, options: { darkModeSelector: '.p-dark' } },
         }),
     ],
@@ -147,7 +147,7 @@ bootstrapApplication(${componentName}, appConfig).catch((err) =>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Optimus UI ${componentName}</title>
+    <title>ExhaustiveUI ${componentName}</title>
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -197,11 +197,11 @@ function validateTypeScript(tsContent, filePath, selector) {
     }
 
     // Check for invalid imports
-    if (tsContent.includes("from '@openng/optimus-ui/") && tsContent.includes('ImportsModule')) {
-        // Should not have direct optimus-ui imports when using ImportsModule
-        const directImports = tsContent.match(/import\s+\{[^}]*Module[^}]*\}\s+from\s+'@openng\/optimus-ui\/[^']+'/g);
+    if (tsContent.includes("from '@exhaustive-ui/core/") && tsContent.includes('ImportsModule')) {
+        // Should not have direct exhaustive-ui imports when using ImportsModule
+        const directImports = tsContent.match(/import\s+\{[^}]*Module[^}]*\}\s+from\s+'@exhaustive-ui\/core\/[^']+'/g);
         if (directImports) {
-            errors.push('Has direct Optimus UI module imports alongside ImportsModule');
+            errors.push('Has direct ExhaustiveUI module imports alongside ImportsModule');
         }
     }
 
@@ -221,7 +221,7 @@ function validateTypeScript(tsContent, filePath, selector) {
 // Validate package.json
 function validatePackageJson(packageJson) {
     const errors = [];
-    const requiredDeps = ['@angular/core', '@angular/common', '@openng/optimus-ui', '@openng/optimus-ui-themes'];
+    const requiredDeps = ['@angular/core', '@angular/common', '@exhaustive-ui/core', '@exhaustive-ui/themes'];
 
     for (const dep of requiredDeps) {
         if (!packageJson.dependencies?.[dep]) {

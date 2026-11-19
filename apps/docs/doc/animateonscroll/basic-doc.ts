@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AnimateOnScrollModule } from '@openng/optimus-ui/animateonscroll';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { AnimateOnScrollModule } from '@exhaustive-ui/core/animateonscroll';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -11,7 +11,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     imports: [CommonModule, AnimateOnScrollModule, AvatarModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>Animation classes are defined with the <i>enterClass</i> and <i>leaveClass</i> properties. This example utilizes @openng/optimus-ui-tailwindcss plugin animations however any valid CSS animation is supported.</p>
+            <p>Animation classes are defined with the <i>enterClass</i> and <i>leaveClass</i> properties. This example utilizes @exhaustive-ui/tailwindcss plugin animations however any valid CSS animation is supported.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center overflow-hidden">
             <div class="flex flex-col items-center gap-2">
@@ -62,18 +62,18 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     leaveClass="animate-leave fade-out-0"
                     class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
                 >
-                    <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Jenna Thompson</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>
 
                 <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-b-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/asiyajavayant.png" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Isabel Garcia</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>
                 <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://optimus.openng.org/demo/avatar/onyamalimba.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/onyamalimba.png" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Xavier Mason</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>

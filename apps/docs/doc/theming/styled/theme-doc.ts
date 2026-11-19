@@ -17,12 +17,12 @@ import { Component } from '@angular/core';
 export class ThemeDoc {
     code: Code = {
         typescript: `import { ApplicationConfig } from '@angular/core';
-import { provideOptimus } from '@openng/optimus-ui/config';
-import Aura from '@openng/optimus-ui-themes/aura';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideOptimus({
+        provideExhaustive({
             theme: {
                 preset: Aura
             }

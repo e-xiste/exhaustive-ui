@@ -1,9 +1,9 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'basic-doc',

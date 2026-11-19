@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { CardModule } from '@openng/optimus-ui/card';
-import { TimelineModule } from '@openng/optimus-ui/timeline';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CardModule } from '@exhaustive-ui/core/card';
+import { TimelineModule } from '@exhaustive-ui/core/timeline';
 
 interface EventItem {
     status?: string;
@@ -31,7 +31,7 @@ interface EventItem {
                 </ng-template>
                 <ng-template #content let-event>
                     <p-card [header]="event.status" [subheader]="event.date">
-                        <img *ngIf="event.image" [src]="'https://optimus.openng.org/demo/product/' + event.image" [alt]="event.name" width="200" class="shadow" />
+                        <img *ngIf="event.image" [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + event.image" [alt]="event.name" width="200" class="shadow" />
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate
                             neque quas!

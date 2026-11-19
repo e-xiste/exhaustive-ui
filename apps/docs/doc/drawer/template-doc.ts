@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -17,7 +17,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-drawer [(visible)]="visible" [closable]="false">
                 <ng-template #header>
                     <div class="flex items-center gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold">Amy Elsner</span>
                     </div>
                 </ng-template>

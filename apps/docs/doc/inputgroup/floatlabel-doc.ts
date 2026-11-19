@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

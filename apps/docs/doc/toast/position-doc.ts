@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { Ripple } from '@openng/optimus-ui/ripple';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 
 @Component({
     selector: 'position-doc',

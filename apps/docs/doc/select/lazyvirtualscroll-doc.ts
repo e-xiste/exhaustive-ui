@@ -1,8 +1,8 @@
 import { AppCode } from '@/components/doc/app.code';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ScrollerOptions, SelectItem } from '@openng/optimus-ui/api';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { ScrollerOptions, SelectItem } from '@exhaustive-ui/core/api';
+import { SelectModule } from '@exhaustive-ui/core/select';
 
 @Component({
     selector: 'lazyvirtualscroll-doc',

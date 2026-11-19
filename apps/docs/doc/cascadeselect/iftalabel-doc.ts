@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { CascadeSelectModule } from '@openng/optimus-ui/cascadeselect';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { CascadeSelectModule } from '@exhaustive-ui/core/cascadeselect';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

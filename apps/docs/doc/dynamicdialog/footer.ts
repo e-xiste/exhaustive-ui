@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'footer',

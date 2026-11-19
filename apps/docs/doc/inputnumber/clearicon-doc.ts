@@ -3,7 +3,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
+import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
 
 @Component({
     selector: 'clearicon-doc',

@@ -4,9 +4,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { TableModule } from '@openng/optimus-ui/table';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'selectionevents-doc',

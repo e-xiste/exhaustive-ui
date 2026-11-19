@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import ts from 'typescript';
 
-export const PACKAGE_NAME = '@openng/optimus-ui';
+export const PACKAGE_NAME = '@exhaustive-ui/core';
 
 /**
- * Collect every Angular component, directive, NgModule, service and exported type of @openng/optimus-ui, per entry point.
+ * Collect every Angular component, directive, NgModule, service and exported type of @exhaustive-ui/core, per entry point.
  *
  * Structure (selectors, inputs, outputs, two-way bindings, content projection, inheritance) is read from the
  * Angular metadata the compiler writes into the published typings (`static ɵcmp` / `ɵdir` / `ɵmod` / `ɵprov`),

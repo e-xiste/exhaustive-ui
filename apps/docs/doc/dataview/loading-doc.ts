@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DataViewModule } from '@openng/optimus-ui/dataview';
-import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
-import { SkeletonModule } from '@openng/optimus-ui/skeleton';
+import { DataViewModule } from '@exhaustive-ui/core/dataview';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
 
 @Component({
     selector: 'loading-doc',

@@ -3,21 +3,21 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ChartModule } from '@openng/optimus-ui/chart';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MenuModule } from '@openng/optimus-ui/menu';
-import { MeterGroupModule } from '@openng/optimus-ui/metergroup';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
-import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
-import { TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'overview-app',
@@ -47,7 +47,7 @@ import { TooltipModule } from '@openng/optimus-ui/tooltip';
             <div class="flex flex-wrap gap-4 items-start justify-between p-1">
                 <div class="flex-1">
                     <div class="text-muted-color font-medium leading-normal">Overview</div>
-                    <div class="text-color text-3xl font-semibold leading-normal">Welcome to Optimus UI</div>
+                    <div class="text-color text-3xl font-semibold leading-normal">Welcome to ExhaustiveUI</div>
                 </div>
                 <div class="flex gap-2 whitespace-nowrap flex-nowrap">
                     <p-iconfield iconPosition="left">

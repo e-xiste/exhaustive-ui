@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { FileUploadModule } from '@openng/optimus-ui/fileupload';`
+        typescript: `import { FileUploadModule } from '@exhaustive-ui/core/fileupload';`
     };
 }

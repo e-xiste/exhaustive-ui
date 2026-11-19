@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { KnobModule } from '@openng/optimus-ui/knob';`
+        typescript: `import { KnobModule } from '@exhaustive-ui/core/knob';`
     };
 }

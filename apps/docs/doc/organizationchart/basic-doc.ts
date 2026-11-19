@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { OrganizationChartModule } from '@openng/optimus-ui/organizationchart';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { OrganizationChartModule } from '@exhaustive-ui/core/organizationchart';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

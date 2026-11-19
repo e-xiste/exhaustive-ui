@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ProgressSpinnerModule } from '@openng/optimus-ui/progressspinner';
+import { ProgressSpinnerModule } from '@exhaustive-ui/core/progressspinner';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

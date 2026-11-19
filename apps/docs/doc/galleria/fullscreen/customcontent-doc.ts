@@ -3,7 +3,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { PhotoService } from '@/service/photoservice';
 import { CommonModule } from '@angular/common';
 import { Component, inject, model, OnInit } from '@angular/core';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
 
 @Component({
     selector: 'custom-content-doc',

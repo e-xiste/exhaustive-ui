@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
 
 @Component({
     selector: 'mask-doc',

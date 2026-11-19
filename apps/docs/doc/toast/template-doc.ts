@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 
 @Component({
     selector: 'template-doc',
@@ -19,7 +19,7 @@ import { AvatarModule } from '@openng/optimus-ui/avatar';
                 <ng-template let-message #message>
                     <div class="flex flex-col items-start flex-auto">
                         <div class="flex items-center gap-2">
-                            <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                            <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                             <span class="font-bold">Amy Elsner</span>
                         </div>
                         <div class="font-medium text-lg my-4">{{ message.summary }}</div>

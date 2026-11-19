@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { CheckboxModule } from '@openng/optimus-ui/checkbox';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

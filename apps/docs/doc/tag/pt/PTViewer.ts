@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'tag-pt-viewer',

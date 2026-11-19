@@ -4,15 +4,15 @@ import Noir from '@/themes/app-theme';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
-import { provideOptimus } from '@openng/optimus-ui/config';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideZonelessChangeDetection(),
         provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })), // withEnabledBlockingInitialNavigation()
         provideHttpClient(withFetch()),
-        provideOptimus({
+        provideExhaustive({
             theme: Noir,
             ripple: false
         }),

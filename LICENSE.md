@@ -1,8 +1,9 @@
-## Optimus UI LICENSE
+## ExhaustiveUI LICENSE
 
 The MIT License (MIT)
 
-Copyright (c) 2026 OpenNG
+Copyright (c) 2026 e-xiste
+Copyright (c) 2026 OpenNG (as per the Optimus UI license)
 Copyright (c) 2016-2026 PrimeTek (as per the PrimeNG community version license)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

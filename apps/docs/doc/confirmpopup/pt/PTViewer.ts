@@ -1,9 +1,9 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ConfirmationService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ConfirmPopupModule } from '@openng/optimus-ui/confirmpopup';
+import { ConfirmationService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
 
 @Component({
     selector: 'confirmpopup-pt-viewer',

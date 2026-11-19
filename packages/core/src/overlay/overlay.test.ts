@@ -1,0 +1,520 @@
+import { ChangeDetectionStrategy, Component, DebugElement, input, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Overlay } from './overlay';
+
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { SharedModule } from '@exhaustive-ui/core/api';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+describe('Overlay', () => {
+    describe('PassThrough API', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            standalone: true,
+            imports: [Overlay],
+            template: `<p-overlay [visible]="visible()" [mode]="mode()" [pt]="pt()">
+                <div class="test-content">Test Content</div>
+            </p-overlay>`
+        })
+        class TestPTOverlayComponent {
+            visible = input<boolean>(false);
+            mode = input<'overlay' | 'modal'>('overlay');
+            pt = input<any>();
+        }
+
+        let fixture: ComponentFixture<TestPTOverlayComponent>;
+        let overlayElement: DebugElement;
+
+        beforeEach(async () => {
+            await TestBed.configureTestingModule({
+                imports: [TestPTOverlayComponent, BrowserAnimationsModule],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            fixture = TestBed.createComponent(TestPTOverlayComponent);
+            fixture.componentRef.setInput('visible', true);
+            fixture.detectChanges();
+            overlayElement = fixture.debugElement.query(By.css('p-overlay'));
+        });
+
+        describe('Case 1: Simple string classes', () => {
+            it('should apply string class to host section', async () => {
+                fixture.componentRef.setInput('pt', { host: 'HOST_CLASS' });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(overlayElement.nativeElement.classList.contains('HOST_CLASS')).toBe(true);
+            });
+
+            it('should apply string class to root section', async () => {
+                fixture.componentRef.setInput('pt', { root: 'ROOT_CLASS' });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.classList.contains('ROOT_CLASS')).toBe(true);
+            });
+
+            it('should apply string class to content section', async () => {
+                fixture.componentRef.setInput('pt', { content: 'CONTENT_CLASS' });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                expect(contentElement?.classList.contains('CONTENT_CLASS')).toBe(true);
+            });
+        });
+
+        describe('Case 2: Objects (class, style, data, aria)', () => {
+            it('should apply object with class to host section', async () => {
+                fixture.componentRef.setInput('pt', { host: { class: 'HOST_OBJ_CLASS' } });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(overlayElement.nativeElement.classList.contains('HOST_OBJ_CLASS')).toBe(true);
+            });
+
+            it('should apply object with class to root section', async () => {
+                fixture.componentRef.setInput('pt', { root: { class: 'ROOT_OBJ_CLASS' } });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.classList.contains('ROOT_OBJ_CLASS')).toBe(true);
+            });
+
+            it('should apply object with style to root section', async () => {
+                fixture.componentRef.setInput('pt', { root: { style: { color: 'red', fontSize: '20px' } } });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.style.color).toBe('red');
+                expect(rootElement?.style.fontSize).toBe('20px');
+            });
+
+            it('should apply object with data attributes to root section', async () => {
+                fixture.componentRef.setInput('pt', { root: { 'data-test-id': 'root-test' } });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.getAttribute('data-test-id')).toBe('root-test');
+            });
+
+            it('should apply object with aria attributes to root section', async () => {
+                fixture.componentRef.setInput('pt', { root: { 'aria-label': 'Overlay Test' } });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.getAttribute('aria-label')).toBe('Overlay Test');
+            });
+
+            it('should apply object with multiple properties to content section', async () => {
+                fixture.componentRef.setInput('pt', {
+                    content: {
+                        class: 'CONTENT_OBJ_CLASS',
+                        style: { backgroundColor: 'blue' },
+                        'data-section': 'content'
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                expect(contentElement?.classList.contains('CONTENT_OBJ_CLASS')).toBe(true);
+                expect(contentElement?.style.backgroundColor).toBe('blue');
+                expect(contentElement?.getAttribute('data-section')).toBe('content');
+            });
+        });
+
+        describe('Case 3: Mixed object and string values', () => {
+            it('should apply mixed values to root section', async () => {
+                fixture.componentRef.setInput('pt', {
+                    root: {
+                        class: 'ROOT_MIXED_CLASS',
+                        style: { margin: '5px' }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.classList.contains('ROOT_MIXED_CLASS')).toBe(true);
+                expect(rootElement?.style.margin).toBe('5px');
+            });
+
+            it('should apply mixed values to content section', async () => {
+                fixture.componentRef.setInput('pt', {
+                    content: {
+                        class: 'CONTENT_MIXED_CLASS',
+                        style: { padding: '10px' }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                expect(contentElement?.classList.contains('CONTENT_MIXED_CLASS')).toBe(true);
+                expect(contentElement?.style.padding).toBe('10px');
+            });
+        });
+
+        describe('Case 4: Use variables from instance', () => {
+            it('should access visible property from instance in pt', async () => {
+                fixture.componentRef.setInput('visible', true);
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                fixture.componentRef.setInput('pt', {
+                    root: ({ instance }: any) => ({
+                        class: instance?.visible() ? 'VISIBLE_CLASS' : 'HIDDEN_CLASS'
+                    })
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.classList.contains('VISIBLE_CLASS')).toBe(true);
+            });
+
+            it('should access modal property from instance in pt', async () => {
+                fixture.componentRef.setInput('mode', 'modal');
+                fixture.componentRef.setInput('visible', true);
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                fixture.componentRef.setInput('pt', {
+                    content: ({ instance }: any) => ({
+                        class: instance?.modal ? 'MODAL_CLASS' : 'OVERLAY_CLASS'
+                    })
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                expect(contentElement?.classList.contains('MODAL_CLASS')).toBe(true);
+            });
+        });
+
+        describe('Case 5: Event binding', () => {
+            it('should bind onclick event to root section', async () => {
+                let clicked = false;
+                fixture.componentRef.setInput('pt', {
+                    root: {
+                        onclick: () => {
+                            clicked = true;
+                        }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                rootElement?.click();
+                expect(clicked).toBe(true);
+            });
+
+            it('should bind onclick event to content section', async () => {
+                let clicked = false;
+                fixture.componentRef.setInput('pt', {
+                    content: {
+                        onclick: () => {
+                            clicked = true;
+                        }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                contentElement?.click();
+                expect(clicked).toBe(true);
+            });
+        });
+
+        describe('Case 6: Test emitters', () => {
+            it('should access onShow emitter through instance in pt', async () => {
+                let emitterAccessed = false;
+                fixture.componentRef.setInput('pt', {
+                    root: ({ instance }: any) => {
+                        if (instance.onShow) {
+                            emitterAccessed = true;
+                        }
+                        return {};
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(emitterAccessed).toBe(true);
+            });
+
+            it('should access onHide emitter through instance in pt', async () => {
+                let emitterAccessed = false;
+                fixture.componentRef.setInput('pt', {
+                    root: ({ instance }: any) => {
+                        if (instance.onHide) {
+                            emitterAccessed = true;
+                        }
+                        return {};
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(emitterAccessed).toBe(true);
+            });
+
+            it('should access visible model emitter through instance in pt', async () => {
+                let emitterAccessed = false;
+                fixture.componentRef.setInput('pt', {
+                    root: ({ instance }: any) => {
+                        if (instance.visible.subscribe) {
+                            emitterAccessed = true;
+                        }
+                        return {};
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                expect(emitterAccessed).toBe(true);
+            });
+        });
+
+        describe('Case 7: Inline test', () => {
+            it('should apply inline styles and classes for root section', async () => {
+                fixture.componentRef.setInput('pt', {
+                    root: {
+                        class: 'inline-test-root',
+                        style: { display: 'block', padding: '15px' }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const rootElement = overlayElement.nativeElement.querySelector('[data-pc-section="root"]');
+                expect(rootElement?.classList.contains('inline-test-root')).toBe(true);
+                expect(rootElement?.style.display).toBe('block');
+                expect(rootElement?.style.padding).toBe('15px');
+            });
+
+            it('should apply inline styles and classes for content section', async () => {
+                fixture.componentRef.setInput('pt', {
+                    content: {
+                        class: 'inline-test-content',
+                        style: { width: '100%' }
+                    }
+                });
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+
+                const contentElement = overlayElement.nativeElement.querySelector('[data-pc-section="content"]');
+                expect(contentElement?.classList.contains('inline-test-content')).toBe(true);
+                expect(contentElement?.style.width).toBe('100%');
+            });
+        });
+
+        describe('Case 8: Test hooks', () => {
+            it('should call onAfterViewInit hook in pt', async () => {
+                let hookCalled = false;
+                const hookFixture = TestBed.createComponent(TestPTOverlayComponent);
+                hookFixture.componentRef.setInput('visible', true);
+                hookFixture.componentRef.setInput('pt', {
+                    hooks: {
+                        onAfterViewInit: () => {
+                            hookCalled = true;
+                        }
+                    }
+                });
+                hookFixture.changeDetectorRef.markForCheck();
+                await hookFixture.whenStable();
+
+                expect(hookCalled).toBe(true);
+                hookFixture.destroy();
+            });
+
+            it('should call onAfterContentInit hook in pt', async () => {
+                let hookCalled = false;
+                const hookFixture = TestBed.createComponent(TestPTOverlayComponent);
+                hookFixture.componentRef.setInput('visible', true);
+                hookFixture.componentRef.setInput('pt', {
+                    hooks: {
+                        onAfterContentInit: () => {
+                            hookCalled = true;
+                        }
+                    }
+                });
+                hookFixture.changeDetectorRef.markForCheck();
+                await hookFixture.whenStable();
+
+                expect(hookCalled).toBe(true);
+                hookFixture.destroy();
+            });
+
+            it('should call onAfterViewChecked hook in pt', async () => {
+                let hookCalled = false;
+                const hookFixture = TestBed.createComponent(TestPTOverlayComponent);
+                hookFixture.componentRef.setInput('visible', true);
+                hookFixture.componentRef.setInput('pt', {
+                    hooks: {
+                        onAfterViewChecked: () => {
+                            hookCalled = true;
+                        }
+                    }
+                });
+                hookFixture.changeDetectorRef.markForCheck();
+                await hookFixture.whenStable();
+
+                expect(hookCalled).toBe(true);
+                hookFixture.destroy();
+            });
+
+            it('should call onDestroy hook in pt', async () => {
+                let hookCalled = false;
+                const hookFixture = TestBed.createComponent(TestPTOverlayComponent);
+                hookFixture.componentRef.setInput('visible', true);
+                hookFixture.componentRef.setInput('pt', {
+                    hooks: {
+                        onDestroy: () => {
+                            hookCalled = true;
+                        }
+                    }
+                });
+                hookFixture.changeDetectorRef.markForCheck();
+                await hookFixture.whenStable();
+
+                hookFixture.destroy();
+                expect(hookCalled).toBe(true);
+            });
+        });
+    });
+});
+
+describe('Overlay visibility', () => {
+    @Component({
+        imports: [Overlay],
+        template: `<p-overlay [(visible)]="visible">Content</p-overlay>`
+    })
+    class TestVisibleOverlayComponent {
+        visible = signal(false);
+    }
+
+    let fixture: ComponentFixture<TestVisibleOverlayComponent>;
+    let overlay: Overlay;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestVisibleOverlayComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TestVisibleOverlayComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        overlay = fixture.debugElement.query(By.directive(Overlay)).componentInstance;
+    });
+
+    it('should keep modalVisible true after visible turns false until the leave motion completes', async () => {
+        expect(overlay.modalVisible()).toBe(false);
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        expect(overlay.visible()).toBe(true);
+        expect(overlay.modalVisible()).toBe(true);
+        expect(fixture.nativeElement.querySelector('[data-pc-section="root"]')).toBeTruthy();
+
+        fixture.componentInstance.visible.set(false);
+        await fixture.whenStable();
+        expect(overlay.visible()).toBe(false);
+        expect(overlay.modalVisible()).toBe(true);
+
+        overlay.onOverlayAfterLeave({} as any);
+        await fixture.whenStable();
+        expect(overlay.modalVisible()).toBe(false);
+        expect(fixture.nativeElement.querySelector('[data-pc-section="root"]')).toBeFalsy();
+    });
+
+    it('should propagate hide() back to the two-way bound host property', async () => {
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+
+        overlay.hide();
+        await fixture.whenStable();
+        expect(overlay.visible()).toBe(false);
+        expect(fixture.componentInstance.visible()).toBe(false);
+    });
+
+    it('should react to global config overlayOptions changes', async () => {
+        const config = TestBed.inject(Exhaustive);
+        expect(overlay.$target()).toBe('@prev');
+        expect(overlay.overlayResponsiveDirection()).toBe('center');
+
+        config.overlayOptions.set({ target: '@parent', responsive: { direction: 'bottom' } });
+        expect(overlay.$target()).toBe('@parent');
+        expect(overlay.overlayResponsiveDirection()).toBe('bottom');
+
+        config.overlayOptions.set({});
+        expect(overlay.$target()).toBe('@prev');
+    });
+
+    it('should honour explicit false/0 z-index inputs over config overlayOptions', async () => {
+        const config = TestBed.inject(Exhaustive);
+        config.overlayOptions.set({ autoZIndex: true, baseZIndex: 500 });
+        const direct = TestBed.createComponent(Overlay);
+        expect(direct.componentInstance.$autoZIndex()).toBe(true);
+        expect(direct.componentInstance.$baseZIndex()).toBe(500);
+
+        direct.componentRef.setInput('autoZIndex', false);
+        direct.componentRef.setInput('baseZIndex', 0);
+        expect(direct.componentInstance.$autoZIndex()).toBe(false);
+        expect(direct.componentInstance.$baseZIndex()).toBe(0);
+        config.overlayOptions.set({});
+        direct.destroy();
+    });
+
+    it('should leave _contentTemplate undefined without any pTemplate', async () => {
+        expect(overlay._contentTemplate()).toBeUndefined();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Signal query API
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [Overlay, SharedModule],
+    template: `
+        <p-overlay>
+            <ng-template #content>C</ng-template>
+            <ng-template pTemplate="content">c2</ng-template>
+            <ng-template pTemplate="other">c3</ng-template>
+        </p-overlay>
+    `
+})
+class OverlayQueryApiHostComponent {}
+
+describe('Overlay Signal Query API', () => {
+    it('should resolve content queries and leave view queries unresolved while hidden', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [OverlayQueryApiHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(OverlayQueryApiHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const instance = fixture.debugElement.query(By.directive(Overlay)).componentInstance;
+        expect(instance.contentTemplate()).toBeDefined();
+        expect(instance._contentTemplate()).toBe(instance.templates().find((t: any) => t.getType() === 'other').template);
+        expect(instance.templates().some((t: any) => t.getType() === 'content')).toBe(true);
+        expect(instance.overlayViewChild()).toBeUndefined();
+        expect(instance.contentViewChild()).toBeUndefined();
+    });
+});

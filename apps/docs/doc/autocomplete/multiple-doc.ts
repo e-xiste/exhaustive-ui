@@ -2,7 +2,7 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;

@@ -5,9 +5,9 @@ import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { RatingModule } from '@openng/optimus-ui/rating';
-import { TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 interface Column {
     field: string;
@@ -44,7 +44,7 @@ interface Column {
                         <tr>
                             <td>{{ product.name }}</td>
                             <td>
-                                <img [src]="'https://optimus.openng.org/demo/product/' + product.image" [alt]="product.name" class="w-24 rounded" />
+                                <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.name" class="w-24 rounded" />
                             </td>
                             <td>{{ product.price | currency: 'USD' }}</td>
                             <td>{{ product.category }}</td>

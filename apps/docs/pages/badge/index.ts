@@ -13,7 +13,7 @@ import { Component } from '@angular/core';
     standalone: true,
     imports: [AppDoc],
     template: ` <app-doc
-        docTitle="Angular Badge Component - Optimus UI"
+        docTitle="Angular Badge Component - ExhaustiveUI"
         header="Badge"
         description="Badge is a small status indicator for another element."
         [docs]="docs"

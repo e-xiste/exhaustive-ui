@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MessageModule } from '@openng/optimus-ui/message';
+import { MessageModule } from '@exhaustive-ui/core/message';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

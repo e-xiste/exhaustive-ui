@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { SplitterModule } from '@openng/optimus-ui/splitter';
+import { SplitterModule } from '@exhaustive-ui/core/splitter';
 
 @Component({
     selector: 'splitter-pt-viewer',

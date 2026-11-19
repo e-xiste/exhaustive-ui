@@ -5,10 +5,10 @@ import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { ContextMenuModule } from '@openng/optimus-ui/contextmenu';
-import { TableModule } from '@openng/optimus-ui/table';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'contextmenu-doc',

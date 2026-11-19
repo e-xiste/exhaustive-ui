@@ -19,7 +19,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <app-code [code]="code2" [hideToggleCode]="true" [importCode]="true" [hideStackBlitz]="true"></app-code>
             <div class="font-bold my-4">Best Practices</div>
             <ul class="leading-normal list-disc list-inside mb-4">
-                <li>Check how tokens are defined in the preset before customizing from the <a href="https://github.com/openng-org/optimus-ui/blob/main/packages/optimus-ui-themes/src/presets" target="_blank" rel="noopener noreferrer">source</a>.</li>
+                <li>Check how tokens are defined in the preset before customizing from the <a href="https://github.com/e-xiste/exhaustive-ui/blob/main/packages/themes/src/presets" target="_blank" rel="noopener noreferrer">source</a>.</li>
                 <li>Always maintain the same structure (direct value or colorScheme) as the original preset.</li>
                 <li>Consider both light and dark mode values when overriding scheme-dependent tokens.</li>
             </ul>
@@ -31,9 +31,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 export class ColorSchemeDoc {
     code1 = {
         typescript: `import { bootstrapApplication } from '@angular/platform-browser';
-import { provideOptimus } from '@openng/optimus-ui/config';
-import { definePreset } from '@openng/optimus-ui-themes';
-import Aura from '@openng/optimus-ui-themes/aura';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { definePreset } from '@exhaustive-ui/themes';
+import Aura from '@exhaustive-ui/themes/aura';
 import { AppComponent } from './app/app.component';
 
 const MyPreset = definePreset(Aura, {
@@ -51,7 +51,7 @@ const MyPreset = definePreset(Aura, {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideOptimus({
+        provideExhaustive({
             theme: {
                 preset: MyPreset
             }

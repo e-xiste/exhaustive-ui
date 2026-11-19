@@ -2,7 +2,7 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
 
 @Component({
     selector: 'autocomplete-pt-viewer',

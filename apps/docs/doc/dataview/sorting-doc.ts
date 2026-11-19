@@ -5,11 +5,11 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SelectItem } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DataViewModule } from '@openng/optimus-ui/dataview';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { SelectItem } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DataViewModule } from '@exhaustive-ui/core/dataview';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'sorting-doc',
@@ -32,7 +32,7 @@ import { TagModule } from '@openng/optimus-ui/tag';
                         <div class="col-span-12" *ngFor="let item of items; let first = first">
                             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
                                 <div class="md:w-40 relative">
-                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://optimus.openng.org/demo/product/' + item.image" [alt]="item.name" />
+                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + item.image" [alt]="item.name" />
                                     <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="dark:!bg-surface-900 absolute" [style.left.px]="4" [style.top.px]="4" />
                                 </div>
                                 <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">

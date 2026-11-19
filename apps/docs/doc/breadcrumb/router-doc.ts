@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { BreadcrumbModule } from '@exhaustive-ui/core/breadcrumb';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

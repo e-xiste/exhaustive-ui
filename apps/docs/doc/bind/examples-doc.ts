@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
-import { BindModule } from '@openng/optimus-ui/bind';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { BindModule } from '@exhaustive-ui/core/bind';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'examples-doc',

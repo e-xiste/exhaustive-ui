@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "$id": "ExhaustiveUiMigrateFromPrimeng",
+    "title": "Migrate a PrimeNG v21 project to ExhaustiveUI",
+    "description": "Deprecated on this line \u2014 only maintained on release/1.x. Run via @exhaustive-ui/core@1.",
+    "deprecated": true,
+    "type": "object",
+    "properties": {
+        "skipInstall": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip scheduling the package install task."
+        },
+        "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Run the migration even if the installed primeng version is unsupported."
+        }
+    }
+}

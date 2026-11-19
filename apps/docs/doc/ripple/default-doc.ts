@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RippleModule } from '@openng/optimus-ui/ripple';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

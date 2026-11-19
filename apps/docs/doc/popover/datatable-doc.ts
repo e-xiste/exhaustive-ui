@@ -4,11 +4,11 @@ import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { Popover, PopoverModule } from '@openng/optimus-ui/popover';
-import { TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Popover, PopoverModule } from '@exhaustive-ui/core/popover';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'datatable-doc',
@@ -38,7 +38,7 @@ import { TagModule } from '@openng/optimus-ui/tag';
                         <td>{{ product.name }}</td>
                         <td>$ {{ product.price }}</td>
                         <td>
-                            <img [src]="'https://optimus.openng.org/demo/product/' + product.image" [alt]="product.image" class="w-16 shadow-sm" />
+                            <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.image" class="w-16 shadow-sm" />
                         </td>
                         <td>
                             <p-button (onClick)="displayProduct($event, product)" icon="pi pi-search" severity="secondary" rounded />
@@ -51,7 +51,7 @@ import { TagModule } from '@openng/optimus-ui/tag';
                     <div *ngIf="selectedProduct()" class="rounded flex flex-col">
                         <div class="flex justify-center rounded">
                             <div class="relative mx-auto">
-                                <img class="rounded w-44 sm:w-64" [src]="'https://optimus.openng.org/demo/product/' + selectedProduct().image" [alt]="selectedProduct().name" />
+                                <img class="rounded w-44 sm:w-64" [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + selectedProduct().image" [alt]="selectedProduct().name" />
                                 <p-tag [value]="selectedProduct().inventoryStatus" [severity]="getSeverity(selectedProduct())" class="absolute dark:!bg-surface-900" [style.left.px]="4" [style.top.px]="4" />
                             </div>
                         </div>

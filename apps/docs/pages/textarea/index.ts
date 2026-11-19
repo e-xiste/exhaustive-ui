@@ -19,7 +19,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: `<app-doc
-        docTitle="Angular Textarea Component - Optimus UI"
+        docTitle="Angular Textarea Component - ExhaustiveUI"
         header="Textarea"
         description="Textarea adds styling and autoResize functionality to standard textarea element."
         [docs]="docs"

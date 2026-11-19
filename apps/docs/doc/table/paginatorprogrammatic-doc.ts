@@ -4,8 +4,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Customer } from '@/domain/customer';
 import { CustomerService } from '@/service/customerservice';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { TableModule } from '@openng/optimus-ui/table';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'paginatorprogrammatic-doc',

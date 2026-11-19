@@ -1,10 +1,10 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component, OnInit } from '@angular/core';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { MenuModule } from '@openng/optimus-ui/menu';
-import { PanelModule } from '@openng/optimus-ui/panel';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { PanelModule } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'template-doc',
@@ -18,7 +18,7 @@ import { PanelModule } from '@openng/optimus-ui/panel';
             <p-panel [toggleable]="true">
                 <ng-template #header>
                     <div class="flex items-center gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold">Amy Elsner</span>
                     </div>
                 </ng-template>

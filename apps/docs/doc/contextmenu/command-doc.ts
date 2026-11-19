@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { ContextMenu, ContextMenuModule } from '@openng/optimus-ui/contextmenu';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { Tag } from '@openng/optimus-ui/tag';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { ContextMenu, ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { Tag } from '@exhaustive-ui/core/tag';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 interface Users {
@@ -31,7 +31,7 @@ interface Users {
                     (contextmenu)="onContextMenu($event, user)"
                 >
                     <div class="flex flex-1 items-center gap-2">
-                        <img class="w-8 h-8" [alt]="user.name" [src]="'https://optimus.openng.org/demo/avatar/' + user.image" />
+                        <img class="w-8 h-8" [alt]="user.name" [src]="'https://exhaustive-ui.e-xiste.com/demo/avatar/' + user.image" />
                         <span class="font-bold">{{ user.name }}</span>
                     </div>
                     <p-tag [value]="user.role" [severity]="getBadge(user)" />

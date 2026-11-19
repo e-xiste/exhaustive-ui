@@ -3,13 +3,13 @@ import { CustomerService } from '@/service/customerservice';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Table, TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { Table, TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
+import { SelectModule } from '@exhaustive-ui/core/select';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 import { DeferredDemo } from '@/components/demo/deferreddemo';
@@ -69,7 +69,7 @@ import { DeferredDemo } from '@/components/demo/deferreddemo';
                                         <p-multiselect [(ngModel)]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
                                             <ng-template let-option #item>
                                                 <div class="flex items-center gap-2">
-                                                    <img [alt]="option.label" src="https://optimus.openng.org/demo/avatar/{{ option.image }}" style="width: 32px" />
+                                                    <img [alt]="option.label" src="https://exhaustive-ui.e-xiste.com/demo/avatar/{{ option.image }}" style="width: 32px" />
                                                     <span>{{ option.name }}</span>
                                                 </div>
                                             </ng-template>
@@ -100,13 +100,13 @@ import { DeferredDemo } from '@/components/demo/deferreddemo';
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
+                                    <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
                                     <span>{{ customer.country.name }}</span>
                                 </div>
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <img [alt]="customer.representative.name" src="https://optimus.openng.org/demo/avatar/{{ customer.representative.image }}" width="32" style="vertical-align: middle" />
+                                    <img [alt]="customer.representative.name" src="https://exhaustive-ui.e-xiste.com/demo/avatar/{{ customer.representative.image }}" width="32" style="vertical-align: middle" />
                                     <span>{{ customer.representative.name }}</span>
                                 </div>
                             </td>

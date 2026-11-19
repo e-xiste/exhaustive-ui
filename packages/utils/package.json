@@ -1,0 +1,47 @@
+{
+    "name": "@exhaustive-ui/utils",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "description": "Utility functions and helpers for ExhaustiveUI Libraries",
+    "keywords": ["utilities", "helpers", "exhaustive-ui", "angular"],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/e-xiste/exhaustive-ui.git",
+        "directory": "packages/utils"
+    },
+    "bugs": {
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
+    },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.mjs"
+        },
+        "./*": {
+            "types": "./dist/*/index.d.mts",
+            "import": "./dist/*/index.mjs",
+            "default": "./dist/*/index.mjs"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "sideEffects": false,
+    "files": ["dist", "README.md", "LICENSE"],
+    "scripts": {
+        "build": "cross-env NODE_ENV=production INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:package",
+        "build:dev": "cross-env NODE_ENV=development INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:dev:package",
+        "build:package": "pnpm run build:prebuild && tsdown",
+        "build:dev:package": "pnpm run build:prebuild && tsdown --watch",
+        "build:prebuild": "node ./scripts/prebuild.mjs",
+        "dev:link": "pnpm link --global && npm link"
+    },
+    "engines": {
+        "node": ">=12.11.0"
+    }
+}

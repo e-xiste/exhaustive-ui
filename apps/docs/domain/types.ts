@@ -147,11 +147,11 @@ export const ROUTE_FILE_DEFINITIONS: Record<string, RouteFileDefinition> = {
         content: `import { Component, OnInit } from '@angular/core';
 import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
-import { MessageService } from '@openng/optimus-ui/api';
-import { DialogService, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { DialogService, DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
 import { InfoDemo } from './infodemo';
-import { TableModule } from '@openng/optimus-ui/table'
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { TableModule } from '@exhaustive-ui/core/table'
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     providers: [DialogService, MessageService, ProductService],
@@ -175,7 +175,7 @@ import { ButtonModule } from '@openng/optimus-ui/button';
                 <tr>
                     <td>{{ product.code }}</td>
                     <td>{{ product.name }}</td>
-                    <td><img src="https://optimus.openng.org/demo/product/{{ product.image }}" [alt]="product.image" class="w-16 h-16 shadow" /></td>
+                    <td><img src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.image" class="w-16 h-16 shadow" /></td>
                     <td>{{ product.category }}</td>
                     <td>
                         {{ product.quantity }}
@@ -231,9 +231,9 @@ export class ProductListDemo implements OnInit {
         path: 'src/app/demo/infodemo.ts',
         name: 'InfoDemo',
         content: `import { Component} from '@angular/core';
-import { DialogService, DynamicDialog, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DialogService, DynamicDialog, DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     providers: [DialogService, MessageService],
@@ -278,8 +278,8 @@ export class InfoDemo {
         path: 'src/app/demo/footer.ts',
         name: 'Footer',
         content: `import { Component } from '@angular/core';
-import { DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'footer',

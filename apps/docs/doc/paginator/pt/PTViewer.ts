@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { PaginatorModule } from '@openng/optimus-ui/paginator';
+import { PaginatorModule } from '@exhaustive-ui/core/paginator';
 
 @Component({
     selector: 'paginator-pt-viewer',

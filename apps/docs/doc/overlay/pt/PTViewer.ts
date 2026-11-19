@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { OverlayModule } from '@openng/optimus-ui/overlay';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { OverlayModule } from '@exhaustive-ui/core/overlay';
 
 @Component({
     selector: 'overlay-pt-viewer',

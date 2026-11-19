@@ -1,7 +1,7 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { PaginatorModule, PaginatorState } from '@openng/optimus-ui/paginator';
+import { PaginatorModule, PaginatorState } from '@exhaustive-ui/core/paginator';
 
 @Component({
     selector: 'images-doc',
@@ -13,7 +13,7 @@ import { PaginatorModule, PaginatorState } from '@openng/optimus-ui/paginator';
         </app-docsectiontext>
         <div class="card flex flex-col gap-4 justify-center items-center">
             <p-paginator [first]="first" [rows]="1" [totalRecords]="12" (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
-            <img [src]="'https://optimus.openng.org/demo/nature/nature' + (first + 1) + '.jpg'" class="max-w-full rounded-xl" />
+            <img [src]="'https://exhaustive-ui.e-xiste.com/demo/nature/nature' + (first + 1) + '.jpg'" class="max-w-full rounded-xl" />
         </div>
         <app-code></app-code>
     `

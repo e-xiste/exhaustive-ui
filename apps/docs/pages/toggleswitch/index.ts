@@ -13,7 +13,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular ToggleSwitch Component - Optimus UI"
+        docTitle="Angular ToggleSwitch Component - ExhaustiveUI"
         header="ToggleSwitch"
         description="ToggleSwitch is used to select a boolean value."
         [docs]="docs"

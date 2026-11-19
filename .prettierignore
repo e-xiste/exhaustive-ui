@@ -12,5 +12,5 @@ node_modules
 *.yml
 /tsconfig.json
 *.json
-packages/optimus-ui-themes/tokens
-packages/optimus-ui-themes/umd
+packages/themes/tokens
+packages/themes/umd

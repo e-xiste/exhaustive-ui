@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
-import { ConfirmPopupModule } from '@openng/optimus-ui/confirmpopup';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

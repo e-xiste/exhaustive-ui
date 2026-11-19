@@ -2,10 +2,10 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { ContextMenu, ContextMenuModule } from '@openng/optimus-ui/contextmenu';
-import { Ripple } from '@openng/optimus-ui/ripple';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { ContextMenu, ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 @Component({
     selector: 'template-doc',
     standalone: true,
@@ -23,7 +23,7 @@ import { Ripple } from '@openng/optimus-ui/ripple';
                     (contextmenu)="onContextMenu($event)"
                 >
                     <div class="flex flex-wrap p-2 items-center gap-4">
-                        <img class="w-16 shrink-0 rounded" src="https://optimus.openng.org/demo/product/{{ product.image }}" [alt]="product.name" />
+                        <img class="w-16 shrink-0 rounded" src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.name" />
                         <div class="flex-1 flex flex-col gap-1">
                             <span class="font-bold">{{ product.name }}</span>
                             <div class="flex items-center gap-2">

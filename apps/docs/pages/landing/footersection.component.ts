@@ -1,4 +1,4 @@
-import { DISCORD_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL, SPARKED_DEMO_URL } from '@/utils/constants';
+import { EXISTE_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL, SPARKED_DEMO_URL } from '@/utils/constants';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -28,9 +28,6 @@ import { RouterModule } from '@angular/router';
                             <li class="mb-6">
                                 <a [href]="githubDiscussionsUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded transition-all duration-300">GitHub Discussions</a>
                             </li>
-                            <li class="mb-6">
-                                <a [href]="discordUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded transition-all duration-300">Discord</a>
-                            </li>
                         </ul>
                     </div>
                     <div class="w-6/12 lg:w-3/12 flex">
@@ -51,7 +48,7 @@ import { RouterModule } from '@angular/router';
                                 <a [href]="sparkedDemoUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded transition-all duration-300">Sparked Demo</a>
                             </li>
                             <li class="mb-6">
-                                <a href="mailto:contact@openng.org" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded transition-all duration-300">Contact Us</a>
+                                <a [href]="existeUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded transition-all duration-300">e-xiste</a>
                             </li>
                         </ul>
                     </div>
@@ -65,9 +62,6 @@ import { RouterModule } from '@angular/router';
                         <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="linkbox linkbox-icon">
                             <i class="pi pi-github"></i>
                         </a>
-                        <a [href]="discordUrl" target="_blank" rel="noopener noreferrer" class="linkbox linkbox-icon">
-                            <i class="pi pi-discord"></i>
-                        </a>
                         <a [href]="githubDiscussionsUrl" class="linkbox linkbox-icon">
                             <i class="pi pi-comments"></i>
                         </a>
@@ -80,7 +74,7 @@ import { RouterModule } from '@angular/router';
 export class FooterSectionComponent {
     readonly githubRepoUrl = GITHUB_REPO_URL;
     readonly githubDiscussionsUrl = GITHUB_DISCUSSIONS_URL;
-    readonly discordUrl = DISCORD_URL;
+    readonly existeUrl = EXISTE_URL;
 
     readonly sparkedDemoUrl = SPARKED_DEMO_URL;
 }

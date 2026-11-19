@@ -4,9 +4,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MessageService, TreeNode } from '@openng/optimus-ui/api';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { MessageService, TreeNode } from '@exhaustive-ui/core/api';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 interface Column {
     field: string;

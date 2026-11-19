@@ -44,8 +44,8 @@ export class OptionsDoc {
     code3 = {
         typescript: `options: {
     cssLayer: {
-        name: 'optimus',
-        order: 'app-styles, optimus, another-css-library'
+        name: 'exhaustive',
+        order: 'app-styles, exhaustive, another-css-library'
     }
 }`
     };

@@ -1,0 +1,49 @@
+{
+    "name": "@exhaustive-ui/styled",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "description": "Styled utilities for ExhaustiveUI Libraries",
+    "keywords": ["styled", "css", "style utilities", "exhaustive", "angular"],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/e-xiste/exhaustive-ui.git",
+        "directory": "packages/styled"
+    },
+    "bugs": {
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
+    },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.mjs"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "sideEffects": false,
+    "files": ["dist", "README.md", "LICENSE"],
+    "scripts": {
+        "build": "cross-env NODE_ENV=production INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:package",
+        "build:dev": "cross-env NODE_ENV=development INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:dev:package",
+        "build:package": "tsdown",
+        "build:dev:package": "tsdown --watch",
+        "dev:link": "pnpm link --global && npm link",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@exhaustive-ui/utils": "workspace:*"
+    },
+    "devDependencies": {
+        "vitest": "^4.1.11"
+    },
+    "engines": {
+        "node": ">=12.11.0"
+    }
+}

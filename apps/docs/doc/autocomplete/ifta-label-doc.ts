@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 import { RouterModule } from '@angular/router';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';

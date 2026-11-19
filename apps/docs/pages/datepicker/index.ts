@@ -34,7 +34,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     imports: [AppDoc],
     template: `
         <app-doc
-            docTitle="Angular DatePicker Component - Optimus UI"
+            docTitle="Angular DatePicker Component - ExhaustiveUI"
             header="DatePicker"
             description="DatePicker is an input component to select a date."
             [docs]="docs"

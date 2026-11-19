@@ -3,19 +3,19 @@ import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/comm
 import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MenuItem, SelectItem } from '@openng/optimus-ui/api';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ChartModule } from '@openng/optimus-ui/chart';
-import { DividerModule } from '@openng/optimus-ui/divider';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { KnobModule } from '@openng/optimus-ui/knob';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
-import { SelectButton } from '@openng/optimus-ui/selectbutton';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { MenuItem, SelectItem } from '@exhaustive-ui/core/api';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 import { Subscription } from 'rxjs';
 import { CardsApp } from './samples/cardsapp.component';
 import { ChatApp } from './samples/chatapp.component';
@@ -120,7 +120,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     }"
                                     class="text-surface-950 dark:text-surface-0 font-medium text-3xl"
                                 >
-                                    Optimus
+                                    Exhaustive
                                 </div>
                             </div>
                             <div class="mt-10 flex flex-col gap-2">
@@ -383,7 +383,7 @@ import { OverviewApp } from './samples/overviewapp.component';
     `
 })
 export class HeroSectionComponent implements OnInit, OnDestroy {
-    readonly installCommand = 'ng add @openng/optimus-ui';
+    readonly installCommand = 'ng add @exhaustive-ui/core';
 
     commandCopied: boolean = false;
 

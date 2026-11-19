@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ToolbarModule } from '@openng/optimus-ui/toolbar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { ToolbarModule } from '@exhaustive-ui/core/toolbar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 
 @Component({
     selector: 'custom-doc',
@@ -55,7 +55,7 @@ import { AvatarModule } from '@openng/optimus-ui/avatar';
                 <ng-template #end>
                     <div class="flex items-center gap-2">
                         <p-button label="Share" severity="contrast" size="small" />
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" [style]="{ width: '32px', height: '32px' }" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" [style]="{ width: '32px', height: '32px' }" />
                     </div>
                 </ng-template>
             </p-toolbar>

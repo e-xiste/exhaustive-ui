@@ -2,11 +2,11 @@ import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { MenuModule } from '@openng/optimus-ui/menu';
-import { Ripple } from '@openng/optimus-ui/ripple';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 
 @Component({
     selector: 'template-doc',
@@ -68,7 +68,7 @@ import { Ripple } from '@openng/optimus-ui/ripple';
                 </ng-template>
                 <ng-template #end>
                     <button pRipple class="relative overflow-hidden w-full border-0 bg-transparent flex items-start p-2 pl-4 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-none cursor-pointer transition-colors duration-200">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" class="mr-2" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" class="mr-2" shape="circle" />
                         <span class="inline-flex flex-col items-start">
                             <span class="font-bold">Amy Elsner</span>
                             <span class="text-sm">Admin</span>

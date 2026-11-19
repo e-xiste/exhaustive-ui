@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
-import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
 
 @Component({
     selector: 'floatlabel-doc',

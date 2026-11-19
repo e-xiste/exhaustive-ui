@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
-import { InputText } from '@openng/optimus-ui/inputtext';
-import { FluidModule } from '@openng/optimus-ui/fluid';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

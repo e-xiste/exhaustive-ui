@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import ComponentTokens from '@openng/optimus-ui-themes/tokens';
+import ComponentTokens from '@exhaustive-ui/themes/tokens';
 import { generateAgentSkill } from './build-llm-skill.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,7 +12,7 @@ const PAGES_DIR = path.resolve(__dirname, '../pages');
 const API_DOC_PATH = path.resolve(__dirname, '../doc/apidoc/index.json');
 const DEMOS_JSON_PATH = path.resolve(__dirname, '../public/demos.json');
 const OUTPUT_DIR = path.resolve(__dirname, '../public/llms');
-const OPTIMUS_PACKAGE_JSON = path.resolve(__dirname, '../../../packages/optimus-ui/package.json');
+const EXHAUSTIVE_PACKAGE_JSON = path.resolve(__dirname, '../../../packages/core/package.json');
 
 // Global demos data loaded from demos.json
 let demosData = null;
@@ -77,13 +77,13 @@ const GUIDE_PAGES = [
         route: 'installation',
         docPath: 'installation',
         title: 'Installation',
-        description: 'Setting up Optimus UI in an Angular CLI project.'
+        description: 'Setting up ExhaustiveUI in an Angular CLI project.'
     },
     {
         route: 'configuration',
         docPath: 'configuration',
         title: 'Configuration',
-        description: 'Application wide configuration for Optimus UI.'
+        description: 'Application wide configuration for ExhaustiveUI.'
     },
     {
         route: 'theming/styled',
@@ -95,19 +95,19 @@ const GUIDE_PAGES = [
         route: 'theming/unstyled',
         docPath: 'theming/unstyled',
         title: 'Unstyled Mode',
-        description: 'Theming Optimus UI with alternative styling approaches.'
+        description: 'Theming ExhaustiveUI with alternative styling approaches.'
     },
     {
         route: 'icons',
         docPath: 'icons',
         title: 'Icons',
-        description: 'OpenNG Icons is the default icon library of Optimus UI with over 250 open source icons.'
+        description: 'OpenNG Icons is the default icon library of ExhaustiveUI with over 250 open source icons.'
     },
     {
         route: 'customicons',
         docPath: 'customicons',
         title: 'Custom Icons',
-        description: 'Use custom icons with Optimus UI components.'
+        description: 'Use custom icons with ExhaustiveUI components.'
     },
     {
         route: 'passthrough',
@@ -119,31 +119,31 @@ const GUIDE_PAGES = [
         route: 'tailwind',
         docPath: 'tailwind',
         title: 'Tailwind CSS',
-        description: 'Integration between Optimus UI and Tailwind CSS.'
+        description: 'Integration between ExhaustiveUI and Tailwind CSS.'
     },
     {
         route: 'llms',
         docPath: 'llms',
         title: 'LLMs.txt',
-        description: 'LLM-optimized documentation endpoints for Optimus UI components.'
+        description: 'LLM-optimized documentation endpoints for ExhaustiveUI components.'
     },
     {
         route: 'guides/accessibility',
         docPath: 'guides/accessibility',
         title: 'Accessibility',
-        description: 'Optimus UI has WCAG 2.1 AA level compliance.'
+        description: 'ExhaustiveUI has WCAG 2.1 AA level compliance.'
     },
     {
         route: 'guides/animations',
         docPath: 'guides/animations',
         title: 'Animations',
-        description: 'Built-in CSS animations for Optimus UI components.'
+        description: 'Built-in CSS animations for ExhaustiveUI components.'
     },
     {
         route: 'guides/rtl',
         docPath: 'guides/rtl',
         title: 'RTL',
-        description: 'Right-to-left support for Optimus UI components.'
+        description: 'Right-to-left support for ExhaustiveUI components.'
     },
     {
         route: 'guides/primeflex',
@@ -155,7 +155,7 @@ const GUIDE_PAGES = [
         route: 'philosophy',
         docPath: 'philosophy',
         title: 'Philosophy',
-        description: 'Why Optimus UI exists, what it commits to, and where it stops.'
+        description: 'Why ExhaustiveUI exists, what it commits to, and where it stops.'
     },
     {
         route: 'faq',
@@ -167,7 +167,7 @@ const GUIDE_PAGES = [
         route: 'contribution',
         docPath: 'contribution',
         title: 'Contribution Guide',
-        description: 'How to contribute to Optimus UI.'
+        description: 'How to contribute to ExhaustiveUI.'
     }
 ];
 
@@ -396,9 +396,9 @@ function getComponentMetadata(componentName) {
 
     // Extract from app-doc template attributes
     const docTitleMatch = content.match(/docTitle="([^"]+)"/);
-    // Page titles carry a ' - Optimus UI' suffix for the browser tab; the llms output
-    // is already headed '# Optimus UI', so drop it rather than repeat it on every line.
-    const docTitle = docTitleMatch ? docTitleMatch[1].replace(/\s+-\s+Optimus UI$/, '') : null;
+    // Page titles carry a ' - ExhaustiveUI' suffix for the browser tab; the llms output
+    // is already headed '# ExhaustiveUI', so drop it rather than repeat it on every line.
+    const docTitle = docTitleMatch ? docTitleMatch[1].replace(/\s+-\s+ExhaustiveUI$/, '') : null;
     const headerMatch = content.match(/header="([^"]+)"/);
     const descriptionMatch = content.match(/description="([^"]+)"/);
     const apiDocsMatch = content.match(/\[apiDocs\]="(\[[^\]]+\])"/);
@@ -681,7 +681,7 @@ function getStyleClassesFromApi(apiDocs, componentName) {
 }
 
 /**
- * Get Design Tokens from @openng/optimus-ui-themes
+ * Get Design Tokens from @exhaustive-ui/themes
  */
 function getTokensFromApi(componentName) {
     const tokens = [];
@@ -947,7 +947,7 @@ function generateJsonOutput(components, apiDocs, guidePages = []) {
  * Generate combined Markdown output for AI context
  */
 function generateMarkdownOutput(components, apiDocs, guidePages = []) {
-    let markdown = '# Optimus UI Documentation\n\n';
+    let markdown = '# ExhaustiveUI Documentation\n\n';
     markdown += `Generated: ${new Date().toISOString().split('T')[0]}\n\n`;
     markdown += '---\n\n';
 
@@ -1039,16 +1039,16 @@ function generateMarkdownOutput(components, apiDocs, guidePages = []) {
  * Generate llms.txt index file
  */
 function generateLlmsTxt(components, pages = []) {
-    let content = '# Optimus UI\n\n';
+    let content = '# ExhaustiveUI\n\n';
     content += '> A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.\n\n';
-    content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://optimus.openng.org/llms/manifest.json\n\n';
+    content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.e-xiste.com/llms/manifest.json\n\n';
 
     // Add Guides section
     if (pages.length > 0) {
         content += '## Guides\n\n';
 
         for (const page of pages) {
-            content += `- [${page.title}](https://optimus.openng.org/${page.route}): ${page.description}\n`;
+            content += `- [${page.title}](https://exhaustive-ui.e-xiste.com/${page.route}): ${page.description}\n`;
         }
 
         content += '\n';
@@ -1061,7 +1061,7 @@ function generateLlmsTxt(components, pages = []) {
 
     for (const comp of sorted) {
         const route = COMPONENT_ROUTE_MAP[comp.name] ?? comp.name;
-        content += `- [${comp.title}](https://optimus.openng.org/${route}): ${comp.description}\n`;
+        content += `- [${comp.title}](https://exhaustive-ui.e-xiste.com/${route}): ${comp.description}\n`;
     }
 
     const outputPath = path.join(OUTPUT_DIR, 'llms.txt');
@@ -1260,7 +1260,7 @@ function generatePageMarkdownFiles(pages) {
  * Main execution
  */
 function main() {
-    console.log('🚀 Building Optimus UI LLM Documentation...\n');
+    console.log('🚀 Building ExhaustiveUI LLM Documentation...\n');
 
     console.log('📦 Loading demos.json...');
     demosData = loadDemosJson();
@@ -1288,7 +1288,7 @@ function main() {
     generateLlmsTxt(components, pages);
     generateIndividualMarkdownFiles(components, apiDocs);
     generatePageMarkdownFiles(pages);
-    generateAgentSkill({ outputDir: OUTPUT_DIR, wellKnownDir: path.resolve(__dirname, '../public/.well-known'), components, pages, version: JSON.parse(fs.readFileSync(OPTIMUS_PACKAGE_JSON, 'utf-8')).version });
+    generateAgentSkill({ outputDir: OUTPUT_DIR, wellKnownDir: path.resolve(__dirname, '../public/.well-known'), components, pages, version: JSON.parse(fs.readFileSync(EXHAUSTIVE_PACKAGE_JSON, 'utf-8')).version });
 
     console.log('\n✅ LLM documentation generation complete!');
     console.log(`\nOutput directory: ${OUTPUT_DIR}`);
@@ -1297,7 +1297,7 @@ function main() {
     console.log('   - llms.txt (index file)');
     console.log('   - components/*.md (individual component files with complete API)');
     console.log('   - pages/*.md (guide/documentation page files)');
-    console.log('   - optimus-ui-skill.zip (Agent Skill bundling the markdown files)');
+    console.log('   - exhaustive-ui-skill.zip (Agent Skill bundling the markdown files)');
     console.log('   - ../.well-known/agent-skills/index.json (skills discovery index for `npx skills add`)');
 }
 

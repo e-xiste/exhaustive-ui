@@ -1,8 +1,8 @@
 import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { Component } from '@angular/core';
-import { InplaceModule } from '@openng/optimus-ui/inplace';
-import { TableModule } from '@openng/optimus-ui/table';
+import { InplaceModule } from '@exhaustive-ui/core/inplace';
+import { TableModule } from '@exhaustive-ui/core/table';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

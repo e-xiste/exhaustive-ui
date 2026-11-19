@@ -9,7 +9,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular PickList Component - Optimus UI"
+        docTitle="Angular PickList Component - ExhaustiveUI"
         header="PickList"
         description="PickList is used to reorder items between different lists."
         [docs]="docs"

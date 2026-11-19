@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'variants-doc',

@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProgressSpinnerModule } from '@openng/optimus-ui/progressspinner';
+import { ProgressSpinnerModule } from '@exhaustive-ui/core/progressspinner';
 
 @Component({
     selector: 'progressspinner-pt-viewer',

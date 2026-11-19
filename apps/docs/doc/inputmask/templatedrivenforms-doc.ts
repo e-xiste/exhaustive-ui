@@ -1,13 +1,13 @@
 import { AppCodeModule } from '@/components/doc/app.code';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { FluidModule } from '@openng/optimus-ui/fluid';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
-import { InputText } from '@openng/optimus-ui/inputtext';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'templatedrivenforms-doc',

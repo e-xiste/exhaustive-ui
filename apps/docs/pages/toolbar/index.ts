@@ -8,7 +8,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Toolbar Component - Optimus UI"
+        docTitle="Angular Toolbar Component - ExhaustiveUI"
         header="Toolbar"
         description="Toolbar is a grouping component for buttons and other content."
         [docs]="docs"

@@ -1,8 +1,8 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { StyleClassModule } from '@openng/optimus-ui/styleclass';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
 
 @Component({
     selector: 'hideonresize-doc',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

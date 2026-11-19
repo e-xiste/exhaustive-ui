@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MegaMenuItem } from '@openng/optimus-ui/api';
-import { MegaMenuModule } from '@openng/optimus-ui/megamenu';
+import { MegaMenuItem } from '@exhaustive-ui/core/api';
+import { MegaMenuModule } from '@exhaustive-ui/core/megamenu';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

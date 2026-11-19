@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { SkeletonModule } from '@openng/optimus-ui/skeleton';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
 
 @Component({
     selector: 'skeleton-pt-viewer',

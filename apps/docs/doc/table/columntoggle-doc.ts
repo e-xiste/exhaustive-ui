@@ -6,8 +6,8 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
-import { TableModule } from '@openng/optimus-ui/table';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 interface Column {
     field: string;

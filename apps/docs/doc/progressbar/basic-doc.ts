@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
+import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

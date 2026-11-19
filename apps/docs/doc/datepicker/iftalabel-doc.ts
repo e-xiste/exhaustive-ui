@@ -3,8 +3,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 
 @Component({
     selector: 'iftalabel-doc',

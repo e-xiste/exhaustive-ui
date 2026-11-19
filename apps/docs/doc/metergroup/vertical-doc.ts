@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MeterGroupModule } from '@openng/optimus-ui/metergroup';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

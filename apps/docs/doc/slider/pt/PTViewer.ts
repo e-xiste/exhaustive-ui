@@ -3,7 +3,7 @@ import { AppDocPtViewer } from '@/components/doc/app.docptviewer';
 import { getPTOptions } from '@/components/doc/app.docptviewer';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SliderModule } from '@openng/optimus-ui/slider';
+import { SliderModule } from '@exhaustive-ui/core/slider';
 
 @Component({
     selector: 'slider-pt-viewer',

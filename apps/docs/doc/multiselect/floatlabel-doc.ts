@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

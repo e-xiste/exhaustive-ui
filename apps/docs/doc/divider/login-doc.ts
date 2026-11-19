@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DividerModule } from '@openng/optimus-ui/divider';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'login-doc',

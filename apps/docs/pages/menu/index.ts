@@ -12,7 +12,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Menu Component - Optimus UI"
+        docTitle="Angular Menu Component - ExhaustiveUI"
         header="Menu"
         description="Menu is a navigation / command component that supports dynamic and static positioning."
         [docs]="docs"

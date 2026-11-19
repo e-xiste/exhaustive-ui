@@ -1,13 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import { Drawer } from '@openng/optimus-ui/drawer';
+import { Drawer } from '@exhaustive-ui/core/drawer';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { FormsModule } from '@angular/forms';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { RippleModule } from '@openng/optimus-ui/ripple';
-import { StyleClassModule } from '@openng/optimus-ui/styleclass';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
+import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
 
 @Component({
     selector: 'headless-doc',
@@ -212,7 +212,7 @@ import { StyleClassModule } from '@openng/optimus-ui/styleclass';
                         <div class="mt-auto">
                             <hr class="mb-4 mx-4 border-t border-0 border-surface" />
                             <a pRipple class="m-4 flex items-center cursor-pointer p-4 gap-2 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                                <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                                <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                                 <span class="font-bold">Amy Elsner</span>
                             </a>
                         </div>

@@ -7,7 +7,7 @@ import { collectApi } from './api.mjs';
 
 // Reads the built library typings, so run `pnpm run build:lib` and `pnpm --filter docs build:apidoc` first
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const libDir = path.resolve(__dirname, '../../../../packages/optimus-ui');
+const libDir = path.resolve(__dirname, '../../../../packages/core');
 const apiDocs = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../doc/apidoc/index.json'), 'utf-8'));
 
 let entryPoints;
@@ -22,7 +22,7 @@ before(() => {
 describe('collectApi', () => {
     it('lists each entry point with its import path, NgModule and declarations', () => {
         const button = entry('button');
-        assert.equal(button.import, '@openng/optimus-ui/button');
+        assert.equal(button.import, '@exhaustive-ui/core/button');
         assert.deepEqual(button.modules, ['ButtonModule']);
         assert.deepEqual(
             button.declarations.map((d) => [d.className, d.selector, d.kind]),

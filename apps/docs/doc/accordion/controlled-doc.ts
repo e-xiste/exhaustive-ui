@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AccordionModule } from '@openng/optimus-ui/accordion';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { AccordionModule } from '@exhaustive-ui/core/accordion';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

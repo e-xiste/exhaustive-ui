@@ -1,0 +1,209 @@
+import type { ElementRef, TemplateRef } from '@angular/core';
+import type { OverlayOptions, PassThroughOptions, Translation } from '@exhaustive-ui/core/api';
+import type { AccordionPassThrough } from '@exhaustive-ui/core/types/accordion';
+import type { AutoCompletePassThrough } from '@exhaustive-ui/core/types/autocomplete';
+import type { AvatarPassThrough } from '@exhaustive-ui/core/types/avatar';
+import type { AvatarGroupPassThrough } from '@exhaustive-ui/core/types/avatargroup';
+import type { BadgePassThrough } from '@exhaustive-ui/core/types/badge';
+import type { BlockUIPassThrough } from '@exhaustive-ui/core/types/blockui';
+import type { BreadcrumbPassThrough } from '@exhaustive-ui/core/types/breadcrumb';
+import type { ButtonPassThrough } from '@exhaustive-ui/core/types/button';
+import type { CardPassThrough } from '@exhaustive-ui/core/types/card';
+import type { CarouselPassThrough } from '@exhaustive-ui/core/types/carousel';
+import type { CascadeSelectPassThrough } from '@exhaustive-ui/core/types/cascadeselect';
+import type { CheckboxPassThrough } from '@exhaustive-ui/core/types/checkbox';
+import type { ChipPassThrough } from '@exhaustive-ui/core/types/chip';
+import type { ColorPickerPassThrough } from '@exhaustive-ui/core/types/colorpicker';
+import type { ConfirmDialogPassThrough } from '@exhaustive-ui/core/types/confirmdialog';
+import type { ConfirmPopupPassThrough } from '@exhaustive-ui/core/types/confirmpopup';
+import type { DialogPassThrough } from '@exhaustive-ui/core/types/dialog';
+import type { DividerPassThrough } from '@exhaustive-ui/core/types/divider';
+import type { DockPassThrough } from '@exhaustive-ui/core/types/dock';
+import type { DrawerPassThrough } from '@exhaustive-ui/core/types/drawer';
+import type { EditorPassThrough } from '@exhaustive-ui/core/types/editor';
+import type { FieldsetPassThrough } from '@exhaustive-ui/core/types/fieldset';
+import type { FileUploadPassThrough } from '@exhaustive-ui/core/types/fileupload';
+import type { FloatLabelPassThrough } from '@exhaustive-ui/core/types/floatlabel';
+import type { FluidPassThrough } from '@exhaustive-ui/core/types/fluid';
+import type { GalleriaPassThrough } from '@exhaustive-ui/core/types/galleria';
+import type { IconFieldPassThrough } from '@exhaustive-ui/core/types/iconfield';
+import type { IftaLabelPassThrough } from '@exhaustive-ui/core/types/iftalabel';
+import type { ImagePassThrough } from '@exhaustive-ui/core/types/image';
+import type { ImageComparePassThrough } from '@exhaustive-ui/core/types/imagecompare';
+import type { InplacePassThrough } from '@exhaustive-ui/core/types/inplace';
+import type { InputGroupPassThrough } from '@exhaustive-ui/core/types/inputgroup';
+import type { InputGroupAddonPassThrough } from '@exhaustive-ui/core/types/inputgroupaddon';
+import type { InputIconPassThrough } from '@exhaustive-ui/core/types/inputicon';
+import type { InputMaskPassThrough } from '@exhaustive-ui/core/types/inputmask';
+import type { InputNumberPassThrough } from '@exhaustive-ui/core/types/inputnumber';
+import type { InputOtpPassThrough } from '@exhaustive-ui/core/types/inputotp';
+import type { InputTextPassThrough } from '@exhaustive-ui/core/types/inputtext';
+import type { KnobPassThrough } from '@exhaustive-ui/core/types/knob';
+import type { MegaMenuPassThrough } from '@exhaustive-ui/core/types/megamenu';
+import type { MenuPassThrough } from '@exhaustive-ui/core/types/menu';
+import type { MenubarPassThrough } from '@exhaustive-ui/core/types/menubar';
+import type { MessagePassThrough } from '@exhaustive-ui/core/types/message';
+import type { MeterGroupPassThrough } from '@exhaustive-ui/core/types/metergroup';
+import type { OrderListPassThrough } from '@exhaustive-ui/core/types/orderlist';
+import type { OrganizationChartPassThrough } from '@exhaustive-ui/core/types/organizationchart';
+import type { OverlayBadgePassThrough } from '@exhaustive-ui/core/types/overlaybadge';
+import type { PanelPassThrough } from '@exhaustive-ui/core/types/panel';
+import type { PanelMenuPassThrough } from '@exhaustive-ui/core/types/panelmenu';
+import type { PopoverPassThrough } from '@exhaustive-ui/core/types/popover';
+import type { ProgressBarPassThrough } from '@exhaustive-ui/core/types/progressbar';
+import type { ProgressSpinnerPassThrough } from '@exhaustive-ui/core/types/progressspinner';
+import type { RadioButtonPassThrough } from '@exhaustive-ui/core/types/radiobutton';
+import type { RatingPassThrough } from '@exhaustive-ui/core/types/rating';
+import type { VirtualScrollerPassThrough } from '@exhaustive-ui/core/types/scroller';
+import type { ScrollPanelPassThrough } from '@exhaustive-ui/core/types/scrollpanel';
+import type { ScrollTopPassThrough } from '@exhaustive-ui/core/types/scrolltop';
+import type { SelectPassThrough } from '@exhaustive-ui/core/types/select';
+import type { SelectButtonPassThrough } from '@exhaustive-ui/core/types/selectbutton';
+import type { SkeletonPassThrough } from '@exhaustive-ui/core/types/skeleton';
+import type { SliderPassThrough } from '@exhaustive-ui/core/types/slider';
+import type { SpeedDialPassThrough } from '@exhaustive-ui/core/types/speeddial';
+import type { SplitButtonPassThrough } from '@exhaustive-ui/core/types/splitbutton';
+import type { SplitterPassThrough } from '@exhaustive-ui/core/types/splitter';
+import type { StepperPassThrough } from '@exhaustive-ui/core/types/stepper';
+import type { ColumnFilterPassThrough, TablePassThrough } from '@exhaustive-ui/core/types/table';
+import type { TabListPassThrough, TabPanelPassThrough, TabPanelsPassThrough, TabPassThrough, TabsPassThrough } from '@exhaustive-ui/core/types/tabs';
+import type { TagPassThrough } from '@exhaustive-ui/core/types/tag';
+import type { TerminalPassThrough } from '@exhaustive-ui/core/types/terminal';
+import type { TieredMenuPassThrough } from '@exhaustive-ui/core/types/tieredmenu';
+import type { TimelinePassThrough } from '@exhaustive-ui/core/types/timeline';
+import type { ToastPassThrough } from '@exhaustive-ui/core/types/toast';
+import type { ToggleButtonPassThrough } from '@exhaustive-ui/core/types/togglebutton';
+import type { ToggleSwitchPassThrough } from '@exhaustive-ui/core/types/toggleswitch';
+import type { ToolbarPassThrough } from '@exhaustive-ui/core/types/toolbar';
+import type { TreePassThrough } from '@exhaustive-ui/core/types/tree';
+import type { TreeSelectPassThrough } from '@exhaustive-ui/core/types/treeselect';
+import type { TreeTablePassThrough } from '@exhaustive-ui/core/types/treetable';
+
+/** ZIndex configuration */
+export type ZIndex = {
+    modal: number;
+    overlay: number;
+    menu: number;
+    tooltip: number;
+};
+
+/** Theme configuration */
+export type ThemeType = { preset?: any; options?: any } | 'none' | boolean | undefined;
+
+export type ThemeConfigType = {
+    theme?: ThemeType;
+    csp?: {
+        nonce: string | undefined;
+    };
+};
+
+export interface GlobalPassThrough {
+    accordion?: AccordionPassThrough;
+    autoComplete?: AutoCompletePassThrough;
+    avatar?: AvatarPassThrough;
+    avatarGroup?: AvatarGroupPassThrough;
+    blockUI?: BlockUIPassThrough;
+    breadcrumb?: BreadcrumbPassThrough;
+    card?: CardPassThrough;
+    carousel?: CarouselPassThrough;
+    cascadeSelect?: CascadeSelectPassThrough;
+    checkbox?: CheckboxPassThrough;
+    chip?: ChipPassThrough;
+    colorPicker?: ColorPickerPassThrough;
+    columnFilter?: ColumnFilterPassThrough;
+    confirmDialog?: ConfirmDialogPassThrough;
+    confirmPopup?: ConfirmPopupPassThrough;
+    dialog?: DialogPassThrough;
+    divider?: DividerPassThrough;
+    dock?: DockPassThrough;
+    megaMenu?: MegaMenuPassThrough;
+    drawer?: DrawerPassThrough;
+    editor?: EditorPassThrough;
+    fileUpload?: FileUploadPassThrough;
+    floatLabel?: FloatLabelPassThrough;
+    menu?: MenuPassThrough;
+    menubar?: MenubarPassThrough;
+    fluid?: FluidPassThrough;
+    galleria?: GalleriaPassThrough;
+    iconField?: IconFieldPassThrough;
+    iftaLabel?: IftaLabelPassThrough;
+    inputIcon?: InputIconPassThrough;
+    image?: ImagePassThrough;
+    imageCompare?: ImageComparePassThrough;
+    inplace?: InplacePassThrough;
+    inputText?: InputTextPassThrough;
+    inputGroup?: InputGroupPassThrough;
+    inputGroupAddon?: InputGroupAddonPassThrough;
+    inputMask?: InputMaskPassThrough;
+    inputNumber?: InputNumberPassThrough;
+    inputOtp?: InputOtpPassThrough;
+    knob?: KnobPassThrough;
+    popover?: PopoverPassThrough;
+    message?: MessagePassThrough;
+    meterGroup?: MeterGroupPassThrough;
+    orderList?: OrderListPassThrough;
+    organizationChart?: OrganizationChartPassThrough;
+    overlayBadge?: OverlayBadgePassThrough;
+    progressBar?: ProgressBarPassThrough;
+    progressSpinner?: ProgressSpinnerPassThrough;
+    radioButton?: RadioButtonPassThrough;
+    rating?: RatingPassThrough;
+    virtualScroller?: VirtualScrollerPassThrough;
+    scrollPanel?: ScrollPanelPassThrough;
+    scrollTop?: ScrollTopPassThrough;
+    select?: SelectPassThrough;
+    selectButton?: SelectButtonPassThrough;
+    skeleton?: SkeletonPassThrough;
+    slider?: SliderPassThrough;
+    speedDial?: SpeedDialPassThrough;
+    splitButton?: SplitButtonPassThrough;
+    splitter?: SplitterPassThrough;
+    stepper?: StepperPassThrough;
+    tabs?: TabsPassThrough;
+    tab?: TabPassThrough;
+    tabList?: TabListPassThrough;
+    tabPanel?: TabPanelPassThrough;
+    tabPanels?: TabPanelsPassThrough;
+    table?: TablePassThrough;
+    tieredMenu?: TieredMenuPassThrough;
+    timeline?: TimelinePassThrough;
+    tag?: TagPassThrough;
+    terminal?: TerminalPassThrough;
+    toast?: ToastPassThrough;
+    toggleButton?: ToggleButtonPassThrough;
+    toggleSwitch?: ToggleSwitchPassThrough;
+    toolbar?: ToolbarPassThrough;
+    tree?: TreePassThrough;
+    treeSelect?: TreeSelectPassThrough;
+    treeTable?: TreeTablePassThrough;
+    panel?: PanelPassThrough;
+    panelMenu?: PanelMenuPassThrough;
+    button?: ButtonPassThrough;
+    badge?: BadgePassThrough;
+    fieldset?: FieldsetPassThrough;
+    global?: {
+        css?: string;
+    };
+    [key: string]: any;
+}
+
+export type ExhaustiveConfigType = {
+    ripple?: boolean;
+    overlayAppendTo?: HTMLElement | ElementRef | TemplateRef<any> | string | null | undefined | any;
+    /**
+     * @deprecated Since v20. Use `inputVariant` instead.
+     */
+    inputStyle?: 'outlined' | 'filled';
+    inputVariant?: 'outlined' | 'filled';
+    overlayOptions?: OverlayOptions;
+    translation?: Translation;
+    /**
+     * @experimental
+     * This property is not yet implemented. It will be available in a future release.
+     */
+    unstyled?: boolean;
+    zIndex?: ZIndex | null | undefined;
+    pt?: GlobalPassThrough | null | undefined;
+    ptOptions?: PassThroughOptions | null | undefined;
+    filterMatchModeOptions?: any;
+} & ThemeConfigType;

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
+import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

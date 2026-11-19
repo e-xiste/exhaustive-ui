@@ -3,9 +3,9 @@ import { CommonModule, DOCUMENT, isPlatformBrowser, Location } from '@angular/co
 import { Component, DestroyRef, ElementRef, inject, input, OnInit, PLATFORM_ID, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { DomHandler } from '@openng/optimus-ui/dom';
-import { ObjectUtils } from '@openng/optimus-ui/utils';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DomHandler } from '@exhaustive-ui/core/dom';
+import { ObjectUtils } from '@exhaustive-ui/core/utils';
 import { fromEvent } from 'rxjs';
 
 @Component({

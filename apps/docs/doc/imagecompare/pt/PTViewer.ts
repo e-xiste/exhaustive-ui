@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ImageCompareModule } from '@openng/optimus-ui/imagecompare';
+import { ImageCompareModule } from '@exhaustive-ui/core/imagecompare';
 
 @Component({
     selector: 'imagecompare-pt-viewer',
@@ -11,10 +11,10 @@ import { ImageCompareModule } from '@openng/optimus-ui/imagecompare';
         <app-docptviewer [docs]="docs">
             <p-imagecompare>
                 <ng-template #left>
-                    <img src="https://optimus.openng.org/demo/compare/island1.jpg" />
+                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island1.jpg" />
                 </ng-template>
                 <ng-template #right>
-                    <img src="https://optimus.openng.org/demo/compare/island2.jpg" />
+                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island2.jpg" />
                 </ng-template>
             </p-imagecompare>
         </app-docptviewer>

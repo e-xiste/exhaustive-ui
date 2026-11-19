@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Slider Component - Optimus UI"
+        docTitle="Angular Slider Component - ExhaustiveUI"
         header="Slider"
         description="Slider is a component to provide input with a drag handle."
         [docs]="docs"

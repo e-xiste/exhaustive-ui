@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -19,7 +19,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
                 <ng-template #header>
                     <div class="inline-flex items-center justify-center gap-2">
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Amy Elsner</span>
                     </div>
                 </ng-template>

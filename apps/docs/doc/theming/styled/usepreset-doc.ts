@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 })
 export class UsePresetDoc {
     code1 = {
-        typescript: `import { usePreset } from '@openng/optimus-ui-themes';`
+        typescript: `import { usePreset } from '@exhaustive-ui/themes';`
     };
 
     code2 = {

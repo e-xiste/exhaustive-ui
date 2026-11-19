@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EditorModule } from '@openng/optimus-ui/editor';
+import { EditorModule } from '@exhaustive-ui/core/editor';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -27,5 +27,5 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     `
 })
 export class CustomToolbarDoc {
-    text: string = '<div>Hello World!</div><div>Optimus UI <b>Editor</b> Rocks</div><div><br></div>';
+    text: string = '<div>Hello World!</div><div>ExhaustiveUI <b>Editor</b> Rocks</div><div><br></div>';
 }

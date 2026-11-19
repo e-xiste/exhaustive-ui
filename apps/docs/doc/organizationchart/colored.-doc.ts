@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { OrganizationChartModule } from '@openng/optimus-ui/organizationchart';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { OrganizationChartModule } from '@exhaustive-ui/core/organizationchart';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -35,7 +35,7 @@ export class ColoredDoc {
             type: 'person',
             styleClass: '!bg-indigo-100 !text-indigo-900 rounded-xl',
             data: {
-                image: 'https://optimus.openng.org/demo/avatar/amyelsner.png',
+                image: 'https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png',
                 name: 'Amy Elsner',
                 title: 'CEO'
             },
@@ -45,7 +45,7 @@ export class ColoredDoc {
                     type: 'person',
                     styleClass: '!bg-purple-100 !text-purple-900 rounded-xl',
                     data: {
-                        image: 'https://optimus.openng.org/demo/avatar/annafali.png',
+                        image: 'https://exhaustive-ui.e-xiste.com/demo/avatar/annafali.png',
                         name: 'Anna Fali',
                         title: 'CMO'
                     },
@@ -65,7 +65,7 @@ export class ColoredDoc {
                     type: 'person',
                     styleClass: '!bg-teal-100 !text-teal-900 rounded-xl',
                     data: {
-                        image: 'https://optimus.openng.org/demo/avatar/stephenshaw.png',
+                        image: 'https://exhaustive-ui.e-xiste.com/demo/avatar/stephenshaw.png',
                         name: 'Stephen Shaw',
                         title: 'CTO'
                     },

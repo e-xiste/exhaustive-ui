@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeModule } from '@openng/optimus-ui/tree';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
 import { NodeService } from '@/service/nodeservice';
 
 @Component({

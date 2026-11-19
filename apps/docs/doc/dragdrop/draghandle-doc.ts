@@ -1,8 +1,8 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { DragDropModule } from '@openng/optimus-ui/dragdrop';
-import { PanelModule } from '@openng/optimus-ui/panel';
+import { DragDropModule } from '@exhaustive-ui/core/dragdrop';
+import { PanelModule } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'draghandle-doc',

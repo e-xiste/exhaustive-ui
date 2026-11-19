@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { MenubarModule } from '@openng/optimus-ui/menubar';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { MenubarModule } from '@exhaustive-ui/core/menubar';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

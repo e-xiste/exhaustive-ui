@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { StepperModule } from '@openng/optimus-ui/stepper';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { StepperModule } from '@exhaustive-ui/core/stepper';
 
 @Component({
     selector: 'stepper-pt-viewer',

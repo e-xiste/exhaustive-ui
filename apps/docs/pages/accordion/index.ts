@@ -13,7 +13,7 @@ import { AppDocService } from '@/components/doc/app.doc.service';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Accordion Component - Optimus UI"
+        docTitle="Angular Accordion Component - ExhaustiveUI"
         header="Accordion"
         description="Accordion groups a collection of contents in tabs."
         [docs]="docs"

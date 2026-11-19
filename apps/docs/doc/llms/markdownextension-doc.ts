@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'markdownextension-doc',

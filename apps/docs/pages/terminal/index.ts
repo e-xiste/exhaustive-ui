@@ -7,7 +7,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Terminal Component - Optimus UI"
+        docTitle="Angular Terminal Component - ExhaustiveUI"
         header="Terminal"
         description='Terminal is a text based user interface. Enter "date" to display the current date.'
         [docs]="docs"

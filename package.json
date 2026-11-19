@@ -1,15 +1,15 @@
 {
-    "name": "@openng/optimus-ui-monorepo",
-    "version": "2.0.2",
-    "author": "OpenNg",
-    "homepage": "https://www.openng.org/",
+    "name": "@exhaustive-ui/monorepo",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "homepage": "https://exhaustive-ui.e-xiste.com/",
     "repository": {
         "type": "git",
-        "url": "https://github.com/openng-org/optimus-ui.git"
+        "url": "https://github.com/e-xiste/exhaustive-ui.git"
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/openng-org/optimus-ui/issues"
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
     },
     "scripts": {
         "clean": "npx rimraf --glob **/node_modules **/dist **/.angular ./pnpm-lock.yaml",
@@ -19,10 +19,10 @@
         "release:rc": "pnpm run build && pnpm recursive publish --filter './packages/*' --no-git-checks --report-summary --tag rc",
         "build": "cross-env NODE_ENV=production pnpm run build:check && pnpm run build:packages",
         "build:check": "pnpm run format:check && pnpm run security:check",
-        "build:packages": "pnpm run build:optimus-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:docs",
-        "build:optimus-ui": "pnpm --filter './packages/optimus-ui-*' build",
-        "build:lib": "pnpm --filter @openng/optimus-ui build",
-        "build:themes": "pnpm --filter @openng/optimus-ui-themes build",
+        "build:packages": "pnpm run build:exhaustive-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:docs",
+        "build:exhaustive-ui": "pnpm --filter './packages/*' --filter '!@exhaustive-ui/core' build",
+        "build:lib": "pnpm --filter @exhaustive-ui/core build",
+        "build:themes": "pnpm --filter @exhaustive-ui/themes build",
         "build:docs": "pnpm --filter docs build",
         "build:docs:content": "pnpm --filter docs build:docs",
         "dev": "pnpm --filter docs start",
@@ -32,9 +32,9 @@
         "format:check": "prettier --check \"packages/**/*.{js,mjs,ts,mts,d.ts,html}\" \"apps/**/*.{js,mjs,ts,mts,d.ts,html}\"",
         "lint": "eslint --ext \".js,.mjs,.ts,.mts\" --ignore-path .gitignore . --cache",
         "lint:fix": "eslint --fix --ext \".js,.mjs,.ts,.mts\" --ignore-path .gitignore .",
-        "test:unit": "pnpm run build:optimus-ui && pnpm --filter @openng/optimus-ui test:unit",
-        "test:coverage": "pnpm run build:optimus-ui && pnpm --filter @openng/optimus-ui test:unit:coverage",
-        "test:styled": "pnpm --filter @openng/optimus-ui-utils build && pnpm --filter @openng/optimus-ui-styled test"
+        "test:unit": "pnpm run build:exhaustive-ui && pnpm --filter @exhaustive-ui/core test:unit",
+        "test:coverage": "pnpm run build:exhaustive-ui && pnpm --filter @exhaustive-ui/core test:unit:coverage",
+        "test:styled": "pnpm --filter @exhaustive-ui/utils build && pnpm --filter @exhaustive-ui/styled test"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "catalog:angular22",
@@ -56,11 +56,11 @@
         "@angular/router": "catalog:angular22",
         "@commitlint/cli": "^21.2.2",
         "@commitlint/config-conventional": "^21.2.2",
-        "@openng/optimus-ui-motion": "workspace:*",
-        "@openng/optimus-ui-styled": "workspace:*",
-        "@openng/optimus-ui-styles": "workspace:*",
-        "@openng/optimus-ui-themes": "workspace:*",
-        "@openng/optimus-ui-utils": "workspace:*",
+        "@exhaustive-ui/motion": "workspace:*",
+        "@exhaustive-ui/styled": "workspace:*",
+        "@exhaustive-ui/styles": "workspace:*",
+        "@exhaustive-ui/themes": "workspace:*",
+        "@exhaustive-ui/utils": "workspace:*",
         "@typescript-eslint/eslint-plugin": "^8.68.0",
         "cross-env": "^10.1.0",
         "eslint": "^9.14.0",

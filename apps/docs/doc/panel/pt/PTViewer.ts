@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { PanelModule } from '@openng/optimus-ui/panel';
+import { PanelModule } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'panel-pt-viewer',

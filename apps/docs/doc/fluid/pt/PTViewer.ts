@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FluidModule } from '@openng/optimus-ui/fluid';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
 @Component({
     selector: 'fluid-pt-viewer',

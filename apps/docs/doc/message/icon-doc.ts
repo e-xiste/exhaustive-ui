@@ -1,8 +1,8 @@
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component, OnInit } from '@angular/core';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { MessageModule } from '@openng/optimus-ui/message';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     selector: 'icon-doc',
@@ -16,7 +16,7 @@ import { MessageModule } from '@openng/optimus-ui/message';
             <p-message severity="info" icon="pi pi-send" text="Info Message" class="h-full" />
             <p-message severity="success">
                 <ng-template #icon>
-                    <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                 </ng-template>
                 <span class="ms-2">How may I help you?</span>
             </p-message>

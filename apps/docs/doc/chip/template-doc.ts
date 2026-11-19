@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ChipModule } from '@openng/optimus-ui/chip';
+import { ChipModule } from '@exhaustive-ui/core/chip';
 
 @Component({
     selector: 'template-doc',

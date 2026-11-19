@@ -3,15 +3,15 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { NodeService } from '@/service/nodeservice';
 import { PhotoService } from '@/service/photoservice';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { Dock } from '@openng/optimus-ui/dock';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
-import { MenubarModule } from '@openng/optimus-ui/menubar';
-import { TerminalModule, TerminalService } from '@openng/optimus-ui/terminal';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
-import { TreeModule } from '@openng/optimus-ui/tree';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { Dock } from '@exhaustive-ui/core/dock';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { MenubarModule } from '@exhaustive-ui/core/menubar';
+import { TerminalModule, TerminalService } from '@exhaustive-ui/core/terminal';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+import { TreeModule } from '@exhaustive-ui/core/tree';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -52,7 +52,7 @@ import { Subscription } from 'rxjs';
                 </p-dialog>
 
                 <p-dialog [maximizable]="true" [(visible)]="displayTerminal" [breakpoints]="{ '960px': '50vw' }" [style]="{ width: '30vw' }" [draggable]="false" [resizable]="false" header="Terminal">
-                    <p-terminal welcomeMessage="Welcome to Optimus UI (cmd: 'date', 'greet {0}', 'random')" prompt="optimus $" />
+                    <p-terminal welcomeMessage="Welcome to ExhaustiveUI (cmd: 'date', 'greet {0}', 'random')" prompt="exhaustive $" />
                 </p-dialog>
 
                 <p-galleria
@@ -82,7 +82,7 @@ import { Subscription } from 'rxjs';
                     width: 100%;
                     height: 450px;
                     position: relative;
-                    background-image: url('https://optimus.openng.org/demo/dock/window.jpg');
+                    background-image: url('https://exhaustive-ui.e-xiste.com/demo/dock/window.jpg');
                     background-repeat: no-repeat;
                     background-size: cover;
                 }
@@ -133,7 +133,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/finder.svg',
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/finder.svg',
                 command: () => {
                     this.displayFinder = true;
                 }
@@ -147,7 +147,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/terminal.svg',
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/terminal.svg',
                 command: () => {
                     this.displayTerminal = true;
                 }
@@ -161,7 +161,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/appstore.svg',
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/appstore.svg',
                 url: 'https://www.apple.com/app-store/'
             },
             {
@@ -173,7 +173,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/safari.svg'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/safari.svg'
             },
             {
                 label: 'Photos',
@@ -184,7 +184,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/photos.svg',
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/photos.svg',
                 command: () => {
                     this.displayGalleria = true;
                 }
@@ -198,8 +198,8 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/github.svg',
-                url: 'https://github.com/openng-org/optimus-ui'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/github.svg',
+                url: 'https://github.com/e-xiste/exhaustive-ui'
             },
             {
                 label: 'Trash',
@@ -210,7 +210,7 @@ export class AdvancedDoc implements OnInit, OnDestroy {
                     positionLeft: 15,
                     showDelay: 1000
                 },
-                icon: 'https://optimus.openng.org/demo/dock/trash.png',
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/trash.png',
                 command: () => {
                     this.messageService.add({ severity: 'info', summary: 'Trash is empty', key: 'tc' });
                 }

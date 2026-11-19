@@ -29,8 +29,8 @@
         // "rootDir": "./",                                  /* Specify the root folder within your source files. */
         "moduleResolution": "bundler",                       /* (UPDATED) Specify how TypeScript looks up a file from a given module specifier. */
         "paths": {                                           /* (UPDATED) Specify a set of entries that re-map imports to additional lookup locations. */
-            "@openng/optimus-ui/types/*": ["./packages/optimus-ui/src/types/*/public_api"],
-            "@openng/optimus-ui/*": ["./packages/optimus-ui/src/*/public_api"],
+            "@exhaustive-ui/core/types/*": ["./packages/core/src/types/*/public_api"],
+            "@exhaustive-ui/core/*": ["./packages/core/src/*/public_api"],
             "@primeng/themes/*": ["./packages/themes/src/presets/*/index"],
             "@primeng/themes": ["./packages/themes/src/index"]
         },
@@ -105,5 +105,5 @@
         "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
     },
     "include": ["**/src/**/*", "**/dist/**/*", "**/types/**/*"],
-    "exclude": ["**/node_modules", "packages/optimus-ui-*"]
+    "exclude": ["**/node_modules", "packages/themes", "packages/styled", "packages/styles", "packages/tailwindcss", "packages/locale", "packages/motion", "packages/utils"]
 }

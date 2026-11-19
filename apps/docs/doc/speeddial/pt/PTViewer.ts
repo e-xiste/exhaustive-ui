@@ -1,9 +1,9 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { SpeedDialModule } from '@openng/optimus-ui/speeddial';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'speeddial-pt-viewer',

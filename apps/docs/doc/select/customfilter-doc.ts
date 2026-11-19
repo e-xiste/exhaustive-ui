@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { SelectFilterOptions } from '@openng/optimus-ui/select';
+import { SelectFilterOptions } from '@exhaustive-ui/core/select';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { CommonModule } from '@angular/common';
 
 interface City {
@@ -36,13 +36,13 @@ interface City {
                 </ng-template>
                 <ng-template pTemplate="selectedItem" let-selectedOption>
                     <div class="flex items-center gap-2">
-                        <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
                         <div>{{ selectedOption.name }}</div>
                     </div>
                 </ng-template>
                 <ng-template let-country pTemplate="item">
                     <div class="flex items-center gap-2">
-                        <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
                         <div>{{ country.name }}</div>
                     </div>
                 </ng-template>

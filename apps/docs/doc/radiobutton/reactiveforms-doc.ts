@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';

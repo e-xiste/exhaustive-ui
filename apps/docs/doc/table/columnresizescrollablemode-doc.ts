@@ -4,7 +4,7 @@ import { Customer } from '@/domain/customer';
 import { CustomerService } from '@/service/customerservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { TableModule } from '@openng/optimus-ui/table';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'columnresizescrollablemode-doc',

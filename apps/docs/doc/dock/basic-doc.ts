@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { DockModule } from '@openng/optimus-ui/dock';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { DockModule } from '@exhaustive-ui/core/dock';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -43,7 +43,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     width: 100%;
                     height: 450px;
                     position: relative;
-                    background-image: url('https://optimus.openng.org/demo/dock/window.jpg');
+                    background-image: url('https://exhaustive-ui.e-xiste.com/demo/dock/window.jpg');
                     background-repeat: no-repeat;
                     background-size: cover;
                 }
@@ -83,19 +83,19 @@ export class BasicDoc implements OnInit {
         this.items = [
             {
                 label: 'Finder',
-                icon: 'https://optimus.openng.org/demo/dock/finder.svg'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/finder.svg'
             },
             {
                 label: 'App Store',
-                icon: 'https://optimus.openng.org/demo/dock/appstore.svg'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/appstore.svg'
             },
             {
                 label: 'Photos',
-                icon: 'https://optimus.openng.org/demo/dock/photos.svg'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/photos.svg'
             },
             {
                 label: 'Trash',
-                icon: 'https://optimus.openng.org/demo/dock/trash.png'
+                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/trash.png'
             }
         ];
     }

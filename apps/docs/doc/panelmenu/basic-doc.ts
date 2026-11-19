@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { PanelMenu } from '@openng/optimus-ui/panelmenu';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

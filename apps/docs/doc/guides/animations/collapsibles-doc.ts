@@ -1,7 +1,7 @@
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { AccordionModule } from '@openng/optimus-ui/accordion';
+import { AccordionModule } from '@exhaustive-ui/core/accordion';
 
 @Component({
     selector: 'collapsibles-doc',

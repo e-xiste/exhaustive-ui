@@ -11,7 +11,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: ` <app-doc
-        docTitle="Angular IconField Component - Optimus UI"
+        docTitle="Angular IconField Component - ExhaustiveUI"
         header="IconField"
         description="IconField wraps an input and an icon."
         [docs]="docs"

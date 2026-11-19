@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ScrollerModule } from '@openng/optimus-ui/scroller';`
+        typescript: `import { ScrollerModule } from '@exhaustive-ui/core/scroller';`
     };
 }

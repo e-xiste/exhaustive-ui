@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DatePickerModule } from '@openng/optimus-ui/datepicker';
-import { FluidModule } from '@openng/optimus-ui/fluid';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
 
 @Component({
     selector: 'time-doc',

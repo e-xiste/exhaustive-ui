@@ -2,11 +2,11 @@ import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { KnobModule } from '@openng/optimus-ui/knob';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'templatedrivenforms-doc',

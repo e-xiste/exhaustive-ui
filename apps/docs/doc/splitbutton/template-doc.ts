@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { SplitButtonModule } from '@openng/optimus-ui/splitbutton';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -20,7 +20,7 @@ import { RouterModule } from '@angular/router';
                 <ng-template #content>
                     <span class="flex items-center font-bold">
                         <img alt="logo" src="logo-icon.svg" style="height: 1rem; margin-right: 0.5rem" />
-                        <span>Optimus UI</span>
+                        <span>ExhaustiveUI</span>
                     </span>
                 </ng-template>
             </p-splitbutton>

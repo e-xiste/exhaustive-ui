@@ -2,7 +2,7 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
 
 @Component({
     selector: 'multiselect-pt-viewer',
@@ -24,7 +24,7 @@ import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
             >
                 <ng-template #group let-group>
                     <div class="flex items-center">
-                        <img [alt]="group.label" src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'flag flag-' + group.code.toLowerCase() + ' mr-2'" style="width: 18px" />
+                        <img [alt]="group.label" src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + group.code.toLowerCase() + ' mr-2'" style="width: 18px" />
                         <div>{{ group.label }}</div>
                     </div>
                 </ng-template>

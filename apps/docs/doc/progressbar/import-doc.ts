@@ -10,8 +10,8 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
+        typescript: `import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
 // For dynamic progressbar demo
-import { ToastModule } from '@openng/optimus-ui/toast';`
+import { ToastModule } from '@exhaustive-ui/core/toast';`
     };
 }

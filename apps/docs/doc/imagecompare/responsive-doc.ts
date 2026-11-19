@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ImageCompareModule } from '@openng/optimus-ui/imagecompare';
+import { ImageCompareModule } from '@exhaustive-ui/core/imagecompare';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -14,10 +14,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <p-imagecompare class="sm:!w-96 shadow-lg rounded-2xl">
                 <ng-template #left>
-                    <img src="https://optimus.openng.org/demo/compare/island1.jpg" />
+                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island1.jpg" />
                 </ng-template>
                 <ng-template #right>
-                    <img src="https://optimus.openng.org/demo/compare/island2.jpg" />
+                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island2.jpg" />
                 </ng-template>
             </p-imagecompare>
         </div>

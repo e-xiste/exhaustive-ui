@@ -19,7 +19,7 @@ import { Component } from '@angular/core';
     imports: [AppDoc],
     template: `
         <app-doc
-            docTitle="Angular Checkbox Component - Optimus UI"
+            docTitle="Angular Checkbox Component - ExhaustiveUI"
             header="Checkbox"
             description="Checkbox is an extension to standard checkbox element with theming."
             [docs]="docs"

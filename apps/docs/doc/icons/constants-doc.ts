@@ -1,9 +1,9 @@
 import { Code } from '@/domain/code';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api';
+import { MenuItem, OpenngIcons } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { MenuModule } from '@openng/optimus-ui/menu';
+import { MenuModule } from '@exhaustive-ui/core/menu';
 
 @Component({
     selector: 'constants-doc',
@@ -38,7 +38,7 @@ export class ConstantsDoc implements OnInit {
     code: Code = {
         typescript: `
 import { Component } from '@angular/core';
-import { OpenngIcons, MenuItem } from '@openng/optimus-ui/api';
+import { OpenngIcons, MenuItem } from '@exhaustive-ui/core/api';
 
 @Component({
     selector: 'openng-icons-constants-demo',

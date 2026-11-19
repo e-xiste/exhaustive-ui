@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonGroupModule } from '@openng/optimus-ui/buttongroup';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { ButtonGroupModule } from '@exhaustive-ui/core/buttongroup';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'buttongroup-doc',

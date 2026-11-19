@@ -4,13 +4,13 @@ import { AppConfigService } from '@/service/appconfigservice';
 import { CustomerService } from '@/service/customerservice';
 import { CommonModule } from '@angular/common';
 import { Component, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { IconField } from '@openng/optimus-ui/iconfield';
-import { InputIcon } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { ProgressBar } from '@openng/optimus-ui/progressbar';
-import { Table, TableModule } from '@openng/optimus-ui/table';
-import { Tag } from '@openng/optimus-ui/tag';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { IconField } from '@exhaustive-ui/core/iconfield';
+import { InputIcon } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { ProgressBar } from '@exhaustive-ui/core/progressbar';
+import { Table, TableModule } from '@exhaustive-ui/core/table';
+import { Tag } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'theme-section',

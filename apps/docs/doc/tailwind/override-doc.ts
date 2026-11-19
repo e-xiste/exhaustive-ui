@@ -22,13 +22,13 @@ import { Component } from '@angular/core';
             <p>CSS Layer provides control over the css specificity so that Tailwind utilities can safely override components.</p>
 
             <h5>Tailwind v4</h5>
-            <p>Ensure <i>optimus</i> layer is after <i>theme</i> and <i>base</i>, but before the other Tailwind layers such as <i>utilities</i>.</p>
+            <p>Ensure <i>exhaustive</i> layer is after <i>theme</i> and <i>base</i>, but before the other Tailwind layers such as <i>utilities</i>.</p>
             <app-code [code]="code3" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" class="block mb-4" />
             <p>No change in the CSS configuration is required.</p>
             <app-code [code]="code4" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" />
 
             <h5>Tailwind v3</h5>
-            <p>The <i>optimus</i> layer should be between base and utilities.</p>
+            <p>The <i>exhaustive</i> layer should be between base and utilities.</p>
             <app-code [code]="code5" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" class="block mb-4" />
             <p>Tailwind v3 does not use native <i>layer</i> so needs to be defined with CSS.</p>
             <app-code [code]="code6" [importCode]="true" [hideToggleCode]="true" [hideStackBlitz]="true" />
@@ -45,13 +45,13 @@ export class OverrideDoc {
     };
 
     code3 = {
-        typescript: `provideOptimus({
+        typescript: `provideExhaustive({
     theme: {
         preset: Aura,
         options: {
             cssLayer: {
-                name: 'optimus',
-                order: 'theme, base, optimus'
+                name: 'exhaustive',
+                order: 'theme, base, exhaustive'
             }
         }
     }
@@ -60,17 +60,17 @@ export class OverrideDoc {
 
     code4 = {
         typescript: `@import "tailwindcss";
-@import "@openng/optimus-ui-tailwindcss";`
+@import "@exhaustive-ui/tailwindcss";`
     };
 
     code5 = {
-        typescript: `provideOptimus({
+        typescript: `provideExhaustive({
     theme: {
         preset: Aura,
         options: {
             cssLayer: {
-                name: 'optimus',
-                order: 'tailwind-base, optimus, tailwind-utilities'
+                name: 'exhaustive',
+                order: 'tailwind-base, exhaustive, tailwind-utilities'
             }
         }
     }
@@ -78,7 +78,7 @@ export class OverrideDoc {
     };
 
     code6 = {
-        typescript: `@layer tailwind-base, optimus, tailwind-utilities;
+        typescript: `@layer tailwind-base, exhaustive, tailwind-utilities;
 
 @layer tailwind-base {
   @tailwind base;

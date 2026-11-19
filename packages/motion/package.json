@@ -1,0 +1,44 @@
+{
+    "name": "@exhaustive-ui/motion",
+    "version": "3.0.0-alpha.0",
+    "author": "e-xiste",
+    "description": "Motion utilities for ExhaustiveUI Libraries",
+    "keywords": ["motion", "animation", "transition", "composition utilities", "exhaustive-ui", "angular"],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/e-xiste/exhaustive-ui.git",
+        "directory": "packages/motion"
+    },
+    "bugs": {
+        "url": "https://github.com/e-xiste/exhaustive-ui/issues"
+    },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.mjs"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "sideEffects": false,
+    "files": ["dist", "README.md", "LICENSE"],
+    "scripts": {
+        "build": "cross-env NODE_ENV=production INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:package",
+        "build:dev": "cross-env NODE_ENV=development INPUT_DIR=src/ OUTPUT_DIR=dist/ pnpm run build:dev:package",
+        "build:package": "tsdown",
+        "build:dev:package": "tsdown --watch",
+        "dev:link": "pnpm link --global && npm link"
+    },
+    "dependencies": {
+        "@exhaustive-ui/utils": "workspace:*"
+    },
+    "engines": {
+        "node": ">=12.11.0"
+    }
+}

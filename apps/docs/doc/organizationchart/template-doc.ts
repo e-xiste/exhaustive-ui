@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { OrganizationChartModule } from '@openng/optimus-ui/organizationchart';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { OrganizationChartModule } from '@exhaustive-ui/core/organizationchart';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-organization-chart [value]="data" [collapsible]="true">
                 <ng-template let-node pTemplate="default">
                     <div class="flex flex-col items-center">
-                        <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [alt]="node.label" [class]="'flag' + ' flag-' + node.data" width="32" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [alt]="node.label" [class]="'flag' + ' flag-' + node.data" width="32" />
                         <div class="mt-4 font-medium text-lg">{{ node.label }}</div>
                     </div>
                 </ng-template>

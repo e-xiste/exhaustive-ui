@@ -6,13 +6,13 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { RatingModule } from '@openng/optimus-ui/rating';
-import { RippleModule } from '@openng/optimus-ui/ripple';
-import { TableModule, TableRowCollapseEvent, TableRowExpandEvent } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
+import { TableModule, TableRowCollapseEvent, TableRowExpandEvent } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'rowexpansion-doc',
@@ -52,7 +52,7 @@ import { ToastModule } from '@openng/optimus-ui/toast';
                             </td>
                             <td>{{ product.name }}</td>
                             <td>
-                                <img [src]="'https://optimus.openng.org/demo/product/' + product.image" [alt]="product.name" width="50" class="shadow-lg" />
+                                <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.name" width="50" class="shadow-lg" />
                             </td>
                             <td>{{ product.price | currency: 'USD' }}</td>
                             <td>{{ product.category }}</td>

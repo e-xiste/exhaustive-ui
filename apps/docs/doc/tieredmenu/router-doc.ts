@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from '@openng/optimus-ui/api';
+import { MenuItem } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TieredMenuModule } from '@openng/optimus-ui/tieredmenu';
+import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
 
 @Component({
     selector: 'router-doc',

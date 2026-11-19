@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { IftaLabelModule } from '@openng/optimus-ui/iftalabel';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 import { RouterModule } from '@angular/router';
 
 interface City {

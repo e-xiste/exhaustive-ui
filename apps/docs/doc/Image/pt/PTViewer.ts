@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ImageModule } from '@openng/optimus-ui/image';
+import { ImageModule } from '@exhaustive-ui/core/image';
 
 @Component({
     selector: 'image-pt-viewer',
@@ -9,7 +9,7 @@ import { ImageModule } from '@openng/optimus-ui/image';
     imports: [CommonModule, AppDocPtViewer, ImageModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-image src="https://optimus.openng.org/demo/galleria/galleria1.jpg" alt="Image" width="250" [preview]="true"></p-image>
+            <p-image src="https://exhaustive-ui.e-xiste.com/demo/galleria/galleria1.jpg" alt="Image" width="250" [preview]="true"></p-image>
         </app-docptviewer>
     `
 })

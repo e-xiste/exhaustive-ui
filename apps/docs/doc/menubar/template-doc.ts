@@ -2,12 +2,12 @@ import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { BadgeModule } from '@openng/optimus-ui/badge';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MenubarModule } from '@openng/optimus-ui/menubar';
-import { Ripple } from '@openng/optimus-ui/ripple';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MenubarModule } from '@exhaustive-ui/core/menubar';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 
 @Component({
     selector: 'template-doc',
@@ -61,7 +61,7 @@ import { Ripple } from '@openng/optimus-ui/ripple';
                 <ng-template #end>
                     <div class="flex items-center gap-2">
                         <input type="text" pInputText placeholder="Search" class="w-36" />
-                        <p-avatar image="https://optimus.openng.org/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
                     </div>
                 </ng-template>
             </p-menubar>

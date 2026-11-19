@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 interface VersionCompatibilityEntry {
-    optimusUi: string;
+    exhaustiveUi: string;
     angular: string;
 }
 
@@ -12,14 +12,14 @@ interface VersionCompatibilityEntry {
         <table class="doc-table">
             <thead>
                 <tr>
-                    <th>Optimus UI</th>
+                    <th>ExhaustiveUI</th>
                     <th>Angular</th>
                 </tr>
             </thead>
             <tbody>
-                @for (entry of entries; track entry.optimusUi) {
+                @for (entry of entries; track entry.exhaustiveUi) {
                     <tr>
-                        <td>{{ entry.optimusUi }}</td>
+                        <td>{{ entry.exhaustiveUi }}</td>
                         <td>{{ entry.angular }}</td>
                     </tr>
                 }
@@ -28,8 +28,5 @@ interface VersionCompatibilityEntry {
     `
 })
 export class AppVersionCompatibility {
-    entries: VersionCompatibilityEntry[] = [
-        { optimusUi: 'v2', angular: 'v22' },
-        { optimusUi: 'v1', angular: 'v21' }
-    ];
+    entries: VersionCompatibilityEntry[] = [{ exhaustiveUi: 'v3', angular: 'v22' }];
 }

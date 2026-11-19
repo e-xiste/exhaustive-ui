@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { PopoverModule } from '@openng/optimus-ui/popover';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { PopoverModule } from '@exhaustive-ui/core/popover';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

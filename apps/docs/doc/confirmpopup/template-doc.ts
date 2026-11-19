@@ -2,10 +2,10 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ConfirmPopupModule } from '@openng/optimus-ui/confirmpopup';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'template-doc',

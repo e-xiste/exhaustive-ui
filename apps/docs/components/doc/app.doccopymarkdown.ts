@@ -2,9 +2,9 @@ import { GITHUB_REPO_HEAD } from '@/utils/constants';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, inject, input, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem, MessageService } from '@openng/optimus-ui/api';
-import { SplitButtonModule } from '@openng/optimus-ui/splitbutton';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'app-doccopymarkdown',
@@ -33,7 +33,7 @@ export class AppDocCopyMarkdown implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
             return this.document.location.origin;
         }
-        return 'https://optimus.openng.org';
+        return 'https://exhaustive-ui.e-xiste.com';
     }
 
     get currentComponentName(): string {

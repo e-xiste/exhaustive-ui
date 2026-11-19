@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
     imports: [AppDocSectionText, AppVersionCompatibility, RouterModule],
     template: `
         <app-docsectiontext>
-            <p>Each Optimus UI major targets a single Angular major. Install the version matching your workspace, and see the <a [routerLink]="'/migration/update'" class="doc-link">update guide</a> when moving to a newer one.</p>
+            <p>Each ExhaustiveUI major targets a single Angular major. Install the version matching your workspace, and see the <a [routerLink]="'/migration/update'" class="doc-link">update guide</a> when moving to a newer one.</p>
             <app-version-compatibility></app-version-compatibility>
         </app-docsectiontext>
     `

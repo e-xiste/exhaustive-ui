@@ -2,16 +2,16 @@ import { AppConfigService } from '@/service/appconfigservice';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { $t, updatePreset, updateSurfacePalette } from '@openng/optimus-ui-themes';
-import Aura from '@openng/optimus-ui-themes/aura';
-import Lara from '@openng/optimus-ui-themes/lara';
-import Material from '@openng/optimus-ui-themes/material';
-import Nora from '@openng/optimus-ui-themes/nora';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { Optimus } from '@openng/optimus-ui/config';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
-import { SelectButton } from '@openng/optimus-ui/selectbutton';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
+import { $t, updatePreset, updateSurfacePalette } from '@exhaustive-ui/themes';
+import Aura from '@exhaustive-ui/themes/aura';
+import Lara from '@exhaustive-ui/themes/lara';
+import Material from '@exhaustive-ui/themes/material';
+import Nora from '@exhaustive-ui/themes/nora';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
 
 const presets = {
     Aura,
@@ -104,7 +104,7 @@ export class AppConfiguratorComponent {
         return this.configService.appState().RTL;
     }
 
-    config: Optimus = inject(Optimus);
+    config: Exhaustive = inject(Exhaustive);
 
     configService: AppConfigService = inject(AppConfigService);
 

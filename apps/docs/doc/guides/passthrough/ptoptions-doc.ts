@@ -34,11 +34,11 @@ import { Component } from '@angular/core';
 export class PTOptionsDoc {
     codeGlobal: Code = {
         typescript: `import { ApplicationConfig } from '@angular/core';
-import { provideOptimus } from '@openng/optimus-ui/config';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideOptimus({
+        provideExhaustive({
             pt: {
                 panel: {
                     header: {
@@ -55,7 +55,7 @@ export const appConfig: ApplicationConfig = {
 
     codeComponent: Code = {
         typescript: `import { Component } from '@angular/core';
-import { Panel, PanelModule, PanelPassThrough } from '@openng/optimus-ui/panel';
+import { Panel, PanelModule, PanelPassThrough } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'ptoptions-doc',
@@ -83,7 +83,7 @@ export class PanelPtDemo {
 
     codeComponentTrueTrue: Code = {
         typescript: `import { Component } from '@angular/core';
-import { Panel, PanelModule, PanelPassThrough } from '@openng/optimus-ui/panel';
+import { Panel, PanelModule, PanelPassThrough } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'ptoptions-doc',
@@ -111,7 +111,7 @@ export class PanelPtDemo {
 
     codeComponentFalseTrue: Code = {
         typescript: `import { Component } from '@angular/core';
-import { Panel, PanelModule, PanelPassThrough } from '@openng/optimus-ui/panel';
+import { Panel, PanelModule, PanelPassThrough } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'ptoptions-doc',
@@ -137,7 +137,7 @@ export class PanelPtDemo {
 
     codeComponentFalseFalse: Code = {
         typescript: `import { Component } from '@angular/core';
-import { Panel, PanelModule, PanelPassThrough } from '@openng/optimus-ui/panel';
+import { Panel, PanelModule, PanelPassThrough } from '@exhaustive-ui/core/panel';
 
 @Component({
     selector: 'ptoptions-doc',

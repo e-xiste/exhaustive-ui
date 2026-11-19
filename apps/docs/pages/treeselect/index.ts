@@ -23,7 +23,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular TreeSelect Component - Optimus UI"
+        docTitle="Angular TreeSelect Component - ExhaustiveUI"
         header="TreeSelect"
         description="TreeSelect is a form component to choose from hierarchical data."
         [docs]="docs"

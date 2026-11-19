@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { BlockUIModule } from '@openng/optimus-ui/blockui';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { BlockUIModule } from '@exhaustive-ui/core/blockui';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

@@ -5,8 +5,8 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
-import { ChipModule } from '@openng/optimus-ui/chip';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { ChipModule } from '@exhaustive-ui/core/chip';
 
 @Component({
     selector: 'advanced-chips-doc',
@@ -32,7 +32,7 @@ import { ChipModule } from '@openng/optimus-ui/chip';
             >
                 <ng-template let-product #item>
                     <div class="flex flex-wrap p-1 items-center gap-4 w-full">
-                        <img class="w-12 shrink-0 rounded" src="https://optimus.openng.org/demo/product/{{ product.image }}" [alt]="product.name" />
+                        <img class="w-12 shrink-0 rounded" src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.name" />
                         <div class="flex-1 flex flex-col">
                             <span class="font-medium text-sm">{{ product.name }}</span>
                             <span class="text-sm text-surface-500 dark:text-surface-400">{{ product.category }}</span>

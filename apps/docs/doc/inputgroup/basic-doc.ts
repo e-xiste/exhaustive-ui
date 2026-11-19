@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
+import { SelectModule } from '@exhaustive-ui/core/select';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

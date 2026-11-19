@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { PasswordModule } from '@openng/optimus-ui/password';
-import { FloatLabelModule } from '@openng/optimus-ui/floatlabel';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

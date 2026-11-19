@@ -565,7 +565,7 @@
                     "href": "https://v1.optimus.openng.org/migration/primeng"
                 },
                 {
-                    "name": "Update Optimus UI",
+                    "name": "Update ExhaustiveUI",
                     "routerLink": "/migration/update"
                 }
             ]
@@ -584,7 +584,7 @@
                 },
                 {
                     "name": "GitHub Discussions",
-                    "href": "https://github.com/openng-org/optimus-ui/discussions"
+                    "href": "https://github.com/e-xiste/exhaustive-ui/discussions"
                 }
             ]
         },
@@ -598,11 +598,11 @@
                 },
                 {
                     "name": "Source Code",
-                    "href": "https://github.com/openng-org/optimus-ui"
+                    "href": "https://github.com/e-xiste/exhaustive-ui"
                 },
                 {
                     "name": "Changelog",
-                    "href": "https://github.com/openng-org/optimus-ui/releases"
+                    "href": "https://github.com/e-xiste/exhaustive-ui/releases"
                 },
                 {
                     "name": "Contribution",

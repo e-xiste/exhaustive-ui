@@ -6,7 +6,7 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from '@openng/optimus-ui/table';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'checkboxselection-doc',

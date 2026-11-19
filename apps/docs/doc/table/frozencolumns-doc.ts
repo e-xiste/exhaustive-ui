@@ -6,8 +6,8 @@ import { CustomerService } from '@/service/customerservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from '@openng/optimus-ui/table';
-import { ToggleButtonModule } from '@openng/optimus-ui/togglebutton';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
 
 @Component({
     selector: 'frozencolumns-doc',

@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { OrganizationChartModule } from '@openng/optimus-ui/organizationchart';`
+        typescript: `import { OrganizationChartModule } from '@exhaustive-ui/core/organizationchart';`
     };
 }

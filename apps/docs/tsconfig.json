@@ -2,28 +2,28 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "outDir": "./out-tsc/app",
-        // TS 6 defaults rootDir to the tsconfig dir; widen it so paths-mapped optimus-ui sources are allowed
+        // TS 6 defaults rootDir to the tsconfig dir; widen it so paths-mapped exhaustive-ui sources are allowed
         "rootDir": "../..",
         "types": ["node"],
         "strict": false,
         "paths": {
-            "@openng/optimus-ui/*": ["../../packages/optimus-ui/src/*/public_api"],
-            "@openng/optimus-ui-motion": ["../../packages/optimus-ui-motion/src/index"],
-            "@openng/optimus-ui-styled": ["../../packages/optimus-ui-styled/src/index"],
-            "@openng/optimus-ui-styles": ["../../packages/optimus-ui-styles/src/index"],
-            "@openng/optimus-ui-styles/*": ["../../packages/optimus-ui-styles/src/*/index", "../../packages/optimus-ui-styles/src/*"],
-            "@openng/optimus-ui-utils": ["../../packages/optimus-ui-utils/src/index"],
-            "@openng/optimus-ui-utils/*": ["../../packages/optimus-ui-utils/src/*/index", "../../packages/optimus-ui-utils/src/*"],
-            "@openng/optimus-ui-themes": ["../../packages/optimus-ui-themes/src/index"],
-            "@openng/optimus-ui-themes/types": ["../../packages/optimus-ui-themes/types/index"],
-            "@openng/optimus-ui-themes/types/*": ["../../packages/optimus-ui-themes/types/*/index"],
+            "@exhaustive-ui/core/*": ["../../packages/core/src/*/public_api"],
+            "@exhaustive-ui/motion": ["../../packages/motion/src/index"],
+            "@exhaustive-ui/styled": ["../../packages/styled/src/index"],
+            "@exhaustive-ui/styles": ["../../packages/styles/src/index"],
+            "@exhaustive-ui/styles/*": ["../../packages/styles/src/*/index", "../../packages/styles/src/*"],
+            "@exhaustive-ui/utils": ["../../packages/utils/src/index"],
+            "@exhaustive-ui/utils/*": ["../../packages/utils/src/*/index", "../../packages/utils/src/*"],
+            "@exhaustive-ui/themes": ["../../packages/themes/src/index"],
+            "@exhaustive-ui/themes/types": ["../../packages/themes/types/index"],
+            "@exhaustive-ui/themes/types/*": ["../../packages/themes/types/*/index"],
             // extension-less on purpose: resolves the tracked tokens.ts source before the generated tokens/ dir
-            "@openng/optimus-ui-themes/tokens": ["../../packages/optimus-ui-themes/tokens"],
-            "@openng/optimus-ui-themes/*": ["../../packages/optimus-ui-themes/src/presets/*/index", "../../packages/optimus-ui-themes/src/presets/*"],
+            "@exhaustive-ui/themes/tokens": ["../../packages/themes/tokens"],
+            "@exhaustive-ui/themes/*": ["../../packages/themes/src/presets/*/index", "../../packages/themes/src/presets/*"],
             "@/*": ["./*"]
         }
     },
-    "include": ["../../packages/optimus-ui/src/**/*.d.ts"],
+    "include": ["../../packages/core/src/**/*.d.ts"],
     "exclude": ["node_modules", "**/node_modules", "**/dist", "**/*.spec.ts", "**/*.test.ts"],
     "files": ["app/main.ts", "server/main.server.ts", "server/server.ts", "app/polyfills.ts"],
     "angularCompilerOptions": {

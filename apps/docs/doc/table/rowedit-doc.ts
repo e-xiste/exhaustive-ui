@@ -6,14 +6,14 @@ import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService, SelectItem } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { RippleModule } from '@openng/optimus-ui/ripple';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { TableModule } from '@openng/optimus-ui/table';
-import { TagModule } from '@openng/optimus-ui/tag';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService, SelectItem } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'rowedit-doc',

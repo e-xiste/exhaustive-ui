@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SelectModule } from '@openng/optimus-ui/select';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { CommonModule } from '@angular/common';
 
 interface City {

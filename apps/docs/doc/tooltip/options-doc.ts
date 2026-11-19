@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'options-doc',

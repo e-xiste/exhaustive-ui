@@ -3,9 +3,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@openng/optimus-ui/inputmask';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MessageModule } from '@openng/optimus-ui/message';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     selector: 'form-doc',

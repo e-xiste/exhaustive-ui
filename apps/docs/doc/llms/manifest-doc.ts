@@ -28,7 +28,7 @@ export class ManifestDoc {
   "entryPoints": [
     {
       "name": "button",
-      "import": "@openng/optimus-ui/button",
+      "import": "@exhaustive-ui/core/button",
       "modules": ["ButtonModule"],
       "declarations": [
         {

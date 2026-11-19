@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { KeyFilterModule } from '@openng/optimus-ui/keyfilter';
-import { TextareaModule } from '@openng/optimus-ui/textarea';
+import { KeyFilterModule } from '@exhaustive-ui/core/keyfilter';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
 
 @Component({
     selector: 'keyfilter-doc',

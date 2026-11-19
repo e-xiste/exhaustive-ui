@@ -9,7 +9,7 @@ import { AppCode } from '@/components/doc/app.code';
     imports: [AppDocSectionText, AppCode],
     template: `
         <app-docsectiontext>
-            <p>Inject the <i>Optimus</i> to your application to update the initial configuration at runtime.</p>
+            <p>Inject the <i>Exhaustive</i> to your application to update the initial configuration at runtime.</p>
         </app-docsectiontext>
         <app-code [code]="code" [hideToggleCode]="true"></app-code>
     `
@@ -17,7 +17,7 @@ import { AppCode } from '@/components/doc/app.code';
 export class DynamicDoc {
     code: Code = {
         typescript: `import { Component, OnInit } from '@angular/core';
-import { Optimus } from '@openng/optimus-ui/config';
+import { Exhaustive } from '@exhaustive-ui/core/config';
 
 @Component({
     selector: 'app-root',
@@ -25,7 +25,7 @@ import { Optimus } from '@openng/optimus-ui/config';
 })
 export class AppComponent implements OnInit {
 
-    constructor(private config: Optimus) {}
+    constructor(private config: Exhaustive) {}
 
     ngOnInit() {
         this.config.ripple.set(true);

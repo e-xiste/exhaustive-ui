@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MeterGroupModule } from '@openng/optimus-ui/metergroup';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
 
 @Component({
     selector: 'metergroup-pt-viewer',

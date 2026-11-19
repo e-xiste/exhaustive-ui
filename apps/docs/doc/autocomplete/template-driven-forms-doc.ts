@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { AutoCompleteCompleteEvent } from '@openng/optimus-ui/autocomplete';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { AutoCompleteCompleteEvent } from '@exhaustive-ui/core/autocomplete';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@openng/optimus-ui/autocomplete';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 

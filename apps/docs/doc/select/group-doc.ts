@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { SelectItemGroup } from '@openng/optimus-ui/api';
+import { SelectItemGroup } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { SelectModule } from '@exhaustive-ui/core/select';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
             <p-select [options]="groupedCities" [(ngModel)]="selectedCity" placeholder="Select a City" [group]="true" class="w-full md:w-56">
                 <ng-template let-group #group>
                     <div class="flex items-center">
-                        <img src="https://optimus.openng.org/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
                         <span>{{ group.label }}</span>
                     </div>
                 </ng-template>

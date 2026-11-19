@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { TabsModule } from '@openng/optimus-ui/tabs';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'controlled-doc',

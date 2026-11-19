@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { CardModule } from '@openng/optimus-ui/card';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CardModule } from '@exhaustive-ui/core/card';
 
 @Component({
     selector: 'advanced-doc',
@@ -15,7 +15,7 @@ import { CardModule } from '@openng/optimus-ui/card';
         <div class="mb-4 p-8 flex items-center justify-center">
             <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
                 <ng-template #header>
-                    <img alt="Card" class="w-full" src="https://optimus.openng.org/demo/card-ng.jpg" />
+                    <img alt="Card" class="w-full" src="https://exhaustive-ui.e-xiste.com/demo/card-ng.jpg" />
                 </ng-template>
                 <ng-template #title> Advanced Card </ng-template>
                 <ng-template #subtitle> Card subtitle </ng-template>

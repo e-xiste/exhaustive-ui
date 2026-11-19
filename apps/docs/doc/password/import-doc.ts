@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PasswordModule } from '@openng/optimus-ui/password';`
+        typescript: `import { PasswordModule } from '@exhaustive-ui/core/password';`
     };
 }

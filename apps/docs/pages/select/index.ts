@@ -25,7 +25,7 @@ import { Component } from '@angular/core';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Select Component - Optimus UI"
+        docTitle="Angular Select Component - ExhaustiveUI"
         header="Select"
         description="Select is used to choose an item from a collection of options."
         [docs]="docs"

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { StepperModule } from '@openng/optimus-ui/stepper';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { StepperModule } from '@exhaustive-ui/core/stepper';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'vertical-doc',

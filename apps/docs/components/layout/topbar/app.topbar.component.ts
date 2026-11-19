@@ -1,15 +1,14 @@
 import Versions from '@/assets/data/versions.json';
 import { AppConfiguratorComponent } from '@/components/layout/configurator/app.configurator.component';
 import { AppConfigService } from '@/service/appconfigservice';
-import { DISCORD_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
+import { GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
 import { CommonModule, DOCUMENT, NgOptimizedImage } from '@angular/common';
 import { afterNextRender, booleanAttribute, Component, computed, ElementRef, Inject, Input, OnDestroy, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import docsearch from '@docsearch/js';
-import { DomHandler } from '@openng/optimus-ui/dom';
-import { StyleClass } from '@openng/optimus-ui/styleclass';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { DomHandler } from '@exhaustive-ui/core/dom';
+import { StyleClass } from '@exhaustive-ui/core/styleclass';
+import { SelectModule } from '@exhaustive-ui/core/select';
 
 @Component({
     selector: 'app-topbar',
@@ -18,32 +17,18 @@ import { SelectModule } from '@openng/optimus-ui/select';
     template: `<div class="layout-topbar">
         <div class="layout-topbar-inner">
             <div class="layout-topbar-logo-container">
-                <a [routerLink]="['/']" class="layout-topbar-logo" aria-label="Optimus UI Logo">
+                <a [routerLink]="['/']" class="layout-topbar-logo" aria-label="ExhaustiveUI Logo">
                     <img ngSrc="logo.svg" height="40" width="200" class="dark:invert" />
                 </a>
-                <a [routerLink]="['/']" class="layout-topbar-icon" aria-label="Optimus UI Logo">
+                <a [routerLink]="['/']" class="layout-topbar-icon" aria-label="ExhaustiveUI Logo">
                     <img ngSrc="logo-icon.svg" height="32" width="32" class="dark:invert" />
                 </a>
             </div>
 
             <ul class="topbar-items">
-                <li>
-                    <div id="docsearch"></div>
-                </li>
-                <li>
-                    <button type="button" class="topbar-item ask-ai-button" id="ask-ai" aria-label="Ask AI">
-                        <i class="pi pi-sparkles"></i>
-                        <span class="ask-ai-label">Ask AI</span>
-                    </button>
-                </li>
                 <li class="topbar-desktop-item">
                     <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="topbar-item">
                         <i class="pi pi-github text-surface-700 dark:text-surface-100"></i>
-                    </a>
-                </li>
-                <li class="topbar-desktop-item">
-                    <a [href]="discordUrl" target="_blank" rel="noopener noreferrer" class="topbar-item" aria-label="Optimus UI Discord" title="Optimus UI Discord">
-                        <i class="pi pi-discord text-surface-700 dark:text-surface-100"></i>
                     </a>
                 </li>
                 <li class="topbar-desktop-item">
@@ -97,8 +82,6 @@ import { SelectModule } from '@openng/optimus-ui/select';
 export class AppTopBarComponent implements OnDestroy {
     readonly githubRepoUrl = GITHUB_REPO_URL;
     readonly githubDiscussionsUrl = GITHUB_DISCUSSIONS_URL;
-    readonly discordUrl = DISCORD_URL;
-
     @Input({ transform: booleanAttribute }) showConfigurator = true;
 
     @Input({ transform: booleanAttribute }) showMenuButton = true;
@@ -120,7 +103,6 @@ export class AppTopBarComponent implements OnDestroy {
 
         afterNextRender(() => {
             this.bindScrollListener();
-            this.initDocSearch();
         });
     }
 
@@ -140,15 +122,6 @@ export class AppTopBarComponent implements OnDestroy {
 
     toggleDarkMode() {
         this.configService.appState.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
-    }
-
-    initDocSearch() {
-        docsearch({
-            appId: 'X3M9GFEM8Z',
-            apiKey: 'ce715b53658d2e2190d8751fad64e8e9',
-            indexName: 'Optimus UI Documentation',
-            container: '#docsearch'
-        });
     }
 
     bindScrollListener() {

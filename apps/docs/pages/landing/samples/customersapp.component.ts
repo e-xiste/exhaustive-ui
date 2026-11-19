@@ -3,20 +3,20 @@ import { ChangeDetectionStrategy, Component, Inject, PLATFORM_ID } from '@angula
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { ChartModule } from '@openng/optimus-ui/chart';
-import { DividerModule } from '@openng/optimus-ui/divider';
-import { DrawerModule } from '@openng/optimus-ui/drawer';
-import { IconField } from '@openng/optimus-ui/iconfield';
-import { InputIcon } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
-import { PopoverModule } from '@openng/optimus-ui/popover';
-import { TableModule } from '@openng/optimus-ui/table';
-import { Tag } from '@openng/optimus-ui/tag';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { IconField } from '@exhaustive-ui/core/iconfield';
+import { InputIcon } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { PopoverModule } from '@exhaustive-ui/core/popover';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { Tag } from '@exhaustive-ui/core/tag';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'customers-app',

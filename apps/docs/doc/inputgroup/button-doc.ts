@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
-import { InputGroupModule } from '@openng/optimus-ui/inputgroup';
-import { InputGroupAddonModule } from '@openng/optimus-ui/inputgroupaddon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { MenuModule } from '@openng/optimus-ui/menu';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MenuModule } from '@exhaustive-ui/core/menu';
 import { AppCodeModule } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

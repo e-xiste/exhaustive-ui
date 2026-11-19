@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DialogModule } from '@openng/optimus-ui/dialog';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { SelectModule } from '@openng/optimus-ui/select';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { SelectModule } from '@exhaustive-ui/core/select';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

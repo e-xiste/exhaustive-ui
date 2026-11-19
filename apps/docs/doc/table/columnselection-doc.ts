@@ -5,10 +5,10 @@ import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { TableModule } from '@openng/optimus-ui/table';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'columnselection-doc',

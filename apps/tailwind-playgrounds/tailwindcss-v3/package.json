@@ -9,7 +9,7 @@
         "preview": "vite preview"
     },
     "devDependencies": {
-        "@openng/optimus-ui-tailwindcss": "workspace:*",
+        "@exhaustive-ui/tailwindcss": "workspace:*",
         "autoprefixer": "^10.5.4",
         "postcss": "^8.5.26",
         "tailwindcss": "^3.4.10",

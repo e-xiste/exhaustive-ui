@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AutoFocusModule } from '@openng/optimus-ui/autofocus';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { AutoFocusModule } from '@exhaustive-ui/core/autofocus';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

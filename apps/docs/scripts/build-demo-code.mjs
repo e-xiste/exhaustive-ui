@@ -16,8 +16,8 @@ const SKIP_DIRS = ['apidoc', 'theming', 'icons', 'installation', 'configuration'
 // Known services that exist in StackBlitz templates
 const KNOWN_SERVICES = ['CarService', 'CountryService', 'CustomerService', 'EventService', 'NodeService', 'PhotoService', 'ProductService', 'TicketService'];
 
-// Optimus UI API services that should be included in providers
-const OPTIMUS_SERVICES = ['MessageService', 'ConfirmationService', 'DialogService', 'TreeDragDropService', 'FilterService'];
+// ExhaustiveUI API services that should be included in providers
+const EXHAUSTIVE_SERVICES = ['MessageService', 'ConfirmationService', 'DialogService', 'TreeDragDropService', 'FilterService'];
 
 // Known domain types and their paths
 // Note: 'Event' is excluded because it conflicts with DOM Event type
@@ -78,8 +78,8 @@ export interface Customer {
 }`
 };
 
-// Optimus UI named exports that can be used as types (not modules)
-const OPTIMUS_NAMED_EXPORTS = {
+// ExhaustiveUI named exports that can be used as types (not modules)
+const EXHAUSTIVE_NAMED_EXPORTS = {
     Table: 'table',
     Tree: 'tree',
     TreeTable: 'treetable',
@@ -98,8 +98,8 @@ const OPTIMUS_NAMED_EXPORTS = {
     PanelMenu: 'panelmenu'
 };
 
-// Optimus UI API types that need to be imported from '@openng/optimus-ui/api'
-const OPTIMUS_API_TYPES = [
+// ExhaustiveUI API types that need to be imported from '@exhaustive-ui/core/api'
+const EXHAUSTIVE_API_TYPES = [
     'TreeNode',
     'MenuItem',
     'MegaMenuItem',
@@ -108,7 +108,7 @@ const OPTIMUS_API_TYPES = [
     'FilterService',
     'MessageService',
     'ConfirmationService',
-    'OptimusConfig',
+    'ExhaustiveConfig',
     'TreeTableNode',
     'ConfirmEventType',
     'SortEvent',
@@ -117,7 +117,7 @@ const OPTIMUS_API_TYPES = [
     'TableLazyLoadEvent'
 ];
 
-// Optimus UI selector to module mapping
+// ExhaustiveUI selector to module mapping
 const SELECTOR_TO_MODULE = {
     'p-accordion': 'AccordionModule',
     'p-autocomplete': 'AutoCompleteModule',
@@ -413,8 +413,8 @@ function extractConstructor(content, services = []) {
             if (services.some((s) => p.includes(s))) return true;
             // Keep common Angular services
             if (p.includes('MessageService') || p.includes('ConfirmationService')) return true;
-            // Keep Optimus config injection
-            if (p.includes('Optimus')) return true;
+            // Keep Exhaustive config injection
+            if (p.includes('Exhaustive')) return true;
             // Filter out doc-specific ones
             if (p.includes('ChangeDetectorRef') || p.includes('PLATFORM_ID') || p.includes('DOCUMENT')) return false;
             // Keep other services
@@ -745,7 +745,7 @@ function extractDivContent(html, classPattern) {
     return null;
 }
 
-// Extract basic code (just Optimus UI component without wrapper)
+// Extract basic code (just ExhaustiveUI component without wrapper)
 function extractBasicCode(htmlContent) {
     if (!htmlContent) return null;
 
@@ -757,7 +757,7 @@ function extractBasicCode(htmlContent) {
         basic = cardContent;
     }
 
-    // Only remove flex/grid wrapper if it's the ONLY top-level element wrapping Optimus UI components
+    // Only remove flex/grid wrapper if it's the ONLY top-level element wrapping ExhaustiveUI components
     // Don't remove flex divs that are inside ng-template or other components
     // Don't remove if there are sibling elements after the flex div
     const trimmed = basic.trim();
@@ -788,11 +788,11 @@ function extractBasicCode(htmlContent) {
 
                 // Only unwrap if there's nothing after the flex div
                 if (!afterFlexDiv) {
-                    // Only unwrap if the flex div directly contains Optimus UI components (not nested in templates)
-                    const hasOptimusDirect = /^[\s\S]*?<p-[a-z]/.test(flexContent);
+                    // Only unwrap if the flex div directly contains ExhaustiveUI components (not nested in templates)
+                    const hasExhaustiveDirect = /^[\s\S]*?<p-[a-z]/.test(flexContent);
                     const hasNoTemplates = !flexContent.includes('<ng-template');
                     const isSimpleWrapper = flexContent.split('<div').length <= 3;
-                    if (hasOptimusDirect && hasNoTemplates && isSimpleWrapper) {
+                    if (hasExhaustiveDirect && hasNoTemplates && isSimpleWrapper) {
                         basic = flexContent;
                     }
                 }
@@ -905,12 +905,12 @@ function detectDomainTypes(content) {
     return domainTypes;
 }
 
-// Detect Optimus UI named exports used as types in component
-function detectOptimusNamedExports(content) {
+// Detect ExhaustiveUI named exports used as types in component
+function detectExhaustiveNamedExports(content) {
     const namedExports = {};
 
     // Check each known named export
-    for (const [exportName, modulePath] of Object.entries(OPTIMUS_NAMED_EXPORTS)) {
+    for (const [exportName, modulePath] of Object.entries(EXHAUSTIVE_NAMED_EXPORTS)) {
         // Look for usage as type annotation (e.g., `: Table`, `Table[]`, `<Table>`)
         const typeRegex = new RegExp(`[:\\s<,]\\s*${exportName}\\b(?![a-zA-Z])`, 'g');
         if (typeRegex.test(content)) {
@@ -952,7 +952,7 @@ function generateExtFilesFromDomainTypes(content) {
 // Detect services from component file
 function detectServices(content) {
     const services = [];
-    const optimusServices = [];
+    const exhaustiveServices = [];
 
     // Method 1: Look for imports from @/service/*
     const serviceImportMatches = content.matchAll(/import\s*\{\s*([^}]+)\s*\}\s*from\s*['"`]@\/service\/[^'"`]+['"`]/g);
@@ -973,18 +973,18 @@ function detectServices(content) {
             if (KNOWN_SERVICES.includes(name) && !services.includes(name)) {
                 services.push(name);
             }
-            // Also check for Optimus UI API services
-            if (OPTIMUS_SERVICES.includes(name) && !optimusServices.includes(name)) {
-                optimusServices.push(name);
+            // Also check for ExhaustiveUI API services
+            if (EXHAUSTIVE_SERVICES.includes(name) && !exhaustiveServices.includes(name)) {
+                exhaustiveServices.push(name);
             }
         }
     }
 
-    return { services, optimusServices };
+    return { services, exhaustiveServices };
 }
 
-// Detect Optimus UI modules used in template
-function detectOptimusModules(template) {
+// Detect ExhaustiveUI modules used in template
+function detectExhaustiveModules(template) {
     const modules = new Set();
 
     // Check for p-* selectors
@@ -1039,8 +1039,8 @@ function detectOptimusModules(template) {
 }
 
 // Generate demo TypeScript code with actual module imports (not ImportsModule)
-function generateTypescript(componentName, template, services = [], fileContent = '', optimusServices = []) {
-    const optimusModules = detectOptimusModules(template);
+function generateTypescript(componentName, template, services = [], fileContent = '', exhaustiveServices = []) {
+    const exhaustiveModules = detectExhaustiveModules(template);
 
     // Extract class details from original file
     const interfaces = extractInterfaceDefinitions(fileContent);
@@ -1057,7 +1057,7 @@ function generateTypescript(componentName, template, services = [], fileContent 
     const hasSignals = properties.some((p) => p.type === '__signal__');
 
     // Check if we have inject() properties or services that need inject()
-    const hasInject = properties.some((p) => p.type === '__inject__') || services.length > 0 || optimusServices.length > 0;
+    const hasInject = properties.some((p) => p.type === '__inject__') || services.length > 0 || exhaustiveServices.length > 0;
 
     // Build import statements with actual modules
     let importStatements = '';
@@ -1070,30 +1070,30 @@ function generateTypescript(componentName, template, services = [], fileContent 
     importStatements += `import { ${angularCoreImports.join(', ')} } from '@angular/core';\n`;
 
     // Add FormsModule if needed
-    if (optimusModules.includes('FormsModule')) {
+    if (exhaustiveModules.includes('FormsModule')) {
         importStatements += `import { FormsModule } from '@angular/forms';\n`;
     }
 
     // Add ReactiveFormsModule if needed
-    if (optimusModules.includes('ReactiveFormsModule')) {
+    if (exhaustiveModules.includes('ReactiveFormsModule')) {
         importStatements += `import { ReactiveFormsModule } from '@angular/forms';\n`;
     }
 
-    // Add Optimus UI modules (will be modified below to include named exports)
-    const optimusImports = optimusModules.filter((m) => !['CommonModule', 'FormsModule', 'ReactiveFormsModule'].includes(m));
+    // Add ExhaustiveUI modules (will be modified below to include named exports)
+    const exhaustiveImports = exhaustiveModules.filter((m) => !['CommonModule', 'FormsModule', 'ReactiveFormsModule'].includes(m));
 
-    // Detect Optimus UI named exports early so we can combine them with module imports
-    const optimusNamedExportsEarly = detectOptimusNamedExports(fileContent);
+    // Detect ExhaustiveUI named exports early so we can combine them with module imports
+    const exhaustiveNamedExportsEarly = detectExhaustiveNamedExports(fileContent);
 
-    for (const module of optimusImports) {
+    for (const module of exhaustiveImports) {
         const moduleLower = module.replace('Module', '').toLowerCase();
         // Check if there are named exports for this module
-        const namedExportsForModule = optimusNamedExportsEarly[moduleLower] || [];
+        const namedExportsForModule = exhaustiveNamedExportsEarly[moduleLower] || [];
         if (namedExportsForModule.length > 0) {
             // Combine module with named exports
-            importStatements += `import { ${[...namedExportsForModule, module].join(', ')} } from '@openng/optimus-ui/${moduleLower}';\n`;
+            importStatements += `import { ${[...namedExportsForModule, module].join(', ')} } from '@exhaustive-ui/core/${moduleLower}';\n`;
         } else {
-            importStatements += `import { ${module} } from '@openng/optimus-ui/${moduleLower}';\n`;
+            importStatements += `import { ${module} } from '@exhaustive-ui/core/${moduleLower}';\n`;
         }
     }
 
@@ -1102,25 +1102,25 @@ function generateTypescript(componentName, template, services = [], fileContent 
         importStatements += `import { ${service} } from '@/service/${service.toLowerCase()}';\n`;
     }
 
-    // Add Optimus config import if used in constructor
-    if (constructor && constructor.params && constructor.params.includes('Optimus')) {
-        importStatements += `import { Optimus } from '@openng/optimus-ui/config';\n`;
+    // Add Exhaustive config import if used in constructor
+    if (constructor && constructor.params && constructor.params.includes('Exhaustive')) {
+        importStatements += `import { Exhaustive } from '@exhaustive-ui/core/config';\n`;
     }
 
-    // Detect and add Optimus UI API types (TreeNode, MenuItem, etc.) and services
+    // Detect and add ExhaustiveUI API types (TreeNode, MenuItem, etc.) and services
     const usedApiTypes = [];
     const allContent = fileContent + (interfaces.length > 0 ? interfaces.join('\n') : '');
-    for (const apiType of OPTIMUS_API_TYPES) {
+    for (const apiType of EXHAUSTIVE_API_TYPES) {
         // Check if type is used in properties, interfaces, or method signatures
         const typeRegex = new RegExp(`\\b${apiType}\\b`, 'g');
         if (typeRegex.test(allContent)) {
             usedApiTypes.push(apiType);
         }
     }
-    // Combine API types with Optimus UI services for import (avoid duplicates)
-    const apiImports = [...new Set([...usedApiTypes, ...optimusServices])];
+    // Combine API types with ExhaustiveUI services for import (avoid duplicates)
+    const apiImports = [...new Set([...usedApiTypes, ...exhaustiveServices])];
     if (apiImports.length > 0) {
-        importStatements += `import { ${apiImports.join(', ')} } from '@openng/optimus-ui/api';\n`;
+        importStatements += `import { ${apiImports.join(', ')} } from '@exhaustive-ui/core/api';\n`;
     }
 
     // Detect and add domain type imports (Customer, Product, etc.)
@@ -1129,21 +1129,21 @@ function generateTypescript(componentName, template, services = [], fileContent 
         importStatements += `import { ${types.join(', ')} } from '@/domain/${domainPath}';\n`;
     }
 
-    // Add Optimus UI named exports that weren't combined with module imports
-    for (const [modulePath, exports] of Object.entries(optimusNamedExportsEarly)) {
+    // Add ExhaustiveUI named exports that weren't combined with module imports
+    for (const [modulePath, exports] of Object.entries(exhaustiveNamedExportsEarly)) {
         const moduleNameBase = modulePath.charAt(0).toUpperCase() + modulePath.slice(1);
         const moduleName = moduleNameBase + 'Module';
         // Only add separate import if we don't already have the module imported
-        if (!optimusImports.includes(moduleName)) {
-            importStatements += `import { ${exports.join(', ')} } from '@openng/optimus-ui/${modulePath}';\n`;
+        if (!exhaustiveImports.includes(moduleName)) {
+            importStatements += `import { ${exports.join(', ')} } from '@exhaustive-ui/core/${modulePath}';\n`;
         }
     }
 
     // Build imports array for decorator (actual modules, not ImportsModule)
-    const decoratorImports = optimusModules.filter((m) => m !== 'CommonModule');
+    const decoratorImports = exhaustiveModules.filter((m) => m !== 'CommonModule');
 
-    // Build providers if services exist (include both custom services and Optimus UI API services)
-    const allProviders = [...services, ...optimusServices];
+    // Build providers if services exist (include both custom services and ExhaustiveUI API services)
+    const allProviders = [...services, ...exhaustiveServices];
     const providersLine = allProviders.length > 0 ? `,\n    providers: [${allProviders.join(', ')}]` : '';
 
     // Generate class name (e.g., SelectBasicDemo)
@@ -1162,7 +1162,7 @@ function generateTypescript(componentName, template, services = [], fileContent 
     let classBody = '';
 
     // Add inject() statements for services first (before other properties)
-    const allServices = [...services, ...optimusServices];
+    const allServices = [...services, ...exhaustiveServices];
     if (allServices.length > 0) {
         classBody += '\n';
         for (const service of allServices) {
@@ -1275,11 +1275,11 @@ function parseDocFile(filePath, componentDir) {
     const componentName = toPascalCase(uniqueKey.replace(/-demo$/, ''));
 
     // Detect services from component file (preferred) or fall back to existing code block
-    const { services: detectedServices, optimusServices } = detectServices(content);
+    const { services: detectedServices, exhaustiveServices } = detectServices(content);
     const services = detectedServices.length > 0 ? detectedServices : existingCode?.service || [];
 
     // Generate TypeScript - pass full content for class extraction
-    const generatedTypescript = generateTypescript(componentName, demoContent, services, content, optimusServices);
+    const generatedTypescript = generateTypescript(componentName, demoContent, services, content, exhaustiveServices);
 
     return {
         key: uniqueKey,
@@ -1293,9 +1293,9 @@ function parseDocFile(filePath, componentDir) {
         },
         metadata: {
             services,
-            optimusServices, // Add Optimus UI API services to metadata
+            exhaustiveServices, // Add ExhaustiveUI API services to metadata
             extFiles,
-            imports: detectOptimusModules(demoContent)
+            imports: detectExhaustiveModules(demoContent)
         }
     };
 }

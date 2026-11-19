@@ -2,8 +2,8 @@ import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { NodeService } from '@/service/nodeservice';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 @Component({
     selector: 'treetable-pt-viewer',

@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { FormsModule } from '@angular/forms';
-import { SliderModule } from '@openng/optimus-ui/slider';
-import { ToastModule } from '@openng/optimus-ui/toast';
-import { MessageModule } from '@openng/optimus-ui/message';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { SliderModule } from '@exhaustive-ui/core/slider';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { CommonModule } from '@angular/common';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';

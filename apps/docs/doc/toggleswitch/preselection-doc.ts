@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToggleSwitchModule } from '@openng/optimus-ui/toggleswitch';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

@@ -10,7 +10,7 @@ import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Splitter Component - Optimus UI"
+        docTitle="Angular Splitter Component - ExhaustiveUI"
         header="Splitter"
         description="Splitter is utilized to separate and resize panels."
         [docs]="docs"

@@ -1,5 +1,15 @@
 [
     {
+        "label": "ExhaustiveUI",
+        "value": "exhaustiveui",
+        "items": [
+            {
+                "label": "v3",
+                "value": "https://exhaustive-ui.e-xiste.com"
+            }
+        ]
+    },
+    {
         "label": "Optimus UI",
         "value": "optimusui",
         "items": [

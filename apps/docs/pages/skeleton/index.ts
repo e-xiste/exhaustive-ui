@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
 
 @Component({
     template: `<app-doc
-        docTitle="Angular Skeleton Component - Optimus UI"
+        docTitle="Angular Skeleton Component - ExhaustiveUI"
         header="Skeleton"
         description="Skeleton is a placeholder to display instead of the actual content."
         [docs]="docs"

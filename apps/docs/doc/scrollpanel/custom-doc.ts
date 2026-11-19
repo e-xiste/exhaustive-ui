@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ScrollPanelModule } from '@openng/optimus-ui/scrollpanel';
+import { ScrollPanelModule } from '@exhaustive-ui/core/scrollpanel';
 
 @Component({
     selector: 'custom-doc',

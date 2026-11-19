@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
 
 @Component({
     selector: 'label-doc',

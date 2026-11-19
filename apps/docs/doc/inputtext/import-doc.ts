@@ -12,6 +12,6 @@ export class ImportDoc {
     value1: string;
 
     code: Code = {
-        typescript: `import { InputTextModule } from '@openng/optimus-ui/inputtext';`
+        typescript: `import { InputTextModule } from '@exhaustive-ui/core/inputtext';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { StepperModule } from '@openng/optimus-ui/stepper';`
+        typescript: `import { StepperModule } from '@exhaustive-ui/core/stepper';`
     };
 }

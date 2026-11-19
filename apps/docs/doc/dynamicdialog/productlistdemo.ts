@@ -1,10 +1,10 @@
 import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { Component, OnInit, signal } from '@angular/core';
-import { DialogService, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
+import { DialogService, DynamicDialogRef } from '@exhaustive-ui/core/dynamicdialog';
 import { InfoDemo } from './infodemo';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { TableModule } from '@openng/optimus-ui/table';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TableModule } from '@exhaustive-ui/core/table';
 @Component({
     standalone: true,
     imports: [ButtonModule, TableModule],
@@ -27,7 +27,7 @@ import { TableModule } from '@openng/optimus-ui/table';
                     <td>{{ product.code }}</td>
                     <td>{{ product.name }}</td>
                     <td>
-                        <img src="https://optimus.openng.org/demo/product/{{ product.image }}" [alt]="product.image" class="w-16" />
+                        <img src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.image" class="w-16" />
                     </td>
                     <td>{{ product.category }}</td>
                     <td>

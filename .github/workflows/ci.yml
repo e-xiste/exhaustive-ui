@@ -33,7 +33,7 @@ jobs:
               run: |
                   pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
-    # Formatting, the dependency audit, the schematics suite and the optimus-ui-styled unit
+    # Formatting, the dependency audit, the schematics suite and the styled-package unit
     # tests are all short and need no browser, so they share a job rather than each paying
     # the setup cost.
     checks:
@@ -53,7 +53,7 @@ jobs:
 
             - name: Schematic Tests
               run: |
-                  pnpm --filter @openng/optimus-ui test:schematics
+                  pnpm --filter @exhaustive-ui/core test:schematics
 
             - name: Styled Utils Tests
               run: |
@@ -79,7 +79,7 @@ jobs:
 
             - name: Install Playwright Chromium
               run: |
-                  pnpm --filter @openng/optimus-ui exec playwright install --with-deps chromium
+                  pnpm --filter @exhaustive-ui/core exec playwright install --with-deps chromium
 
             - name: Unit Test (vitest)
               run: |
@@ -92,7 +92,7 @@ jobs:
               if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
               uses: mikepenz/action-junit-report@v6
               with:
-                  report_paths: 'packages/optimus-ui/reports/junit/vitest.xml'
+                  report_paths: 'packages/core/reports/junit/vitest.xml'
                   check_name: 'Test Results (vitest)'
                   detailed_summary: true
                   include_passed: false
@@ -103,7 +103,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: junit-vitest
-                  path: packages/optimus-ui/reports/junit/vitest.xml
+                  path: packages/core/reports/junit/vitest.xml
                   if-no-files-found: warn
 
     build:

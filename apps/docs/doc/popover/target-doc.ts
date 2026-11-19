@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { PopoverModule } from '@openng/optimus-ui/popover';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { PopoverModule } from '@exhaustive-ui/core/popover';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <span>Target Element</span>
             </div>
             <p-popover #op>
-                <img src="https://optimus.openng.org/demo/product/bamboo-watch.jpg" alt="product" />
+                <img src="https://exhaustive-ui.e-xiste.com/demo/product/bamboo-watch.jpg" alt="product" />
             </p-popover>
         </div>
         <app-code></app-code>

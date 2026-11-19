@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PopoverModule } from '@openng/optimus-ui/popover';`
+        typescript: `import { PopoverModule } from '@exhaustive-ui/core/popover';`
     };
 }

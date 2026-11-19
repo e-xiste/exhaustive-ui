@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { Toast } from '@openng/optimus-ui/toast';
-import { ButtonModule } from '@openng/optimus-ui/button';
+import { Toast } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'clear-doc',

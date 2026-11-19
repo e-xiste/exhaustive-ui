@@ -1,9 +1,9 @@
-import OptimusUiTailwind from '@openng/optimus-ui-tailwindcss';
+import ExhaustiveUiTailwind from '@exhaustive-ui/tailwindcss';
 
 export default {
     darkMode: ['selector', '[class="p-dark"]'],
     content: ['./components/**/*.{html,ts,scss,css}', './doc/**/*.{html,ts,scss,css}', './pages/**/*.{html,ts,scss,css}', './index.html'],
-    plugins: [OptimusUiTailwind],
+    plugins: [ExhaustiveUiTailwind],
     theme: {
         screens: {
             sm: '576px',

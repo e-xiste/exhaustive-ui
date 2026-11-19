@@ -2,8 +2,8 @@ import { PhotoService } from '@/service/photoservice';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GalleriaModule } from '@openng/optimus-ui/galleria';
-import { RadioButtonModule } from '@openng/optimus-ui/radiobutton';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 

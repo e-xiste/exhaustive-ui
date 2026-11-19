@@ -1,7 +1,7 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { PickListModule } from '@openng/optimus-ui/picklist';
+import { PickListModule } from '@exhaustive-ui/core/picklist';
 
 interface Product {
     id?: string;

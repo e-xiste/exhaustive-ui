@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AvatarModule } from '@openng/optimus-ui/avatar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { Checkbox } from '@openng/optimus-ui/checkbox';
-import { DividerModule } from '@openng/optimus-ui/divider';
-import { IconField } from '@openng/optimus-ui/iconfield';
-import { InputIcon } from '@openng/optimus-ui/inputicon';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { MenuModule } from '@openng/optimus-ui/menu';
-import { OverlayBadgeModule } from '@openng/optimus-ui/overlaybadge';
-import { ProgressBar } from '@openng/optimus-ui/progressbar';
-import { TableModule } from '@openng/optimus-ui/table';
-import { Tag } from '@openng/optimus-ui/tag';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Checkbox } from '@exhaustive-ui/core/checkbox';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+import { IconField } from '@exhaustive-ui/core/iconfield';
+import { InputIcon } from '@exhaustive-ui/core/inputicon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { ProgressBar } from '@exhaustive-ui/core/progressbar';
+import { TableModule } from '@exhaustive-ui/core/table';
+import { Tag } from '@exhaustive-ui/core/tag';
 
 @Component({
     selector: 'inbox-app',

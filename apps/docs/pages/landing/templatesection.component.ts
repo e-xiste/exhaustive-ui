@@ -2,7 +2,7 @@ import { AppConfigService } from '@/service/appconfigservice';
 import { SPARKED_DEMO_URL, SPARKED_REPO_URL } from '@/utils/constants';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { AnimateOnScrollModule } from '@openng/optimus-ui/animateonscroll';
+import { AnimateOnScrollModule } from '@exhaustive-ui/core/animateonscroll';
 
 @Component({
     selector: 'template-section',
@@ -11,7 +11,7 @@ import { AnimateOnScrollModule } from '@openng/optimus-ui/animateonscroll';
     template: `
         <section class="landing-template py-20">
             <div class="section-header">Application Template</div>
-            <p class="section-detail">Sparked is a free, MIT licensed admin template built with Optimus UI. Clone it and start shipping.</p>
+            <p class="section-detail">Sparked is a free, MIT licensed admin template built with Optimus UI, the project ExhaustiveUI is forked from. Clone it and start shipping.</p>
             <div class="mt-16 px-8 lg:px-20 flex justify-center">
                 <div class="template-showcase animate-duration-500" pAnimateOnScroll enterClass="animate-fadein">
                     <div class="template-frame box">
@@ -22,7 +22,7 @@ import { AnimateOnScrollModule } from '@openng/optimus-ui/animateonscroll';
                             <span class="template-frame-url">sparked.openng.org</span>
                         </div>
                         <a [href]="sparkedDemoUrl" target="_blank" rel="noopener noreferrer" class="template-frame-body" aria-label="Open the Sparked live demo">
-                            <img [src]="screenshot()" alt="Sparked admin dashboard built with Optimus UI" width="1440" height="900" loading="lazy" />
+                            <img [src]="screenshot()" alt="Sparked admin dashboard built with Optimus UI, the project ExhaustiveUI is forked from" width="1440" height="900" loading="lazy" />
                         </a>
                     </div>
                     <div class="template-highlights">

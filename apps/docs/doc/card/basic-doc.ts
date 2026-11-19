@@ -1,7 +1,7 @@
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
-import { CardModule } from '@openng/optimus-ui/card';
+import { CardModule } from '@exhaustive-ui/core/card';
 
 @Component({
     selector: 'basic-doc',

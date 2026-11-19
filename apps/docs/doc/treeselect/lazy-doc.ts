@@ -2,8 +2,8 @@ import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { ChangeDetectorRef, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeSelectModule } from '@openng/optimus-ui/treeselect';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
 
 @Component({
     selector: 'lazy-doc',

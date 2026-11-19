@@ -3,21 +3,21 @@ import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
 
-const SKILL_NAME = 'optimus-ui';
-const ZIP_NAME = 'optimus-ui-skill.zip';
-const SITE_URL = 'https://optimus.openng.org';
+const SKILL_NAME = 'exhaustive-ui';
+const ZIP_NAME = 'exhaustive-ui-skill.zip';
+const SITE_URL = 'https://exhaustive-ui.e-xiste.com';
 const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 const SKILL_DESCRIPTION =
-    'Local, offline copy of the official Optimus UI (@openng/optimus-ui) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility and PrimeNG-migration guides. ' +
-    'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses Optimus UI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@openng/optimus-ui` or `@openng/optimus-ui-themes`, theming/design tokens, or migrating from PrimeNG — and prefer it over fetching optimus.openng.org pages.';
+    'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility and PrimeNG-migration guides. ' +
+    'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses ExhaustiveUI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@exhaustive-ui/core` or `@exhaustive-ui/themes`, theming/design tokens, or migrating from PrimeNG — and prefer it over fetching exhaustive-ui.e-xiste.com pages.';
 
 /**
  * Build an Agent Skill (https://agentskills.io: SKILL.md + references/) from the generated LLM markdown files
  * and publish it as a single zip next to llms.txt.
  *
  * The zip has SKILL.md at its root, as the well-known discovery index requires. The index at
- * `/.well-known/agent-skills/index.json` lets `npx skills add https://optimus.openng.org` install the skill,
+ * `/.well-known/agent-skills/index.json` lets `npx skills add https://exhaustive-ui.e-xiste.com` install the skill,
  * and its sha256 digest lets `npx skills update` detect new versions.
  */
 export function generateAgentSkill({ outputDir, wellKnownDir, components, pages, version }) {
@@ -85,9 +85,9 @@ name: ${SKILL_NAME}
 description: ${SKILL_DESCRIPTION}
 ---
 
-# Optimus UI docs (local copy)
+# ExhaustiveUI docs (local copy)
 
-Optimus UI is a community-maintained, MIT-licensed continuation of PrimeNG: 80+ accessible Angular components, targeting Angular v21+. This skill bundles the documentation published at <${SITE_URL}/llms/llms.txt> (generated from Optimus UI v${version}), so you can read it from disk instead of fetching \`${SITE_URL}/llms/components/<name>.md\` each time.
+ExhaustiveUI is a community-maintained, MIT-licensed continuation of PrimeNG: 80+ accessible Angular components, targeting Angular v21+. This skill bundles the documentation published at <${SITE_URL}/llms/llms.txt> (generated from ExhaustiveUI v${version}), so you can read it from disk instead of fetching \`${SITE_URL}/llms/components/<name>.md\` each time.
 
 All paths below are relative to this skill's directory (the folder containing this SKILL.md).
 
@@ -95,7 +95,7 @@ All paths below are relative to this skill's directory (the folder containing th
 
 1. Find the file in the index below. The file name is the component's docs slug (\`select\`, \`datepicker\`, \`inputotp\`, \`galleria\`, \`scroller\`, ...), which is not always the selector name.
 2. Read only the part you need. Component files are 10–60 KB, so list the headings first and then read the matching line range, for example \`grep -n '^##' references/components/table.md\`.
-3. When an exact API detail matters (input name, event payload, template context, token name), copy it from the docs instead of relying on memory of PrimeNG. Optimus UI is API-compatible with PrimeNG v21 in most places, but names, packages and defaults can differ.
+3. When an exact API detail matters (input name, event payload, template context, token name), copy it from the docs instead of relying on memory of PrimeNG. ExhaustiveUI is API-compatible with PrimeNG v21 in most places, but names, packages and defaults can differ.
 
 To search everything at once, grep the folder, for example \`grep -rn "appendTo" references/components/\`.
 
@@ -112,14 +112,14 @@ To search everything at once, grep the folder, for example \`grep -rn "appendTo"
 
 Check the guides when in doubt; these are here so simple tasks don't need a lookup:
 
-- Packages: \`@openng/optimus-ui\` (one secondary entry point per component, such as \`@openng/optimus-ui/button\`) and \`@openng/optimus-ui-themes\` (theme presets).
-- Components are imported per entry point (\`import { ButtonModule } from '@openng/optimus-ui/button'\`) into standalone components. The docs examples show the exact symbol to import, so copy it from there.
-- App-wide setup (theme preset, ripple, z-index, locale and so on) goes through \`provideOptimus({...})\` from \`@openng/optimus-ui/config\`; see \`references/guides/configuration.md\`. New projects can use \`ng add @openng/optimus-ui\`. Existing PrimeNG apps use the \`migrate-from-primeng\` schematic instead (see \`references/guides/installation.md\` and \`references/guides/faq.md\`).
+- Packages: \`@exhaustive-ui/core\` (one secondary entry point per component, such as \`@exhaustive-ui/core/button\`) and \`@exhaustive-ui/themes\` (theme presets).
+- Components are imported per entry point (\`import { ButtonModule } from '@exhaustive-ui/core/button'\`) into standalone components. The docs examples show the exact symbol to import, so copy it from there.
+- App-wide setup (theme preset, ripple, z-index, locale and so on) goes through \`provideExhaustive({...})\` from \`@exhaustive-ui/core/config\`; see \`references/guides/configuration.md\`. New projects can use \`ng add @exhaustive-ui/core\`. Existing PrimeNG apps use the \`migrate-from-primeng\` schematic instead (see \`references/guides/installation.md\` and \`references/guides/faq.md\`).
 - Selectors use the \`p-\` prefix (\`<p-button>\`, \`<p-table>\`) and directives the \`p\` prefix (\`pButton\`, \`pTooltip\`, \`pInputText\`).
 
 ## Keeping the docs up to date
 
-These docs are a snapshot of v${version}. If the project uses a newer Optimus UI release, or the docs contradict the installed package, offer to update it by running \`npx skills update ${SKILL_NAME}\`, or \`npx skills add ${SITE_URL}\` (add \`-g\` for a user-level install) if it was installed another way. Any single page can also be fetched live from \`${SITE_URL}/llms/components/<name>.md\` or \`${SITE_URL}/llms/pages/<name>.md\`.
+These docs are a snapshot of v${version}. If the project uses a newer ExhaustiveUI release, or the docs contradict the installed package, offer to update it by running \`npx skills update ${SKILL_NAME}\`, or \`npx skills add ${SITE_URL}\` (add \`-g\` for a user-level install) if it was installed another way. Any single page can also be fetched live from \`${SITE_URL}/llms/components/<name>.md\` or \`${SITE_URL}/llms/pages/<name>.md\`.
 
 ## Index
 

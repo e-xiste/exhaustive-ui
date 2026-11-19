@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { TooltipModule } from '@openng/optimus-ui/tooltip';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 
 @Component({
     selector: 'custom-doc',
@@ -17,8 +17,8 @@ import { TooltipModule } from '@openng/optimus-ui/tooltip';
             <p-button [pTooltip]="tooltipContent" severity="secondary" tooltipPosition="bottom" label="Button" />
             <ng-template #tooltipContent>
                 <div class="flex items-center">
-                    <img src="https://optimus.openng.org/logo-icon.svg" alt="Optimus UI" width="32" height="32" class="mr-2" />
-                    <span> <b>Optimus UI</b> rocks! </span>
+                    <img src="https://exhaustive-ui.e-xiste.com/logo-icon.svg" alt="ExhaustiveUI" width="32" height="32" class="mr-2" />
+                    <span> <b>ExhaustiveUI</b> rocks! </span>
                 </div>
             </ng-template>
         </div>

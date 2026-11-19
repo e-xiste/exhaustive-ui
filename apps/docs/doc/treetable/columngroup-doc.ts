@@ -1,8 +1,8 @@
 import { DeferredDemo } from '@/components/demo/deferreddemo';
 import { AppCode } from '@/components/doc/app.code';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TreeNode } from '@openng/optimus-ui/api';
-import { TreeTableModule } from '@openng/optimus-ui/treetable';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
 
 @Component({
     selector: 'columngroup-doc',

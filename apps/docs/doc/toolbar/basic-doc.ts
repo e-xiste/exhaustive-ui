@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@openng/optimus-ui/api';
+import { MenuItem } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { ToolbarModule } from '@openng/optimus-ui/toolbar';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { SplitButtonModule } from '@openng/optimus-ui/splitbutton';
-import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { IconFieldModule } from '@openng/optimus-ui/iconfield';
-import { InputIconModule } from '@openng/optimus-ui/inputicon';
+import { ToolbarModule } from '@exhaustive-ui/core/toolbar';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { IconFieldModule } from '@exhaustive-ui/core/iconfield';
+import { InputIconModule } from '@exhaustive-ui/core/inputicon';
 
 @Component({
     selector: 'basic-doc',

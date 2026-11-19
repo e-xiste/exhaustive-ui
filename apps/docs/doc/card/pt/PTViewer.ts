@@ -1,8 +1,8 @@
 import { AppDocPtViewer, getPTOptions } from '@/components/doc/app.docptviewer';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ButtonModule } from '@openng/optimus-ui/button';
-import { CardModule } from '@openng/optimus-ui/card';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CardModule } from '@exhaustive-ui/core/card';
 
 @Component({
     selector: 'card-pt-viewer',

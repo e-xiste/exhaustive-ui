@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { MessageService } from '@openng/optimus-ui/api';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { FileUploadModule } from '@openng/optimus-ui/fileupload';
-import { ToastModule } from '@openng/optimus-ui/toast';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     selector: 'custom-doc',

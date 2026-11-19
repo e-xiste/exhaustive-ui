@@ -16,7 +16,7 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: `
-        <app-doc docTitle="Angular Dialog Component - Optimus UI" header="Dialog" description="Dialog is a container to display content in an overlay window." [docs]="docs" [apiDocs]="['Dialog']" [ptDocs]="ptComponent" themeDocs="dialog"></app-doc>
+        <app-doc docTitle="Angular Dialog Component - ExhaustiveUI" header="Dialog" description="Dialog is a container to display content in an overlay window." [docs]="docs" [apiDocs]="['Dialog']" [ptDocs]="ptComponent" themeDocs="dialog"></app-doc>
     `
 })
 export class DialogDemo {
