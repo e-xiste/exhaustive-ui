@@ -51,6 +51,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * mobile menu layers with the configured `zIndex.menu` directly), and MenubarSub's own `autoZIndex`/
  * `baseZIndex`/`mobileActive`/`ariaLabel`/`ariaLabelledBy` were never read either (Menubar sets the aria
  * attributes on the root list itself and `mobileActive` was only passed down to nested submenus).
+ * The deprecated `transitionOptions` and `tabindex` on PanelMenu were only forwarded to its internal lists,
+ * which never read them: the toggle animation is driven by `motionOptions` and the sub list host always
+ * sets its own `tabindex="-1"`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -89,7 +92,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-tiered-menu', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-menubar', names: ['autoZIndex', 'baseZIndex'] },
     { selector: 'p-menubarSub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] },
-    { selector: 'p-menubarsub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] }
+    { selector: 'p-menubarsub', names: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'] },
+    { selector: 'p-panelMenu', names: ['transitionOptions', 'tabindex'] },
+    { selector: 'p-panelmenu', names: ['transitionOptions', 'tabindex'] },
+    { selector: 'p-panel-menu', names: ['transitionOptions', 'tabindex'] }
 ];
 
 /**
@@ -106,9 +112,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * Menubar's and MenubarSub's `autoZIndex`/`baseZIndex`/`mobileActive`/`ariaLabel`/`ariaLabelledBy` are left
  * out as well: Menu, TieredMenu, ContextMenu and most other components still expose working inputs of
  * the same names.
+ * PanelMenu's `tabindex` is left out too: it is a native attribute and an input on many other components.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'].includes(name)
+    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex'].includes(name)
 );
 
 /**
@@ -135,9 +142,10 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * read (motionOptions drives the overlay animation); Button's deprecated badgeClass, stored but
  * never read (badgeSeverity styles the inner badge); ContextMenuSub's autoZIndex/baseZIndex/popup,
  * stored but never read (the parent ContextMenu handles layering); TieredMenu's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation); and
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation);
  * Menubar's autoZIndex/baseZIndex plus MenubarSub's autoZIndex/baseZIndex/mobileActive/ariaLabel/
- * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu).
+ * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); and PanelMenu's transitionOptions
+ * and tabindex, forwarded to internal lists that never read them.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

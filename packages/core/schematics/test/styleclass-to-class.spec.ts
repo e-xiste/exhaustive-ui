@@ -914,9 +914,9 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-panel class="existing my-panel"></p-panel>\n`);
     });
 
-    it('does not rewrite styleClass on p-panelmenu', async () => {
+    it('does not rewrite styleClass on p-menu', async () => {
         const runner = createMigrationRunner();
-        const content = `<p-panelmenu [model]="items" styleClass="my-menu"></p-panelmenu>\n`;
+        const content = `<p-menu [model]="items" styleClass="my-menu"></p-menu>\n`;
         const tree = createAppTree({ '/src/app/app.html': content });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(content);
@@ -1352,6 +1352,33 @@ describe('styleclass-to-class', () => {
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-menubar class="existing my-menubar"></p-menubar>\n`);
+    });
+
+    it('rewrites a static styleClass to class on p-panelmenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panelmenu [model]="items" styleClass="w-full md:w-80" [multiple]="true"></p-panelmenu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panelmenu [model]="items" class="w-full md:w-80" [multiple]="true"></p-panelmenu>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-panelMenu and p-panel-menu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panelMenu [model]="items" [styleClass]="menuClass"></p-panelMenu>\n<p-panel-menu [model]="items" styleClass="my-menu"></p-panel-menu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panelMenu [model]="items" [class]="menuClass"></p-panelMenu>\n<p-panel-menu [model]="items" class="my-menu"></p-panel-menu>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-panelmenu', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panelmenu class="existing" styleClass="my-menu" [model]="items"></p-panelmenu>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-panelmenu class="existing my-menu" [model]="items"></p-panelmenu>\n`);
     });
 
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {

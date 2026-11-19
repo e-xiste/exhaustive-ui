@@ -274,6 +274,34 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-contextmenu-sub [items]="items" [root]="true"></p-contextmenu-sub>\n<p-contextMenuSub [items]="items"></p-contextMenuSub>\n<p-contextmenu [model]="items" [autoZIndex]="false" [baseZIndex]="100"></p-contextmenu>\n`);
     });
 
+    it('removes the deprecated transitionOptions and the dead tabindex from p-panelmenu while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-panelmenu [model]="items" transitionOptions="400ms ease" [tabindex]="0" [motionOptions]="motion"></p-panelmenu>\n<p-panelMenu [model]="items" [transitionOptions]="transition" tabindex="1"></p-panelMenu>\n<p-panel-menu [model]="items" [multiple]="true" tabindex="2"></p-panel-menu>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).toBe(`<p-panelmenu [model]="items" [motionOptions]="motion"></p-panelmenu>\n<p-panelMenu [model]="items"></p-panelMenu>\n<p-panel-menu [model]="items" [multiple]="true"></p-panel-menu>\n`);
+    });
+
+    it('keeps tabindex on other components and does not report a programmatic tabindex access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const html = `<p-menu [model]="items" [tabindex]="0"></p-menu>\n<div tabindex="-1"></div>\n`;
+        const ts = `export class Foo {\n    focusable(menu: { tabindex: number }) {\n        return menu.tabindex >= 0;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/app.html': html, '/src/app/foo.ts': ts });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(html);
+        expect(result.readContent('/src/app/foo.ts')).toBe(ts);
+        expect(warnings.join('\n')).not.toContain('tabindex');
+    });
+
     it('does not report a programmatic autoZIndex or popup access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    layer(menu: { autoZIndex: boolean; popup: boolean }) {\n        return menu.autoZIndex && menu.popup;\n    }\n}\n`;
