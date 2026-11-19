@@ -138,6 +138,24 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(content);
     });
 
+    it('removes the deprecated transitionOptions from p-accordion while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-accordion value="0" transitionOptions="200ms ease-in" [motionOptions]="motion"></p-accordion>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion value="0" [motionOptions]="motion"></p-accordion>\n`);
+    });
+
+    it('removes a bound [transitionOptions] from p-accordion', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-accordion [transitionOptions]="transition" [(value)]="active" [multiple]="true"></p-accordion>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion [(value)]="active" [multiple]="true"></p-accordion>\n`);
+    });
+
     it('removes inputId from p-togglebutton and its aliases', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({

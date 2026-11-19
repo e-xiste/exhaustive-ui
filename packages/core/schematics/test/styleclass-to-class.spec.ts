@@ -949,6 +949,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-dock class="existing my-dock"></p-dock>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-accordion', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-accordion value="0" styleClass="my-accordion"></p-accordion>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion value="0" class="my-accordion"></p-accordion>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-accordion', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-accordion [styleClass]="accordionClass" [(value)]="active"></p-accordion>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion [class]="accordionClass" [(value)]="active"></p-accordion>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-accordion', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-accordion class="existing" styleClass="my-accordion"></p-accordion>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-accordion class="existing my-accordion"></p-accordion>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

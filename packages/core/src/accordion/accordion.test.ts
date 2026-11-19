@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { MotionOptions } from '@exhaustive-ui/motion';
 import { Accordion, AccordionContent, AccordionHeader, AccordionPanel, AccordionTabCloseEvent, AccordionTabOpenEvent } from './accordion';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: true,
     imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
     template: `
         <p-accordion
@@ -14,8 +14,8 @@ import { Accordion, AccordionContent, AccordionHeader, AccordionPanel, Accordion
             [selectOnFocus]="selectOnFocus"
             [expandIcon]="expandIcon"
             [collapseIcon]="collapseIcon"
-            [transitionOptions]="transitionOptions"
-            [styleClass]="styleClass"
+            [motionOptions]="motionOptions"
+            [class]="styleClass"
             (onOpen)="onOpen($event)"
             (onClose)="onClose($event)"
         >
@@ -54,7 +54,7 @@ class TestAccordionComponent {
     selectOnFocus = false;
     expandIcon?: string;
     collapseIcon?: string;
-    transitionOptions = '400ms cubic-bezier(0.86, 0, 0.07, 1)';
+    motionOptions?: MotionOptions;
     styleClass?: string;
     tab1Disabled = false;
     tab2Disabled = false;
@@ -74,7 +74,6 @@ class TestAccordionComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: true,
     imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
     template: `
         <p-accordion [(value)]="value" [multiple]="true">
@@ -98,7 +97,6 @@ class TestDynamicAccordionComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: true,
     imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
     template: `
         <p-accordion [(value)]="value">
@@ -120,7 +118,6 @@ class TestCustomIconAccordionComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: true,
     imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
     template: `
         <p-accordion [value]="'tab1'" [pt]="pt">
@@ -168,9 +165,9 @@ describe('Accordion', () => {
             expect(accordion.value()).toBeUndefined();
             expect(accordion.multiple()).toBe(false);
             expect(accordion.selectOnFocus()).toBe(false);
-            expect(accordion.transitionOptions).toBe('400ms cubic-bezier(0.86, 0, 0.07, 1)');
-            expect(accordion.expandIcon).toBeUndefined();
-            expect(accordion.collapseIcon).toBeUndefined();
+            expect(accordion.motionOptions()).toBeUndefined();
+            expect(accordion.expandIcon()).toBeUndefined();
+            expect(accordion.collapseIcon()).toBeUndefined();
         });
 
         it('should accept custom values', async () => {
@@ -179,7 +176,7 @@ describe('Accordion', () => {
             component.selectOnFocus = true;
             component.expandIcon = 'pi pi-plus';
             component.collapseIcon = 'pi pi-minus';
-            component.transitionOptions = '200ms ease-in';
+            component.motionOptions = { duration: 200 };
             component.styleClass = 'custom-accordion';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -187,10 +184,10 @@ describe('Accordion', () => {
             expect(accordion.value()).toBe('tab1');
             expect(accordion.multiple()).toBe(true);
             expect(accordion.selectOnFocus()).toBe(true);
-            expect(accordion.expandIcon).toBe('pi pi-plus');
-            expect(accordion.collapseIcon).toBe('pi pi-minus');
-            expect(accordion.transitionOptions).toBe('200ms ease-in');
-            expect(accordion.styleClass).toBe('custom-accordion');
+            expect(accordion.expandIcon()).toBe('pi pi-plus');
+            expect(accordion.collapseIcon()).toBe('pi pi-minus');
+            expect(accordion.motionOptions()).toEqual({ duration: 200 });
+            expect(accordionEl.nativeElement.className).toContain('custom-accordion');
         });
 
         it('should render all accordion panels', () => {
@@ -616,10 +613,14 @@ describe('Accordion', () => {
     });
 
     describe('Animation', () => {
-        it('should apply transition options', async () => {
-            component.transitionOptions = '300ms ease-out';
+        it('should apply motion options', async () => {
+            component.motionOptions = { duration: 300 };
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
+
+            const contents = fixture.debugElement.queryAll(By.directive(AccordionContent));
+            expect(accordion.computedMotionOptions()).toEqual(expect.objectContaining({ duration: 300 }));
+            expect(contents[0].componentInstance.computedMotionOptions()).toEqual(expect.objectContaining({ duration: 300 }));
 
             const headers = fixture.debugElement.queryAll(By.directive(AccordionHeader));
             headers[0].nativeElement.click();
@@ -650,15 +651,17 @@ describe('Accordion', () => {
 
             const headers = fixture.debugElement.queryAll(By.directive(AccordionHeader));
 
-            // Check that custom expand icon is referenced (not necessarily displayed)
-            expect(accordion.expandIcon).toBe('pi pi-plus');
-            expect(accordion.collapseIcon).toBe('pi pi-minus');
+            expect(accordion.expandIcon()).toBe('pi pi-plus');
+            expect(accordion.collapseIcon()).toBe('pi pi-minus');
+            expect(headers[0].nativeElement.querySelector('span.pi-plus')).toBeTruthy();
+            expect(headers[0].nativeElement.querySelector('svg[data-p-icon]')).toBeNull();
 
             headers[0].nativeElement.click();
             await fixture.whenStable();
 
-            // Check that accordion value changed (indicating icon toggle worked)
             expect(accordion.value()).toBe('tab1');
+            expect(headers[0].nativeElement.querySelector('span.pi-minus')).toBeTruthy();
+            expect(headers[0].nativeElement.querySelector('span.pi-plus')).toBeNull();
         });
 
         it('should render custom icon template', async () => {
@@ -861,7 +864,7 @@ describe('Accordion', () => {
     });
 
     describe('CSS Classes and Styling', () => {
-        it('should apply custom style class', async () => {
+        it('should apply custom class', async () => {
             component.styleClass = 'custom-accordion';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();

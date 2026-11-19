@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, InjectionToken, Input, input, InputSignalWithTransform, model, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, output } from '@angular/core';
+import { afterEveryRender, ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, input, InputSignalWithTransform, model, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, output } from '@angular/core';
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { findSingle, focus, getAttribute, uuid } from '@exhaustive-ui/utils';
 import { BlockableUI, SharedModule } from '@exhaustive-ui/core/api';
@@ -46,10 +46,6 @@ export interface AccordionToggleIconTemplateContext {
      */
     active: boolean;
 }
-const ACCORDION_PANEL_INSTANCE = new InjectionToken<AccordionPanel>('ACCORDION_PANEL_INSTANCE');
-const ACCORDION_HEADER_INSTANCE = new InjectionToken<AccordionHeader>('ACCORDION_HEADER_INSTANCE');
-const ACCORDION_CONTENT_INSTANCE = new InjectionToken<AccordionContent>('ACCORDION_CONTENT_INSTANCE');
-const ACCORDION_INSTANCE = new InjectionToken<Accordion>('ACCORDION_INSTANCE');
 
 /**
  * AccordionPanel is a helper component for Accordion component.
@@ -58,7 +54,6 @@ const ACCORDION_INSTANCE = new InjectionToken<Accordion>('ACCORDION_INSTANCE');
 @Component({
     selector: 'p-accordion-panel, p-accordionpanel',
     imports: [BindModule],
-    standalone: true,
     template: `<ng-content />`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
@@ -68,17 +63,16 @@ const ACCORDION_INSTANCE = new InjectionToken<Accordion>('ACCORDION_INSTANCE');
         '[attr.data-p-active]': 'active()'
     },
     hostDirectives: [Bind],
-    providers: [AccordionStyle, { provide: ACCORDION_PANEL_INSTANCE, useExisting: AccordionPanel }, { provide: PARENT_INSTANCE, useExisting: AccordionPanel }]
+    providers: [AccordionStyle, { provide: PARENT_INSTANCE, useExisting: AccordionPanel }]
 })
 export class AccordionPanel extends BaseComponent<AccordionPanelPassThrough> {
-    $pcAccordionPanel: AccordionPanel | undefined = inject(ACCORDION_PANEL_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
     componentName = 'AccordionPanel';
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('root'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -113,25 +107,24 @@ export class AccordionPanel extends BaseComponent<AccordionPanelPassThrough> {
 @Component({
     selector: 'p-accordion-header, p-accordionheader',
     imports: [CommonModule, ChevronDownIcon, ChevronUpIcon, BindModule],
-    standalone: true,
     template: `
         <ng-content />
         @if (toggleicon()) {
             <ng-template *ngTemplateOutlet="toggleicon(); context: { active: active() }"></ng-template>
         } @else {
             @if (active()) {
-                @if (pcAccordion.collapseIcon) {
-                    <span [class]="cn(cx('toggleicon'), pcAccordion.collapseIcon)" [attr.aria-hidden]="true" [pBind]="ptm('toggleicon')"></span>
+                @if (pcAccordion.collapseIcon()) {
+                    <span [class]="cn(cx('toggleicon'), pcAccordion.collapseIcon())" [attr.aria-hidden]="true" [pBind]="ptm('toggleicon')"></span>
                 }
-                @if (!pcAccordion.collapseIcon) {
+                @if (!pcAccordion.collapseIcon()) {
                     <svg data-p-icon="chevron-up" [class]="cx('toggleicon')" [pBind]="ptm('toggleicon')" [attr.aria-hidden]="true" />
                 }
             }
             @if (!active()) {
-                @if (pcAccordion.expandIcon) {
-                    <span [class]="cn(cx('toggleicon'), pcAccordion.expandIcon)" [attr.aria-hidden]="true" [pBind]="ptm('toggleicon')"></span>
+                @if (pcAccordion.expandIcon()) {
+                    <span [class]="cn(cx('toggleicon'), pcAccordion.expandIcon())" [attr.aria-hidden]="true" [pBind]="ptm('toggleicon')"></span>
                 }
-                @if (!pcAccordion.expandIcon) {
+                @if (!pcAccordion.expandIcon()) {
                     <svg data-p-icon="chevron-down" [attr.aria-hidden]="true" [pBind]="ptm('toggleicon')" />
                 }
             }
@@ -150,20 +143,19 @@ export class AccordionPanel extends BaseComponent<AccordionPanelPassThrough> {
         '[attr.data-p-active]': 'active()',
         '[attr.data-p-disabled]': 'disabled()',
         '[style.user-select]': '"none"',
-        '[attr.data-p]': 'dataP'
+        '[attr.data-p]': 'dataP()'
     },
     hostDirectives: [Ripple, Bind],
-    providers: [AccordionStyle, { provide: ACCORDION_HEADER_INSTANCE, useExisting: AccordionHeader }, { provide: PARENT_INSTANCE, useExisting: AccordionHeader }]
+    providers: [AccordionStyle, { provide: PARENT_INSTANCE, useExisting: AccordionHeader }]
 })
 export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
-    $pcAccordionHeader: AccordionHeader | undefined = inject(ACCORDION_HEADER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
     componentName = 'AccordionHeader';
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('root'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -310,17 +302,16 @@ export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
         event.preventDefault();
     }
 
-    get dataP() {
-        return this.cn({
+    readonly dataP = computed(() =>
+        this.cn({
             active: this.active()
-        });
-    }
+        })
+    );
 }
 
 @Component({
     selector: 'p-accordion-content, p-accordioncontent',
     imports: [BindModule, MotionModule],
-    standalone: true,
     template: `
         <p-motion [visible]="active()" name="p-collapsible" hideStrategy="visibility" [mountOnEnter]="false" [unmountOnLeave]="false" [options]="computedMotionOptions()">
             <div [pBind]="ptm('contentWrapper', ptParams())" [class]="cx('contentWrapper')">
@@ -340,17 +331,16 @@ export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
         '[attr.aria-labelledby]': 'ariaLabelledby()'
     },
     hostDirectives: [Bind],
-    providers: [AccordionStyle, { provide: ACCORDION_CONTENT_INSTANCE, useExisting: AccordionContent }, { provide: PARENT_INSTANCE, useExisting: AccordionContent }]
+    providers: [AccordionStyle, { provide: PARENT_INSTANCE, useExisting: AccordionContent }]
 })
 export class AccordionContent extends BaseComponent<AccordionContentPassThrough> {
-    $pcAccordionContent: AccordionContent | undefined = inject(ACCORDION_CONTENT_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
     componentName = 'AccordionContent';
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('root'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -381,25 +371,23 @@ export class AccordionContent extends BaseComponent<AccordionContentPassThrough>
  */
 @Component({
     selector: 'p-accordion',
-    standalone: true,
     imports: [SharedModule, BindModule],
     template: ` <ng-content />`,
     host: {
-        '[class]': "cn(cx('root'), styleClass)"
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [AccordionStyle, { provide: ACCORDION_INSTANCE, useExisting: Accordion }, { provide: PARENT_INSTANCE, useExisting: Accordion }]
+    providers: [AccordionStyle, { provide: PARENT_INSTANCE, useExisting: Accordion }]
 })
 export class Accordion extends BaseComponent<AccordionPassThrough> implements BlockableUI {
     componentName = 'Accordion';
 
-    $pcAccordion: Accordion | undefined = inject(ACCORDION_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('root'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
     /**
@@ -415,33 +403,21 @@ export class Accordion extends BaseComponent<AccordionPassThrough> implements Bl
      */
     multiple = input(false, { transform: (v: any) => transformToBoolean(v) });
     /**
-     * Class of the element.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
-    /**
      * Icon of a collapsed tab.
      * @group Props
      */
-    @Input() expandIcon: string | undefined;
+    readonly expandIcon = input<string | undefined>();
     /**
      * Icon of an expanded tab.
      * @group Props
      */
-    @Input() collapseIcon: string | undefined;
+    readonly collapseIcon = input<string | undefined>();
     /**
      * When enabled, the focused tab is activated.
      * @defaultValue false
      * @group Props
      */
     selectOnFocus = input(false, { transform: (v: any) => transformToBoolean(v) });
-    /**
-     * Transition options of the animation.
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    @Input() transitionOptions: string = '400ms cubic-bezier(0.86, 0, 0.07, 1)';
 
     /**
      * The motion options.

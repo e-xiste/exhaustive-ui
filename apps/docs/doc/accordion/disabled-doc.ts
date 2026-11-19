@@ -9,7 +9,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     imports: [AccordionModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>Enabling <i>disabled</i> property of an AccordionTab prevents user interaction.</p>
+            <p>Enabling <i>disabled</i> property of an AccordionPanel prevents user interaction.</p>
         </app-docsectiontext>
         <div class="card flex justify-content-center">
             <p-accordion [value]="['0']" [multiple]="true">

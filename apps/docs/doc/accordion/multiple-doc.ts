@@ -9,7 +9,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     imports: [AccordionModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>Only one tab at a time can be active by default, enabling <i>multiple</i> property changes this behavior to allow multiple tabs. In this case <i>activeIndex</i> needs to be an array.</p>
+            <p>Only one tab at a time can be active by default, enabling <i>multiple</i> property changes this behavior to allow multiple tabs. In this case <i>value</i> needs to be an array.</p>
         </app-docsectiontext>
         <div class="card flex justify-content-center">
             <p-accordion [value]="['0']" [multiple]="true">
