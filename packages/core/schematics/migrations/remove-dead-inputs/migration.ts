@@ -12,6 +12,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * show/hide animation is driven by `motionOptions`, which has no transition-options equivalent.
  * `showTransitionOptions`/`hideTransitionOptions` on Overlay were stored but never read: its
  * show/hide animation is driven by `motionOptions` too.
+ * `showTransitionOptions`/`hideTransitionOptions` on ColorPicker were stored but never read either:
+ * its overlay animation is driven by `motionOptions`.
  * The deprecated `size` on OverlayBadge was stored and logged a deprecation warning but never
  * forwarded to the inner badge: only `badgeSize` ever sized it.
  */
@@ -20,6 +22,9 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toastItem', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-message', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-overlay', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-colorPicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-colorpicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-color-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-overlayBadge', names: ['size'] },
     { selector: 'p-overlay-badge', names: ['size'] },
     { selector: 'p-overlaybadge', names: ['size'] }
@@ -38,11 +43,12 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions and hideTransitionOptions, dead since the show/hide animation moved to the
  * shared Motion directive (which has no equivalent transform/transition-options input); and
  * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
- * showTransitionOptions/hideTransitionOptions, stored but never read; and OverlayBadge's deprecated
- * size, never forwarded to the inner badge (badgeSize is the input that sizes it).
+ * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
+ * showTransitionOptions/hideTransitionOptions, stored but never read either; and OverlayBadge's
+ * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it).
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
- * `p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge` are removed
+ * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

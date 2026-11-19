@@ -526,6 +526,31 @@ describe('styleclass-to-class', () => {
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-toggleSwitch class="camel"></p-toggleSwitch>\n<p-toggle-switch class="kebab"></p-toggle-switch>\n`);
+    it('rewrites styleClass on p-colorpicker', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-colorpicker [styleClass]="myClass"></p-colorpicker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-colorpicker [class]="myClass"></p-colorpicker>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-colorpicker', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-colorpicker class="existing" styleClass="my-colorpicker"></p-colorpicker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-colorpicker class="existing my-colorpicker"></p-colorpicker>\n`);
+    });
+
+    it('rewrites styleClass on the p-colorPicker and p-color-picker aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-colorPicker styleClass="a"></p-colorPicker>\n<p-color-picker [styleClass]="b"></p-color-picker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-colorPicker class="a"></p-colorPicker>\n<p-color-picker [class]="b"></p-color-picker>\n`);
     });
 
     it('switches quotes when the merged class value contains the existing class quote character', async () => {

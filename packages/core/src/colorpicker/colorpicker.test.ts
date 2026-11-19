@@ -38,8 +38,6 @@ class TestBasicColorPickerComponent {
     tabindex: string = '0';
     inputId: string | undefined;
     autoZIndex: boolean = true;
-    showTransitionOptions: string = '.12s cubic-bezier(0, 0, 0.2, 1)';
-    hideTransitionOptions: string = '.1s linear';
     autofocus: boolean = false;
     defaultColor: string = 'ff0000';
     appendTo: any = undefined as any;
@@ -175,11 +173,11 @@ describe('ColorPicker', () => {
         it('should have default values', () => {
             const colorPickerInstance = testFixture.debugElement.query(By.css('p-colorpicker')).componentInstance;
 
-            expect(colorPickerInstance.format).toBe('hex');
-            expect(colorPickerInstance.inline).toBeFalsy();
+            expect(colorPickerInstance.format()).toBe('hex');
+            expect(colorPickerInstance.inline()).toBeFalsy();
             expect(colorPickerInstance.disabled()).toBe(false);
-            expect(colorPickerInstance.autoZIndex).toBe(true);
-            expect(colorPickerInstance.defaultColor).toBe('ff0000');
+            expect(colorPickerInstance.autoZIndex()).toBe(true);
+            expect(colorPickerInstance.defaultColor()).toBe('ff0000');
         });
 
         it('should accept custom values', async () => {
@@ -193,11 +191,11 @@ describe('ColorPicker', () => {
 
             const colorPickerInstance = testFixture.debugElement.query(By.css('p-colorpicker')).componentInstance;
 
-            expect(colorPickerInstance.format).toBe('rgb');
-            expect(colorPickerInstance.inline).toBe(true);
+            expect(colorPickerInstance.format()).toBe('rgb');
+            expect(colorPickerInstance.inline()).toBe(true);
             expect(colorPickerInstance.disabled()).toBe(true);
-            expect(colorPickerInstance.autoZIndex).toBe(false);
-            expect(colorPickerInstance.defaultColor).toBe('00ff00');
+            expect(colorPickerInstance.autoZIndex()).toBe(false);
+            expect(colorPickerInstance.defaultColor()).toBe('00ff00');
         });
     });
 
@@ -239,13 +237,13 @@ describe('ColorPicker', () => {
 
             const input = testFixture.debugElement.query(By.css('input[type="text"]'));
 
-            expect(colorPickerInstance.overlayVisible).toBeFalsy();
+            expect(colorPickerInstance.overlayVisible()).toBeFalsy();
 
             input.nativeElement.click();
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            expect(colorPickerInstance.overlayVisible).toBeTruthy();
+            expect(colorPickerInstance.overlayVisible()).toBeTruthy();
         });
 
         it('should handle input key events', async () => {
@@ -261,7 +259,7 @@ describe('ColorPicker', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            expect(colorPickerInstance.overlayVisible).toBeTruthy();
+            expect(colorPickerInstance.overlayVisible()).toBeTruthy();
 
             // Test Escape key to close
             const escapeKeyEvent = new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' });
@@ -269,7 +267,7 @@ describe('ColorPicker', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            expect(colorPickerInstance.overlayVisible).toBeFalsy();
+            expect(colorPickerInstance.overlayVisible()).toBeFalsy();
         });
     });
 
@@ -287,7 +285,7 @@ describe('ColorPicker', () => {
             const hexPicker = testFixture.debugElement.query(By.css('#hex-picker'));
             const hexPickerInstance = hexPicker.componentInstance;
 
-            expect(hexPickerInstance.format).toBe('hex');
+            expect(hexPickerInstance.format()).toBe('hex');
             expect(testComponent.hexColor).toBe('#6466f1');
         });
 
@@ -295,7 +293,7 @@ describe('ColorPicker', () => {
             const rgbPicker = testFixture.debugElement.query(By.css('#rgb-picker'));
             const rgbPickerInstance = rgbPicker.componentInstance;
 
-            expect(rgbPickerInstance.format).toBe('rgb');
+            expect(rgbPickerInstance.format()).toBe('rgb');
             expect(testComponent.rgbColor).toEqual({ r: 100, g: 102, b: 241 });
         });
 
@@ -303,7 +301,7 @@ describe('ColorPicker', () => {
             const hsbPicker = testFixture.debugElement.query(By.css('#hsb-picker'));
             const hsbPickerInstance = hsbPicker.componentInstance;
 
-            expect(hsbPickerInstance.format).toBe('hsb');
+            expect(hsbPickerInstance.format()).toBe('hsb');
             expect(testComponent.hsbColor).toEqual({ h: 239, s: 59, b: 95 });
         });
 
@@ -508,7 +506,7 @@ describe('ColorPicker', () => {
             await testFixture.whenStable();
 
             // Check that the panel becomes visible
-            expect(colorPickerInstance.overlayVisible).toBeTruthy();
+            expect(colorPickerInstance.overlayVisible()).toBeTruthy();
         });
 
         it('should handle disabled state', async () => {
@@ -526,7 +524,7 @@ describe('ColorPicker', () => {
             await testFixture.whenStable();
 
             const colorPickerInstance = testFixture.debugElement.query(By.css('p-colorpicker')).componentInstance;
-            expect(colorPickerInstance.autofocus).toBe(true);
+            expect(colorPickerInstance.autofocus()).toBe(true);
         });
     });
 
@@ -602,7 +600,7 @@ describe('ColorPicker', () => {
             await testFixture.whenStable();
 
             const colorPickerInstance = testFixture.debugElement.query(By.css('p-colorpicker')).componentInstance;
-            expect(colorPickerInstance.defaultColor).toBe('00ff00');
+            expect(colorPickerInstance.defaultColor()).toBe('00ff00');
         });
     });
 
@@ -1039,18 +1037,18 @@ describe('ColorPicker', () => {
                         pt: {
                             colorPicker: {
                                 root: ({ instance }: any) => ({
-                                    class: instance?.inline ? 'PT_INLINE_MODE' : 'PT_OVERLAY_MODE'
+                                    class: instance?.inline() ? 'PT_INLINE_MODE' : 'PT_OVERLAY_MODE'
                                 }),
                                 panel: ({ instance }: any) => ({
                                     style: {
-                                        'background-color': instance?.inline ? 'lightblue' : 'lightgreen'
+                                        'background-color': instance?.inline() ? 'lightblue' : 'lightgreen'
                                     } as any
                                 }),
                                 preview: ({ instance }: any) => ({
-                                    'data-p-format': instance?.format
+                                    'data-p-format': instance?.format()
                                 }),
                                 content: ({ instance }: any) => ({
-                                    class: instance?.format ? `PT_FORMAT_${instance.format.toUpperCase()}` : 'PT_NO_FORMAT'
+                                    class: instance?.format() ? `PT_FORMAT_${instance.format().toUpperCase()}` : 'PT_NO_FORMAT'
                                 })
                             }
                         }
@@ -1084,13 +1082,13 @@ describe('ColorPicker', () => {
                         pt: {
                             colorPicker: {
                                 root: ({ instance }: any) => ({
-                                    class: instance?.inline ? 'PT_INLINE' : 'PT_OVERLAY',
+                                    class: instance?.inline() ? 'PT_INLINE' : 'PT_OVERLAY',
                                     'data-p-disabled': instance?.$disabled()
                                 }),
                                 preview: ({ instance }: any) => ({
-                                    'data-p-format': instance?.format,
+                                    'data-p-format': instance?.format(),
                                     style: {
-                                        'border-color': instance?.format === 'rgb' ? 'blue' : 'red'
+                                        'border-color': instance?.format() === 'rgb' ? 'blue' : 'red'
                                     } as any
                                 })
                             }
@@ -1712,14 +1710,14 @@ describe('ColorPicker', () => {
                         pt: {
                             colorPicker: {
                                 root: ({ instance }: any) => ({
-                                    class: instance?.inline ? 'PT_INLINE' : 'PT_OVERLAY',
-                                    'data-format': instance?.format,
+                                    class: instance?.inline() ? 'PT_INLINE' : 'PT_OVERLAY',
+                                    'data-format': instance?.format(),
                                     'data-disabled': instance?.$disabled()
                                 }),
                                 panel: ({ instance }: any) => ({
-                                    class: instance?.inline ? 'PT_PANEL_INLINE' : 'PT_PANEL_OVERLAY',
+                                    class: instance?.inline() ? 'PT_PANEL_INLINE' : 'PT_PANEL_OVERLAY',
                                     style: {
-                                        border: instance?.inline ? '1px solid blue' : '1px solid red'
+                                        border: instance?.inline() ? '1px solid blue' : '1px solid red'
                                     } as any
                                 }),
                                 colorSelector: ({ instance }: any) => ({
@@ -1764,7 +1762,7 @@ describe('ColorPicker', () => {
 @Component({
     standalone: true,
     imports: [ColorPicker, SharedModule],
-    template: ` <p-colorpicker> </p-colorpicker> `
+    template: ` <p-colorpicker [inline]="true"> </p-colorpicker> `
 })
 class ColorPickerQueryApiHostComponent {}
 
@@ -1781,5 +1779,173 @@ describe('ColorPicker Signal Query API', () => {
         const instance = fixture.debugElement.query(By.directive(ColorPicker)).componentInstance;
 
         expect(instance.overlayViewChild()).toBeDefined();
+        expect(instance.colorSelectorViewChild()).toBeDefined();
+        expect(instance.colorHandleViewChild()).toBeDefined();
+        expect(instance.hueViewChild()).toBeDefined();
+        expect(instance.hueHandleViewChild()).toBeDefined();
+    });
+});
+
+describe('ColorPicker Signal State', () => {
+    let fixture: ComponentFixture<ColorPicker>;
+    let instance: ColorPicker;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ColorPicker],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        fixture = TestBed.createComponent(ColorPicker);
+        instance = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    it('should re-render the preview input when inputId and tabindex change', async () => {
+        fixture.componentRef.setInput('inputId', 'first-id');
+        fixture.componentRef.setInput('tabindex', '3');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        let input = fixture.nativeElement.querySelector('input[type="text"]') as HTMLInputElement;
+        expect(input.getAttribute('id')).toBe('first-id');
+        expect(input.getAttribute('tabindex')).toBe('3');
+
+        fixture.componentRef.setInput('inputId', 'second-id');
+        fixture.componentRef.setInput('tabindex', '7');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        input = fixture.nativeElement.querySelector('input[type="text"]') as HTMLInputElement;
+        expect(input.getAttribute('id')).toBe('second-id');
+        expect(input.getAttribute('tabindex')).toBe('7');
+    });
+
+    it('should switch between overlay and inline rendering when inline changes', async () => {
+        expect(fixture.nativeElement.querySelector('input[type="text"]')).toBeTruthy();
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-overlay')).toBe(true);
+
+        fixture.componentRef.setInput('inline', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelector('input[type="text"]')).toBeFalsy();
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-overlay')).toBe(false);
+        expect(fixture.nativeElement.querySelector('.p-colorpicker-panel-inline')).toBeTruthy();
+    });
+
+    it('should derive the preview background color from the written value', async () => {
+        expect(instance.inputBgColor()).toBe('#ff0000');
+
+        instance.writeValue('#00ff00');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.value()).toEqual({ h: 120, s: 100, b: 100 });
+        expect(instance.inputBgColor()).toBe('#00ff00');
+        const input = fixture.nativeElement.querySelector('input[type="text"]') as HTMLInputElement;
+        expect(input.style.backgroundColor).toBe('rgb(0, 255, 0)');
+
+        fixture.componentRef.setInput('defaultColor', '0000ff');
+        instance.writeValue(null);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.inputBgColor()).toBe('#0000ff');
+        expect(input.style.backgroundColor).toBe('rgb(0, 0, 255)');
+    });
+
+    it('should convert the written value according to the format input', () => {
+        fixture.componentRef.setInput('format', 'rgb');
+        instance.writeValue({ r: 0, g: 0, b: 255 });
+        expect(instance.value()).toEqual({ h: 240, s: 100, b: 100 });
+        expect(instance.getValueToUpdate()).toEqual({ r: 0, g: 0, b: 255 });
+
+        fixture.componentRef.setInput('format', 'hsb');
+        instance.writeValue({ h: 60, s: 50, b: 50 });
+        expect(instance.value()).toEqual({ h: 60, s: 50, b: 50 });
+        expect(instance.getValueToUpdate()).toEqual({ h: 60, s: 50, b: 50 });
+    });
+
+    it('should toggle overlayVisible through show, hide and togglePanel', () => {
+        expect(instance.overlayVisible()).toBeFalsy();
+
+        instance.show();
+        expect(instance.overlayVisible()).toBe(true);
+
+        instance.hide();
+        expect(instance.overlayVisible()).toBe(false);
+
+        instance.togglePanel();
+        expect(instance.overlayVisible()).toBe(true);
+
+        instance.togglePanel();
+        expect(instance.overlayVisible()).toBe(false);
+    });
+
+    it('should track dragging state and bound document listeners while dragging', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const colorSelector = fixture.nativeElement.querySelector('.p-colorpicker-color-selector') as HTMLElement;
+        colorSelector.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 10, clientY: 10 }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.colorDragging()).toBe(true);
+        expect(instance.documentMousemoveListener()).toBeTruthy();
+        expect(instance.documentMouseupListener()).toBeTruthy();
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-dragging')).toBe(true);
+
+        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.colorDragging()).toBe(false);
+        expect(instance.documentMousemoveListener()).toBeNull();
+        expect(instance.documentMouseupListener()).toBeNull();
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-dragging')).toBe(false);
+
+        const hue = fixture.nativeElement.querySelector('.p-colorpicker-hue') as HTMLElement;
+        hue.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 10, clientY: 10 }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.hueDragging()).toBe(true);
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-dragging')).toBe(true);
+
+        instance.onDragEnd();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(instance.hueDragging()).toBe(false);
+        expect(instance.documentMousemoveListener()).toBeNull();
+        expect(fixture.nativeElement.classList.contains('p-colorpicker-dragging')).toBe(false);
+    });
+});
+
+describe('Class Attribute', () => {
+    @Component({
+        standalone: true,
+        imports: [ColorPicker],
+        template: `<p-colorpicker class="custom-colorpicker-class" />`
+    })
+    class TestClassColorPickerComponent {}
+
+    it('should apply native class to host element', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestClassColorPickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestClassColorPickerComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const el = fixture.nativeElement.querySelector('p-colorpicker');
+        expect(el.classList.contains('custom-colorpicker-class')).toBe(true);
+        expect(el.classList.contains('p-colorpicker')).toBe(true);
     });
 });

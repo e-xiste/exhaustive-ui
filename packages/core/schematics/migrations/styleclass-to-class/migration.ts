@@ -37,7 +37,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-input-icon',
     'p-toggleswitch',
     'p-toggleSwitch',
-    'p-toggle-switch'
+    'p-toggle-switch',
+    'p-colorPicker',
+    'p-colorpicker',
+    'p-color-picker'
 ];
 
 /**

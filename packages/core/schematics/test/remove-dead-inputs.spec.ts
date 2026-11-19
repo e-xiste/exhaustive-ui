@@ -45,6 +45,17 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-overlay [(visible)]="visible"></p-overlay>\n`);
     });
 
+    it('removes showTransitionOptions/hideTransitionOptions from p-colorpicker and its aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-colorpicker [(ngModel)]="color" showTransitionOptions=".12s ease" [hideTransitionOptions]="hideTf"></p-colorpicker>\n<p-colorPicker [showTransitionOptions]="showTf" [inline]="true"></p-colorPicker>\n<p-color-picker hideTransitionOptions=".1s linear" format="rgb"></p-color-picker>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(`<p-colorpicker [(ngModel)]="color"></p-colorpicker>\n<p-colorPicker [inline]="true"></p-colorPicker>\n<p-color-picker format="rgb"></p-color-picker>\n`);
+    });
+
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
