@@ -165,12 +165,12 @@ describe('AnimateOnScroll', () => {
         });
 
         it('should have default values', () => {
-            expect(directive.threshold).toBe(0.5);
-            expect(directive.once).toBe(false);
-            expect(directive.enterClass).toBeUndefined();
-            expect(directive.leaveClass).toBeUndefined();
-            expect(directive.root).toBeUndefined();
-            expect(directive.rootMargin).toBeUndefined();
+            expect(directive.threshold()).toBe(0.5);
+            expect(directive.once()).toBe(false);
+            expect(directive.enterClass()).toBeUndefined();
+            expect(directive.leaveClass()).toBeUndefined();
+            expect(directive.root()).toBeUndefined();
+            expect(directive.rootMargin()).toBeUndefined();
         });
 
         it('should apply host class', () => {
@@ -220,14 +220,14 @@ describe('AnimateOnScroll', () => {
 
             expect(directiveEl.nativeElement.classList.contains('fade-in')).toBe(true);
             expect(directiveEl.nativeElement.style.opacity).toBe('' as any);
-            expect(directive.animationState).toBe('enter');
+            expect(directive.animationState()).toBe('enter');
         });
 
         it('should not trigger enter animation if already in enter state', async () => {
             await fixture.whenStable();
 
             const mockObserver = mockIntersectionObserverInstances[0];
-            directive.animationState = 'enter';
+            directive.animationState.set('enter');
             vi.spyOn(directiveEl.nativeElement.classList, 'add').mockImplementation(() => {});
 
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 100 });
@@ -271,22 +271,22 @@ describe('AnimateOnScroll', () => {
             const mockObserver = mockIntersectionObserverInstances[0];
             // First make it active
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 100 });
-            expect(directive.isObserverActive).toBe(true);
+            expect(directive.isObserverActive()).toBe(true);
 
             // Then trigger leave
             mockObserver.triggerIntersection(directiveEl.nativeElement, false, { top: 100 });
 
             expect(directiveEl.nativeElement.classList.contains('fade-out')).toBe(true);
             expect(directiveEl.nativeElement.style.opacity).toBe('0');
-            expect(directive.animationState).toBe('leave');
+            expect(directive.animationState()).toBe('leave');
         });
 
         it('should not trigger leave animation if already in leave state', async () => {
             await fixture.whenStable();
 
             const mockObserver = mockIntersectionObserverInstances[0];
-            directive.isObserverActive = true;
-            directive.animationState = 'leave';
+            directive.isObserverActive.set(true);
+            directive.animationState.set('leave');
             vi.spyOn(directiveEl.nativeElement.classList, 'add').mockImplementation(() => {});
 
             mockObserver.triggerIntersection(directiveEl.nativeElement, false, { top: 100 });
@@ -299,7 +299,7 @@ describe('AnimateOnScroll', () => {
 
             directiveEl.nativeElement.classList.add('fade-in');
             const mockObserver = mockIntersectionObserverInstances[0];
-            directive.isObserverActive = true;
+            directive.isObserverActive.set(true);
 
             mockObserver.triggerIntersection(directiveEl.nativeElement, false, { top: 100 });
 
@@ -325,7 +325,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
-            expect(directive.options.threshold).toBe(0.8);
+            expect(directive.options().threshold).toBe(0.8);
         });
 
         it('should use custom rootMargin', async () => {
@@ -334,7 +334,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
-            expect(directive.options.rootMargin).toBe('10px');
+            expect(directive.options().rootMargin).toBe('10px');
         });
 
         it('should use custom root element', async () => {
@@ -344,7 +344,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
-            expect(directive.options.root).toBe(rootElement);
+            expect(directive.options().root).toBe(rootElement);
         });
 
         it('should default threshold to 0.5 when undefined', async () => {
@@ -353,7 +353,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
-            expect(directive.options.threshold).toBe(0.5);
+            expect(directive.options().threshold).toBe(0.5);
         });
     });
 
@@ -424,7 +424,7 @@ describe('AnimateOnScroll', () => {
             const mockObserver = mockIntersectionObserverInstances[0];
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 100 });
 
-            expect(directive.animationEndListener).toBeDefined();
+            expect(directive.animationEndListener()).toBeDefined();
         });
 
         it('should clean up classes on animation end', async () => {
@@ -438,7 +438,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             expect(directiveEl.nativeElement.classList.contains('fade-in')).toBe(false);
-            expect(directive.animationEndListener).toBeNull();
+            expect(directive.animationEndListener()).toBeNull();
         });
 
         it('should not create multiple animation listeners', async () => {
@@ -447,10 +447,10 @@ describe('AnimateOnScroll', () => {
             const mockObserver = mockIntersectionObserverInstances[0];
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 100 });
 
-            const firstListener = directive.animationEndListener;
+            const firstListener = directive.animationEndListener();
             directive.bindAnimationEvents();
 
-            expect(directive.animationEndListener).toBe(firstListener);
+            expect(directive.animationEndListener()).toBe(firstListener);
         });
     });
 
@@ -509,7 +509,7 @@ describe('AnimateOnScroll', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(directive.enterClass).toBe('new-enter-class');
+            expect(directive.enterClass()).toBe('new-enter-class');
         });
 
         it('should handle dynamic threshold changes', async () => {
@@ -517,8 +517,8 @@ describe('AnimateOnScroll', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(directive.threshold).toBe(0.9);
-            expect(directive.options.threshold).toBe(0.9);
+            expect(directive.threshold()).toBe(0.9);
+            expect(directive.options().threshold).toBe(0.9);
         });
 
         it('should handle dynamic once property changes', async () => {
@@ -526,7 +526,7 @@ describe('AnimateOnScroll', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(directive.once).toBe(true);
+            expect(directive.once()).toBe(true);
         });
     });
 
@@ -550,19 +550,19 @@ describe('AnimateOnScroll', () => {
 
         it('should create reset observer', async () => {
             await fixture.whenStable();
-            expect(directive.resetObserver).toBeDefined();
+            expect(directive.resetObserver()).toBeDefined();
         });
 
         it('should reset animation state when element goes out of view', async () => {
             await fixture.whenStable();
 
             // Simulate reset observer triggering
-            if (directive.resetObserver && mockIntersectionObserverInstances.length > 1) {
+            if (directive.resetObserver() && mockIntersectionObserverInstances.length > 1) {
                 const resetObserver = mockIntersectionObserverInstances[1];
                 resetObserver.triggerIntersection(directiveEl.nativeElement, false, { top: 100 });
 
                 expect(directiveEl.nativeElement.style.opacity).toBe('0');
-                expect(directive.animationState).toBeUndefined();
+                expect(directive.animationState()).toBeUndefined();
             }
         });
     });
@@ -591,7 +591,7 @@ describe('AnimateOnScroll', () => {
             await fixture.whenStable();
 
             const directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
-            expect(directive.options.root).toBeNull();
+            expect(directive.options().root).toBeNull();
         });
 
         it('should handle elements with top <= 0', async () => {
@@ -603,7 +603,7 @@ describe('AnimateOnScroll', () => {
             const directive = directiveEl.injector.get(AnimateOnScroll);
 
             const mockObserver = mockIntersectionObserverInstances[0];
-            directive.isObserverActive = true;
+            directive.isObserverActive.set(true);
 
             // Element at top of viewport or above
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 0 });
@@ -643,14 +643,14 @@ describe('AnimateOnScroll', () => {
         it('should unobserve elements when unbinding', async () => {
             await fixture.whenStable();
 
-            vi.spyOn(directive.observer!, 'unobserve');
-            vi.spyOn(directive.resetObserver!, 'unobserve');
+            vi.spyOn(directive.observer()!, 'unobserve');
+            vi.spyOn(directive.resetObserver()!, 'unobserve');
 
             directive.unbindIntersectionObserver();
 
-            expect(directive.observer!.unobserve).toHaveBeenCalledWith(directiveEl.nativeElement);
-            expect(directive.resetObserver!.unobserve).toHaveBeenCalledWith(directiveEl.nativeElement);
-            expect(directive.isObserverActive).toBe(false);
+            expect(directive.observer()!.unobserve).toHaveBeenCalledWith(directiveEl.nativeElement);
+            expect(directive.resetObserver()!.unobserve).toHaveBeenCalledWith(directiveEl.nativeElement);
+            expect(directive.isObserverActive()).toBe(false);
         });
 
         it('should cleanup animation listeners', async () => {
@@ -659,11 +659,11 @@ describe('AnimateOnScroll', () => {
             const mockObserver = mockIntersectionObserverInstances[0];
             mockObserver.triggerIntersection(directiveEl.nativeElement, true, { top: 100 });
 
-            expect(directive.animationEndListener).toBeDefined();
+            expect(directive.animationEndListener()).toBeDefined();
 
             directive.unbindAnimationEvents();
 
-            expect(directive.animationEndListener).toBeNull();
+            expect(directive.animationEndListener()).toBeNull();
         });
 
         it('should handle rapid create and destroy cycles', async () => {
@@ -688,7 +688,7 @@ describe('AnimateOnScroll', () => {
 
             const directive = fixture.debugElement.query(By.directive(AnimateOnScroll)).injector.get(AnimateOnScroll);
             // In test environment, isPlatformBrowser should return true
-            expect(directive.observer).toBeDefined();
+            expect(directive.observer()).toBeDefined();
         });
     });
 
@@ -704,7 +704,7 @@ describe('AnimateOnScroll', () => {
         });
 
         it('should return correct options object', () => {
-            const options = directive.options;
+            const options = directive.options();
 
             expect(options.threshold).toBe(0.8);
             expect(options.rootMargin).toBe('10px');

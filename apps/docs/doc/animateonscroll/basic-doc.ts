@@ -90,7 +90,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>
                 <div
-                    pAnimateOnScroll="{ enterClass: 'animate-enter fade-in-10 zoom-in-50 slide-in-from-t-20 animate-duration-1000' }"
+                    pAnimateOnScroll
+                    enterClass="animate-enter fade-in-10 zoom-in-50 slide-in-from-t-20 animate-duration-1000"
                     class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
                 >
                     <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2">$1.5M</span>
