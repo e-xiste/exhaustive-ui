@@ -59,6 +59,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` and `containerClass` on Galleria were
  * stored but never read: its animations are driven by `motionOptions`/`maskMotionOptions` and no
  * element ever received the container class.
+ * `removeStyleClass` on FileUpload was stored but never read: the file remove buttons are styled through
+ * the PassThrough API only.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -103,7 +105,9 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-panel-menu', names: ['transitionOptions', 'tabindex'] },
     { selector: 'p-megaMenuSub', names: ['disabled', 'queryMatches'] },
     { selector: 'p-megamenu-sub', names: ['disabled', 'queryMatches'] },
-    { selector: 'p-galleria', names: ['showTransitionOptions', 'hideTransitionOptions', 'containerClass'] }
+    { selector: 'p-galleria', names: ['showTransitionOptions', 'hideTransitionOptions', 'containerClass'] },
+    { selector: 'p-fileupload', names: ['removeStyleClass'] },
+    { selector: 'p-fileUpload', names: ['removeStyleClass'] }
 ];
 
 /**
@@ -156,8 +160,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * Menubar's autoZIndex/baseZIndex plus MenubarSub's autoZIndex/baseZIndex/mobileActive/ariaLabel/
  * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); PanelMenu's transitionOptions
  * and tabindex, forwarded to internal lists that never read them; MegaMenuSub's disabled and
- * queryMatches, never read (MegaMenu handles both itself); and Galleria's deprecated
- * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass.
+ * queryMatches, never read (MegaMenu handles both itself); Galleria's deprecated
+ * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; and FileUpload's
+ * removeStyleClass, never read (the remove buttons are styled through PassThrough).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

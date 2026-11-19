@@ -651,4 +651,15 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/foo.ts')).toBe(content);
         expect(warnings.join('\n')).toContain('/src/app/foo.ts:3');
     });
+
+    it('removes removeStyleClass from p-fileupload and p-fileUpload while keeping the other style classes', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-fileupload name="demo[]" removeStyleClass="p-button-danger" chooseStyleClass="choose"></p-fileupload>\n<p-fileUpload [removeStyleClass]="removeClass" [uploadStyleClass]="uploadClass" styleClass="w-full"></p-fileUpload>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('removeStyleClass');
+        expect(html).toBe(`<p-fileupload name="demo[]" chooseStyleClass="choose"></p-fileupload>\n<p-fileUpload [uploadStyleClass]="uploadClass" styleClass="w-full"></p-fileUpload>\n`);
+    });
 });
