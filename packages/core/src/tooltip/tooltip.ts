@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, computed, Directive, effect, ElementRef, inject, InjectionToken, input, Input, NgModule, NgZone, numberAttribute, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
+import { afterNextRender, booleanAttribute, Directive, effect, ElementRef, inject, InjectionToken, input, linkedSignal, NgModule, NgZone, numberAttribute, signal, TemplateRef, untracked, ViewContainerRef } from '@angular/core';
 import { appendChild, createElement, fadeIn, findSingle, getOuterHeight, getOuterWidth, getViewport, getWindowScrollLeft, getWindowScrollTop, hasClass, removeChild, uuid } from '@exhaustive-ui/utils';
 import { TooltipOptions } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -19,7 +18,6 @@ const TOOLTIP_INSTANCE = new InjectionToken<Tooltip>('TOOLTIP_INSTANCE');
  */
 @Directive({
     selector: '[pTooltip]',
-    standalone: true,
     providers: [TooltipStyle, { provide: TOOLTIP_INSTANCE, useExisting: Tooltip }, { provide: PARENT_INSTANCE, useExisting: Tooltip }]
 })
 export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
@@ -34,99 +32,93 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
      * Position of the tooltip.
      * @group Props
      */
-    @Input() tooltipPosition: 'right' | 'left' | 'top' | 'bottom' | string | undefined;
+    tooltipPosition = input<'right' | 'left' | 'top' | 'bottom' | string | undefined>(undefined);
     /**
      * Event to show the tooltip.
      * @group Props
      */
-    @Input() tooltipEvent: 'hover' | 'focus' | 'both' = 'hover';
+    tooltipEvent = input<'hover' | 'focus' | 'both'>('hover');
     /**
      * Type of CSS position.
      * @group Props
      */
-    @Input() positionStyle: string | undefined;
+    positionStyle = input<string | undefined>(undefined);
     /**
      * Style class of the tooltip.
      * @group Props
      */
-    @Input() tooltipStyleClass: string | undefined;
+    tooltipStyleClass = input<string | undefined>(undefined);
     /**
      * Whether the z-index should be managed automatically to always go on top or have a fixed value.
      * @group Props
      */
-    @Input() tooltipZIndex: string | undefined;
+    tooltipZIndex = input<string | undefined>(undefined);
     /**
      * By default the tooltip contents are rendered as text. Set to false to support html tags in the content.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) escape: boolean = true;
+    escape = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Delay to show the tooltip in milliseconds.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) showDelay: number | undefined;
+    showDelay = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Delay to hide the tooltip in milliseconds.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) hideDelay: number | undefined;
+    hideDelay = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Time to wait in milliseconds to hide the tooltip even it is active.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) life: number | undefined;
+    life = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Specifies the additional vertical offset of the tooltip from its default position.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) positionTop: number | undefined;
+    positionTop = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Specifies the additional horizontal offset of the tooltip from its default position.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) positionLeft: number | undefined;
+    positionLeft = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Whether to hide tooltip when hovering over tooltip content.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoHide: boolean = true;
+    autoHide = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Automatically adjusts the element position when there is not enough space on the selected position.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) fitContent: boolean = true;
+    fitContent = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to hide tooltip on escape key press.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnEscape: boolean = true;
+    hideOnEscape = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to show the tooltip only when the target text overflows (e.g., ellipsis is active).
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showOnEllipsis: boolean = false;
+    showOnEllipsis = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Content of the tooltip.
      * @group Props
      */
-    @Input('pTooltip') content: string | TemplateRef<HTMLElement> | undefined;
+    content = input<string | TemplateRef<HTMLElement> | undefined>(undefined, { alias: 'pTooltip' });
     /**
      * When present, it specifies that the component should be disabled.
      * @defaultValue false
      * @group Props
      */
-    @Input('tooltipDisabled') get disabled(): boolean {
-        return this._disabled as boolean;
-    }
-    set disabled(val: boolean) {
-        this._disabled = val;
-        this.deactivate();
-    }
+    disabled = input<boolean | undefined>(undefined, { alias: 'tooltipDisabled' });
     /**
      * Specifies the tooltip configuration options for the component.
      * @group Props
      */
-    @Input() tooltipOptions: TooltipOptions | undefined;
+    tooltipOptions = input<TooltipOptions | undefined>(undefined);
     /**
      * Target element to attach the overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @defaultValue 'self'
@@ -134,74 +126,69 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
      */
     appendTo = input<HTMLElement | ElementRef | TemplateRef<any> | 'self' | 'body' | null | undefined | any>(undefined);
 
-    $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
+    private readonly _id = uuid('pn_id_') + '_tooltip';
 
-    _tooltipOptions = {
-        tooltipLabel: null,
-        tooltipPosition: 'right',
-        tooltipEvent: 'hover',
-        appendTo: 'body',
-        positionStyle: null,
-        tooltipStyleClass: null,
-        tooltipZIndex: 'auto',
-        escape: true,
-        disabled: null,
-        showDelay: null,
-        hideDelay: null,
-        positionTop: null,
-        positionLeft: null,
-        life: null,
-        autoHide: true,
-        hideOnEscape: true,
-        showOnEllipsis: false,
-        id: uuid('pn_id_') + '_tooltip'
-    };
+    _tooltipOptions = linkedSignal<Record<string, any>>(() => ({
+        tooltipLabel: this.content() ?? null,
+        tooltipPosition: this.tooltipPosition() ?? 'right',
+        tooltipEvent: this.tooltipEvent(),
+        appendTo: this.appendTo() ?? 'body',
+        positionStyle: this.positionStyle() ?? null,
+        tooltipStyleClass: this.tooltipStyleClass() ?? null,
+        tooltipZIndex: this.tooltipZIndex() ?? 'auto',
+        escape: this.escape(),
+        disabled: this.disabled() ?? null,
+        showDelay: this.showDelay() ?? null,
+        hideDelay: this.hideDelay() ?? null,
+        positionTop: this.positionTop() ?? null,
+        positionLeft: this.positionLeft() ?? null,
+        life: this.life() ?? null,
+        autoHide: this.autoHide(),
+        hideOnEscape: this.hideOnEscape(),
+        showOnEllipsis: this.showOnEllipsis(),
+        id: this._id,
+        ...this.tooltipOptions()
+    }));
 
-    _disabled: boolean | undefined;
+    container = signal<any>(undefined);
 
-    container: any;
+    tooltipText = signal<any>(undefined);
 
-    styleClass: string | undefined;
+    showTimeout = signal<any>(undefined);
 
-    tooltipText: any;
+    hideTimeout = signal<any>(undefined);
 
-    rootPTClasses: string = '';
+    active = signal<boolean | undefined>(undefined);
 
-    showTimeout: any;
+    mouseEnterListener = signal<Nullable<Function>>(undefined);
 
-    hideTimeout: any;
+    mouseLeaveListener = signal<Nullable<Function>>(undefined);
 
-    active: boolean | undefined;
+    containerMouseleaveListener = signal<Nullable<Function>>(undefined);
 
-    mouseEnterListener: Nullable<Function>;
+    clickListener = signal<Nullable<Function>>(undefined);
 
-    mouseLeaveListener: Nullable<Function>;
+    focusListener = signal<Nullable<Function>>(undefined);
 
-    containerMouseleaveListener: Nullable<Function>;
+    blurListener = signal<Nullable<Function>>(undefined);
 
-    clickListener: Nullable<Function>;
+    touchStartListener = signal<Nullable<Function>>(undefined);
 
-    focusListener: Nullable<Function>;
+    touchEndListener = signal<Nullable<Function>>(undefined);
 
-    blurListener: Nullable<Function>;
+    documentTouchListener = signal<Nullable<Function>>(undefined);
 
-    touchStartListener: Nullable<Function>;
+    documentEscapeListener = signal<Nullable<Function>>(undefined);
 
-    touchEndListener: Nullable<Function>;
+    scrollHandler = signal<any>(undefined);
 
-    documentTouchListener: Nullable<Function>;
-
-    documentEscapeListener: Nullable<Function>;
-
-    scrollHandler: any;
-
-    resizeListener: any;
+    resizeListener = signal<any>(undefined);
 
     _componentStyle = inject(TooltipStyle);
 
-    interactionInProgress = false;
+    interactionInProgress = signal(false);
 
-    pointerInside = false;
+    pointerInside = signal(false);
 
     /**
      * Used to pass attributes to DOM elements inside the Tooltip component.
@@ -233,30 +220,54 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         effect(() => {
             this.pTooltipUnstyled() && this.directiveUnstyled.set(this.pTooltipUnstyled());
         });
-    }
 
-    onAfterViewInit() {
-        if (isPlatformBrowser(this.platformId)) {
+        effect(() => {
+            const content = this.content();
+
+            untracked(() => {
+                if (this.active()) {
+                    if (content) {
+                        if (this.container() && this.container().offsetParent) {
+                            this.updateText();
+                            this.align();
+                        } else {
+                            this.show();
+                        }
+                    } else {
+                        this.hide();
+                    }
+                }
+            });
+        });
+
+        effect(() => {
+            this.tooltipOptions();
+            this.disabled();
+
+            untracked(() => this.deactivate());
+        });
+
+        afterNextRender(() => {
             this.zone.runOutsideAngular(() => {
                 const tooltipEvent = this.getOption('tooltipEvent');
 
                 if (tooltipEvent === 'hover' || tooltipEvent === 'both') {
-                    this.mouseEnterListener = this.onMouseEnter.bind(this);
-                    this.mouseLeaveListener = this.onMouseLeave.bind(this);
-                    this.clickListener = this.onInputClick.bind(this);
-                    this.el.nativeElement.addEventListener('mouseenter', this.mouseEnterListener);
-                    this.el.nativeElement.addEventListener('click', this.clickListener);
-                    this.el.nativeElement.addEventListener('mouseleave', this.mouseLeaveListener);
+                    this.mouseEnterListener.set(this.onMouseEnter.bind(this));
+                    this.mouseLeaveListener.set(this.onMouseLeave.bind(this));
+                    this.clickListener.set(this.onInputClick.bind(this));
+                    this.el.nativeElement.addEventListener('mouseenter', this.mouseEnterListener());
+                    this.el.nativeElement.addEventListener('click', this.clickListener());
+                    this.el.nativeElement.addEventListener('mouseleave', this.mouseLeaveListener());
 
                     // Touch support
-                    this.touchStartListener = this.onTouchStart.bind(this);
-                    this.touchEndListener = this.onTouchEnd.bind(this);
-                    this.el.nativeElement.addEventListener('touchstart', this.touchStartListener, { passive: true });
-                    this.el.nativeElement.addEventListener('touchend', this.touchEndListener, { passive: true });
+                    this.touchStartListener.set(this.onTouchStart.bind(this));
+                    this.touchEndListener.set(this.onTouchEnd.bind(this));
+                    this.el.nativeElement.addEventListener('touchstart', this.touchStartListener(), { passive: true });
+                    this.el.nativeElement.addEventListener('touchend', this.touchEndListener(), { passive: true });
                 }
                 if (tooltipEvent === 'focus' || tooltipEvent === 'both') {
-                    this.focusListener = this.onFocus.bind(this);
-                    this.blurListener = this.onBlur.bind(this);
+                    this.focusListener.set(this.onFocus.bind(this));
+                    this.blurListener.set(this.onBlur.bind(this));
 
                     let target = this.el.nativeElement.querySelector('.p-component');
 
@@ -264,112 +275,11 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
                         target = this.getTarget(this.el.nativeElement);
                     }
 
-                    target.addEventListener('focus', this.focusListener);
-                    target.addEventListener('blur', this.blurListener);
+                    target.addEventListener('focus', this.focusListener());
+                    target.addEventListener('blur', this.blurListener());
                 }
             });
-        }
-    }
-
-    onChanges(simpleChange: SimpleChanges) {
-        if (simpleChange.tooltipPosition) {
-            this.setOption({ tooltipPosition: simpleChange.tooltipPosition.currentValue });
-        }
-
-        if (simpleChange.tooltipEvent) {
-            this.setOption({ tooltipEvent: simpleChange.tooltipEvent.currentValue });
-        }
-
-        if (simpleChange.appendTo) {
-            this.setOption({ appendTo: simpleChange.appendTo.currentValue });
-        }
-
-        if (simpleChange.positionStyle) {
-            this.setOption({ positionStyle: simpleChange.positionStyle.currentValue });
-        }
-
-        if (simpleChange.tooltipStyleClass) {
-            this.setOption({ tooltipStyleClass: simpleChange.tooltipStyleClass.currentValue });
-        }
-
-        if (simpleChange.tooltipZIndex) {
-            this.setOption({ tooltipZIndex: simpleChange.tooltipZIndex.currentValue });
-        }
-
-        if (simpleChange.escape) {
-            this.setOption({ escape: simpleChange.escape.currentValue });
-        }
-
-        if (simpleChange.showDelay) {
-            this.setOption({ showDelay: simpleChange.showDelay.currentValue });
-        }
-
-        if (simpleChange.hideDelay) {
-            this.setOption({ hideDelay: simpleChange.hideDelay.currentValue });
-        }
-
-        if (simpleChange.life) {
-            this.setOption({ life: simpleChange.life.currentValue });
-        }
-
-        if (simpleChange.positionTop) {
-            this.setOption({ positionTop: simpleChange.positionTop.currentValue });
-        }
-
-        if (simpleChange.positionLeft) {
-            this.setOption({ positionLeft: simpleChange.positionLeft.currentValue });
-        }
-
-        if (simpleChange.disabled) {
-            this.setOption({ disabled: simpleChange.disabled.currentValue });
-        }
-
-        if (simpleChange.content) {
-            this.setOption({ tooltipLabel: simpleChange.content.currentValue });
-
-            if (this.active) {
-                if (simpleChange.content.currentValue) {
-                    if (this.container && this.container.offsetParent) {
-                        this.updateText();
-                        this.align();
-                    } else {
-                        this.show();
-                    }
-                } else {
-                    this.hide();
-                }
-            }
-        }
-
-        if (simpleChange.autoHide) {
-            this.setOption({ autoHide: simpleChange.autoHide.currentValue });
-        }
-
-        if (simpleChange.showOnEllipsis) {
-            this.setOption({ showOnEllipsis: simpleChange.showOnEllipsis.currentValue });
-        }
-
-        if (simpleChange.id) {
-            this.setOption({ id: simpleChange.id.currentValue });
-        }
-
-        if (simpleChange.tooltipOptions) {
-            this._tooltipOptions = { ...this._tooltipOptions, ...simpleChange.tooltipOptions.currentValue };
-            this.deactivate();
-
-            if (this.active) {
-                if (this.getOption('tooltipLabel')) {
-                    if (this.container && this.container.offsetParent) {
-                        this.updateText();
-                        this.align();
-                    } else {
-                        this.show();
-                    }
-                } else {
-                    this.hide();
-                }
-            }
-        }
+        });
     }
 
     isAutoHide(): boolean {
@@ -381,19 +291,19 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         // detached (e.g. an overlay rendered inside the host closing on click), without the
         // pointer ever leaving. An enter without a preceding leave is not a new hover, so
         // ignore it - otherwise a tooltip dismissed by that very click comes straight back.
-        if (this.pointerInside) {
+        if (this.pointerInside()) {
             return;
         }
 
-        this.pointerInside = true;
+        this.pointerInside.set(true);
 
-        if (!this.container && !this.showTimeout) {
+        if (!this.container() && !this.showTimeout()) {
             this.activate();
         }
     }
 
     onMouseLeave(e: MouseEvent) {
-        this.pointerInside = false;
+        this.pointerInside.set(false);
 
         if (!this.isAutoHide()) {
             const valid = hasClass(e.relatedTarget as any, 'p-tooltip') || hasClass(e.relatedTarget as any, 'p-tooltip-text') || hasClass(e.relatedTarget as any, 'p-tooltip-arrow');
@@ -404,7 +314,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     onTouchStart(e: TouchEvent) {
-        if (!this.container && !this.showTimeout) {
+        if (!this.container() && !this.showTimeout()) {
             this.activate();
 
             if (!this.isAutoHide()) {
@@ -420,20 +330,24 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     bindDocumentTouchListener() {
-        if (!this.documentTouchListener) {
-            this.documentTouchListener = this.renderer.listen('document', 'touchstart', (e: TouchEvent) => {
-                if (this.container && !this.container.contains(e.target) && !this.el.nativeElement.contains(e.target)) {
-                    this.deactivate();
-                    this.unbindDocumentTouchListener();
-                }
-            });
+        if (!this.documentTouchListener()) {
+            this.documentTouchListener.set(
+                this.renderer.listen('document', 'touchstart', (e: TouchEvent) => {
+                    const container = this.container();
+                    if (container && !container.contains(e.target) && !this.el.nativeElement.contains(e.target)) {
+                        this.deactivate();
+                        this.unbindDocumentTouchListener();
+                    }
+                })
+            );
         }
     }
 
     unbindDocumentTouchListener() {
-        if (this.documentTouchListener) {
-            this.documentTouchListener();
-            this.documentTouchListener = null;
+        const documentTouchListener = this.documentTouchListener();
+        if (documentTouchListener) {
+            documentTouchListener();
+            this.documentTouchListener.set(null);
         }
     }
 
@@ -455,107 +369,121 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     activate() {
-        if (!this.interactionInProgress) {
+        if (!this.interactionInProgress()) {
             if (this.getOption('showOnEllipsis') && !this.hasEllipsis()) {
                 return;
             }
-            this.active = true;
+            this.active.set(true);
             this.clearHideTimeout();
 
             if (this.getOption('showDelay'))
-                this.showTimeout = setTimeout(() => {
-                    this.show();
-                }, this.getOption('showDelay'));
+                this.showTimeout.set(
+                    setTimeout(() => {
+                        this.show();
+                    }, this.getOption('showDelay'))
+                );
             else this.show();
 
             if (this.getOption('life')) {
                 let duration = this.getOption('showDelay') ? this.getOption('life') + this.getOption('showDelay') : this.getOption('life');
-                this.hideTimeout = setTimeout(() => {
-                    this.hide();
-                }, duration);
+                this.hideTimeout.set(
+                    setTimeout(() => {
+                        this.hide();
+                    }, duration)
+                );
             }
 
             if (this.getOption('hideOnEscape')) {
-                this.documentEscapeListener = this.renderer.listen('document', 'keydown.escape', () => {
-                    this.deactivate();
-                    this.documentEscapeListener?.();
-                });
+                this.documentEscapeListener.set(
+                    this.renderer.listen('document', 'keydown.escape', () => {
+                        this.deactivate();
+                        this.documentEscapeListener()?.();
+                    })
+                );
             }
-            this.interactionInProgress = true;
+            this.interactionInProgress.set(true);
         }
     }
 
     deactivate() {
-        this.interactionInProgress = false;
-        this.active = false;
+        this.interactionInProgress.set(false);
+        this.active.set(false);
         this.clearShowTimeout();
 
         if (this.getOption('hideDelay')) {
             this.clearHideTimeout(); //life timeout
-            this.hideTimeout = setTimeout(() => {
-                this.hide();
-            }, this.getOption('hideDelay'));
+            this.hideTimeout.set(
+                setTimeout(() => {
+                    this.hide();
+                }, this.getOption('hideDelay'))
+            );
         } else {
             this.hide();
         }
 
-        if (this.documentEscapeListener) {
-            this.documentEscapeListener();
+        const documentEscapeListener = this.documentEscapeListener();
+        if (documentEscapeListener) {
+            documentEscapeListener();
         }
     }
 
     create() {
-        if (this.container) {
+        if (this.container()) {
             this.clearHideTimeout();
             this.remove();
         }
 
-        this.container = createElement('div', { class: this.cx('root'), 'p-bind': this.ptm('root'), 'data-pc-section': 'root' });
-        this.container.setAttribute('role', 'tooltip');
+        const container: any = createElement('div', { class: this.cx('root'), 'p-bind': this.ptm('root'), 'data-pc-section': 'root' });
+        this.container.set(container);
+        container.setAttribute('role', 'tooltip');
         let tooltipArrow = createElement('div', { class: this.cx('arrow'), 'p-bind': this.ptm('arrow'), 'data-pc-section': 'arrow' });
-        this.container.appendChild(tooltipArrow);
-        this.tooltipText = createElement('div', { class: this.cx('text'), 'p-bind': this.ptm('text'), 'data-pc-section': 'text' });
+        container.appendChild(tooltipArrow);
+        this.tooltipText.set(createElement('div', { class: this.cx('text'), 'p-bind': this.ptm('text'), 'data-pc-section': 'text' }));
 
         this.updateText();
 
         if (this.getOption('positionStyle')) {
-            this.container.style.position = this.getOption('positionStyle');
+            container.style.position = this.getOption('positionStyle');
         }
 
-        this.container.appendChild(this.tooltipText);
+        container.appendChild(this.tooltipText());
 
-        if (this.getOption('appendTo') === 'body') document.body.appendChild(this.container);
-        else if (this.getOption('appendTo') === 'target') appendChild(this.container, this.el.nativeElement);
-        else appendChild(this.getOption('appendTo'), this.container);
+        if (this.getOption('appendTo') === 'body') document.body.appendChild(container);
+        else if (this.getOption('appendTo') === 'target') appendChild(container, this.el.nativeElement);
+        else appendChild(this.getOption('appendTo'), container);
 
-        this.container.style.display = 'none';
+        container.style.display = 'none';
 
-        if (this.fitContent) {
-            this.container.style.width = 'fit-content';
+        if (this.fitContent()) {
+            container.style.width = 'fit-content';
         }
 
         if (this.isAutoHide()) {
-            this.container.style.pointerEvents = 'none';
+            container.style.pointerEvents = 'none';
         } else {
-            this.container.style.pointerEvents = 'unset';
+            container.style.pointerEvents = 'unset';
             this.bindContainerMouseleaveListener();
         }
     }
 
     bindContainerMouseleaveListener() {
-        if (!this.containerMouseleaveListener) {
-            const targetEl: any = this.container ?? this.container.nativeElement;
+        if (!this.containerMouseleaveListener()) {
+            const container = this.container();
+            const targetEl: any = container ?? container.nativeElement;
 
-            this.containerMouseleaveListener = this.renderer.listen(targetEl, 'mouseleave', (e) => {
-                this.deactivate();
-            });
+            this.containerMouseleaveListener.set(
+                this.renderer.listen(targetEl, 'mouseleave', (e) => {
+                    this.deactivate();
+                })
+            );
         }
     }
 
     unbindContainerMouseleaveListener() {
-        if (this.containerMouseleaveListener) {
-            this.bindContainerMouseleaveListener();
-            this.containerMouseleaveListener = null;
+        const containerMouseleaveListener = this.containerMouseleaveListener();
+        if (containerMouseleaveListener) {
+            containerMouseleaveListener();
+            this.containerMouseleaveListener.set(null);
         }
     }
 
@@ -571,18 +499,19 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
 
         if (pDialogWrapper) {
             setTimeout(() => {
-                this.container && (this.container.style.display = 'inline-block');
-                this.container && this.align();
+                const container = this.container();
+                container && (container.style.display = 'inline-block');
+                container && this.align();
             }, 100);
         } else {
-            this.container.style.display = 'inline-block';
+            this.container().style.display = 'inline-block';
             this.align();
         }
 
-        fadeIn(this.container, 250);
+        fadeIn(this.container(), 250);
 
-        if (this.getOption('tooltipZIndex') === 'auto') ZIndexUtils.set('tooltip', this.container, this.config.zIndex.tooltip);
-        else this.container.style.zIndex = this.getOption('tooltipZIndex');
+        if (this.getOption('tooltipZIndex') === 'auto') ZIndexUtils.set('tooltip', this.container(), this.config.zIndex.tooltip);
+        else this.container().style.zIndex = this.getOption('tooltipZIndex');
 
         this.bindDocumentResizeListener();
         this.bindScrollListener();
@@ -590,22 +519,23 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
 
     hide() {
         if (this.getOption('tooltipZIndex') === 'auto') {
-            ZIndexUtils.clear(this.container);
+            ZIndexUtils.clear(this.container());
         }
         this.remove();
     }
 
     updateText() {
         const content = this.getOption('tooltipLabel');
+        const tooltipText = this.tooltipText();
         if (content && typeof (content as TemplateRef<any>).createEmbeddedView === 'function') {
             const embeddedViewRef = this.viewContainer.createEmbeddedView(content);
             embeddedViewRef.detectChanges();
-            embeddedViewRef.rootNodes.forEach((node) => this.tooltipText.appendChild(node));
+            embeddedViewRef.rootNodes.forEach((node) => tooltipText.appendChild(node));
         } else if (this.getOption('escape')) {
-            this.tooltipText.textContent = '';
-            this.tooltipText.appendChild(document.createTextNode(content));
+            tooltipText.textContent = '';
+            tooltipText.appendChild(document.createTextNode(content));
         } else {
-            this.tooltipText.innerHTML = content;
+            tooltipText.innerHTML = content;
         }
     }
 
@@ -647,7 +577,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         this.preAlign('right');
         const el = this.activeElement;
         const offsetLeft = getOuterWidth(el);
-        const offsetTop = (getOuterHeight(el) - getOuterHeight(this.container)) / 2;
+        const offsetTop = (getOuterHeight(el) - getOuterHeight(this.container())) / 2;
         this.alignTooltip(offsetLeft, offsetTop);
         let arrowElement = this.getArrowElement();
 
@@ -660,8 +590,8 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     alignLeft() {
         this.preAlign('left');
         let arrowElement = this.getArrowElement();
-        let offsetLeft = getOuterWidth(this.container);
-        let offsetTop = (getOuterHeight(this.el.nativeElement) - getOuterHeight(this.container)) / 2;
+        let offsetLeft = getOuterWidth(this.container());
+        let offsetTop = (getOuterHeight(this.el.nativeElement) - getOuterHeight(this.container())) / 2;
         this.alignTooltip(-offsetLeft, offsetTop);
 
         arrowElement.style.top = '50%';
@@ -674,10 +604,10 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         this.preAlign('top');
         let arrowElement = this.getArrowElement();
         let hostOffset = this.getHostOffset();
-        let elementWidth = getOuterWidth(this.container);
+        let elementWidth = getOuterWidth(this.container());
 
-        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container)) / 2;
-        let offsetTop = getOuterHeight(this.container);
+        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container())) / 2;
+        let offsetTop = getOuterHeight(this.container());
         this.alignTooltip(offsetLeft, -offsetTop);
 
         let elementRelativeCenter = hostOffset.left - this.getHostOffset().left + elementWidth / 2;
@@ -688,15 +618,15 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     getArrowElement(): any {
-        return findSingle(this.container, '[data-pc-section="arrow"]');
+        return findSingle(this.container(), '[data-pc-section="arrow"]');
     }
 
     alignBottom() {
         this.preAlign('bottom');
         let arrowElement = this.getArrowElement();
-        let elementWidth = getOuterWidth(this.container);
+        let elementWidth = getOuterWidth(this.container());
         let hostOffset = this.getHostOffset();
-        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container)) / 2;
+        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container())) / 2;
         let offsetTop = getOuterHeight(this.el.nativeElement);
         this.alignTooltip(offsetLeft, offsetTop);
 
@@ -712,16 +642,16 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         let hostOffset = this.getHostOffset();
         let left = hostOffset.left + offsetLeft;
         let top = hostOffset.top + offsetTop;
-        this.container.style.left = left + this.getOption('positionLeft') + 'px';
-        this.container.style.top = top + this.getOption('positionTop') + 'px';
+        this.container().style.left = left + this.getOption('positionLeft') + 'px';
+        this.container().style.top = top + this.getOption('positionTop') + 'px';
     }
 
     setOption(option: any) {
-        this._tooltipOptions = { ...this._tooltipOptions, ...option };
+        this._tooltipOptions.update((options) => ({ ...options, ...option }));
     }
 
     getOption(option: string) {
-        return this._tooltipOptions[option as keyof typeof this.tooltipOptions];
+        return this._tooltipOptions()[option];
     }
 
     getTarget(el: Element) {
@@ -729,17 +659,19 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     preAlign(position: string) {
-        this.container.style.left = -999 + 'px';
-        this.container.style.top = -999 + 'px';
-        this.container.className = this.cn(this.cx('root'), this.ptm('root')?.class, 'p-tooltip-' + position, this.getOption('tooltipStyleClass'));
+        const container = this.container();
+        container.style.left = -999 + 'px';
+        container.style.top = -999 + 'px';
+        container.className = this.cn(this.cx('root'), this.ptm('root')?.class, 'p-tooltip-' + position, this.getOption('tooltipStyleClass'));
     }
 
     isOutOfBounds(): boolean {
-        let offset = this.container.getBoundingClientRect();
+        const container = this.container();
+        let offset = container.getBoundingClientRect();
         let targetTop = offset.top;
         let targetLeft = offset.left;
-        let width = getOuterWidth(this.container);
-        let height = getOuterHeight(this.container);
+        let width = getOuterWidth(container);
+        let height = getOuterHeight(container);
         let viewport = getViewport();
 
         return targetLeft + width > viewport.width || targetLeft < 0 || targetTop < 0 || targetTop + height > viewport.height;
@@ -751,49 +683,53 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
 
     bindDocumentResizeListener() {
         this.zone.runOutsideAngular(() => {
-            this.resizeListener = this.onWindowResize.bind(this);
-            window.addEventListener('resize', this.resizeListener);
+            this.resizeListener.set(this.onWindowResize.bind(this));
+            window.addEventListener('resize', this.resizeListener());
         });
     }
 
     unbindDocumentResizeListener() {
-        if (this.resizeListener) {
-            window.removeEventListener('resize', this.resizeListener);
-            this.resizeListener = null;
+        const resizeListener = this.resizeListener();
+        if (resizeListener) {
+            window.removeEventListener('resize', resizeListener);
+            this.resizeListener.set(null);
         }
     }
 
     bindScrollListener() {
-        if (!this.scrollHandler) {
-            this.scrollHandler = new ConnectedOverlayScrollHandler(this.el.nativeElement, () => {
-                if (this.container) {
-                    this.hide();
-                }
-            });
+        if (!this.scrollHandler()) {
+            this.scrollHandler.set(
+                new ConnectedOverlayScrollHandler(this.el.nativeElement, () => {
+                    if (this.container()) {
+                        this.hide();
+                    }
+                })
+            );
         }
 
-        this.scrollHandler.bindScrollListener();
+        this.scrollHandler().bindScrollListener();
     }
 
     unbindScrollListener() {
-        if (this.scrollHandler) {
-            this.scrollHandler.unbindScrollListener();
+        const scrollHandler = this.scrollHandler();
+        if (scrollHandler) {
+            scrollHandler.unbindScrollListener();
         }
     }
 
     unbindEvents() {
         const tooltipEvent = this.getOption('tooltipEvent');
 
-        this.pointerInside = false;
+        this.pointerInside.set(false);
 
         if (tooltipEvent === 'hover' || tooltipEvent === 'both') {
-            this.el.nativeElement.removeEventListener('mouseenter', this.mouseEnterListener);
-            this.el.nativeElement.removeEventListener('mouseleave', this.mouseLeaveListener);
-            this.el.nativeElement.removeEventListener('click', this.clickListener);
+            this.el.nativeElement.removeEventListener('mouseenter', this.mouseEnterListener());
+            this.el.nativeElement.removeEventListener('mouseleave', this.mouseLeaveListener());
+            this.el.nativeElement.removeEventListener('click', this.clickListener());
 
             // Touch support
-            this.el.nativeElement.removeEventListener('touchstart', this.touchStartListener);
-            this.el.nativeElement.removeEventListener('touchend', this.touchEndListener);
+            this.el.nativeElement.removeEventListener('touchstart', this.touchStartListener());
+            this.el.nativeElement.removeEventListener('touchend', this.touchEndListener());
             this.unbindDocumentTouchListener();
         }
         if (tooltipEvent === 'focus' || tooltipEvent === 'both') {
@@ -803,17 +739,18 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
                 target = this.getTarget(this.el.nativeElement);
             }
 
-            target.removeEventListener('focus', this.focusListener);
-            target.removeEventListener('blur', this.blurListener);
+            target.removeEventListener('focus', this.focusListener());
+            target.removeEventListener('blur', this.blurListener());
         }
         this.unbindDocumentResizeListener();
     }
 
     remove() {
-        if (this.container && this.container.parentElement) {
-            if (this.getOption('appendTo') === 'body') document.body.removeChild(this.container);
-            else if (this.getOption('appendTo') === 'target') this.el.nativeElement.removeChild(this.container);
-            else removeChild(this.getOption('appendTo'), this.container);
+        const container = this.container();
+        if (container && container.parentElement) {
+            if (this.getOption('appendTo') === 'body') document.body.removeChild(container);
+            else if (this.getOption('appendTo') === 'target') this.el.nativeElement.removeChild(container);
+            else removeChild(this.getOption('appendTo'), container);
         }
 
         this.unbindDocumentResizeListener();
@@ -821,21 +758,23 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         this.unbindContainerMouseleaveListener();
         this.unbindDocumentTouchListener();
         this.clearTimeouts();
-        this.container = null;
-        this.scrollHandler = null;
+        this.container.set(null);
+        this.scrollHandler.set(null);
     }
 
     clearShowTimeout() {
-        if (this.showTimeout) {
-            clearTimeout(this.showTimeout);
-            this.showTimeout = null;
+        const showTimeout = this.showTimeout();
+        if (showTimeout) {
+            clearTimeout(showTimeout);
+            this.showTimeout.set(null);
         }
     }
 
     clearHideTimeout() {
-        if (this.hideTimeout) {
-            clearTimeout(this.hideTimeout);
-            this.hideTimeout = null;
+        const hideTimeout = this.hideTimeout();
+        if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            this.hideTimeout.set(null);
         }
     }
 
@@ -847,19 +786,21 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     onDestroy() {
         this.unbindEvents();
 
-        if (this.container) {
-            ZIndexUtils.clear(this.container);
+        if (this.container()) {
+            ZIndexUtils.clear(this.container());
         }
 
         this.remove();
 
-        if (this.scrollHandler) {
-            this.scrollHandler.destroy();
-            this.scrollHandler = null;
+        const scrollHandler = this.scrollHandler();
+        if (scrollHandler) {
+            scrollHandler.destroy();
+            this.scrollHandler.set(null);
         }
 
-        if (this.documentEscapeListener) {
-            this.documentEscapeListener();
+        const documentEscapeListener = this.documentEscapeListener();
+        if (documentEscapeListener) {
+            documentEscapeListener();
         }
     }
 }

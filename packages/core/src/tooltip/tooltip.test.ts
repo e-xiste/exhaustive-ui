@@ -11,7 +11,7 @@ import { Tooltip } from './tooltip';
     template: `
         <input
             #inputElement
-            pTooltip="Default tooltip text"
+            [pTooltip]="content"
             [tooltipPosition]="tooltipPosition"
             [tooltipEvent]="tooltipEvent"
             [positionStyle]="positionStyle"
@@ -36,6 +36,7 @@ import { Tooltip } from './tooltip';
 class TestBasicTooltipComponent {
     readonly inputElement = viewChild.required('inputElement', { read: ElementRef });
 
+    content: string | undefined = 'Default tooltip text';
     tooltipPosition: 'right' | 'left' | 'top' | 'bottom' = 'right';
     tooltipEvent: 'hover' | 'focus' | 'both' = 'hover';
     positionStyle: string | undefined;
@@ -121,14 +122,14 @@ describe('Tooltip', () => {
         });
 
         it('should have default values', () => {
-            expect(tooltipDirective.tooltipPosition).toBe('right');
-            expect(tooltipDirective.tooltipEvent).toBe('hover');
-            expect(tooltipDirective.escape).toBe(true);
-            expect(tooltipDirective.autoHide).toBe(true);
-            expect(tooltipDirective.fitContent).toBe(true);
-            expect(tooltipDirective.hideOnEscape).toBe(true);
-            expect(tooltipDirective.content).toBe('Default tooltip text');
-            expect(tooltipDirective.disabled).toBeFalsy();
+            expect(tooltipDirective.tooltipPosition()).toBe('right');
+            expect(tooltipDirective.tooltipEvent()).toBe('hover');
+            expect(tooltipDirective.escape()).toBe(true);
+            expect(tooltipDirective.autoHide()).toBe(true);
+            expect(tooltipDirective.fitContent()).toBe(true);
+            expect(tooltipDirective.hideOnEscape()).toBe(true);
+            expect(tooltipDirective.content()).toBe('Default tooltip text');
+            expect(tooltipDirective.disabled()).toBeFalsy();
         });
 
         it('should accept custom values', async () => {
@@ -144,14 +145,14 @@ describe('Tooltip', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tooltipDirective.tooltipPosition).toBe('top');
-            expect(tooltipDirective.tooltipEvent).toBe('focus');
-            expect(tooltipDirective.escape).toBe(false);
-            expect(tooltipDirective.showDelay).toBe(500);
-            expect(tooltipDirective.hideDelay).toBe(300);
-            expect(tooltipDirective.life).toBe(2000);
-            expect(tooltipDirective.autoHide).toBe(false);
-            expect(tooltipDirective.tooltipStyleClass).toBe('custom-tooltip');
+            expect(tooltipDirective.tooltipPosition()).toBe('top');
+            expect(tooltipDirective.tooltipEvent()).toBe('focus');
+            expect(tooltipDirective.escape()).toBe(false);
+            expect(tooltipDirective.showDelay()).toBe(500);
+            expect(tooltipDirective.hideDelay()).toBe(300);
+            expect(tooltipDirective.life()).toBe(2000);
+            expect(tooltipDirective.autoHide()).toBe(false);
+            expect(tooltipDirective.tooltipStyleClass()).toBe('custom-tooltip');
         });
 
         it('should disable tooltip when disabled is true', async () => {
@@ -160,7 +161,7 @@ describe('Tooltip', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tooltipDirective.disabled).toBe(true);
+            expect(tooltipDirective.disabled()).toBe(true);
         });
     });
 
@@ -184,7 +185,7 @@ describe('Tooltip', () => {
             tooltipDirective.activate();
 
             expect(tooltipDirective.show).toHaveBeenCalled();
-            expect(tooltipDirective.active).toBe(true);
+            expect(tooltipDirective.active()).toBe(true);
         });
 
         it('should hide tooltip on deactivation', () => {
@@ -194,7 +195,7 @@ describe('Tooltip', () => {
             tooltipDirective.deactivate();
 
             expect(tooltipDirective.hide).toHaveBeenCalled();
-            expect(tooltipDirective.active).toBe(false);
+            expect(tooltipDirective.active()).toBe(false);
         });
 
         it('should not show tooltip when disabled', async () => {
@@ -207,7 +208,7 @@ describe('Tooltip', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(tooltipDirective.container).toBeFalsy();
+            expect(tooltipDirective.container()).toBeFalsy();
         });
 
         it('should not show tooltip when content is empty', async () => {
@@ -220,7 +221,7 @@ describe('Tooltip', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(tooltipDirective.container).toBeFalsy();
+            expect(tooltipDirective.container()).toBeFalsy();
         });
     });
 
@@ -364,11 +365,11 @@ describe('Tooltip', () => {
 
         it('should reset the pointer state when the events are unbound', () => {
             enter();
-            expect(tooltipDirective.pointerInside).toBe(true);
+            expect(tooltipDirective.pointerInside()).toBe(true);
 
             tooltipDirective.unbindEvents();
 
-            expect(tooltipDirective.pointerInside).toBe(false);
+            expect(tooltipDirective.pointerInside()).toBe(false);
         });
     });
 
@@ -400,7 +401,7 @@ describe('Tooltip', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(tooltipDirective.tooltipPosition).toBe('left');
+            expect(tooltipDirective.tooltipPosition()).toBe('left');
         });
 
         it('should handle out of bounds check', () => {
@@ -416,7 +417,7 @@ describe('Tooltip', () => {
                     bottom: -50
                 }) as any;
 
-            tooltipDirective.container = mockContainer;
+            tooltipDirective.container.set(mockContainer);
 
             expect(tooltipDirective.isOutOfBounds()).toBe(true);
         });
@@ -475,13 +476,13 @@ describe('Tooltip', () => {
         });
 
         it('should clear timeouts correctly', () => {
-            tooltipDirective.showTimeout = setTimeout(() => {}, 1000);
-            tooltipDirective.hideTimeout = setTimeout(() => {}, 1000);
+            tooltipDirective.showTimeout.set(setTimeout(() => {}, 1000));
+            tooltipDirective.hideTimeout.set(setTimeout(() => {}, 1000));
 
             tooltipDirective.clearTimeouts();
 
-            expect(tooltipDirective.showTimeout).toBeNull();
-            expect(tooltipDirective.hideTimeout).toBeNull();
+            expect(tooltipDirective.showTimeout()).toBeNull();
+            expect(tooltipDirective.hideTimeout()).toBeNull();
         });
     });
 
@@ -542,6 +543,8 @@ describe('Tooltip', () => {
 
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
+            tooltipDirective.pointerInside.set(true);
+            tooltipDirective.deactivate();
         });
 
         it('should handle autoHide option correctly', async () => {
@@ -559,7 +562,7 @@ describe('Tooltip', () => {
         });
 
         it('should update text content correctly', async () => {
-            tooltipDirective.tooltipText = document.createElement('div');
+            tooltipDirective.tooltipText.set(document.createElement('div'));
             tooltipDirective.setOption({ escape: true });
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -589,7 +592,7 @@ describe('Tooltip', () => {
                 }
             });
 
-            tooltipDirective.tooltipText = tooltipText;
+            tooltipDirective.tooltipText.set(tooltipText);
             tooltipDirective.setOption({ escape: true });
             tooltipDirective.setOption({ tooltipLabel: 'New content' });
             fixture.changeDetectorRef.markForCheck();
@@ -602,7 +605,7 @@ describe('Tooltip', () => {
         });
 
         it('should handle HTML content when escape is false', async () => {
-            tooltipDirective.tooltipText = document.createElement('div');
+            tooltipDirective.tooltipText.set(document.createElement('div'));
             tooltipDirective.setOption({ escape: false });
             tooltipDirective.setOption({ tooltipLabel: '<strong>Bold</strong>' });
             fixture.changeDetectorRef.markForCheck();
@@ -611,7 +614,7 @@ describe('Tooltip', () => {
 
             tooltipDirective.updateText();
 
-            expect(tooltipDirective.tooltipText.innerHTML).toBe('<strong>Bold</strong>');
+            expect(tooltipDirective.tooltipText().innerHTML).toBe('<strong>Bold</strong>');
         });
     });
 
@@ -630,7 +633,7 @@ describe('Tooltip', () => {
         });
 
         it('should handle template content', () => {
-            expect(tooltipDirective.content).toEqual(component.tooltipTemplate());
+            expect(tooltipDirective.content()).toEqual(component.tooltipTemplate());
         });
     });
 
@@ -718,7 +721,7 @@ describe('Tooltip', () => {
         });
 
         it('should clear all timeouts on destroy', () => {
-            tooltipDirective.showTimeout = setTimeout(() => {}, 500);
+            tooltipDirective.showTimeout.set(setTimeout(() => {}, 500));
 
             vi.spyOn(tooltipDirective, 'clearTimeouts');
             tooltipDirective.ngOnDestroy();
@@ -729,8 +732,8 @@ describe('Tooltip', () => {
         it('should handle mouseenter without existing container', () => {
             vi.spyOn(tooltipDirective, 'activate').mockImplementation(() => {});
 
-            tooltipDirective.container = null as any;
-            tooltipDirective.showTimeout = null as any;
+            tooltipDirective.container.set(null);
+            tooltipDirective.showTimeout.set(null);
 
             tooltipDirective.onMouseEnter(new MouseEvent('mouseenter'));
 
@@ -750,7 +753,7 @@ describe('Tooltip', () => {
         });
 
         it('should handle options updates correctly', async () => {
-            const initialOptions = { ...tooltipDirective._tooltipOptions };
+            const initialOptions = { ...tooltipDirective._tooltipOptions() };
 
             tooltipDirective.setOption({ tooltipLabel: 'New label' });
             fixture.changeDetectorRef.markForCheck();
@@ -758,7 +761,163 @@ describe('Tooltip', () => {
             fixture.detectChanges();
 
             expect(tooltipDirective.getOption('tooltipLabel')).toBe('New label');
-            expect(tooltipDirective._tooltipOptions).not.toEqual(initialOptions);
+            expect(tooltipDirective._tooltipOptions()).not.toEqual(initialOptions);
+        });
+    });
+
+    describe('Options Derivation', () => {
+        let fixture: ComponentFixture<TestBasicTooltipComponent>;
+        let component: TestBasicTooltipComponent;
+        let tooltipDirective: Tooltip;
+
+        const settle = async () => {
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+        };
+
+        beforeEach(() => {
+            fixture = TestBed.createComponent(TestBasicTooltipComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+
+            const debugElement = fixture.debugElement.query(By.directive(Tooltip));
+            tooltipDirective = debugElement.injector.get(Tooltip);
+            tooltipDirective.pointerInside.set(true);
+            tooltipDirective.deactivate();
+        });
+
+        afterEach(() => {
+            tooltipDirective.deactivate();
+        });
+
+        it('should derive the options from the inputs', async () => {
+            component.tooltipPosition = 'top';
+            component.showDelay = 500;
+            component.hideOnEscape = false;
+            component.tooltipDisabled = true;
+            await settle();
+
+            expect(tooltipDirective.getOption('tooltipLabel')).toBe('Default tooltip text');
+            expect(tooltipDirective.getOption('tooltipPosition')).toBe('top');
+            expect(tooltipDirective.getOption('showDelay')).toBe(500);
+            expect(tooltipDirective.getOption('hideOnEscape')).toBe(false);
+            expect(tooltipDirective.getOption('disabled')).toBe(true);
+        });
+
+        it('should fall back to the default option when an input is not set', () => {
+            expect(tooltipDirective.getOption('appendTo')).toBe('body');
+            expect(tooltipDirective.getOption('tooltipZIndex')).toBe('auto');
+            expect(tooltipDirective.getOption('positionStyle')).toBeNull();
+            expect(tooltipDirective.getOption('showDelay')).toBeFalsy();
+            expect(tooltipDirective.getOption('id')).toMatch(/^pn_id_.*_tooltip$/);
+        });
+
+        it('should let tooltipOptions override the matching inputs', async () => {
+            component.tooltipPosition = 'top';
+            component.tooltipOptions = { tooltipPosition: 'bottom', tooltipLabel: 'From options' };
+            await settle();
+
+            expect(tooltipDirective.getOption('tooltipPosition')).toBe('bottom');
+            expect(tooltipDirective.getOption('tooltipLabel')).toBe('From options');
+            expect(tooltipDirective.getOption('showDelay')).toBeFalsy();
+        });
+
+        it('should keep a setOption override until an input changes', async () => {
+            tooltipDirective.setOption({ tooltipPosition: 'top' });
+            expect(tooltipDirective.getOption('tooltipPosition')).toBe('top');
+
+            component.tooltipPosition = 'left';
+            await settle();
+
+            expect(tooltipDirective.getOption('tooltipPosition')).toBe('left');
+        });
+
+        it('should update the text of a visible tooltip when the content changes', async () => {
+            tooltipDirective.activate();
+            expect(tooltipDirective.tooltipText().textContent).toBe('Default tooltip text');
+
+            component.content = 'Updated tooltip text';
+            await settle();
+
+            expect(tooltipDirective.active()).toBe(true);
+            expect(tooltipDirective.container()).toBeTruthy();
+            expect(tooltipDirective.tooltipText().textContent).toBe('Updated tooltip text');
+        });
+
+        it('should hide a visible tooltip when the content is cleared', async () => {
+            tooltipDirective.activate();
+            const container = tooltipDirective.container();
+            expect(container.parentElement).toBe(document.body);
+
+            component.content = '';
+            await settle();
+
+            expect(tooltipDirective.container()).toBeFalsy();
+            expect(container.parentElement).toBeNull();
+        });
+
+        it('should deactivate when tooltipOptions change', async () => {
+            tooltipDirective.activate();
+            expect(tooltipDirective.active()).toBe(true);
+            const container = tooltipDirective.container();
+            expect(container.parentElement).toBe(document.body);
+
+            component.tooltipOptions = { tooltipPosition: 'top' };
+            await settle();
+
+            expect(tooltipDirective.active()).toBe(false);
+            expect(tooltipDirective.container()).toBeFalsy();
+            expect(container.parentElement).toBeNull();
+        });
+
+        it('should deactivate when the tooltip gets disabled', async () => {
+            tooltipDirective.activate();
+            const container = tooltipDirective.container();
+            expect(container.parentElement).toBe(document.body);
+
+            component.tooltipDisabled = true;
+            await settle();
+
+            expect(tooltipDirective.active()).toBe(false);
+            expect(tooltipDirective.container()).toBeFalsy();
+            expect(container.parentElement).toBeNull();
+        });
+
+        it('should hide on escape key by default', () => {
+            tooltipDirective.deactivate();
+            tooltipDirective.activate();
+            expect(tooltipDirective.container()).toBeTruthy();
+
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+            expect(tooltipDirective.active()).toBe(false);
+            expect(tooltipDirective.container()).toBeFalsy();
+        });
+
+        it('should ignore the escape key when hideOnEscape is false', async () => {
+            component.hideOnEscape = false;
+            await settle();
+
+            tooltipDirective.deactivate();
+            const listen = vi.spyOn(tooltipDirective.renderer, 'listen');
+            tooltipDirective.activate();
+            expect(listen).not.toHaveBeenCalledWith('document', 'keydown.escape', expect.any(Function));
+
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+            expect(tooltipDirective.active()).toBe(true);
+            expect(tooltipDirective.container()).toBeTruthy();
+        });
+
+        it('should call the container mouseleave unlisten function on unbind', () => {
+            const unlisten = vi.fn();
+            tooltipDirective.containerMouseleaveListener.set(unlisten);
+
+            tooltipDirective.unbindContainerMouseleaveListener();
+
+            expect(unlisten).toHaveBeenCalledTimes(1);
+            expect(tooltipDirective.containerMouseleaveListener()).toBeNull();
         });
     });
 
@@ -793,6 +952,8 @@ describe('Tooltip', () => {
             const debugElement = fixture.debugElement.query(By.directive(Tooltip));
             tooltipDirective = debugElement.injector.get(Tooltip);
             inputEl = component.inputElement().nativeElement;
+            tooltipDirective.pointerInside.set(true);
+            tooltipDirective.deactivate();
         });
 
         // Case 1: Simple string classes
