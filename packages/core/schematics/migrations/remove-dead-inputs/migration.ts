@@ -86,43 +86,11 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
- * @exhaustive-ui/core in this version: Toast/ToastItem's showTransformOptions, hideTransformOptions,
- * showTransitionOptions and hideTransitionOptions, dead since the show/hide animation moved to the
- * shared Motion directive (which has no equivalent transform/transition-options input); and
- * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
- * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
- * showTransitionOptions/hideTransitionOptions, stored but never read either; OverlayBadge's
- * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it);
- * Fieldset's, Panel's and Accordion's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation);
- * ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
- * (motionOptions drives the show/hide animation); ToggleButton's inputId, stored but never read
- * since the host element became the button itself; and Popover's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the show/hide animation) and
- * ariaCloseLabel, stored but never read since the popover renders no close button; Image's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the preview animation) and
- * modalEnterAnimation/modalLeaveAnimation, stored but never read since the mask motion classes are fixed;
- * and Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
- * animation).
- * and Menu's deprecated showTransitionOptions/hideTransitionOptions (motionOptions drives the popup animation).
- * Drawer's deprecated transitionOptions, stored but never read (motionOptions drives the slide
- * animation); and SplitButton's deprecated showTransitionOptions/hideTransitionOptions (motionOptions
- * drives the menu animation) and plain, stored but never read.
+ * @exhaustive-ui/core in this version. The removed inputs are listed per selector in
+ * {@link REMOVED_INPUT_GROUPS}; the header comment of this file explains why each of them was dead.
  *
- * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
- * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/`p-accordion`/
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
- * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover`/`p-drawer` are removed
- * (motionOptions drives the show/hide animation); ConfirmPopup's deprecated
- * showTransitionOptions/hideTransitionOptions, stored but never read (motionOptions drives the
- * overlay animation); and ToggleButton's inputId, stored but never read since the host element
- * became the button itself.
- *
- * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
- * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-confirmpopup`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover`/`p-image`/`p-menu` are removed
- * automatically — safe to delete outright, since the values they passed were already unused.
+ * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
+ * safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.
  */
