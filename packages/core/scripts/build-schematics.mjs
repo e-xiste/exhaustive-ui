@@ -18,7 +18,8 @@ for (const entry of fs.readdirSync(packagesDir)) {
         continue;
     }
     const pkg = fs.readJsonSync(pkgPath);
-    if (pkg.name?.startsWith('@exhaustive-ui/') && pkg.version) {
+    // @exhaustive-ui/mcp is a Node tool, not an Angular library: `ng update` never touches it.
+    if (pkg.name?.startsWith('@exhaustive-ui/') && pkg.name !== '@exhaustive-ui/mcp' && pkg.version) {
         versions[pkg.name] = `^${pkg.version}`;
         monorepoPackages.push(pkg);
     }
