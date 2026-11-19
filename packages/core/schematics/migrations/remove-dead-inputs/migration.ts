@@ -20,6 +20,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * is driven by `motionOptions`.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on ScrollTop were stored but never
  * read: its show/hide animation is driven by `motionOptions`.
+ * `inputId` on ToggleButton was stored but never read: the host element is the button itself and
+ * there has been no inner input element left to identify.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -35,7 +37,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-fieldset', names: ['transitionOptions'] },
     { selector: 'p-scrollTop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-scrolltop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-scroll-top', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-scroll-top', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-togglebutton', names: ['inputId'] },
+    { selector: 'p-toggleButton', names: ['inputId'] },
+    { selector: 'p-toggle-button', names: ['inputId'] }
 ];
 
 /**
@@ -44,8 +49,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * from the countless other `size` properties (Map#size, DOM sizes, option objects) in an application.
  * Fieldset's `transitionOptions` is left out too: the same input is still alive on other components
  * (p-panel, p-accordion, p-dialog, ...), so a name-only scan cannot tell a Fieldset read apart.
+ * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
+ * a working `inputId`.
  */
-const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions');
+const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId');
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
@@ -55,14 +62,15 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * Message's showTransitionOptions/hideTransitionOptions, dead for the same reason; Overlay's
  * showTransitionOptions/hideTransitionOptions, stored but never read; ColorPicker's
  * showTransitionOptions/hideTransitionOptions, stored but never read either; OverlayBadge's
- * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it); and
+ * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it);
  * Fieldset's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation);
- * and ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
- * (motionOptions drives the show/hide animation).
+ * ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
+ * (motionOptions drives the show/hide animation); and ToggleButton's inputId, stored but never read
+ * since the host element became the button itself.
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/
- * `p-scrollTop`/`p-scrolltop`/`p-scroll-top` are removed
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

@@ -44,7 +44,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-metergroup',
     'p-meterGroup',
     'p-meter-group',
-    'p-inplace'
+    'p-inplace',
+    'p-togglebutton',
+    'p-toggleButton',
+    'p-toggle-button'
 ];
 
 /**

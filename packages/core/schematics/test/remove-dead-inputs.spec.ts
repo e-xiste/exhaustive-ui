@@ -120,9 +120,43 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(content);
     });
 
+    it('removes inputId from p-togglebutton and its aliases', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-togglebutton [(ngModel)]="checked" inputId="tb1" onLabel="Yes"></p-togglebutton>\n<p-toggleButton [inputId]="id" [onLabel]="on"></p-toggleButton>\n<p-toggle-button inputId="tb3"></p-toggle-button>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-togglebutton [(ngModel)]="checked" onLabel="Yes"></p-togglebutton>\n<p-toggleButton [onLabel]="on"></p-toggleButton>\n<p-toggle-button></p-toggle-button>\n`);
+    });
+
+    it('keeps inputId on form components that still read it', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-toggleswitch inputId="ts1"></p-toggleswitch>\n<p-checkbox [inputId]="id"></p-checkbox>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
     it('does not report a programmatic transitionOptions access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    read(panel: { transitionOptions: string }) {\n        return panel.transitionOptions;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
+    it('does not report a programmatic inputId access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    label(control: { inputId: string }) {\n        return control.inputId;\n    }\n}\n`;
         const tree = createAppTree({ '/src/app/foo.ts': content });
 
         const warnings: string[] = [];
