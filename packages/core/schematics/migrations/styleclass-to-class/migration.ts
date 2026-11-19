@@ -65,7 +65,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-scrollPanel',
     'p-scroll-panel',
     'p-image',
-    'p-editor'
+    'p-editor',
+    'p-slider'
 ];
 
 /**

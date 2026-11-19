@@ -1111,6 +1111,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-editor class="existing my-editor"></p-editor>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-slider', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-slider formControlName="value" styleClass="w-56" />\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-slider formControlName="value" class="w-56" />\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-slider', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-slider [(ngModel)]="value" [styleClass]="myClass"></p-slider>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-slider [(ngModel)]="value" [class]="myClass"></p-slider>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-slider', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-slider class="existing" styleClass="my-slider"></p-slider>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-slider class="existing my-slider"></p-slider>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
