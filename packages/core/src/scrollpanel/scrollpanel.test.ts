@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZoneles
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { SharedModule } from '@exhaustive-ui/core/api';
 import { ScrollPanel } from './scrollpanel';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-scrollpanel [styleClass]="styleClass" [step]="step" style="width: 400px; height: 200px;">
+        <p-scrollpanel [class]="styleClass" [step]="step" style="width: 400px; height: 200px;">
             <div class="content-div" style="width: 800px; height: 600px; padding: 20px;">
                 <h2>Scrollable Content</h2>
                 <p>This is content that will cause scrollbars to appear.</p>
@@ -91,7 +92,7 @@ describe('ScrollPanel', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [ScrollPanel],
+            imports: [ScrollPanel, SharedModule],
             declarations: [TestScrollPanelComponent, TestTemplateScrollPanelComponent, TestContentTemplateScrollPanelComponent, TestNoScrollScrollPanelComponent, TestPTScrollPanelComponent],
             providers: [provideZonelessChangeDetection()]
         });
@@ -113,11 +114,11 @@ describe('ScrollPanel', () => {
             const fixture = TestBed.createComponent(ScrollPanel);
             const scrollPanelInstance = fixture.componentInstance;
 
-            expect(scrollPanelInstance.step).toBe(5);
-            expect(scrollPanelInstance.initialized).toBe(false);
-            expect(scrollPanelInstance.lastScrollLeft).toBe(0);
-            expect(scrollPanelInstance.lastScrollTop).toBe(0);
-            expect(scrollPanelInstance.orientation).toBe('vertical');
+            expect(scrollPanelInstance.step()).toBe(5);
+            expect(scrollPanelInstance.initialized()).toBe(false);
+            expect(scrollPanelInstance.lastScrollLeft()).toBe(0);
+            expect(scrollPanelInstance.lastScrollTop()).toBe(0);
+            expect(scrollPanelInstance.orientation()).toBe('vertical');
         });
 
         it('should accept custom step value', async () => {
@@ -126,7 +127,11 @@ describe('ScrollPanel', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(scrollPanel.step).toBe(10);
+            expect(scrollPanel.step()).toBe(10);
+
+            const setTimerSpy = vi.spyOn(scrollPanel, 'setTimer').mockImplementation(() => {});
+            scrollPanel.onKeyDown(new KeyboardEvent('keydown', { code: 'ArrowDown' }));
+            expect(setTimerSpy).toHaveBeenCalledWith('scrollTop', 10);
         });
 
         it('should generate unique content ID', () => {
@@ -173,7 +178,7 @@ describe('ScrollPanel', () => {
     });
 
     describe('CSS Classes and Styling', () => {
-        it('should apply custom styleClass', async () => {
+        it('should apply custom class', async () => {
             component.styleClass = 'my-custom-panel';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -181,6 +186,15 @@ describe('ScrollPanel', () => {
 
             const scrollPanelElement = fixture.debugElement.query(By.css('p-scrollpanel'));
             expect(scrollPanelElement.nativeElement.className).toContain('my-custom-panel');
+            expect(scrollPanelElement.nativeElement.className).not.toContain('custom-scrollpanel');
+            expect(scrollPanelElement.nativeElement.className).toContain('p-scrollpanel');
+        });
+
+        it('should apply the root class on the host', () => {
+            const scrollPanelElement = fixture.debugElement.query(By.css('p-scrollpanel'));
+            expect(scrollPanelElement.nativeElement.className).toContain('p-scrollpanel');
+            expect(scrollPanelElement.nativeElement.className).toContain('p-component');
+            expect(scrollPanelElement.nativeElement.className).toContain('custom-scrollpanel');
         });
 
         it('should apply custom styles via template', () => {
@@ -213,10 +227,10 @@ describe('ScrollPanel', () => {
             await fixture.whenStable();
 
             // Scroll ratios should be calculated
-            expect(scrollPanel.scrollXRatio).toBeDefined();
-            expect(scrollPanel.scrollYRatio).toBeDefined();
-            expect(typeof scrollPanel.scrollXRatio).toBe('number');
-            expect(typeof scrollPanel.scrollYRatio).toBe('number');
+            expect(scrollPanel.scrollXRatio()).toBeDefined();
+            expect(scrollPanel.scrollYRatio()).toBeDefined();
+            expect(typeof scrollPanel.scrollXRatio()).toBe('number');
+            expect(typeof scrollPanel.scrollYRatio()).toBe('number');
         });
 
         it('should handle different content sizes', async () => {
@@ -232,8 +246,8 @@ describe('ScrollPanel', () => {
             await noScrollFixture.whenStable();
 
             // Should calculate ratios without errors
-            expect(noScrollPanel.scrollXRatio).toBeDefined();
-            expect(noScrollPanel.scrollYRatio).toBeDefined();
+            expect(noScrollPanel.scrollXRatio()).toBeDefined();
+            expect(noScrollPanel.scrollYRatio()).toBeDefined();
         });
     });
 
@@ -245,8 +259,8 @@ describe('ScrollPanel', () => {
 
         it('should handle content scroll events', async () => {
             // Initialize with different values to trigger the update logic
-            scrollPanel.lastScrollLeft = 0;
-            scrollPanel.lastScrollTop = 0;
+            scrollPanel.lastScrollLeft.set(0);
+            scrollPanel.lastScrollTop.set(0);
 
             // First scroll event with scrollLeft change
             const scrollEvent1 = {
@@ -256,8 +270,8 @@ describe('ScrollPanel', () => {
                 }
             };
             scrollPanel.onScroll(scrollEvent1);
-            expect(scrollPanel.lastScrollLeft).toBe(100);
-            expect(scrollPanel.orientation).toBe('horizontal');
+            expect(scrollPanel.lastScrollLeft()).toBe(100);
+            expect(scrollPanel.orientation()).toBe('horizontal');
 
             // Second scroll event with scrollTop change (scrollLeft unchanged)
             const scrollEvent2 = {
@@ -270,9 +284,9 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(scrollPanel.lastScrollLeft).toBe(100);
-            expect(scrollPanel.lastScrollTop).toBe(150);
-            expect(scrollPanel.orientation).toBe('vertical');
+            expect(scrollPanel.lastScrollLeft()).toBe(100);
+            expect(scrollPanel.lastScrollTop()).toBe(150);
+            expect(scrollPanel.orientation()).toBe('vertical');
         });
 
         it('should update orientation based on scroll direction', () => {
@@ -284,12 +298,12 @@ describe('ScrollPanel', () => {
             };
 
             scrollPanel.onScroll(scrollEvent);
-            expect(scrollPanel.orientation).toBe('horizontal');
+            expect(scrollPanel.orientation()).toBe('horizontal');
 
             scrollEvent.target.scrollLeft = 100;
             scrollEvent.target.scrollTop = 50;
             scrollPanel.onScroll(scrollEvent);
-            expect(scrollPanel.orientation).toBe('vertical');
+            expect(scrollPanel.orientation()).toBe('vertical');
         });
 
         it('should programmatically scroll to top position', async () => {
@@ -332,7 +346,7 @@ describe('ScrollPanel', () => {
         });
 
         it('should handle arrow key navigation in vertical orientation', async () => {
-            scrollPanel.orientation = 'vertical';
+            scrollPanel.orientation.set('vertical');
 
             const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));
             const arrowDownEvent = new KeyboardEvent('keydown', { code: 'ArrowDown' });
@@ -352,7 +366,7 @@ describe('ScrollPanel', () => {
         });
 
         it('should handle arrow key navigation in horizontal orientation', async () => {
-            scrollPanel.orientation = 'horizontal';
+            scrollPanel.orientation.set('horizontal');
 
             const arrowRightEvent = new KeyboardEvent('keydown', { code: 'ArrowRight' });
             const arrowLeftEvent = new KeyboardEvent('keydown', { code: 'ArrowLeft' });
@@ -371,8 +385,8 @@ describe('ScrollPanel', () => {
         });
 
         it('should clear timer on key up', async () => {
-            scrollPanel.timer = setTimeout(() => {}, 1000);
-            const timerId = scrollPanel.timer;
+            scrollPanel.timer.set(setTimeout(() => {}, 1000));
+            const timerId = scrollPanel.timer();
 
             scrollPanel.onKeyUp();
 
@@ -387,16 +401,16 @@ describe('ScrollPanel', () => {
             const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));
 
             scrollPanel.onFocus({ target: xBar.nativeElement });
-            expect(scrollPanel.orientation).toBe('horizontal');
+            expect(scrollPanel.orientation()).toBe('horizontal');
 
             scrollPanel.onFocus({ target: yBar.nativeElement });
-            expect(scrollPanel.orientation).toBe('vertical');
+            expect(scrollPanel.orientation()).toBe('vertical');
         });
 
         it('should reset orientation on blur', () => {
-            scrollPanel.orientation = 'horizontal';
+            scrollPanel.orientation.set('horizontal');
             scrollPanel.onBlur();
-            expect(scrollPanel.orientation).toBe('vertical');
+            expect(scrollPanel.orientation()).toBe('vertical');
         });
     });
 
@@ -416,8 +430,8 @@ describe('ScrollPanel', () => {
 
             scrollPanel.onYBarMouseDown(mouseEvent);
 
-            expect(scrollPanel.isYBarClicked).toBe(true);
-            expect(scrollPanel.lastPageY).toBe(100);
+            expect(scrollPanel.isYBarClicked()).toBe(true);
+            expect(scrollPanel.lastPageY()).toBe(100);
             expect(yBar.nativeElement.focus).toHaveBeenCalled();
             expect(mouseEvent.preventDefault).toHaveBeenCalled();
             expect(yBar.nativeElement.getAttribute('data-p-scrollpanel-grabbed')).toBe('true');
@@ -433,51 +447,51 @@ describe('ScrollPanel', () => {
 
             scrollPanel.onXBarMouseDown(mouseEvent);
 
-            expect(scrollPanel.isXBarClicked).toBe(true);
-            expect(scrollPanel.lastPageX).toBe(150);
+            expect(scrollPanel.isXBarClicked()).toBe(true);
+            expect(scrollPanel.lastPageX()).toBe(150);
             expect(xBar.nativeElement.focus).toHaveBeenCalled();
             expect(mouseEvent.preventDefault).toHaveBeenCalled();
         });
 
         it('should handle document mouse move for vertical scrolling', async () => {
-            scrollPanel.isYBarClicked = true;
-            scrollPanel.lastPageY = 100;
+            scrollPanel.isYBarClicked.set(true);
+            scrollPanel.lastPageY.set(100);
 
             const mouseMoveEvent = new MouseEvent('mousemove');
             Object.defineProperty(mouseMoveEvent, 'pageY', { value: 120, writable: false });
             scrollPanel.onMouseMoveForYBar(mouseMoveEvent);
 
-            expect(scrollPanel.lastPageY).toBe(120);
+            expect(scrollPanel.lastPageY()).toBe(120);
 
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
         });
 
         it('should handle document mouse move for horizontal scrolling', async () => {
-            scrollPanel.isXBarClicked = true;
-            scrollPanel.lastPageX = 100;
+            scrollPanel.isXBarClicked.set(true);
+            scrollPanel.lastPageX.set(100);
 
             const mouseMoveEvent = new MouseEvent('mousemove');
             Object.defineProperty(mouseMoveEvent, 'pageX', { value: 120, writable: false });
             scrollPanel.onMouseMoveForXBar(mouseMoveEvent);
 
-            expect(scrollPanel.lastPageX).toBe(120);
+            expect(scrollPanel.lastPageX()).toBe(120);
 
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
         });
 
         it('should handle document mouse up', () => {
-            scrollPanel.isXBarClicked = true;
-            scrollPanel.isYBarClicked = true;
+            scrollPanel.isXBarClicked.set(true);
+            scrollPanel.isYBarClicked.set(true);
 
             const xBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-x'));
             const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));
 
             scrollPanel.onDocumentMouseUp(new MouseEvent('mouseup'));
 
-            expect(scrollPanel.isXBarClicked).toBe(false);
-            expect(scrollPanel.isYBarClicked).toBe(false);
+            expect(scrollPanel.isXBarClicked()).toBe(false);
+            expect(scrollPanel.isYBarClicked()).toBe(false);
             expect(xBar.nativeElement.getAttribute('data-p-scrollpanel-grabbed')).toBe('false');
             expect(yBar.nativeElement.getAttribute('data-p-scrollpanel-grabbed')).toBe('false');
         });
@@ -490,17 +504,16 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await templateFixture.whenStable();
 
-            const templateScrollPanel = templateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance;
+            const templateScrollPanel = templateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance as ScrollPanel;
 
-            // Test that component handles pTemplate without errors
-            expect(() => templateScrollPanel.ngAfterContentInit()).not.toThrow();
+            expect(templateScrollPanel.templates().length).toBe(1);
+            expect(templateScrollPanel._contentTemplate()).toBe(templateScrollPanel.templates()[0].template);
+            expect(templateScrollPanel.contentTemplate()).toBeUndefined();
 
-            // Test that templates property exists and is processed
-            expect(templateScrollPanel.templates).toBeDefined();
-
-            // Verify pTemplate content container is rendered
             const content = templateFixture.debugElement.query(By.css('.p-scrollpanel-content'));
             expect(content).toBeTruthy();
+            expect(content.nativeElement.querySelector('.template-content')).toBeTruthy();
+            expect(content.nativeElement.textContent).toContain('Template Content');
         });
 
         it('should handle #content template processing', async () => {
@@ -509,17 +522,15 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await contentTemplateFixture.whenStable();
 
-            const contentScrollPanel = contentTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance;
+            const contentScrollPanel = contentTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance as ScrollPanel;
 
-            // Test that component handles #content template without errors
-            expect(() => contentScrollPanel.ngAfterContentInit()).not.toThrow();
+            expect(contentScrollPanel.contentTemplate()).toBeTruthy();
+            expect(contentScrollPanel._contentTemplate()).toBeUndefined();
 
-            // Test that contentTemplate property exists (might be undefined in test environment)
-            expect(contentScrollPanel.contentTemplate).toBeDefined();
-
-            // Verify content container is rendered
             const content = contentTemplateFixture.debugElement.query(By.css('.p-scrollpanel-content'));
             expect(content).toBeTruthy();
+            expect(content.nativeElement.querySelector('.content-template-content')).toBeTruthy();
+            expect(content.nativeElement.textContent).toContain('Content Template');
         });
 
         it('should handle content with or without templates', async () => {
@@ -554,10 +565,9 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await pTemplateFixture.whenStable();
 
-            const pTemplateScrollPanel = pTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance;
-            // Test that templates are defined and can be processed
-            expect(pTemplateScrollPanel.templates).toBeDefined();
-            expect(() => pTemplateScrollPanel.ngAfterContentInit()).not.toThrow();
+            const pTemplateScrollPanel = pTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance as ScrollPanel;
+            expect(pTemplateScrollPanel._contentTemplate()).toBeTruthy();
+            expect(pTemplateFixture.debugElement.query(By.css('.template-content'))).toBeTruthy();
 
             // Test #content template rendering
             const contentTemplateFixture = TestBed.createComponent(TestContentTemplateScrollPanelComponent);
@@ -565,9 +575,9 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await contentTemplateFixture.whenStable();
 
-            const contentScrollPanel = contentTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance;
-            // Test that contentTemplate is defined (even if undefined in test environment)
-            expect(contentScrollPanel.contentTemplate).toBeDefined();
+            const contentScrollPanel = contentTemplateFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance as ScrollPanel;
+            expect(contentScrollPanel.contentTemplate()).toBeTruthy();
+            expect(contentTemplateFixture.debugElement.query(By.css('.content-template-content'))).toBeTruthy();
         });
     });
 
@@ -591,7 +601,7 @@ describe('ScrollPanel', () => {
             await fixture.whenStable();
 
             // Should not throw error and complete calculation
-            expect(scrollPanel.initialized).toBe(true);
+            expect(scrollPanel.initialized()).toBe(true);
         });
     });
 
@@ -615,14 +625,29 @@ describe('ScrollPanel', () => {
             const xBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-x'));
             const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));
 
-            scrollPanel.lastScrollLeft = 50;
-            scrollPanel.lastScrollTop = 75;
-            fixture.changeDetectorRef.markForCheck();
+            expect(xBar.nativeElement.getAttribute('aria-valuenow')).toBe('0');
+            expect(yBar.nativeElement.getAttribute('aria-valuenow')).toBe('0');
+
+            scrollPanel.lastScrollLeft.set(50);
+            scrollPanel.lastScrollTop.set(75);
             await fixture.whenStable();
             fixture.detectChanges();
 
             expect(xBar.nativeElement.getAttribute('aria-valuenow')).toBe('50');
             expect(yBar.nativeElement.getAttribute('aria-valuenow')).toBe('75');
+        });
+
+        it('should re-render aria-valuenow after a scroll event', async () => {
+            const xBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-x'));
+            const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));
+
+            scrollPanel.onScroll({ target: { scrollLeft: 30, scrollTop: 0 } });
+            scrollPanel.onScroll({ target: { scrollLeft: 30, scrollTop: 60 } });
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(xBar.nativeElement.getAttribute('aria-valuenow')).toBe('30');
+            expect(yBar.nativeElement.getAttribute('aria-valuenow')).toBe('60');
         });
 
         it('should be keyboard navigable', () => {
@@ -645,8 +670,8 @@ describe('ScrollPanel', () => {
 
         it('should handle rapid scroll events', async () => {
             // Initialize with starting values
-            scrollPanel.lastScrollLeft = 0;
-            scrollPanel.lastScrollTop = 0;
+            scrollPanel.lastScrollLeft.set(0);
+            scrollPanel.lastScrollTop.set(0);
 
             // Due to if/else if logic, only one dimension updates per call
             // First, trigger horizontal scrolls
@@ -660,8 +685,8 @@ describe('ScrollPanel', () => {
                 scrollPanel.onScroll(scrollEvent);
             }
 
-            expect(scrollPanel.lastScrollLeft).toBe(100);
-            expect(scrollPanel.orientation).toBe('horizontal');
+            expect(scrollPanel.lastScrollLeft()).toBe(100);
+            expect(scrollPanel.orientation()).toBe('horizontal');
 
             // Then trigger vertical scrolls
             for (let i = 1; i <= 10; i++) {
@@ -674,8 +699,8 @@ describe('ScrollPanel', () => {
                 scrollPanel.onScroll(scrollEvent);
             }
 
-            expect(scrollPanel.lastScrollTop).toBe(150);
-            expect(scrollPanel.orientation).toBe('vertical');
+            expect(scrollPanel.lastScrollTop()).toBe(150);
+            expect(scrollPanel.orientation()).toBe('vertical');
 
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
@@ -686,24 +711,24 @@ describe('ScrollPanel', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(scrollPanel.step).toBe(0);
+            expect(scrollPanel.step()).toBe(0);
 
             component.step = 1000;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(scrollPanel.step).toBe(1000);
+            expect(scrollPanel.step()).toBe(1000);
 
             component.step = -5;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(scrollPanel.step).toBe(-5);
+            expect(scrollPanel.step()).toBe(-5);
         });
 
         it('should handle window resize during scrollbar operations', async () => {
             // Test that resize listener is set up
-            expect(scrollPanel.windowResizeListener).toBeTruthy();
+            expect(scrollPanel.windowResizeListener()).toBeTruthy();
 
             // moveBar should be callable
             expect(() => scrollPanel.moveBar()).not.toThrow();
@@ -738,7 +763,7 @@ describe('ScrollPanel', () => {
         });
 
         it('should cleanup listeners on destroy', async () => {
-            scrollPanel.initialized = true;
+            scrollPanel.initialized.set(true);
             vi.spyOn(scrollPanel, 'unbindListeners').mockImplementation(() => {});
 
             fixture.destroy();
@@ -747,8 +772,8 @@ describe('ScrollPanel', () => {
         });
 
         it('should cleanup timers properly', async () => {
-            scrollPanel.timer = setTimeout(() => {}, 1000);
-            const timerId = scrollPanel.timer;
+            scrollPanel.timer.set(setTimeout(() => {}, 1000));
+            const timerId = scrollPanel.timer();
 
             scrollPanel.clearTimer();
 
@@ -761,12 +786,12 @@ describe('ScrollPanel', () => {
 
         it('should handle multiple timer operations', async () => {
             scrollPanel.setTimer('scrollTop', 10);
-            expect(scrollPanel.timer).toBeDefined();
+            expect(scrollPanel.timer()).toBeDefined();
 
             scrollPanel.setTimer('scrollLeft', 15);
-            expect(scrollPanel.timer).toBeDefined();
+            expect(scrollPanel.timer()).toBeDefined();
 
-            const timerId = scrollPanel.timer;
+            const timerId = scrollPanel.timer();
             scrollPanel.clearTimer();
             expect(typeof timerId).toBe('number');
 
@@ -828,10 +853,10 @@ describe('ScrollPanel', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(scrollPanel.scrollXRatio).toBeDefined();
-            expect(scrollPanel.scrollYRatio).toBeDefined();
-            expect(scrollPanel.scrollXRatio).toBeGreaterThan(0);
-            expect(scrollPanel.scrollYRatio).toBeGreaterThan(0);
+            expect(scrollPanel.scrollXRatio()).toBeDefined();
+            expect(scrollPanel.scrollYRatio()).toBeDefined();
+            expect(scrollPanel.scrollXRatio()).toBeGreaterThan(0);
+            expect(scrollPanel.scrollYRatio()).toBeGreaterThan(0);
         });
 
         it('should handle zero dimensions gracefully', async () => {
@@ -953,18 +978,18 @@ describe('ScrollPanel', () => {
 
         it('should use instance variables in PT functions', async () => {
             ptScrollPanel = ptFixture.debugElement.query(By.directive(ScrollPanel)).componentInstance;
-            ptScrollPanel.initialized = true;
-            ptScrollPanel.orientation = 'horizontal';
+            ptScrollPanel.initialized.set(true);
+            ptScrollPanel.orientation.set('horizontal');
 
             ptComponent.pt = {
                 root: ({ instance }) => ({
-                    class: instance?.initialized ? 'INITIALIZED' : 'NOT_INITIALIZED'
+                    class: instance?.initialized() ? 'INITIALIZED' : 'NOT_INITIALIZED'
                 }),
                 barX: ({ instance }) => {
-                    const bgColor = instance?.orientation === 'horizontal' ? 'yellow' : 'blue';
+                    const bgColor = instance?.orientation() === 'horizontal' ? 'yellow' : 'blue';
                     return {
                         class: 'INSTANCE_BAR',
-                        'data-orientation': instance?.orientation
+                        'data-orientation': instance?.orientation()
                     };
                 }
             };

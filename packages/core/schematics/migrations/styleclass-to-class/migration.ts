@@ -60,7 +60,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-dock',
     'p-accordion',
     'p-knob',
-    'p-splitter'
+    'p-splitter',
+    'p-scrollpanel',
+    'p-scrollPanel',
+    'p-scroll-panel'
 ];
 
 /**

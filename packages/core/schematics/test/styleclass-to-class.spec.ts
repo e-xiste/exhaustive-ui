@@ -1030,6 +1030,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-splitter class="existing my-splitter"></p-splitter>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-scrollpanel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-scrollpanel [style]="{ height: '200px' }" styleClass="my-panel"><p>content</p></p-scrollpanel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-scrollpanel [style]="{ height: '200px' }" class="my-panel"><p>content</p></p-scrollpanel>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-scrollPanel and p-scroll-panel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-scrollPanel [styleClass]="panelClass"></p-scrollPanel>\n<p-scroll-panel [styleClass]="panelClass"></p-scroll-panel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-scrollPanel [class]="panelClass"></p-scrollPanel>\n<p-scroll-panel [class]="panelClass"></p-scroll-panel>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-scrollpanel', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-scrollpanel class="existing" styleClass="my-panel"></p-scrollpanel>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-scrollpanel class="existing my-panel"></p-scrollpanel>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
