@@ -56,7 +56,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-checkbox',
     'p-checkBox',
     'p-check-box',
-    'p-panel'
+    'p-panel',
+    'p-dock'
 ];
 
 /**

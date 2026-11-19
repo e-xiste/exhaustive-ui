@@ -922,6 +922,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(content);
     });
 
+    it('rewrites a static styleClass to class on p-dock', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dock [model]="items" position="top" styleClass="my-dock"></p-dock>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dock [model]="items" position="top" class="my-dock"></p-dock>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-dock', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dock [model]="items" [styleClass]="dockClass"></p-dock>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dock [model]="items" [class]="dockClass"></p-dock>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-dock', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dock class="existing" styleClass="my-dock"></p-dock>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-dock class="existing my-dock"></p-dock>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
