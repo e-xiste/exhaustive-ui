@@ -43,7 +43,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-color-picker',
     'p-metergroup',
     'p-meterGroup',
-    'p-meter-group'
+    'p-meter-group',
+    'p-inplace'
 ];
 
 /**
