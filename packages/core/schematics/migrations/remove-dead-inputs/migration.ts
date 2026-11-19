@@ -20,6 +20,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * animation is driven by `motionOptions`.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on ScrollTop were stored but never
  * read: its show/hide animation is driven by `motionOptions`.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on ConfirmPopup were stored but never
+ * read: its overlay animation is driven by `motionOptions`.
  * `inputId` on ToggleButton was stored but never read: the host element is the button itself and
  * there has been no inner input element left to identify.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Popover were stored but never
@@ -43,6 +45,7 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-scrollTop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-scrolltop', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-scroll-top', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-confirmpopup', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-togglebutton', names: ['inputId'] },
     { selector: 'p-toggleButton', names: ['inputId'] },
     { selector: 'p-toggle-button', names: ['inputId'] },
@@ -81,6 +84,14 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
  * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover` are removed
+ * (motionOptions drives the show/hide animation); ConfirmPopup's deprecated
+ * showTransitionOptions/hideTransitionOptions, stored but never read (motionOptions drives the
+ * overlay animation); and ToggleButton's inputId, stored but never read since the host element
+ * became the button itself.
+ *
+ * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
+ * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-confirmpopup`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

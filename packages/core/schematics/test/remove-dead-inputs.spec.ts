@@ -67,6 +67,17 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-scrolltop [threshold]="200"></p-scrolltop>\n<p-scrollTop target="parent"></p-scrollTop>\n<p-scroll-top icon="pi pi-arrow-up"></p-scroll-top>\n`);
     });
 
+    it('removes showTransitionOptions/hideTransitionOptions from p-confirmpopup while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-confirmpopup key="delete" showTransitionOptions=".12s cubic-bezier(0, 0, 0.2, 1)" [hideTransitionOptions]="hideTf" [motionOptions]="motion"></p-confirmpopup>\n<p-confirmpopup [showTransitionOptions]="showTf" defaultFocus="reject"></p-confirmpopup>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(`<p-confirmpopup key="delete" [motionOptions]="motion"></p-confirmpopup>\n<p-confirmpopup defaultFocus="reject"></p-confirmpopup>\n`);
+    });
+
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
