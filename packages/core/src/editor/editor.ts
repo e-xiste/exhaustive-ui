@@ -1,5 +1,24 @@
 import { CommonModule, isPlatformServer } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, forwardRef, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
+import {
+    afterEveryRender,
+    afterNextRender,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    forwardRef,
+    inject,
+    InjectionToken,
+    input,
+    NgModule,
+    signal,
+    TemplateRef,
+    untracked,
+    ViewEncapsulation,
+    contentChild,
+    contentChildren,
+    output
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { findSingle } from '@exhaustive-ui/utils';
 import { Header, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -23,16 +42,15 @@ export const EDITOR_VALUE_ACCESSOR: any = {
  */
 @Component({
     selector: 'p-editor',
-    standalone: true,
     imports: [CommonModule, SharedModule, BindModule],
     template: `
-        @if (toolbar() || headerTemplate() || _headerTemplate) {
+        @if (toolbar() || headerTemplate() || _headerTemplate()) {
             <div [class]="cx('toolbar')" [pBind]="ptm('toolbar')">
                 <ng-content select="p-header"></ng-content>
-                <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
             </div>
         }
-        @if (!toolbar() && !headerTemplate() && !_headerTemplate) {
+        @if (!toolbar() && !headerTemplate() && !_headerTemplate()) {
             <div [class]="cx('toolbar')" [pBind]="ptm('toolbar')">
                 <span class="ql-formats" [pBind]="ptm('formats')">
                     <select class="ql-header" [pBind]="ptm('header')">
@@ -75,13 +93,13 @@ export const EDITOR_VALUE_ACCESSOR: any = {
                 </span>
             </div>
         }
-        <div [class]="cx('content')" [ngStyle]="style" [pBind]="ptm('content')"></div>
+        <div [class]="cx('content')" [ngStyle]="style()" [pBind]="ptm('content')"></div>
     `,
     providers: [EDITOR_VALUE_ACCESSOR, EditorStyle, { provide: EDITOR_INSTANCE, useExisting: Editor }, { provide: PARENT_INSTANCE, useExisting: Editor }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': "cn(cx('root'), styleClass)"
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind]
 })
@@ -92,66 +110,46 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
-
     /**
      * Inline style of the container.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
-    /**
-     * Style class of the container.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    readonly style = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Placeholder text to show when editor is empty.
      * @group Props
      */
-    @Input() placeholder: string | undefined;
+    readonly placeholder = input<string | undefined>();
     /**
      * Whitelist of formats to display, see [here](https://quilljs.com/docs/formats/) for available options.
      * @group Props
      */
-    @Input() formats: string[] | undefined;
+    readonly formats = input<string[] | undefined>();
     /**
      * Modules configuration of Editor, see [here](https://quilljs.com/docs/modules/) for available options.
      * @group Props
      */
-    @Input() modules: object | undefined;
+    readonly modules = input<object | undefined>();
     /**
      * DOM Element or a CSS selector for a DOM Element, within which the editor’s p elements (i.e. tooltips, etc.) should be confined. Currently, it only considers left and right boundaries.
      * @group Props
      */
-    @Input() bounds: HTMLElement | string | undefined;
+    readonly bounds = input<HTMLElement | string | undefined>();
     /**
      * DOM Element or a CSS selector for a DOM Element, specifying which container has the scrollbars (i.e. overflow-y: auto), if is has been changed from the default ql-editor with custom CSS. Necessary to fix scroll jumping bugs when Quill is set to auto grow its height, and another ancestor container is responsible from the scrolling..
      * @group Props
      */
-    @Input() scrollingContainer: HTMLElement | string | undefined;
+    readonly scrollingContainer = input<HTMLElement | string | undefined>();
     /**
      * Shortcut for debug. Note debug is a static method and will affect other instances of Quill editors on the page. Only warning and error messages are enabled by default.
      * @group Props
      */
-    @Input() debug: string | undefined;
+    readonly debug = input<string | undefined>();
     /**
      * Whether to instantiate the editor to read-only mode.
      * @group Props
      */
-    @Input() get readonly(): boolean {
-        return this._readonly;
-    }
-    set readonly(val: boolean) {
-        this._readonly = val;
-
-        if (this.quill) {
-            if (this._readonly) this.quill.disable();
-            else this.quill.enable();
-        }
-    }
+    readonly readonly = input<boolean>(false);
     /**
      * Callback to invoke when the quill modules are loaded.
      * @param {EditorInitEvent} event - custom event.
@@ -191,15 +189,13 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
 
     readonly toolbar = contentChild(Header);
 
-    value: Nullable<string>;
+    value = signal<Nullable<string>>(undefined);
 
-    delayedCommand: Function | null = null;
+    delayedCommand = signal<Function | null>(null);
 
-    _readonly: boolean = false;
+    quill = signal<any>(undefined);
 
-    quill: any;
-
-    dynamicQuill: any;
+    dynamicQuill = signal<any>(undefined);
 
     /**
      * Custom item template.
@@ -209,38 +205,43 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _headerTemplate: TemplateRef<any> | undefined;
+    readonly _headerTemplate = computed<TemplateRef<any> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
     private get isAttachedQuillEditorToDOM(): boolean | undefined {
-        return this.quillElements?.editorElement?.isConnected;
+        return this.quillElements()?.editorElement?.isConnected;
     }
 
-    private quillElements!: { editorElement: HTMLElement; toolbarElement: HTMLElement };
+    private quillElements = signal<{ editorElement: HTMLElement; toolbarElement: HTMLElement } | undefined>(undefined);
 
-    private focusListener: (() => void) | null = null;
+    private focusListener = signal<(() => void) | null>(null);
 
-    private blurListener: (() => void) | null = null;
+    private blurListener = signal<(() => void) | null>(null);
 
     _componentStyle = inject(EditorStyle);
 
     constructor() {
         super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        effect(() => {
+            const readonly = this.readonly();
+            const quill = untracked(() => this.quill());
+
+            if (quill) {
+                if (readonly) quill.disable();
+                else quill.enable();
+            }
+        });
         /**
          * Read or write the DOM once, when initializing non-Angular (Quill) library.
          */
         afterNextRender(() => {
             this.initQuillElements();
             this.initQuillEditor();
-        });
-    }
-
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'header':
-                    this._headerTemplate = item.template;
-                    break;
-            }
         });
     }
 
@@ -251,35 +252,37 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
      * Writes the value to the control.
      */
     writeControlValue(value: any): void {
-        this.value = value;
+        this.value.set(value);
 
-        if (this.quill) {
+        const quill = this.quill();
+
+        if (quill) {
             if (value) {
                 const command = (): void => {
-                    this.quill.setContents(this.quill.clipboard.convert(this.dynamicQuill.version.startsWith('2') ? { html: this.value } : this.value));
+                    quill.setContents(quill.clipboard.convert(this.dynamicQuill().version.startsWith('2') ? { html: this.value() } : this.value()));
                 };
 
                 if (this.isAttachedQuillEditorToDOM) {
                     command();
                 } else {
-                    this.delayedCommand = command;
+                    this.delayedCommand.set(command);
                 }
             } else {
                 const command = (): void => {
-                    this.quill.setText('');
+                    quill.setText('');
                 };
 
                 if (this.isAttachedQuillEditorToDOM) {
                     command();
                 } else {
-                    this.delayedCommand = command;
+                    this.delayedCommand.set(command);
                 }
             }
         }
     }
 
     getQuill() {
-        return this.quill;
+        return this.quill();
     }
 
     private initQuillEditor(): void {
@@ -291,10 +294,10 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
          * Importing Quill at top level, throws `document is undefined` error during when
          * building for SSR, so this dynamically loads quill when it's in browser module.
          */
-        if (!this.dynamicQuill) {
+        if (!this.dynamicQuill()) {
             import('quill')
                 .then((quillModule: any) => {
-                    this.dynamicQuill = quillModule.default;
+                    this.dynamicQuill.set(quillModule.default);
                     this.createQuillEditor();
                 })
                 .catch((e) => console.error(e.message));
@@ -306,30 +309,32 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
     private createQuillEditor(): void {
         this.initQuillElements();
 
-        const { toolbarElement, editorElement } = this.quillElements;
+        const { toolbarElement, editorElement } = this.quillElements()!;
+        const dynamicQuill = this.dynamicQuill();
         let defaultModule = { toolbar: toolbarElement };
-        let modules = this.modules ? { ...defaultModule, ...this.modules } : defaultModule;
-        this.quill = new this.dynamicQuill(editorElement, {
+        let modules = this.modules() ? { ...defaultModule, ...this.modules() } : defaultModule;
+        const quill = new dynamicQuill(editorElement, {
             modules: modules,
-            placeholder: this.placeholder,
-            readOnly: this.readonly,
+            placeholder: this.placeholder(),
+            readOnly: this.readonly(),
             theme: 'snow',
-            formats: this.formats,
-            bounds: this.bounds,
-            debug: this.debug,
-            scrollingContainer: this.scrollingContainer
+            formats: this.formats(),
+            bounds: this.bounds(),
+            debug: this.debug(),
+            scrollingContainer: this.scrollingContainer()
         });
+        this.quill.set(quill);
 
-        const isQuill2 = this.dynamicQuill.version.startsWith('2');
+        const isQuill2 = dynamicQuill.version.startsWith('2');
 
-        if (this.value) {
-            this.quill.setContents(this.quill.clipboard.convert(isQuill2 ? { html: this.value } : this.value));
+        if (this.value()) {
+            quill.setContents(quill.clipboard.convert(isQuill2 ? { html: this.value() } : this.value()));
         }
 
-        this.quill.on('text-change', (delta: any, oldContents: any, source: 'user' | 'api' | 'silent') => {
+        quill.on('text-change', (delta: any, oldContents: any, source: 'user' | 'api' | 'silent') => {
             if (source === 'user') {
-                let html = isQuill2 ? this.quill.getSemanticHTML() : findSingle(editorElement, '.ql-editor')?.innerHTML;
-                let text = this.quill.getText().trim();
+                let html = isQuill2 ? quill.getSemanticHTML() : findSingle(editorElement, '.ql-editor')?.innerHTML;
+                let text = quill.getText().trim();
                 if (html === '<p><br></p>') {
                     html = null;
                 }
@@ -346,7 +351,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
             }
         });
 
-        this.quill.on('selection-change', (range: any, oldRange: any, source: 'user' | 'api' | 'silent') => {
+        quill.on('selection-change', (range: any, oldRange: any, source: 'user' | 'api' | 'silent') => {
             this.onSelectionChange.emit({
                 range: range,
                 oldRange: oldRange,
@@ -354,55 +359,62 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
             });
         });
 
-        this.quill.on('editor-change', (eventName: 'text-change' | 'selection-change', ...args: any[]) => {
+        quill.on('editor-change', (eventName: 'text-change' | 'selection-change', ...args: any[]) => {
             this.onEditorChange.emit({
                 eventName: eventName,
                 args: args
             });
         });
 
-        const editorEl = this.quill.root;
+        const editorEl = quill.root;
 
-        this.focusListener = () => {
+        const focusListener = () => {
             this.onFocus.emit({
                 source: 'user'
             });
         };
 
-        this.blurListener = () => {
+        const blurListener = () => {
             this.onBlur.emit({
                 source: 'user'
             });
         };
 
-        editorEl.addEventListener('focus', this.focusListener);
-        editorEl.addEventListener('blur', this.blurListener);
+        this.focusListener.set(focusListener);
+        this.blurListener.set(blurListener);
+
+        editorEl.addEventListener('focus', focusListener);
+        editorEl.addEventListener('blur', blurListener);
 
         this.onEditorInit.emit({
-            editor: this.quill
+            editor: quill
         });
     }
 
     onDestroy(): void {
-        if (this.quill && this.quill.root) {
-            const editorEl = this.quill.root;
-            if (this.focusListener) {
-                editorEl.removeEventListener('focus', this.focusListener);
-                this.focusListener = null;
+        const quill = this.quill();
+
+        if (quill && quill.root) {
+            const editorEl = quill.root;
+            const focusListener = this.focusListener();
+            const blurListener = this.blurListener();
+            if (focusListener) {
+                editorEl.removeEventListener('focus', focusListener);
+                this.focusListener.set(null);
             }
-            if (this.blurListener) {
-                editorEl.removeEventListener('blur', this.blurListener);
-                this.blurListener = null;
+            if (blurListener) {
+                editorEl.removeEventListener('blur', blurListener);
+                this.blurListener.set(null);
             }
         }
     }
 
     private initQuillElements(): void {
-        if (!this.quillElements) {
-            this.quillElements = {
+        if (!this.quillElements()) {
+            this.quillElements.set({
                 editorElement: findSingle(this.el.nativeElement, 'div[data-pc-section="content"]'),
                 toolbarElement: findSingle(this.el.nativeElement, 'div[data-pc-section="toolbar"]')
-            } as any;
+            } as any);
         }
     }
 }

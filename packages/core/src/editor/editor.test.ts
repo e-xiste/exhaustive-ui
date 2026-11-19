@@ -17,7 +17,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
         <p-editor
             [(ngModel)]="text"
             [style]="style"
-            [styleClass]="styleClass"
+            [class]="styleClass"
             [placeholder]="placeholder"
             [readonly]="readonly"
             [formats]="formats"
@@ -215,12 +215,11 @@ describe('Editor', () => {
         });
 
         it('should have default values', () => {
-            expect(editorInstance.readonly).toBe(false);
-            expect(editorInstance.style).toBe(null);
-            expect(editorInstance.styleClass).toBe('' as any);
-            expect(editorInstance.placeholder).toBe('Enter text here...');
-            expect(editorInstance.formats).toBeUndefined();
-            expect(editorInstance.modules).toBeUndefined();
+            expect(editorInstance.readonly()).toBe(false);
+            expect(editorInstance.style()).toBe(null);
+            expect(editorInstance.placeholder()).toBe('Enter text here...');
+            expect(editorInstance.formats()).toBeUndefined();
+            expect(editorInstance.modules()).toBeUndefined();
         });
 
         it('should accept input values', async () => {
@@ -231,15 +230,15 @@ describe('Editor', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(editorInstance.placeholder).toBe('Custom placeholder');
-            expect(editorInstance.readonly).toBe(true);
-            expect(editorInstance.styleClass).toBe('custom-editor');
-            expect(editorInstance.formats).toEqual(['bold', 'italic']);
+            expect(editorInstance.placeholder()).toBe('Custom placeholder');
+            expect(editorInstance.readonly()).toBe(true);
+            expect(fixture.debugElement.query(By.css('p-editor')).nativeElement.classList.contains('custom-editor')).toBe(true);
+            expect(editorInstance.formats()).toEqual(['bold', 'italic']);
         });
 
         it('should initialize with ngModel value', () => {
             // Value might be null initially, component sets it asynchronously
-            expect(editorInstance.value).toBeDefined();
+            expect(editorInstance.value()).toBeDefined();
         });
     });
 
@@ -262,7 +261,7 @@ describe('Editor', () => {
             const newValue = '<div>New content</div>';
             editorInstance.writeControlValue(newValue);
 
-            expect(editorInstance.value).toBe(newValue);
+            expect(editorInstance.value()).toBe(newValue);
         });
 
         it('should get quill instance', () => {
@@ -271,24 +270,22 @@ describe('Editor', () => {
             expect(editorInstance.getQuill).toBeDefined();
         });
 
-        it('should handle readonly mode toggle', () => {
-            if (editorInstance.quill) {
-                vi.spyOn(editorInstance.quill, 'disable').mockImplementation(() => {});
-                vi.spyOn(editorInstance.quill, 'enable').mockImplementation(() => {});
+        it('should handle readonly mode toggle', async () => {
+            await vi.waitFor(() => expect(editorInstance.quill()).toBeTruthy());
+            const disable = vi.spyOn(editorInstance.quill(), 'disable').mockImplementation(() => {});
+            const enable = vi.spyOn(editorInstance.quill(), 'enable').mockImplementation(() => {});
 
-                editorInstance.readonly = true;
-                expect(editorInstance.quill.disable).toHaveBeenCalled();
+            component.readonly = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(editorInstance.readonly()).toBe(true);
+            expect(disable).toHaveBeenCalled();
 
-                editorInstance.readonly = false;
-                expect(editorInstance.quill.enable).toHaveBeenCalled();
-            } else {
-                // If quill is not initialized, just test the property
-                editorInstance.readonly = true;
-                expect(editorInstance.readonly).toBe(true);
-
-                editorInstance.readonly = false;
-                expect(editorInstance.readonly).toBe(false);
-            }
+            component.readonly = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            expect(editorInstance.readonly()).toBe(false);
+            expect(enable).toHaveBeenCalled();
         });
     });
 
@@ -311,7 +308,7 @@ describe('Editor', () => {
             vi.spyOn(component, 'onInit').mockImplementation(() => {});
 
             editorInstance.onEditorInit.emit({
-                editor: editorInstance.quill
+                editor: editorInstance.quill()
             });
 
             expect(component.onInit).toHaveBeenCalled();
@@ -422,28 +419,19 @@ describe('Editor', () => {
             await fixture.whenStable();
         });
 
-        it('should process pTemplate header correctly', async () => {
+        it('should process pTemplate header correctly', () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            editorInstance.ngAfterContentInit();
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            // pTemplate processing might not work in test environment, just verify method exists
-            expect(editorInstance.ngAfterContentInit).toBeDefined();
+            expect(editorInstance._headerTemplate()).toBeTruthy();
         });
 
         it('should render pTemplate toolbar content', () => {
             const ptemplateToolbar = fixture.debugElement.query(By.css('.ptemplate-toolbar'));
-            if (ptemplateToolbar) {
-                expect(ptemplateToolbar).toBeTruthy();
+            expect(ptemplateToolbar).toBeTruthy();
 
-                const underlineButton = fixture.debugElement.query(By.css('.ql-underline'));
-                expect(underlineButton).toBeTruthy();
-            } else {
-                expect(true).toBe(true);
-            }
+            const underlineButton = fixture.debugElement.query(By.css('.ql-underline'));
+            expect(underlineButton).toBeTruthy();
         });
     });
 
@@ -459,14 +447,16 @@ describe('Editor', () => {
         });
 
         it('should apply custom style classes', async () => {
+            const editorEl = fixture.debugElement.query(By.css('p-editor'));
+            expect(editorEl.nativeElement.classList.contains('p-editor')).toBe(true);
+            expect(editorEl.nativeElement.classList.contains('custom-editor-class')).toBe(false);
+
             component.styleClass = 'custom-editor-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            const editorEl = fixture.debugElement.query(By.css('p-editor'));
-            const editorInstance = editorEl.componentInstance as Editor;
-
-            expect(editorInstance.styleClass).toBe('custom-editor-class');
+            expect(editorEl.nativeElement.classList.contains('p-editor')).toBe(true);
+            expect(editorEl.nativeElement.classList.contains('custom-editor-class')).toBe(true);
         });
 
         it('should apply custom styles', async () => {
@@ -477,19 +467,11 @@ describe('Editor', () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            expect(editorInstance.style).toEqual({ border: '2px solid red', padding: '10px' });
+            expect(editorInstance.style()).toEqual({ border: '2px solid red', padding: '10px' });
 
-            // Simulate ngStyle behavior in test environment
-            const contentElement = fixture.debugElement.query(By.css('.p-editor-content'));
-            if (contentElement && editorInstance.style) {
-                const element = contentElement.nativeElement;
-                Object.keys(editorInstance.style).forEach((key) => {
-                    element.style[key] = editorInstance.style![key];
-                });
-
-                expect(element.style.border).toBe('2px solid red');
-                expect(element.style.padding).toBe('10px');
-            }
+            const element = fixture.debugElement.query(By.css('.p-editor-content')).nativeElement;
+            expect(element.style.border).toBe('2px solid red');
+            expect(element.style.padding).toBe('10px');
         });
     });
 
@@ -508,22 +490,17 @@ describe('Editor', () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            expect(editorInstance.readonly).toBe(true);
+            expect(editorInstance.readonly()).toBe(true);
         });
 
-        it('should disable editor when readonly is true', () => {
+        it('should disable editor when readonly is true', async () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            if (editorInstance.quill) {
-                vi.spyOn(editorInstance.quill, 'disable').mockImplementation(() => {});
-                editorInstance.readonly = true;
-                expect(editorInstance.quill.disable).toHaveBeenCalled();
-            } else {
-                // Test readonly property setting if quill is not available
-                editorInstance.readonly = true;
-                expect(editorInstance.readonly).toBe(true);
-            }
+            await vi.waitFor(() => expect(editorInstance.quill()).toBeTruthy());
+
+            expect(editorInstance.quill().isEnabled()).toBe(false);
+            expect(editorInstance.quill().root.getAttribute('contenteditable')).toBe('false');
         });
     });
 
@@ -542,7 +519,7 @@ describe('Editor', () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            expect(editorInstance.modules).toEqual({
+            expect(editorInstance.modules()).toEqual({
                 toolbar: [['bold', 'italic'], ['clean']]
             });
         });
@@ -551,7 +528,7 @@ describe('Editor', () => {
             const editorEl = fixture.debugElement.query(By.css('p-editor'));
             const editorInstance = editorEl.componentInstance as Editor;
 
-            expect(editorInstance.formats).toEqual(['bold', 'italic', 'underline']);
+            expect(editorInstance.formats()).toEqual(['bold', 'italic', 'underline']);
         });
     });
 
@@ -582,15 +559,15 @@ describe('Editor', () => {
 
             editorInstance.writeControlValue(newValue);
 
-            expect(editorInstance.value).toBe(newValue);
+            expect(editorInstance.value()).toBe(newValue);
         });
 
         it('should handle null and undefined values', () => {
             editorInstance.writeControlValue(null);
-            expect(editorInstance.value).toBe(null);
+            expect(editorInstance.value()).toBe(null);
 
             editorInstance.writeControlValue(undefined);
-            expect(editorInstance.value).toBeUndefined();
+            expect(editorInstance.value()).toBeUndefined();
         });
     });
 
@@ -653,29 +630,27 @@ describe('Editor', () => {
             editorInstance = editorEl.componentInstance as Editor;
         });
 
-        it('should cleanup event listeners on destroy', () => {
-            if (editorInstance.quill && editorInstance.quill.root) {
-                const mockElement = {
-                    removeEventListener: vi.fn()
-                };
+        it('should cleanup event listeners on destroy', async () => {
+            await vi.waitFor(() => expect(editorInstance.quill()?.root).toBeTruthy());
 
-                // Mock the quill root element
-                editorInstance.quill.root = mockElement;
+            const mockElement = {
+                removeEventListener: vi.fn()
+            };
 
-                // Test that ngOnDestroy doesn't throw errors
-                expect(() => {
-                    editorInstance.ngOnDestroy();
-                }).not.toThrow();
+            // Mock the quill root element
+            editorInstance.quill().root = mockElement;
 
-                // Verify destroy was called properly
-                expect(mockElement.removeEventListener).toHaveBeenCalled();
-            } else {
-                expect(true).toBe(true);
-            }
+            // Test that ngOnDestroy doesn't throw errors
+            expect(() => {
+                editorInstance.ngOnDestroy();
+            }).not.toThrow();
+
+            // Verify destroy was called properly
+            expect(mockElement.removeEventListener).toHaveBeenCalledTimes(2);
         });
 
         it('should handle destroy when quill is not initialized', () => {
-            editorInstance.quill = null as any;
+            editorInstance.quill.set(null);
 
             expect(() => {
                 editorInstance.ngOnDestroy();
@@ -700,13 +675,13 @@ describe('Editor', () => {
 
         it('should handle empty content', () => {
             editorInstance.writeControlValue('');
-            expect(editorInstance.value).toBe('' as any);
+            expect(editorInstance.value()).toBe('' as any);
         });
 
         it('should handle HTML content with special characters', () => {
             const htmlContent = '<div>Test &amp; content with "quotes" and \'apostrophes\'</div>';
             editorInstance.writeControlValue(htmlContent);
-            expect(editorInstance.value).toBe(htmlContent);
+            expect(editorInstance.value()).toBe(htmlContent);
         });
 
         it('should handle rapid property changes', async () => {
@@ -722,7 +697,7 @@ describe('Editor', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(editorInstance.placeholder).toBe('Third placeholder');
+            expect(editorInstance.placeholder()).toBe('Third placeholder');
         });
 
         it('should handle invalid configuration gracefully', async () => {
@@ -743,8 +718,8 @@ describe('Editor', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(editorInstance.bounds).toBe('body');
-            expect(editorInstance.scrollingContainer).toBe('#container');
+            expect(editorInstance.bounds()).toBe('body');
+            expect(editorInstance.scrollingContainer()).toBe('#container');
         });
     });
 
@@ -935,19 +910,19 @@ describe('Editor', () => {
                 pt = {
                     root: ({ instance }: any) => {
                         return {
-                            class: instance?.readonly ? 'READONLY_CLASS' : 'NOT_READONLY_CLASS'
+                            class: instance?.readonly() ? 'READONLY_CLASS' : 'NOT_READONLY_CLASS'
                         };
                     },
                     toolbar: ({ instance }: any) => {
                         return {
                             style: {
-                                'background-color': instance?.readonly ? 'yellow' : 'red'
+                                'background-color': instance?.readonly() ? 'yellow' : 'red'
                             } as any
                         };
                     },
                     content: ({ instance }: any) => {
                         return {
-                            'data-placeholder': instance?.placeholder
+                            'data-placeholder': instance?.placeholder()
                         };
                     }
                 };

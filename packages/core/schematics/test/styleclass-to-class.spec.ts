@@ -1084,6 +1084,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-image class="existing my-image"></p-image>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-editor', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-editor [(ngModel)]="text" styleClass="my-editor" [style]="{ height: '320px' }"></p-editor>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-editor [(ngModel)]="text" class="my-editor" [style]="{ height: '320px' }"></p-editor>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-editor', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-editor [(ngModel)]="text" [styleClass]="editorClass"></p-editor>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-editor [(ngModel)]="text" [class]="editorClass"></p-editor>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-editor', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-editor class="existing" styleClass="my-editor"></p-editor>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-editor class="existing my-editor"></p-editor>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
