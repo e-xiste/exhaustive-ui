@@ -3,7 +3,7 @@ import { style } from '@exhaustive-ui/styles/steps';
 import { BaseStyle } from '@exhaustive-ui/core/base';
 
 const classes = {
-    root: ({ instance }) => ['p-steps p-component', { 'p-readonly': instance.readonly }],
+    root: ({ instance }) => ['p-steps p-component', { 'p-readonly': instance.readonly() }],
     list: 'p-steps-list',
     item: ({ instance, item, index }) => [
         'p-steps-item',

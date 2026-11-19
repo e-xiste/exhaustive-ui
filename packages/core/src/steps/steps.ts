@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, ElementRef, inject, Input, NgModule, numberAttribute, OnDestroy, OnInit, ViewEncapsulation, viewChild, output } from '@angular/core';
+import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, model, NgModule, ViewEncapsulation, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { find, findSingle } from '@exhaustive-ui/utils';
 import { MenuItem, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
+import { Bind } from '@exhaustive-ui/core/bind';
 import { TooltipModule } from '@exhaustive-ui/core/tooltip';
-import { Subscription } from 'rxjs';
 import { StepsStyle } from './style/stepsstyle';
 
 /**
@@ -14,12 +15,11 @@ import { StepsStyle } from './style/stepsstyle';
  */
 @Component({
     selector: 'p-steps',
-    standalone: true,
     imports: [CommonModule, RouterModule, TooltipModule, SharedModule],
     template: `
-        <nav [class]="cn(cx('root'), styleClass)" [ngStyle]="style" [attr.data-pc-name]="'steps'">
+        <nav [class]="cn(cx('root'), styleClass())" [ngStyle]="style()" [attr.data-pc-name]="'steps'">
             <ul #list [attr.data-pc-section]="'menu'" [class]="cx('list')">
-                @for (item of model; track item.label; let i = $index) {
+                @for (item of model(); track item.label; let i = $index) {
                     @if (item.visible !== false) {
                         <li
                             [class]="cx('item', { item, index: i })"
@@ -37,21 +37,20 @@ import { StepsStyle } from './style/stepsstyle';
                                     role="link"
                                     [routerLink]="item.routerLink"
                                     [queryParams]="item.queryParams"
-                                    [routerLinkActiveOptions]="item.routerLinkActiveOptions || { exact: false }"
                                     [class]="cx('itemLink')"
                                     (click)="onItemClick($event, item, i)"
                                     (keydown)="onItemKeydown($event, item, i)"
                                     [target]="item.target"
                                     [attr.tabindex]="getItemTabIndex(item, i)"
-                                    [attr.aria-expanded]="i === activeIndex"
-                                    [attr.aria-disabled]="item.disabled || (readonly && i !== activeIndex)"
+                                    [attr.aria-expanded]="i === activeIndex()"
+                                    [attr.aria-disabled]="item.disabled || (readonly() && i !== activeIndex())"
                                     [fragment]="item.fragment"
                                     [queryParamsHandling]="item.queryParamsHandling"
                                     [preserveFragment]="item.preserveFragment"
                                     [skipLocationChange]="item.skipLocationChange"
                                     [replaceUrl]="item.replaceUrl"
                                     [state]="item.state"
-                                    [attr.ariaCurrentWhenActive]="exact ? 'step' : undefined"
+                                    [attr.ariaCurrentWhenActive]="exact() ? 'step' : undefined"
                                 >
                                     <span [class]="cx('itemNumber')">{{ i + 1 }}</span>
                                     @if (item.escape !== false) {
@@ -69,9 +68,9 @@ import { StepsStyle } from './style/stepsstyle';
                                     (keydown)="onItemKeydown($event, item, i)"
                                     [target]="item.target"
                                     [attr.tabindex]="getItemTabIndex(item, i)"
-                                    [attr.aria-expanded]="i === activeIndex"
-                                    [attr.aria-disabled]="item.disabled || (readonly && i !== activeIndex)"
-                                    [attr.ariaCurrentWhenActive]="exact && (!item.disabled || readonly) ? 'step' : undefined"
+                                    [attr.aria-expanded]="i === activeIndex()"
+                                    [attr.aria-disabled]="item.disabled || (readonly() && i !== activeIndex())"
+                                    [attr.ariaCurrentWhenActive]="exact() && (!item.disabled || readonly()) ? 'step' : undefined"
                                 >
                                     <span [class]="cx('itemNumber')">{{ i + 1 }}</span>
                                     @if (item.escape !== false) {
@@ -89,46 +88,48 @@ import { StepsStyle } from './style/stepsstyle';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    providers: [StepsStyle]
+    providers: [StepsStyle],
+    hostDirectives: [Bind]
 })
 export class Steps extends BaseComponent {
     componentName = 'Steps';
+
+    bindDirectiveInstance = inject(Bind, { self: true });
+
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+    }
     /**
-     * Index of the active item.
+     * Index of the active item. Emits the new index through `activeIndexChange` when a step is selected.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) activeIndex: number = 0;
+    readonly activeIndex = model<number>(0);
     /**
      * An array of menu items.
      * @group Props
      */
-    @Input() model: MenuItem[] | undefined;
+    readonly model = input<MenuItem[] | undefined>();
     /**
      * Whether the items are clickable or not.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonly: boolean = true;
+    readonly readonly = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Inline style of the component.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
+    readonly style = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Style class of the component.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    readonly styleClass = input<string | undefined>();
     /**
      * Whether to apply 'router-link-active-exact' class if route exactly matches the item path.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) exact: boolean = true;
-    /**
-     * Callback to invoke when the new step is selected.
-     * @param {number} number - current index.
-     * @group Emits
-     */
-    readonly activeIndexChange = output<number>();
+    readonly exact = input<boolean, unknown>(true, { transform: booleanAttribute });
 
     readonly listViewChild = viewChild.required<ElementRef>('list');
 
@@ -136,21 +137,21 @@ export class Steps extends BaseComponent {
 
     route = inject(ActivatedRoute);
 
+    destroyRef = inject(DestroyRef);
+
     _componentStyle = inject(StepsStyle);
 
-    subscription: Subscription | undefined;
-
     onInit() {
-        this.subscription = this.router.events.subscribe(() => this.cd.markForCheck());
+        this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.cd.markForCheck());
     }
 
     onItemClick(event: Event, item: MenuItem, i: number) {
-        if (this.readonly || item.disabled) {
+        if (this.readonly() || item.disabled) {
             event.preventDefault();
             return;
         }
 
-        this.activeIndexChange.emit(i);
+        this.activeIndex.set(i);
 
         if (!item.url && !item.routerLink) {
             event.preventDefault();
@@ -192,10 +193,10 @@ export class Steps extends BaseComponent {
             }
 
             case 'Tab':
-                if (i !== (this.activeIndex ?? -1)) {
+                if (i !== (this.activeIndex() ?? -1)) {
                     const siblings = <any>find(this.listViewChild().nativeElement, '[data-pc-section="menuitem"]');
                     siblings[i].children[0].tabIndex = '-1';
-                    siblings[this.activeIndex ?? 0].children[0].tabIndex = '0';
+                    siblings[this.activeIndex() ?? 0].children[0].tabIndex = '0';
                 }
                 break;
 
@@ -266,11 +267,11 @@ export class Steps extends BaseComponent {
     }
 
     isClickableRouterLink(item: MenuItem) {
-        return item.routerLink && !this.readonly && !item.disabled;
+        return item.routerLink && !this.readonly() && !item.disabled;
     }
 
     isItemDisabled(item: MenuItem, index: number): boolean {
-        return item.disabled || (this.readonly && !this.isActive(item, index));
+        return item.disabled || (this.readonly() && !this.isActive(item, index));
     }
 
     isActive(item: MenuItem, index: number) {
@@ -280,7 +281,7 @@ export class Steps extends BaseComponent {
             return this.router.isActive(this.router.createUrlTree(routerLink, { relativeTo: this.route }).toString(), false);
         }
 
-        return index === this.activeIndex;
+        return index === this.activeIndex();
     }
 
     getItemTabIndex(item: MenuItem, index: number): string {
@@ -288,17 +289,11 @@ export class Steps extends BaseComponent {
             return '-1';
         }
 
-        if (!item.disabled && this.activeIndex === index) {
+        if (!item.disabled && this.activeIndex() === index) {
             return item.tabindex || '0';
         }
 
         return item.tabindex ?? '-1';
-    }
-
-    onDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 }
 
