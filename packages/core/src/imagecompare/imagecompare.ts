@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, InjectionToken, Input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { afterEveryRender, ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -14,19 +14,18 @@ const IMAGECOMPARE_INSTANCE = new InjectionToken<ImageCompare>('IMAGECOMPARE_INS
  */
 @Component({
     selector: 'p-imageCompare, p-imagecompare, p-image-compare',
-    standalone: true,
     imports: [CommonModule, SharedModule, BindModule],
     template: `
-        <ng-template *ngTemplateOutlet="leftTemplate() || _leftTemplate"></ng-template>
-        <ng-template *ngTemplateOutlet="rightTemplate() || _rightTemplate"></ng-template>
+        <ng-template *ngTemplateOutlet="leftTemplate() || _leftTemplate()"></ng-template>
+        <ng-template *ngTemplateOutlet="rightTemplate() || _rightTemplate()"></ng-template>
 
         <input type="range" min="0" max="100" value="50" (input)="onSlide($event)" [class]="cx('slider')" [pBind]="ptm('slider')" />
     `,
     host: {
         '[class]': "cx('root')",
-        '[attr.tabindex]': 'tabindex',
-        '[attr.aria-labelledby]': 'ariaLabelledby',
-        '[attr.aria-label]': 'ariaLabel'
+        '[attr.tabindex]': 'tabindex()',
+        '[attr.aria-labelledby]': 'ariaLabelledby()',
+        '[attr.aria-label]': 'ariaLabel()'
     },
     hostDirectives: [Bind],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,22 +38,27 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
     $pcImageCompare: ImageCompare | undefined = inject(IMAGECOMPARE_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
     bindDirectiveInstance = inject(Bind, { self: true });
+
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+    }
     /**
      * Index of the element in tabbing order.
      * @defaultValue 0
      * @group Props
      */
-    @Input() tabindex: number | undefined;
+    readonly tabindex = input<number | undefined>();
     /**
      * Defines a string value that labels an interactive element.
      * @group Props
      */
-    @Input() ariaLabelledby: string | undefined;
+    readonly ariaLabelledby = input<string | undefined>();
     /**
      * Identifier of the underlying input element.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
 
     /**
      * Custom left side template.
@@ -68,45 +72,38 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
      */
     readonly rightTemplate = contentChild<TemplateRef<void>>('right', { descendants: false });
 
-    _leftTemplate: TemplateRef<void> | undefined;
+    readonly _leftTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'left')
+                .at(-1)?.template
+    );
 
-    _rightTemplate: TemplateRef<void> | undefined;
+    readonly _rightTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'right')
+                .at(-1)?.template
+    );
 
     readonly templates = contentChildren(PrimeTemplate);
 
     _componentStyle = inject(ImageCompareStyle);
 
-    mutationObserver: MutationObserver;
+    mutationObserver = signal<MutationObserver | undefined>(undefined);
 
-    isRTL: boolean = false;
-
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
+    isRTL = signal<boolean>(false);
 
     onInit() {
         this.updateDirection();
         this.observeDirectionChanges();
     }
 
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'left':
-                    this._leftTemplate = item.template;
-                    break;
-                case 'right':
-                    this._rightTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
     onSlide(event) {
         const value = event.target.value;
         const image = event.target.previousElementSibling;
 
-        if (this.isRTL) {
+        if (this.isRTL()) {
             image.style.clipPath = `polygon(${100 - value}% 0, 100% 0, 100% 100%, ${100 - value}% 100%)`;
         } else {
             image.style.clipPath = `polygon(0 0, ${value}% 0, ${value}% 100%, 0 100%)`;
@@ -114,7 +111,7 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
     }
 
     updateDirection() {
-        this.isRTL = !!this.el.nativeElement.closest('[dir="rtl"]');
+        this.isRTL.set(!!this.el.nativeElement.closest('[dir="rtl"]'));
     }
 
     observeDirectionChanges() {
@@ -122,18 +119,18 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
             const targetNode = document?.documentElement;
             const config = { attributes: true, attributeFilter: ['dir'] };
 
-            this.mutationObserver = new MutationObserver(() => {
-                this.updateDirection();
-            });
+            this.mutationObserver.set(
+                new MutationObserver(() => {
+                    this.updateDirection();
+                })
+            );
 
-            this.mutationObserver.observe(targetNode, config);
+            this.mutationObserver()?.observe(targetNode, config);
         }
     }
 
     onDestroy() {
-        if (this.mutationObserver) {
-            this.mutationObserver.disconnect();
-        }
+        this.mutationObserver()?.disconnect();
     }
 }
 
