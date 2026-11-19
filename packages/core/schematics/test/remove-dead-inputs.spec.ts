@@ -173,6 +173,43 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(content);
     });
 
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions and ariaCloseLabel from p-popover while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-popover #op showTransitionOptions=".12s ease" [hideTransitionOptions]="hideTf" ariaCloseLabel="Close" [motionOptions]="motion" [dismissable]="false"></p-popover>\n<p-popover [ariaCloseLabel]="closeLabel" [appendTo]="'body'"></p-popover>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).not.toContain('ariaCloseLabel');
+        expect(html).toBe(`<p-popover #op [motionOptions]="motion" [dismissable]="false"></p-popover>\n<p-popover [appendTo]="'body'"></p-popover>\n`);
+    });
+
+    it('keeps ariaCloseLabel on components that still read it', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-drawer ariaCloseLabel="Close drawer"></p-drawer>\n<p-dialog [ariaCloseLabel]="closeLabel"></p-dialog>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
+    it('does not report a programmatic ariaCloseLabel access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    label(dialog: { ariaCloseLabel: string }) {\n        return dialog.ariaCloseLabel;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
     it('does not report a programmatic transitionOptions access as a leftover', async () => {
         const runner = createMigrationRunner();
         const content = `export class Foo {\n    read(panel: { transitionOptions: string }) {\n        return panel.transitionOptions;\n    }\n}\n`;

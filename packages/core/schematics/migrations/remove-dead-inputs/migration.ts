@@ -22,6 +22,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * read: its show/hide animation is driven by `motionOptions`.
  * `inputId` on ToggleButton was stored but never read: the host element is the button itself and
  * there has been no inner input element left to identify.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on Popover were stored but never
+ * read: its show/hide animation is driven by `motionOptions`. `ariaCloseLabel` on Popover was stored
+ * but never read either: the popover renders no close button to label.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -42,7 +45,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-scroll-top', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-togglebutton', names: ['inputId'] },
     { selector: 'p-toggleButton', names: ['inputId'] },
-    { selector: 'p-toggle-button', names: ['inputId'] }
+    { selector: 'p-toggle-button', names: ['inputId'] },
+    { selector: 'p-popover', names: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'] }
 ];
 
 /**
@@ -52,9 +56,9 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * Fieldset's, Panel's and Accordion's `transitionOptions` is left out too: the same input is still alive on other
  * components (p-dialog, p-drawer, ...), so a name-only scan cannot tell their reads apart.
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
- * a working `inputId`.
+ * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
  */
-const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId');
+const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter((name) => name !== 'size' && name !== 'transitionOptions' && name !== 'inputId' && name !== 'ariaCloseLabel');
 
 /**
  * Removes usages of inputs that stopped doing anything before being deleted from
@@ -67,12 +71,16 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * deprecated size, never forwarded to the inner badge (badgeSize is the input that sizes it);
  * Fieldset's, Panel's and Accordion's deprecated transitionOptions, stored but never read (motionOptions drives the toggle animation);
  * ScrollTop's deprecated showTransitionOptions/hideTransitionOptions, stored but never read
- * (motionOptions drives the show/hide animation); and ToggleButton's inputId, stored but never read
- * since the host element became the button itself.
+ * (motionOptions drives the show/hide animation); ToggleButton's inputId, stored but never read
+ * since the host element became the button itself; and Popover's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the show/hide animation) and
+ * ariaCloseLabel, stored but never read since the popover renders no close button.
  *
  * `name="..."`/`[name]="..."` template bindings on `p-toast`/`p-toastItem`/`p-message`/`p-overlay`/
  * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/`p-accordion`/
  * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button` are removed
+ * `p-colorPicker`/`p-colorpicker`/`p-color-picker`/`p-overlayBadge`/`p-overlay-badge`/`p-overlaybadge`/`p-fieldset`/`p-panel`/
+ * `p-scrollTop`/`p-scrolltop`/`p-scroll-top`/`p-togglebutton`/`p-toggleButton`/`p-toggle-button`/`p-popover` are removed
  * automatically — safe to delete outright, since the values they passed were already unused.
  * Programmatic reads/writes of the same property name elsewhere (e.g. on a `@ViewChild`-queried
  * instance) are reported for manual review instead of being rewritten automatically.

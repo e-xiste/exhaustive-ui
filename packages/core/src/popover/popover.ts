@@ -1,5 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -7,12 +8,11 @@ import {
     ElementRef,
     HostListener,
     inject,
-    InjectionToken,
     input,
-    Input,
     NgModule,
     NgZone,
     numberAttribute,
+    signal,
     TemplateRef,
     ViewEncapsulation,
     ViewRef,
@@ -34,31 +34,28 @@ import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { Subscription } from 'rxjs';
 import { PopoverStyle } from './style/popoverstyle';
 
-const POPOVER_INSTANCE = new InjectionToken<Popover>('POPOVER_INSTANCE');
-
 /**
  * Popover is a container component that can overlay other components on page.
  * @group Components
  */
 @Component({
     selector: 'p-popover',
-    standalone: true,
     imports: [CommonModule, SharedModule, Bind, MotionModule],
-    providers: [PopoverStyle, { provide: POPOVER_INSTANCE, useExisting: Popover }, { provide: PARENT_INSTANCE, useExisting: Popover }],
+    providers: [PopoverStyle, { provide: PARENT_INSTANCE, useExisting: Popover }],
     hostDirectives: [Bind],
     template: `
-        @if (render) {
+        @if (render()) {
             <div
                 [pBind]="ptm('root')"
-                [class]="cn(cx('root'), styleClass)"
+                [class]="cn(cx('root'), styleClass())"
                 [style]="sx('root')"
-                [ngStyle]="style"
+                [ngStyle]="style()"
                 (click)="onOverlayClick($event)"
                 role="dialog"
-                [attr.aria-modal]="overlayVisible"
-                [attr.aria-label]="ariaLabel"
-                [attr.aria-labelledBy]="ariaLabelledBy"
-                [pMotion]="overlayVisible"
+                [attr.aria-modal]="overlayVisible()"
+                [attr.aria-label]="ariaLabel()"
+                [attr.aria-labelledBy]="ariaLabelledBy()"
+                [pMotion]="overlayVisible()"
                 pMotionName="p-anchored-overlay"
                 [pMotionAppear]="true"
                 (pMotionOnEnter)="onAnimationStart($event)"
@@ -67,7 +64,7 @@ const POPOVER_INSTANCE = new InjectionToken<Popover>('POPOVER_INSTANCE');
             >
                 <div [pBind]="ptm('content')" [class]="cx('content')" (click)="onContentClick($event)" (mousedown)="onContentClick($event)">
                     <ng-content></ng-content>
-                    <ng-template *ngTemplateOutlet="contentTemplate() || _contentTemplate; context: { closeCallback: onCloseClick.bind(this) }"></ng-template>
+                    <ng-template *ngTemplateOutlet="contentTemplate() || _contentTemplate(); context: { closeCallback: onCloseClick.bind(this) }"></ng-template>
                 </div>
             </div>
         }
@@ -78,39 +75,38 @@ const POPOVER_INSTANCE = new InjectionToken<Popover>('POPOVER_INSTANCE');
 export class Popover extends BaseComponent<PopoverPassThrough> {
     componentName = 'Popover';
 
-    $pcPopover: Popover | undefined = inject(POPOVER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
-
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('host'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
     }
 
     /**
      * Defines a string that labels the input for accessibility.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    ariaLabel = input<string | undefined>(undefined);
     /**
      * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
      * @group Props
      */
-    @Input() ariaLabelledBy: string | undefined;
+    ariaLabelledBy = input<string | undefined>(undefined);
     /**
      * Enables to hide the overlay when outside is clicked.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) dismissable: boolean = true;
+    dismissable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Inline style of the component.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
+    style = input<{ [klass: string]: any } | null | undefined>(undefined);
     /**
      * Style class of the component.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    styleClass = input<string | undefined>(undefined);
     /**
      * Target element to attach the overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @defaultValue 'self'
@@ -121,34 +117,17 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
      * Whether to automatically manage layering.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
-    /**
-     * Aria label of the close icon.
-     * @group Props
-     */
-    @Input() ariaCloseLabel: string | undefined;
+    autoZIndex = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Base zIndex value to use in layering.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
+    baseZIndex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * When enabled, first button receives focus on show.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) focusOnShow: boolean = true;
-    /**
-     * Transition options of the show animation.
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() showTransitionOptions: string = '.12s cubic-bezier(0, 0, 0.2, 1)';
-    /**
-     * Transition options of the hide animation.
-     * @group Props
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     */
-    @Input() hideTransitionOptions: string = '.1s linear';
+    focusOnShow = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * The motion options.
      * @group Props
@@ -174,23 +153,21 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    container: Nullable<HTMLDivElement>;
+    container = signal<Nullable<HTMLDivElement>>(undefined);
 
-    overlayVisible: boolean = false;
+    overlayVisible = signal<boolean>(false);
 
-    render: boolean = false;
+    render = signal<boolean>(false);
 
-    selfClick: boolean = false;
+    selfClick = signal<boolean>(false);
 
-    documentClickListener: VoidListener;
+    documentClickListener = signal<VoidListener>(undefined);
 
-    target: any;
+    target = signal<any>(undefined);
 
-    willHide: Nullable<boolean>;
+    scrollHandler = signal<Nullable<ConnectedOverlayScrollHandler>>(undefined);
 
-    scrollHandler: Nullable<ConnectedOverlayScrollHandler>;
-
-    documentResizeListener: VoidListener;
+    documentResizeListener = signal<VoidListener>(undefined);
 
     /**
      * Custom content template.
@@ -202,13 +179,18 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _contentTemplate: TemplateRef<PopoverContentTemplateContext> | undefined;
+    readonly _contentTemplate = computed<TemplateRef<PopoverContentTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'content')
+                .at(-1)?.template
+    );
 
-    destroyCallback: Nullable<Function>;
+    destroyCallback = signal<Nullable<Function>>(undefined);
 
-    overlayEventListener: Nullable<(event?: any) => void>;
+    overlayEventListener = signal<Nullable<(event?: any) => void>>(undefined);
 
-    overlaySubscription: Subscription | undefined;
+    overlaySubscription = signal<Subscription | undefined>(undefined);
 
     _componentStyle = inject(PopoverStyle);
 
@@ -216,43 +198,36 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
     overlayService = inject(OverlayService);
 
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'content':
-                    this._contentTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
     bindDocumentClickListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.documentClickListener) {
+            if (!this.documentClickListener()) {
                 let documentEvent = isIOS() ? 'touchstart' : 'click';
                 const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : this.document;
 
-                this.documentClickListener = this.renderer.listen(documentTarget, documentEvent, (event) => {
-                    if (!this.dismissable) {
-                        return;
-                    }
+                this.documentClickListener.set(
+                    this.renderer.listen(documentTarget, documentEvent, (event) => {
+                        if (!this.dismissable()) {
+                            return;
+                        }
 
-                    if (!this.container?.contains(event.target) && this.target !== event.target && !this.target.contains(event.target) && !this.selfClick) {
-                        this.hide();
-                    }
+                        const target = this.target();
+                        if (!this.container()?.contains(event.target) && target !== event.target && !target.contains(event.target) && !this.selfClick()) {
+                            this.hide();
+                        }
 
-                    this.selfClick = false;
-                    this.cd.markForCheck();
-                });
+                        this.selfClick.set(false);
+                    })
+                );
             }
         }
     }
 
     unbindDocumentClickListener() {
-        if (this.documentClickListener) {
-            this.documentClickListener();
-            this.documentClickListener = null;
-            this.selfClick = false;
+        const documentClickListener = this.documentClickListener();
+        if (documentClickListener) {
+            documentClickListener();
+            this.documentClickListener.set(null);
+            this.selfClick.set(false);
         }
     }
 
@@ -263,11 +238,11 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
      * @group Method
      */
     toggle(event: any, target?: any) {
-        if (this.overlayVisible) {
+        if (this.overlayVisible()) {
             if (this.hasTargetChanged(event, target)) {
-                this.destroyCallback = () => {
+                this.destroyCallback.set(() => {
                     this.show(null, target || event.currentTarget || event.target);
-                };
+                });
             }
 
             this.hide();
@@ -285,14 +260,13 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
         target && event && event.stopPropagation();
 
         // Clear container if it exists from previous show
-        if (this.container && !this.overlayVisible) {
-            this.container = null;
+        if (this.container() && !this.overlayVisible()) {
+            this.container.set(null);
         }
 
-        this.target = target || event.currentTarget || event.target;
-        this.overlayVisible = true;
-        this.render = true;
-        this.cd.markForCheck();
+        this.target.set(target || event.currentTarget || event.target);
+        this.overlayVisible.set(true);
+        this.render.set(true);
     }
 
     onOverlayClick(event: MouseEvent) {
@@ -301,64 +275,68 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
             target: this.el.nativeElement
         });
 
-        this.selfClick = true;
+        this.selfClick.set(true);
     }
 
     onContentClick(event: MouseEvent) {
         const targetElement = event.target as HTMLElement;
-        this.selfClick = event.offsetX < targetElement.clientWidth && event.offsetY < targetElement.clientHeight;
+        this.selfClick.set(event.offsetX < targetElement.clientWidth && event.offsetY < targetElement.clientHeight);
     }
 
     hasTargetChanged(event: any, target: any) {
-        return this.target != null && this.target !== (target || event.currentTarget || event.target);
+        return this.target() != null && this.target() !== (target || event.currentTarget || event.target);
     }
 
     appendOverlay() {
         if (this.$appendTo() && this.$appendTo() !== 'self') {
             if (this.$appendTo() === 'body') {
-                appendChild(this.document.body, this.container!);
+                appendChild(this.document.body, this.container()!);
             } else {
-                appendChild(this.$appendTo(), this.container!);
+                appendChild(this.$appendTo(), this.container()!);
             }
         }
     }
 
     restoreAppend() {
-        if (this.container && this.$appendTo() && this.$appendTo() !== 'self') {
-            appendChild(this.el.nativeElement, this.container);
+        const container = this.container();
+        if (container && this.$appendTo() && this.$appendTo() !== 'self') {
+            appendChild(this.el.nativeElement, container);
         }
     }
 
     setZIndex() {
-        if (this.autoZIndex) {
-            ZIndexUtils.set('overlay', this.container, this.baseZIndex + this.config.zIndex.overlay);
+        if (this.autoZIndex()) {
+            ZIndexUtils.set('overlay', this.container(), this.baseZIndex() + this.config.zIndex.overlay);
         }
     }
 
     align() {
-        if (this.target && this.container) {
-            absolutePosition(this.container, this.target, false);
+        const container = this.container();
+        const target = this.target();
+        if (target && container) {
+            absolutePosition(container, target, false);
 
-            const containerOffset = <any>getOffset(this.container);
-            const targetOffset = <any>getOffset(this.target);
-            const borderRadius = this.document.defaultView?.getComputedStyle(this.container).getPropertyValue('border-radius');
+            const containerOffset = <any>getOffset(container);
+            const targetOffset = <any>getOffset(target);
+            const borderRadius = this.document.defaultView?.getComputedStyle(container).getPropertyValue('border-radius');
             let arrowLeft = 0;
 
             if (containerOffset.left < targetOffset.left) {
                 arrowLeft = targetOffset.left - containerOffset.left - parseFloat(borderRadius!) * 2;
             }
-            this.container.style.setProperty($dt('popover.arrow.left').name, `${arrowLeft}px`);
+            container.style.setProperty($dt('popover.arrow.left').name, `${arrowLeft}px`);
 
             if (containerOffset.top < targetOffset.top) {
-                this.container.setAttribute('data-p-popover-flipped', 'true');
-                !this.$unstyled() && addClass(this.container, 'p-popover-flipped');
+                container.setAttribute('data-p-popover-flipped', 'true');
+                !this.$unstyled() && addClass(container, 'p-popover-flipped');
             }
         }
     }
 
     onAnimationStart(event: MotionEvent) {
-        this.container = event.element as HTMLDivElement;
-        this.container?.setAttribute(this.$attrSelector, '');
+        const container = event.element as HTMLDivElement;
+        this.container.set(container);
+        container?.setAttribute(this.$attrSelector, '');
         this.appendOverlay();
         this.align();
         this.setZIndex();
@@ -366,44 +344,47 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
         this.bindDocumentResizeListener();
         this.bindScrollListener();
 
-        if (this.focusOnShow) {
+        if (this.focusOnShow()) {
             this.focus();
         }
 
-        this.overlayEventListener = (e) => {
-            if (this.container && this.container.contains(e.target)) {
-                this.selfClick = true;
+        this.overlayEventListener.set((e) => {
+            const container = this.container();
+            if (container && container.contains(e.target)) {
+                this.selfClick.set(true);
             }
-        };
+        });
 
-        this.overlaySubscription = this.overlayService.clickObservable.subscribe(this.overlayEventListener);
+        this.overlaySubscription.set(this.overlayService.clickObservable.subscribe(this.overlayEventListener()!));
         this.onShow.emit(null);
     }
 
     onAnimationEnd() {
-        if (!this.overlayVisible) {
-            if (this.destroyCallback) {
-                this.destroyCallback();
-                this.destroyCallback = null;
+        if (!this.overlayVisible()) {
+            const destroyCallback = this.destroyCallback();
+            if (destroyCallback) {
+                destroyCallback();
+                this.destroyCallback.set(null);
             }
 
-            if (this.overlaySubscription) {
-                this.overlaySubscription.unsubscribe();
+            const overlaySubscription = this.overlaySubscription();
+            if (overlaySubscription) {
+                overlaySubscription.unsubscribe();
             }
 
-            if (this.autoZIndex) {
-                ZIndexUtils.clear(this.container);
+            if (this.autoZIndex()) {
+                ZIndexUtils.clear(this.container());
             }
 
             this.onContainerDestroy();
             this.onHide.emit({});
-            this.render = false;
-            this.container = null;
+            this.render.set(false);
+            this.container.set(null);
         }
     }
 
     focus() {
-        let focusable = <any>findSingle(this.container!, '[autofocus]');
+        let focusable = <any>findSingle(this.container()!, '[autofocus]');
         if (focusable) {
             this.zone.runOutsideAngular(() => {
                 setTimeout(() => focusable.focus(), 5);
@@ -415,8 +396,7 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
      * @group Method
      */
     hide() {
-        this.overlayVisible = false;
-        this.cd.markForCheck();
+        this.overlayVisible.set(false);
     }
 
     onCloseClick(event: MouseEvent) {
@@ -430,50 +410,54 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
     }
 
     onWindowResize() {
-        if (this.overlayVisible && !isTouchDevice()) {
+        if (this.overlayVisible() && !isTouchDevice()) {
             this.hide();
         }
     }
 
     bindDocumentResizeListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.documentResizeListener) {
+            if (!this.documentResizeListener()) {
                 const window = this.document.defaultView as Window;
-                this.documentResizeListener = this.renderer.listen(window, 'resize', this.onWindowResize.bind(this));
+                this.documentResizeListener.set(this.renderer.listen(window, 'resize', this.onWindowResize.bind(this)));
             }
         }
     }
 
     unbindDocumentResizeListener() {
-        if (this.documentResizeListener) {
-            this.documentResizeListener();
-            this.documentResizeListener = null;
+        const documentResizeListener = this.documentResizeListener();
+        if (documentResizeListener) {
+            documentResizeListener();
+            this.documentResizeListener.set(null);
         }
     }
 
     bindScrollListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.scrollHandler) {
-                this.scrollHandler = new ConnectedOverlayScrollHandler(this.target, () => {
-                    if (this.overlayVisible) {
-                        this.hide();
-                    }
-                });
+            if (!this.scrollHandler()) {
+                this.scrollHandler.set(
+                    new ConnectedOverlayScrollHandler(this.target(), () => {
+                        if (this.overlayVisible()) {
+                            this.hide();
+                        }
+                    })
+                );
             }
 
-            this.scrollHandler.bindScrollListener();
+            this.scrollHandler()!.bindScrollListener();
         }
     }
 
     unbindScrollListener() {
-        if (this.scrollHandler) {
-            this.scrollHandler.unbindScrollListener();
+        const scrollHandler = this.scrollHandler();
+        if (scrollHandler) {
+            scrollHandler.unbindScrollListener();
         }
     }
 
     onContainerDestroy() {
         if (!(this.cd as ViewRef).destroyed) {
-            this.target = null;
+            this.target.set(null);
         }
 
         this.unbindDocumentClickListener();
@@ -482,27 +466,29 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
     }
 
     onDestroy() {
-        if (this.scrollHandler) {
-            this.scrollHandler.destroy();
-            this.scrollHandler = null;
+        const scrollHandler = this.scrollHandler();
+        if (scrollHandler) {
+            scrollHandler.destroy();
+            this.scrollHandler.set(null);
         }
 
-        if (this.container && this.autoZIndex) {
-            ZIndexUtils.clear(this.container);
+        if (this.container() && this.autoZIndex()) {
+            ZIndexUtils.clear(this.container());
         }
 
         if (!(this.cd as ViewRef).destroyed) {
-            this.target = null;
+            this.target.set(null);
         }
 
-        this.destroyCallback = null;
-        if (this.container) {
+        this.destroyCallback.set(null);
+        if (this.container()) {
             this.restoreAppend();
             this.onContainerDestroy();
         }
 
-        if (this.overlaySubscription) {
-            this.overlaySubscription.unsubscribe();
+        const overlaySubscription = this.overlaySubscription();
+        if (overlaySubscription) {
+            overlaySubscription.unsubscribe();
         }
     }
 }
