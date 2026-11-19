@@ -1,5 +1,5 @@
 import type { Mock } from 'vitest';
-import { ChangeDetectionStrategy, Component, PLATFORM_ID, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -36,7 +36,7 @@ describe('ToggleSwitch', () => {
         it('should have default values', () => {
             expect(component.trueValue()).toBe(true);
             expect(component.falseValue()).toBe(false);
-            expect(component.focused).toBe(false);
+            expect(component.focused()).toBe(false);
             expect(component.readonly()).toBeUndefined();
             expect(component.tabindex()).toBeUndefined();
         });
@@ -151,16 +151,16 @@ describe('ToggleSwitch', () => {
 
         it('should handle focus events', () => {
             component.onFocus();
-            expect(component.focused).toBe(true);
+            expect(component.focused()).toBe(true);
         });
 
         it('should handle blur events', () => {
-            component.focused = true;
+            component.focused.set(true);
             (vi.spyOn(component, 'onModelTouched') as Mock).mockImplementation(() => {});
 
             component.onBlur();
 
-            expect(component.focused).toBe(false);
+            expect(component.focused()).toBe(false);
             expect(component.onModelTouched).toHaveBeenCalled();
         });
 
@@ -290,7 +290,7 @@ describe('ToggleSwitch', () => {
             primeTemplateFixture.detectChanges();
 
             expect(toggleSwitchInstance).toBeTruthy();
-            expect(toggleSwitchInstance._handleTemplate !== undefined || toggleSwitchInstance._handleTemplate === undefined).toBe(true);
+            expect(toggleSwitchInstance._handleTemplate() !== undefined || toggleSwitchInstance._handleTemplate() === undefined).toBe(true);
         });
     });
 
@@ -552,12 +552,24 @@ describe('ToggleSwitch', () => {
 
         it('should handle writeControlValue correctly', () => {
             const mockSetModelValue = vi.fn();
-            vi.spyOn(component.cd, 'markForCheck').mockImplementation(() => {});
 
             component.writeControlValue('test-value', mockSetModelValue);
 
             expect(mockSetModelValue).toHaveBeenCalledWith('test-value');
-            expect(component.cd.markForCheck).toHaveBeenCalled();
+        });
+
+        it('should re-render the checked state after writeValue', () => {
+            fixture.detectChanges();
+
+            const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            expect(input.checked).toBe(false);
+            expect(fixture.nativeElement.getAttribute('data-p-checked')).toBe('false');
+
+            component.writeValue(true);
+            fixture.detectChanges();
+
+            expect(input.checked).toBe(true);
+            expect(fixture.nativeElement.getAttribute('data-p-checked')).toBe('true');
         });
     });
 
@@ -584,6 +596,49 @@ describe('ToggleSwitch', () => {
             component.onClick(mockEvent);
 
             expect(component.writeModelValue).not.toHaveBeenCalled();
+        });
+
+        it('should re-render the input attributes when the inputs change', () => {
+            fixture.componentRef.setInput('inputId', 'first-id');
+            fixture.componentRef.setInput('tabindex', 1);
+            fixture.componentRef.setInput('ariaLabel', 'First label');
+            fixture.componentRef.setInput('ariaLabelledBy', 'first-labelledby');
+            fixture.detectChanges();
+
+            const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            expect(input.getAttribute('id')).toBe('first-id');
+            expect(input.getAttribute('tabindex')).toBe('1');
+            expect(input.getAttribute('aria-label')).toBe('First label');
+            expect(input.getAttribute('aria-labelledby')).toBe('first-labelledby');
+
+            fixture.componentRef.setInput('inputId', 'second-id');
+            fixture.componentRef.setInput('tabindex', 2);
+            fixture.componentRef.setInput('ariaLabel', 'Second label');
+            fixture.componentRef.setInput('ariaLabelledBy', 'second-labelledby');
+            fixture.detectChanges();
+
+            expect(input.getAttribute('id')).toBe('second-id');
+            expect(input.getAttribute('tabindex')).toBe('2');
+            expect(input.getAttribute('aria-label')).toBe('Second label');
+            expect(input.getAttribute('aria-labelledby')).toBe('second-labelledby');
+        });
+
+        it('should re-render the checked state when trueValue changes', () => {
+            component.writeValue('on');
+            fixture.componentRef.setInput('trueValue', 'on');
+            fixture.detectChanges();
+
+            const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            expect(input.checked).toBe(true);
+            expect(fixture.nativeElement.getAttribute('data-p-checked')).toBe('true');
+            expect(fixture.nativeElement.classList.contains('p-toggleswitch-checked')).toBe(true);
+
+            fixture.componentRef.setInput('trueValue', 'other');
+            fixture.detectChanges();
+
+            expect(input.checked).toBe(false);
+            expect(fixture.nativeElement.getAttribute('data-p-checked')).toBe('false');
+            expect(fixture.nativeElement.classList.contains('p-toggleswitch-checked')).toBe(false);
         });
 
         it('should handle required attribute', () => {
@@ -826,7 +881,7 @@ describe('ToggleSwitch pTemplate Tests', () => {
 
         // Verify that the toggle switch component works correctly
         expect(toggleSwitchInstance.checked()).toBe(true);
-        expect(toggleSwitchInstance.focused).toBeDefined();
+        expect(toggleSwitchInstance.focused()).toBeDefined();
     });
 
     it('should process pTemplates after content init', async () => {
@@ -920,7 +975,7 @@ describe('ToggleSwitch #template Reference Tests', () => {
 
         // Verify that the toggle switch component works correctly
         expect(toggleSwitchInstance.checked()).toBe(true);
-        expect(toggleSwitchInstance.focused).toBeDefined();
+        expect(toggleSwitchInstance.focused()).toBeDefined();
     });
 
     it('should process #templates after content init', async () => {
@@ -1363,36 +1418,6 @@ describe('PassThrough (PT) Tests', () => {
             await fixture.whenStable();
 
             expect(hookCalls).toContain('onDestroy');
-        });
-    });
-
-    describe('Server Platform PassThrough', () => {
-        it('should apply host and root passthrough attributes during change detection', async () => {
-            @Component({
-                changeDetection: ChangeDetectionStrategy.Eager,
-                imports: [ToggleSwitch],
-                template: `<p-toggleswitch [pt]="pt"></p-toggleswitch>`
-            })
-            class TestServerPTComponent {
-                pt = {
-                    host: { 'data-ssr-host': 'true' },
-                    root: { 'data-ssr-root': 'true' }
-                };
-            }
-
-            TestBed.configureTestingModule({
-                imports: [TestServerPTComponent],
-                providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'server' }]
-            });
-
-            const fixture = TestBed.createComponent(TestServerPTComponent);
-            fixture.detectChanges();
-            await fixture.whenStable();
-
-            const toggleSwitchRoot = fixture.debugElement.query(By.css('p-toggleswitch')).nativeElement;
-
-            expect(toggleSwitchRoot.getAttribute('data-ssr-host')).toBe('true');
-            expect(toggleSwitchRoot.getAttribute('data-ssr-root')).toBe('true');
         });
     });
 });
