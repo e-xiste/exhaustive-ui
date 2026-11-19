@@ -1138,6 +1138,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-slider class="existing my-slider"></p-slider>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-paginator', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-paginator [rows]="10" [totalRecords]="120" styleClass="my-paginator"></p-paginator>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-paginator [rows]="10" [totalRecords]="120" class="my-paginator"></p-paginator>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-paginator', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-paginator [rows]="10" [totalRecords]="120" [styleClass]="myClass"></p-paginator>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-paginator [rows]="10" [totalRecords]="120" [class]="myClass"></p-paginator>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-paginator', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-paginator class="existing" styleClass="my-paginator"></p-paginator>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-paginator class="existing my-paginator"></p-paginator>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

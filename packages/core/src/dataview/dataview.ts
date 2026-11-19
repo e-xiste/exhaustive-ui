@@ -73,7 +73,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                 [showCurrentPageReport]="showCurrentPageReport"
                 [showJumpToPageDropdown]="showJumpToPageDropdown"
                 [showPageLinks]="showPageLinks"
-                [styleClass]="cn(cx('pcPaginator', { position: 'top' }), paginatorStyleClass)"
+                [class]="cn(cx('pcPaginator', { position: 'top' }), paginatorStyleClass)"
                 [pt]="ptm('pcPaginator')"
                 [unstyled]="unstyled()"
             ></p-paginator>
@@ -129,7 +129,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                 [showCurrentPageReport]="showCurrentPageReport"
                 [showJumpToPageDropdown]="showJumpToPageDropdown"
                 [showPageLinks]="showPageLinks"
-                [styleClass]="cn(cx('pcPaginator', { position: 'bottom' }), paginatorStyleClass)"
+                [class]="cn(cx('pcPaginator', { position: 'bottom' }), paginatorStyleClass)"
                 [pt]="ptm('pcPaginator')"
                 [unstyled]="unstyled()"
             ></p-paginator>

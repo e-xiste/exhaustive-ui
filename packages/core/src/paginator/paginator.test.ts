@@ -31,7 +31,7 @@ import { PrimeTemplate } from '@exhaustive-ui/core/api';
             [alwaysShow]="alwaysShow"
             [currentPageReportTemplate]="currentPageReportTemplate"
             [dropdownScrollHeight]="dropdownScrollHeight"
-            [styleClass]="styleClass"
+            [class]="styleClass"
             [dropdownAppendTo]="dropdownAppendTo"
             [locale]="locale"
             [templateLeft]="leftTemplate"
@@ -184,33 +184,33 @@ describe('Paginator', () => {
         });
 
         it('should initialize with default values', () => {
-            expect(paginator.pageLinkSize).toBe(5);
-            expect(paginator.alwaysShow).toBe(true);
-            expect(paginator.showFirstLastIcon).toBe(true);
-            expect(paginator.showPageLinks).toBe(true);
-            expect(paginator.dropdownScrollHeight).toBe('200px');
+            expect(paginator.pageLinkSize()).toBe(5);
+            expect(paginator.alwaysShow()).toBe(true);
+            expect(paginator.showFirstLastIcon()).toBe(true);
+            expect(paginator.showPageLinks()).toBe(true);
+            expect(paginator.dropdownScrollHeight()).toBe('200px');
         });
 
         it('should initialize with provided input values', () => {
-            expect(paginator.rows).toBe(10);
-            expect(paginator.totalRecords).toBe(100);
-            expect(paginator.first).toBe(0);
-            expect(paginator.currentPageReportTemplate).toBe('{currentPage} of {totalPages}');
+            expect(paginator.rows()).toBe(10);
+            expect(paginator.totalRecords()).toBe(100);
+            expect(paginator.first()).toBe(0);
+            expect(paginator.currentPageReportTemplate()).toBe('{currentPage} of {totalPages}');
         });
 
         it('should update paginator state on init', () => {
-            expect(paginator.paginatorState).toBeDefined();
-            expect(paginator.paginatorState.page).toBe(0);
-            expect(paginator.paginatorState.pageCount).toBe(10);
-            expect(paginator.paginatorState.rows).toBe(10);
-            expect(paginator.paginatorState.first).toBe(0);
-            expect(paginator.paginatorState.totalRecords).toBe(100);
+            expect(paginator.paginatorState()).toBeDefined();
+            expect(paginator.paginatorState().page).toBe(0);
+            expect(paginator.paginatorState().pageCount).toBe(10);
+            expect(paginator.paginatorState().rows).toBe(10);
+            expect(paginator.paginatorState().first).toBe(0);
+            expect(paginator.paginatorState().totalRecords).toBe(100);
         });
 
         it('should calculate page links correctly', () => {
-            expect(paginator.pageLinks).toBeDefined();
-            expect(paginator.pageLinks!.length).toBe(5);
-            expect(paginator.pageLinks).toEqual([1, 2, 3, 4, 5]);
+            expect(paginator.pageLinks()).toBeDefined();
+            expect(paginator.pageLinks().length).toBe(5);
+            expect(paginator.pageLinks()).toEqual([1, 2, 3, 4, 5]);
         });
 
         it('should render page links', () => {
@@ -219,10 +219,10 @@ describe('Paginator', () => {
         });
 
         it('should initialize rows per page dropdown options', () => {
-            expect(paginator.rowsPerPageItems).toBeDefined();
-            expect(paginator.rowsPerPageItems?.length).toBe(4);
-            expect(paginator.rowsPerPageItems?.[0].value).toBe(5);
-            expect(paginator.rowsPerPageItems?.[3].value).toBe(50);
+            expect(paginator.rowsPerPageItems()).toBeDefined();
+            expect(paginator.rowsPerPageItems()?.length).toBe(4);
+            expect(paginator.rowsPerPageItems()?.[0].value).toBe(5);
+            expect(paginator.rowsPerPageItems()?.[3].value).toBe(50);
         });
 
         it('should show/hide elements based on configuration', () => {
@@ -241,34 +241,46 @@ describe('Paginator', () => {
         it('should calculate page count correctly', () => {
             expect(paginator.getPageCount()).toBe(10);
 
-            paginator.totalRecords = 55;
+            component.totalRecords = 55;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.getPageCount()).toBe(6);
 
-            paginator.totalRecords = 0;
+            component.totalRecords = 0;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.getPageCount()).toBe(0);
         });
 
         it('should get current page correctly', () => {
             expect(paginator.getPage()).toBe(0);
 
-            paginator.first = 20;
+            component.first = 20;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.getPage()).toBe(2);
 
-            paginator.first = 95;
+            component.first = 95;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.getPage()).toBe(9);
         });
 
         it('should check if first page correctly', () => {
             expect(paginator.isFirstPage()).toBe(true);
 
-            paginator.first = 10;
+            component.first = 10;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.isFirstPage()).toBe(false);
         });
 
         it('should check if last page correctly', () => {
             expect(paginator.isLastPage()).toBe(false);
 
-            paginator.first = 90;
+            component.first = 90;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.isLastPage()).toBe(true);
         });
 
@@ -276,48 +288,63 @@ describe('Paginator', () => {
             const boundaries = paginator.calculatePageLinkBoundaries();
             expect(boundaries).toEqual([0, 4]);
 
-            paginator.first = 50; // page 5
+            component.first = 50; // page 5
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             const boundaries2 = paginator.calculatePageLinkBoundaries();
             expect(boundaries2).toEqual([3, 7]);
         });
 
         it('should update page links', () => {
-            paginator.first = 30; // page 3
-            paginator.updatePageLinks();
-            expect(paginator.pageLinks).toEqual([2, 3, 4, 5, 6]);
+            component.first = 30; // page 3
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            expect(paginator.pageLinks()).toEqual([2, 3, 4, 5, 6]);
         });
 
         it('should check empty state', () => {
             expect(paginator.empty()).toBe(false);
 
-            paginator.totalRecords = 0;
+            component.totalRecords = 0;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.empty()).toBe(true);
         });
 
         it('should get current page number (1-based)', () => {
             expect(paginator.currentPage()).toBe(1);
 
-            paginator.first = 20;
+            component.first = 20;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.currentPage()).toBe(3);
 
-            paginator.totalRecords = 0;
+            component.totalRecords = 0;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             expect(paginator.currentPage()).toBe(0);
         });
 
         it('should generate current page report correctly', () => {
-            expect(paginator.currentPageReport).toBe('1 of 10');
+            expect(paginator.currentPageReport()).toBe('1 of 10');
 
-            paginator.first = 20;
-            paginator.currentPageReportTemplate = 'Showing {first} to {last} of {totalRecords} entries';
-            expect(paginator.currentPageReport).toBe('Showing 21 to 30 of 100 entries');
+            component.first = 20;
+            component.currentPageReportTemplate = 'Showing {first} to {last} of {totalRecords} entries';
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            expect(paginator.currentPageReport()).toBe('Showing 21 to 30 of 100 entries');
         });
 
         it('should handle locale-specific number formatting', () => {
-            paginator.locale = 'ar';
+            component.locale = 'ar';
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             const arabicNumber = paginator.getLocalization(5);
             expect(arabicNumber).toBeDefined();
 
-            paginator.locale = 'en-US';
+            component.locale = 'en-US';
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             const englishNumber = paginator.getLocalization(5);
             expect(englishNumber).toBe('5');
         });
@@ -336,11 +363,12 @@ describe('Paginator', () => {
                 rows: 10,
                 pageCount: 10
             });
-            expect(paginator.first).toBe(20);
+            expect(paginator._first()).toBe(20);
         });
 
         it('should change to first page', async () => {
-            paginator.first = 50;
+            component.first = 50;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const firstButton = fixture.debugElement.query(By.css('.p-paginator-first'));
@@ -352,7 +380,8 @@ describe('Paginator', () => {
         });
 
         it('should change to previous page', async () => {
-            paginator.first = 20;
+            component.first = 20;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const prevButton = fixture.debugElement.query(By.css('.p-paginator-prev'));
@@ -393,8 +422,8 @@ describe('Paginator', () => {
         it('should not change page when clicking disabled buttons', async () => {
             // Reset to first page to start clean
             component.first = 0;
-            paginator.first = 0;
             fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             await fixture.whenStable();
 
             // First page - prev should be disabled
@@ -408,8 +437,8 @@ describe('Paginator', () => {
 
             // Move to last page - next should be disabled
             component.first = 90;
-            paginator.first = 90;
             fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             await fixture.whenStable();
 
             const nextButton = fixture.debugElement.query(By.css('.p-paginator-next'));
@@ -432,10 +461,30 @@ describe('Paginator', () => {
             expect(paginator.changePage).toHaveBeenCalledWith(0);
         });
 
+        it('should keep the rows picked in the rows per page dropdown until the rows input changes', async () => {
+            const rowsPerPageDropdown = fixture.debugElement.query(By.directive(Select));
+            rowsPerPageDropdown.triggerEventHandler('ngModelChange', 20);
+            rowsPerPageDropdown.triggerEventHandler('onChange', { originalEvent: new Event('change'), value: 20 });
+            await fixture.whenStable();
+
+            expect(paginator._rows()).toBe(20);
+            expect(paginator.rows()).toBe(10);
+            expect(paginator.getPageCount()).toBe(5);
+            expect(component.pageChangeEvent?.rows).toBe(20);
+            expect(fixture.debugElement.query(By.css('.p-paginator-current')).nativeElement.textContent).toBe('1 of 5');
+
+            component.rows = 25;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+
+            expect(paginator._rows()).toBe(25);
+            expect(paginator.getPageCount()).toBe(4);
+        });
+
         it('should handle page dropdown change', async () => {
             component.showJumpToPageDropdown = true;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
-            paginator.updatePageLinks();
 
             vi.spyOn(paginator, 'changePage');
 
@@ -449,6 +498,7 @@ describe('Paginator', () => {
     describe('Edge Cases and Error Handling', () => {
         it('should handle zero total records', () => {
             component.totalRecords = 0;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             expect(paginator.getPageCount()).toBe(0);
@@ -466,34 +516,42 @@ describe('Paginator', () => {
             expect(paginator.onPageChange.emit).not.toHaveBeenCalled();
         });
 
-        it('should handle total records changes appropriately', () => {
+        it('should handle total records changes appropriately', async () => {
             // Test scenario where total records decrease
-            paginator.first = 90; // Page 9
-            paginator.totalRecords = 50; // Now only 5 pages (0-4)
+            component.first = 90; // Page 9
+            component.totalRecords = 85; // Now only 9 pages (0-8)
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
             // The component should recognize the inconsistency
             const currentPage = paginator.getPage(); // 9
-            const maxPage = paginator.getPageCount() - 1; // 4
+            const maxPage = paginator.getPageCount() - 1; // 8
 
             // Current page is beyond the available pages
             expect(currentPage).toBeGreaterThan(maxPage);
 
             // When updateFirst is called, it should detect this condition
             const pageBeforeFirst = paginator.getPage();
-            const totalRecordsValue = paginator.totalRecords;
-            const firstValue = paginator.first;
+            const totalRecordsValue = paginator.totalRecords();
+            const firstValue = paginator._first();
 
             // Verify the problematic state exists
             expect(pageBeforeFirst > 0 && totalRecordsValue > 0 && firstValue >= totalRecordsValue).toBe(true);
+
+            await fixture.whenStable();
+
+            expect(component.pageChangeEvent?.page).toBe(8);
+            expect(component.first).toBe(80);
+            expect(paginator.getPage()).toBe(8);
         });
 
         it('should handle rows per page with showAll option', () => {
             component.rowsPerPageOptions = [10, 20, { showAll: 'All' } as any];
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
-            paginator.updateRowsPerPageOptions();
 
-            expect(paginator.rowsPerPageItems?.length).toBe(3);
-            const showAllItem = paginator.rowsPerPageItems?.find((item) => item.label === 'All');
+            expect(paginator.rowsPerPageItems()?.length).toBe(3);
+            const showAllItem = paginator.rowsPerPageItems()?.find((item) => item.label === 'All');
             expect(showAllItem?.value).toBe(100);
         });
 
@@ -515,18 +573,23 @@ describe('Paginator', () => {
             const testFixture = TestBed.createComponent(TestBasicPaginatorComponent);
             const testPaginator = testFixture.debugElement.query(By.directive(Paginator)).componentInstance;
 
-            testPaginator.rowsPerPageOptions = undefined as any;
-            testPaginator.updateRowsPerPageOptions();
-            expect(testPaginator.rowsPerPageItems).toBeUndefined();
+            testFixture.componentInstance.rowsPerPageOptions = undefined as any;
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
+            expect(testPaginator.rowsPerPageItems()).toBeUndefined();
 
-            testPaginator.locale = undefined as any;
+            testFixture.componentInstance.locale = undefined as any;
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
             const result = testPaginator.getLocalization(5);
             expect(result).toBeDefined();
         });
 
         it('should validate page boundaries', () => {
-            paginator.totalRecords = 25;
-            paginator.rows = 10;
+            component.totalRecords = 25;
+            component.rows = 10;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
             paginator.changePage(5); // Invalid page
             expect(paginator.getPage()).toBe(0); // Should remain at page 0
@@ -536,7 +599,9 @@ describe('Paginator', () => {
         });
 
         it('should handle empty rows per page', () => {
-            paginator.rows = 0;
+            component.rows = 0;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
             // getPageCount returns Math.ceil(totalRecords / 0) which is Infinity
             expect(paginator.getPageCount()).toBe(Infinity);
             // getPage returns Math.floor(first / 0) which is NaN
@@ -560,14 +625,14 @@ describe('Paginator', () => {
                 expect(pTemplatePaginator).toBeTruthy();
             });
 
-            it('should process pTemplate templates in ngAfterContentInit', async () => {
+            it('should resolve pTemplate templates from the templates query', async () => {
                 await pTemplateFixture.whenStable();
 
-                expect(pTemplatePaginator._dropdownIconTemplate).toBeDefined();
-                expect(pTemplatePaginator._firstPageLinkIconTemplate).toBeDefined();
-                expect(pTemplatePaginator._previousPageLinkIconTemplate).toBeDefined();
-                expect(pTemplatePaginator._nextPageLinkIconTemplate).toBeDefined();
-                expect(pTemplatePaginator._lastPageLinkIconTemplate).toBeDefined();
+                expect(pTemplatePaginator._dropdownIconTemplate()).toBeDefined();
+                expect(pTemplatePaginator._firstPageLinkIconTemplate()).toBeDefined();
+                expect(pTemplatePaginator._previousPageLinkIconTemplate()).toBeDefined();
+                expect(pTemplatePaginator._nextPageLinkIconTemplate()).toBeDefined();
+                expect(pTemplatePaginator._lastPageLinkIconTemplate()).toBeDefined();
             });
 
             it('should apply custom icon templates', async () => {
@@ -656,19 +721,17 @@ describe('Paginator', () => {
             it('should apply jump to page item template', async () => {
                 await dropdownFixture.whenStable();
 
-                expect(dropdownPaginator.jumpToPageItemTemplate).toBeDefined();
+                expect(dropdownPaginator.jumpToPageItemTemplate()).toBeDefined();
             });
 
             it('should apply dropdown item template', async () => {
                 await dropdownFixture.whenStable();
 
-                expect(dropdownPaginator.dropdownItemTemplate).toBeDefined();
+                expect(dropdownPaginator.dropdownItemTemplate()).toBeDefined();
             });
 
             it('should handle showAll option in rows per page', () => {
-                dropdownPaginator.updateRowsPerPageOptions();
-
-                const showAllItem = dropdownPaginator.rowsPerPageItems?.find((item) => item.label === 'All');
+                const showAllItem = dropdownPaginator.rowsPerPageItems()?.find((item) => item.label === 'All');
                 expect(showAllItem).toBeDefined();
                 expect(showAllItem?.value).toBe(100);
             });
@@ -706,6 +769,7 @@ describe('Paginator', () => {
         it('should apply correct CSS classes', () => {
             const paginatorElement = fixture.debugElement.query(By.css('p-paginator'));
             expect(paginatorElement).toBeTruthy();
+            expect(paginatorElement.nativeElement.classList.contains('p-paginator')).toBe(true);
 
             const firstButton = fixture.debugElement.query(By.css('.p-paginator-first'));
             expect(firstButton).toBeTruthy();
@@ -729,22 +793,22 @@ describe('Paginator', () => {
             component.alwaysShow = false;
             component.totalRecords = 5;
             component.rows = 10;
-            paginator.alwaysShow = false;
-            paginator.totalRecords = 5;
-            paginator.rows = 10;
-            paginator.updatePageLinks();
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
-            expect(paginator.display).toBe('none');
+            expect(paginator.display()).toBe('none');
+            expect(fixture.debugElement.query(By.css('p-paginator')).nativeElement.style.display).toBe('none');
         });
 
         it('should show when alwaysShow is true even with one page', () => {
             component.alwaysShow = true;
             component.totalRecords = 5;
             component.rows = 10;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
-            expect(paginator.display).toBeNull();
+            expect(paginator.display()).toBeNull();
+            expect(fixture.debugElement.query(By.css('p-paginator')).nativeElement.style.display).toBe('');
         });
     });
 
@@ -791,7 +855,8 @@ describe('Paginator', () => {
             expect(firstButton.nativeElement.disabled).toBe(true);
 
             // Last page
-            paginator.first = 90;
+            component.first = 90;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const nextButton = fixture.debugElement.query(By.css('.p-paginator-next'));
@@ -817,65 +882,49 @@ describe('Paginator', () => {
 
     describe('Component State Management', () => {
         it('should maintain state across page changes', async () => {
-            const initialState = { ...paginator.paginatorState };
+            const initialState = { ...paginator.paginatorState() };
 
             paginator.changePage(3);
             await fixture.whenStable();
 
-            expect(paginator.paginatorState.page).toBe(3);
-            expect(paginator.paginatorState.first).toBe(30);
-            expect(paginator.paginatorState.rows).toBe(initialState.rows);
-            expect(paginator.paginatorState.totalRecords).toBe(initialState.totalRecords);
+            expect(paginator.paginatorState().page).toBe(3);
+            expect(paginator.paginatorState().first).toBe(30);
+            expect(paginator.paginatorState().rows).toBe(initialState.rows);
+            expect(paginator.paginatorState().totalRecords).toBe(initialState.totalRecords);
         });
 
         it('should update state when rows change', () => {
-            paginator.rows = 20;
-            paginator.ngOnChanges({
-                rows: {
-                    currentValue: 20,
-                    previousValue: 10,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            });
+            component.rows = 20;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
             expect(paginator.getPageCount()).toBe(5);
-            expect(paginator.paginatorState.rows).toBe(20);
+            expect(paginator.paginatorState().rows).toBe(20);
         });
 
         it('should update state when totalRecords change', () => {
-            paginator.totalRecords = 200;
-            paginator.ngOnChanges({
-                totalRecords: {
-                    currentValue: 200,
-                    previousValue: 100,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            });
+            component.totalRecords = 200;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
             expect(paginator.getPageCount()).toBe(20);
-            expect(paginator.paginatorState.totalRecords).toBe(200);
+            expect(paginator.paginatorState().totalRecords).toBe(200);
         });
 
         it('should handle pageLinkSize changes', () => {
-            paginator.pageLinkSize = 7;
-            paginator.ngOnChanges({
-                pageLinkSize: {
-                    currentValue: 7,
-                    previousValue: 5,
-                    firstChange: false,
-                    isFirstChange: () => false
-                }
-            });
+            component.pageLinkSize = 7;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
-            expect(paginator.pageLinks?.length).toBe(7);
+            expect(paginator.pageLinks().length).toBe(7);
+            expect(fixture.debugElement.queryAll(By.css('.p-paginator-page')).length).toBe(7);
         });
     });
 
     describe('Jump to Page Functionality', () => {
         it('should show jump to page dropdown when enabled', () => {
             component.showJumpToPageDropdown = true;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const dropdown = fixture.debugElement.query(By.css('.p-select'));
@@ -884,6 +933,7 @@ describe('Paginator', () => {
 
         it('should show jump to page input when enabled', () => {
             component.showJumpToPageInput = true;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const input = fixture.debugElement.query(By.directive(InputNumber));
@@ -891,18 +941,21 @@ describe('Paginator', () => {
         });
 
         it('should populate page items for jump dropdown', () => {
-            component.showJumpToPageDropdown = true;
-            fixture.detectChanges();
-            paginator.updatePageLinks();
+            expect(paginator.pageItems()).toBeUndefined();
 
-            expect(paginator.pageItems).toBeDefined();
-            expect(paginator.pageItems?.length).toBe(10);
-            expect(paginator.pageItems?.[0]).toEqual({ label: '1', value: 0 });
-            expect(paginator.pageItems?.[9]).toEqual({ label: '10', value: 9 });
+            component.showJumpToPageDropdown = true;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+
+            expect(paginator.pageItems()).toBeDefined();
+            expect(paginator.pageItems()?.length).toBe(10);
+            expect(paginator.pageItems()?.[0]).toEqual({ label: '1', value: 0 });
+            expect(paginator.pageItems()?.[9]).toEqual({ label: '10', value: 9 });
         });
 
         it('should handle jump to page input change', async () => {
             component.showJumpToPageInput = true;
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             vi.spyOn(paginator, 'changePage');
@@ -935,21 +988,24 @@ describe('Paginator', () => {
 
         it('should support custom report templates', () => {
             component.currentPageReportTemplate = 'Showing {first} to {last} of {totalRecords} entries';
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
-            expect(paginator.currentPageReport).toBe('Showing 1 to 10 of 100 entries');
+            expect(paginator.currentPageReport()).toBe('Showing 1 to 10 of 100 entries');
 
             paginator.changePage(9);
             fixture.detectChanges();
 
-            expect(paginator.currentPageReport).toBe('Showing 91 to 100 of 100 entries');
+            expect(paginator.currentPageReport()).toBe('Showing 91 to 100 of 100 entries');
+            expect(fixture.debugElement.query(By.css('.p-paginator-current')).nativeElement.textContent).toBe('Showing 91 to 100 of 100 entries');
         });
 
         it('should handle all template variables', () => {
             component.currentPageReportTemplate = '{currentPage}/{totalPages} - {first}-{last}/{totalRecords} ({rows} per page)';
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
-            expect(paginator.currentPageReport).toBe('1/10 - 1-10/100 (10 per page)');
+            expect(paginator.currentPageReport()).toBe('1/10 - 1-10/100 (10 per page)');
         });
     });
 
@@ -959,31 +1015,34 @@ describe('Paginator', () => {
         });
 
         it('should handle pageLinkSize property changes', async () => {
-            expect(paginator.pageLinkSize).toBe(5);
+            expect(paginator.pageLinkSize()).toBe(5);
 
             component.pageLinkSize = 7;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.pageLinkSize).toBe(7);
+            expect(paginator.pageLinkSize()).toBe(7);
         });
 
-        it('should handle styleClass property', async () => {
+        it('should merge the class attribute into the host classes', async () => {
+            const hostElement = fixture.debugElement.query(By.css('p-paginator')).nativeElement;
+
             component.styleClass = 'custom-paginator-class';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.styleClass).toBe('custom-paginator-class');
+            expect(hostElement.classList.contains('custom-paginator-class')).toBe(true);
+            expect(hostElement.classList.contains('p-paginator')).toBe(true);
         });
 
         it('should handle alwaysShow property', async () => {
-            expect(paginator.alwaysShow).toBe(true);
+            expect(paginator.alwaysShow()).toBe(true);
 
             component.alwaysShow = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.alwaysShow).toBe(false);
+            expect(paginator.alwaysShow()).toBe(false);
         });
 
         it('should handle dropdownAppendTo property', async () => {
@@ -992,17 +1051,17 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.dropdownAppendTo).toBe(element);
+            expect(paginator.dropdownAppendTo()).toBe(element);
         });
 
         it('should handle dropdownScrollHeight property', async () => {
-            expect(paginator.dropdownScrollHeight).toBe('200px');
+            expect(paginator.dropdownScrollHeight()).toBe('200px');
 
             component.dropdownScrollHeight = '300px';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.dropdownScrollHeight).toBe('300px');
+            expect(paginator.dropdownScrollHeight()).toBe('300px');
         });
 
         it('should handle currentPageReportTemplate property', async () => {
@@ -1011,7 +1070,8 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.currentPageReportTemplate).toBe(template);
+            expect(paginator.currentPageReportTemplate()).toBe(template);
+            expect(fixture.debugElement.query(By.css('.p-paginator-current')).nativeElement.textContent).toBe('Page 1 of 10');
         });
 
         it('should handle showCurrentPageReport property', async () => {
@@ -1019,37 +1079,42 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.showCurrentPageReport).toBe(false);
+            expect(paginator.showCurrentPageReport()).toBe(false);
+            expect(fixture.debugElement.query(By.css('.p-paginator-current'))).toBeNull();
         });
 
         it('should handle showFirstLastIcon property', async () => {
-            expect(paginator.showFirstLastIcon).toBe(true);
+            expect(paginator.showFirstLastIcon()).toBe(true);
 
             component.showFirstLastIcon = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.showFirstLastIcon).toBe(false);
+            expect(paginator.showFirstLastIcon()).toBe(false);
+            expect(fixture.debugElement.query(By.css('.p-paginator-first'))).toBeNull();
+            expect(fixture.debugElement.query(By.css('.p-paginator-last'))).toBeNull();
         });
 
         it('should handle totalRecords property changes', async () => {
-            expect(paginator.totalRecords).toBe(100);
+            expect(paginator.totalRecords()).toBe(100);
 
             component.totalRecords = 200;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.totalRecords).toBe(200);
+            expect(paginator.totalRecords()).toBe(200);
+            expect(fixture.debugElement.query(By.css('.p-paginator-current')).nativeElement.textContent).toBe('1 of 20');
         });
 
         it('should handle rows property changes', async () => {
-            expect(paginator.rows).toBe(10);
+            expect(paginator.rows()).toBe(10);
 
             component.rows = 20;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.rows).toBe(20);
+            expect(paginator.rows()).toBe(20);
+            expect(fixture.debugElement.query(By.css('.p-paginator-current')).nativeElement.textContent).toBe('1 of 5');
         });
 
         it('should handle rowsPerPageOptions property', async () => {
@@ -1058,7 +1123,7 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.rowsPerPageOptions).toEqual(options);
+            expect(paginator.rowsPerPageOptions()).toEqual(options);
         });
 
         it('should handle showJumpToPageDropdown property', async () => {
@@ -1066,7 +1131,7 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.showJumpToPageDropdown).toBe(true);
+            expect(paginator.showJumpToPageDropdown()).toBe(true);
         });
 
         it('should handle showJumpToPageInput property', async () => {
@@ -1074,17 +1139,18 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.showJumpToPageInput).toBe(true);
+            expect(paginator.showJumpToPageInput()).toBe(true);
         });
 
         it('should handle showPageLinks property', async () => {
-            expect(paginator.showPageLinks).toBe(true);
+            expect(paginator.showPageLinks()).toBe(true);
 
             component.showPageLinks = false;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.showPageLinks).toBe(false);
+            expect(paginator.showPageLinks()).toBe(false);
+            expect(fixture.debugElement.queryAll(By.css('.p-paginator-page')).length).toBe(0);
         });
 
         it('should handle locale property', async () => {
@@ -1092,16 +1158,31 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.locale).toBe('tr-TR');
+            expect(paginator.locale()).toBe('tr-TR');
         });
 
-        it('should handle first property getter/setter', () => {
-            expect(paginator.first).toBe(0);
+        it('should reset the first row to the first input and keep the navigated one in between', () => {
+            expect(paginator.first()).toBe(0);
+            expect(paginator._first()).toBe(0);
 
-            paginator.first = 20;
+            component.first = 20;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
 
-            expect(paginator.first).toBe(20);
+            expect(paginator._first()).toBe(20);
             expect(paginator.getPage()).toBe(2); // page 3 (0-based index 2)
+
+            paginator.changePage(5);
+
+            expect(paginator._first()).toBe(50);
+            expect(paginator.first()).toBe(20);
+
+            component.first = 30;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+
+            expect(paginator._first()).toBe(30);
+            expect(paginator.getPage()).toBe(3);
         });
 
         it('should handle boolean attributes transformation', async () => {
@@ -1110,13 +1191,13 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.alwaysShow).toBe(false);
+            expect(paginator.alwaysShow()).toBe(false);
 
             component.alwaysShow = '' as any;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.alwaysShow).toBe(true); // empty string should be true
+            expect(paginator.alwaysShow()).toBe(true); // empty string should be true
         });
 
         it('should handle number attributes transformation', async () => {
@@ -1125,15 +1206,15 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.pageLinkSize).toBe(7);
-            expect(typeof paginator.pageLinkSize).toBe('number');
+            expect(paginator.pageLinkSize()).toBe(7);
+            expect(typeof paginator.pageLinkSize()).toBe('number');
         });
 
         it('should handle template properties', () => {
-            expect(paginator.templateLeft).toBeDefined();
-            expect(paginator.templateRight).toBeDefined();
-            expect(paginator.jumpToPageItemTemplate).toBeUndefined();
-            expect(paginator.dropdownItemTemplate).toBeUndefined();
+            expect(paginator.templateLeft()).toBeDefined();
+            expect(paginator.templateRight()).toBeDefined();
+            expect(paginator.jumpToPageItemTemplate()).toBeUndefined();
+            expect(paginator.dropdownItemTemplate()).toBeUndefined();
         });
 
         it('should handle edge case values for numeric inputs', async () => {
@@ -1144,9 +1225,9 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.totalRecords).toBe(0);
-            expect(paginator.rows).toBe(0);
-            expect(paginator.pageLinkSize).toBe(0);
+            expect(paginator.totalRecords()).toBe(0);
+            expect(paginator.rows()).toBe(0);
+            expect(paginator.pageLinkSize()).toBe(0);
         });
 
         it('should handle negative values for numeric inputs', async () => {
@@ -1156,9 +1237,9 @@ describe('Paginator', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.totalRecords).toBe(-10);
-            expect(paginator.rows).toBe(-5);
-            expect(paginator.pageLinkSize).toBe(-3);
+            expect(paginator.totalRecords()).toBe(-10);
+            expect(paginator.rows()).toBe(-5);
+            expect(paginator.pageLinkSize()).toBe(-3);
         });
     });
 
@@ -1176,58 +1257,58 @@ describe('Paginator', () => {
 
         it('should handle dynamic totalRecords changes', async () => {
             await dynamicFixture.whenStable();
-            expect(dynamicPaginator.totalRecords).toBe(100);
+            expect(dynamicPaginator.totalRecords()).toBe(100);
 
             // Change totalRecords dynamically
             dynamicComponent.updateTotalRecords(250);
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.totalRecords).toBe(250);
+            expect(dynamicPaginator.totalRecords()).toBe(250);
             expect(dynamicPaginator.getPageCount()).toBe(25);
         });
 
         it('should handle dynamic rows changes', async () => {
             await dynamicFixture.whenStable();
-            expect(dynamicPaginator.rows).toBe(10);
+            expect(dynamicPaginator.rows()).toBe(10);
 
             // Change rows dynamically
             dynamicComponent.updateRows(20);
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.rows).toBe(20);
+            expect(dynamicPaginator.rows()).toBe(20);
             expect(dynamicPaginator.getPageCount()).toBe(5);
         });
 
         it('should handle dynamic pageLinkSize changes', async () => {
             await dynamicFixture.whenStable();
-            expect(dynamicPaginator.pageLinkSize).toBe(5);
+            expect(dynamicPaginator.pageLinkSize()).toBe(5);
 
             // Change pageLinkSize dynamically
             dynamicComponent.updatePageLinkSize(7);
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.pageLinkSize).toBe(7);
+            expect(dynamicPaginator.pageLinkSize()).toBe(7);
         });
 
         it('should handle dynamic boolean property changes', async () => {
             await dynamicFixture.whenStable();
-            expect(dynamicPaginator.showFirstLastIcon).toBe(true);
+            expect(dynamicPaginator.showFirstLastIcon()).toBe(true);
 
             // Toggle boolean properties
             dynamicComponent.toggleShowFirstLastIcon();
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.showFirstLastIcon).toBe(false);
+            expect(dynamicPaginator.showFirstLastIcon()).toBe(false);
 
             dynamicComponent.toggleShowFirstLastIcon();
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.showFirstLastIcon).toBe(true);
+            expect(dynamicPaginator.showFirstLastIcon()).toBe(true);
         });
 
         it('should handle dynamic rowsPerPageOptions changes', async () => {
@@ -1237,14 +1318,14 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.rowsPerPageOptions).toEqual([5, 10, 15]);
+            expect(dynamicPaginator.rowsPerPageOptions()).toEqual([5, 10, 15]);
 
             // Update with showAll option
             dynamicComponent.updateRowsPerPageOptions([10, 20, 30, { showAll: 'All' }]);
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.rowsPerPageOptions).toEqual([10, 20, 30, { showAll: 'All' }]);
+            expect(dynamicPaginator.rowsPerPageOptions()).toEqual([10, 20, 30, { showAll: 'All' }]);
         });
 
         it('should handle dynamic template changes', async () => {
@@ -1254,8 +1335,8 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.currentPageReportTemplate).toBe('{first}-{last} of {totalRecords}');
-            expect(dynamicPaginator.currentPageReport).toBe('1-10 of 100');
+            expect(dynamicPaginator.currentPageReportTemplate()).toBe('{first}-{last} of {totalRecords}');
+            expect(dynamicPaginator.currentPageReport()).toBe('1-10 of 100');
         });
 
         it('should handle multiple simultaneous changes', async () => {
@@ -1265,9 +1346,9 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.totalRecords).toBe(200);
-            expect(dynamicPaginator.rows).toBe(25);
-            expect(dynamicPaginator.pageLinkSize).toBe(3);
+            expect(dynamicPaginator.totalRecords()).toBe(200);
+            expect(dynamicPaginator.rows()).toBe(25);
+            expect(dynamicPaginator.pageLinkSize()).toBe(3);
             expect(dynamicPaginator.getPageCount()).toBe(8);
         });
 
@@ -1279,8 +1360,8 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.totalRecords).toBe(500);
-            expect(dynamicPaginator.rows).toBe(50);
+            expect(dynamicPaginator.totalRecords()).toBe(500);
+            expect(dynamicPaginator.rows()).toBe(50);
         });
 
         it('should handle async property updates with delays', async () => {
@@ -1291,8 +1372,8 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.totalRecords).toBe(300);
-            expect(dynamicPaginator.rows).toBe(30);
+            expect(dynamicPaginator.totalRecords()).toBe(300);
+            expect(dynamicPaginator.rows()).toBe(30);
             expect(dynamicPaginator.getPageCount()).toBe(10);
         });
 
@@ -1307,7 +1388,7 @@ describe('Paginator', () => {
                 await dynamicFixture.whenStable();
             }
 
-            expect(dynamicPaginator.totalRecords).toBe(300);
+            expect(dynamicPaginator.totalRecords()).toBe(300);
             expect(dynamicPaginator.getPage()).toBe(initialPage); // Should maintain current page if possible
         });
 
@@ -1325,7 +1406,7 @@ describe('Paginator', () => {
             dynamicFixture.changeDetectorRef.markForCheck();
             await dynamicFixture.whenStable();
 
-            expect(dynamicPaginator.totalRecords).toBe(25);
+            expect(dynamicPaginator.totalRecords()).toBe(25);
             expect(dynamicPaginator.getPageCount()).toBe(3);
             // Component should automatically adjust to valid page
         });
