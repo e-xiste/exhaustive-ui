@@ -3820,7 +3820,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     isOutsideClicked(event: Event) {
-        return !(this.el.nativeElement.isSameNode(event.target) || this.isNavIconClicked(event) || this.el.nativeElement.contains(event.target) || (this.overlay() && this.overlay()!.contains(<Node>event.target)));
+        // inside a shadow root, event.target is retargeted to the shadow host: use the real target
+        const target = event.composedPath?.()[0] ?? event.target;
+        return !(this.el.nativeElement.isSameNode(target) || this.isNavIconClicked(event) || this.el.nativeElement.contains(target) || (this.overlay() && this.overlay()!.contains(<Node>target)));
     }
 
     isNavIconClicked(event: any) {

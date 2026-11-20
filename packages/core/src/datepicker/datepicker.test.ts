@@ -2680,4 +2680,26 @@ describe('DatePicker Optimus UI bug fixes', () => {
 
         expect(picker.currentHour()).toBe(10);
     });
+
+    it('does not treat clicks inside the panel as outside clicks inside a shadow root (optimus-ui#503)', async () => {
+        await render();
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadow = host.attachShadow({ mode: 'open' });
+        const overlay = document.createElement('div');
+        const inner = document.createElement('span');
+        overlay.appendChild(inner);
+        shadow.appendChild(overlay);
+        picker.overlay.set(overlay);
+
+        let outside: boolean | undefined;
+        const listener = (event: Event) => (outside = picker.isOutsideClicked(event));
+        document.addEventListener('mousedown', listener);
+        inner.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }));
+        document.removeEventListener('mousedown', listener);
+        picker.overlay.set(null);
+        host.remove();
+
+        expect(outside).toBe(false);
+    });
 });
