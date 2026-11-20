@@ -2792,6 +2792,22 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(picker.overlayVisible()).toBe(true);
     });
 
+    it('sets the current time with the today button when a value is set (optimus-ui#574)', async () => {
+        fixture.componentRef.setInput('showTime', true);
+        fixture.componentRef.setInput('showButtonBar', true);
+        await render();
+        picker.writeValue(new Date(2025, 1, 12, 14, 37));
+
+        const before = new Date();
+        before.setSeconds(0, 0);
+        picker.onTodayButtonClick(new Event('click'));
+
+        const value = picker.value() as Date;
+        expect(value.toDateString()).toBe(new Date().toDateString());
+        expect(value.getTime()).toBeGreaterThanOrEqual(before.getTime());
+        expect(value.getTime()).toBeLessThanOrEqual(Date.now());
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;

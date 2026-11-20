@@ -3717,6 +3717,13 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             selectable: true
         };
 
+        // selectDate applies the time picker values: set them to now, not to the time of the current value
+        if (this.showTime() || this.timeOnly()) {
+            this.setCurrentHourPM(date.getHours());
+            this.currentMinute.set(date.getMinutes());
+            this.currentSecond.set(this.showSeconds() ? date.getSeconds() : 0);
+        }
+
         this.createMonths(date.getMonth(), date.getFullYear());
         this.onDateSelect(event, dateMeta);
         this.onTodayClick.emit(date);
