@@ -226,7 +226,7 @@ export class MenuItemContent extends BaseComponent {
                                 }
                             }
                             @for (item of submenu.items; track $index; let j = $index) {
-                                @if (item.separator && (item.visible !== false || submenu.visible !== false)) {
+                                @if (item.separator && item.visible !== false && (item.visible !== undefined || submenu.visible !== false)) {
                                     <li [class]="cx('separator')" [pBind]="ptm('separator')" role="separator" [attr.data-pc-section]="'separator'"></li>
                                 }
                                 @if (!item.separator && item.visible !== false && (item.visible !== undefined || submenu.visible !== false)) {

@@ -589,6 +589,21 @@ describe('Menu', () => {
             const separators = submenuFixture.debugElement.queryAll(By.css('li[data-pc-section="separator"]'));
             expect(separators.length).toBe(0);
         });
+
+        it('should not render a separator item with visible false inside a visible group (optimus-ui#518)', async () => {
+            const submenuFixture = TestBed.createComponent(TestSubmenuMenuComponent);
+            submenuFixture.componentInstance.submenuModel = [
+                {
+                    label: 'Profile',
+                    items: [{ label: 'Settings' }, { separator: true, visible: false }, { label: 'Hidden', visible: false }]
+                }
+            ];
+            submenuFixture.detectChanges();
+            await submenuFixture.whenStable();
+
+            const separators = submenuFixture.debugElement.queryAll(By.css('li[data-pc-section="separator"]'));
+            expect(separators.length).toBe(0);
+        });
     });
 
     describe('Item Interaction Tests', () => {
