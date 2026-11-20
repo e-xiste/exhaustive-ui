@@ -1284,6 +1284,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         if (valueStr != null) {
             newValue = this.parseValue(valueStr);
             newValue = !newValue && !this.allowEmpty() ? 0 : newValue;
+            // maxlength counts the characters of the formatted value, as the spin buttons do: reject an insertion beyond it
+            const maxlength = this.maxlength();
+            if (maxlength && currentValue && (operation === 'insert' || operation === 'range-insert') && this.formatValue(newValue).length > maxlength) {
+                return;
+            }
             this.updateInput(newValue, insertedValueStr, operation, valueStr);
 
             this.handleOnInput(event, currentValue, newValue);

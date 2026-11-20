@@ -1951,4 +1951,21 @@ describe('InputNumber Optimus UI bug fixes', () => {
         expect(input.hasAttribute('min')).toBe(false);
         expect(input.hasAttribute('max')).toBe(false);
     });
+
+    it('rejects a keystroke that would exceed maxlength instead of truncating the value (optimus-ui#362)', async () => {
+        await create({ locale: 'en-US', mode: 'decimal', minFractionDigits: 2, maxFractionDigits: 2, maxlength: 11 }, null);
+        input.focus();
+
+        for (const digit of '123456789') {
+            await keypress(digit);
+        }
+
+        expect(input.value).toBe('123,456.00');
+        expect(inputNumber.value()).toBe(123456);
+
+        input.setSelectionRange(2, 2);
+        await keypress('5');
+        expect(input.value).toBe('123,456.00');
+        expect(inputNumber.value()).toBe(123456);
+    });
 });
