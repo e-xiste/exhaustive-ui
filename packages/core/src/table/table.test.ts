@@ -3715,3 +3715,26 @@ describe('Table column filter menu', () => {
         expect(overlay.querySelector('.p-datatable-filter-buttonbar')).toBeNull();
     });
 });
+
+describe('Table stateful selection', () => {
+    it('saves the state when the selection is changed from outside (optimus-ui#573)', async () => {
+        const stateKey = 'low-fix-573';
+        window.sessionStorage.removeItem(stateKey);
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableModule], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(Table);
+        fixture.componentRef.setInput('stateKey', stateKey);
+        fixture.componentRef.setInput('dataKey', 'id');
+        fixture.componentRef.setInput('selectionMode', 'multiple');
+        fixture.componentRef.setInput('value', [{ id: 1 }, { id: 2 }]);
+        await fixture.whenStable();
+        const saveSpy = vi.spyOn(fixture.componentInstance, 'saveState');
+
+        fixture.componentRef.setInput('selection', [{ id: 2 }]);
+        await fixture.whenStable();
+
+        expect(saveSpy).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(window.sessionStorage.getItem(stateKey)!).selection).toEqual([{ id: 2 }]);
+        window.sessionStorage.removeItem(stateKey);
+    });
+});

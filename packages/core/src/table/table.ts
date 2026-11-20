@@ -1383,6 +1383,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             });
         });
+        let selectionInitialized = false;
         effect(() => {
             this.selection();
 
@@ -1390,7 +1391,13 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 if (!this.preventSelectionSetterPropagation()) {
                     this.updateSelectionKeys();
                     this.tableService.onSelectionChange();
+
+                    // a selection set from outside is saved like one made by clicking a row
+                    if (selectionInitialized && this.isStateful()) {
+                        this.saveState();
+                    }
                 }
+                selectionInitialized = true;
                 this.preventSelectionSetterPropagation.set(false);
             });
         });
