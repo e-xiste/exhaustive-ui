@@ -1141,6 +1141,12 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
     }
 
     onListKeyDown(event: KeyboardEvent) {
+        const target = event.target as HTMLElement;
+        // keys typed in a field of an item template (input, editor...) belong to that field
+        if (target !== event.currentTarget && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) {
+            return;
+        }
+
         const metaKey = event.metaKey || event.ctrlKey;
 
         switch (event.code) {

@@ -3227,3 +3227,46 @@ describe('Listbox Signals API', () => {
         expect(hostFixture.debugElement.query(By.css('.ptemplate-empty'))).toBeTruthy();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [Listbox, FormsModule],
+    template: `
+        <p-listbox [options]="options" [(ngModel)]="selected" optionLabel="name" [multiple]="true">
+            <ng-template #item let-option>
+                <input class="item-input" type="text" />
+                <span>{{ option.name }}</span>
+            </ng-template>
+        </p-listbox>
+    `
+})
+class ListboxItemInputHostComponent {
+    options = [{ name: 'Alpha' }, { name: 'Beta' }];
+    selected: any[] = [];
+}
+
+describe('Listbox medium bug fixes', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Listbox, ListboxItemInputHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('lets Space and Enter through to an input inside an item template (optimus-ui#737)', async () => {
+        const hostFixture = TestBed.createComponent(ListboxItemInputHostComponent);
+        hostFixture.detectChanges();
+        await hostFixture.whenStable();
+        const listbox = hostFixture.debugElement.query(By.directive(Listbox)).componentInstance as Listbox;
+        listbox.focusedOptionIndex.set(0);
+
+        const itemInput = hostFixture.nativeElement.querySelector('.item-input') as HTMLInputElement;
+        for (const code of ['Space', 'Enter']) {
+            const keydown = new KeyboardEvent('keydown', { key: code === 'Space' ? ' ' : code, code, bubbles: true, cancelable: true });
+            itemInput.dispatchEvent(keydown);
+            expect(keydown.defaultPrevented).toBe(false);
+        }
+        expect(listbox.modelValue() ?? []).toEqual([]);
+    });
+});
