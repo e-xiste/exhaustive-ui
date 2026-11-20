@@ -218,7 +218,9 @@ const classes = {
         'p-datatable-row-selected': instance.selected()
     }),
     resizableColumn: 'p-datatable-resizable-column',
-    reorderableColumn: 'p-datatable-reorderable-column',
+    reorderableColumn: ({ instance }) => ({
+        'p-datatable-reorderable-column': instance.isEnabled()
+    }),
     rowEditorCancel: 'p-datatable-row-editor-cancel',
     frozenColumn: ({ instance }) => ({
         'p-datatable-frozen-column': instance.frozen(),

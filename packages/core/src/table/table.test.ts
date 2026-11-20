@@ -3580,3 +3580,43 @@ describe('Table frozen rows', () => {
         expect(fixture.nativeElement.textContent).toContain('Pinned');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [reorderableColumns]="true">
+            <ng-template #header>
+                <tr>
+                    <th pReorderableColumn id="enabled">A</th>
+                    <th pReorderableColumn [pReorderableColumnDisabled]="true" id="disabled">B</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.a }}</td>
+                    <td>{{ row.b }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestReorderableColumnComponent {
+    rows = [{ a: 1, b: 2 }];
+}
+
+describe('Table ReorderableColumn', () => {
+    let fixture: ComponentFixture<TestReorderableColumnComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestReorderableColumnComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TestReorderableColumnComponent);
+        await fixture.whenStable();
+    });
+
+    it('does not mark a disabled reorderable column as reorderable (optimus-ui#132)', () => {
+        expect(fixture.nativeElement.querySelector('#enabled').classList).toContain('p-datatable-reorderable-column');
+        expect(fixture.nativeElement.querySelector('#disabled').classList).not.toContain('p-datatable-reorderable-column');
+    });
+});
