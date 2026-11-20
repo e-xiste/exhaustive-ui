@@ -3627,9 +3627,9 @@ export class FrozenColumn extends BaseComponent {
     }
 
     updateStickyPosition() {
-        if (this.frozen()) {
+        if (this.frozen() && isPlatformBrowser(this.platformId)) {
             // alignFrozen is logical: in RTL the start (left alignment) is the physical right side
-            const isRTL = getComputedStyle(this.el.nativeElement).direction === 'rtl';
+            const isRTL = this.document.defaultView?.getComputedStyle(this.el.nativeElement).direction === 'rtl';
             const startSide = isRTL ? 'right' : 'left';
             const endSide = isRTL ? 'left' : 'right';
 
