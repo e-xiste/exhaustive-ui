@@ -484,6 +484,7 @@ export const Password_VALUE_ACCESSOR: any = {
             [attr.minlength]="minlength()"
             [attr.required]="required() ? '' : undefined"
             [attr.disabled]="$disabled() ? '' : undefined"
+            [attr.readonly]="readonly() ? '' : undefined"
             [invalid]="invalid()"
             (input)="onInput($event)"
             (focus)="onInputFocus($event)"
@@ -493,7 +494,7 @@ export const Password_VALUE_ACCESSOR: any = {
             [pt]="ptm('pcInputText')"
             [unstyled]="unstyled()"
         />
-        @if (showClear() && value() != null) {
+        @if (showClear() && value() != null && !readonly()) {
             @if (!clearIconTemplate() && !_clearIconTemplate()) {
                 <svg data-p-icon="times" [class]="cx('clearIcon')" (click)="clear()" [pBind]="ptm('clearIcon')" />
             }
@@ -641,6 +642,11 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * @group Props
      */
     feedback = input<boolean, unknown>(true, { transform: booleanAttribute });
+    /**
+     * When present, it specifies that an input field is read-only.
+     * @group Props
+     */
+    readonly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to show an icon to display the password as plain text.
      * @group Props

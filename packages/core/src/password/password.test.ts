@@ -1246,6 +1246,20 @@ describe('Password', () => {
             expect(component.maxlength()).toBe(20);
         });
 
+        it('should make the input read-only with readonly (optimus-ui#235)', async () => {
+            fixture.componentRef.setInput('readonly', true);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const inputEl = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            expect(inputEl.readOnly).toBe(true);
+
+            fixture.componentRef.setInput('readonly', false);
+            fixture.detectChanges();
+            await fixture.whenStable();
+            expect(inputEl.readOnly).toBe(false);
+        });
+
         it('should handle autocomplete attribute', () => {
             fixture.componentRef.setInput('autocomplete', 'new-password');
             expect(component.autocomplete()).toBe('new-password');
