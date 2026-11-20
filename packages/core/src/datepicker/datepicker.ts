@@ -3033,7 +3033,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         if (this.isMultipleSelection()) {
             value = this.value()[this.value().length - 1];
         }
-        value = value && isDate(value) ? new Date(value.getTime()) : new Date();
+        // without a value, the time applies to the day the panel shows on opening: defaultDate when given, today otherwise
+        const defaultDate = this.defaultDate();
+        value = value && isDate(value) ? new Date(value.getTime()) : defaultDate && isDate(defaultDate) ? new Date(defaultDate.getTime()) : new Date();
 
         if (this.hourFormat() == '12') {
             if (this.currentHour() === 12) value.setHours(this.pm() ? 12 : 0);
