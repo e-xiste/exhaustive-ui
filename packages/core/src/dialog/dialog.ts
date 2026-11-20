@@ -23,7 +23,7 @@ import {
     output
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
-import { addStyle, appendChild, getOuterHeight, getOuterWidth, getViewport, hasClass, removeClass, setAttribute, uuid } from '@exhaustive-ui/utils';
+import { addStyle, appendChild, getOuterHeight, getOuterWidth, getViewport, removeClass, setAttribute, uuid } from '@exhaustive-ui/utils';
 import { OverlayService, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -1100,10 +1100,6 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
         if (this.modal()) {
             this.disableModality();
-        }
-
-        if (hasClass(this.document.body, 'p-overflow-hidden')) {
-            removeClass(this.document.body, 'p-overflow-hidden');
         }
 
         if (this.container() && this.autoZIndex()) {

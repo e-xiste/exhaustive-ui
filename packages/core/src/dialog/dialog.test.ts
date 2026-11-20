@@ -2030,3 +2030,56 @@ describe('Dialog Signal API', () => {
         expect(dialog.originalStyle()).toEqual({ width: '400px' });
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog],
+    template: `
+        <p-dialog [(visible)]="first" [modal]="true" header="First">First</p-dialog>
+        <p-dialog [(visible)]="second" [modal]="true" header="Second">Second</p-dialog>
+    `
+})
+class StackedModalDialogsHostComponent {
+    first = signal(false);
+    second = signal(false);
+}
+
+describe('Dialog stacked modals', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [StackedModalDialogsHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should keep the body scroll lock while another modal is still open', async () => {
+        const fixture = TestBed.createComponent(StackedModalDialogsHostComponent);
+        const host = fixture.componentInstance;
+        await fixture.whenStable();
+
+        host.first.set(true);
+        await fixture.whenStable();
+        await wait(50);
+        host.second.set(true);
+        await fixture.whenStable();
+        await wait(50);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        host.second.set(false);
+        await fixture.whenStable();
+        await wait(400);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        host.first.set(false);
+        await fixture.whenStable();
+        await wait(400);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
+});
