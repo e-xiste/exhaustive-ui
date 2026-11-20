@@ -260,7 +260,10 @@ export class ButtonDirective extends BaseComponent {
         });
 
         afterNextRender(() => {
-            !this.$unstyled() && addClass(this.htmlElement, this.getStyleClass().join(' '));
+            if (!this.$unstyled()) {
+                this._appliedClasses = this.getStyleClass();
+                addClass(this.htmlElement, this._appliedClasses.join(' '));
+            }
 
             this.createIcon();
             this.createLabel();
@@ -346,6 +349,8 @@ export class ButtonDirective extends BaseComponent {
     }
 
     private _internalClasses: string[] = Object.values(INTERNAL_BUTTON_CLASSES);
+
+    private _appliedClasses: string[] = [];
 
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
@@ -466,8 +471,10 @@ export class ButtonDirective extends BaseComponent {
         const styleClass = this.getStyleClass();
         this.removeExistingSeverityClass();
 
-        this.htmlElement.classList.remove(...this._internalClasses);
+        // also drop the variant classes (outlined, text, raised, size...) applied by the previous call
+        this.htmlElement.classList.remove(...this._internalClasses, ...this._appliedClasses);
         this.htmlElement.classList.add(...styleClass);
+        this._appliedClasses = styleClass;
     }
 
     removeExistingSeverityClass() {

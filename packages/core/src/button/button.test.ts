@@ -1541,6 +1541,38 @@ describe('ButtonDirective', () => {
         });
     });
 
+    describe('Directive variant classes', () => {
+        it('should remove the variant classes when their inputs go back to false', async () => {
+            component.outlined = true;
+            component.text = true;
+            component.raised = true;
+            component.rounded = true;
+            component.size = 'small';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            for (const cls of ['p-button-outlined', 'p-button-text', 'p-button-raised', 'p-button-rounded', 'p-button-sm', 'p-button-small']) {
+                expect(buttonElement.classList.contains(cls)).toBe(true);
+            }
+
+            component.outlined = false;
+            component.text = false;
+            component.raised = false;
+            component.rounded = false;
+            component.size = null;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            for (const cls of ['p-button-outlined', 'p-button-text', 'p-button-raised', 'p-button-rounded', 'p-button-sm', 'p-button-small']) {
+                expect(buttonElement.classList.contains(cls)).toBe(false);
+            }
+            expect(buttonElement.classList.contains('p-button')).toBe(true);
+            expect(buttonElement.classList.contains('test-button')).toBe(true);
+        });
+    });
+
     describe('Directive Properties', () => {
         it('should update severity', async () => {
             component.severity = 'success';
