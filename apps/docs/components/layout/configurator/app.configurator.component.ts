@@ -1,6 +1,6 @@
 import { AppConfigService } from '@/service/appconfigservice';
-import { CommonModule } from '@angular/common';
-import { Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, computed, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { $t, updatePreset, updateSurfacePalette } from '@exhaustive-ui/themes';
 import Aura from '@exhaustive-ui/themes/aura';
@@ -91,7 +91,7 @@ export interface PrimaryColor {
     },
     imports: [CommonModule, FormsModule, ButtonModule, RadioButtonModule, SelectButton, ToggleSwitchModule]
 })
-export class AppConfiguratorComponent {
+export class AppConfiguratorComponent implements OnInit {
     get ripple() {
         return this.config.ripple();
     }
@@ -111,6 +111,12 @@ export class AppConfiguratorComponent {
     platformId = inject(PLATFORM_ID);
 
     presets = Object.keys(presets);
+
+    ngOnInit() {
+        if (isPlatformBrowser(this.platformId) && this.configService.restoredState) {
+            this.onPresetChange(this.configService.appState().preset);
+        }
+    }
 
     onRTLChange(value: boolean) {
         this.configService.appState.update((state) => ({ ...state, RTL: value }));
