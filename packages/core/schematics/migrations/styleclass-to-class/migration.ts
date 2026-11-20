@@ -96,7 +96,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-datepicker',
     'p-date-picker',
     'p-tree',
-    'p-select'
+    'p-select',
+    'p-listbox',
+    'p-listBox',
+    'p-list-box'
 ];
 
 /**

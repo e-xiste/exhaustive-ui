@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
 import { ListboxChangeEvent } from '@exhaustive-ui/core/types/listbox';
 import { BehaviorSubject, Observable, delay, of } from 'rxjs';
 import { Listbox } from './listbox';
@@ -30,7 +30,12 @@ import { SharedModule } from '@exhaustive-ui/core/api';
             [lazy]="lazy"
             [scrollHeight]="scrollHeight"
             [listStyle]="style"
-            [styleClass]="styleClass"
+            [class]="styleClass"
+            [metaKeySelection]="metaKeySelection"
+            [filterMatchMode]="filterMatchMode"
+            [readonly]="readonly"
+            [showToggleAll]="showToggleAll"
+            [emptyMessage]="emptyMessage"
             (onChange)="onSelectionChange($event)"
             (onFocus)="onFocus($event)"
             (onBlur)="onBlur($event)"
@@ -68,6 +73,11 @@ class TestListboxComponent {
     scrollHeight: string = '200px';
     style: any = null as any;
     styleClass: string = '';
+    metaKeySelection: boolean = false;
+    filterMatchMode: string = 'contains';
+    readonly: boolean | undefined;
+    showToggleAll: boolean = true;
+    emptyMessage: string | undefined;
     showReactiveForm: boolean = false;
 
     // Signal-based properties
@@ -148,8 +158,8 @@ describe('Listbox', () => {
 
         it('should initialize with default values', () => {
             fixture.detectChanges();
-            expect(component.multiple).toBeUndefined();
-            expect(component.filter).toBe(false);
+            expect(component.multiple()).toBeUndefined();
+            expect(component.filter()).toBe(false);
         });
     });
 
@@ -183,7 +193,7 @@ describe('Listbox', () => {
 
         it('should enable multiple selection', () => {
             const listbox = testFixture.debugElement.query(By.css('p-listbox'));
-            expect(listbox.componentInstance.multiple).toBe(true);
+            expect(listbox.componentInstance.multiple()).toBe(true);
         });
 
         it('should allow selecting multiple options', async () => {
@@ -346,9 +356,8 @@ describe('Listbox', () => {
         });
 
         it('should apply custom style and styleClass', async () => {
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.style = { height: '300px' };
-            listboxComponent.styleClass = 'custom-listbox';
+            testComponent.style = { height: '300px' };
+            testComponent.styleClass = 'custom-listbox';
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
@@ -380,8 +389,7 @@ describe('Listbox', () => {
     describe('Meta Key Selection', () => {
         beforeEach(async () => {
             testComponent.multiple = false;
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.metaKeySelection = false;
+            testComponent.metaKeySelection = false;
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
         });
@@ -434,8 +442,7 @@ describe('Listbox', () => {
     describe('Filter with Match Modes', () => {
         beforeEach(() => {
             testComponent.filter = true;
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.filterMatchMode = 'startsWith';
+            testComponent.filterMatchMode = 'startsWith';
             testFixture.detectChanges();
         });
 
@@ -456,8 +463,7 @@ describe('Listbox', () => {
 
     describe('Readonly Mode', () => {
         beforeEach(() => {
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.readonly = true;
+            testComponent.readonly = true;
             testFixture.detectChanges();
         });
 
@@ -495,8 +501,7 @@ describe('Listbox', () => {
         beforeEach(() => {
             testComponent.multiple = true;
             testComponent.checkbox = true;
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.metaKeySelection = false;
+            testComponent.metaKeySelection = false;
             testFixture.detectChanges();
         });
 
@@ -527,8 +532,7 @@ describe('Listbox', () => {
             testComponent.multiple = true;
             testComponent.checkbox = true;
             testComponent.filter = true;
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.showToggleAll = true;
+            testComponent.showToggleAll = true;
             testFixture.detectChanges();
         });
 
@@ -635,9 +639,8 @@ describe('Listbox', () => {
         it('should work with getters', () => {
             testFixture.detectChanges();
 
-            const listboxComponent = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listboxComponent.options = testComponent.getterOptions;
-            listboxComponent.optionLabel = testComponent.getterOptionLabel;
+            testComponent.options = testComponent.getterOptions;
+            testComponent.optionLabel = testComponent.getterOptionLabel;
             testFixture.detectChanges();
 
             const listItems = testFixture.debugElement.queryAll(By.css('.p-listbox-option'));
@@ -747,7 +750,7 @@ describe('Listbox', () => {
             ];
             testFixture.detectChanges();
 
-            expect(testFixture.debugElement.query(By.css('p-listbox')).componentInstance.options.length).toBe(2);
+            expect(testFixture.debugElement.query(By.css('p-listbox')).componentInstance.options().length).toBe(2);
         });
 
         it('should handle optionDisabled as function', () => {
@@ -768,8 +771,8 @@ describe('Listbox', () => {
             testFixture.detectChanges();
 
             const listbox = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            expect(listbox.virtualScroll).toBe(true);
-            expect(listbox.scrollHeight).toBe('300px');
+            expect(listbox.virtualScroll()).toBe(true);
+            expect(listbox.scrollHeight()).toBe('300px');
         });
 
         it('should handle lazy loading', () => {
@@ -777,15 +780,15 @@ describe('Listbox', () => {
             testFixture.detectChanges();
 
             const listbox = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            expect(listbox.lazy).toBe(true);
+            expect(listbox.lazy()).toBe(true);
         });
 
         it('should handle emptyMessage property', () => {
             const listbox = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            listbox.emptyMessage = 'No items available';
+            testComponent.emptyMessage = 'No items available';
             testFixture.detectChanges();
 
-            expect(listbox.emptyMessage).toBe('No items available');
+            expect(listbox.emptyMessage()).toBe('No items available');
         });
 
         it('should handle dynamic style and styleClass updates', async () => {
@@ -795,8 +798,8 @@ describe('Listbox', () => {
             await testFixture.whenStable();
 
             const listbox = testFixture.debugElement.query(By.css('p-listbox')).componentInstance;
-            expect(listbox.listStyle).toEqual({ border: '1px solid red' });
-            expect(listbox.styleClass).toBe('custom-class');
+            expect(listbox.listStyle()).toEqual({ border: '1px solid red' });
+            expect(testFixture.debugElement.query(By.css('p-listbox')).nativeElement.classList).toContain('custom-class');
         });
     });
 
@@ -1041,7 +1044,7 @@ describe('Listbox', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            expect(testFixture.debugElement.query(By.css('p-listbox')).componentInstance.options.length).toBe(10000);
+            expect(testFixture.debugElement.query(By.css('p-listbox')).componentInstance.options().length).toBe(10000);
         });
 
         it('should handle options with special characters', () => {
@@ -1686,7 +1689,9 @@ describe('Listbox #template Reference Tests', () => {
             [filter]="true"
             [scrollHeight]="scrollHeightSignal()"
             [listStyle]="dynamicStyle"
-            [styleClass]="dynamicStyleClass"
+            [class]="dynamicStyleClass"
+            [emptyMessage]="emptyMessage"
+            [emptyFilterMessage]="emptyFilterMessage"
             (onChange)="onChangeHandler($event)"
             (onFilter)="onFilterHandler($event)"
             (onFocus)="onFocusHandler($event)"
@@ -1701,6 +1706,8 @@ class TestListboxViewChildComponent {
     selectedValues: any[] = [];
     dynamicStyle: any = null as any;
     dynamicStyleClass = '';
+    emptyMessage: string | undefined;
+    emptyFilterMessage: string | undefined;
 
     // Drag drop properties
     dragdrop: boolean = false;
@@ -1797,8 +1804,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
     describe('Function-based Properties', () => {
         it('should handle optionLabel as function', async () => {
             // Manually set options since async may not load in test
-            const listboxComponent = listboxElement.componentInstance;
-            listboxComponent.options = [
+            component.options = [
                 { name: 'Test Item 1', id: 'test1', active: true },
                 { name: 'Test Item 2', id: 'test2', active: false }
             ];
@@ -1825,8 +1831,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
         it('should handle optionDisabled as function', async () => {
             // Manually set options since async may not load in test
-            const listboxComponent = listboxElement.componentInstance;
-            listboxComponent.options = [
+            component.options = [
                 { name: 'Test Item 1', id: 'test1', active: true },
                 { name: 'Test Item 2', id: 'test2', active: false }
             ];
@@ -1857,13 +1862,13 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
         it('should handle emptyMessage and emptyFilterMessage', async () => {
             const listboxComponent = listboxElement.componentInstance;
-            listboxComponent.emptyMessage = 'No items found';
-            listboxComponent.emptyFilterMessage = 'No filtered results';
+            component.emptyMessage = 'No items found';
+            component.emptyFilterMessage = 'No filtered results';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(listboxComponent.emptyMessage).toBe('No items found');
-            expect(listboxComponent.emptyFilterMessage).toBe('No filtered results');
+            expect(listboxComponent.emptyMessage()).toBe('No items found');
+            expect(listboxComponent.emptyFilterMessage()).toBe('No filtered results');
         });
 
         it('should handle dynamic style and styleClass updates', async () => {
@@ -1882,8 +1887,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
         it('should handle async options updates', async () => {
             // Set initial options manually
-            const listboxComponent = listboxElement.componentInstance;
-            listboxComponent.options = [
+            component.options = [
                 { name: 'Initial 1', id: 'init1', active: true },
                 { name: 'Initial 2', id: 'init2', active: true }
             ];
@@ -1897,10 +1901,11 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             expect(initialCount).toBeGreaterThan(0);
 
             // Update options manually to simulate async update
-            listboxComponent.options = [
+            component.options = [
                 { name: 'Updated 1', id: 'upd1', active: true },
                 { name: 'Updated 2', id: 'upd2', active: true }
             ];
+            fixture.changeDetectorRef.markForCheck();
             await new Promise((resolve) => setTimeout(resolve, 150));
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -1919,8 +1924,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             vi.spyOn(component, 'onDblClickHandler').mockImplementation(() => {});
 
             // Set options manually since async may not load in test
-            const listboxComponent = listboxElement.componentInstance;
-            listboxComponent.options = [
+            component.options = [
                 { name: 'Event Test 1', id: 'evt1', active: true },
                 { name: 'Event Test 2', id: 'evt2', active: true }
             ];
@@ -1992,14 +1996,14 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             const listboxComponent = fixture.debugElement.query(By.directive(Listbox)).componentInstance;
 
             // Verify dragdrop is enabled
-            expect(listboxComponent.dragdrop).toBe(true);
+            expect(listboxComponent.dragdrop()).toBe(true);
 
             // Verify options are set correctly
             expect(listboxComponent._options()).toEqual(component.options);
 
             // Since drag drop testing is complex and requires CDK setup,
             // we'll just verify the dragdrop property is working
-            expect(listboxComponent.dragdrop).toBeTruthy();
+            expect(listboxComponent.dragdrop()).toBeTruthy();
         });
 
         it('should not reorder when dragdrop is disabled', async () => {
@@ -2047,11 +2051,11 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
             ptFixture = TestBed.createComponent(Listbox);
             listbox = ptFixture.componentInstance;
-            listbox.options = [
+            ptFixture.componentRef.setInput('options', [
                 { label: 'Option 1', value: 'opt1' },
                 { label: 'Option 2', value: 'opt2' },
                 { label: 'Option 3', value: 'opt3' }
-            ];
+            ]);
         });
 
         describe('Case 1: Simple string classes', () => {
@@ -2064,7 +2068,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply string class to header', () => {
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', { header: 'HEADER_CLASS' });
                 ptFixture.detectChanges();
 
@@ -2165,7 +2169,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply object to header', () => {
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', {
                     header: {
                         class: 'HEADER_OBJECT_CLASS',
@@ -2186,7 +2190,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
         describe('Case 3: Mixed object and string values', () => {
             it('should handle mixed PT configuration', () => {
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', {
                     host: { class: 'HOST_MIXED_CLASS' },
                     header: 'HEADER_STRING_CLASS',
@@ -2234,7 +2238,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                         }
                     })
                 });
-                listbox.multiple = true;
+                ptFixture.componentRef.setInput('multiple', true);
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
@@ -2250,7 +2254,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                         }
                     })
                 });
-                listbox.value = 'opt1';
+                listbox.writeValue('opt1');
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
@@ -2267,7 +2271,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                         }
                     })
                 });
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
@@ -2321,7 +2325,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
             it('should bind onclick event via PT to header', async () => {
                 let headerClicked = false;
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', {
                     header: {
                         onclick: () => {
@@ -2526,23 +2530,23 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                         }
                     })
                 });
-                listbox.value = 'opt1';
+                listbox.writeValue('opt1');
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
                 // Verify getPTOptions is being called
-                const ptOptions = listbox.getPTOptions(listbox.options[0], {}, 0, 'option');
+                const ptOptions = listbox.getPTOptions(listbox.options()![0], {}, 0, 'option');
                 expect(ptOptions).toBeDefined();
             });
 
             it('should export correct context via getPTOptions for selected option', async () => {
                 // Select first option
-                listbox.value = 'opt1';
+                listbox.writeValue('opt1');
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
                 // Get PT options for selected option
-                const ptOptionsForSelected = listbox.getPTOptions(listbox.options[0], {}, 0, 'option');
+                const ptOptionsForSelected = listbox.getPTOptions(listbox.options()![0], {}, 0, 'option');
                 expect(ptOptionsForSelected).toBeDefined();
 
                 // Verify context.selected is true for selected option
@@ -2552,7 +2556,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 }
 
                 // Get PT options for non-selected option
-                const ptOptionsForNonSelected = listbox.getPTOptions(listbox.options[1], {}, 1, 'option');
+                const ptOptionsForNonSelected = listbox.getPTOptions(listbox.options()![1], {}, 1, 'option');
                 if (ptOptionsForNonSelected.context) {
                     expect(ptOptionsForNonSelected.context.selected).toBe(false);
                 }
@@ -2560,17 +2564,17 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
             it('should export correct context via getPTOptions for disabled option', async () => {
                 // Add disabled option
-                listbox.options = [
+                ptFixture.componentRef.setInput('options', [
                     { label: 'Option 1', value: 'opt1' },
                     { label: 'Option 2', value: 'opt2', disabled: true },
                     { label: 'Option 3', value: 'opt3' }
-                ];
-                listbox.optionDisabled = 'disabled';
+                ]);
+                ptFixture.componentRef.setInput('optionDisabled', 'disabled');
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
                 // Get PT options for disabled option
-                const ptOptionsForDisabled = listbox.getPTOptions(listbox.options[1], {}, 1, 'option');
+                const ptOptionsForDisabled = listbox.getPTOptions(listbox.options()![1], {}, 1, 'option');
                 expect(ptOptionsForDisabled).toBeDefined();
 
                 // Verify context.disabled is true
@@ -2579,7 +2583,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 }
 
                 // Get PT options for enabled option
-                const ptOptionsForEnabled = listbox.getPTOptions(listbox.options[0], {}, 0, 'option');
+                const ptOptionsForEnabled = listbox.getPTOptions(listbox.options()![0], {}, 0, 'option');
                 if (ptOptionsForEnabled.context) {
                     expect(ptOptionsForEnabled.context.disabled).toBe(false);
                 }
@@ -2595,7 +2599,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 await ptFixture.whenStable();
 
                 // Get PT options for focused option
-                const ptOptionsForFocused = listbox.getPTOptions(listbox.options[1], {}, 1, 'option');
+                const ptOptionsForFocused = listbox.getPTOptions(listbox.options()![1], {}, 1, 'option');
                 expect(ptOptionsForFocused).toBeDefined();
 
                 // Verify context.focused is true
@@ -2604,7 +2608,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 }
 
                 // Get PT options for non-focused option
-                const ptOptionsForNonFocused = listbox.getPTOptions(listbox.options[0], {}, 0, 'option');
+                const ptOptionsForNonFocused = listbox.getPTOptions(listbox.options()![0], {}, 0, 'option');
                 if (ptOptionsForNonFocused.context) {
                     expect(ptOptionsForNonFocused.context.focused).toBe(false);
                 }
@@ -2612,19 +2616,19 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
             it('should export combined context states via getPTOptions', async () => {
                 // Setup: select first option, disable second, focus third
-                listbox.options = [
+                ptFixture.componentRef.setInput('options', [
                     { label: 'Option 1', value: 'opt1' },
                     { label: 'Option 2', value: 'opt2', disabled: true },
                     { label: 'Option 3', value: 'opt3' }
-                ];
-                listbox.optionDisabled = 'disabled';
-                listbox.value = 'opt1';
+                ]);
+                ptFixture.componentRef.setInput('optionDisabled', 'disabled');
+                listbox.writeValue('opt1');
                 listbox.focusedOptionIndex.set(2);
                 ptFixture.changeDetectorRef.markForCheck();
                 await ptFixture.whenStable();
 
                 // Check selected option
-                const ptSelected = listbox.getPTOptions(listbox.options[0], {}, 0, 'option');
+                const ptSelected = listbox.getPTOptions(listbox.options()![0], {}, 0, 'option');
                 expect(ptSelected).toBeDefined();
                 if (ptSelected.context) {
                     expect(ptSelected.context.selected).toBe(true);
@@ -2636,7 +2640,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 }
 
                 // Check disabled option
-                const ptDisabled = listbox.getPTOptions(listbox.options[1], {}, 1, 'option');
+                const ptDisabled = listbox.getPTOptions(listbox.options()![1], {}, 1, 'option');
                 expect(ptDisabled).toBeDefined();
                 if (ptDisabled.context) {
                     expect(ptDisabled.context.selected).toBe(false);
@@ -2647,7 +2651,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                 }
 
                 // Check focused option
-                const ptFocused = listbox.getPTOptions(listbox.options[2], {}, 2, 'option');
+                const ptFocused = listbox.getPTOptions(listbox.options()![2], {}, 2, 'option');
                 expect(ptFocused).toBeDefined();
                 if (ptFocused.context) {
                     expect(ptFocused.context.selected).toBe(false);
@@ -2659,8 +2663,8 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to optionGroup when using grouped options', async () => {
-                listbox.group = true;
-                listbox.options = [
+                ptFixture.componentRef.setInput('group', true);
+                ptFixture.componentRef.setInput('options', [
                     {
                         label: 'Group 1',
                         value: 'g1',
@@ -2669,7 +2673,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
                             { label: 'Item 1.2', value: 'i1_2' }
                         ]
                     }
-                ];
+                ]);
                 ptFixture.componentRef.setInput('pt', {
                     optionGroup: 'OPTION_GROUP_CLASS'
                 });
@@ -2683,7 +2687,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to filter elements', async () => {
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', {
                     pcFilter: 'FILTER_INPUT_CLASS',
                     pcFilterContainer: 'FILTER_CONTAINER_CLASS'
@@ -2697,8 +2701,8 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to checkbox elements', async () => {
-                listbox.multiple = true;
-                listbox.checkbox = true;
+                ptFixture.componentRef.setInput('multiple', true);
+                ptFixture.componentRef.setInput('checkbox', true);
                 ptFixture.componentRef.setInput('pt', {
                     pcCheckbox: { class: 'CHECKBOX_CLASS' }
                 });
@@ -2711,8 +2715,8 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to virtualScroller', async () => {
-                listbox.virtualScroll = true;
-                listbox.scrollHeight = '200px';
+                ptFixture.componentRef.setInput('virtualScroll', true);
+                ptFixture.componentRef.setInput('scrollHeight', '200px');
                 ptFixture.componentRef.setInput('pt', {
                     virtualScroller: { class: 'VIRTUAL_SCROLLER_CLASS' }
                 });
@@ -2725,7 +2729,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to emptyMessage', async () => {
-                listbox.options = [];
+                ptFixture.componentRef.setInput('options', []);
                 ptFixture.componentRef.setInput('pt', {
                     emptyMessage: 'EMPTY_MESSAGE_CLASS'
                 });
@@ -2766,7 +2770,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
 
         describe('Additional PT sections coverage', () => {
             it('should apply PT to optionCheckIcon and optionBlankIcon', async () => {
-                listbox.checkmark = true;
+                ptFixture.componentRef.setInput('checkmark', true);
                 ptFixture.componentRef.setInput('pt', {
                     optionCheckIcon: 'CHECK_ICON_CLASS',
                     optionBlankIcon: 'BLANK_ICON_CLASS'
@@ -2781,7 +2785,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to hiddenFilterResult', async () => {
-                listbox.filter = true;
+                ptFixture.componentRef.setInput('filter', true);
                 ptFixture.componentRef.setInput('pt', {
                     hiddenFilterResult: 'FILTER_RESULT_CLASS'
                 });
@@ -2808,7 +2812,7 @@ describe('Listbox ViewChild and Advanced Scenarios', () => {
             });
 
             it('should apply PT to hiddenEmptyMessage', async () => {
-                listbox.options = [];
+                ptFixture.componentRef.setInput('options', []);
                 ptFixture.componentRef.setInput('pt', {
                     hiddenEmptyMessage: 'EMPTY_HIDDEN_CLASS'
                 });
@@ -2900,5 +2904,326 @@ describe('Listbox Signal Query API', () => {
         expect(instance.lastHiddenFocusableElement()).toBeDefined();
         expect(instance.scroller()).toBeUndefined();
         expect(instance.headerCheckboxViewChild()).toBeUndefined();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [Listbox, SharedModule],
+    template: `
+        <p-listbox class="host-class" [options]="opts">
+            <ng-template pTemplate="item" let-option
+                ><span class="ptemplate-item">{{ option.label }}</span></ng-template
+            >
+            <ng-template pTemplate="empty"><span class="ptemplate-empty">nothing</span></ng-template>
+        </p-listbox>
+    `
+})
+class ListboxSignalsHostComponent {
+    opts: any[] = [{ label: 'a', value: 1 }];
+}
+
+describe('Listbox Signals API', () => {
+    let fixture: ComponentFixture<Listbox>;
+    let listbox: Listbox;
+    const options = [
+        { label: 'Apple', value: 'apple' },
+        { label: 'Banana', value: 'banana' },
+        { label: 'Cherry', value: 'cherry', disabled: true }
+    ];
+
+    const optionEls = () => fixture.debugElement.queryAll(By.css('.p-listbox-option'));
+    const text = () => (fixture.nativeElement as HTMLElement).textContent || '';
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Listbox, ListboxSignalsHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(Listbox);
+        listbox = fixture.componentInstance;
+        fixture.componentRef.setInput('options', options);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    it('re-renders when the options input changes', async () => {
+        expect(optionEls().length).toBe(3);
+
+        fixture.componentRef.setInput('options', [{ label: 'Kiwi', value: 'kiwi' }]);
+        fixture.detectChanges();
+
+        expect(optionEls().length).toBe(1);
+        expect(optionEls()[0].nativeElement.textContent).toContain('Kiwi');
+    });
+
+    it('re-renders labels when optionLabel changes', () => {
+        fixture.componentRef.setInput('options', [{ name: 'Named', label: 'Labelled', value: 1 }]);
+        fixture.detectChanges();
+        expect(optionEls()[0].nativeElement.textContent).toContain('Labelled');
+
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.detectChanges();
+        expect(optionEls()[0].nativeElement.textContent).toContain('Named');
+    });
+
+    it('re-renders checkboxes when multiple and checkbox change', () => {
+        expect(fixture.debugElement.queryAll(By.css('p-checkbox')).length).toBe(0);
+
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('checkbox', true);
+        fixture.detectChanges();
+
+        // one per option plus the toggle-all checkbox
+        expect(fixture.debugElement.queryAll(By.css('p-checkbox')).length).toBe(4);
+
+        fixture.componentRef.setInput('showToggleAll', false);
+        fixture.detectChanges();
+        expect(fixture.debugElement.queryAll(By.css('p-checkbox')).length).toBe(3);
+    });
+
+    it('re-renders the filter input and its attributes', () => {
+        expect(fixture.debugElement.query(By.css('input[pInputText]'))).toBeNull();
+
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('filterPlaceHolder', 'Search fruits');
+        fixture.componentRef.setInput('ariaFilterLabel', 'Fruit filter');
+        fixture.detectChanges();
+
+        const input = fixture.debugElement.query(By.css('input[pInputText]')).nativeElement as HTMLInputElement;
+        expect(input.getAttribute('placeholder')).toBe('Search fruits');
+        expect(input.getAttribute('aria-label')).toBe('Fruit filter');
+
+        fixture.componentRef.setInput('filterPlaceHolder', 'Find');
+        fixture.detectChanges();
+        expect(input.getAttribute('placeholder')).toBe('Find');
+    });
+
+    it('filters with the filterValue input, keeps a typed filter until the input changes again', () => {
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('optionLabel', 'label');
+        fixture.componentRef.setInput('filterValue', 'ban');
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(1);
+        expect(listbox._filterValue()).toBe('ban');
+
+        const input = fixture.debugElement.query(By.css('input[pInputText]')).nativeElement as HTMLInputElement;
+        input.value = 'ch';
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        expect(listbox._filterValue()).toBe('ch');
+        expect(optionEls().length).toBe(1);
+        expect(optionEls()[0].nativeElement.textContent).toContain('Cherry');
+
+        fixture.componentRef.setInput('filterValue', 'app');
+        fixture.detectChanges();
+        expect(listbox._filterValue()).toBe('app');
+        expect(optionEls()[0].nativeElement.textContent).toContain('Apple');
+
+        listbox.resetFilter();
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(3);
+    });
+
+    it('re-renders the filterMatchMode result', () => {
+        fixture.componentRef.setInput('optionLabel', 'label');
+        fixture.componentRef.setInput('filterValue', 'an');
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(1);
+
+        fixture.componentRef.setInput('filterMatchMode', 'startsWith');
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(0);
+    });
+
+    it('re-renders the empty and empty filter messages', () => {
+        fixture.componentRef.setInput('options', []);
+        fixture.componentRef.setInput('emptyMessage', 'No fruit');
+        fixture.detectChanges();
+        expect(fixture.debugElement.query(By.css('.p-listbox-empty-message')).nativeElement.textContent).toContain('No fruit');
+
+        fixture.componentRef.setInput('options', options);
+        fixture.componentRef.setInput('filterValue', 'zzz');
+        fixture.componentRef.setInput('emptyFilterMessage', 'No match');
+        fixture.detectChanges();
+        expect(fixture.debugElement.query(By.css('.p-listbox-empty-message')).nativeElement.textContent).toContain('No match');
+    });
+
+    it('re-renders list container style inputs', () => {
+        fixture.componentRef.setInput('listStyleClass', 'my-list');
+        fixture.componentRef.setInput('listStyle', { color: 'red' });
+        fixture.componentRef.setInput('scrollHeight', '123px');
+        fixture.detectChanges();
+
+        const container = fixture.debugElement.query(By.css('.p-listbox-list-container')).nativeElement as HTMLElement;
+        expect(container.classList).toContain('my-list');
+        expect(container.style.color).toBe('red');
+        expect(container.style.maxHeight).toBe('123px');
+    });
+
+    it('re-renders root and option classes for striped and highlightOnSelect', () => {
+        const host = fixture.nativeElement as HTMLElement;
+        expect(host.classList).not.toContain('p-listbox-striped');
+
+        fixture.componentRef.setInput('striped', true);
+        fixture.detectChanges();
+        expect(host.classList).toContain('p-listbox-striped');
+
+        listbox.writeValue('apple');
+        fixture.detectChanges();
+        expect(optionEls()[0].nativeElement.classList).toContain('p-listbox-option-selected');
+
+        fixture.componentRef.setInput('highlightOnSelect', false);
+        fixture.detectChanges();
+        expect(optionEls()[0].nativeElement.classList).not.toContain('p-listbox-option-selected');
+    });
+
+    it('re-renders the checkmark icons', () => {
+        expect(fixture.debugElement.queryAll(By.css('.p-listbox-option-blank-icon')).length).toBe(0);
+
+        fixture.componentRef.setInput('checkmark', true);
+        fixture.detectChanges();
+        expect(fixture.debugElement.queryAll(By.css('.p-listbox-option-blank-icon')).length).toBe(3);
+    });
+
+    it('re-renders option groups when group changes', () => {
+        fixture.componentRef.setInput('options', [{ label: 'Fruits', items: [{ label: 'Apple', value: 'apple' }] }]);
+        fixture.componentRef.setInput('group', true);
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.queryAll(By.css('.p-listbox-option-group')).length).toBe(1);
+        expect(fixture.debugElement.query(By.css('.p-listbox-option-group')).nativeElement.textContent).toContain('Fruits');
+    });
+
+    it('re-renders the disabled state of options from optionDisabled', () => {
+        expect(optionEls()[2].nativeElement.getAttribute('aria-disabled')).toBe('false');
+
+        fixture.componentRef.setInput('optionDisabled', 'disabled');
+        fixture.detectChanges();
+        expect(optionEls()[2].nativeElement.getAttribute('aria-disabled')).toBe('true');
+
+        fixture.componentRef.setInput('optionDisabled', (item: any) => item.value === 'apple');
+        fixture.detectChanges();
+        expect(optionEls()[0].nativeElement.getAttribute('aria-disabled')).toBe('true');
+        expect(optionEls()[2].nativeElement.getAttribute('aria-disabled')).toBe('false');
+    });
+
+    it('reflects the selectAll input in allSelected and the toggle-all checkbox', () => {
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('checkbox', true);
+        fixture.componentRef.setInput('selectAll', true);
+        fixture.detectChanges();
+        expect(listbox.allSelected()).toBe(true);
+
+        fixture.componentRef.setInput('selectAll', false);
+        fixture.detectChanges();
+        expect(listbox.allSelected()).toBe(false);
+
+        fixture.componentRef.setInput('selectAll', null);
+        listbox.writeValue(['apple', 'banana', 'cherry']);
+        fixture.detectChanges();
+        expect(listbox.allSelected()).toBe(true);
+    });
+
+    it('re-renders ids from the id input', () => {
+        fixture.componentRef.setInput('id', 'fruits');
+        fixture.detectChanges();
+
+        expect((fixture.nativeElement as HTMLElement).getAttribute('id')).toBe('fruits');
+        expect(fixture.debugElement.query(By.css('ul[role="listbox"]')).nativeElement.getAttribute('id')).toBe('fruits_list');
+        expect(optionEls()[1].nativeElement.getAttribute('id')).toBe('fruits_1');
+    });
+
+    it('generates an id when none is given', () => {
+        expect(listbox._id()).toMatch(/^pn_id_/);
+        expect((fixture.nativeElement as HTMLElement).getAttribute('id')).toBe(listbox._id());
+    });
+
+    it('re-renders ariaLabel and tabindex', () => {
+        fixture.componentRef.setInput('ariaLabel', 'Fruits');
+        fixture.componentRef.setInput('tabindex', 3);
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.query(By.css('ul[role="listbox"]')).nativeElement.getAttribute('aria-label')).toBe('Fruits');
+        expect(fixture.debugElement.query(By.css('.p-hidden-focusable')).nativeElement.getAttribute('tabindex')).toBe('3');
+    });
+
+    it('re-renders the selection message and follows translation changes', () => {
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('selectionMessage', '{0} fruits');
+        fixture.detectChanges();
+        listbox.writeValue(['apple', 'banana']);
+        fixture.detectChanges();
+        expect(text()).toContain('2 fruits');
+
+        listbox.writeValue([]);
+        TestBed.inject(Exhaustive).setTranslation({ emptySelectionMessage: 'Aucune sélection' });
+        fixture.detectChanges();
+        expect(text()).toContain('Aucune sélection');
+    });
+
+    it('renders the virtual scroller when virtualScroll changes', () => {
+        expect(fixture.debugElement.query(By.css('p-scroller'))).toBeNull();
+
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 40);
+        fixture.detectChanges();
+        expect(fixture.debugElement.query(By.css('p-scroller'))).toBeTruthy();
+    });
+
+    it('resets reordered options when the options input changes', () => {
+        fixture.componentRef.setInput('dragdrop', true);
+        fixture.detectChanges();
+
+        const list = { data: options };
+        listbox.drop({ previousContainer: list, container: list, previousIndex: 0, currentIndex: 2, item: { data: options[0] } } as any);
+        fixture.detectChanges();
+        expect(listbox._options().map((o: any) => o.value)).toEqual(['banana', 'cherry', 'apple']);
+        expect(optionEls()[2].nativeElement.textContent).toContain('Apple');
+        expect(options[0].value).toBe('apple');
+
+        fixture.componentRef.setInput('options', [...options]);
+        fixture.detectChanges();
+        expect(listbox._options().map((o: any) => o.value)).toEqual(['apple', 'banana', 'cherry']);
+        expect(optionEls()[0].nativeElement.textContent).toContain('Apple');
+    });
+
+    it('exposes filterOptions only when filterBy is set', () => {
+        expect(listbox.filterOptions()).toBeUndefined();
+
+        fixture.componentRef.setInput('filterBy', 'label');
+        fixture.detectChanges();
+        expect(listbox.filterOptions()).toBeDefined();
+
+        listbox.filterOptions()!.filter!({ target: { value: 'cher' } } as any);
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(1);
+
+        listbox.filterOptions()!.reset!();
+        fixture.detectChanges();
+        expect(optionEls().length).toBe(3);
+    });
+
+    it('merges the native class attribute with the root classes and resolves pTemplates', async () => {
+        const hostFixture = TestBed.createComponent(ListboxSignalsHostComponent);
+        hostFixture.detectChanges();
+        await hostFixture.whenStable();
+
+        const listboxDebug = hostFixture.debugElement.query(By.directive(Listbox));
+        const instance = listboxDebug.componentInstance as Listbox;
+        expect(listboxDebug.nativeElement.classList).toContain('host-class');
+        expect(listboxDebug.nativeElement.classList).toContain('p-listbox');
+        expect(instance._itemTemplate()).toBeDefined();
+        expect(instance._emptyTemplate()).toBeDefined();
+        expect(instance._headerTemplate()).toBeUndefined();
+        expect(hostFixture.debugElement.query(By.css('.ptemplate-item')).nativeElement.textContent).toContain('a');
+
+        hostFixture.componentInstance.opts = [];
+        hostFixture.changeDetectorRef.markForCheck();
+        hostFixture.detectChanges();
+        expect(hostFixture.debugElement.query(By.css('.ptemplate-empty'))).toBeTruthy();
     });
 });

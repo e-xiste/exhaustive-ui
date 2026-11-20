@@ -1541,4 +1541,31 @@ describe('styleclass-to-class', () => {
             `<p-selectbutton [options]="states" styleClass="keep"></p-selectbutton>\n<p-select-button [options]="states" [styleClass]="keepClass"></p-select-button>\n<p-select [options]="cities" class="rewrite"></p-select>\n`
         );
     });
+
+    it('rewrites a static styleClass to class on p-listbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-listbox [options]="cities" styleClass="w-full md:w-56"></p-listbox>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-listbox [options]="cities" class="w-full md:w-56"></p-listbox>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-listBox and p-list-box', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-listBox [options]="cities" [styleClass]="listClass"></p-listBox>\n<p-list-box [multiple]="true" [styleClass]="listClass"></p-list-box>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-listBox [options]="cities" [class]="listClass"></p-listBox>\n<p-list-box [multiple]="true" [class]="listClass"></p-list-box>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-listbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-listbox class="existing" styleClass="my-listbox" [options]="cities"></p-listbox>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-listbox class="existing my-listbox" [options]="cities"></p-listbox>\n`);
+    });
 });

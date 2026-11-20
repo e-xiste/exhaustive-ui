@@ -616,8 +616,8 @@ describe('PickList', () => {
             expect(listboxes.length).toBe(2);
 
             // Check that both listboxes use the dataKey as optionLabel
-            expect(listboxes[0].componentInstance.optionLabel).toBe('id');
-            expect(listboxes[1].componentInstance.optionLabel).toBe('id');
+            expect(listboxes[0].componentInstance.optionLabel()).toBe('id');
+            expect(listboxes[1].componentInstance.optionLabel()).toBe('id');
         });
     });
 
@@ -632,8 +632,8 @@ describe('PickList', () => {
             expect(listboxes.length).toBe(2);
 
             // When dataKey is provided, it's used as optionLabel in listboxes
-            expect(listboxes[0].componentInstance.optionLabel).toBe('id');
-            expect(listboxes[1].componentInstance.optionLabel).toBe('id');
+            expect(listboxes[0].componentInstance.optionLabel()).toBe('id');
+            expect(listboxes[1].componentInstance.optionLabel()).toBe('id');
         });
 
         it('should use default name field when dataKey is not provided', () => {
@@ -644,8 +644,8 @@ describe('PickList', () => {
             expect(listboxes.length).toBe(2);
 
             // Should fallback to 'name'
-            expect(listboxes[0].componentInstance.optionLabel).toBe('name');
-            expect(listboxes[1].componentInstance.optionLabel).toBe('name');
+            expect(listboxes[0].componentInstance.optionLabel()).toBe('name');
+            expect(listboxes[1].componentInstance.optionLabel()).toBe('name');
         });
     });
 
