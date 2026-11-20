@@ -770,3 +770,46 @@ describe('Textarea', () => {
         });
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [Textarea, FormsModule],
+    template: `
+        <div style="height: 400px; overflow: auto" id="scroller">
+            <textarea pTextarea [(ngModel)]="value" [autoResize]="true" rows="3" style="display: block; width: 200px"></textarea>
+        </div>
+    `
+})
+class TestAutoResizeScrollComponent {
+    value = Array.from({ length: 60 }, (_, i) => 'line ' + i).join('\n');
+}
+
+describe('Textarea autoResize scroll position (optimus-ui#646)', () => {
+    it('should keep the scroll position of the scroll container when resizing', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestAutoResizeScrollComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestAutoResizeScrollComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const scroller = fixture.nativeElement.querySelector('#scroller') as HTMLElement;
+        const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+        expect(textarea.offsetHeight).toBeGreaterThan(600);
+
+        scroller.scrollTop = scroller.scrollHeight;
+        const scrollTop = scroller.scrollTop;
+        expect(scrollTop).toBeGreaterThan(200);
+
+        textarea.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(scroller.scrollTop).toBe(scrollTop);
+        fixture.nativeElement.remove();
+    });
+});

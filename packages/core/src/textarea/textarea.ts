@@ -127,6 +127,12 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
     }
 
     resize(event?: Event) {
+        // Collapsing the height to measure scrollHeight shrinks the scroll containers for a moment, which clamps their scroll position.
+        const scrollPositions: [HTMLElement, number][] = [];
+        for (let parent: HTMLElement | null = this.el.nativeElement.parentElement; parent; parent = parent.parentElement) {
+            if (parent.scrollTop) scrollPositions.push([parent, parent.scrollTop]);
+        }
+
         this.el.nativeElement.style.height = 'auto';
         this.el.nativeElement.style.height = this.el.nativeElement.scrollHeight + 'px';
 
@@ -136,6 +142,8 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
         } else {
             this.el.nativeElement.style.overflow = 'hidden';
         }
+
+        scrollPositions.forEach(([parent, scrollTop]) => (parent.scrollTop = scrollTop));
 
         this.onResize.emit(event || {});
     }
