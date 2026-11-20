@@ -12,6 +12,7 @@ import { PaginatorState } from '@exhaustive-ui/core/types/paginator';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { PrimeTemplate } from '@exhaustive-ui/core/api';
+import { Exhaustive } from '@exhaustive-ui/core/config';
 // Test component for basic paginator functionality
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1557,5 +1558,38 @@ describe('Paginator Signal Query API', () => {
         expect(templates.length).toBe(2);
         expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
         expect(templates[0].template).toBeDefined();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Paginator],
+    template: `<p-paginator [rows]="10" [totalRecords]="120" />`
+})
+class TestTranslationPaginatorComponent {}
+
+describe('Paginator translation', () => {
+    let originalAria: any;
+
+    afterEach(() => {
+        TestBed.inject(Exhaustive).setTranslation({ aria: { ...originalAria } });
+    });
+
+    it('updates its aria labels after setTranslation (optimus-ui#2080)', async () => {
+        TestBed.configureTestingModule({ imports: [TestTranslationPaginatorComponent], providers: [provideZonelessChangeDetection()] });
+        const config = TestBed.inject(Exhaustive);
+        originalAria = config.translation.aria;
+        const fixture = TestBed.createComponent(TestTranslationPaginatorComponent);
+        await fixture.whenStable();
+
+        const nextButton = fixture.debugElement.query(By.css('.p-paginator-next')).nativeElement;
+        const pageButton = fixture.debugElement.query(By.css('.p-paginator-page')).nativeElement;
+        expect(nextButton.getAttribute('aria-label')).toBe(originalAria.nextPageLabel);
+
+        config.setTranslation({ aria: { ...originalAria, nextPageLabel: 'Page suivante', pageLabel: 'Page n°{page}' } });
+        await fixture.whenStable();
+
+        expect(nextButton.getAttribute('aria-label')).toBe('Page suivante');
+        expect(pageButton.getAttribute('aria-label')).toBe('Page n°1');
     });
 });

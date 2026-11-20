@@ -20,6 +20,7 @@ import {
     contentChildren,
     output
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Aria, PrimeTemplate, SelectItem, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -452,12 +453,16 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
 
     readonly display = computed<string | null>(() => (this.alwaysShow() || this.pageLinks().length > 1 ? null : 'none'));
 
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
+
     getAriaLabel(labelType: keyof Aria): string | undefined {
-        return this.config.translation.aria ? this.config.translation.aria[labelType] : undefined;
+        const aria = this.translation().aria;
+        return aria ? aria[labelType] : undefined;
     }
 
     getPageAriaLabel(value: number): string | undefined {
-        return this.config.translation.aria ? this.config.translation.aria.pageLabel?.replace(/{page}/g, `${value}`) : undefined;
+        const aria = this.translation().aria;
+        return aria ? aria.pageLabel?.replace(/{page}/g, `${value}`) : undefined;
     }
 
     getLocalization(digit: number): string {
