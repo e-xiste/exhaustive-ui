@@ -186,3 +186,23 @@ describe('ThemeUtils.getPreset', () => {
         expect(result.style).toBe('.p-button{}');
     });
 });
+
+describe('ThemeUtils.getPreset extend', () => {
+    it('merges extend tokens into a native token group instead of replacing it (optimus-ui#163)', () => {
+        const result = callGetPreset({
+            weekDay: { padding: '0.25rem', fontWeight: '600' },
+            colorScheme: { light: { panel: { background: '#fff', color: '#000' } }, dark: { panel: { background: '#000', color: '#fff' } } },
+            extend: {
+                weekDay: { fontSize: '0.75rem' },
+                colorScheme: { light: { panel: { shadow: 'none' } }, dark: { panel: { shadow: 'none' } } }
+            }
+        });
+
+        expect(result.css).toContain('--p-button-week-day-padding:0.25rem');
+        expect(result.css).toContain('--p-button-week-day-font-weight:600');
+        expect(result.css).toContain('--p-button-week-day-font-size:0.75rem');
+        expect(result.css).toContain('--p-button-panel-background:#fff');
+        expect(result.css).toContain('--p-button-panel-background:#000');
+        expect(result.css).toContain('--p-button-panel-shadow:none');
+    });
+});

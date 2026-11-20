@@ -1,4 +1,4 @@
-import { isEmpty, isNotEmpty, isObject, matchRegex, minifyCSS, omit, resolve } from '@exhaustive-ui/utils/object';
+import { deepMerge, isEmpty, isNotEmpty, isObject, matchRegex, minifyCSS, omit, resolve } from '@exhaustive-ui/utils/object';
 import { dt, toVariables } from '../helpers/index';
 import { CALC_REGEX, EXPR_REGEX, getRule, toTokenKey, VAR_REGEX } from './sharedUtils';
 
@@ -124,9 +124,9 @@ export default {
             const csRest: any = omit(colorScheme, 'dark');
             const ecsDark = eColorScheme?.dark;
             const ecsRest: any = omit(eColorScheme, 'dark');
-            const vRest_var: any = isNotEmpty(vRest) ? this._toVariables({ [_name]: { ...vRest, ...evRest } }, options) : {};
-            const csRest_var: any = isNotEmpty(csRest) ? this._toVariables({ [_name]: { ...csRest, ...ecsRest } }, options) : {};
-            const csDark_var: any = isNotEmpty(dark) ? this._toVariables({ [_name]: { ...dark, ...ecsDark } }, options) : {};
+            const vRest_var: any = isNotEmpty(vRest) ? this._toVariables({ [_name]: deepMerge(vRest, evRest) }, options) : {};
+            const csRest_var: any = isNotEmpty(csRest) ? this._toVariables({ [_name]: deepMerge(csRest, ecsRest) }, options) : {};
+            const csDark_var: any = isNotEmpty(dark) ? this._toVariables({ [_name]: deepMerge(dark, ecsDark) }, options) : {};
 
             const [vRest_css, vRest_tokens] = [vRest_var.declarations ?? '', vRest_var.tokens || []];
             const [csRest_css, csRest_tokens] = [csRest_var.declarations ?? '', csRest_var.tokens || []];
