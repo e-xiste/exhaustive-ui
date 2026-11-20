@@ -1469,3 +1469,33 @@ describe('SelectButton RTL borders (optimus-ui#285)', () => {
         expect(last.borderTopWidth).not.toBe('0px');
     });
 });
+
+describe('SelectButton duplicate labels (optimus-ui#301)', () => {
+    it('should render options sharing a label without duplicate track keys', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SelectButton],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const warn = vi.spyOn(console, 'warn');
+        const error = vi.spyOn(console, 'error');
+        const fixture = TestBed.createComponent(SelectButton);
+        fixture.componentRef.setInput('options', [
+            { label: '', value: 1, icon: 'pi pi-align-left' },
+            { label: '', value: 2, icon: 'pi pi-align-right' },
+            { label: 'Same', value: 3 },
+            { label: 'Same', value: 4 }
+        ]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.componentRef.setInput('options', [...fixture.componentInstance.options()!]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const messages = [...warn.mock.calls, ...error.mock.calls].map((args) => String(args[0]));
+        warn.mockRestore();
+        error.mockRestore();
+        expect(messages.filter((message) => message.includes('NG0955'))).toEqual([]);
+        expect((fixture.nativeElement as HTMLElement).querySelectorAll('p-togglebutton').length).toBe(4);
+    });
+});

@@ -23,7 +23,7 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
     selector: 'p-selectButton, p-selectbutton, p-select-button',
     imports: [ToggleButton, FormsModule, CommonModule, SharedModule, BindModule],
     template: `
-        @for (option of options(); track getOptionLabel(option); let i = $index) {
+        @for (option of options(); track $index; let i = $index) {
             <p-togglebutton
                 [autofocus]="autofocus() && i === 0"
                 [class]="styleClass()"
