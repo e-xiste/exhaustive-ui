@@ -22,7 +22,6 @@ import {
     NgZone,
     numberAttribute,
     signal,
-    SimpleChanges,
     TemplateRef,
     untracked,
     ViewEncapsulation,
@@ -4217,67 +4216,71 @@ export class ResizableColumn extends BaseComponent {
     dataTable = inject(Table);
     zone = inject(NgZone);
 
-    @Input({ transform: booleanAttribute }) pResizableColumnDisabled: boolean | undefined;
+    readonly pResizableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    resizer: HTMLSpanElement | undefined;
+    resizer = signal<HTMLSpanElement | undefined>(undefined);
 
-    resizerMouseDownListener: VoidListener;
+    resizerMouseDownListener = signal<VoidListener>(undefined);
 
-    resizerTouchStartListener: VoidListener;
+    resizerTouchStartListener = signal<VoidListener>(undefined);
 
-    resizerTouchMoveListener: VoidListener;
+    resizerTouchMoveListener = signal<VoidListener>(undefined);
 
-    resizerTouchEndListener: VoidListener;
+    resizerTouchEndListener = signal<VoidListener>(undefined);
 
-    documentMouseMoveListener: VoidListener;
+    documentMouseMoveListener = signal<VoidListener>(undefined);
 
-    documentMouseUpListener: VoidListener;
+    documentMouseUpListener = signal<VoidListener>(undefined);
 
     _componentStyle = inject(TableStyle);
 
-    onAfterViewInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.isEnabled()) {
-                this.resizer = this.renderer.createElement('span');
-                setAttribute(this.resizer as HTMLElement, 'data-pc-column-resizer', 'true');
-                !this.$unstyled() && this.renderer.addClass(this.resizer, 'p-datatable-column-resizer');
-                this.renderer.appendChild(this.el.nativeElement, this.resizer);
+    constructor() {
+        super();
+        afterNextRender(() => {
+            if (isPlatformBrowser(this.platformId)) {
+                if (this.isEnabled()) {
+                    const resizer: HTMLSpanElement = this.renderer.createElement('span');
+                    this.resizer.set(resizer);
+                    setAttribute(resizer, 'data-pc-column-resizer', 'true');
+                    !this.$unstyled() && this.renderer.addClass(resizer, 'p-datatable-column-resizer');
+                    this.renderer.appendChild(this.el.nativeElement, resizer);
 
-                this.zone.runOutsideAngular(() => {
-                    this.resizerMouseDownListener = this.renderer.listen(this.resizer, 'mousedown', this.onMouseDown.bind(this));
-                    this.resizerTouchStartListener = this.renderer.listen(this.resizer, 'touchstart', this.onTouchStart.bind(this));
-                });
+                    this.zone.runOutsideAngular(() => {
+                        this.resizerMouseDownListener.set(this.renderer.listen(resizer, 'mousedown', this.onMouseDown.bind(this)));
+                        this.resizerTouchStartListener.set(this.renderer.listen(resizer, 'touchstart', this.onTouchStart.bind(this)));
+                    });
+                }
             }
-        }
+        });
     }
 
     bindDocumentEvents() {
         this.zone.runOutsideAngular(() => {
-            this.documentMouseMoveListener = this.renderer.listen(this.document, 'mousemove', this.onDocumentMouseMove.bind(this));
-            this.documentMouseUpListener = this.renderer.listen(this.document, 'mouseup', this.onDocumentMouseUp.bind(this));
-            this.resizerTouchMoveListener = this.renderer.listen(this.resizer, 'touchmove', this.onTouchMove.bind(this));
-            this.resizerTouchEndListener = this.renderer.listen(this.resizer, 'touchend', this.onTouchEnd.bind(this));
+            this.documentMouseMoveListener.set(this.renderer.listen(this.document, 'mousemove', this.onDocumentMouseMove.bind(this)));
+            this.documentMouseUpListener.set(this.renderer.listen(this.document, 'mouseup', this.onDocumentMouseUp.bind(this)));
+            this.resizerTouchMoveListener.set(this.renderer.listen(this.resizer(), 'touchmove', this.onTouchMove.bind(this)));
+            this.resizerTouchEndListener.set(this.renderer.listen(this.resizer(), 'touchend', this.onTouchEnd.bind(this)));
         });
     }
 
     unbindDocumentEvents() {
-        if (this.documentMouseMoveListener) {
-            this.documentMouseMoveListener();
-            this.documentMouseMoveListener = null;
+        if (this.documentMouseMoveListener()) {
+            this.documentMouseMoveListener()!();
+            this.documentMouseMoveListener.set(null);
         }
 
-        if (this.documentMouseUpListener) {
-            this.documentMouseUpListener();
-            this.documentMouseUpListener = null;
+        if (this.documentMouseUpListener()) {
+            this.documentMouseUpListener()!();
+            this.documentMouseUpListener.set(null);
         }
-        if (this.resizerTouchMoveListener) {
-            this.resizerTouchMoveListener();
-            this.resizerTouchMoveListener = null;
+        if (this.resizerTouchMoveListener()) {
+            this.resizerTouchMoveListener()!();
+            this.resizerTouchMoveListener.set(null);
         }
 
-        if (this.resizerTouchEndListener) {
-            this.resizerTouchEndListener();
-            this.resizerTouchEndListener = null;
+        if (this.resizerTouchEndListener()) {
+            this.resizerTouchEndListener()!();
+            this.resizerTouchEndListener.set(null);
         }
     }
 
@@ -4309,13 +4312,13 @@ export class ResizableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pResizableColumnDisabled !== true;
+        return this.pResizableColumnDisabled() !== true;
     }
 
     onDestroy() {
-        if (this.resizerMouseDownListener) {
-            this.resizerMouseDownListener();
-            this.resizerMouseDownListener = null;
+        if (this.resizerMouseDownListener()) {
+            this.resizerMouseDownListener()!();
+            this.resizerMouseDownListener.set(null);
         }
 
         this.unbindDocumentEvents();
@@ -4335,66 +4338,69 @@ export class ReorderableColumn extends BaseComponent {
     el = inject(ElementRef);
     zone = inject(NgZone);
 
-    @Input({ transform: booleanAttribute }) pReorderableColumnDisabled: boolean | undefined;
+    readonly pReorderableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    dragStartListener: VoidListener;
+    dragStartListener = signal<VoidListener>(undefined);
 
-    dragOverListener: VoidListener;
+    dragOverListener = signal<VoidListener>(undefined);
 
-    dragEnterListener: VoidListener;
+    dragEnterListener = signal<VoidListener>(undefined);
 
-    dragLeaveListener: VoidListener;
+    dragLeaveListener = signal<VoidListener>(undefined);
 
-    mouseDownListener: VoidListener;
+    mouseDownListener = signal<VoidListener>(undefined);
 
     _componentStyle = inject(TableStyle);
 
-    onAfterViewInit() {
-        if (this.isEnabled()) {
-            this.bindEvents();
-        }
+    constructor() {
+        super();
+        afterNextRender(() => {
+            if (this.isEnabled()) {
+                this.bindEvents();
+            }
+        });
     }
 
     bindEvents() {
         if (isPlatformBrowser(this.platformId)) {
             this.zone.runOutsideAngular(() => {
-                this.mouseDownListener = this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this));
+                this.mouseDownListener.set(this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this)));
 
-                this.dragStartListener = this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this));
+                this.dragStartListener.set(this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this)));
 
-                this.dragOverListener = this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragOver.bind(this));
+                this.dragOverListener.set(this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragOver.bind(this)));
 
-                this.dragEnterListener = this.renderer.listen(this.el.nativeElement, 'dragenter', this.onDragEnter.bind(this));
+                this.dragEnterListener.set(this.renderer.listen(this.el.nativeElement, 'dragenter', this.onDragEnter.bind(this)));
 
-                this.dragLeaveListener = this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this));
+                this.dragLeaveListener.set(this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this)));
             });
         }
     }
 
     unbindEvents() {
-        if (this.mouseDownListener) {
-            this.mouseDownListener();
-            this.mouseDownListener = null;
+        if (this.mouseDownListener()) {
+            this.mouseDownListener()!();
+            this.mouseDownListener.set(null);
         }
 
-        if (this.dragStartListener) {
-            this.dragStartListener();
-            this.dragStartListener = null;
+        if (this.dragStartListener()) {
+            this.dragStartListener()!();
+            this.dragStartListener.set(null);
         }
 
-        if (this.dragOverListener) {
-            this.dragOverListener();
-            this.dragOverListener = null;
+        if (this.dragOverListener()) {
+            this.dragOverListener()!();
+            this.dragOverListener.set(null);
         }
 
-        if (this.dragEnterListener) {
-            this.dragEnterListener();
-            this.dragEnterListener = null;
+        if (this.dragEnterListener()) {
+            this.dragEnterListener()!();
+            this.dragEnterListener.set(null);
         }
 
-        if (this.dragLeaveListener) {
-            this.dragLeaveListener();
-            this.dragLeaveListener = null;
+        if (this.dragLeaveListener()) {
+            this.dragLeaveListener()!();
+            this.dragLeaveListener.set(null);
         }
     }
 
@@ -4427,7 +4433,7 @@ export class ReorderableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pReorderableColumnDisabled !== true;
+        return this.pReorderableColumnDisabled() !== true;
     }
 
     onDestroy() {
@@ -4446,28 +4452,42 @@ export class EditableColumn extends BaseComponent {
     dataTable = inject(Table);
     zone = inject(NgZone);
 
-    @Input('pEditableColumn') data: any;
+    readonly data = input<any>(undefined, { alias: 'pEditableColumn' });
 
-    @Input('pEditableColumnField') field: any;
+    readonly field = input<any>(undefined, { alias: 'pEditableColumnField' });
 
-    @Input('pEditableColumnRowIndex') rowIndex: number | undefined;
+    readonly rowIndex = input<number | undefined>(undefined, { alias: 'pEditableColumnRowIndex' });
 
-    @Input({ transform: booleanAttribute }) pEditableColumnDisabled: boolean | undefined;
+    readonly pEditableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input() pFocusCellSelector: string | undefined;
+    readonly pFocusCellSelector = input<string | undefined>();
 
-    overlayEventListener: any;
+    overlayEventListener = signal<any>(undefined);
 
-    public onChanges(changes: SimpleChanges): void {
-        if (this.el.nativeElement && !changes.data?.firstChange) {
-            this.dataTable.updateEditingCell(this.el.nativeElement, this.data, this.field, <number>this.rowIndex);
-        }
-    }
+    constructor() {
+        super();
+        let initialized = false;
+        effect(() => {
+            const data = this.data();
+            const field = this.field();
+            const rowIndex = this.rowIndex();
 
-    onAfterViewInit() {
-        if (this.isEnabled()) {
-            !this.$unstyled() && DomHandler.addClass(this.el.nativeElement, 'p-editable-column');
-        }
+            untracked(() => {
+                if (!initialized) {
+                    initialized = true;
+                    return;
+                }
+
+                if (this.el.nativeElement) {
+                    this.dataTable.updateEditingCell(this.el.nativeElement, data, field, <number>rowIndex);
+                }
+            });
+        });
+        afterNextRender(() => {
+            if (this.isEnabled()) {
+                !this.$unstyled() && DomHandler.addClass(this.el.nativeElement, 'p-editable-column');
+            }
+        });
     }
 
     @HostListener('click', ['$event'])
@@ -4491,18 +4511,18 @@ export class EditableColumn extends BaseComponent {
     }
 
     openCell() {
-        this.dataTable.updateEditingCell(this.el.nativeElement, this.data, this.field, <number>this.rowIndex);
+        this.dataTable.updateEditingCell(this.el.nativeElement, this.data(), this.field(), <number>this.rowIndex());
         !this.$unstyled() && DomHandler.addClass(this.el.nativeElement, 'p-cell-editing');
         setAttribute(this.el.nativeElement, 'data-p-cell-editing', 'true');
 
         this.dataTable.onEditInit.emit({
-            field: this.field,
-            data: this.data,
-            index: <number>this.rowIndex
+            field: this.field(),
+            data: this.data(),
+            index: <number>this.rowIndex()
         });
         this.zone.runOutsideAngular(() => {
             setTimeout(() => {
-                let focusCellSelector = this.pFocusCellSelector || 'input, textarea, select';
+                let focusCellSelector = this.pFocusCellSelector() || 'input, textarea, select';
                 let focusableElement = DomHandler.findSingle(this.el.nativeElement, focusCellSelector);
 
                 if (focusableElement) {
@@ -4511,13 +4531,13 @@ export class EditableColumn extends BaseComponent {
             }, 50);
         });
 
-        this.overlayEventListener = (e: any) => {
+        this.overlayEventListener.set((e: any) => {
             if (this.el && this.el.nativeElement.contains(e.target)) {
                 this.dataTable.selfClick.set(true);
             }
-        };
+        });
 
-        this.dataTable.overlaySubscription.set(this.dataTable.overlayService.clickObservable.subscribe(this.overlayEventListener));
+        this.dataTable.overlaySubscription.set(this.dataTable.overlayService.clickObservable.subscribe(this.overlayEventListener()));
     }
 
     closeEditingCell(completed: any, event: Event) {
@@ -4534,7 +4554,7 @@ export class EditableColumn extends BaseComponent {
             this.dataTable.onEditCancel.emit(eventData);
 
             this.dataTable._value().forEach((element) => {
-                if (element[this.dataTable.editingCellField()] === this.data) {
+                if (element[this.dataTable.editingCellField()] === this.data()) {
                     element[this.dataTable.editingCellField()] = this.dataTable.editingCellData();
                 }
             });
@@ -4774,7 +4794,7 @@ export class EditableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pEditableColumnDisabled !== true;
+        return this.pEditableColumnDisabled() !== true;
     }
 
     onDestroy() {
@@ -4789,12 +4809,12 @@ export class EditableColumn extends BaseComponent {
     standalone: false
 })
 export class EditableRow extends BaseComponent {
-    @Input('pEditableRow') data: any;
+    readonly data = input<any>(undefined, { alias: 'pEditableRow' });
 
-    @Input({ transform: booleanAttribute }) pEditableRowDisabled: boolean | undefined;
+    readonly pEditableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     isEnabled() {
-        return this.pEditableRowDisabled !== true;
+        return this.pEditableRowDisabled() !== true;
     }
 }
 
@@ -4811,7 +4831,7 @@ export class InitEditableRow extends BaseComponent {
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
-        this.dataTable.initRowEdit(this.editableRow.data);
+        this.dataTable.initRowEdit(this.editableRow.data());
         event.preventDefault();
     }
 }
@@ -4829,7 +4849,7 @@ export class SaveEditableRow extends BaseComponent {
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
-        this.dataTable.saveRowEdit(this.editableRow.data, this.editableRow.el.nativeElement);
+        this.dataTable.saveRowEdit(this.editableRow.data(), this.editableRow.el.nativeElement);
         event.preventDefault();
     }
 }
@@ -4848,7 +4868,7 @@ export class CancelEditableRow extends BaseComponent {
     _componentStyle = inject(TableStyle);
     @HostListener('click', ['$event'])
     onClick(event: Event) {
-        this.dataTable.cancelRowEdit(this.editableRow.data);
+        this.dataTable.cancelRowEdit(this.editableRow.data());
         event.preventDefault();
     }
 }
@@ -4859,10 +4879,10 @@ export class CancelEditableRow extends BaseComponent {
     standalone: false,
     template: `
         @if (editing) {
-            <ng-container *ngTemplateOutlet="inputTemplate || _inputTemplate()"></ng-container>
+            <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate()"></ng-container>
         }
         @if (!editing) {
-            <ng-container *ngTemplateOutlet="outputTemplate || _outputTemplate()"></ng-container>
+            <ng-container *ngTemplateOutlet="outputTemplate() || _outputTemplate()"></ng-container>
         }
     `,
     encapsulation: ViewEncapsulation.None
@@ -4878,28 +4898,25 @@ export class CellEditor extends BaseComponent {
 
     readonly _outputTemplate = contentChild<TemplateRef<any>>('output');
 
-    inputTemplate: Nullable<TemplateRef<any>>;
+    readonly inputTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'input')
+                .at(-1)?.template
+    );
 
-    outputTemplate: Nullable<TemplateRef<any>>;
+    readonly outputTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'output')
+                .at(-1)?.template
+    );
 
-    onAfterContentInit() {
-        this._templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'input':
-                    this.inputTemplate = item.template;
-                    break;
-
-                case 'output':
-                    this.outputTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
+    // Stays a getter: isRowEditing() reads editingRowKeys, which the consumer owns and Table mutates in place.
     get editing(): boolean {
         return !!(
             (this.dataTable.editingCell() && this.editableColumn && this.dataTable.editingCell() === this.editableColumn.el.nativeElement) ||
-            (this.editableRow && this.dataTable.editMode() === 'row' && this.dataTable.isRowEditing(this.editableRow.data))
+            (this.editableRow && this.dataTable.editMode() === 'row' && this.dataTable.isRowEditing(this.editableRow.data()))
         );
     }
 }
@@ -5175,14 +5192,11 @@ export class ReorderableRowHandle extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRowHandle'));
-    }
-
     _componentStyle = inject(TableStyle);
 
-    onAfterViewInit() {
-        // DomHandler.addClass(this.el.nativeElement, 'p-datatable-reorderable-row-handle');
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRowHandle')));
     }
 }
 
@@ -5199,71 +5213,71 @@ export class ReorderableRow extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRow'));
-    }
+    readonly index = input<number | undefined>(undefined, { alias: 'pReorderableRow' });
 
-    @Input('pReorderableRow') index: number | undefined;
+    readonly pReorderableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input({ transform: booleanAttribute }) pReorderableRowDisabled: boolean | undefined;
+    mouseDownListener = signal<VoidListener>(undefined);
 
-    mouseDownListener: VoidListener;
+    dragStartListener = signal<VoidListener>(undefined);
 
-    dragStartListener: VoidListener;
+    dragEndListener = signal<VoidListener>(undefined);
 
-    dragEndListener: VoidListener;
+    dragOverListener = signal<VoidListener>(undefined);
 
-    dragOverListener: VoidListener;
+    dragLeaveListener = signal<VoidListener>(undefined);
 
-    dragLeaveListener: VoidListener;
+    dropListener = signal<VoidListener>(undefined);
 
-    dropListener: VoidListener;
-
-    onAfterViewInit() {
-        if (this.isEnabled()) {
-            this.el.nativeElement.droppable = true;
-            this.bindEvents();
-        }
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRow')));
+        afterNextRender(() => {
+            if (this.isEnabled()) {
+                this.el.nativeElement.droppable = true;
+                this.bindEvents();
+            }
+        });
     }
 
     bindEvents() {
         this.zone.runOutsideAngular(() => {
-            this.mouseDownListener = this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this));
+            this.mouseDownListener.set(this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this)));
 
-            this.dragStartListener = this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this));
+            this.dragStartListener.set(this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this)));
 
-            this.dragEndListener = this.renderer.listen(this.el.nativeElement, 'dragend', this.onDragEnd.bind(this));
+            this.dragEndListener.set(this.renderer.listen(this.el.nativeElement, 'dragend', this.onDragEnd.bind(this)));
 
-            this.dragOverListener = this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragOver.bind(this));
+            this.dragOverListener.set(this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragOver.bind(this)));
 
-            this.dragLeaveListener = this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this));
+            this.dragLeaveListener.set(this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this)));
         });
     }
 
     unbindEvents() {
-        if (this.mouseDownListener) {
-            this.mouseDownListener();
-            this.mouseDownListener = null;
+        if (this.mouseDownListener()) {
+            this.mouseDownListener()!();
+            this.mouseDownListener.set(null);
         }
 
-        if (this.dragStartListener) {
-            this.dragStartListener();
-            this.dragStartListener = null;
+        if (this.dragStartListener()) {
+            this.dragStartListener()!();
+            this.dragStartListener.set(null);
         }
 
-        if (this.dragEndListener) {
-            this.dragEndListener();
-            this.dragEndListener = null;
+        if (this.dragEndListener()) {
+            this.dragEndListener()!();
+            this.dragEndListener.set(null);
         }
 
-        if (this.dragOverListener) {
-            this.dragOverListener();
-            this.dragOverListener = null;
+        if (this.dragOverListener()) {
+            this.dragOverListener()!();
+            this.dragOverListener.set(null);
         }
 
-        if (this.dragLeaveListener) {
-            this.dragLeaveListener();
-            this.dragLeaveListener = null;
+        if (this.dragLeaveListener()) {
+            this.dragLeaveListener()!();
+            this.dragLeaveListener.set(null);
         }
     }
 
@@ -5286,7 +5300,7 @@ export class ReorderableRow extends BaseComponent {
     }
 
     onDragStart(event: DragEvent) {
-        this.dataTable.onRowDragStart(event, <number>this.index);
+        this.dataTable.onRowDragStart(event, <number>this.index());
     }
 
     onDragEnd(event: DragEvent) {
@@ -5295,7 +5309,7 @@ export class ReorderableRow extends BaseComponent {
     }
 
     onDragOver(event: DragEvent) {
-        this.dataTable.onRowDragOver(event, <number>this.index, this.el.nativeElement);
+        this.dataTable.onRowDragOver(event, <number>this.index(), this.el.nativeElement);
         event.preventDefault();
     }
 
@@ -5304,7 +5318,7 @@ export class ReorderableRow extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pReorderableRowDisabled !== true;
+        return this.pReorderableRowDisabled() !== true;
     }
 
     @HostListener('drop', ['$event'])
