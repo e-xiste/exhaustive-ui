@@ -4654,4 +4654,19 @@ describe('MultiSelect medium bug fixes', () => {
 
         expect(multiSelect.label()).toBe('Rome');
     });
+
+    it('clears the selected items when the model and the options are both emptied (optimus-ui#908)', () => {
+        fixture.componentRef.setInput('options', groups[0].items);
+        fixture.componentRef.setInput('optionLabel', 'label');
+        fixture.componentRef.setInput('optionValue', 'value');
+        multiSelect.writeValue(['RM']);
+        fixture.detectChanges();
+        expect(multiSelect.selectedOptions()).toEqual([{ label: 'Rome', value: 'RM' }]);
+
+        fixture.componentRef.setInput('options', []);
+        multiSelect.writeValue([]);
+        fixture.detectChanges();
+
+        expect(multiSelect.selectedOptions()).toEqual([]);
+    });
 });

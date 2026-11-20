@@ -1247,6 +1247,10 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 }
                 return modelValue;
             }
+            // an emptied model clears the selection even while there are no options
+            if (!isNotEmpty(modelValue)) {
+                return [];
+            }
             return previous?.value;
         }
     });
