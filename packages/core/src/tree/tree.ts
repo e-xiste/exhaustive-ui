@@ -84,6 +84,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                 [attr.data-id]="node()!.key"
                 role="treeitem"
                 (keydown)="onKeyDown($event)"
+                (contextmenu)="onNodeRightClick($event)"
                 [pBind]="getPTOptions('node')"
             >
                 @if (isPrevDropPointActive()) {
@@ -93,7 +94,6 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                     [class]="cx('nodeContent')"
                     [style.paddingLeft]="level()! * indentation()! + 'rem'"
                     (click)="onNodeClick($event)"
-                    (contextmenu)="onNodeRightClick($event)"
                     (dblclick)="onNodeDblClick($event)"
                     (touchend)="onNodeTouchEnd()"
                     (drop)="onNodeDrop($event)"
@@ -351,6 +351,11 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
     }
 
     onNodeRightClick(event: MouseEvent) {
+        // Bound on the focusable treeitem so the keyboard (menu key, Shift+F10) can open it; ignore events bubbling up from child nodes.
+        if ((<Element>event.target).closest('[role="treeitem"]') !== event.currentTarget) {
+            return;
+        }
+
         this.tree.onNodeRightClick(event, <TreeNode>this.node());
     }
 

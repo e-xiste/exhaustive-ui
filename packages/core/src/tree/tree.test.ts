@@ -2920,6 +2920,19 @@ describe('Tree', () => {
             // contextMenuSelection should remain null when contextMenu is removed
             expect(tree.contextMenuSelection()).toBeNull();
         });
+
+        it('should open the context menu from the keyboard on the focused treeitem', async () => {
+            const treeItems = fixture.debugElement.queryAll(By.css('[role="treeitem"]'));
+            const childItem = treeItems.find((item) => item.nativeElement.getAttribute('data-id') === '0-0')!;
+
+            // Shift+F10 / context menu key fires contextmenu on the focused <li role="treeitem">
+            childItem.nativeElement.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(mockContextMenu.show).toHaveBeenCalledTimes(1);
+            expect(tree.contextMenuSelection()?.key).toBe('0-0');
+        });
     });
 });
 
