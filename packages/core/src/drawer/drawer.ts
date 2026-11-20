@@ -400,7 +400,7 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
         const maskStyle = this.maskStyle();
         return maskStyle
             ? Object.entries(maskStyle)
-                  .map(([key, value]) => `${key}: ${value}`)
+                  .map(([key, value]) => `${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}: ${value}`)
                   .join('; ')
             : '';
     });

@@ -282,6 +282,11 @@ describe('Drawer', () => {
         expect(component.getMaskStyle()).toBe('');
     });
 
+    it('should convert camelCase maskStyle keys to CSS properties (optimus-ui#488)', () => {
+        fixture.componentRef.setInput('maskStyle', { backgroundColor: 'red', backdropFilter: 'blur(2px)' });
+        expect(component.getMaskStyle()).toBe('background-color: red; backdrop-filter: blur(2px)');
+    });
+
     describe('Component Initialization', () => {
         let testFixture: ComponentFixture<TestDrawerBasicComponent>;
         let testComponent: TestDrawerBasicComponent;
