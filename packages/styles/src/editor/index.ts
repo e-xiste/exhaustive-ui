@@ -1013,7 +1013,7 @@ export const style = /*css*/ `
         border-radius: dt('editor.overlay.option.border.radius');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item:hover {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-color-picker) .ql-picker-options .ql-picker-item:hover {
         background: dt('editor.overlay.option.focus.background');
         color: dt('editor.overlay.option.focus.color');
     }

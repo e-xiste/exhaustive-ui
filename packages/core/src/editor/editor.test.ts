@@ -1374,3 +1374,26 @@ describe('Editor list styles with Quill 2 markup (optimus-ui#300, optimus-ui#376
         expect(unchecked.uiMarker).toBe('"\u2610"');
     });
 });
+
+// Resolves dt('a.b.c') to var(--t-a-b-c) so a test can feed token values through custom properties.
+const editorCssWithTokens = (editorCss as string).replace(/dt\('([^']+)'\)/g, (_, token: string) => `var(--t-${token.replace(/\./g, '-')})`);
+
+describe('Editor color picker hover (optimus-ui#834)', () => {
+    it('should not give color swatches the option focus background on hover', () => {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(editorCssWithTokens);
+        const host = document.createElement('div');
+        host.className = 'p-editor';
+        host.innerHTML = `<div class="p-editor-toolbar ql-toolbar ql-snow"><span class="ql-color-picker ql-picker ql-color ql-expanded"><span class="ql-picker-options"><span class="ql-picker-item"></span></span></span><span class="ql-picker ql-header ql-expanded"><span class="ql-picker-options"><span class="ql-picker-item"></span></span></span></div>`;
+        document.body.appendChild(host);
+        const [swatch, option] = Array.from(host.querySelectorAll('.ql-picker-item'));
+        const hoverBackgrounds = (el: Element) =>
+            Array.from(sheet.cssRules)
+                .filter((rule): rule is CSSStyleRule => rule instanceof CSSStyleRule && rule.selectorText.includes(':hover') && rule.style.background.includes('focus-background'))
+                .filter((rule) => el.matches(rule.selectorText.replace(/:hover/g, '')));
+
+        expect(hoverBackgrounds(option).length).toBeGreaterThan(0);
+        expect(hoverBackgrounds(swatch)).toEqual([]);
+        host.remove();
+    });
+});
