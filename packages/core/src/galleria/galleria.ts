@@ -599,6 +599,7 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 
     startSlideShow() {
         if (isPlatformBrowser(this.galleria.platformId)) {
+            this.clearSlideShowInterval();
             this.interval.set(
                 setInterval(() => {
                     let activeIndex = this.galleria.circular() && this.value().length - 1 === this._activeIndex() ? 0 : this._activeIndex() + 1;
@@ -616,11 +617,21 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
             return;
         }
 
-        if (this.interval()) {
-            clearInterval(this.interval());
-        }
+        this.clearSlideShowInterval();
 
         this.slideShowActive.set(false);
+    }
+
+    clearSlideShowInterval() {
+        const interval = this.interval();
+        if (interval) {
+            clearInterval(interval);
+            this.interval.set(undefined);
+        }
+    }
+
+    onDestroy() {
+        this.clearSlideShowInterval();
     }
 
     getPositionClass(preClassName: string, position: string) {
@@ -672,52 +683,41 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
 
     item = input<any>();
 
-    readonly shouldRender = computed(() => {
-        const captionTemplate = this.galleria.captionTemplate();
-        return (
-            this.contentTemplate() ||
-            this.galleria._itemTemplate() ||
-            this.galleria.itemTemplate() ||
-            captionTemplate ||
-            captionTemplate ||
-            this.galleria.captionFacet() ||
-            this.galleria.thumbnailTemplate() ||
-            this.galleria._thumbnailTemplate() ||
-            this.galleria.footerTemplate()
-        );
-    });
+    readonly shouldRender = computed(() => !!this.contentTemplate());
 
     galleria: Galleria = inject(Galleria);
 
     $pcGalleria: Galleria | undefined = inject(GALLERIA_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
-    getTemplateFromQueryList(type: string): TemplateRef<any> | undefined {
-        return this.galleria.templates()?.find((item) => item.getType() === type)?.template;
-    }
-
     type = input<string | undefined>();
 
+    /**
+     * The template of the slot type: the last pTemplate of that type wins, then the #ref template of the same type.
+     * A slot without a type is the main item slot.
+     */
     readonly contentTemplate = computed<TemplateRef<any> | undefined>(() => {
-        const templates = this.templates();
-        const type = this.type();
+        const type = this.type() || 'item';
+        const pTemplate = (this.templates() ?? this.galleria.templates())?.filter((item) => item.getType() === type).at(-1)?.template;
 
-        if (templates && templates.length > 0) {
-            return templates.filter((item) => item.getType() === type).at(-1)?.template;
+        if (pTemplate) {
+            return pTemplate;
         }
 
         switch (type) {
-            case 'item':
-                return this.galleria._itemTemplate() || this.getTemplateFromQueryList('item');
-            case 'caption':
-                return this.galleria.captionTemplate() || this.getTemplateFromQueryList('caption');
-            case 'thumbnail':
-                return this.galleria._thumbnailTemplate() || this.getTemplateFromQueryList('thumbnail');
-            case 'indicator':
-                return this.galleria.indicatorTemplate() || this.getTemplateFromQueryList('indicator');
+            case 'header':
+                return this.galleria.headerTemplate();
             case 'footer':
-                return this.galleria.footerTemplate() || this.getTemplateFromQueryList('footer');
+                return this.galleria.footerTemplate();
+            case 'item':
+                return this.galleria._itemTemplate();
+            case 'caption':
+                return this.galleria.captionTemplate();
+            case 'thumbnail':
+                return this.galleria._thumbnailTemplate();
+            case 'indicator':
+                return this.galleria.indicatorTemplate();
             default:
-                return this.galleria._itemTemplate() || this.getTemplateFromQueryList('item');
+                return undefined;
         }
     });
 
@@ -739,6 +739,7 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
             }
             <div
                 pGalleriaItemSlot
+                type="item"
                 [pBind]="ptm('item')"
                 [unstyled]="unstyled()"
                 [class]="cx('item')"
@@ -988,7 +989,16 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
                 </button>
             }
             <div [pBind]="ptm('thumbnailsViewport')" [class]="cx('thumbnailsViewport')" [ngStyle]="{ height: isVertical() ? contentHeight() : '' }">
-                <div #itemsContainer [pBind]="ptm('thumbnailItems')" [class]="cx('thumbnailItems')" (transitionend)="onTransitionEnd()" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" role="tablist">
+                <div
+                    #itemsContainer
+                    [pBind]="ptm('thumbnailItems')"
+                    [class]="cx('thumbnailItems')"
+                    (transitionend)="onTransitionEnd()"
+                    (touchstart)="onTouchStart($event)"
+                    (touchmove)="onTouchMove($event)"
+                    (touchend)="onTouchEnd($event)"
+                    role="tablist"
+                >
                     @for (item of value(); track item; let index = $index) {
                         <div
                             [pBind]="ptm('thumbnailItem')"
@@ -1005,7 +1015,7 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
                                 [attr.aria-current]="_activeIndex() === index ? 'page' : undefined"
                                 [attr.aria-label]="ariaPageLabel(index + 1)"
                                 (click)="onItemClick(index)"
-                                (touchend)="onItemClick(index)"
+                                (touchend)="onThumbnailTouchEnd($event, index)"
                                 (keydown.enter)="onItemClick(index)"
                             >
                                 <div pGalleriaItemSlot type="thumbnail" [pBind]="ptm('thumbnailItem')" [item]="item" [templates]="templates()" [unstyled]="unstyled()"></div>
@@ -1421,13 +1431,46 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
         }
     }
 
+    /**
+     * Minimum touch move distance, in pixels, for a touch to be a swipe rather than a tap.
+     */
+    swipeThreshold: number = 20;
+
     changePageOnTouch(e: TouchEvent, diff: number) {
+        if (Math.abs(diff) <= this.swipeThreshold) {
+            return;
+        }
+
+        const lastIndex = (<any[]>this.value()).length - 1;
+
         if (diff < 0) {
             // left
-            this.navForward(e);
+            if (this.circular() || this._activeIndex() < lastIndex) {
+                this.navForward(e);
+            }
         } else {
             // right
-            this.navBackward(e);
+            if (this.circular() || this._activeIndex() > 0) {
+                this.navBackward(e);
+            }
+        }
+    }
+
+    getTouchDiff(e: TouchEvent): number {
+        const startPos = this.startPos();
+        const touchobj = e.changedTouches?.[0];
+
+        if (!startPos || !touchobj) {
+            return 0;
+        }
+
+        return this.isVertical() ? touchobj.pageY - startPos.y : touchobj.pageX - startPos.x;
+    }
+
+    onThumbnailTouchEnd(e: TouchEvent, index: number) {
+        // a swipe that ends on a thumbnail changes the page (onTouchEnd), it does not select that thumbnail
+        if (Math.abs(this.getTouchDiff(e)) <= this.swipeThreshold) {
+            this.onItemClick(index);
         }
     }
 
@@ -1449,13 +1492,8 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
     }
 
     onTouchEnd(e: TouchEvent) {
-        let touchobj = e.changedTouches[0];
-
-        if (this.isVertical()) {
-            this.changePageOnTouch(e, touchobj.pageY - (<{ x: number; y: number }>this.startPos()).y);
-        } else {
-            this.changePageOnTouch(e, touchobj.pageX - (<{ x: number; y: number }>this.startPos()).x);
-        }
+        this.changePageOnTouch(e, this.getTouchDiff(e));
+        this.startPos.set(null);
     }
 
     onTouchMove(e: TouchEvent) {

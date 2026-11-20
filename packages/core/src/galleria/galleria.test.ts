@@ -1530,6 +1530,7 @@ function createGalleriaStub(): Galleria {
         templates: () => [],
         captionTemplate: none,
         indicatorTemplate: none,
+        headerTemplate: none,
         footerTemplate: none,
         _itemTemplate: none,
         itemTemplate: none,
@@ -1853,5 +1854,244 @@ describe('GalleriaThumbnails', () => {
         fixture.componentRef.setInput('showThumbnailNavigators', false);
         fixture.detectChanges();
         expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnailprevbutton"]')).toBeNull();
+    });
+});
+
+describe('Galleria template slots', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [GalleriaModule],
+        template: `
+            <p-galleria [value]="images" [showIndicators]="true">
+                <ng-template pTemplate="header"><div class="pt-header">Header</div></ng-template>
+                <ng-template pTemplate="item" let-item><img [src]="item.itemImageSrc" [alt]="item.alt" class="pt-item" /></ng-template>
+                <ng-template pTemplate="caption" let-item
+                    ><div class="pt-caption">{{ item.title }}</div></ng-template
+                >
+                <ng-template pTemplate="thumbnail" let-item><img [src]="item.thumbnailImageSrc" [alt]="item.alt" class="pt-thumbnail" /></ng-template>
+                <ng-template pTemplate="indicator" let-index
+                    ><span class="pt-indicator">{{ index }}</span></ng-template
+                >
+                <ng-template pTemplate="footer"><div class="pt-footer">Footer</div></ng-template>
+            </p-galleria>
+        `
+    })
+    class PTemplateSlotsComponent {
+        images = mockImages;
+    }
+
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [GalleriaModule],
+        template: `
+            <p-galleria [value]="images" [showIndicators]="true">
+                <ng-template #header><div class="ref-header">Header</div></ng-template>
+                <ng-template #item let-item><img [src]="item.itemImageSrc" [alt]="item.alt" class="ref-item" /></ng-template>
+                <ng-template #caption let-item
+                    ><div class="ref-caption">{{ item.title }}</div></ng-template
+                >
+                <ng-template #thumbnail let-item><img [src]="item.thumbnailImageSrc" [alt]="item.alt" class="ref-thumbnail" /></ng-template>
+                <ng-template #indicator let-index
+                    ><span class="ref-indicator">{{ index }}</span></ng-template
+                >
+                <ng-template #footer><div class="ref-footer">Footer</div></ng-template>
+            </p-galleria>
+        `
+    })
+    class RefSlotsComponent {
+        images = mockImages;
+    }
+
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [GalleriaModule],
+        template: `
+            <p-galleria [value]="images">
+                <ng-template #item let-item><img [src]="item.itemImageSrc" [alt]="item.alt" class="ref-item" /></ng-template>
+                <ng-template pTemplate="thumbnail" let-item><img [src]="item.thumbnailImageSrc" [alt]="item.alt" class="pt-thumbnail" /></ng-template>
+            </p-galleria>
+        `
+    })
+    class MixedSlotsComponent {
+        images = mockImages;
+    }
+
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [PTemplateSlotsComponent, RefSlotsComponent, MixedSlotsComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    function render(type: any): HTMLElement {
+        const fixture = TestBed.createComponent(type);
+        fixture.detectChanges();
+        return fixture.nativeElement;
+    }
+
+    function inSection(root: HTMLElement, section: string, selector: string): Element[] {
+        return Array.from(root.querySelectorAll(`[data-pc-section="${section}"] ${selector}`));
+    }
+
+    for (const { name, type, prefix } of [
+        { name: 'pTemplate', type: PTemplateSlotsComponent as any, prefix: 'pt' },
+        { name: '#ref', type: RefSlotsComponent as any, prefix: 'ref' }
+    ]) {
+        it(`should render every ${name} slot, each in its own section`, () => {
+            const root = render(type);
+
+            const items = root.querySelectorAll(`.${prefix}-item`);
+            expect(items.length).toBe(1);
+            expect(items[0].getAttribute('alt')).toBe(mockImages[0].alt);
+            expect(inSection(root, 'item', `.${prefix}-item`).length).toBe(1);
+
+            expect(root.querySelectorAll(`.${prefix}-header`).length).toBe(1);
+            expect(inSection(root, 'header', `.${prefix}-header`).length).toBe(1);
+            expect(inSection(root, 'header', `.${prefix}-item`).length).toBe(0);
+
+            expect(root.querySelectorAll(`.${prefix}-footer`).length).toBe(1);
+            expect(inSection(root, 'footer', `.${prefix}-footer`).length).toBe(1);
+
+            const caption = root.querySelectorAll(`.${prefix}-caption`);
+            expect(caption.length).toBe(1);
+            expect(caption[0].textContent).toBe(mockImages[0].title);
+
+            const thumbnails = root.querySelectorAll(`.${prefix}-thumbnail`);
+            expect(Array.from(thumbnails).map((t) => t.getAttribute('alt'))).toEqual(mockImages.map((image) => image.alt));
+
+            const indicators = root.querySelectorAll(`.${prefix}-indicator`);
+            expect(Array.from(indicators).map((i) => i.textContent)).toEqual(['0', '1', '2', '3', '4']);
+        });
+    }
+
+    it('should render a #item template when the thumbnails use a pTemplate', () => {
+        const root = render(MixedSlotsComponent);
+
+        expect(root.querySelectorAll('.ref-item').length).toBe(1);
+        expect(root.querySelectorAll('.pt-thumbnail').length).toBe(mockImages.length);
+    });
+});
+
+describe('Galleria thumbnails swipe', () => {
+    beforeEach(async () => {
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, GalleriaModule, SharedModule, PrimeTemplate],
+            providers: [provideZonelessChangeDetection(), { provide: Galleria, useValue: createGalleriaStub() }]
+        }).compileComponents();
+    });
+
+    function touch(target: Element, type: string, pageX: number, pageY = 0) {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        Object.defineProperty(event, 'changedTouches', { value: [{ pageX, pageY }] });
+        target.dispatchEvent(event);
+    }
+
+    function createFixture(activeIndex: number, isVertical = false) {
+        const fixture = TestBed.createComponent(GalleriaThumbnails);
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('numVisible', 3);
+        fixture.componentRef.setInput('activeIndex', activeIndex);
+        fixture.componentRef.setInput('isVertical', isVertical);
+        fixture.detectChanges();
+        const emitted: number[] = [];
+        fixture.componentInstance.onActiveIndexChange.subscribe((index) => emitted.push(index));
+        const container = fixture.nativeElement.querySelector('[data-pc-section="thumbnailitems"]') as HTMLElement;
+        const thumbnails = fixture.nativeElement.querySelectorAll('[data-pc-section="thumbnail"]') as NodeListOf<HTMLElement>;
+        return { emitted, container, thumbnails };
+    }
+
+    it('should go to the next item on a left swipe and to the previous one on a right swipe', () => {
+        const { emitted, container } = createFixture(2);
+
+        touch(container, 'touchstart', 200);
+        touch(container, 'touchend', 100);
+        expect(emitted).toEqual([3]);
+
+        touch(container, 'touchstart', 100);
+        touch(container, 'touchend', 200);
+        expect(emitted).toEqual([3, 1]);
+    });
+
+    it('should swipe along the vertical axis when the thumbnails are vertical', () => {
+        const { emitted, container } = createFixture(2, true);
+
+        touch(container, 'touchstart', 0, 200);
+        touch(container, 'touchend', 0, 100);
+        expect(emitted).toEqual([3]);
+    });
+
+    it('should not swipe past the first item when not circular', () => {
+        const { emitted, container } = createFixture(0);
+
+        touch(container, 'touchstart', 100);
+        touch(container, 'touchend', 200);
+        expect(emitted).toEqual([]);
+    });
+
+    it('should select the tapped thumbnail without changing the page', () => {
+        const { emitted, thumbnails } = createFixture(0);
+
+        touch(thumbnails[1], 'touchstart', 100);
+        touch(thumbnails[1], 'touchend', 105);
+        expect(emitted).toEqual([1]);
+    });
+
+    it('should not select the thumbnail a swipe ends on', () => {
+        const { emitted, thumbnails } = createFixture(1);
+
+        touch(thumbnails[1], 'touchstart', 200);
+        touch(thumbnails[3], 'touchend', 100);
+        expect(emitted).toEqual([2]);
+    });
+});
+
+describe('Galleria autoplay destroy', () => {
+    beforeEach(async () => {
+        vi.useFakeTimers();
+        await TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [GalleriaModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    function createFixture(inputs: Record<string, unknown>) {
+        const fixture = TestBed.createComponent(Galleria);
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('autoPlay', true);
+        fixture.componentRef.setInput('transitionInterval', 1000);
+        Object.entries(inputs).forEach(([key, value]) => fixture.componentRef.setInput(key, value));
+        fixture.detectChanges();
+        const content = fixture.debugElement.query(By.directive(GalleriaContent)).componentInstance as GalleriaContent;
+        return { fixture, content };
+    }
+
+    it('should clear the autoplay interval when the component is destroyed', () => {
+        const { fixture, content } = createFixture({ circular: true });
+        vi.advanceTimersByTime(1000);
+        expect(content._activeIndex()).toBe(1);
+
+        const onActiveIndexChange = vi.spyOn(content, 'onActiveIndexChange');
+        fixture.destroy();
+        vi.advanceTimersByTime(5000);
+
+        expect(onActiveIndexChange).not.toHaveBeenCalled();
+        expect(content.interval()).toBeUndefined();
+    });
+
+    it('should clear the autoplay interval on destroy even when shouldStopAutoplayByClick is false', () => {
+        const { fixture, content } = createFixture({ shouldStopAutoplayByClick: false });
+
+        const onActiveIndexChange = vi.spyOn(content, 'onActiveIndexChange');
+        fixture.destroy();
+        vi.advanceTimersByTime(5000);
+
+        expect(onActiveIndexChange).not.toHaveBeenCalled();
     });
 });
