@@ -2310,9 +2310,13 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             case 37: {
                 cellContent.tabIndex = '-1';
                 let prevCell = cell.previousElementSibling;
+                if (!prevCell || hasClass(prevCell, 'p-datepicker-weeknumber')) {
+                    // first day of the week row: the previous day ends the previous row
+                    prevCell = cell.parentElement.previousElementSibling?.lastElementChild;
+                }
                 if (prevCell) {
                     let focusCell = prevCell.children[0];
-                    if (hasClass(focusCell, 'p-disabled') || hasClass(focusCell.parentElement, 'p-datepicker-weeknumber')) {
+                    if (!focusCell || hasClass(focusCell, 'p-disabled') || hasClass(focusCell.parentElement, 'p-datepicker-weeknumber')) {
                         this.navigateToMonth(true, groupIndex);
                     } else {
                         focusCell.tabIndex = '0';
@@ -2329,9 +2333,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             case 39: {
                 cellContent.tabIndex = '-1';
                 let nextCell = cell.nextElementSibling;
+                if (!nextCell) {
+                    // last day of the week row: the next day starts the next row
+                    const nextRow = cell.parentElement.nextElementSibling;
+                    nextCell = nextRow && Array.from(nextRow.children).find((rowCell: any) => !hasClass(rowCell, 'p-datepicker-weeknumber'));
+                }
                 if (nextCell) {
                     let focusCell = nextCell.children[0];
-                    if (hasClass(focusCell, 'p-disabled')) {
+                    if (!focusCell || hasClass(focusCell, 'p-disabled')) {
                         this.navigateToMonth(false, groupIndex);
                     } else {
                         focusCell.tabIndex = '0';

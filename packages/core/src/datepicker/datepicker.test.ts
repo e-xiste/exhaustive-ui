@@ -2437,6 +2437,9 @@ describe('DatePicker Optimus UI bug fixes', () => {
         return event;
     };
 
+    // p-motion keeps the inline panel hidden (display: none) until its enter transition has run
+    const panelShown = () => vi.waitFor(() => expect(getComputedStyle(el.querySelector('p-motion')!).display).not.toBe('none'));
+
     const dayCell = (day: number) => Array.from(el.querySelectorAll<HTMLElement>('td:not(.p-datepicker-other-month) span.p-datepicker-day')).find((span) => span.textContent?.trim() === String(day))!;
 
     beforeEach(async () => {
@@ -2574,5 +2577,26 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(cell.getAttribute('aria-label')).toBe('Friday, 15 May 2026');
         expect(cell.getAttribute('aria-selected')).toBe('true');
         expect(dayCell(16).parentElement!.getAttribute('aria-selected')).toBe('false');
+    });
+
+    it('moves to the previous/next day with left/right arrows at the edge of a week row (optimus-ui#7)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 4, 10));
+        await render();
+        await panelShown();
+
+        // May 10, 2026 is a Sunday: first column with the default firstDayOfWeek
+        const sunday = dayCell(10);
+        sunday.focus();
+        keydown(sunday, 'ArrowLeft', 37);
+        await render();
+        expect(picker.currentMonth()).toBe(4);
+        expect(document.activeElement).toBe(dayCell(9));
+
+        const saturday = dayCell(16);
+        keydown(saturday, 'ArrowRight', 39);
+        await render();
+        expect(picker.currentMonth()).toBe(4);
+        expect(document.activeElement).toBe(dayCell(17));
     });
 });
