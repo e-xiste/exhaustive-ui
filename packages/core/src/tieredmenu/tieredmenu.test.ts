@@ -405,6 +405,18 @@ describe('TieredMenu', () => {
             expect(tieredMenu.autoDisplay()).toBe(false);
             expect(tieredMenu.rootmenu()!.autoDisplay()).toBe(false);
         });
+
+        it('should open a submenu on mouse over without a prior click when autoDisplay is true (optimus-ui#655)', async () => {
+            // the test viewport is narrower than the 960px breakpoint, where hover never opens submenus
+            tieredMenu.queryMatches.set(false);
+            const groupItem = fixture.debugElement.queryAll(By.css('li[role="menuitem"] .p-tieredmenu-item-content'))[1];
+            groupItem.nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(tieredMenu.activeItemPath().length).toBe(1);
+            expect(tieredMenu.activeItemPath()[0].item.label).toBe('Edit');
+        });
     });
 
     describe('Menu Display and Interaction', () => {

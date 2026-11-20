@@ -814,7 +814,8 @@ export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
         // a tap fires an emulated mouseenter right before its click: opening the submenu here made that
         // click close it again, so a touch pointer leaves it to the click. The pointer type is checked
         // rather than the device, so a mouse on a touchscreen laptop still opens submenus on hover.
-        if (event.pointerType !== 'touch' && this.dirty()) {
+        // autoDisplay opens them on hover right away; without it hover only moves between open submenus.
+        if (event.pointerType !== 'touch' && (this.autoDisplay() || this.dirty())) {
             this.onItemChange(event, 'hover');
         }
     }
