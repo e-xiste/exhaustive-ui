@@ -478,6 +478,30 @@ describe('PanelMenu', () => {
         });
     });
 
+    describe('Sub item badge', () => {
+        it('should render the badge of a sub item', async () => {
+            component.model = [{ label: 'Root', expanded: true, items: [{ label: 'Inbox', badge: '5', badgeStyleClass: 'inbox-badge' }] }];
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const badge = panelMenuElement.querySelector('.inbox-badge');
+            expect(badge).toBeTruthy();
+            expect(badge!.textContent!.trim()).toBe('5');
+        });
+
+        it('should render the badge of a sub item with a routerLink', async () => {
+            component.model = [{ label: 'Root', expanded: true, items: [{ label: 'Inbox', routerLink: '/inbox', badge: '3', badgeStyleClass: 'inbox-badge' }] }];
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const badge = panelMenuElement.querySelector('.inbox-badge');
+            expect(badge).toBeTruthy();
+            expect(badge!.textContent!.trim()).toBe('3');
+        });
+    });
+
     describe('Menu Items Display', () => {
         beforeEach(async () => {
             component.model![0].expanded = true;

@@ -116,6 +116,9 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                             [pBind]="getPTOptions(processedItem, index, 'itemLabel')"
                                         ></span>
                                     }
+                                    @if (getItemProp(processedItem, 'badge')) {
+                                        <span [class]="cn(cx('badge'), getItemProp(processedItem, 'badgeStyleClass'))">{{ getItemProp(processedItem, 'badge') }}</span>
+                                    }
                                 </a>
                             }
                             @if (getItemProp(processedItem, 'routerLink')) {
@@ -174,8 +177,8 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                             [pBind]="getPTOptions(processedItem, index, 'itemLabel')"
                                         ></span>
                                     }
-                                    @if (processedItem.badge) {
-                                        <span [class]="cn(cx('badge'), getItemProp(processedItem, 'badgeStyleClass'))">{{ processedItem.badge }}</span>
+                                    @if (getItemProp(processedItem, 'badge')) {
+                                        <span [class]="cn(cx('badge'), getItemProp(processedItem, 'badgeStyleClass'))">{{ getItemProp(processedItem, 'badge') }}</span>
                                     }
                                 </a>
                             }
