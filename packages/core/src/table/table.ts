@@ -3268,7 +3268,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 @if (!(dataTable.groupHeaderTemplate() && dataTable._groupHeaderTemplate())) {
                     <ng-container
                         *ngTemplateOutlet="
-                            template();
+                            rowData ? template() : dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),

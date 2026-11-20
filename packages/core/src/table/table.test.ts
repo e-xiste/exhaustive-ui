@@ -2721,3 +2721,43 @@ describe('Table cell edit cancel', () => {
         expect(fixture.componentInstance.cancelled.data.name).toBe('Original');
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" dataKey="id">
+            <ng-template #body let-row>
+                <tr class="data-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #expandedrow let-row>
+                <tr>
+                    <td>expanded {{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #loadingbody>
+                <tr class="loading-row">
+                    <td>loading</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableExpansionLoadingBodyHostComponent {
+    rows: any[] = [undefined, { id: '1', name: 'A' }];
+}
+
+describe('Table loading body with a row expansion template', () => {
+    it('renders the loadingbody template for rows not loaded yet (optimus-ui#899)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableExpansionLoadingBodyHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableExpansionLoadingBodyHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelectorAll('tr.loading-row').length).toBe(1);
+        expect(fixture.nativeElement.querySelectorAll('tr.data-row').length).toBe(1);
+    });
+});
