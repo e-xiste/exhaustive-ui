@@ -164,6 +164,12 @@ const GUIDE_PAGES = [
         description: 'Licensing, migration from PrimeNG, the ecosystem, and how support works.'
     },
     {
+        route: 'migration/update',
+        docPath: 'migration/update',
+        title: 'Update ExhaustiveUI',
+        description: 'Updating with ng update, Angular version compatibility, and what changes in v22 (Signals API, OnPush, automated migrations).'
+    },
+    {
         route: 'contribution',
         docPath: 'contribution',
         title: 'Contribution Guide',
@@ -199,6 +205,9 @@ function extractDescriptionFromTemplate(template) {
     for (const match of docTextMatches) {
         const content = match[1]
             .replace(/<[^>]+>/g, ' ')
+            .replace(/&#64;/g, '@')
+            .replace(/&#123;/g, '{')
+            .replace(/&#125;/g, '}')
             .replace(/\s+/g, ' ')
             .trim();
         if (content) {
@@ -541,7 +550,8 @@ function getAllComponents() {
         'cdn',
         'nuxt',
         'accessibility',
-        'templates'
+        'templates',
+        'migration'
     ];
 
     for (const entry of entries) {
@@ -1159,7 +1169,7 @@ function processGuidePage(pageConfig) {
                 // Recurse into subdirectories
                 processDocDir(entryPath, entry + '/');
             } else if (entry.endsWith('.ts') && !entry.endsWith('.spec.ts') && entry.toLowerCase().includes('doc')) {
-                const sectionId = entry.replace(/doc\.ts$/i, '').toLowerCase();
+                const sectionId = entry.replace(/-?doc\.ts$/i, '').toLowerCase();
                 const docData = parseDocFile(entryPath);
 
                 // Get code examples - priority: inline code > app-code selector > page/section naming
