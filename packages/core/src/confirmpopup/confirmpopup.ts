@@ -96,7 +96,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                                 [unstyled]="unstyled()"
                             >
                                 <ng-template #icon>
-                                    @if (confirmation()?.rejectIcon) {
+                                    @if (confirmation()?.rejectIcon && !rejectIconTemplate() && !_rejectIconTemplate()) {
                                         <i [class]="confirmation()?.rejectIcon"></i>
                                     }
                                     <ng-template *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate()"></ng-template>
@@ -118,7 +118,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                                 [unstyled]="unstyled()"
                             >
                                 <ng-template #icon>
-                                    @if (confirmation()?.acceptIcon) {
+                                    @if (confirmation()?.acceptIcon && !acceptIconTemplate() && !_acceptIconTemplate()) {
                                         <i [class]="confirmation()?.acceptIcon"></i>
                                     }
                                     <ng-template *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate()"></ng-template>

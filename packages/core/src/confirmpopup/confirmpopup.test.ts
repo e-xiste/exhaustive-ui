@@ -224,6 +224,27 @@ class TestButtonPropertiesComponent {
     }
 }
 
+// ConfirmPopup icon template vs. class icon
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    template: `
+        <p-confirmpopup>
+            <ng-template #accepticon>
+                <i class="tpl-accept-icon"></i>
+            </ng-template>
+        </p-confirmpopup>
+        <button (click)="confirm($event)" class="trigger-btn">Trigger</button>
+    `
+})
+class TestIconTemplatePriorityComponent {
+    private confirmationService = inject_1(ConfirmationService);
+
+    confirm(event: Event) {
+        this.confirmationService.confirm({ target: event.target as EventTarget, message: 'Icons', acceptIcon: 'cls-accept-icon', rejectIcon: 'cls-reject-icon' });
+    }
+}
+
 // ConfirmPopup Position Test
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -288,6 +309,7 @@ describe('ConfirmPopup', () => {
                 TestMultipleKeysComponent,
                 TestFocusConfirmPopupComponent,
                 TestButtonPropertiesComponent,
+                TestIconTemplatePriorityComponent,
                 TestPositionConfirmPopupComponent,
                 TestAccessibilityConfirmPopupComponent
             ],
@@ -731,6 +753,24 @@ describe('ConfirmPopup', () => {
             expect(confirmation?.rejectIcon).toBe('pi pi-times');
             expect(confirmation?.acceptButtonStyleClass).toBe('custom-accept');
             expect(confirmation?.rejectButtonStyleClass).toBe('custom-reject');
+        });
+
+        it('should render an icon template instead of the confirmation class icon, and the class icon when there is no template', async () => {
+            const iconFixture = TestBed.createComponent(TestIconTemplatePriorityComponent);
+            await iconFixture.whenStable();
+
+            iconFixture.debugElement.query(By.css('.trigger-btn')).nativeElement.click();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            iconFixture.changeDetectorRef.markForCheck();
+            await iconFixture.whenStable();
+
+            // scoped to this popup: the beforeEach fixture's popup listens to the same ConfirmationService
+            const root: HTMLElement = iconFixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance.container();
+            expect(root).toBeTruthy();
+            expect(root.querySelectorAll('.tpl-accept-icon').length).toBe(1);
+            expect(root.querySelector('.cls-accept-icon')).toBeNull();
+            expect(root.querySelectorAll('.cls-reject-icon').length).toBe(1);
+            iconFixture.destroy();
         });
 
         it('should handle button visibility', async () => {
