@@ -73,6 +73,12 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
   - No hide timer runs after destroy.
 - ToggleButton: `autofocus` works, and blur marks the control as touched.
 - SelectButton: `autofocus` focuses the first option.
+- Table: header cells of resizable columns can be dragged again to reorder columns, and reordering after a resize keeps every column's width instead of collapsing one to 0 (optimus-ui#187, #178).
+- AutoFocus: the native `autofocus` attribute is only rendered when autofocus is on; p-button and the other components no longer carry it by default (optimus-ui#251).
+- FilterService: the "Date is after" constraint no longer erases the time of the row's Date (optimus-ui#373).
+- InputOtp: Tab, Enter and the other named keys keep working, so focus can leave the field and Enter submits the form (optimus-ui#340).
+- Accordion: arrow, Home and End keys work again in inputs and textareas placed inside a panel (optimus-ui#608).
+- Textarea: no longer crashes with an `NgControl` that has no `valueChanges`, as provided by Angular Signal Forms (optimus-ui#203).
 
 ### Tooling and documentation
 
@@ -80,6 +86,17 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The `exhaustive-ui` agent skill (`npx skills add https://exhaustive-ui.com`) describes the v22 conventions and bundles the update guide.
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
+
+## Unreleased
+
+### Fixes
+
+- Table: header cells of resizable columns can be dragged again to reorder columns, and reordering after a resize keeps every column's width instead of collapsing one to 0 (optimus-ui#187, #178).
+- AutoFocus: the native `autofocus` attribute is only rendered when autofocus is on; p-button and the other components no longer carry it by default (optimus-ui#251).
+- FilterService: the "Date is after" constraint no longer erases the time of the row's Date (optimus-ui#373).
+- InputOtp: Tab, Enter and the other named keys keep working, so focus can leave the field and Enter submits the form (optimus-ui#340).
+- Accordion: arrow, Home and End keys work again in inputs and textareas placed inside a panel (optimus-ui#608).
+- Textarea: no longer crashes with an `NgControl` that has no `valueChanges`, as provided by Angular Signal Forms (optimus-ui#203).
 
 ## 22.0.0-alpha.8 (2026-11-20)
 
