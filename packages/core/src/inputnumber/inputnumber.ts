@@ -507,6 +507,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     lastValue = signal<Nullable<string>>(undefined);
 
+    pasted = signal<Nullable<{ value: string; selectionStart: number | null; selectionEnd: number | null; data: string }>>(null);
+
     _numeral = computed<RegExp>(() => {
         const numerals = [...new Intl.NumberFormat(this.locale(), { useGrouping: false }).format(9876543210)].reverse();
         return new RegExp(`[${numerals.join('')}]`, 'g');
@@ -796,7 +798,9 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         const target = event.target as HTMLInputElement;
         const { inputType, data } = event as InputEvent;
 
-        if (this.isSpecialChar()) {
+        if (inputType === 'insertFromPaste' && this.pasted()) {
+            this.insertPasted(event, target);
+        } else if (this.isSpecialChar()) {
             target.value = this.lastValue() as string;
         } else if (inputType === 'insertText' && data && this.lastValue() != null) {
             // Soft keyboards insert text without a keypress, where characters are filtered: undo the raw insertion
@@ -1031,20 +1035,31 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     onPaste(event: ClipboardEvent) {
         if (!this.$disabled() && !this.readonly()) {
-            event.preventDefault();
-            let data = (event.clipboardData || (this.document as any).defaultView['clipboardData']).getData('Text');
-            if (this.inputId() === 'integeronly' && /[^\d-]/.test(data)) {
-                return;
-            }
-            if (data) {
-                if (this.maxlength()) {
-                    data = data.toString().substring(0, this.maxlength());
-                }
+            // Let the native paste land (cancelling it flags the input as paste-preventing) and sanitize it in onUserInput
+            const { value, selectionStart, selectionEnd } = event.target as HTMLInputElement;
+            const data = (event.clipboardData || (this.document as any).defaultView['clipboardData']).getData('Text');
+            this.pasted.set({ value, selectionStart, selectionEnd, data });
+        }
+    }
 
-                let filteredData = this.parseValue(data);
-                if (filteredData != null) {
-                    this.insert(event, filteredData.toString());
-                }
+    insertPasted(event: Event, target: HTMLInputElement) {
+        const { value, selectionStart, selectionEnd } = this.pasted()!;
+        let data = this.pasted()!.data;
+        this.pasted.set(null);
+        target.value = value;
+        target.setSelectionRange(selectionStart ?? value.length, selectionEnd ?? value.length);
+
+        if (this.inputId() === 'integeronly' && /[^\d-]/.test(data)) {
+            return;
+        }
+        if (data) {
+            if (this.maxlength()) {
+                data = data.toString().substring(0, this.maxlength() as number);
+            }
+
+            let filteredData = this.parseValue(data);
+            if (filteredData != null) {
+                this.insert(event, filteredData.toString());
             }
         }
     }

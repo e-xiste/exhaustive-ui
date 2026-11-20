@@ -1878,3 +1878,67 @@ describe('InputNumber soft keyboard input (optimus-ui#508, optimus-ui#892)', () 
         expect(fixture.componentInstance.value).toBe(123);
     });
 });
+
+describe('InputNumber Optimus UI bug fixes', () => {
+    let fixture: ComponentFixture<InputNumber>;
+    let inputNumber: InputNumber;
+    let input: HTMLInputElement;
+    let changes: any[];
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const create = async (inputs: Record<string, unknown> = {}, value: number | null = null) => {
+        fixture = TestBed.createComponent(InputNumber);
+        inputNumber = fixture.componentInstance;
+        Object.entries(inputs).forEach(([name, inputValue]) => fixture.componentRef.setInput(name, inputValue));
+        changes = [];
+        inputNumber.registerOnChange((changed: any) => changes.push(changed));
+        await render();
+        inputNumber.writeValue(value);
+        await render();
+        input = fixture.nativeElement.querySelector('input');
+    };
+
+    const keypress = async (key: string) => {
+        const code = key.charCodeAt(0);
+        input.dispatchEvent(new KeyboardEvent('keydown', { key, keyCode: code, cancelable: true, bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keypress', { key, keyCode: code, charCode: code, which: code, cancelable: true, bubbles: true } as KeyboardEventInit));
+        await render();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [InputNumber],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        fixture?.destroy();
+    });
+
+    it('sanitizes a paste without cancelling the native paste (optimus-ui#8)', async () => {
+        await create({ locale: 'en-US', mode: 'decimal', maxFractionDigits: 2 }, 12);
+        input.focus();
+        input.setSelectionRange(2, 2);
+
+        const data = new DataTransfer();
+        data.setData('text/plain', ' 3,4 ');
+        const paste = new ClipboardEvent('paste', { clipboardData: data, cancelable: true, bubbles: true });
+        input.dispatchEvent(paste);
+        expect(paste.defaultPrevented).toBe(false);
+
+        // the browser inserts the raw clipboard text, then fires the input event
+        input.value = '12 3,4 ';
+        input.setSelectionRange(7, 7);
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true }));
+        await render();
+
+        expect(input.value).toBe('1,234');
+        expect(inputNumber.value()).toBe(1234);
+    });
+});
