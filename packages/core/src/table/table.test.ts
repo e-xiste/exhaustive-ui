@@ -2667,4 +2667,13 @@ describe('Table menu column filter with programmatic filtering', () => {
         expect(Array.isArray(columnFilter.fieldConstraints)).toBe(true);
         expect(columnFilter.fieldConstraints![0].value).toBeNull();
     });
+
+    it('recreates its constraint when the table filters are reset to {} (optimus-ui#722)', async () => {
+        fixture.componentInstance.filters.set({});
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(Array.isArray(columnFilter.fieldConstraints)).toBe(true);
+        expect(columnFilter.fieldConstraints!.length).toBe(1);
+    });
 });

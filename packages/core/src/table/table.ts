@@ -5614,6 +5614,16 @@ export class ColumnFilter extends BaseComponent {
     constructor() {
         super();
         afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('columnFilter')));
+        // the table filters can be replaced at any time (e.g. reset to {}): recreate the default constraint
+        effect(() => {
+            const filters = this.dataTable._filters();
+
+            untracked(() => {
+                if (filters && !filters[<string>this.field()]) {
+                    this.initFieldFilterConstraint();
+                }
+            });
+        });
     }
 
     ptmFilterConstraintOptions(matchMode) {
