@@ -45,7 +45,6 @@ import { SplitterPassThrough } from '@exhaustive-ui/core/types/splitter';
                 <div
                     [pBind]="ptm('gutter')"
                     [class]="cx('gutter')"
-                    role="separator"
                     tabindex="-1"
                     (mousedown)="onGutterMouseDown($event, i)"
                     (touchstart)="onGutterTouchStart($event, i)"
@@ -57,6 +56,7 @@ import { SplitterPassThrough } from '@exhaustive-ui/core/types/splitter';
                     <div
                         [pBind]="ptm('gutterHandle')"
                         [class]="cx('gutterHandle')"
+                        role="separator"
                         tabindex="0"
                         [ngStyle]="gutterStyle()"
                         [attr.aria-orientation]="layout()"
