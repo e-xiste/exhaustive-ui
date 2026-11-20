@@ -10,6 +10,47 @@ import translations from './primeflex-translations.json';
  */
 const TRANSLATIONS: Readonly<Record<string, string>> = translations;
 
+/** The Tailwind CSS major version the translated classes target. */
+export type TailwindVersion = 3 | 4;
+
+/**
+ * The dictionary produces Tailwind v3 names. Tailwind v4 renamed the shadow and border-radius
+ * scales one step down (v3 `shadow-sm` is v4 `shadow-xs`, v3 `rounded` is v4 `rounded-sm`), so
+ * keeping the v3 names on a v4 project would silently change the rendering.
+ */
+const V4_RENAMES: Readonly<Record<string, string>> = {
+    'shadow-sm': 'shadow-xs',
+    shadow: 'shadow-sm',
+    'rounded-sm': 'rounded-xs',
+    rounded: 'rounded-sm',
+    ...Object.fromEntries(
+        ['t', 'r', 'b', 'l'].flatMap((side) => [
+            [`rounded-${side}-sm`, `rounded-${side}-xs`],
+            [`rounded-${side}`, `rounded-${side}-sm`]
+        ])
+    )
+};
+
+function toV4(classes: string): string {
+    return classes
+        .split(' ')
+        .map((token) => {
+            const index = token.lastIndexOf(':') + 1;
+            const renamed = V4_RENAMES[token.slice(index)];
+            return renamed === undefined ? token : token.slice(0, index) + renamed;
+        })
+        .join(' ');
+}
+
+/**
+ * Reads the Tailwind CSS major version from a package.json `tailwindcss` range (`^3.4.1` -> 3).
+ * Defaults to 4, the current major, when Tailwind is not installed yet or the range is not a plain version.
+ */
+export function detectTailwindVersion(range: string | undefined): TailwindVersion {
+    const major = range?.match(/^\s*[\^~>=v]*\s*(\d+)/)?.[1];
+    return major !== undefined && Number(major) <= 3 ? 3 : 4;
+}
+
 /**
  * Translates a whitespace-separated class list (the value of a `class` attribute or of a string
  * literal inside a class binding). Each token is looked up in the PrimeFlex dictionary and, when
@@ -17,7 +58,7 @@ const TRANSLATIONS: Readonly<Record<string, string>> = translations;
  * interpolations like `{{ x }}`, arbitrary text) are left untouched. Inter-token whitespace is
  * preserved so diffs stay minimal.
  */
-export function translateClassList(value: string): { value: string; changed: boolean } {
+export function translateClassList(value: string, tailwindVersion: TailwindVersion = 4): { value: string; changed: boolean } {
     let changed = false;
     // Split keeping the whitespace runs so the original spacing is preserved on rebuild.
     const parts = value.split(/(\s+)/);
@@ -25,10 +66,11 @@ export function translateClassList(value: string): { value: string; changed: boo
         if (index % 2 === 1 || part.length === 0) {
             return part; // whitespace run or empty edge
         }
-        const mapped = TRANSLATIONS[part];
-        if (mapped === undefined) {
+        const translated = TRANSLATIONS[part];
+        if (translated === undefined) {
             return part;
         }
+        const mapped = tailwindVersion === 4 ? toV4(translated) : translated;
         if (mapped !== part) {
             changed = true;
         }
@@ -46,10 +88,10 @@ export function translateClassList(value: string): { value: string; changed: boo
  * Only the contents of the string literals are touched; identifiers and the surrounding
  * expression structure are left exactly as-is.
  */
-function translateBindingExpression(expr: string): { value: string; changed: boolean } {
+function translateBindingExpression(expr: string, tailwindVersion: TailwindVersion): { value: string; changed: boolean } {
     let changed = false;
     const rebuilt = expr.replace(/(['"])((?:\\.|(?!\1).)*)\1/g, (_match, quote: string, inner: string) => {
-        const translated = translateClassList(inner);
+        const translated = translateClassList(inner, tailwindVersion);
         if (translated.changed) {
             changed = true;
         }
@@ -71,11 +113,11 @@ const CLASS_BINDING_RE = /(\[(?:ngClass|class)\]\s*=\s*)(["'])((?:\\.|(?!\2).)*)
  * `class`/`ngClass` attribute values and `[class]`/`[ngClass]` binding expressions. All other markup
  * — text, unrelated attributes, single-class bindings like `[class.active]` — is left untouched.
  */
-export function translateHtml(html: string): { text: string; changed: boolean } {
+export function translateHtml(html: string, tailwindVersion: TailwindVersion = 4): { text: string; changed: boolean } {
     let changed = false;
 
     let text = html.replace(STATIC_CLASS_RE, (match, lead: string, name: string, eq: string, quote: string, inner: string) => {
-        const translated = translateClassList(inner);
+        const translated = translateClassList(inner, tailwindVersion);
         if (!translated.changed) {
             return match;
         }
@@ -84,7 +126,7 @@ export function translateHtml(html: string): { text: string; changed: boolean } 
     });
 
     text = text.replace(CLASS_BINDING_RE, (match, prefix: string, quote: string, inner: string) => {
-        const translated = translateBindingExpression(inner);
+        const translated = translateBindingExpression(inner, tailwindVersion);
         if (!translated.changed) {
             return match;
         }
@@ -111,7 +153,7 @@ interface Edit {
  * single `NoSubstitutionTemplateLiteral` (or `StringLiteral`) to the TypeScript parser and its full
  * body can be handed to `translateHtml`.
  */
-export function translateTypeScript(fileName: string, text: string): { text: string; changed: boolean } {
+export function translateTypeScript(fileName: string, text: string, tailwindVersion: TailwindVersion = 4): { text: string; changed: boolean } {
     const sourceFile = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true);
     const edits: Edit[] = [];
 
@@ -122,7 +164,7 @@ export function translateTypeScript(fileName: string, text: string): { text: str
                 const raw = initializer.getText(sourceFile);
                 const quote = raw[0];
                 const body = raw.slice(1, -1);
-                const translated = translateHtml(body);
+                const translated = translateHtml(body, tailwindVersion);
                 if (translated.changed) {
                     edits.push({
                         start: initializer.getStart(sourceFile),

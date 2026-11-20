@@ -7,6 +7,11 @@
         "path": {
             "type": "string",
             "description": "Restrict the translation to files under this workspace path (e.g. \"src/app\"). Defaults to the whole workspace."
+        },
+        "tailwindVersion": {
+            "type": "number",
+            "enum": [3, 4],
+            "description": "The Tailwind CSS major version to produce class names for. Tailwind v4 renamed the shadow and border-radius scales. Defaults to the version of the tailwindcss dependency, or 4 when Tailwind is not installed yet."
         }
     }
 }

@@ -75,6 +75,39 @@ describe('migrate-from-primeflex', () => {
         expect(result.readContent('/dist/app/tpl.html')).toBe(content);
     });
 
+    describe('Tailwind version', () => {
+        const SOURCE = `<div class="shadow-1 hover:shadow-2 border-round-xs border-round-sm border-round-left-sm shadow-3">x</div>\n`;
+        const withTailwind = (range: string) => ({ ...PRIMEFLEX_PKG, devDependencies: { tailwindcss: range } });
+
+        it('produces Tailwind v4 names when Tailwind is not installed yet', async () => {
+            const runner = createRunner();
+            const tree = createAppTree({ '/src/app/app.html': SOURCE }, PRIMEFLEX_PKG);
+            const result = await runner.runSchematic('migrate-from-primeflex', {}, tree);
+            expect(result.readContent('/src/app/app.html')).toBe(`<div class="shadow-xs hover:shadow-sm rounded-xs rounded-sm rounded-l-sm shadow-md">x</div>\n`);
+        });
+
+        it('produces Tailwind v4 names for a Tailwind v4 workspace', async () => {
+            const runner = createRunner();
+            const tree = createAppTree({ '/src/app/app.html': SOURCE }, withTailwind('^4.1.0'));
+            const result = await runner.runSchematic('migrate-from-primeflex', {}, tree);
+            expect(result.readContent('/src/app/app.html')).toContain('class="shadow-xs hover:shadow-sm rounded-xs rounded-sm rounded-l-sm shadow-md"');
+        });
+
+        it('keeps the Tailwind v3 names for a Tailwind v3 workspace', async () => {
+            const runner = createRunner();
+            const tree = createAppTree({ '/src/app/app.html': SOURCE }, withTailwind('^3.4.10'));
+            const result = await runner.runSchematic('migrate-from-primeflex', {}, tree);
+            expect(result.readContent('/src/app/app.html')).toContain('class="shadow-sm hover:shadow rounded-sm rounded rounded-l shadow-md"');
+        });
+
+        it('lets the tailwindVersion option override the detected version', async () => {
+            const runner = createRunner();
+            const tree = createAppTree({ '/src/app/app.html': SOURCE }, withTailwind('^4.1.0'));
+            const result = await runner.runSchematic('migrate-from-primeflex', { tailwindVersion: 3 }, tree);
+            expect(result.readContent('/src/app/app.html')).toContain('class="shadow-sm hover:shadow rounded-sm rounded rounded-l shadow-md"');
+        });
+    });
+
     it('restricts translation to the requested path', async () => {
         const runner = createRunner();
         const tree = createAppTree({

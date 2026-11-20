@@ -198,6 +198,23 @@ export function hasPrimeflex(tree: Tree): boolean {
  * Walks every package.json in the workspace tree (skipping node_modules/dist/.angular/.git/out-tsc),
  * invoking `visitor` with each successfully-parsed package.json contents.
  */
+/**
+ * The `tailwindcss` version range declared by the workspace's package.json files (the first one
+ * found), or `undefined` when Tailwind is not a direct dependency.
+ */
+export function findTailwindRange(tree: Tree): string | undefined {
+    let range: string | undefined;
+    visitWorkspacePackageJsons(tree, (pkg) => {
+        for (const section of DIRECT_DEPENDENCY_SECTIONS) {
+            const deps = pkg[section];
+            if (range === undefined && isRecord(deps) && typeof deps['tailwindcss'] === 'string') {
+                range = deps['tailwindcss'];
+            }
+        }
+    });
+    return range;
+}
+
 function visitWorkspacePackageJsons(tree: Tree, visitor: (pkg: Record<string, any>) => void): void {
     visitWorkspaceFiles(
         tree,

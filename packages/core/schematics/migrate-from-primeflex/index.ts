@@ -1,6 +1,6 @@
 import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
-import { translateHtml, translateTypeScript } from '../utils/primeflex';
-import { hasPrimeflex, SKIP_DIRS } from '../utils/package-json';
+import { detectTailwindVersion, TailwindVersion, translateHtml, translateTypeScript } from '../utils/primeflex';
+import { findTailwindRange, hasPrimeflex, SKIP_DIRS } from '../utils/package-json';
 import { Schema } from './schema';
 
 // Files whose *class references* we still scan for after translating, so the leftover report can
@@ -24,6 +24,8 @@ export function migrateFromPrimeflex(options: Schema): Rule {
         const scope = normalizeScope(options.path);
         let htmlChanged = 0;
         let tsChanged = 0;
+        const tailwindVersion: TailwindVersion = options.tailwindVersion ?? detectTailwindVersion(findTailwindRange(tree));
+        context.logger.info(`Translating PrimeFlex classes for Tailwind CSS v${tailwindVersion}.`);
 
         tree.visit((path) => {
             if (SKIP_DIRS.test(path) || !inScope(path, scope)) {
@@ -31,7 +33,7 @@ export function migrateFromPrimeflex(options: Schema): Rule {
             }
             if (path.endsWith('.html')) {
                 const original = tree.read(path)!.toString();
-                const { text, changed } = translateHtml(original);
+                const { text, changed } = translateHtml(original, tailwindVersion);
                 if (changed) {
                     tree.overwrite(path, text);
                     htmlChanged++;
@@ -39,7 +41,7 @@ export function migrateFromPrimeflex(options: Schema): Rule {
                 }
             } else if (path.endsWith('.ts') || path.endsWith('.mts')) {
                 const original = tree.read(path)!.toString();
-                const { text, changed } = translateTypeScript(path, original);
+                const { text, changed } = translateTypeScript(path, original, tailwindVersion);
                 if (changed) {
                     tree.overwrite(path, text);
                     tsChanged++;
