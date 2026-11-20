@@ -3015,6 +3015,21 @@ describe('TreeTable', () => {
                     multiSortMeta: treetable._multiSortMeta()
                 });
             });
+
+            it('should call the custom multiple sort function with each level of children', () => {
+                component.sortMode = 'multiple';
+                fixture.changeDetectorRef.markForCheck();
+                fixture.detectChanges();
+                treetable._multiSortMeta.set([{ field: 'name', order: 1 }]);
+
+                const sortedData: TreeNode[][] = [];
+                vi.spyOn(treetable.sortFunction, 'emit').mockImplementation((event: any) => sortedData.push(event.data));
+
+                const value = treetable.value() as TreeNode[];
+                treetable.sortMultipleNodes(value);
+
+                expect(sortedData).toEqual([value, value[0].children, value[1].children]);
+            });
         });
 
         describe('onColResize (via onColumnResizeEnd)', () => {
