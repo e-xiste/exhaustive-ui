@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { RadioButton } from './radiobutton';
 
@@ -1310,5 +1310,95 @@ describe('RadioButton', () => {
                 expect(iconEl).toBeTruthy();
             });
         });
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [RadioButton, ReactiveFormsModule],
+    template: `
+        <form [formGroup]="form">
+            <p-radiobutton formControlName="a" value="1" inputId="a1" />
+            <p-radiobutton formControlName="a" value="2" inputId="a2" />
+            <p-radiobutton formControlName="b" value="1" inputId="b1" />
+            <p-radiobutton formControlName="b" value="2" inputId="b2" />
+        </form>
+    `
+})
+class TestUnnamedRadioGroupsComponent {
+    form = new FormGroup({ a: new FormControl(''), b: new FormControl('') });
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [RadioButton, ReactiveFormsModule],
+    template: `
+        <form [formGroup]="form">
+            <div formArrayName="rows">
+                @for (row of rows.controls; track $index; let i = $index) {
+                    <div [formGroupName]="i">
+                        <p-radiobutton formControlName="choice" name="choice" value="x" [inputId]="'x' + i" />
+                        <p-radiobutton formControlName="choice" name="choice" value="y" [inputId]="'y' + i" />
+                    </div>
+                }
+            </div>
+        </form>
+    `
+})
+class TestFormArrayRadioComponent {
+    form = new FormGroup({
+        rows: new FormArray([new FormGroup({ choice: new FormControl('') }), new FormGroup({ choice: new FormControl('') })])
+    });
+
+    get rows() {
+        return this.form.get('rows') as FormArray;
+    }
+}
+
+describe('RadioButton grouping in reactive forms', () => {
+    const radioById = (fixture: ComponentFixture<any>, id: string): RadioButton => fixture.debugElement.queryAll(By.directive(RadioButton)).find((d) => d.componentInstance.inputId() === id)!.componentInstance;
+
+    it('should not link unnamed radios bound to different controls of the same FormGroup (optimus-ui#257)', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestUnnamedRadioGroupsComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestUnnamedRadioGroupsComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.debugElement.query(By.css('#a1')).nativeElement.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.form.value).toEqual({ a: '1', b: '' });
+        expect(radioById(fixture, 'a1').checked()).toBe(true);
+        expect(radioById(fixture, 'b1').checked()).toBe(false);
+    });
+
+    it('should not link same-named radios in different FormArray rows (optimus-ui#572)', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestFormArrayRadioComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestFormArrayRadioComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.debugElement.query(By.css('#x0')).nativeElement.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.form.value).toEqual({ rows: [{ choice: 'x' }, { choice: '' }] });
+        expect(radioById(fixture, 'x0').checked()).toBe(true);
+        expect(radioById(fixture, 'x1').checked()).toBe(false);
+
+        fixture.debugElement.query(By.css('#y0')).nativeElement.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(radioById(fixture, 'x0').checked()).toBe(false);
+        expect(radioById(fixture, 'y0').checked()).toBe(true);
     });
 });

@@ -46,7 +46,14 @@ export class RadioControlRegistry {
             return false;
         }
 
-        return controlPair[0].control.root === (accessor as any).control().control.root && controlPair[1].name() === accessor.name();
+        const control = controlPair[0].control;
+        const accessorControl = (accessor as any).control()?.control;
+
+        if (control === accessorControl) {
+            return true;
+        }
+
+        return !!control.parent && control.parent === accessorControl?.parent && accessor.name() != null && controlPair[1].name() === accessor.name();
     }
 }
 /**
