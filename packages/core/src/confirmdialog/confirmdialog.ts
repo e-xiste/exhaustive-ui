@@ -17,7 +17,8 @@ import {
     ViewEncapsulation,
     contentChild,
     contentChildren,
-    output
+    output,
+    viewChild
 } from '@angular/core';
 import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -61,6 +62,8 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
             [autoZIndex]="autoZIndex()"
             [maskStyleClass]="cn(cx('mask'), maskStyleClass())"
             [unstyled]="unstyled()"
+            [focusOnShow]="!option('defaultFocus')"
+            (onShow)="onDialogShow()"
             (onHide)="onDialogHide()"
         >
             @if (headlessTemplate() || _headlessTemplate()) {
@@ -106,6 +109,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                 @if (!footerTemplate() && !_footerTemplate()) {
                     @if (option('rejectVisible')) {
                         <p-button
+                            #rejectButton
                             [pt]="ptm('pcRejectButton')"
                             [label]="rejectButtonLabel"
                             (onClick)="onReject()"
@@ -124,6 +128,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                     }
                     @if (option('acceptVisible')) {
                         <p-button
+                            #acceptButton
                             [pt]="ptm('pcAcceptButton')"
                             [label]="acceptButtonLabel"
                             (onClick)="onAccept()"
@@ -401,6 +406,12 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
 
     confirmation = signal<Nullable<Confirmation>>(undefined);
 
+    readonly dialogViewChild = viewChild<Dialog>('dialog');
+
+    readonly acceptButtonViewChild = viewChild('acceptButton', { read: ElementRef });
+
+    readonly rejectButtonViewChild = viewChild('rejectButton', { read: ElementRef });
+
     subscription: Subscription;
 
     translationSubscription: Subscription | undefined;
@@ -475,6 +486,26 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
         }
         // Unsubscribe from confirmation events when the dialogue is closed, because events are created when the dialogue is opened.
         this.unsubscribeConfirmationEvents(confirmation);
+    }
+
+    /**
+     * Applies the defaultFocus of the confirmation ('accept', 'reject', 'close' or 'none') once the dialog is shown.
+     * Without defaultFocus the inner Dialog focuses its first focusable element itself (focusOnShow).
+     */
+    onDialogShow() {
+        const defaultFocus = this.option('defaultFocus');
+        let target: HTMLElement | null | undefined;
+
+        if (defaultFocus === 'accept') {
+            target = this.acceptButtonViewChild()?.nativeElement;
+        } else if (defaultFocus === 'reject') {
+            target = this.rejectButtonViewChild()?.nativeElement;
+        } else if (defaultFocus === 'close') {
+            target = this.dialogViewChild()?.container()?.querySelector('[data-pc-group-section="headericon"]');
+        }
+
+        const focusable = target?.matches('button') ? target : target?.querySelector('button');
+        focusable?.focus();
     }
 
     onDialogHide() {

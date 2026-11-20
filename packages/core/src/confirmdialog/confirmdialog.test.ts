@@ -1748,6 +1748,29 @@ describe('ConfirmDialog Signal API', () => {
         expect(confirmDialog.confirmation()).toBeNull();
     });
 
+    it('should focus the button named by the defaultFocus of the confirmation', async () => {
+        const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+        host.visible.set(false);
+        await fixture.whenStable();
+        await wait(400);
+
+        confirmationService.confirm({ key: 'signals', message: 'Focus', defaultFocus: 'accept' });
+        await fixture.whenStable();
+        await wait(600);
+
+        expect(query('.p-confirmdialog-accept-button')?.contains(document.activeElement)).toBe(true);
+
+        confirmDialog.onReject();
+        await fixture.whenStable();
+        await wait(600);
+
+        confirmationService.confirm({ key: 'signals', message: 'No focus', defaultFocus: 'none' });
+        await fixture.whenStable();
+        await wait(600);
+
+        expect(query('.p-dialog')?.contains(document.activeElement)).toBe(false);
+    });
+
     it('should show a confirmation requested from the accept callback of the previous one', async () => {
         const secondAccept = vi.fn();
         confirmationService.confirm({
