@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, Type, ViewEncapsulation, viewChild } from '@angular/core';
+import { afterEveryRender, afterNextRender, ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, signal, Type, ViewEncapsulation, viewChild } from '@angular/core';
 import { uuid } from '@exhaustive-ui/utils';
 import { SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -15,7 +15,6 @@ const DYNAMIC_DIALOG_INSTANCE = new InjectionToken<DynamicDialog>('DYNAMIC_DIALO
 
 @Component({
     selector: 'p-dynamicDialog, p-dynamicdialog, p-dynamic-dialog',
-    standalone: true,
     imports: [CommonModule, SharedModule, DynamicDialogContent, Dialog, BindModule],
     template: `
         <p-dialog
@@ -115,21 +114,26 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        afterNextRender(() => {
+            this.loadChildComponent(this.childComponentType()!);
+            this.cd.detectChanges();
+        });
     }
 
-    visible: boolean = true;
+    visible = signal<boolean>(true);
 
-    componentRef: Nullable<ComponentRef<any>>;
+    componentRef = signal<Nullable<ComponentRef<any>>>(undefined);
 
     id: string = uuid('pn_id_');
 
     readonly insertionPoint = viewChild(DynamicDialogContent);
 
-    childComponentType: Nullable<Type<any>>;
+    childComponentType = signal<Nullable<Type<any>>>(undefined);
 
-    inputValues: Record<string, any>;
+    inputValues = signal<Record<string, any> | undefined>(undefined);
 
     get minX(): number {
         return this.ddconfig.minX ? this.ddconfig.minX : 0;
@@ -219,41 +223,9 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
         return this.ddconfig.unstyled || this.$unstyled();
     }
 
-    maximized: boolean | undefined;
+    maximized = signal<boolean | undefined>(undefined);
 
-    dragging: boolean | undefined;
-
-    resizing: boolean | undefined;
-
-    ariaLabelledBy: string | undefined | null;
-
-    _style: any = {};
-
-    styleElement: any;
-
-    lastPageX: number | undefined;
-
-    lastPageY: number | undefined;
-
-    contentViewChild: any;
-
-    footerViewChild: any;
-
-    headerViewChild: any;
-
-    maskViewChild: any;
-
-    maskClickListener: any;
-
-    documentDragListener: any;
-
-    documentDragEndListener: any;
-
-    documentResizeListener: any;
-
-    documentResizeEndListener: any;
-
-    documentEscapeListener: any;
+    resizing = signal<boolean | undefined>(undefined);
 
     onVisibleChange(visible: boolean) {
         if (!visible) {
@@ -261,38 +233,21 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
         }
     }
 
-    onAfterViewInit() {
-        this.loadChildComponent(this.childComponentType!);
-        this.ariaLabelledBy = this.getAriaLabelledBy();
-        this.cd.detectChanges();
-    }
-
-    getAriaLabelledBy() {
-        const { header, showHeader, ariaLabelledBy } = this.ddconfig;
-
-        if (ariaLabelledBy) {
-            return ariaLabelledBy;
-        }
-
-        if (header === null || showHeader === false) {
-            return null;
-        }
-        return uuid('pn_id_') + '_header';
-    }
-
     loadChildComponent(componentType: Type<any>) {
         let viewContainerRef = this.insertionPoint()?.viewContainerRef;
         viewContainerRef?.clear();
 
-        this.componentRef = viewContainerRef?.createComponent(componentType);
+        const componentRef = viewContainerRef?.createComponent(componentType);
+        this.componentRef.set(componentRef);
 
-        if (this.inputValues && this.componentRef) {
-            Object.entries(this.inputValues).forEach(([key, value]) => {
-                this.componentRef!.setInput(key, value);
+        const inputValues = this.inputValues();
+        if (inputValues && componentRef) {
+            Object.entries(inputValues).forEach(([key, value]) => {
+                componentRef.setInput(key, value);
             });
         }
 
-        this.dialogRef.onChildComponentLoaded.next(this.componentRef!.instance);
+        this.dialogRef.onChildComponentLoaded.next(componentRef!.instance);
     }
 
     onDialogHide(event: any) {
@@ -300,28 +255,26 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
     }
 
     onDialogMaximize(event: any) {
-        this.maximized = event.maximized;
+        this.maximized.set(event.maximized);
         this.dialogRef.maximize(event);
     }
 
     onDialogResizeInit(event: MouseEvent) {
-        this.resizing = true;
+        this.resizing.set(true);
         this.dialogRef.resizeInit(event);
     }
 
     onDialogResizeEnd(event: MouseEvent) {
-        this.resizing = false;
+        this.resizing.set(false);
         this.dialogRef.resizeEnd(event);
     }
 
     onDialogDragEnd(event: DragEvent) {
-        this.dragging = false;
         this.dialogRef.dragEnd(event);
     }
 
     close() {
-        this.visible = false;
-        this.cd.markForCheck();
+        this.visible.set(false);
     }
 
     hide() {
@@ -330,257 +283,11 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
         }
     }
 
-    get _parent() {
-        const domElements = Array.from(this.document.getElementsByClassName('p-dialog'));
-        if (domElements.length > 1) {
-            return domElements.pop();
-        }
-    }
-
-    get parentContent() {
-        const domElements = Array.from(this.document.getElementsByClassName('p-dialog'));
-        if (domElements.length > 0) {
-            const contentElements = domElements[domElements.length - 1].querySelector('.p-dialog-content');
-            if (contentElements) return Array.isArray(contentElements) ? contentElements[0] : contentElements;
-        }
-    }
-
-    container: any;
-
-    wrapper: any;
-
-    unbindGlobalListeners() {
-        this.unbindDocumentEscapeListener();
-        this.unbindDocumentResizeListeners();
-        this.unbindDocumentDragListener();
-        this.unbindDocumentDragEndListener();
-    }
-
-    onAnimationStart(event: any) {
-        if (event.toState === 'visible') {
-            // If parent dialog exists, unbind its listeners first
-            if (this._parent) {
-                this.unbindGlobalListeners();
-            }
-            if (this.ddconfig.modal) {
-                this.enableModality();
-            }
-        }
-    }
-
-    onAnimationEnd(event: any) {
-        if (event.toState === 'void') {
-            this.onContainerDestroy();
-            this.dialogRef.destroy();
-        }
-    }
-
-    onContainerDestroy() {
-        this.unbindGlobalListeners();
-        if (this.ddconfig.modal) {
-            this.disableModality();
-        }
-        this.container = null;
-    }
-
-    bindDocumentDragListener() {
-        if (!this.documentDragListener) {
-            this.documentDragListener = this.renderer.listen(this.document.defaultView, 'mousemove', (event) => {
-                this.onDrag(event);
-            });
-        }
-    }
-
-    bindDocumentDragEndListener() {
-        if (!this.documentDragEndListener) {
-            this.documentDragEndListener = this.renderer.listen(this.document.defaultView, 'mouseup', (event) => {
-                this.endDrag(event);
-            });
-        }
-    }
-
-    unbindDocumentDragEndListener() {
-        if (this.documentDragEndListener) {
-            this.documentDragEndListener();
-            this.documentDragEndListener = null;
-        }
-    }
-
-    unbindDocumentDragListener() {
-        if (this.documentDragListener) {
-            this.documentDragListener();
-            this.documentDragListener = null;
-        }
-    }
-
-    initDrag(event: MouseEvent) {
-        // Don't initialize drag when clicking on header icons
-        if (event.target instanceof HTMLElement) {
-            const target = event.target;
-            if (target.closest('.p-dialog-header-icon') || target.closest('.p-dialog-header-icons')) {
-                return;
-            }
-        }
-
-        this.dragging = true;
-        this.lastPageX = event.pageX;
-        this.lastPageY = event.pageY;
-        this.dialogRef.dragStart(event);
-        this.bindDocumentDragListener();
-        this.bindDocumentDragEndListener();
-        // Handled by Dialog component
-    }
-
-    onDrag(event: MouseEvent) {
-        if (this.dragging) {
-            this.lastPageX = event.pageX;
-            this.lastPageY = event.pageY;
-
-            if (this.ddconfig.keepInViewport && this.container) {
-                this.container.style.position = 'fixed';
-            }
-        }
-    }
-
-    endDrag(event: MouseEvent) {
-        if (this.dragging) {
-            this.dragging = false;
-            this.dialogRef.dragEnd(event as any);
-            this.cd.detectChanges();
-        }
-    }
-
-    resetPosition() {
-        if (this.container) {
-            this.container.style.position = '';
-            this.container.style.left = '';
-            this.container.style.top = '';
-            this.container.style.margin = '';
-        }
-    }
-
-    bindDocumentResizeListeners() {
-        if (!this.documentResizeListener) {
-            this.documentResizeListener = this.renderer.listen(this.document.defaultView, 'mousemove', (event) => {
-                this.onResize(event);
-            });
-        }
-        if (!this.documentResizeEndListener) {
-            this.documentResizeEndListener = this.renderer.listen(this.document.defaultView, 'mouseup', (event) => {
-                this.resizeEnd(event);
-            });
-        }
-    }
-
-    unbindDocumentResizeListeners() {
-        if (this.documentResizeListener) {
-            this.documentResizeListener();
-            this.documentResizeListener = null;
-        }
-        if (this.documentResizeEndListener) {
-            this.documentResizeEndListener();
-            this.documentResizeEndListener = null;
-        }
-    }
-
-    initResize(event: MouseEvent) {
-        this.resizing = true;
-        this.lastPageX = event.pageX;
-        this.lastPageY = event.pageY;
-        this.dialogRef.resizeInit(event);
-    }
-
-    onResize(event: MouseEvent) {
-        if (this.resizing) {
-            this.lastPageX = event.pageX;
-            this.lastPageY = event.pageY;
-        }
-    }
-
-    resizeEnd(event: MouseEvent) {
-        if (this.resizing) {
-            this.resizing = false;
-            this.dialogRef.resizeEnd(event);
-        }
-    }
-
-    maximize() {
-        this.maximized = !this.maximized;
-        this.dialogRef.maximize({ maximized: this.maximized });
-    }
-
-    enableModality() {
-        if (this.ddconfig.dismissableMask && this.wrapper) {
-            this.maskClickListener = this.renderer.listen(this.wrapper, 'mousedown', (event: any) => {
-                if (this.wrapper && this.wrapper.isSameNode(event.target)) {
-                    this.hide();
-                }
-            });
-        }
-    }
-
-    disableModality() {
-        this.unbindMaskClickListener();
-        this.cd.detectChanges();
-    }
-
-    unbindMaskClickListener() {
-        if (this.maskClickListener) {
-            this.maskClickListener();
-            this.maskClickListener = null;
-        }
-    }
-
-    bindDocumentEscapeListener() {
-        if (this.ddconfig.closeOnEscape) {
-            this.documentEscapeListener = this.renderer.listen(this.document, 'keydown', (event: KeyboardEvent) => {
-                if (event.key === 'Escape' && this.container) {
-                    this.hide();
-                }
-            });
-        }
-    }
-
-    unbindDocumentEscapeListener() {
-        if (this.documentEscapeListener) {
-            this.documentEscapeListener();
-            this.documentEscapeListener = null;
-        }
-    }
-
-    createStyle() {
-        if (!this.styleElement && this.breakpoints) {
-            this.styleElement = this.renderer.createElement('style');
-            this.styleElement.type = 'text/css';
-            this.renderer.appendChild(this.document.head, this.styleElement);
-
-            let innerHTML = '';
-            for (let breakpoint in this.breakpoints) {
-                innerHTML += `
-                    @media screen and (max-width: ${breakpoint}) {
-                        .p-dialog[${this.dialogId}] {
-                            width: ${this.breakpoints[breakpoint]} !important;
-                        }
-                    }
-                `;
-            }
-            this.renderer.setProperty(this.styleElement, 'innerHTML', innerHTML);
-        }
-    }
-
-    destroyStyle() {
-        if (this.styleElement) {
-            this.renderer.removeChild(this.document.head, this.styleElement);
-            this.styleElement = null;
-        }
-    }
-
     onDestroy() {
-        this.onContainerDestroy();
-        if (this.componentRef && typeof this.componentRef.destroy === 'function') {
-            this.componentRef.destroy();
+        const componentRef = this.componentRef();
+        if (componentRef && typeof componentRef.destroy === 'function') {
+            componentRef.destroy();
         }
-        this.destroyStyle();
     }
 }
 

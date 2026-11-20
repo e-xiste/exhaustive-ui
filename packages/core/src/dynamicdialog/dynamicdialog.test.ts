@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { DomHandler } from '@exhaustive-ui/core/dom';
-import { ZIndexUtils } from '@exhaustive-ui/core/utils';
+import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Subject } from 'rxjs';
 import { DynamicDialog } from './dynamicdialog';
 import { DynamicDialogConfig } from './dynamicdialog-config';
@@ -172,7 +171,7 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
@@ -182,10 +181,9 @@ describe('DynamicDialog', () => {
         });
 
         it('should have default values', () => {
-            expect(component.visible).toBe(true);
-            expect(component.maximized).toBeUndefined();
-            expect(component.dragging).toBeUndefined();
-            expect(component.resizing).toBeUndefined();
+            expect(component.visible()).toBe(true);
+            expect(component.maximized()).toBeUndefined();
+            expect(component.resizing()).toBeUndefined();
         });
 
         it('should initialize with config values', () => {
@@ -199,57 +197,58 @@ describe('DynamicDialog', () => {
             expect(component.id).toBeTruthy();
         });
 
-        it('should create aria-labelledby when header is present', async () => {
+        it('should label the dialog by the generated header title id', async () => {
             mockConfig.showHeader = true;
-            component.visible = true;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
-            component.ngAfterViewInit();
 
-            expect(component.ariaLabelledBy).toBeTruthy();
-            expect(component.ariaLabelledBy).toContain('_header');
+            const dialogElement = fixture.debugElement.query(By.css('[role="dialog"]'));
+            const titleElement = fixture.debugElement.query(By.css('.p-dialog-title'));
+
+            expect(dialogElement.nativeElement.getAttribute('aria-labelledby')).toContain('_header');
+            expect(dialogElement.nativeElement.getAttribute('aria-labelledby')).toBe(titleElement.nativeElement.getAttribute('id'));
         });
 
-        it('should not create aria-labelledby when header is null', async () => {
-            mockConfig.header = null as any;
-            mockConfig.showHeader = false;
-            component.visible = true;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            component.ngAfterViewInit();
-            expect(component.ariaLabelledBy).toBeNull();
-        });
-
-        it('should not create aria-labelledby when showHeader is false', async () => {
-            mockConfig.showHeader = false;
-            component.visible = true;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            component.ngAfterViewInit();
-            expect(component.ariaLabelledBy).toBeNull();
-        });
-
-        it('should use ariaLabelledBy from config when provided', async () => {
-            mockConfig.showHeader = true;
-            mockConfig.ariaLabelledBy = 'custom-label-id';
-            component.visible = true;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-            component.ngAfterViewInit();
-
-            expect(component.ariaLabelledBy).toBe('custom-label-id');
-        });
-
-        it('should prioritize ariaLabelledBy from config over header when showHeader is false', async () => {
-            mockConfig.header = null as any;
+        it('should prioritize ariaLabelledBy from config even when the header is hidden', async () => {
             mockConfig.showHeader = false;
             mockConfig.ariaLabelledBy = 'custom-label-id';
-            component.visible = true;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
-            component.ngAfterViewInit();
 
-            expect(component.ariaLabelledBy).toBe('custom-label-id');
+            const dialogElement = fixture.debugElement.query(By.css('[role="dialog"]'));
+            expect(dialogElement.nativeElement.getAttribute('aria-labelledby')).toBe('custom-label-id');
+        });
+
+        it('should load the child component after the first render and notify the dialog ref', () => {
+            expect(component.componentRef()?.instance).toBeInstanceOf(TestDialogContentComponent);
+            expect(fixture.nativeElement.querySelector('.test-component')).toBeTruthy();
+        });
+    });
+
+    describe('Child Component Loading', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.OnPush,
+            template: `<span class="input-content">{{ label() }}</span>`
+        })
+        class InputDialogContentComponent {
+            label = input<string>('none');
+        }
+
+        it('should set the inputValues on the loaded child component and emit onChildComponentLoaded', async () => {
+            const loaded = vi.fn();
+            mockDialogRef.onChildComponentLoaded.subscribe(loaded);
+
+            const fixture = TestBed.createComponent(DynamicDialog);
+            const component = fixture.componentInstance;
+            component.childComponentType.set(InputDialogContentComponent);
+            component.inputValues.set({ label: 'From inputValues' });
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const instance = component.componentRef()?.instance;
+            expect(instance).toBeInstanceOf(InputDialogContentComponent);
+            expect(loaded).toHaveBeenCalledWith(instance);
+            expect(fixture.nativeElement.querySelector('.input-content').textContent).toBe('From inputValues');
         });
     });
 
@@ -261,17 +260,17 @@ describe('DynamicDialog', () => {
             mockConfig.header = 'Test Dialog';
             mockConfig.closable = true;
             mockConfig.showHeader = true;
+            mockConfig.closeOnEscape = true;
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
-            component.visible = true; // Make dialog visible so template renders
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
 
         it('should be visible by default', () => {
-            expect(component.visible).toBe(true);
+            expect(component.visible()).toBe(true);
         });
 
         it('should hide dialog when close is called', () => {
@@ -279,9 +278,13 @@ describe('DynamicDialog', () => {
             expect(mockDialogRef.close).toHaveBeenCalled();
         });
 
-        it('should close dialog when close method is called', () => {
+        it('should close dialog when close method is called', async () => {
             component.close();
-            expect(component.visible).toBe(false);
+            expect(component.visible()).toBe(false);
+
+            await fixture.whenStable();
+            const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
+            expect(dialog.visible()).toBe(false);
         });
 
         it('should handle close button click', async () => {
@@ -296,268 +299,73 @@ describe('DynamicDialog', () => {
         });
 
         it('should call close on dialogRef on close icon click', async () => {
-            component.visible = true;
             const closeButton = fixture.debugElement.query(By.css('.p-dialog-close-button'));
             closeButton.nativeElement.click();
             expect(mockDialogRef.close).toHaveBeenCalled();
-            expect(component.visible).toBe(false);
+            expect(component.visible()).toBe(false);
         });
 
         it('should call close on dialogRef on Escape key press', async () => {
-            mockConfig.closeOnEscape = true;
-            component.container = document.createElement('div');
-            component.visible = true;
+            await new Promise((resolve) => setTimeout(resolve, 300));
 
             const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27 });
-            component.bindDocumentEscapeListener();
-
-            // Simulate escape key press on document
             document.dispatchEvent(escapeEvent);
+
             expect(mockDialogRef.close).toHaveBeenCalled();
+            expect(component.visible()).toBe(false);
         });
     });
 
-    describe('Drag and Drop Functionality', () => {
+    describe('Drag and Resize Events', () => {
         let fixture: ComponentFixture<DynamicDialog>;
         let component: DynamicDialog;
-
-        beforeEach(async () => {
-            mockConfig.draggable = true;
-            mockConfig.header = 'Draggable Dialog';
-            mockConfig.showHeader = true;
-
-            fixture = TestBed.createComponent(DynamicDialog);
-            component = fixture.componentInstance;
-            component.childComponentType = DraggableDialogComponent;
-
-            // Setup container with parent element for drag functionality
-            const parentElement = document.createElement('div');
-            const containerElement = document.createElement('div');
-            parentElement.appendChild(containerElement);
-            document.body.appendChild(parentElement); // Add to DOM so parentElement is accessible
-            component.container = containerElement;
-            component.visible = true;
-
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-        });
-
-        it('should initialize drag on header mousedown', () => {
-            const targetElement = document.createElement('div');
-            const parentElement = document.createElement('div');
-            parentElement.appendChild(targetElement);
-
-            const mouseEvent = new MouseEvent('mousedown');
-            Object.defineProperty(mouseEvent, 'target', { value: targetElement });
-            Object.defineProperty(mouseEvent, 'pageX', { value: 100 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 100 });
-
-            // Mock DomHandler.getOffset to avoid parentElement issues
-            vi.spyOn(DomHandler, 'getOffset').mockReturnValue({ left: 50, top: 50 });
-            vi.spyOn(component, 'bindDocumentDragListener').mockImplementation(() => {});
-            vi.spyOn(component, 'bindDocumentDragEndListener').mockImplementation(() => {});
-
-            component.initDrag(mouseEvent);
-
-            expect(component.dragging).toBe(true);
-            expect(component.lastPageX).toBe(100);
-            expect(component.lastPageY).toBe(100);
-            expect(mockDialogRef.dragStart).toHaveBeenCalledWith(mouseEvent);
-        });
-
-        it('should not initialize drag when clicking on header icons', () => {
-            const iconElement = document.createElement('i');
-            iconElement.className = 'p-dialog-header-icon';
-            const mouseEvent = new MouseEvent('mousedown');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 100 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 100 });
-            Object.defineProperty(mouseEvent, 'target', { value: iconElement });
-
-            component.initDrag(mouseEvent);
-
-            expect(component.dragging).toBeUndefined();
-        });
-
-        it('should handle drag movement', () => {
-            component.dragging = true;
-            component.lastPageX = 100;
-            component.lastPageY = 100;
-            component.container = document.createElement('div');
-            component.container.style.position = 'absolute';
-
-            // Mock getBoundingClientRect
-            vi.spyOn(component.container, 'getBoundingClientRect').mockReturnValue({
-                left: 50,
-                top: 50,
-                width: 200,
-                height: 150,
-                right: 250,
-                bottom: 200
-            } as any);
-
-            const mouseEvent = new MouseEvent('mousemove');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 150 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 120 });
-            component.onDrag(mouseEvent);
-
-            expect(component.lastPageX).toBe(150);
-            expect(component.lastPageY).toBe(120);
-        });
-
-        it('should handle drag with keepInViewport constraint', () => {
-            mockConfig.keepInViewport = true;
-            component.dragging = true;
-            component.lastPageX = 100;
-            component.lastPageY = 100;
-            component.container = document.createElement('div');
-
-            vi.spyOn(component.container, 'getBoundingClientRect').mockReturnValue({
-                left: 50,
-                top: 50,
-                width: 200,
-                height: 150,
-                right: 250,
-                bottom: 200
-            } as any);
-
-            const mouseEvent = new MouseEvent('mousemove');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 150 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 120 });
-            component.onDrag(mouseEvent);
-
-            expect(component.container.style.position).toBe('fixed');
-        });
-
-        it('should end drag properly', () => {
-            component.dragging = true;
-            const mouseEvent = new MouseEvent('mouseup');
-
-            vi.spyOn(component.cd, 'detectChanges').mockImplementation(() => {});
-
-            component.endDrag(mouseEvent);
-
-            expect(component.dragging).toBe(false);
-            expect(mockDialogRef.dragEnd).toHaveBeenCalledWith(mouseEvent);
-            expect(component.cd.detectChanges).toHaveBeenCalled();
-        });
-
-        it('should reset position correctly', () => {
-            component.container = document.createElement('div');
-            component.container.style.position = 'absolute';
-            component.container.style.left = '100px';
-            component.container.style.top = '50px';
-            component.container.style.margin = '10px';
-
-            component.resetPosition();
-
-            expect(component.container.style.position).toBe('' as any);
-            expect(component.container.style.left).toBe('' as any);
-            expect(component.container.style.top).toBe('' as any);
-            expect(component.container.style.margin).toBe('' as any);
-        });
-
-        afterEach(() => {
-            // Cleanup DOM elements
-            const containers = document.body.querySelectorAll('div:not(.jasmine-results):not(#jasmine-content)');
-            containers.forEach((container) => {
-                if (container.parentElement === document.body && !container.classList.contains('jasmine-results')) {
-                    document.body.removeChild(container);
-                }
-            });
-        });
-    });
-
-    describe('Resize Functionality', () => {
-        let fixture: ComponentFixture<DynamicDialog>;
-        let component: DynamicDialog;
+        let dialog: Dialog;
 
         beforeEach(async () => {
             mockConfig.resizable = true;
+            mockConfig.draggable = true;
             mockConfig.header = 'Resizable Dialog';
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = ResizableDialogComponent;
+            component.childComponentType.set(ResizableDialogComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
+            dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance;
         });
 
-        it('should initialize resize on handle mousedown', () => {
-            const mouseEvent = new MouseEvent('mousedown');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 100 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 100 });
+        it('should forward the dialog resize events to the dialog ref', () => {
+            const initEvent = new MouseEvent('mousedown');
+            dialog.onResizeInit.emit(initEvent);
 
-            vi.spyOn(component, 'bindDocumentResizeListeners').mockImplementation(() => {});
+            expect(component.resizing()).toBe(true);
+            expect(mockDialogRef.resizeInit).toHaveBeenCalledWith(initEvent);
 
-            component.initResize(mouseEvent);
+            const endEvent = new MouseEvent('mouseup');
+            dialog.onResizeEnd.emit(endEvent);
 
-            expect(component.resizing).toBe(true);
-            expect(component.lastPageX).toBe(100);
-            expect(component.lastPageY).toBe(100);
-            expect(mockDialogRef.resizeInit).toHaveBeenCalledWith(mouseEvent);
+            expect(component.resizing()).toBe(false);
+            expect(mockDialogRef.resizeEnd).toHaveBeenCalledWith(endEvent);
         });
 
-        it('should handle resize movement', () => {
-            component.resizing = true;
-            component.lastPageX = 100;
-            component.lastPageY = 100;
-            component.container = document.createElement('div');
-            component.contentViewChild = { nativeElement: document.createElement('div') } as any;
+        it('should forward the dialog drag end event to the dialog ref', () => {
+            const dragEvent = new DragEvent('dragend');
+            dialog.onDragEnd.emit(dragEvent);
 
-            // Mock element dimensions
-            vi.spyOn(component.container, 'getBoundingClientRect').mockReturnValue({
-                left: 50,
-                top: 50,
-                width: 200,
-                height: 150,
-                right: 250,
-                bottom: 200
-            } as any);
-
-            const mouseEvent = new MouseEvent('mousemove');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 150 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 130 });
-            component.onResize(mouseEvent);
-
-            expect(component.lastPageX).toBe(150);
-            expect(component.lastPageY).toBe(130);
+            expect(mockDialogRef.dragEnd).toHaveBeenCalledWith(dragEvent);
         });
 
-        it('should respect minimum dimensions during resize', () => {
-            component.resizing = true;
-            component.lastPageX = 100;
-            component.lastPageY = 100;
-            component.container = document.createElement('div');
-            component.container.style.minWidth = '300px';
-            component.container.style.minHeight = '200px';
-            component.contentViewChild = { nativeElement: document.createElement('div') } as any;
+        it('should pass the config drag and resize options to the dialog', async () => {
+            expect(dialog.draggable()).toBe(true);
+            expect(dialog.resizable()).toBe(true);
 
-            vi.spyOn(component.container, 'getBoundingClientRect').mockReturnValue({
-                left: 50,
-                top: 50,
-                width: 280,
-                height: 180,
-                right: 330,
-                bottom: 230
-            } as any);
+            mockConfig.draggable = false;
+            mockConfig.resizable = false;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
 
-            const mouseEvent = new MouseEvent('mousemove');
-            Object.defineProperty(mouseEvent, 'pageX', { value: 90 });
-            Object.defineProperty(mouseEvent, 'pageY', { value: 90 });
-            component.onResize(mouseEvent);
-
-            // Should not resize below minimum dimensions
-            expect(component._style.width).toBeUndefined();
-        });
-
-        it('should end resize properly', () => {
-            component.resizing = true;
-            const mouseEvent = new MouseEvent('mouseup');
-
-            component.resizeEnd(mouseEvent);
-
-            expect(component.resizing).toBe(false);
-            expect(mockDialogRef.resizeEnd).toHaveBeenCalledWith(mouseEvent);
+            expect(dialog.draggable()).toBe(false);
+            expect(dialog.resizable()).toBe(false);
         });
     });
 
@@ -572,23 +380,22 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = MaximizableDialogComponent;
-            component.visible = true; // Make dialog visible so template renders
+            component.childComponentType.set(MaximizableDialogComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
 
-        it('should toggle maximize state', () => {
-            expect(component.maximized).toBeUndefined();
+        it('should track the maximize state reported by the dialog', () => {
+            expect(component.maximized()).toBeUndefined();
 
-            component.maximize();
+            component.onDialogMaximize({ maximized: true });
 
-            expect(component.maximized).toBe(true);
+            expect(component.maximized()).toBe(true);
             expect(mockDialogRef.maximize).toHaveBeenCalledWith({ maximized: true });
 
-            component.maximize();
+            component.onDialogMaximize({ maximized: false });
 
-            expect(component.maximized).toBe(false);
+            expect(component.maximized()).toBe(false);
             expect(mockDialogRef.maximize).toHaveBeenCalledWith({ maximized: false });
         });
 
@@ -599,7 +406,7 @@ describe('DynamicDialog', () => {
             maximizeButton.nativeElement.click();
             await new Promise((resolve) => setTimeout(resolve, 100));
 
-            expect(component.maximized).toBe(true);
+            expect(component.maximized()).toBe(true);
         });
 
         it('should apply maximized class when maximized', async () => {
@@ -617,7 +424,8 @@ describe('DynamicDialog', () => {
             await fixture.whenStable();
 
             // Check that maximized state is set
-            expect(component.maximized).toBe(true);
+            expect(component.maximized()).toBe(true);
+            expect(fixture.nativeElement.querySelector('.p-dialog').classList).toContain('p-dialog-maximized');
         });
     });
 
@@ -633,16 +441,12 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
 
         it('should have correct ARIA attributes', async () => {
-            component.ngAfterViewInit();
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
             const dialogElement = fixture.debugElement.query(By.css('[role="dialog"]'));
             expect(dialogElement).toBeTruthy();
             expect(dialogElement.nativeElement.getAttribute('role')).toBe('dialog');
@@ -658,23 +462,9 @@ describe('DynamicDialog', () => {
             expect(dialogElement.nativeElement.getAttribute('aria-labelledby')).toBe('custom-label-id');
         });
 
-        // Focus management is now handled by Dialog component, removing focus tests
-
-        it('should handle escape key press', () => {
-            mockConfig.closeOnEscape = true;
-            component.container = document.createElement('div');
-            component.container.style.zIndex = '1000';
-
-            vi.spyOn(component, 'hide').mockImplementation(() => {});
-            vi.spyOn(ZIndexUtils, 'getCurrent').mockReturnValue(1000);
-
-            const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27 });
-            component.bindDocumentEscapeListener();
-
-            // Simulate escape key press on document
-            document.dispatchEvent(escapeEvent);
-
-            expect(component.hide).toHaveBeenCalled();
+        it('should pass closeAriaLabel from config to the close button', () => {
+            const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
+            expect(dialog.closeAriaLabel()).toBe('Close Dialog');
         });
     });
 
@@ -682,83 +472,44 @@ describe('DynamicDialog', () => {
         let fixture: ComponentFixture<DynamicDialog>;
         let component: DynamicDialog;
 
-        beforeEach(async () => {
-            mockConfig.modal = true;
-            mockConfig.dismissableMask = true;
-            mockConfig.header = 'Modal Dialog';
-
+        const createDialog = async () => {
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
-        });
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        };
 
-        it('should enable modality when modal is true', () => {
+        const clickMask = () => {
+            const mask = fixture.nativeElement.querySelector('.p-dialog-mask') as HTMLElement;
+            mask.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        };
+
+        beforeEach(() => {
             mockConfig.modal = true;
-            const wrapperElement = document.createElement('div');
-            document.body.appendChild(wrapperElement);
-            component.wrapper = wrapperElement;
-            vi.spyOn(component, 'enableModality');
-
-            // const animationEvent: AnimationEvent = {
-            //     element: document.createElement('div'),
-            //     toState: 'visible',
-            //     fromState: 'void',
-            //     totalTime: 150,
-            //     phaseName: 'start',
-            //     triggerName: 'animation',
-            //     disabled: false
-            // };
-
-            // component.onAnimationStart(animationEvent);
-
-            // expect(component.enableModality).toHaveBeenCalled();
-
-            // // Cleanup
-            // document.body.removeChild(wrapperElement);
+            mockConfig.closable = true;
+            mockConfig.header = 'Modal Dialog';
         });
 
-        it('should handle dismissable mask click', () => {
-            component.wrapper = document.createElement('div');
-            vi.spyOn(component, 'hide').mockImplementation(() => {});
+        it('should close through the dialog ref when the mask is clicked and dismissableMask is true', async () => {
+            mockConfig.dismissableMask = true;
+            await createDialog();
 
-            component.enableModality();
+            clickMask();
 
-            // Simulate mask click
-            const mouseEvent = new MouseEvent('mousedown');
-            Object.defineProperty(mouseEvent, 'target', { value: component.wrapper });
-            vi.spyOn(component.wrapper, 'isSameNode').mockReturnValue(true);
-
-            component.wrapper.dispatchEvent(mouseEvent);
-
-            expect(component.hide).toHaveBeenCalled();
+            expect(mockDialogRef.close).toHaveBeenCalled();
+            expect(component.visible()).toBe(false);
         });
 
-        it('should not close on mask click when dismissableMask is false', () => {
+        it('should not close on mask click when dismissableMask is false', async () => {
             mockConfig.dismissableMask = false;
-            component.wrapper = document.createElement('div');
-            vi.spyOn(component, 'hide').mockImplementation(() => {});
+            await createDialog();
 
-            component.enableModality();
+            clickMask();
 
-            const mouseEvent = new MouseEvent('mousedown');
-            component.wrapper.dispatchEvent(mouseEvent);
-
-            expect(component.hide).not.toHaveBeenCalled();
-        });
-
-        it('should disable modality properly', () => {
-            component.wrapper = document.createElement('div');
-            component.enableModality();
-
-            vi.spyOn(component, 'unbindMaskClickListener').mockImplementation(() => {});
-            vi.spyOn(component.cd, 'detectChanges').mockImplementation(() => {});
-
-            component.disableModality();
-
-            expect(component.unbindMaskClickListener).toHaveBeenCalled();
-            expect(component.cd.detectChanges).toHaveBeenCalled();
+            expect(mockDialogRef.close).not.toHaveBeenCalled();
+            expect(component.visible()).toBe(true);
         });
     });
 
@@ -773,8 +524,7 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
-            component.visible = true; // Make dialog visible
+            component.childComponentType.set(TestDialogContentComponent);
         });
 
         it('should load child component correctly', () => {
@@ -809,6 +559,18 @@ describe('DynamicDialog', () => {
             expect(headerElement.nativeElement.textContent.trim()).toBe('Template Dialog');
         });
 
+        it('should re-render the header when the config header changes', async () => {
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            mockConfig.header = 'Updated Dialog';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const headerElement = fixture.debugElement.query(By.css('.p-dialog-title'));
+            expect(headerElement.nativeElement.textContent.trim()).toBe('Updated Dialog');
+        });
+
         it('should display footer content', async () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
@@ -837,7 +599,7 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = DialogWithinDialogComponent;
+            component.childComponentType.set(DialogWithinDialogComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
@@ -871,24 +633,6 @@ describe('DynamicDialog', () => {
             expect(innerDialogRef).not.toBe(mockDialogRef);
             expect(innerConfig).not.toBe(mockConfig);
         });
-
-        it('should handle mask clicks correctly with nested dialogs', () => {
-            component.wrapper = document.createElement('div');
-            mockConfig.dismissableMask = true;
-
-            vi.spyOn(component, 'hide').mockImplementation(() => {});
-
-            component.enableModality();
-
-            // Simulate mask click on outer dialog
-            const mouseEvent = new MouseEvent('mousedown');
-            Object.defineProperty(mouseEvent, 'target', { value: component.wrapper });
-            vi.spyOn(component.wrapper, 'isSameNode').mockReturnValue(true);
-
-            component.wrapper.dispatchEvent(mouseEvent);
-
-            expect(component.hide).toHaveBeenCalled();
-        });
     });
 
     describe('Cleanup and Memory Leak Prevention', () => {
@@ -900,115 +644,18 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent;
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
 
-        it('should cleanup all listeners on destroy', () => {
-            vi.spyOn(component, 'onContainerDestroy').mockImplementation(() => {});
-            vi.spyOn(component, 'destroyStyle').mockImplementation(() => {});
-
-            // Simulate component ref
-            component.componentRef = {
-                destroy: vi.fn()
-            } as any;
+        it('should destroy the child component on destroy', () => {
+            const destroy = vi.fn();
+            component.componentRef.set({ destroy } as any);
 
             component.ngOnDestroy();
 
-            expect(component.onContainerDestroy).toHaveBeenCalled();
-            expect(component.componentRef!.destroy).toHaveBeenCalled();
-            expect(component.destroyStyle).toHaveBeenCalled();
-        });
-
-        it('should unbind all global listeners', () => {
-            vi.spyOn(component, 'unbindDocumentEscapeListener').mockImplementation(() => {});
-            vi.spyOn(component, 'unbindDocumentResizeListeners').mockImplementation(() => {});
-            vi.spyOn(component, 'unbindDocumentDragListener').mockImplementation(() => {});
-            vi.spyOn(component, 'unbindDocumentDragEndListener').mockImplementation(() => {});
-
-            component.unbindGlobalListeners();
-
-            expect(component.unbindDocumentEscapeListener).toHaveBeenCalled();
-            expect(component.unbindDocumentResizeListeners).toHaveBeenCalled();
-            expect(component.unbindDocumentDragListener).toHaveBeenCalled();
-            expect(component.unbindDocumentDragEndListener).toHaveBeenCalled();
-        });
-
-        it('should clear z-index utilities on container destroy', () => {
-            component.container = document.createElement('div');
-            mockConfig.autoZIndex = true;
-            mockConfig.modal = true; // Enable modal so disableModality gets called
-
-            vi.spyOn(component, 'unbindGlobalListeners').mockImplementation(() => {});
-            vi.spyOn(component, 'disableModality').mockImplementation(() => {});
-
-            component.onContainerDestroy();
-
-            expect(component.unbindGlobalListeners).toHaveBeenCalled();
-            expect(component.disableModality).toHaveBeenCalled();
-            expect(component.container).toBeNull();
-        });
-
-        it('should destroy style element on destroy', () => {
-            component.styleElement = document.createElement('style');
-            document.head.appendChild(component.styleElement);
-
-            vi.spyOn(component.renderer, 'removeChild').mockImplementation(() => {});
-            const styleElement = component.styleElement;
-
-            component.destroyStyle();
-
-            expect(component.renderer.removeChild).toHaveBeenCalledWith(document.head, styleElement);
-            expect(component.styleElement).toBeNull();
-        });
-
-        it('should unbind mask click listener', () => {
-            const mockListener = vi.fn();
-            component.maskClickListener = mockListener;
-
-            component.unbindMaskClickListener();
-
-            expect(mockListener).toHaveBeenCalled();
-            expect(component.maskClickListener).toBeNull();
-        });
-
-        it('should unbind document listeners correctly', () => {
-            const mockResizeListener = vi.fn();
-            const mockResizeEndListener = vi.fn();
-
-            component.documentResizeListener = mockResizeListener;
-            component.documentResizeEndListener = mockResizeEndListener;
-
-            component.unbindDocumentResizeListeners();
-
-            expect(mockResizeListener).toHaveBeenCalled();
-            expect(mockResizeEndListener).toHaveBeenCalled();
-            expect(component.documentResizeListener).toBeNull();
-            expect(component.documentResizeEndListener).toBeNull();
-        });
-
-        it('should unbind drag listeners correctly', () => {
-            // Set up actual listeners first
-            const mockDragListener = vi.fn();
-            const mockDragEndListener = vi.fn();
-
-            component.documentDragListener = mockDragListener;
-            component.documentDragEndListener = mockDragEndListener;
-
-            expect(component.documentDragListener).not.toBeNull();
-            expect(component.documentDragEndListener).not.toBeNull();
-
-            component.unbindDocumentDragListener();
-            component.unbindDocumentDragEndListener();
-
-            // Check that listeners were called (they are removal functions)
-            expect(mockDragListener).toHaveBeenCalled();
-            expect(mockDragEndListener).toHaveBeenCalled();
-
-            // Check that references were nullified
-            expect(component.documentDragListener).toBeNull();
-            expect(component.documentDragEndListener).toBeNull();
+            expect(destroy).toHaveBeenCalled();
         });
     });
 
@@ -1024,40 +671,18 @@ describe('DynamicDialog', () => {
 
             fixture = TestBed.createComponent(DynamicDialog);
             component = fixture.componentInstance;
-            component.childComponentType = TestDialogContentComponent; // Set child component
-
-            // Mock platform to be browser for createStyle to work
-            Object.defineProperty(component, 'platformId', { value: 'browser' });
-
+            component.childComponentType.set(TestDialogContentComponent);
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
         });
 
-        it('should create style element for breakpoints', () => {
-            // Reset styleElement so createStyle can run again
-            component.styleElement = null as any;
+        it('should pass the breakpoints to the dialog, which creates the responsive style element', () => {
+            const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
 
-            vi.spyOn(component.renderer, 'createElement').mockReturnValue(document.createElement('style'));
-            vi.spyOn(component.renderer, 'appendChild').mockImplementation(() => {});
-            vi.spyOn(component.renderer, 'setProperty').mockImplementation(() => {});
-
-            // Call createStyle directly
-            component.createStyle();
-
-            expect(component.renderer.createElement).toHaveBeenCalledWith('style');
-            expect(component.renderer.appendChild).toHaveBeenCalled();
-            expect(component.renderer.setProperty).toHaveBeenCalled();
-        });
-
-        it('should generate correct CSS for breakpoints', () => {
-            // Reset styleElement so createStyle can run again
-            component.styleElement = null as any;
-
-            // Call createStyle directly
-            component.createStyle();
-
-            expect(component.styleElement).toBeTruthy();
-            expect(component.styleElement.type).toBe('text/css');
+            expect(dialog.breakpoints()).toEqual({ '960px': '75vw', '640px': '90vw' });
+            expect(dialog.styleElement()).toBeTruthy();
+            expect(dialog.styleElement().innerHTML).toContain('75vw');
+            expect(dialog.styleElement().innerHTML).toContain('90vw');
         });
     });
 });

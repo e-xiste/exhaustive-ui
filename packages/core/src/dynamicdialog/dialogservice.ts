@@ -34,8 +34,8 @@ export class DialogService {
 
         const componentRefInstance = this.dialogComponentRefMap.get(dialogRef);
         if (componentRefInstance) {
-            componentRefInstance.instance.childComponentType = componentType;
-            componentRefInstance.instance.inputValues = config.inputValues || {};
+            componentRefInstance.instance.childComponentType.set(componentType);
+            componentRefInstance.instance.inputValues.set(config.inputValues || {});
         }
 
         return dialogRef;
@@ -105,7 +105,7 @@ export class DialogService {
         }
         let permission = true;
         for (const [key, value] of this.dialogComponentRefMap) {
-            if (value.instance.childComponentType === componentType) {
+            if (value.instance.childComponentType() === componentType) {
                 permission = false;
                 break;
             }
