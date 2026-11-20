@@ -1878,3 +1878,30 @@ describe('ConfirmDialog draggable from the confirmation', () => {
         expect(dialog.draggable()).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmDialog, SharedModule],
+    template: `
+        <p-confirmdialog appendTo="self" [visible]="true" message="Delete?">
+            <p-footer><button class="custom-footer-button">Custom</button></p-footer>
+        </p-confirmdialog>
+    `
+})
+class ConfirmDialogFooterFacetHostComponent {}
+
+describe('ConfirmDialog p-footer', () => {
+    it('should render the p-footer content instead of the default buttons (optimus-ui#290)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmDialogFooterFacetHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmDialogFooterFacetHostComponent);
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelector('.custom-footer-button')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.p-confirmdialog-accept-button')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.p-confirmdialog-reject-button')).toBeNull();
+    });
+});

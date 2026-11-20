@@ -20,7 +20,7 @@ import {
     output,
     viewChild
 } from '@angular/core';
-import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
+import { Confirmation, ConfirmationService, ConfirmEventType, Footer, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { Button, ButtonProps } from '@exhaustive-ui/core/button';
@@ -103,11 +103,11 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                 </ng-template>
             }
             <ng-template #footer>
-                @if (footerTemplate() || _footerTemplate()) {
+                @if (footerTemplate() || _footerTemplate() || footerFacet()) {
                     <ng-content select="p-footer"></ng-content>
                     <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate()"></ng-container>
                 }
-                @if (!footerTemplate() && !_footerTemplate()) {
+                @if (!footerTemplate() && !_footerTemplate() && !footerFacet()) {
                     @if (option('rejectVisible')) {
                         <p-button
                             #rejectButton
@@ -353,6 +353,8 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
     readonly headlessTemplate = contentChild<Nullable<TemplateRef<ConfirmDialogHeadlessTemplateContext>>>('headless', { descendants: false });
 
     readonly templates = contentChildren(PrimeTemplate);
+
+    readonly footerFacet = contentChild(Footer);
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
