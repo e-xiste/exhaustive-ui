@@ -2029,3 +2029,58 @@ describe('ConfirmPopup Signal Query API', () => {
         expect(instance.rejectButtonViewChild()).toBeUndefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmPopup],
+    template: `
+        <p-confirmpopup />
+        <button class="first-target" style="position: fixed; left: 10px; bottom: 0" (click)="confirm($event, 'First')">First</button>
+        <button class="second-target" style="position: fixed; right: 0; top: 10px; width: 12px; padding: 0" (click)="confirm($event, 'Second')">S</button>
+    `
+})
+class ConfirmPopupTwoTargetsHostComponent {
+    confirmationService = inject_1(ConfirmationService);
+
+    confirm(event: Event, message: string) {
+        this.confirmationService.confirm({ target: event.currentTarget as EventTarget, message });
+    }
+}
+
+describe('ConfirmPopup opened for another target', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    it('should move the popup and its arrow to the new target', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmPopupTwoTargetsHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmPopupTwoTargetsHostComponent);
+        await fixture.whenStable();
+
+        (fixture.nativeElement.querySelector('.first-target') as HTMLElement).click();
+        await fixture.whenStable();
+        await wait(400);
+        // no room below the first target: the popup opens above it
+        expect(document.querySelector('.p-confirmpopup')?.getAttribute('data-p-confirmpopup-flipped')).toBe('true');
+
+        const second = fixture.nativeElement.querySelector('.second-target') as HTMLElement;
+        second.click();
+        await fixture.whenStable();
+        await wait(400);
+
+        const container = document.querySelector('.p-confirmpopup') as HTMLElement;
+        expect(container.textContent).toContain('Second');
+
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = second.getBoundingClientRect();
+        const arrowLeft = parseFloat(container.style.getPropertyValue('--p-confirmpopup-arrow-left')) || 0;
+
+        // the popup sits under the new target, right-aligned to the viewport, and the arrow points at the target
+        expect(containerRect.top).toBeGreaterThanOrEqual(targetRect.bottom - 1);
+        expect(containerRect.left).toBeLessThan(targetRect.left);
+        expect(Math.abs(containerRect.left + arrowLeft - targetRect.left)).toBeLessThan(2);
+        expect(container.hasAttribute('data-p-confirmpopup-flipped')).toBe(false);
+    });
+});

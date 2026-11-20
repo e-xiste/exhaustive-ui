@@ -25,7 +25,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
-import { absolutePosition, addClass, appendChild, findSingle, focus, getOffset, isIOS, isTouchDevice } from '@exhaustive-ui/utils';
+import { absolutePosition, addClass, appendChild, findSingle, focus, getOffset, isIOS, isTouchDevice, removeClass } from '@exhaustive-ui/utils';
 import { Confirmation, ConfirmationService, OverlayService, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -296,6 +296,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
             if (this.computedVisible()) {
                 requestAnimationFrame(() => {
                     this.alignOverlay();
+                    this.alignArrow();
                 });
             }
 
@@ -418,6 +419,10 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
         if (containerOffset && targetOffset && containerOffset.top < targetOffset.top) {
             (container as HTMLElement).setAttribute('data-p-confirmpopup-flipped', 'true');
             !this.$unstyled() && addClass(container as HTMLDivElement, 'p-confirm-popup-flipped');
+        } else if (container) {
+            // realigned under a new target: drop the flip left by a previous one
+            (container as HTMLElement).removeAttribute('data-p-confirmpopup-flipped');
+            removeClass(container as HTMLDivElement, 'p-confirm-popup-flipped');
         }
     }
 
