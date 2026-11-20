@@ -103,6 +103,8 @@ export const style = /*css*/ `
 
     .p-toggleswitch.p-disabled {
         opacity: 1;
+        /* Let the host receive hover events so a tooltip can show; the disabled input still ignores clicks. */
+        pointer-events: auto;
     }
 
     .p-toggleswitch.p-disabled .p-toggleswitch-slider {

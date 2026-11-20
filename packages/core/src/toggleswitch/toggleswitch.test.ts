@@ -1457,3 +1457,28 @@ describe('ToggleSwitch Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+describe('ToggleSwitch disabled hit testing (optimus-ui#90)', () => {
+    it('should keep the disabled host hoverable so a tooltip can show, without toggling on click', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ToggleSwitch],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(ToggleSwitch);
+        fixture.componentRef.setInput('disabled', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host: HTMLElement = fixture.nativeElement;
+        expect(getComputedStyle(host).pointerEvents).not.toBe('none');
+
+        const rect = host.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        expect(hit && host.contains(hit)).toBe(true);
+
+        host.click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.checked()).toBe(false);
+    });
+});
