@@ -4753,4 +4753,20 @@ describe('MultiSelect low bug fixes', () => {
 
         expect(headerInput().disabled).toBe(true);
     });
+
+    it('focuses the first match after filtering when autoOptionFocus is on (optimus-ui#752)', async () => {
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('autoOptionFocus', true);
+        multiSelect.show();
+        await waitForOverlay();
+
+        const filterInput = document.querySelector('.p-multiselect-overlay input[role="searchbox"]') as HTMLInputElement;
+        filterInput.value = 'Par';
+        multiSelect.onFilterInputChange({ target: filterInput } as any);
+        fixture.detectChanges();
+
+        expect(multiSelect.focusedOptionIndex()).toBe(0);
+        multiSelect.onFilterKeyDown(new KeyboardEvent('keydown', { code: 'Enter' }));
+        expect(multiSelect.modelValue()).toEqual(['PRS']);
+    });
 });

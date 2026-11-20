@@ -1865,7 +1865,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     onFilterInputChange(event: Event) {
         let value: string = (event.target as HTMLInputElement).value;
         this._filterValue.set(value);
-        this.focusedOptionIndex.set(-1);
+        this.focusedOptionIndex.set(this.autoOptionFocus() ? this.findFirstOptionIndex() : -1);
         this.onFilter.emit({ originalEvent: event, filter: this._filterValue() });
 
         !this.virtualScrollerDisabled() && this.scroller()?.scrollToIndex(0);
