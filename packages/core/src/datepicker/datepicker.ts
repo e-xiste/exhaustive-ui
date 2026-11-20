@@ -1601,6 +1601,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
+            this.realignOverlay();
         }
     }
 
@@ -1632,6 +1633,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
+            this.realignOverlay();
         }
     }
 
@@ -3080,6 +3082,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 value = Array.isArray(value) ? value.map((date) => date && constrain(date)) : constrain(value);
                 this.updateModel(value);
                 this.updateUI();
+                this.realignOverlay();
             } else if (this.keepInvalid()) {
                 this.updateModel(value);
             }
@@ -3260,6 +3263,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     restoreOverlayAppend() {
         if (this.overlay() && this.$appendTo() !== 'self') {
             this.el.nativeElement.appendChild(this.overlay()!);
+        }
+    }
+
+    // a month can have 4 to 6 rows: a panel opened above the input has to move with its new height
+    realignOverlay() {
+        if (this.overlayVisible() && !this.inline()) {
+            this.cd.detectChanges();
+            this.alignOverlay();
         }
     }
 

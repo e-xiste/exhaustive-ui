@@ -2730,6 +2730,31 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(picker.months()[0].weekNumbers).toEqual([1, 2, 3, 4, 5]);
     });
 
+    it('realigns an upward panel when the month changes its row count (optimus-ui#179)', async () => {
+        const box = document.createElement('div');
+        box.style.cssText = 'position: fixed; bottom: 0; left: 0;';
+        document.body.appendChild(box);
+        box.appendChild(el);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 2, 10));
+        await render();
+        const input = el.querySelector('input')!;
+        input.click();
+        await render();
+        await panelShown();
+        const panel = el.querySelector<HTMLElement>('.p-datepicker-panel')!;
+        const gap = () => input.getBoundingClientRect().top - panel.getBoundingClientRect().bottom;
+        const initialGap = gap();
+        expect(initialGap).toBeGreaterThanOrEqual(0);
+
+        // March 2026 has 5 rows, February 2026 only 4
+        picker.navBackward(new Event('click'));
+        await render();
+
+        expect(picker.months()[0].dates!.length).toBe(4);
+        expect(gap()).toBeCloseTo(initialGap, 0);
+        box.remove();
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;
