@@ -246,10 +246,20 @@ export class SelectItem extends BaseComponent {
         }
         @if (isVisibleClearIcon()) {
             @if (!clearIconTemplate() && !_clearIconTemplate()) {
-                <svg data-p-icon="times" [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')" (click)="clear($event)" [attr.data-pc-section]="'clearicon'" />
+                <svg
+                    data-p-icon="times"
+                    [class]="cx('clearIcon')"
+                    [pBind]="ptm('clearIcon')"
+                    (click)="clear($event)"
+                    (keydown)="onClearIconKeyDown($event)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="clearAriaLabel()"
+                    [attr.data-pc-section]="'clearicon'"
+                />
             }
             @if (clearIconTemplate() || _clearIconTemplate()) {
-                <span [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')" (click)="clear($event)" [attr.data-pc-section]="'clearicon'">
+                <span [class]="cx('clearIcon')" [pBind]="ptm('clearIcon')" (click)="clear($event)" (keydown)="onClearIconKeyDown($event)" role="button" tabindex="0" [attr.aria-label]="clearAriaLabel()" [attr.data-pc-section]="'clearicon'">
                     <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate(); context: { class: cx('clearIcon') }"></ng-template>
                 </span>
             }
@@ -1013,6 +1023,8 @@ export class Select extends BaseInput<SelectPassThrough> {
     isVisibleClearIcon = computed<boolean | undefined>(() => this.modelValue() != null && this.hasSelectedOption() && this.showClear() && !this.$disabled());
 
     listLabel = computed<string>(() => this.translation()[TranslationKeys.ARIA]['listLabel']);
+
+    clearAriaLabel = computed<string>(() => this.translation()[TranslationKeys.CLEAR]);
 
     focusedOptionId = computed(() => (this.focusedOptionIndex() !== -1 ? `${this._id()}_${this.focusedOptionIndex()}` : null));
 
@@ -1851,6 +1863,13 @@ export class Select extends BaseInput<SelectPassThrough> {
      */
     public focus(): void {
         this.applyFocus();
+    }
+    onClearIconKeyDown(event: KeyboardEvent) {
+        if (event.code === 'Enter' || event.code === 'NumpadEnter' || event.code === 'Space') {
+            event.preventDefault();
+            this.clear(event);
+            this.applyFocus();
+        }
     }
     /**
      * Clears the model.

@@ -4964,4 +4964,26 @@ describe('Select medium bug fixes', () => {
         expect(select.focusedOptionIndex()).toBe(3);
         expect(scrollSpy).not.toHaveBeenCalled();
     });
+
+    it('lets keyboard users focus the clear icon and clear with Enter or Space (optimus-ui#253, optimus-ui#462)', () => {
+        fixture.componentRef.setInput('showClear', true);
+        select.writeValue('RM');
+        fixture.detectChanges();
+
+        const clearIcon = fixture.nativeElement.querySelector('[data-pc-section="clearicon"]') as HTMLElement;
+        expect(clearIcon.getAttribute('tabindex')).toBe('0');
+        expect(clearIcon.getAttribute('role')).toBe('button');
+        expect(clearIcon.getAttribute('aria-label')).toBe('Clear');
+
+        clearIcon.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
+        fixture.detectChanges();
+        expect(select.modelValue()).toBeNull();
+
+        select.writeValue('LDN');
+        fixture.detectChanges();
+        const clearIconAgain = fixture.nativeElement.querySelector('[data-pc-section="clearicon"]') as HTMLElement;
+        clearIconAgain.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+        fixture.detectChanges();
+        expect(select.modelValue()).toBeNull();
+    });
 });
