@@ -97,6 +97,7 @@ type SplitButtonIconPosition = 'left' | 'right';
             ></button>
         }
         <button
+            #dropdownbtn
             type="button"
             pButton
             pRipple
@@ -318,6 +319,8 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
     readonly onDropdownClick = output<MouseEvent | undefined>();
 
     readonly menu = viewChild.required<TieredMenu>('menu');
+
+    readonly dropdownButton = viewChild('dropdownbtn', { read: ElementRef });
     /**
      * Custom content template.
      * @group Templates
@@ -360,7 +363,8 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
 
     onDropdownButtonClick(event?: MouseEvent) {
         this.onDropdownClick.emit(event);
-        this.menu().toggle({ currentTarget: this.el?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
+        // relatedTarget is where the menu gives the focus back when it closes
+        this.menu().toggle({ currentTarget: this.el?.nativeElement, relatedTarget: this.dropdownButton()?.nativeElement, relativeAlign: this.$appendTo() == 'self' });
     }
 
     onDropdownButtonKeydown(event: KeyboardEvent) {

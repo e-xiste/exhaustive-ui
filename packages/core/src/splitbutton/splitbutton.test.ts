@@ -677,6 +677,27 @@ describe('SplitButton', () => {
             expect(toggleSpy).toHaveBeenCalled();
         });
 
+        it('should give the focus back to the dropdown button after an item is picked with the keyboard', async () => {
+            dropdownButton.focus();
+            dropdownButton.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowDown', bubbles: true }));
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+
+            const menuList = document.querySelector('.p-tieredmenu ul[role="menu"]') as HTMLElement;
+            expect(menuList).toBeTruthy();
+            menuList.focus();
+            menuList.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowDown', bubbles: true }));
+            fixture.detectChanges();
+            await fixture.whenStable();
+            menuList.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', bubbles: true }));
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(component.updateClicked).toBe(true);
+            expect(document.activeElement).toBe(dropdownButton);
+        });
+
         it('should not handle other keys', async () => {
             const keydownEvent = new KeyboardEvent('keydown', { code: 'Enter', bubbles: true });
             Object.defineProperty(keydownEvent, 'currentTarget', { value: dropdownButton, writable: false, configurable: true });

@@ -791,10 +791,11 @@ export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
                 this.onItemChange(event);
             } else {
                 const rootProcessedItem = root ? processedItem : this.activeItemPath().find((p) => p.parentKey === '');
-                this.hide(originalEvent);
+                // a popup gives the focus back to its trigger, an inline menu keeps it
+                this.hide(originalEvent, this.popup());
                 this.changeFocusedItemIndex(originalEvent, rootProcessedItem?.index ?? -1);
 
-                focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
+                !this.popup() && focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
             }
         }
     }
