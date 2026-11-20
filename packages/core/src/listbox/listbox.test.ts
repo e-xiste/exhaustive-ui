@@ -3269,4 +3269,29 @@ describe('Listbox medium bug fixes', () => {
         }
         expect(listbox.modelValue() ?? []).toEqual([]);
     });
+
+    it('keeps pre-selected disabled options selected on toggle all (optimus-ui#830)', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        const listbox = fixture.componentInstance;
+        fixture.componentRef.setInput('options', [
+            { name: 'Alpha', code: 'A', disabled: true },
+            { name: 'Beta', code: 'B' },
+            { name: 'Gamma', code: 'G', disabled: true },
+            { name: 'Delta', code: 'D' }
+        ]);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('optionValue', 'code');
+        fixture.componentRef.setInput('optionDisabled', 'disabled');
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('checkbox', true);
+        fixture.detectChanges();
+        listbox.writeValue(['A']);
+        fixture.detectChanges();
+
+        listbox.onToggleAll(new MouseEvent('click'));
+        expect(listbox.modelValue()).toEqual(['A', 'B', 'D']);
+
+        listbox.onToggleAll(new MouseEvent('click'));
+        expect(listbox.modelValue()).toEqual(['A']);
+    });
 });

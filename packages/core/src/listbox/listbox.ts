@@ -1032,10 +1032,14 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
                 checked: !this.allSelected()
             });
         } else {
+            // pre-selected disabled options stay selected either way
+            const isSelectedDisabled = (option) => !this.isOptionGroup(option) && this.isOptionDisabled(option) && this.isSelected(option);
             const value = this.allSelected()
-                ? []
+                ? this.visibleOptions()
+                      .filter((option) => isSelectedDisabled(option))
+                      .map((option) => this.getOptionValue(option))
                 : this.visibleOptions()
-                      .filter((option) => this.isValidOption(option))
+                      .filter((option) => this.isValidOption(option) || isSelectedDisabled(option))
                       .map((option) => this.getOptionValue(option));
 
             this.updateModel(value, event);
