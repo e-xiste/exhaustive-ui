@@ -3882,7 +3882,8 @@ export class SelectableRow extends BaseComponent {
 
     setRowTabIndex() {
         if (this.dataTable.selectionMode() === 'single' || this.dataTable.selectionMode() === 'multiple') {
-            return !this.dataTable.selection() ? 0 : this.dataTable.anchorRowIndex() === this.index() ? 0 : -1;
+            // sort, filter and page changes reset the anchor row to null: keep the rows reachable by Tab
+            return !this.dataTable.selection() || this.dataTable.anchorRowIndex() == null ? 0 : this.dataTable.anchorRowIndex() === this.index() ? 0 : -1;
         }
     }
 

@@ -2810,6 +2810,45 @@ describe('Table row grouping with expandable rows', () => {
     standalone: true,
     imports: [TableModule],
     template: `
+        <p-table [value]="rows" dataKey="id" selectionMode="single" [selection]="rows[0]">
+            <ng-template #body let-row let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="row" [pSelectableRowIndex]="rowIndex">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableSelectableTabHostComponent {
+    rows = [
+        { id: '1', name: 'A' },
+        { id: '2', name: 'B' }
+    ];
+}
+
+describe('Table selectable row tab order', () => {
+    it('keeps rows tabbable after sort or page change reset the anchor row (optimus-ui#594)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableSelectableTabHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableSelectableTabHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+
+        // sort() and onPageChange() reset the anchor row to null
+        table.anchorRowIndex.set(null);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const tabbable = Array.from(fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLElement>).filter((tr) => tr.tabIndex === 0);
+        expect(tabbable.length).toBeGreaterThan(0);
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
         <p-table [value]="rows">
             <ng-template #header>
                 <tr>
