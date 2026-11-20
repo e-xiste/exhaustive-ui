@@ -92,7 +92,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                 }
                 <div
                     [class]="cx('nodeContent')"
-                    [style.paddingLeft]="level()! * indentation()! + 'rem'"
+                    [style.marginLeft]="level()! * indentation()! + 'rem'"
                     (click)="onNodeClick($event)"
                     (dblclick)="onNodeDblClick($event)"
                     (touchend)="onNodeTouchEnd()"

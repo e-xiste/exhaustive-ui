@@ -3511,4 +3511,23 @@ describe('Tree low bug fixes', () => {
         const button = fixture.nativeElement.querySelector('button[data-pc-section="nodetogglebutton"]') as HTMLButtonElement;
         expect(button.getAttribute('aria-label')).toBe('Toggle row');
     });
+
+    it('indents nested node content in virtual scroll so the selection highlight starts at its level (optimus-ui#315)', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [{ key: 'a', label: 'A', expanded: true, children: [{ key: 'a-0', label: 'A0' }] }]);
+        fixture.componentRef.setInput('selectionMode', 'single');
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 40);
+        fixture.componentRef.setInput('scrollHeight', '200px');
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+        }
+
+        const contents = Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content')) as HTMLElement[];
+        expect(contents.length).toBe(2);
+        const [root, child] = contents.map((content) => content.getBoundingClientRect().left);
+        expect(child).toBeGreaterThan(root);
+    });
 });
