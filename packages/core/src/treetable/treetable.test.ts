@@ -3146,6 +3146,33 @@ describe('TreeTable', () => {
             });
         });
 
+        describe('onNodeSelect & onNodeUnselect (via toggleCheckbox with selectionKeys)', () => {
+            const keyedData: TreeNode[] = [{ key: '0', data: { name: 'Root' }, children: [{ key: '0-0', data: { name: 'Child' } }] }];
+
+            beforeEach(async () => {
+                component.value = keyedData;
+                component.dataKey = 'key';
+                component.selectionMode = 'checkbox';
+                component.selectionKeys = {};
+                fixture.changeDetectorRef.markForCheck();
+                await fixture.whenStable();
+                fixture.detectChanges();
+            });
+
+            it('should emit onNodeSelect and onNodeUnselect when a checkbox is toggled', () => {
+                const node = keyedData[0];
+                const originalEvent = new Event('click');
+                vi.spyOn(treetable.onNodeSelect, 'emit');
+                vi.spyOn(treetable.onNodeUnselect, 'emit');
+
+                treetable.toggleCheckbox({ originalEvent, check: true, rowNode: { node } });
+                expect(treetable.onNodeSelect.emit).toHaveBeenCalledWith({ originalEvent, node });
+
+                treetable.toggleCheckbox({ originalEvent, check: false, rowNode: { node } });
+                expect(treetable.onNodeUnselect.emit).toHaveBeenCalledWith({ originalEvent, node });
+            });
+        });
+
         describe('onHeaderCheckboxToggle (via toggleNodesWithCheckbox)', () => {
             beforeEach(async () => {
                 component.value = basicTreeData;
