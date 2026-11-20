@@ -3243,4 +3243,20 @@ describe('AutoComplete medium bug fixes', () => {
         expect(autocomplete.overlayVisible()).toBeFalsy();
         expect(enter.defaultPrevented).toBe(true);
     });
+
+    it('does not remove chips when readonly (optimus-ui#299)', () => {
+        fixture.componentRef.setInput('readonly', true);
+        autocomplete.writeValue(['Alpha', 'Beta']);
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('p-chip').length).toBe(2);
+        expect(fixture.nativeElement.querySelector('p-chip [data-p-icon="times-circle"]')).toBeNull();
+
+        // the removeCallback handed to a custom removeicon template
+        autocomplete.removeOption(new MouseEvent('click'), 0);
+        input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', code: 'Backspace', bubbles: true }));
+        fixture.detectChanges();
+
+        expect(autocomplete.modelValue()).toEqual(['Alpha', 'Beta']);
+    });
 });

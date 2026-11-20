@@ -160,7 +160,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                             [class]="cx('pcChip')"
                             [label]="!selectedItemTemplate() && !_selectedItemTemplate() && getOptionLabel(option)"
                             [disabled]="$disabled()"
-                            [removable]="true"
+                            [removable]="!readonly()"
                             (onRemove)="!readonly() ? removeOption($event, i) : ''"
                             [unstyled]="unstyled()"
                         >
@@ -1547,7 +1547,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     onBackspaceKey(event) {
         if (this.multiple()) {
-            if (isNotEmpty(this.modelValue()) && !this.inputEL()?.nativeElement?.value) {
+            if (!this.readonly() && isNotEmpty(this.modelValue()) && !this.inputEL()?.nativeElement?.value) {
                 const removedValue = this.modelValue()[this.modelValue().length - 1];
                 const newValue = this.modelValue().slice(0, -1);
                 this.updateModel(newValue);
@@ -1619,6 +1619,10 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     removeOption(event, index) {
         event.stopPropagation();
+
+        if (this.readonly() || this.$disabled()) {
+            return;
+        }
 
         const removedOption = this.modelValue()[index];
         const value = (this.modelValue() as string[]).filter((_, i) => i !== index);
