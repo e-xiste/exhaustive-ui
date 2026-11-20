@@ -2563,4 +2563,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(year.getAttribute('aria-label')).toContain('2026');
         expect(year.getAttribute('aria-label')).toContain(picker.getTranslation('chooseYear'));
     });
+
+    it('names each day cell with its full date and exposes the selection (optimus-ui#7)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        await render();
+        picker.writeValue(new Date(2026, 4, 15));
+        await render();
+
+        const cell = dayCell(15).parentElement!;
+        expect(cell.getAttribute('aria-label')).toBe('Friday, 15 May 2026');
+        expect(cell.getAttribute('aria-selected')).toBe('true');
+        expect(dayCell(16).parentElement!.getAttribute('aria-selected')).toBe('false');
+    });
 });

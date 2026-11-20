@@ -293,7 +293,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                                             </td>
                                                         }
                                                         @for (date of week; track $index) {
-                                                            <td [attr.aria-label]="date.day" [class]="cx('dayCell', { date })" [pBind]="ptm('dayCell')">
+                                                            <td [attr.aria-label]="formatDate(formatDateMetaToDate(date), 'DD, d MM yy')" [attr.aria-selected]="!!isSelected(date)" [class]="cx('dayCell', { date })" [pBind]="ptm('dayCell')">
                                                                 @if (date.otherMonth ? showOtherMonths() : true) {
                                                                     <span
                                                                         [ngClass]="dayClass(date)"
