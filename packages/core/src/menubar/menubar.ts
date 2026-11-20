@@ -393,6 +393,7 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
             (blur)="onMenuBlur($event)"
             (keydown)="onKeyDown($event)"
             (itemMouseEnter)="onItemMouseEnter($event)"
+            (mouseenter)="onMouseEnter()"
             (mouseleave)="onMouseLeave($event)"
             [pt]="pt()"
             [pBind]="ptm('rootList')"
@@ -496,6 +497,8 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     resizeListener = signal<VoidListener>(undefined);
 
     mouseLeaveSubscriber = signal<Subscription | undefined>(undefined);
+
+    mouseLeaveTimeout: ReturnType<typeof setTimeout> | undefined;
 
     dirty = signal<boolean>(false);
 
@@ -727,10 +730,17 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         const autoHideDelay = this.menubarService.autoHideDelay;
 
         if (autoHideEnabled) {
-            setTimeout(() => {
+            clearTimeout(this.mouseLeaveTimeout);
+            this.mouseLeaveTimeout = setTimeout(() => {
                 this.menubarService.mouseLeaves.next(true);
             }, autoHideDelay);
         }
+    }
+
+    onMouseEnter() {
+        // the pointer came back before autoHide fired: cancel the pending hide
+        clearTimeout(this.mouseLeaveTimeout);
+        this.menubarService.mouseLeaves.next(false);
     }
 
     changeFocusedItemIndex(event: any, index: number) {

@@ -1124,6 +1124,41 @@ describe('Menubar', () => {
         });
     });
 
+    describe('AutoHide pointer return', () => {
+        it('should not hide when the pointer comes back before the autoHide delay', async () => {
+            const autoHideFixture = TestBed.createComponent(TestAutoHideMenubarComponent);
+            autoHideFixture.componentInstance.model = [{ label: 'Projects', items: [{ label: 'Templates', items: [{ label: 'Apollo' }] }] }];
+            autoHideFixture.detectChanges();
+            await autoHideFixture.whenStable();
+
+            const autoHideMenubar: Menubar = autoHideFixture.debugElement.query(By.directive(Menubar)).componentInstance;
+            const hideSpy = vi.spyOn(autoHideMenubar, 'hide');
+            const rootList = autoHideFixture.debugElement.query(By.css('ul[pMenubarSub]')).nativeElement as HTMLElement;
+
+            rootList.dispatchEvent(new MouseEvent('mouseleave'));
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            rootList.dispatchEvent(new MouseEvent('mouseenter'));
+            await new Promise((resolve) => setTimeout(resolve, 600));
+
+            expect(hideSpy).not.toHaveBeenCalled();
+        });
+
+        it('should still hide once the pointer has left', async () => {
+            const autoHideFixture = TestBed.createComponent(TestAutoHideMenubarComponent);
+            autoHideFixture.detectChanges();
+            await autoHideFixture.whenStable();
+
+            const autoHideMenubar: Menubar = autoHideFixture.debugElement.query(By.directive(Menubar)).componentInstance;
+            const hideSpy = vi.spyOn(autoHideMenubar, 'hide');
+            const rootList = autoHideFixture.debugElement.query(By.css('ul[pMenubarSub]')).nativeElement as HTMLElement;
+
+            rootList.dispatchEvent(new MouseEvent('mouseleave'));
+            await new Promise((resolve) => setTimeout(resolve, 600));
+
+            expect(hideSpy).toHaveBeenCalled();
+        });
+    });
+
     describe('Edge Cases', () => {
         it('should handle null/undefined model', async () => {
             component.model = undefined as any;
