@@ -141,7 +141,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [unstyled]="unstyled()"
                     hostName="picklist"
                 >
-                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() || _moveBottomIconTemplate()" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
+                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() && !_moveBottomIconTemplate()" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
                     <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate()"></ng-template>
                 </button>
             </div>
@@ -857,7 +857,7 @@ export class PickList extends BaseComponent {
 
     moveDownAriaLabel = computed(() => this.downButtonAriaLabel() || this.translation()?.aria?.moveDown);
 
-    moveBottomAriaLabel = computed(() => this.bottomButtonAriaLabel() || this.translation()?.aria?.moveDown);
+    moveBottomAriaLabel = computed(() => this.bottomButtonAriaLabel() || this.translation()?.aria?.moveBottom);
 
     moveToTargetAriaLabel = computed(() => this.rightButtonAriaLabel() || this.translation()?.aria?.moveToTarget);
 
@@ -1389,7 +1389,7 @@ export class PickList extends BaseComponent {
                 items: itemsToMove
             });
             if (this.keepSelection()) {
-                this.selectedItemsSource.set([...this.selectedItemsSource(), itemsToMove]);
+                this.selectedItemsSource.set([...this.selectedItemsSource(), ...itemsToMove]);
             }
             itemsToMove = [];
             this.selectedItemsTarget.set([]);

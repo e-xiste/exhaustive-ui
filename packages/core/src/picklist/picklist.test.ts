@@ -2350,3 +2350,102 @@ describe('PickList Signals API', () => {
         expect(hostFixture.componentInstance.source.map((item) => item.name)).toEqual(['Beta']);
     });
 });
+
+// ---------------------------------------------------------------------------
+// Regression tests for pre-existing bugs (move bottom button, keepSelection)
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [PickList, SharedModule],
+    template: `
+        <p-picklist [source]="source" [target]="target">
+            <ng-template pTemplate="movebottomicon"><span class="custom-movebottom"></span></ng-template>
+        </p-picklist>
+    `
+})
+class PickListMoveBottomIconHostComponent {
+    source: any[] = [{ name: 'Alpha' }];
+    target: any[] = [{ name: 'Beta' }];
+}
+
+describe('PickList regressions', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [PickList, PickListMoveBottomIconHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive()]
+        }).compileComponents();
+    });
+
+    it('labels the move bottom buttons with the moveBottom translation', async () => {
+        const fixture = TestBed.createComponent(PickList);
+        fixture.componentRef.setInput('source', [{ name: 'Alpha' }]);
+        fixture.componentRef.setInput('target', [{ name: 'Beta' }]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        for (const selector of ['.p-picklist-source-controls button', '.p-picklist-target-controls button']) {
+            const [up, top, down, bottom] = fixture.debugElement.queryAll(By.css(selector)).map((b) => b.nativeElement as HTMLElement);
+            expect(up.getAttribute('aria-label')).toBe('Move Up');
+            expect(top.getAttribute('aria-label')).toBe('Move Top');
+            expect(down.getAttribute('aria-label')).toBe('Move Down');
+            expect(bottom.getAttribute('aria-label')).toBe('Move Bottom');
+        }
+
+        fixture.componentRef.setInput('bottomButtonAriaLabel', 'To the end');
+        fixture.detectChanges();
+        expect(fixture.debugElement.queryAll(By.css('.p-picklist-source-controls button'))[3].nativeElement.getAttribute('aria-label')).toBe('To the end');
+    });
+
+    it('replaces the default move bottom icon with a pTemplate movebottomicon', async () => {
+        const fixture = TestBed.createComponent(PickListMoveBottomIconHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        for (const selector of ['.p-picklist-source-controls', '.p-picklist-target-controls']) {
+            const controls = fixture.debugElement.query(By.css(selector));
+            expect(controls.queryAll(By.css('.custom-movebottom')).length).toBe(1);
+            expect(controls.query(By.css('svg[data-p-icon="angle-double-down"]'))).toBeNull();
+        }
+    });
+
+    it('spreads the moved items into the source selection on moveLeft with keepSelection', async () => {
+        const fixture = TestBed.createComponent(PickList);
+        const pickList = fixture.componentInstance;
+        const alpha = { id: 1, name: 'Alpha' };
+        const beta = { id: 2, name: 'Beta' };
+        const gamma = { id: 3, name: 'Gamma' };
+        fixture.componentRef.setInput('source', [alpha]);
+        fixture.componentRef.setInput('target', [beta, gamma]);
+        fixture.componentRef.setInput('keepSelection', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        pickList.selectedItemsSource.set([alpha]);
+        pickList.selectedItemsTarget.set([beta, gamma]);
+        pickList.moveLeft();
+
+        expect(pickList.selectedItemsSource()).toEqual([alpha, beta, gamma]);
+        expect(pickList.selectedItemsTarget()).toEqual([]);
+        expect(pickList.isSelected(beta, pickList.selectedItemsSource())).toBe(true);
+    });
+
+    it('spreads the moved items into the target selection on moveRight with keepSelection', async () => {
+        const fixture = TestBed.createComponent(PickList);
+        const pickList = fixture.componentInstance;
+        const alpha = { id: 1, name: 'Alpha' };
+        const beta = { id: 2, name: 'Beta' };
+        fixture.componentRef.setInput('source', [alpha, beta]);
+        fixture.componentRef.setInput('target', []);
+        fixture.componentRef.setInput('keepSelection', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        pickList.selectedItemsSource.set([alpha, beta]);
+        pickList.moveRight();
+
+        expect(pickList.selectedItemsTarget()).toEqual([alpha, beta]);
+        expect(pickList.selectedItemsSource()).toEqual([]);
+    });
+});
