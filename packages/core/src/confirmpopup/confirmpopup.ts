@@ -66,61 +66,67 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
                 role="alertdialog"
                 (click)="onOverlayClick($event)"
             >
-                <ng-container *ngIf="headlessTemplate() || _headlessTemplate(); else notHeadless">
+                @if (headlessTemplate() || _headlessTemplate()) {
                     <ng-container *ngTemplateOutlet="headlessTemplate() || _headlessTemplate(); context: { $implicit: confirmation() }"></ng-container>
-                </ng-container>
-                <ng-template #notHeadless>
+                } @else {
                     <div #content [pBind]="ptm('content')" [class]="cx('content')">
-                        <ng-container *ngIf="contentTemplate() || _contentTemplate(); else withoutContentTemplate">
+                        @if (contentTemplate() || _contentTemplate()) {
                             <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate(); context: { $implicit: confirmation() }"></ng-container>
-                        </ng-container>
-                        <ng-template #withoutContentTemplate>
-                            <i [pBind]="ptm('icon')" [class]="cx('icon')" *ngIf="confirmation()?.icon"></i>
+                        } @else {
+                            @if (confirmation()?.icon) {
+                                <i [pBind]="ptm('icon')" [class]="cx('icon')"></i>
+                            }
                             <span [pBind]="ptm('message')" [class]="cx('message')">{{ confirmation()?.message }}</span>
-                        </ng-template>
+                        }
                     </div>
                     <div [pBind]="ptm('footer')" [class]="cx('footer')">
-                        <p-button
-                            type="button"
-                            [label]="rejectButtonLabel()"
-                            (onClick)="onReject()"
-                            [pt]="ptm('pcRejectButton')"
-                            [class]="cx('pcRejectButton')"
-                            [styleClass]="confirmation()?.rejectButtonStyleClass"
-                            [size]="confirmation()?.rejectButtonProps?.size || 'small'"
-                            [text]="confirmation()?.rejectButtonProps?.text || false"
-                            *ngIf="confirmation()?.rejectVisible !== false"
-                            [attr.aria-label]="rejectButtonLabel()"
-                            [buttonProps]="getRejectButtonProps()"
-                            [autofocus]="autoFocusReject()"
-                            [unstyled]="unstyled()"
-                        >
-                            <ng-template #icon>
-                                <i [class]="confirmation()?.rejectIcon" *ngIf="confirmation()?.rejectIcon; else rejecticon"></i>
-                                <ng-template #rejecticon *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate()"></ng-template>
-                            </ng-template>
-                        </p-button>
-                        <p-button
-                            type="button"
-                            [label]="acceptButtonLabel()"
-                            (onClick)="onAccept()"
-                            [pt]="ptm('pcAcceptButton')"
-                            [class]="cx('pcAcceptButton')"
-                            [styleClass]="confirmation()?.acceptButtonStyleClass"
-                            [size]="confirmation()?.acceptButtonProps?.size || 'small'"
-                            *ngIf="confirmation()?.acceptVisible !== false"
-                            [attr.aria-label]="acceptButtonLabel()"
-                            [buttonProps]="getAcceptButtonProps()"
-                            [autofocus]="autoFocusAccept()"
-                            [unstyled]="unstyled()"
-                        >
-                            <ng-template #icon>
-                                <i [class]="confirmation()?.acceptIcon" *ngIf="confirmation()?.acceptIcon; else accepticontemplate"></i>
-                                <ng-template #accepticontemplate *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate()"></ng-template>
-                            </ng-template>
-                        </p-button>
+                        @if (confirmation()?.rejectVisible !== false) {
+                            <p-button
+                                type="button"
+                                [label]="rejectButtonLabel()"
+                                (onClick)="onReject()"
+                                [pt]="ptm('pcRejectButton')"
+                                [class]="cx('pcRejectButton')"
+                                [styleClass]="confirmation()?.rejectButtonStyleClass"
+                                [size]="confirmation()?.rejectButtonProps?.size || 'small'"
+                                [text]="confirmation()?.rejectButtonProps?.text || false"
+                                [attr.aria-label]="rejectButtonLabel()"
+                                [buttonProps]="getRejectButtonProps()"
+                                [autofocus]="autoFocusReject()"
+                                [unstyled]="unstyled()"
+                            >
+                                <ng-template #icon>
+                                    @if (confirmation()?.rejectIcon) {
+                                        <i [class]="confirmation()?.rejectIcon"></i>
+                                    }
+                                    <ng-template *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate()"></ng-template>
+                                </ng-template>
+                            </p-button>
+                        }
+                        @if (confirmation()?.acceptVisible !== false) {
+                            <p-button
+                                type="button"
+                                [label]="acceptButtonLabel()"
+                                (onClick)="onAccept()"
+                                [pt]="ptm('pcAcceptButton')"
+                                [class]="cx('pcAcceptButton')"
+                                [styleClass]="confirmation()?.acceptButtonStyleClass"
+                                [size]="confirmation()?.acceptButtonProps?.size || 'small'"
+                                [attr.aria-label]="acceptButtonLabel()"
+                                [buttonProps]="getAcceptButtonProps()"
+                                [autofocus]="autoFocusAccept()"
+                                [unstyled]="unstyled()"
+                            >
+                                <ng-template #icon>
+                                    @if (confirmation()?.acceptIcon) {
+                                        <i [class]="confirmation()?.acceptIcon"></i>
+                                    }
+                                    <ng-template *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate()"></ng-template>
+                                </ng-template>
+                            </p-button>
+                        }
                     </div>
-                </ng-template>
+                }
             </div>
         }
     `,
