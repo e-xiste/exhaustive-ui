@@ -4574,10 +4574,15 @@ describe('TreeTable Signal Query API', () => {
     imports: [TreeTableModule, SharedModule],
     template: `
         <p-treetable [value]="nodes" selectionMode="checkbox" dataKey="key" [selectionKeys]="selectionKeys()" (selectionKeysChange)="selectionKeys.set($event)">
+            <ng-template #header>
+                <tr>
+                    <th><p-treeTableHeaderCheckbox ariaLabel="Select all rows" ariaLabelledBy="name-header" /><span id="name-header">Name</span></th>
+                </tr>
+            </ng-template>
             <ng-template #body let-rowNode let-rowData="rowData">
                 <tr [ttRow]="rowNode">
                     <td>
-                        <p-treetable-checkbox [value]="rowNode" />
+                        <p-treetable-checkbox [value]="rowNode" [ariaLabel]="'Select ' + rowData.name" [ariaLabelledBy]="'row-' + rowData.name" />
                         {{ rowData.name }}
                     </td>
                 </tr>
@@ -4622,5 +4627,15 @@ describe('TreeTable checkboxes', () => {
         await render();
 
         expect(checkboxInputs().map((input) => input.checked)).toEqual([false, false, true]);
+    });
+
+    it('should pass aria labels to the row and header checkboxes', () => {
+        const rowInput = checkboxInputs()[0];
+        expect(rowInput.getAttribute('aria-label')).toBe('Select Root');
+        expect(rowInput.getAttribute('aria-labelledby')).toBe('row-Root');
+
+        const headerInput = fixture.debugElement.query(By.css('p-treeTableHeaderCheckbox input[type="checkbox"]')).nativeElement as HTMLInputElement;
+        expect(headerInput.getAttribute('aria-label')).toBe('Select all rows');
+        expect(headerInput.getAttribute('aria-labelledby')).toBe('name-header');
     });
 });

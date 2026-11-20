@@ -3334,6 +3334,8 @@ export class TTContextMenuRow extends BaseComponent {
             [indeterminate]="partialChecked()"
             [class]="cx('pcNodeCheckbox')"
             [tabIndex]="-1"
+            [ariaLabel]="ariaLabel()"
+            [ariaLabelledBy]="ariaLabelledBy()"
             [unstyled]="unstyled()"
         >
             @if (tt.checkboxIconTemplate() || tt._checkboxIconTemplate()) {
@@ -3356,6 +3358,17 @@ export class TTCheckbox extends BaseComponent {
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     readonly rowNode = input<any>(undefined, { alias: 'value' });
+
+    /**
+     * Defines a string that labels the checkbox for accessibility.
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the checkbox and its label(s), where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
 
     readonly checked = signal<boolean | undefined>(undefined);
 
@@ -3429,7 +3442,17 @@ export class TTCheckbox extends BaseComponent {
     selector: 'p-treeTableHeaderCheckbox',
     standalone: false,
     template: `
-        <p-checkbox [ngModel]="checked()" [ngModelOptions]="{ standalone: true }" [pt]="ptm('pcHeaderCheckbox')" (onChange)="onClick($event)" [binary]="true" [disabled]="!tt.value() || tt.value()!.length === 0" [unstyled]="unstyled()">
+        <p-checkbox
+            [ngModel]="checked()"
+            [ngModelOptions]="{ standalone: true }"
+            [pt]="ptm('pcHeaderCheckbox')"
+            (onChange)="onClick($event)"
+            [binary]="true"
+            [disabled]="!tt.value() || tt.value()!.length === 0"
+            [ariaLabel]="ariaLabel()"
+            [ariaLabelledBy]="ariaLabelledBy()"
+            [unstyled]="unstyled()"
+        >
             @if (tt.headerCheckboxIconTemplate() || tt._headerCheckboxIconTemplate()) {
                 <ng-template pTemplate="icon">
                     <ng-template *ngTemplateOutlet="tt.headerCheckboxIconTemplate() || tt._headerCheckboxIconTemplate(); context: { $implicit: checked() }"></ng-template>
@@ -3443,6 +3466,17 @@ export class TTCheckbox extends BaseComponent {
 export class TTHeaderCheckbox extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
+
+    /**
+     * Defines a string that labels the checkbox for accessibility.
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the checkbox and its label(s), where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
 
     readonly checked = signal<boolean | undefined>(undefined);
 
