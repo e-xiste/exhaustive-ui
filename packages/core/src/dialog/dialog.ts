@@ -1,6 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    AfterContentInit,
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -9,16 +9,14 @@ import {
     inject,
     InjectionToken,
     input,
-    Input,
+    linkedSignal,
+    model,
     NgModule,
     NgZone,
     numberAttribute,
-    OnDestroy,
-    OnInit,
     signal,
     TemplateRef,
     ViewEncapsulation,
-    ViewRef,
     viewChild,
     contentChild,
     contentChildren,
@@ -47,34 +45,33 @@ const DIALOG_INSTANCE = new InjectionToken<Dialog>('DIALOG_INSTANCE');
  */
 @Component({
     selector: 'p-dialog',
-    standalone: true,
     imports: [CommonModule, Button, FocusTrap, TimesIcon, WindowMaximizeIcon, WindowMinimizeIcon, SharedModule, Bind, MotionModule],
     template: `
         @if (renderMask()) {
             <div
-                [class]="cn(cx('mask'), maskStyleClass)"
+                [class]="cn(cx('mask'), maskStyleClass())"
                 [style]="sx('mask')"
-                [ngStyle]="maskStyle"
+                [ngStyle]="maskStyle()"
                 [pBind]="ptm('mask')"
-                [pMotion]="maskVisible"
+                [pMotion]="maskVisible()"
                 [pMotionAppear]="true"
-                [pMotionEnterActiveClass]="modal ? 'p-overlay-mask-enter-active' : ''"
-                [pMotionLeaveActiveClass]="modal ? 'p-overlay-mask-leave-active' : ''"
+                [pMotionEnterActiveClass]="modal() ? 'p-overlay-mask-enter-active' : ''"
+                [pMotionLeaveActiveClass]="modal() ? 'p-overlay-mask-leave-active' : ''"
                 [pMotionOptions]="computedMaskMotionOptions()"
                 (pMotionOnAfterLeave)="onMaskAfterLeave()"
-                [attr.data-p-scrollblocker-active]="modal || blockScroll"
-                [attr.data-p]="dataP"
+                [attr.data-p-scrollblocker-active]="modal() || blockScroll()"
+                [attr.data-p]="dataP()"
             >
                 @if (renderDialog()) {
                     <div
                         #container
-                        [class]="cn(cx('root'), styleClass)"
+                        [class]="cn(cx('root'), styleClass())"
                         [style]="sx('root')"
-                        [ngStyle]="style"
+                        [ngStyle]="_style()"
                         [pBind]="ptm('root')"
                         pFocusTrap
-                        [pFocusTrapDisabled]="focusTrap === false"
-                        [pMotion]="visible"
+                        [pFocusTrapDisabled]="focusTrap() === false"
+                        [pMotion]="visible()"
                         [pMotionAppear]="true"
                         [pMotionName]="'p-dialog'"
                         [pMotionOptions]="computedMotionOptions()"
@@ -82,78 +79,78 @@ const DIALOG_INSTANCE = new InjectionToken<Dialog>('DIALOG_INSTANCE');
                         (pMotionOnAfterEnter)="onAfterEnter($event)"
                         (pMotionOnBeforeLeave)="onBeforeLeave($event)"
                         (pMotionOnAfterLeave)="onAfterLeave($event)"
-                        [attr.role]="role"
+                        [attr.role]="role()"
                         [attr.aria-labelledby]="computedAriaLabelledBy()"
                         [attr.aria-modal]="true"
-                        [attr.data-p]="dataP"
+                        [attr.data-p]="dataP()"
                     >
-                        <ng-container *ngIf="_headlessTemplate() || headlessTemplate || headlessT; else notHeadless">
-                            <ng-container *ngTemplateOutlet="_headlessTemplate() || headlessTemplate || headlessT"></ng-container>
+                        <ng-container *ngIf="_headlessTemplate() || headlessTemplate() || headlessT(); else notHeadless">
+                            <ng-container *ngTemplateOutlet="_headlessTemplate() || headlessTemplate() || headlessT()"></ng-container>
                         </ng-container>
 
                         <ng-template #notHeadless>
-                            <div *ngIf="resizable" [class]="cx('resizeHandle')" [pBind]="ptm('resizeHandle')" [style.z-index]="90" (mousedown)="initResize($event)"></div>
-                            <div #titlebar [class]="cx('header')" [pBind]="ptm('header')" (mousedown)="initDrag($event)" *ngIf="showHeader">
-                                <span [id]="headerId()" [class]="cx('title')" [pBind]="ptm('title')" *ngIf="!_headerTemplate() && !headerTemplate && !headerT">{{ header() }}</span>
-                                <ng-container *ngTemplateOutlet="_headerTemplate() || headerTemplate || headerT; context: { ariaLabelledBy: computedAriaLabelledBy() }"></ng-container>
+                            <div *ngIf="resizable()" [class]="cx('resizeHandle')" [pBind]="ptm('resizeHandle')" [style.z-index]="90" (mousedown)="initResize($event)"></div>
+                            <div #titlebar [class]="cx('header')" [pBind]="ptm('header')" (mousedown)="initDrag($event)" *ngIf="showHeader()">
+                                <span [id]="headerId()" [class]="cx('title')" [pBind]="ptm('title')" *ngIf="!_headerTemplate() && !headerTemplate() && !headerT()">{{ header() }}</span>
+                                <ng-container *ngTemplateOutlet="_headerTemplate() || headerTemplate() || headerT(); context: { ariaLabelledBy: computedAriaLabelledBy() }"></ng-container>
                                 <div [class]="cx('headerActions')" [pBind]="ptm('headerActions')">
                                     <p-button
                                         [pt]="ptm('pcMaximizeButton')"
-                                        *ngIf="maximizable"
+                                        *ngIf="maximizable()"
                                         [styleClass]="cx('pcMaximizeButton')"
-                                        [ariaLabel]="maximized ? minimizeLabel : maximizeLabel"
+                                        [ariaLabel]="maximized() ? minimizeLabel : maximizeLabel"
                                         (onClick)="maximize()"
                                         (keydown.enter)="maximize()"
-                                        [tabindex]="maximizable ? '0' : '-1'"
-                                        [buttonProps]="maximizeButtonProps"
+                                        [tabindex]="maximizable() ? '0' : '-1'"
+                                        [buttonProps]="maximizeButtonProps()"
                                         [unstyled]="unstyled()"
                                         [attr.data-pc-group-section]="'headericon'"
                                     >
                                         <ng-template #icon>
-                                            <span *ngIf="maximizeIcon && !_maximizeiconTemplate() && !_minimizeiconTemplate()" [ngClass]="maximized ? minimizeIcon : maximizeIcon"></span>
-                                            <ng-container *ngIf="!maximizeIcon && !maximizeButtonProps?.icon">
-                                                <svg data-p-icon="window-maximize" *ngIf="!maximized && !_maximizeiconTemplate() && !maximizeIconTemplate && !maximizeIconT" />
-                                                <svg data-p-icon="window-minimize" *ngIf="maximized && !_minimizeiconTemplate() && !minimizeIconTemplate && !minimizeIconT" />
+                                            <span *ngIf="maximizeIcon() && !_maximizeiconTemplate() && !_minimizeiconTemplate()" [ngClass]="maximized() ? minimizeIcon() : maximizeIcon()"></span>
+                                            <ng-container *ngIf="!maximizeIcon() && !maximizeButtonProps()?.icon">
+                                                <svg data-p-icon="window-maximize" *ngIf="!maximized() && !_maximizeiconTemplate() && !maximizeIconTemplate() && !maximizeIconT()" />
+                                                <svg data-p-icon="window-minimize" *ngIf="maximized() && !_minimizeiconTemplate() && !minimizeIconTemplate() && !minimizeIconT()" />
                                             </ng-container>
-                                            <ng-container *ngIf="!maximized">
-                                                <ng-template *ngTemplateOutlet="_maximizeiconTemplate() || maximizeIconTemplate || maximizeIconT"></ng-template>
+                                            <ng-container *ngIf="!maximized()">
+                                                <ng-template *ngTemplateOutlet="_maximizeiconTemplate() || maximizeIconTemplate() || maximizeIconT()"></ng-template>
                                             </ng-container>
-                                            <ng-container *ngIf="maximized">
-                                                <ng-template *ngTemplateOutlet="_minimizeiconTemplate() || minimizeIconTemplate || minimizeIconT"></ng-template>
+                                            <ng-container *ngIf="maximized()">
+                                                <ng-template *ngTemplateOutlet="_minimizeiconTemplate() || minimizeIconTemplate() || minimizeIconT()"></ng-template>
                                             </ng-container>
                                         </ng-template>
                                     </p-button>
                                     <p-button
                                         [pt]="ptm('pcCloseButton')"
-                                        *ngIf="closable"
+                                        *ngIf="closable()"
                                         [styleClass]="cx('pcCloseButton')"
-                                        [ariaLabel]="closeAriaLabel"
+                                        [ariaLabel]="closeAriaLabel()"
                                         (onClick)="close($event)"
                                         (keydown.enter)="close($event)"
-                                        [tabindex]="closeTabindex"
-                                        [buttonProps]="closeButtonProps"
+                                        [tabindex]="closeTabindex()"
+                                        [buttonProps]="closeButtonProps()"
                                         [unstyled]="unstyled()"
                                         [attr.data-pc-group-section]="'headericon'"
                                     >
                                         <ng-template #icon>
-                                            <ng-container *ngIf="!_closeiconTemplate() && !closeIconTemplate && !closeIconT && !closeButtonProps?.icon">
-                                                <span *ngIf="closeIcon" [class]="closeIcon"></span>
-                                                <svg data-p-icon="times" *ngIf="!closeIcon" />
+                                            <ng-container *ngIf="!_closeiconTemplate() && !closeIconTemplate() && !closeIconT() && !closeButtonProps()?.icon">
+                                                <span *ngIf="closeIcon()" [class]="closeIcon()"></span>
+                                                <svg data-p-icon="times" *ngIf="!closeIcon()" />
                                             </ng-container>
-                                            <span *ngIf="_closeiconTemplate() || closeIconTemplate || closeIconT">
-                                                <ng-template *ngTemplateOutlet="_closeiconTemplate() || closeIconTemplate || closeIconT"></ng-template>
+                                            <span *ngIf="_closeiconTemplate() || closeIconTemplate() || closeIconT()">
+                                                <ng-template *ngTemplateOutlet="_closeiconTemplate() || closeIconTemplate() || closeIconT()"></ng-template>
                                             </span>
                                         </ng-template>
                                     </p-button>
                                 </div>
                             </div>
-                            <div #content [class]="cn(cx('content'), contentStyleClass)" [ngStyle]="contentStyle" [pBind]="ptm('content')">
+                            <div #content [class]="cn(cx('content'), contentStyleClass())" [ngStyle]="contentStyle()" [pBind]="ptm('content')">
                                 <ng-content></ng-content>
-                                <ng-container *ngTemplateOutlet="_contentTemplate() || contentTemplate || contentT"></ng-container>
+                                <ng-container *ngTemplateOutlet="_contentTemplate() || contentTemplate() || contentT()"></ng-container>
                             </div>
-                            <div #footer [class]="cx('footer')" [pBind]="ptm('footer')" *ngIf="_footerTemplate() || footerTemplate || footerT">
+                            <div #footer [class]="cx('footer')" [pBind]="ptm('footer')" *ngIf="_footerTemplate() || footerTemplate() || footerT()">
                                 <ng-content select="p-footer"></ng-content>
-                                <ng-container *ngTemplateOutlet="_footerTemplate() || footerTemplate || footerT"></ng-container>
+                                <ng-container *ngTemplateOutlet="_footerTemplate() || footerTemplate() || footerT()"></ng-container>
                             </div>
                         </ng-template>
                     </div>
@@ -166,17 +163,18 @@ const DIALOG_INSTANCE = new InjectionToken<Dialog>('DIALOG_INSTANCE');
     providers: [DialogStyle, { provide: DIALOG_INSTANCE, useExisting: Dialog }, { provide: PARENT_INSTANCE, useExisting: Dialog }],
     hostDirectives: [Bind]
 })
-export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, AfterContentInit, OnDestroy {
+export class Dialog extends BaseComponent<DialogPassThrough> {
     componentName = 'Dialog';
 
-    @Input() hostName: string = '';
+    hostName = input<string>('');
 
     $pcDialog: Dialog | undefined = inject(DIALOG_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('host'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
     }
 
     /**
@@ -188,123 +186,112 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
      * Enables dragging to change the position using header.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) draggable: boolean = true;
+    draggable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Enables resizing of the content.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) resizable: boolean = true;
+    resizable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Style of the content section.
      * @group Props
      */
-    @Input() contentStyle: any;
+    contentStyle = input<any>();
     /**
      * Style class of the content.
      * @group Props
      */
-    @Input() contentStyleClass: string | undefined;
+    contentStyleClass = input<string | undefined>(undefined);
     /**
      * Defines if background should be blocked when dialog is displayed.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) modal: boolean = false;
+    modal = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Specifies if pressing escape key should hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) closeOnEscape: boolean = true;
+    closeOnEscape = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Specifies if clicking the modal background should hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) dismissableMask: boolean = false;
-    /**
-     * When enabled dialog is displayed in RTL direction.
-     * @group Props
-     */
-    @Input({ transform: booleanAttribute }) rtl: boolean = false;
+    dismissableMask = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Adds a close icon to the header to hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) closable: boolean = true;
+    closable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Object literal to define widths per screen size.
      * @group Props
      */
-    @Input() breakpoints: any;
+    breakpoints = input<any>();
     /**
      * Style class of the component.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    styleClass = input<string | undefined>(undefined);
     /**
      * Style class of the mask.
      * @group Props
      */
-    @Input() maskStyleClass: string | undefined;
+    maskStyleClass = input<string | undefined>(undefined);
     /**
      * Style of the mask.
      * @group Props
      */
-    @Input() maskStyle: { [klass: string]: any } | null | undefined;
+    maskStyle = input<{ [klass: string]: any } | null | undefined>(undefined);
     /**
      * Whether to show the header or not.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showHeader: boolean = true;
+    showHeader = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether background scroll should be blocked when dialog is visible.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) blockScroll: boolean = false;
+    blockScroll = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to automatically manage layering.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
+    autoZIndex = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Base zIndex value to use in layering.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
+    baseZIndex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * Minimum value for the left coordinate of dialog in dragging.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) minX: number = 0;
+    minX = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * Minimum value for the top coordinate of dialog in dragging.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) minY: number = 0;
+    minY = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * When enabled, first focusable element receives focus on show.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) focusOnShow: boolean = true;
+    focusOnShow = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether the dialog can be displayed full screen.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) maximizable: boolean = false;
+    maximizable = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Keeps dialog in the viewport.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) keepInViewport: boolean = true;
+    keepInViewport = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * When enabled, can only focus on elements inside the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) focusTrap: boolean = true;
-    /**
-     * Transition options of the animation.
-     * @deprecated since v21.0.0. Use `motionOptions` instead.
-     * @group Props
-     */
-    @Input() transitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
+    focusTrap = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * The motion options for the mask.
      * @group Props
@@ -333,84 +320,67 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
      * Name of the close icon.
      * @group Props
      */
-    @Input() closeIcon: string | undefined;
+    closeIcon = input<string | undefined>(undefined);
     /**
      * Defines a string that labels the close button for accessibility.
      * @group Props
      */
-    @Input() closeAriaLabel: string | undefined;
+    closeAriaLabel = input<string | undefined>(undefined);
     /**
      * Index of the close button in tabbing order.
      * @group Props
      */
-    @Input() closeTabindex: string = '0';
+    closeTabindex = input<string>('0');
     /**
      * Name of the minimize icon.
      * @group Props
      */
-    @Input() minimizeIcon: string | undefined;
+    minimizeIcon = input<string | undefined>(undefined);
     /**
      * Name of the maximize icon.
      * @group Props
      */
-    @Input() maximizeIcon: string | undefined;
+    maximizeIcon = input<string | undefined>(undefined);
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
      * @group Props
      */
-    @Input() closeButtonProps: ButtonProps = {
+    closeButtonProps = input<ButtonProps>({
         severity: 'secondary',
         variant: 'text',
         rounded: true
-    };
+    });
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
      * @group Props
      */
-    @Input() maximizeButtonProps: ButtonProps = {
+    maximizeButtonProps = input<ButtonProps>({
         severity: 'secondary',
         variant: 'text',
         rounded: true
-    };
+    });
     /**
      * Specifies the visibility of the dialog.
+     * Emits `visibleChange` with the new value to notify changes in the visibility state of the component.
+     * @defaultValue false
      * @group Props
      */
-    @Input() get visible(): boolean {
-        return this._visible;
-    }
-    set visible(value: boolean) {
-        this._visible = value;
-
-        if (this._visible && !this.maskVisible) {
-            this.maskVisible = true;
-            this.renderMask.set(true);
-            this.renderDialog.set(true);
-        }
-    }
+    visible = model<boolean>(false);
     /**
      * Inline style of the component.
      * @group Props
      */
-    @Input() get style(): any {
-        return this._style;
-    }
-    set style(value: any) {
-        if (value) {
-            this._style = { ...value };
-            this.originalStyle = value;
-        }
-    }
+    style = input<any>();
     /**
      * Position of the dialog.
      * @group Props
      */
-    @Input() position: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
+    position = input<'center' | 'top' | 'bottom' | 'left' | 'right' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright'>();
     /**
      * Role attribute of html element.
      * @group Emits
      */
-    @Input() role: string = 'dialog';
+    role = input<string>('dialog');
     /**
      * Identifier of the element that labels the dialog. Defaults to the id of the generated header title.
      * @group Props
@@ -432,12 +402,6 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
      * @group Emits
      */
     readonly onHide = output<any>();
-    /**
-     * This EventEmitter is used to notify changes in the visibility state of a component.
-     * @param {boolean} value - New value.
-     * @group Emits
-     */
-    readonly visibleChange = output<boolean>();
     /**
      * Callback to invoke when dialog resizing is initiated.
      * @param {MouseEvent} event - Mouse event.
@@ -471,37 +435,37 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
      * Header template.
      * @group Templates
      */
-    @Input('content') headerTemplate: TemplateRef<void> | undefined;
+    headerTemplate = input<TemplateRef<void> | undefined>(undefined, { alias: 'content' });
     /**
      * Content template.
      * @group Templates
      */
-    @Input() contentTemplate: TemplateRef<void> | undefined;
+    contentTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Footer template.
      * @group Templates
      */
-    @Input() footerTemplate: TemplateRef<void> | undefined;
+    footerTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Close icon template.
      * @group Templates
      */
-    @Input() closeIconTemplate: TemplateRef<void> | undefined;
+    closeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Maximize icon template.
      * @group Templates
      */
-    @Input() maximizeIconTemplate: TemplateRef<void> | undefined;
+    maximizeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Minimize icon template.
      * @group Templates
      */
-    @Input() minimizeIconTemplate: TemplateRef<void> | undefined;
+    minimizeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Headless template.
      * @group Templates
      */
-    @Input() headlessTemplate: TemplateRef<void> | undefined;
+    headlessTemplate = input<TemplateRef<void> | undefined>(undefined);
 
     /**
      * Custom header template.
@@ -547,85 +511,117 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    renderMask = signal<boolean>(false);
+    renderMask = linkedSignal<boolean, boolean>({
+        source: this.visible,
+        computation: (visible, previous) => visible || (previous?.value ?? false)
+    });
 
-    renderDialog = signal<boolean>(false);
+    renderDialog = linkedSignal<boolean, boolean>({
+        source: this.visible,
+        computation: (visible, previous) => visible || (previous?.value ?? false)
+    });
 
-    _visible: boolean = false;
-
-    maskVisible: boolean | undefined;
+    maskVisible = linkedSignal<boolean, boolean | undefined>({
+        source: this.visible,
+        computation: (visible, previous) => visible || previous?.value
+    });
 
     container = signal<Nullable<HTMLElement>>(null);
 
-    wrapper: Nullable<HTMLElement>;
+    wrapper = signal<Nullable<HTMLElement>>(undefined);
 
-    dragging: boolean | undefined;
+    dragging = signal<boolean | undefined>(undefined);
 
     headerId = computed<string | null>(() => (this.header() !== null ? this.id + '_header' : null));
 
     computedAriaLabelledBy = computed<string | null>(() => this.ariaLabelledBy() ?? this.headerId());
 
-    documentDragListener: VoidListener;
+    documentDragListener = signal<VoidListener>(undefined);
 
-    documentDragEndListener: VoidListener;
+    documentDragEndListener = signal<VoidListener>(undefined);
 
-    resizing: boolean | undefined;
+    resizing = signal<boolean | undefined>(undefined);
 
-    documentResizeListener: VoidListener;
+    documentResizeListener = signal<VoidListener>(undefined);
 
-    documentResizeEndListener: VoidListener;
+    documentResizeEndListener = signal<VoidListener>(undefined);
 
-    documentEscapeListener: VoidListener;
+    documentEscapeListener = signal<VoidListener>(undefined);
 
-    maskClickListener: VoidListener;
+    maskClickListener = signal<VoidListener>(undefined);
 
-    lastPageX: number | undefined;
+    lastPageX = signal<number | undefined>(undefined);
 
-    lastPageY: number | undefined;
+    lastPageY = signal<number | undefined>(undefined);
 
-    preventVisibleChangePropagation: boolean | undefined;
-
-    maximized: boolean | undefined;
-
-    preMaximizeContentHeight: number | undefined;
-
-    preMaximizeContainerWidth: number | undefined;
-
-    preMaximizeContainerHeight: number | undefined;
-
-    preMaximizePageX: number | undefined;
-
-    preMaximizePageY: number | undefined;
+    maximized = signal<boolean | undefined>(undefined);
 
     id: string = uuid('pn_id_');
 
-    _style: any = {};
+    _style = linkedSignal<any, any>({
+        source: this.style,
+        computation: (style, previous) => (style ? { ...style } : (previous?.value ?? {}))
+    });
 
-    originalStyle: any;
+    originalStyle = linkedSignal<any, any>({
+        source: this.style,
+        computation: (style, previous) => (style ? style : previous?.value)
+    });
 
-    transformOptions: any = 'scale(0.7)';
-
-    styleElement: any;
-
-    private window: Window;
+    styleElement = signal<any>(undefined);
 
     _componentStyle = inject(DialogStyle);
 
-    headerT: TemplateRef<void> | undefined;
+    headerT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
-    contentT: TemplateRef<void> | undefined;
+    contentT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => !['header', 'footer', 'closeicon', 'maximizeicon', 'minimizeicon', 'headless'].includes(item.getType()))
+                .at(-1)?.template
+    );
 
-    footerT: TemplateRef<void> | undefined;
+    footerT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
 
-    closeIconT: TemplateRef<void> | undefined;
+    closeIconT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'closeicon')
+                .at(-1)?.template
+    );
 
-    maximizeIconT: TemplateRef<void> | undefined;
+    maximizeIconT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'maximizeicon')
+                .at(-1)?.template
+    );
 
-    minimizeIconT: TemplateRef<void> | undefined;
+    minimizeIconT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'minimizeicon')
+                .at(-1)?.template
+    );
 
-    headlessT: TemplateRef<void> | undefined;
+    headlessT = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'headless')
+                .at(-1)?.template
+    );
 
-    private zIndexForLayering?: number;
+    private zIndexForLayering = signal<number | undefined>(undefined);
 
     get maximizeLabel(): string {
         return this.config.getTranslation(TranslationKeys.ARIA)['maximizeLabel'];
@@ -638,89 +634,20 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
 
     private overlayService: OverlayService = inject(OverlayService);
 
-    get maskClass() {
-        const positions = ['left', 'right', 'top', 'topleft', 'topright', 'bottom', 'bottomleft', 'bottomright'];
-        const pos = positions.find((item) => item === this.position);
-
-        return {
-            'p-dialog-mask': true,
-            'p-overlay-mask': this.modal || this.dismissableMask,
-            [`p-dialog-${pos}`]: pos
-        };
-    }
-
     onInit() {
-        if (this.breakpoints) {
+        if (this.breakpoints()) {
             this.createStyle();
         }
     }
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'header':
-                    this.headerT = item.template;
-                    break;
-
-                case 'content':
-                    this.contentT = item.template;
-                    break;
-
-                case 'footer':
-                    this.footerT = item.template;
-                    break;
-
-                case 'closeicon':
-                    this.closeIconT = item.template;
-                    break;
-
-                case 'maximizeicon':
-                    this.maximizeIconT = item.template;
-                    break;
-
-                case 'minimizeicon':
-                    this.minimizeIconT = item.template;
-                    break;
-
-                case 'headless':
-                    this.headlessT = item.template;
-                    break;
-
-                default:
-                    this.contentT = item.template;
-                    break;
-            }
-        });
-    }
-
-    parseDurationToMilliseconds(durationString: string): number | undefined {
-        const transitionTimeRegex = /([\d\.]+)(ms|s)\b/g;
-        let totalMilliseconds = 0;
-        let match;
-        while ((match = transitionTimeRegex.exec(durationString)) !== null) {
-            const value = parseFloat(match[1]);
-            const unit = match[2];
-            if (unit === 'ms') {
-                totalMilliseconds += value;
-            } else if (unit === 's') {
-                totalMilliseconds += value * 1000;
-            }
-        }
-        if (totalMilliseconds === 0) {
-            return undefined;
-        }
-        return totalMilliseconds;
-    }
-
     _focus(focusParentElement?: HTMLElement): boolean {
         if (focusParentElement) {
-            const timeoutDuration = this.parseDurationToMilliseconds(this.transitionOptions);
             let _focusableElements = DomHandler.getFocusableElements(focusParentElement);
             if (_focusableElements && _focusableElements.length > 0) {
                 this.zone.runOutsideAngular(() => {
-                    setTimeout(() => _focusableElements[0].focus(), timeoutDuration || 5);
+                    setTimeout(() => _focusableElements[0].focus(), 5);
                 });
                 return true;
             }
@@ -744,94 +671,95 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     close(event: Event) {
-        this.visible = false;
-        this.visibleChange.emit(this.visible);
+        this.visible.set(false);
         event.preventDefault();
     }
 
     enableModality() {
-        if (this.closable && this.dismissableMask) {
-            this.maskClickListener = this.renderer.listen(this.wrapper, 'mousedown', (event: any) => {
-                if (this.wrapper && this.wrapper.isSameNode(event.target)) {
-                    this.close(event);
-                }
-            });
+        if (this.closable() && this.dismissableMask()) {
+            this.maskClickListener.set(
+                this.renderer.listen(this.wrapper(), 'mousedown', (event: any) => {
+                    const wrapper = this.wrapper();
+                    if (wrapper && wrapper.isSameNode(event.target)) {
+                        this.close(event);
+                    }
+                })
+            );
         }
 
-        if (this.modal) {
+        if (this.modal()) {
             blockBodyScroll();
         }
     }
 
     disableModality() {
-        if (this.wrapper) {
-            if (this.dismissableMask) {
+        if (this.wrapper()) {
+            if (this.dismissableMask()) {
                 this.unbindMaskClickListener();
             }
 
             // for nested dialogs w/modal
             const scrollBlockers = document.querySelectorAll('[data-p-scrollblocker-active="true"]');
 
-            if (this.modal && scrollBlockers && scrollBlockers.length == 1) {
+            if (this.modal() && scrollBlockers && scrollBlockers.length == 1) {
                 unblockBodyScroll();
-            }
-
-            if (!(this.cd as ViewRef).destroyed) {
-                this.cd.detectChanges();
             }
         }
     }
 
     maximize() {
-        this.maximized = !this.maximized;
+        this.maximized.update((maximized) => !maximized);
 
-        if (!this.modal && !this.blockScroll) {
-            if (this.maximized) {
+        if (!this.modal() && !this.blockScroll()) {
+            if (this.maximized()) {
                 blockBodyScroll();
             } else {
                 unblockBodyScroll();
             }
         }
 
-        this.onMaximize.emit({ maximized: this.maximized });
+        this.onMaximize.emit({ maximized: this.maximized() });
     }
 
     unbindMaskClickListener() {
-        if (this.maskClickListener) {
-            this.maskClickListener();
-            this.maskClickListener = null;
+        const maskClickListener = this.maskClickListener();
+        if (maskClickListener) {
+            maskClickListener();
+            this.maskClickListener.set(null);
         }
     }
 
     moveOnTop() {
-        if (this.autoZIndex) {
-            ZIndexUtils.set('modal', this.container(), this.baseZIndex + this.config.zIndex.modal);
-            (this.wrapper as HTMLElement).style.zIndex = String(parseInt((this.container() as HTMLDivElement).style.zIndex, 10) - 1);
+        if (this.autoZIndex()) {
+            ZIndexUtils.set('modal', this.container(), this.baseZIndex() + this.config.zIndex.modal);
+            (this.wrapper() as HTMLElement).style.zIndex = String(parseInt((this.container() as HTMLDivElement).style.zIndex, 10) - 1);
         } else {
-            this.zIndexForLayering = ZIndexUtils.generateZIndex('modal', (this.baseZIndex ?? 0) + this.config.zIndex.modal);
+            this.zIndexForLayering.set(ZIndexUtils.generateZIndex('modal', (this.baseZIndex() ?? 0) + this.config.zIndex.modal));
         }
     }
 
     createStyle() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.styleElement && !this.$unstyled()) {
-                this.styleElement = this.renderer.createElement('style');
-                this.styleElement.type = 'text/css';
-                setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
-                this.renderer.appendChild(this.document.head, this.styleElement);
+            if (!this.styleElement() && !this.$unstyled()) {
+                const styleElement = this.renderer.createElement('style');
+                this.styleElement.set(styleElement);
+                styleElement.type = 'text/css';
+                setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
+                this.renderer.appendChild(this.document.head, styleElement);
+                const breakpoints = this.breakpoints();
                 let innerHTML = '';
-                for (let breakpoint in this.breakpoints) {
+                for (let breakpoint in breakpoints) {
                     innerHTML += `
                         @media screen and (max-width: ${breakpoint}) {
                             .p-dialog[${this.id}]:not(.p-dialog-maximized) {
-                                width: ${this.breakpoints[breakpoint]} !important;
+                                width: ${breakpoints[breakpoint]} !important;
                             }
                         }
                     `;
                 }
 
-                this.renderer.setProperty(this.styleElement, 'innerHTML', innerHTML);
-                setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
+                this.renderer.setProperty(styleElement, 'innerHTML', innerHTML);
+                setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
             }
         }
     }
@@ -844,10 +772,10 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
             return;
         }
 
-        if (this.draggable) {
-            this.dragging = true;
-            this.lastPageX = event.pageX;
-            this.lastPageY = event.pageY;
+        if (this.draggable()) {
+            this.dragging.set(true);
+            this.lastPageX.set(event.pageX);
+            this.lastPageY.set(event.pageY);
 
             (this.container() as HTMLDivElement).style.margin = '0';
             this.document.body.setAttribute('data-p-unselectable-text', 'true');
@@ -856,11 +784,11 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     onDrag(event: MouseEvent) {
-        if (this.dragging && this.container()) {
+        if (this.dragging() && this.container()) {
             const containerWidth = getOuterWidth(this.container() as HTMLDivElement);
             const containerHeight = getOuterHeight(this.container() as HTMLDivElement);
-            const deltaX = event.pageX - (this.lastPageX as number);
-            const deltaY = event.pageY - (this.lastPageY as number);
+            const deltaX = event.pageX - (this.lastPageX() as number);
+            const deltaY = event.pageY - (this.lastPageY() as number);
             const offset = this.container()!.getBoundingClientRect();
 
             const containerComputedStyle = getComputedStyle(this.container() as HTMLDivElement);
@@ -874,22 +802,22 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
 
             this.container()!.style.position = 'fixed';
 
-            if (this.keepInViewport) {
-                if (leftPos >= this.minX && leftPos + containerWidth < viewport.width) {
-                    this._style.left = `${leftPos}px`;
-                    this.lastPageX = event.pageX;
+            if (this.keepInViewport()) {
+                if (leftPos >= this.minX() && leftPos + containerWidth < viewport.width) {
+                    this._style().left = `${leftPos}px`;
+                    this.lastPageX.set(event.pageX);
                     this.container()!.style.left = `${leftPos}px`;
                 }
 
-                if (topPos >= this.minY && topPos + containerHeight < viewport.height) {
-                    this._style.top = `${topPos}px`;
-                    this.lastPageY = event.pageY;
+                if (topPos >= this.minY() && topPos + containerHeight < viewport.height) {
+                    this._style().top = `${topPos}px`;
+                    this.lastPageY.set(event.pageY);
                     this.container()!.style.top = `${topPos}px`;
                 }
             } else {
-                this.lastPageX = event.pageX;
+                this.lastPageX.set(event.pageX);
                 this.container()!.style.left = `${leftPos}px`;
-                this.lastPageY = event.pageY;
+                this.lastPageY.set(event.pageY);
                 this.container()!.style.top = `${topPos}px`;
             }
 
@@ -898,11 +826,10 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     endDrag(event: DragEvent) {
-        if (this.dragging) {
-            this.dragging = false;
+        if (this.dragging()) {
+            this.dragging.set(false);
             this.document.body.removeAttribute('data-p-unselectable-text');
             !this.$unstyled() && (this.document.body.style['user-select'] = '');
-            this.cd.detectChanges();
             this.onDragEnd.emit(event);
         }
     }
@@ -920,10 +847,10 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     initResize(event: MouseEvent) {
-        if (this.resizable) {
-            this.resizing = true;
-            this.lastPageX = event.pageX;
-            this.lastPageY = event.pageY;
+        if (this.resizable()) {
+            this.resizing.set(true);
+            this.lastPageX.set(event.pageX);
+            this.lastPageY.set(event.pageY);
 
             this.document.body.setAttribute('data-p-unselectable-text', 'true');
             !this.$unstyled() && addStyle(this.document.body, { 'user-select': 'none' });
@@ -932,9 +859,9 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     onResize(event: MouseEvent) {
-        if (this.resizing) {
-            let deltaX = event.pageX - (this.lastPageX as number);
-            let deltaY = event.pageY - (this.lastPageY as number);
+        if (this.resizing()) {
+            let deltaX = event.pageX - (this.lastPageX() as number);
+            let deltaY = event.pageY - (this.lastPageY() as number);
             let containerWidth = getOuterWidth(this.container() as HTMLDivElement);
             let containerHeight = getOuterHeight(this.container() as HTMLDivElement);
             const contentViewChild = this.contentViewChild();
@@ -946,6 +873,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
             let offset = (this.container() as HTMLDivElement).getBoundingClientRect();
             let viewport = getViewport();
             let hasBeenDragged = !parseInt((this.container() as HTMLDivElement).style.top) || !parseInt((this.container() as HTMLDivElement).style.left);
+            const style = this._style();
 
             if (hasBeenDragged) {
                 newWidth += deltaX;
@@ -953,27 +881,27 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
             }
 
             if ((!minWidth || newWidth > parseInt(minWidth)) && offset.left + newWidth < viewport.width) {
-                this._style.width = newWidth + 'px';
-                (this.container() as HTMLDivElement).style.width = this._style.width;
+                style.width = newWidth + 'px';
+                (this.container() as HTMLDivElement).style.width = style.width;
             }
 
             if ((!minHeight || newHeight > parseInt(minHeight)) && offset.top + newHeight < viewport.height) {
                 (<ElementRef>contentViewChild).nativeElement.style.height = contentHeight + newHeight - containerHeight + 'px';
 
-                if (this._style.height) {
-                    this._style.height = newHeight + 'px';
-                    (this.container() as HTMLDivElement).style.height = this._style.height;
+                if (style.height) {
+                    style.height = newHeight + 'px';
+                    (this.container() as HTMLDivElement).style.height = style.height;
                 }
             }
 
-            this.lastPageX = event.pageX;
-            this.lastPageY = event.pageY;
+            this.lastPageX.set(event.pageX);
+            this.lastPageY.set(event.pageY);
         }
     }
 
     resizeEnd(event: MouseEvent) {
-        if (this.resizing) {
-            this.resizing = false;
+        if (this.resizing()) {
+            this.resizing.set(false);
             this.document.body.removeAttribute('data-p-unselectable-text');
             !this.$unstyled() && (this.document.body.style['user-select'] = '');
             this.onResizeEnd.emit(event);
@@ -981,16 +909,16 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     bindGlobalListeners() {
-        if (this.draggable) {
+        if (this.draggable()) {
             this.bindDocumentDragListener();
             this.bindDocumentDragEndListener();
         }
 
-        if (this.resizable) {
+        if (this.resizable()) {
             this.bindDocumentResizeListeners();
         }
 
-        if (this.closeOnEscape && this.closable) {
+        if (this.closeOnEscape() && this.closable()) {
             this.bindDocumentEscapeListener();
         }
     }
@@ -1003,105 +931,112 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     bindDocumentDragListener() {
-        if (!this.documentDragListener) {
+        if (!this.documentDragListener()) {
             this.zone.runOutsideAngular(() => {
-                this.documentDragListener = this.renderer.listen(this.document.defaultView, 'mousemove', this.onDrag.bind(this));
+                this.documentDragListener.set(this.renderer.listen(this.document.defaultView, 'mousemove', this.onDrag.bind(this)));
             });
         }
     }
 
     unbindDocumentDragListener() {
-        if (this.documentDragListener) {
-            this.documentDragListener();
-            this.documentDragListener = null;
+        const documentDragListener = this.documentDragListener();
+        if (documentDragListener) {
+            documentDragListener();
+            this.documentDragListener.set(null);
         }
     }
 
     bindDocumentDragEndListener() {
-        if (!this.documentDragEndListener) {
+        if (!this.documentDragEndListener()) {
             this.zone.runOutsideAngular(() => {
-                this.documentDragEndListener = this.renderer.listen(this.document.defaultView, 'mouseup', this.endDrag.bind(this));
+                this.documentDragEndListener.set(this.renderer.listen(this.document.defaultView, 'mouseup', this.endDrag.bind(this)));
             });
         }
     }
 
     unbindDocumentDragEndListener() {
-        if (this.documentDragEndListener) {
-            this.documentDragEndListener();
-            this.documentDragEndListener = null;
+        const documentDragEndListener = this.documentDragEndListener();
+        if (documentDragEndListener) {
+            documentDragEndListener();
+            this.documentDragEndListener.set(null);
         }
     }
 
     bindDocumentResizeListeners() {
-        if (!this.documentResizeListener && !this.documentResizeEndListener) {
+        if (!this.documentResizeListener() && !this.documentResizeEndListener()) {
             this.zone.runOutsideAngular(() => {
-                this.documentResizeListener = this.renderer.listen(this.document.defaultView, 'mousemove', this.onResize.bind(this));
-                this.documentResizeEndListener = this.renderer.listen(this.document.defaultView, 'mouseup', this.resizeEnd.bind(this));
+                this.documentResizeListener.set(this.renderer.listen(this.document.defaultView, 'mousemove', this.onResize.bind(this)));
+                this.documentResizeEndListener.set(this.renderer.listen(this.document.defaultView, 'mouseup', this.resizeEnd.bind(this)));
             });
         }
     }
 
     unbindDocumentResizeListeners() {
-        if (this.documentResizeListener && this.documentResizeEndListener) {
-            this.documentResizeListener();
-            this.documentResizeEndListener();
-            this.documentResizeListener = null;
-            this.documentResizeEndListener = null;
+        const documentResizeListener = this.documentResizeListener();
+        const documentResizeEndListener = this.documentResizeEndListener();
+        if (documentResizeListener && documentResizeEndListener) {
+            documentResizeListener();
+            documentResizeEndListener();
+            this.documentResizeListener.set(null);
+            this.documentResizeEndListener.set(null);
         }
     }
 
     bindDocumentEscapeListener() {
         const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : 'document';
 
-        this.documentEscapeListener = this.renderer.listen(documentTarget, 'keydown', (event) => {
-            if (event.key == 'Escape') {
-                const container = this.container();
-                if (!container) {
-                    return;
+        this.documentEscapeListener.set(
+            this.renderer.listen(documentTarget, 'keydown', (event) => {
+                if (event.key == 'Escape') {
+                    const container = this.container();
+                    if (!container) {
+                        return;
+                    }
+                    const currentZIndex = ZIndexUtils.getCurrent();
+                    if (parseInt(container.style.zIndex) == currentZIndex || this.zIndexForLayering() == currentZIndex) {
+                        this.close(event);
+                    }
                 }
-                const currentZIndex = ZIndexUtils.getCurrent();
-                if (parseInt(container.style.zIndex) == currentZIndex || this.zIndexForLayering == currentZIndex) {
-                    this.close(event);
-                }
-            }
-        });
+            })
+        );
     }
 
     unbindDocumentEscapeListener() {
-        if (this.documentEscapeListener) {
-            this.documentEscapeListener();
-            this.documentEscapeListener = null;
+        const documentEscapeListener = this.documentEscapeListener();
+        if (documentEscapeListener) {
+            documentEscapeListener();
+            this.documentEscapeListener.set(null);
         }
     }
 
     appendContainer() {
         if (this.$appendTo() !== 'self') {
-            appendChild(this.document.body, this.wrapper as HTMLElement);
+            appendChild(this.document.body, this.wrapper() as HTMLElement);
         }
     }
 
     restoreAppend() {
         if (this.container() && this.$appendTo() !== 'self') {
-            this.renderer.appendChild(this.el.nativeElement, this.wrapper);
+            this.renderer.appendChild(this.el.nativeElement, this.wrapper());
         }
     }
 
     onBeforeEnter(event: MotionEvent) {
         this.container.set(event.element as HTMLDivElement);
-        this.wrapper = this.container()?.parentElement;
+        this.wrapper.set(this.container()?.parentElement);
         this.$attrSelector && this.container()?.setAttribute(this.$attrSelector, '');
         this.appendContainer();
         this.moveOnTop();
         this.bindGlobalListeners();
         this.container()?.setAttribute(this.id, '');
 
-        if (this.modal) {
+        if (this.modal()) {
             this.enableModality();
         }
     }
 
     onAfterEnter() {
-        if (this.focusOnShow) {
+        if (this.focusOnShow()) {
             this.focus();
         }
 
@@ -1109,8 +1044,8 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
     }
 
     onBeforeLeave() {
-        if (this.modal) {
-            this.maskVisible = false;
+        if (this.modal()) {
+            this.maskVisible.set(false);
         }
     }
 
@@ -1118,14 +1053,13 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
         this.onContainerDestroy();
         this.renderDialog.set(false);
 
-        if (this.modal) {
+        if (this.modal()) {
             this.renderMask.set(false);
         } else {
-            this.maskVisible = false;
+            this.maskVisible.set(false);
         }
 
         this.onHide.emit({});
-        this.cd.markForCheck();
     }
 
     onMaskAfterLeave() {
@@ -1136,15 +1070,15 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
 
     onContainerDestroy() {
         this.unbindGlobalListeners();
-        this.dragging = false;
+        this.dragging.set(false);
 
-        if (this.maximized) {
+        if (this.maximized()) {
             removeClass(this.document.body, 'p-overflow-hidden');
             this.document.body.style.removeProperty('--scrollbar-width');
-            this.maximized = false;
+            this.maximized.set(false);
         }
 
-        if (this.modal) {
+        if (this.modal()) {
             this.disableModality();
         }
 
@@ -1152,23 +1086,26 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
             removeClass(this.document.body, 'p-overflow-hidden');
         }
 
-        if (this.container() && this.autoZIndex) {
+        if (this.container() && this.autoZIndex()) {
             ZIndexUtils.clear(this.container());
         }
-        if (this.zIndexForLayering) {
-            ZIndexUtils.revertZIndex(this.zIndexForLayering);
+        const zIndexForLayering = this.zIndexForLayering();
+        if (zIndexForLayering) {
+            ZIndexUtils.revertZIndex(zIndexForLayering);
         }
 
         this.container.set(null);
-        this.wrapper = null;
+        this.wrapper.set(null);
 
-        this._style = this.originalStyle ? { ...this.originalStyle } : {};
+        const originalStyle = this.originalStyle();
+        this._style.set(originalStyle ? { ...originalStyle } : {});
     }
 
     destroyStyle() {
-        if (this.styleElement) {
-            this.renderer.removeChild(this.document.head, this.styleElement);
-            this.styleElement = null;
+        const styleElement = this.styleElement();
+        if (styleElement) {
+            this.renderer.removeChild(this.document.head, styleElement);
+            this.styleElement.set(null);
         }
     }
 
@@ -1181,12 +1118,12 @@ export class Dialog extends BaseComponent<DialogPassThrough> implements OnInit, 
         this.destroyStyle();
     }
 
-    get dataP() {
-        return this.cn({
-            maximized: this.maximized,
-            modal: this.modal
-        });
-    }
+    dataP = computed(() =>
+        this.cn({
+            maximized: this.maximized(),
+            modal: this.modal()
+        })
+    );
 }
 
 @NgModule({

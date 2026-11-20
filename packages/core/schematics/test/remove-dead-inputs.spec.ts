@@ -78,6 +78,18 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-confirmpopup key="delete" [motionOptions]="motion"></p-confirmpopup>\n<p-confirmpopup defaultFocus="reject"></p-confirmpopup>\n`);
     });
 
+    it('removes the deprecated transitionOptions and the dead rtl from p-dialog while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-dialog header="Edit" [(visible)]="visible" transitionOptions="150ms cubic-bezier(0, 0, 0.2, 1)" [motionOptions]="motion" [rtl]="true"></p-dialog>\n<p-dialog [transitionOptions]="transition" rtl [modal]="true"></p-dialog>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('transitionOptions');
+        expect(html).not.toContain('rtl');
+        expect(html).toBe(`<p-dialog header="Edit" [(visible)]="visible" [motionOptions]="motion"></p-dialog>\n<p-dialog [modal]="true"></p-dialog>\n`);
+    });
+
     it('removes the deprecated transitionOptions from p-drawer while keeping motionOptions and ariaCloseLabel', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
@@ -186,9 +198,9 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-panel [(collapsed)]="collapsed"></p-panel>\n`);
     });
 
-    it('does not remove transitionOptions from p-dialog', async () => {
+    it('does not remove transitionOptions from p-stepper', async () => {
         const runner = createMigrationRunner();
-        const content = `<p-dialog transitionOptions="200ms ease-in"></p-dialog>\n`;
+        const content = `<p-stepper transitionOptions="200ms ease-in"></p-stepper>\n`;
         const tree = createAppTree({ '/src/app/app.html': content });
         const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(content);

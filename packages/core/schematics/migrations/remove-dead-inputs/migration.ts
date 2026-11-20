@@ -64,6 +64,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `inputLabel`/`emptyMessage` on CascadeSelect were never read: the hidden input is labelled by `ariaLabel`/`ariaLabelledBy`, and the only consumer of `emptyMessage` was an `emptyMessageText` getter nothing rendered.
  * The deprecated `showTransitionOptions`/`hideTransitionOptions` on DatePicker were stored but never read:
  * its overlay animation is driven by `motionOptions`.
+ * The deprecated `transitionOptions` on Dialog only delayed the focus of the first focusable element, which
+ * already runs once the enter animation driven by `motionOptions` is over, and `rtl` on Dialog was stored
+ * but never read.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -116,7 +119,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-cascade-select', names: ['inputLabel', 'emptyMessage'] },
     { selector: 'p-datePicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-datepicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-date-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] }
+    { selector: 'p-date-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-dialog', names: ['transitionOptions', 'rtl'] }
 ];
 
 /**
@@ -173,8 +177,8 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * queryMatches, never read (MegaMenu handles both itself); Galleria's deprecated
  * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; FileUpload's
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
- * inputLabel and emptyMessage, never read; and DatePicker's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation).
+ * inputLabel and emptyMessage, never read; DatePicker's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); and Dialog's deprecated transitionOptions and never-read rtl.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.
