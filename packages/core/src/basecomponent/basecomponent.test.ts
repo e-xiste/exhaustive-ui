@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { Button } from '@exhaustive-ui/core/button';
 import { TableModule } from '@exhaustive-ui/core/table';
+import Aura from '@exhaustive-ui/themes/aura';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,5 +37,36 @@ describe('BaseComponent global PassThrough', () => {
         expect(container.style.border).toBe('3px solid red');
         expect(table.hasAttribute('tablecontainer')).toBe(false);
         expect(table.getAttribute('data-test')).toBe('table');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Button],
+    template: `<p-button label="Save" [dt]="dt" />`
+})
+class TestScopedTokensComponent {
+    dt = {
+        root: { borderRadius: '2px' },
+        css: () => '.optimus-ui-633 { border-width: 3px; }'
+    };
+}
+
+describe('BaseComponent scoped design tokens', () => {
+    const hasRule = () => Array.from(document.head.querySelectorAll('style')).some((style) => style.textContent?.includes('.optimus-ui-633'));
+
+    it('loads the css function of a component-level dt (optimus-ui#633)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestScopedTokensComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestScopedTokensComponent);
+        await fixture.whenStable();
+
+        expect(hasRule()).toBe(true);
+
+        fixture.destroy();
+
+        expect(hasRule()).toBe(false);
     });
 });

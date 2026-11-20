@@ -41,6 +41,8 @@ export class BaseComponent<PT = any> implements Lifecycle {
 
     public scopedStyleEl: any;
 
+    private scopedCustomStyleEl: any;
+
     public parent = this.$params.parent;
 
     protected readonly cn = cn;
@@ -389,14 +391,18 @@ export class BaseComponent<PT = any> implements Lifecycle {
     }
 
     private _loadScopedThemeStyles(preset) {
-        const { css } = this.$style?.getPresetTheme?.(preset, `[${this.$attrSelector}]`) || {};
+        const { css, style } = this.$style?.getPresetTheme?.(preset, `[${this.$attrSelector}]`) || {};
         const scopedStyle = this.$style?.load(css, { name: `${this.$attrSelector}-${this.$style?.name}`, ...this.$styleOptions });
+        const name = `${this.$attrSelector}-${this.$style?.name}-style`;
+        const scopedCustomStyle = this.$style?.load(style, { name, ...this.$styleOptions }, (computedStyle = '') => Theme.transformCSS(name, computedStyle));
 
         this.scopedStyleEl = scopedStyle?.el;
+        this.scopedCustomStyleEl = scopedCustomStyle?.el;
     }
 
     private _unloadScopedThemeStyles() {
         this.scopedStyleEl?.remove();
+        this.scopedCustomStyleEl?.remove();
     }
 
     private _themeChangeListener(id: string, callback = () => {}) {
