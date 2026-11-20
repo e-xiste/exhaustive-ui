@@ -4639,3 +4639,63 @@ describe('TreeTable checkboxes', () => {
         expect(headerInput.getAttribute('aria-labelledby')).toBe('name-header');
     });
 });
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule, FormsModule],
+    template: `
+        <p-treetable [value]="nodes" selectionMode="single" [(selection)]="selection">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+                    <td>{{ rowData.name }}</td>
+                    <td><input type="text" [(ngModel)]="rowData.name" /></td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableKeyboardHostComponent {
+    // rows without a toggler button, like the unfrozen part of a row when frozen columns are used
+    nodes: TreeNode[] = [
+        { key: '0', data: { name: 'Root' }, children: [{ key: '0-0', data: { name: 'Child' } }] },
+        { key: '1', data: { name: 'Other' } }
+    ];
+    selection: any;
+}
+
+describe('TreeTable row keyboard', () => {
+    let fixture: ComponentFixture<TreeTableKeyboardHostComponent>;
+
+    const render = async () => {
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+    const rows = () => fixture.debugElement.queryAll(By.css('tr[role="row"]')).map((row) => row.nativeElement as HTMLTableRowElement);
+    const keydown = (target: HTMLElement, code: string) => {
+        const event = new KeyboardEvent('keydown', { code, key: code === 'Space' ? ' ' : code, bubbles: true, cancelable: true });
+        target.dispatchEvent(event);
+        return event;
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableKeyboardHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        fixture = TestBed.createComponent(TreeTableKeyboardHostComponent);
+        await render();
+    });
+
+    it('should expand a row without a toggler button with ArrowRight', async () => {
+        const node = fixture.componentInstance.nodes[0];
+
+        expect(() => keydown(rows()[0], 'ArrowRight')).not.toThrow();
+        await render();
+
+        expect(node.expanded).toBe(true);
+    });
+});

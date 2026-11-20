@@ -3888,7 +3888,8 @@ export class TTRow extends BaseComponent {
 
     onArrowRightKey(event: KeyboardEvent) {
         const currentTarget = <HTMLElement>event.currentTarget;
-        const isHiddenIcon = (findSingle(currentTarget, 'button') as any).style.visibility === 'hidden';
+        // a row may have no toggler, e.g. the unfrozen part of a row when frozen columns are used
+        const isHiddenIcon = (findSingle(currentTarget, 'button') as any)?.style.visibility === 'hidden';
 
         if (!isHiddenIcon && !this.expanded && this.rowNode().node['children']) {
             this.expand(event);
