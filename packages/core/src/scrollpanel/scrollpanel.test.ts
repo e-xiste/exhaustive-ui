@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 import { ScrollPanel } from './scrollpanel';
 
 @Component({
@@ -1047,5 +1049,48 @@ describe('ScrollPanel', () => {
             expect(hostEl.nativeElement.className).toContain('SET_INPUT_CLASS');
             expect(barY.nativeElement.className).toContain('BARY_SET_INPUT');
         });
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ScrollPanel],
+    template: `
+        <p-scrollpanel style="width: 200px; height: 100px;">
+            <div style="width: 400px; height: 400px;">Content</div>
+        </p-scrollpanel>
+    `
+})
+class TestThemedScrollPanelComponent {}
+
+describe('ScrollPanel themed focus', () => {
+    let noTransition: HTMLStyleElement;
+
+    beforeEach(() => {
+        noTransition = document.createElement('style');
+        noTransition.textContent = '.p-scrollpanel-bar { transition: none !important; }';
+        document.head.appendChild(noTransition);
+    });
+
+    afterEach(() => {
+        noTransition.remove();
+    });
+
+    it('shows a focused bar with a visible focus ring (optimus-ui#9)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedScrollPanelComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedScrollPanelComponent);
+        await fixture.whenStable();
+
+        const barY = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y')).nativeElement as HTMLElement;
+        barY.focus();
+
+        expect(barY.matches(':focus-visible')).toBe(true);
+        const style = getComputedStyle(barY);
+        expect(style.opacity).toBe('1');
+        expect(style.outlineStyle).toBe('solid');
+        expect(parseFloat(style.outlineWidth)).toBeGreaterThan(0);
     });
 });

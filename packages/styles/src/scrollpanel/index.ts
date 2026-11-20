@@ -38,9 +38,10 @@ export const style = /*css*/ `
     }
 
     .p-scrollpanel-bar:focus-visible {
+        opacity: 1;
         box-shadow: dt('scrollpanel.bar.focus.ring.shadow');
-        outline: dt('scrollpanel.barfocus.ring.width') dt('scrollpanel.bar.focus.ring.style') dt('scrollpanel.bar.focus.ring.color');
-        outline-offset: dt('scrollpanel.barfocus.ring.offset');
+        outline: dt('scrollpanel.bar.focus.ring.width') dt('scrollpanel.bar.focus.ring.style') dt('scrollpanel.bar.focus.ring.color');
+        outline-offset: dt('scrollpanel.bar.focus.ring.offset');
     }
 
     .p-scrollpanel-bar-y {
