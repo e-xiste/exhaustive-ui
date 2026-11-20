@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 import { InputText } from './inputtext';
 
 @Component({
@@ -596,5 +598,42 @@ describe('InputText', () => {
                 expect(inputEl.classList.contains('custom-input')).toBe(true);
             });
         });
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [InputText, ReactiveFormsModule],
+    template: `
+        <input id="auto" pInputText [formControl]="auto" />
+        <input id="bound" pInputText [formControl]="bound" [invalid]="bound.invalid && bound.touched" />
+        <input id="valid" pInputText />
+    `
+})
+class InputTextInvalidBindingHostComponent {
+    auto = new FormControl('', Validators.required);
+    bound = new FormControl('', Validators.required);
+}
+
+describe('InputText invalid input over ng-invalid (optimus-ui#372)', () => {
+    it('should let a bound [invalid] decide the invalid style of a dirty invalid control', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [InputTextInvalidBindingHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(InputTextInvalidBindingHostComponent);
+        fixture.componentInstance.auto.markAsDirty();
+        fixture.componentInstance.bound.markAsDirty();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        const borderColor = (id: string) => getComputedStyle(host.querySelector(`#${id}`)!).borderTopColor;
+        expect(host.querySelector('#bound')!.classList.contains('ng-invalid')).toBe(true);
+        // without [invalid] the ng-invalid.ng-dirty fallback still applies
+        expect(borderColor('auto')).not.toBe(borderColor('valid'));
+        // with [invalid] bound to false, the control is not shown as invalid
+        expect(borderColor('bound')).toBe(borderColor('valid'));
     });
 });

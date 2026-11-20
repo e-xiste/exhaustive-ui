@@ -15,7 +15,8 @@ import { InputTextStyle } from './style/inputtextstyle';
     selector: '[pInputText]',
     host: {
         '[class]': "cx('root')",
-        '[attr.data-p]': 'dataP()'
+        '[attr.data-p]': 'dataP()',
+        '[attr.data-p-invalid]': 'invalid()'
     },
     providers: [InputTextStyle, { provide: PARENT_INSTANCE, useExisting: InputText }],
     hostDirectives: [Bind]

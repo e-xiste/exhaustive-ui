@@ -5,12 +5,12 @@ import { BaseStyle } from '@exhaustive-ui/core/base';
 const style = /*css*/ `
     ${inputtext_style}
 
-    /* For Exhaustive */
-   .p-inputtext.ng-invalid.ng-dirty {
+    /* For Exhaustive: the ng-invalid fallback applies only while [invalid] is not bound */
+    .p-inputtext.ng-invalid.ng-dirty:not([data-p-invalid]) {
         border-color: dt('inputtext.invalid.border.color');
     }
 
-    .p-inputtext.ng-invalid.ng-dirty::placeholder {
+    .p-inputtext.ng-invalid.ng-dirty:not([data-p-invalid])::placeholder {
         color: dt('inputtext.invalid.placeholder.color');
     }
 `;
