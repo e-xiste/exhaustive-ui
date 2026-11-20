@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, input, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, input, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -4718,5 +4718,42 @@ describe('Scroller scrollToIndex', () => {
 
         scroller.scrollToIndex(20);
         expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 1000, behavior: 'auto' });
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="50" scrollHeight="200px">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestShrinkingItemsScrollerComponent {
+    items = signal(Array.from({ length: 1000 }, (_, i) => `Item ${i}`));
+}
+
+describe('Scroller with shrinking items', () => {
+    it('renders the new items after a narrower list replaces a scrolled one (optimus-ui#47)', async () => {
+        TestBed.configureTestingModule({ imports: [TestShrinkingItemsScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestShrinkingItemsScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        scroller.first.set(600);
+        scroller.calculateOptions();
+        await fixture.whenStable();
+        expect(scroller.loadedItems()[0]).toBe('Item 600');
+
+        fixture.componentInstance.items.set(['Item 6666', 'Item 6667']);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        await fixture.whenStable();
+
+        expect(scroller.loadedItems()).toEqual(['Item 6666', 'Item 6667']);
     });
 });

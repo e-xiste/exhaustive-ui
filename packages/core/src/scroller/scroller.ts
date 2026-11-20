@@ -484,6 +484,15 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                         (previousLayout.itemsLength !== layout.itemsLength || previousLayout.itemSize !== layout.itemSize || previousLayout.scrollHeight !== layout.scrollHeight || previousLayout.scrollWidth !== layout.scrollWidth);
 
                     if (isChanged) {
+                        const first = this.both() ? this.first().rows : this.first();
+
+                        if (!this._lazy() && first > 0 && first >= (layout.itemsLength ?? 0)) {
+                            // The list shrank below the rendered range: go back to the start, otherwise nothing is rendered.
+                            this.first.set(this.both() ? { rows: 0, cols: 0 } : 0);
+                            this.lastScrollPos.set(this.both() ? { top: 0, left: 0 } : 0);
+                            this.scrollTo({ top: 0, left: 0 });
+                        }
+
                         this.init();
                     }
                 }
