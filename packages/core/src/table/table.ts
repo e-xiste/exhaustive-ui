@@ -2265,7 +2265,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
 
         this.onFilter.emit({
-            filters: <{ [s: string]: FilterMetadata | undefined }>this._filters(),
+            filters: this._filters(),
             filteredValue: this.filteredValue() || this._value()
         });
 

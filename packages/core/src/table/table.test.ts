@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { OverlayService, SharedModule, SortMeta } from '@exhaustive-ui/core/api';
+import { TableFilterEvent } from '@exhaustive-ui/core/types/table';
 import { Select } from '@exhaustive-ui/core/select';
 import { CellEditor, ColumnFilter, ColumnFilterFormElement, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
@@ -3514,5 +3515,23 @@ describe('Table FrozenColumn', () => {
         expect(left.classList).toContain('p-datatable-frozen-column-left');
         expect(right.classList).toContain('p-datatable-frozen-column');
         expect(right.classList).not.toContain('p-datatable-frozen-column-left');
+    });
+});
+
+describe('Table onFilter event', () => {
+    it('types the emitted filters as the table filters, rule arrays included (optimus-ui#56)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableModule], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(Table);
+        fixture.componentRef.setInput('value', [{ name: 'a' }, { name: 'b' }]);
+        fixture.componentRef.setInput('filters', { name: [{ value: 'a', matchMode: 'equals', operator: 'and' }] });
+        let event: TableFilterEvent | undefined;
+        fixture.componentInstance.onFilter.subscribe((e) => (event = e));
+
+        fixture.componentInstance._filter();
+
+        expect(event!.filters!['name']).toEqual([{ value: 'a', matchMode: 'equals', operator: 'and' }]);
+        const typed: TableFilterEvent = { filters: { name: [{ value: 'a' }] } };
+        expect(typed.filters).toBeDefined();
     });
 });

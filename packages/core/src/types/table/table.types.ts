@@ -278,7 +278,7 @@ export interface TableFilterEvent {
     /**
      * Filter meta.
      */
-    filters?: { [s: string]: FilterMetadata | undefined };
+    filters?: { [s: string]: FilterMetadata | FilterMetadata[] | undefined };
     /**
      * Value after filter.
      */
