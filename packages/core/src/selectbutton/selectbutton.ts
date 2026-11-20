@@ -31,6 +31,7 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
                 [ngModelOptions]="{ standalone: true }"
                 [onLabel]="this.getOptionLabel(option)"
                 [offLabel]="this.getOptionLabel(option)"
+                [ariaLabel]="this.getOptionLabel(option)"
                 [disabled]="$disabled() || isOptionDisabled(option)"
                 (onChange)="onOptionSelect($event, option, i)"
                 [allowEmpty]="getAllowEmpty()"

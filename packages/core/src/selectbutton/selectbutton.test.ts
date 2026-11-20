@@ -1420,3 +1420,23 @@ describe('SelectButton Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+describe('SelectButton accessibility (optimus-ui#11)', () => {
+    it('should set the option label as aria-label of each toggle button', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [SelectButton],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(SelectButton);
+        fixture.componentRef.setInput('options', [
+            { label: 'Option 1', value: 'opt1' },
+            { label: 'Option 2', value: 'opt2' }
+        ]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const buttons = fixture.debugElement.queryAll(By.directive(ToggleButton));
+        expect(buttons.map((b) => b.nativeElement.getAttribute('aria-label'))).toEqual(['Option 1', 'Option 2']);
+    });
+});
