@@ -172,6 +172,7 @@ export class MenuItemContent extends BaseComponent {
                 [pMotionDisabled]="!popup()"
                 [pMotionOptions]="computedMotionOptions()"
                 (pMotionOnBeforeEnter)="onOverlayBeforeEnter($event)"
+                (pMotionOnAfterEnter)="onOverlayAfterEnter()"
                 (pMotionOnAfterLeave)="onOverlayAfterLeave()"
             >
                 @if (startTemplate() ?? _startTemplate()) {
@@ -416,6 +417,8 @@ export class Menu extends BaseComponent<MenuPassThrough> {
 
     visible = signal<boolean | undefined>(undefined);
 
+    openedWithKeyboard = false;
+
     focusedOptionId = computed(() => {
         return this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : null;
     });
@@ -470,6 +473,8 @@ export class Menu extends BaseComponent<MenuPassThrough> {
         }
 
         this.target.set(event.currentTarget);
+        // a click fired from the keyboard (Enter/Space on the trigger) has no click count
+        this.openedWithKeyboard = event instanceof KeyboardEvent || (event instanceof MouseEvent && event.detail === 0);
         this.visible.set(true);
         this.preventDocumentDefault.set(true);
         this.overlayVisible.set(true);
@@ -553,6 +558,13 @@ export class Menu extends BaseComponent<MenuPassThrough> {
             absolutePosition(container, this.target());
             focus(this.listViewChild()?.nativeElement);
             this.onShow.emit({});
+        }
+    }
+
+    onOverlayAfterEnter() {
+        // move to the first item when the popup was opened from the keyboard (the items do not exist yet before enter)
+        if (this.openedWithKeyboard && this.focused() && this.focusedOptionIndex() === -1) {
+            this.changeFocusedOptionIndex(0);
         }
     }
 

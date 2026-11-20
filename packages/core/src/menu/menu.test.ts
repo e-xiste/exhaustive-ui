@@ -1183,6 +1183,30 @@ describe('Menu', () => {
             expect(popupMenuInstance.visible()).toBe(false);
         });
 
+        it('should focus the first item when the popup is opened from the keyboard', async () => {
+            const toggleButton = popupFixture.debugElement.query(By.css('.toggle-button'));
+            toggleButton.nativeElement.focus();
+            toggleButton.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }));
+            popupFixture.detectChanges();
+            await popupFixture.whenStable();
+            popupFixture.detectChanges();
+
+            const list = document.querySelector('ul[role="menu"]') as HTMLElement;
+            const firstItem = document.querySelector('li[data-pc-section="item"]') as HTMLElement;
+            await vi.waitFor(() => expect(list.getAttribute('aria-activedescendant')).toBe(firstItem.id));
+            expect(document.activeElement).toBe(list);
+        });
+
+        it('should not focus an item when the popup is opened with the mouse', async () => {
+            const toggleButton = popupFixture.debugElement.query(By.css('.toggle-button'));
+            toggleButton.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+            popupFixture.detectChanges();
+            await popupFixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
+            expect(popupMenuInstance.focusedOptionIndex()).toBe(-1);
+        });
+
         it('should show popup menu via button click', () => {
             const toggleButton = popupFixture.debugElement.query(By.css('.toggle-button'));
 
