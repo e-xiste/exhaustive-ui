@@ -196,7 +196,8 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
 
         if (event.inputType === 'deleteContentBackward') {
             this.moveToPrev(event);
-        } else if (event.inputType === 'insertText' || event.inputType === 'deleteContentForward') {
+        } else if (event.inputType === 'insertText' || event.inputType === 'insertCompositionText' || event.inputType === 'deleteContentForward') {
+            // Android soft keyboards type through the IME and report insertCompositionText instead of insertText.
             this.moveToNext(event);
         }
     }

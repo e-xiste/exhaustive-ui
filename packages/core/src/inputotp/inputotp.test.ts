@@ -1113,3 +1113,47 @@ describe('InputOtp Signal Query API', () => {
         });
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [InputOtp, FormsModule],
+    template: `<p-inputotp [(ngModel)]="value" [length]="4" [integerOnly]="integerOnly" />`
+})
+class TestSoftKeyboardInputOtpComponent {
+    value: any = null;
+    integerOnly = false;
+}
+
+describe('InputOtp soft keyboard input', () => {
+    let fixture: ComponentFixture<TestSoftKeyboardInputOtpComponent>;
+    let inputs: HTMLInputElement[];
+
+    const softType = async (input: HTMLInputElement, char: string, inputType: string) => {
+        input.focus();
+        input.value = char;
+        input.dispatchEvent(new InputEvent('input', { inputType, data: char, bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestSoftKeyboardInputOtpComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestSoftKeyboardInputOtpComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        inputs = fixture.debugElement.queryAll(By.css('input')).map((d) => d.nativeElement);
+    });
+
+    it('should move to the next box on Android IME composition input (optimus-ui#868, optimus-ui#12)', async () => {
+        await softType(inputs[0], 'A', 'insertCompositionText');
+        expect(document.activeElement).toBe(inputs[1]);
+
+        await softType(inputs[1], 'B', 'insertCompositionText');
+        expect(document.activeElement).toBe(inputs[2]);
+        expect(fixture.componentInstance.value).toBe('AB');
+    });
+});
