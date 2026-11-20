@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { ToggleButton } from '@exhaustive-ui/core/togglebutton';
+import { Fluid } from '@exhaustive-ui/core/fluid';
 import { SelectButton, SelectButtonModule } from './selectbutton';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -1497,5 +1498,40 @@ describe('SelectButton duplicate labels (optimus-ui#301)', () => {
         error.mockRestore();
         expect(messages.filter((message) => message.includes('NG0955'))).toEqual([]);
         expect((fixture.nativeElement as HTMLElement).querySelectorAll('p-togglebutton').length).toBe(4);
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [SelectButton, Fluid],
+    template: `
+        <p-fluid>
+            <p-selectbutton [options]="options" />
+            <p-selectbutton [options]="options" [fluid]="false" />
+        </p-fluid>
+    `
+})
+class SelectButtonInFluidHostComponent {
+    options = [
+        { label: 'One', value: 1 },
+        { label: 'Two', value: 2 }
+    ];
+}
+
+describe('SelectButton inside p-fluid (optimus-ui#364, optimus-ui#505)', () => {
+    it('should span the container when wrapped in p-fluid unless fluid is false', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SelectButtonInFluidHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(SelectButtonInFluidHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const [fluid, notFluid] = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('p-selectbutton')) as HTMLElement[];
+        expect(fluid.classList.contains('p-selectbutton-fluid')).toBe(true);
+        expect(fluid.querySelector('p-togglebutton')!.classList.contains('p-togglebutton-fluid')).toBe(true);
+        expect(notFluid.classList.contains('p-selectbutton-fluid')).toBe(false);
     });
 });

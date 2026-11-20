@@ -17,7 +17,7 @@ const classes = {
         'p-selectbutton p-component',
         {
             'p-invalid': instance.invalid(),
-            'p-selectbutton-fluid': instance.fluid()
+            'p-selectbutton-fluid': instance.hasFluid()
         }
     ]
 };

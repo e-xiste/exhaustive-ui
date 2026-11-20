@@ -6,6 +6,7 @@ import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
+import { Fluid } from '@exhaustive-ui/core/fluid';
 import { ToggleButton } from '@exhaustive-ui/core/togglebutton';
 import { SelectButtonChangeEvent, SelectButtonItemTemplateContext, SelectButtonOptionClickEvent, SelectButtonPassThrough } from '@exhaustive-ui/core/types/selectbutton';
 import { SelectButtonStyle } from './style/selectbuttonstyle';
@@ -36,7 +37,7 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
                 (onChange)="onOptionSelect($event, option, i)"
                 [allowEmpty]="getAllowEmpty()"
                 [size]="size()"
-                [fluid]="fluid()"
+                [fluid]="hasFluid()"
                 [pt]="ptm('pcToggleButton')"
                 [unstyled]="unstyled()"
             >
@@ -133,6 +134,10 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> {
      * @group Props
      */
     fluid = input(undefined, { transform: booleanAttribute });
+
+    pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
+
+    readonly hasFluid = computed(() => this.fluid() ?? !!this.pcFluid);
     /**
      * Callback to invoke on input click.
      * @param {SelectButtonOptionClickEvent} event - Custom click event.
