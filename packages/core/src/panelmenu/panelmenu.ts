@@ -552,8 +552,8 @@ export class PanelMenuList extends BaseComponent {
     onItemToggle(event) {
         const { processedItem, expanded } = event;
 
-        // Update the original item object's 'expanded' property
-        if (processedItem.item) {
+        // Update the original item object's 'expanded' property, unless the model is immutable (frozen)
+        if (processedItem.item && !Object.isFrozen(processedItem.item)) {
             processedItem.item.expanded = expanded;
         }
 
@@ -1010,6 +1010,11 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
 
     activeItem = signal<any>(null);
 
+    /**
+     * Expanded state of the frozen (immutable) model items, which cannot be written to.
+     */
+    frozenItemsExpanded = signal<Map<MenuItem, boolean>>(new Map());
+
     _componentStyle = inject(PanelMenuStyle);
 
     bindDirectiveInstance = inject(Bind, { self: true });
@@ -1037,8 +1042,8 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
      */
     collapseAll() {
         for (let item of this.model()!) {
-            if (item.expanded) {
-                item.expanded = false;
+            if (this.isItemActive(item)) {
+                this.setItemExpanded(item, false);
             }
         }
 
@@ -1061,7 +1066,17 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
     }
 
     isItemActive(item) {
-        return item.expanded;
+        const frozenItemsExpanded = this.frozenItemsExpanded();
+
+        return frozenItemsExpanded.has(item) ? frozenItemsExpanded.get(item) : item.expanded;
+    }
+
+    setItemExpanded(item, expanded: boolean) {
+        if (Object.isFrozen(item)) {
+            this.frozenItemsExpanded.update((frozenItemsExpanded) => new Map(frozenItemsExpanded).set(item, expanded));
+        } else {
+            item.expanded = expanded;
+        }
     }
 
     isItemVisible(item) {
@@ -1138,13 +1153,13 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
 
         if (!this.multiple()) {
             for (let modelItem of this.model()!) {
-                if (item !== modelItem && modelItem.expanded) {
-                    modelItem.expanded = false;
+                if (item !== modelItem && this.isItemActive(modelItem)) {
+                    this.setItemExpanded(modelItem, false);
                 }
             }
         }
 
-        item.expanded = !item.expanded;
+        this.setItemExpanded(item, !this.isItemActive(item));
         this.changeActiveItem(event, item, index);
         focus(event.currentTarget as HTMLElement);
     }

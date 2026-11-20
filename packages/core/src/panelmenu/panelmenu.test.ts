@@ -478,6 +478,52 @@ describe('PanelMenu', () => {
         });
     });
 
+    describe('Immutable model', () => {
+        const deepFreeze = (items: MenuItem[]): MenuItem[] => {
+            items.forEach((item) => {
+                item.items && deepFreeze(item.items);
+                Object.freeze(item);
+            });
+            return Object.freeze(items) as MenuItem[];
+        };
+
+        it('should expand and collapse headers and sub items of a frozen model without writing to it', async () => {
+            component.model = deepFreeze([
+                { label: 'Files', items: [{ label: 'Documents', items: [{ label: 'Invoice' }] }] },
+                { label: 'Cloud', items: [{ label: 'Upload' }] }
+            ]);
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const headers = () => panelMenuElement.querySelectorAll('.p-panelmenu-header') as NodeListOf<HTMLElement>;
+            const headerContent = (i: number) => headers()[i].querySelector('.p-panelmenu-header-content') as HTMLElement;
+
+            headerContent(0).click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            expect(headers()[0].getAttribute('aria-expanded')).toBe('true');
+
+            const documents = panelMenuElement.querySelector('li[aria-label="Documents"] .p-panelmenu-item-content') as HTMLElement;
+            documents.click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            expect(panelMenuElement.querySelector('li[aria-label="Documents"]')!.getAttribute('aria-expanded')).toBe('true');
+
+            headerContent(1).click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            expect(headers()[0].getAttribute('aria-expanded')).toBe('false');
+            expect(headers()[1].getAttribute('aria-expanded')).toBe('true');
+
+            panelMenuInstance.collapseAll();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            expect(headers()[1].getAttribute('aria-expanded')).toBe('false');
+            expect(component.model![1].expanded).toBeUndefined();
+        });
+    });
+
     describe('Sub item badge', () => {
         it('should render the badge of a sub item', async () => {
             component.model = [{ label: 'Root', expanded: true, items: [{ label: 'Inbox', badge: '5', badgeStyleClass: 'inbox-badge' }] }];
