@@ -556,6 +556,21 @@ describe('Paginator', () => {
             expect(showAllItem?.value).toBe(100);
         });
 
+        it('should keep the showAll option selected when totalRecords shrinks (optimus-ui#703)', async () => {
+            component.rowsPerPageOptions = [10, 20, { showAll: 'All' } as any];
+            component.rows = 100;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            // filtering the data shrinks totalRecords while "All" stays selected
+            component.totalRecords = 10;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const selected = paginator.rowsPerPageItems()?.find((item) => item.value === paginator._rows());
+            expect(selected?.label).toBe('All');
+        });
+
         it('should handle rapid page changes', async () => {
             let emitCount = 0;
             paginator.onPageChange.subscribe(() => emitCount++);

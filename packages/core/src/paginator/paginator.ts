@@ -419,10 +419,13 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
 
         const rowsPerPageItems: SelectItem[] = [];
         let showAllItem: SelectItem | null = null;
+        const rows = this._rows();
+        // rows picked through "All" exceed totalRecords once it shrinks (e.g. after filtering): keep "All" selected
+        const showAllValue = rows > this.totalRecords() && !rowsPerPageOptions.includes(rows) ? rows : this.totalRecords();
 
         for (let opt of rowsPerPageOptions) {
             if (typeof opt == 'object' && opt['showAll']) {
-                showAllItem = { label: opt['showAll'], value: this.totalRecords() };
+                showAllItem = { label: opt['showAll'], value: showAllValue };
             } else {
                 rowsPerPageItems.push({ label: String(this.getLocalization(opt)), value: opt });
             }
