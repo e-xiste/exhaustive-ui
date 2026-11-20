@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { IconField } from './iconfield';
 import { InputIcon } from '@exhaustive-ui/core/inputicon';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import Aura from '@exhaustive-ui/themes/aura';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 @Component({
@@ -389,3 +391,34 @@ class TestInlineStringPTComponent {}
     `
 })
 class TestMultipleInstancesComponent {}
+
+@Component({
+    standalone: true,
+    imports: [IconField, InputIcon, InputText],
+    template: `
+        <p-iconfield iconPosition="right" style="width: 300px">
+            <p-inputicon class="pi pi-spinner" />
+            <input type="text" pInputText style="width: 100%" />
+        </p-iconfield>
+    `
+})
+class IconFieldRightHostComponent {}
+
+describe('IconField iconPosition right (optimus-ui#867)', () => {
+    it('should place the icon at the inline end of the input, wherever it is declared', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [IconFieldRightHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(IconFieldRightHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        const input = host.querySelector('input')!.getBoundingClientRect();
+        const icon = host.querySelector('p-inputicon')!.getBoundingClientRect();
+        expect(icon.left).toBeGreaterThan(input.left + input.width / 2);
+        expect(parseFloat(getComputedStyle(host.querySelector('input')!).paddingRight)).toBeGreaterThan(parseFloat(getComputedStyle(host.querySelector('input')!).paddingLeft));
+    });
+});
