@@ -5052,3 +5052,26 @@ describe('Select medium bug fixes', () => {
         expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Select],
+    template: `<p-select [options]="options" [loading]="true" loadingIcon="pi pi-refresh" />`
+})
+class TestSelectCustomLoadingIconComponent {
+    options = [];
+}
+
+describe('Select custom loadingIcon', () => {
+    it('separates pi-spin from the custom loadingIcon classes (found during triage)', async () => {
+        TestBed.configureTestingModule({ imports: [TestSelectCustomLoadingIconComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestSelectCustomLoadingIconComponent);
+        await fixture.whenStable();
+
+        const icon = fixture.nativeElement.querySelector('.p-select-loading-icon') as HTMLElement;
+
+        expect(icon.classList).toContain('pi-spin');
+        expect(icon.classList).toContain('pi');
+        expect(icon.classList).toContain('pi-refresh');
+    });
+});

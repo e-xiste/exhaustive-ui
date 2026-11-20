@@ -273,7 +273,7 @@ export class SelectItem extends BaseComponent {
                 }
                 @if (!loadingIconTemplate() && !_loadingIconTemplate()) {
                     @if (loadingIcon()) {
-                        <span [class]="cn(cx('loadingIcon'), 'pi-spin' + loadingIcon())" [pBind]="ptm('loadingIcon')" aria-hidden="true"></span>
+                        <span [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon())" [pBind]="ptm('loadingIcon')" aria-hidden="true"></span>
                     }
                     @if (!loadingIcon()) {
                         <span [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [pBind]="ptm('loadingIcon')" aria-hidden="true"></span>
