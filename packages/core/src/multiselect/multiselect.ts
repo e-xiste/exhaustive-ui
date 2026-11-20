@@ -2009,7 +2009,9 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             if (this.virtualScroll()) {
                 const selectedIndex = this.modelValue() ? this.focusedOptionIndex() : -1;
                 if (selectedIndex !== -1) {
-                    this.scroller()?.scrollToIndex(selectedIndex);
+                    setTimeout(() => {
+                        this.scroller()?.scrollToIndex(selectedIndex);
+                    }, 10);
                 }
             } else {
                 let selectedListItem = findSingle(this.itemsWrapper(), '[data-pc-section="option"][data-p-selected="true"]');

@@ -4769,4 +4769,22 @@ describe('MultiSelect low bug fixes', () => {
         multiSelect.onFilterKeyDown(new KeyboardEvent('keydown', { code: 'Enter' }));
         expect(multiSelect.modelValue()).toEqual(['PRS']);
     });
+
+    it('scrolls the selected option into view when the virtual scroller opens (optimus-ui#22)', async () => {
+        const many = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
+        fixture.componentRef.setInput('options', many);
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 40);
+        fixture.componentRef.setInput('scrollHeight', '200px');
+        multiSelect.writeValue([999]);
+        fixture.detectChanges();
+
+        multiSelect.show();
+        await waitForOverlay();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        fixture.detectChanges();
+
+        const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
+        expect(viewport.scrollTop).toBeGreaterThan(0);
+    });
 });
