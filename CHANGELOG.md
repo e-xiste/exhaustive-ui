@@ -87,7 +87,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
-## Unreleased
+## 22.0.0-alpha.9 (2026-11-20)
 
 ### Fixes
 
