@@ -65,7 +65,9 @@ export const TOGGLEBUTTON_VALUE_ACCESSOR: any = {
             } @else {
                 <ng-container *ngTemplateOutlet="iconTemplate() || _iconTemplate(); context: { $implicit: checked() }"></ng-container>
             }
-            <span [class]="cx('label')" [pBind]="ptm('label')">{{ checked() ? (hasOnLabel() ? onLabel() : ' ') : hasOffLabel() ? offLabel() : ' ' }}</span>
+            @if (!isIconOnly()) {
+                <span [class]="cx('label')" [pBind]="ptm('label')">{{ checked() ? (hasOnLabel() ? onLabel() : ' ') : hasOffLabel() ? offLabel() : ' ' }}</span>
+            }
         }
     </span>`,
     providers: [TOGGLEBUTTON_VALUE_ACCESSOR, ToggleButtonStyle, { provide: PARENT_INSTANCE, useExisting: ToggleButton }],
@@ -212,6 +214,9 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
     readonly hasOffLabel = computed<boolean>(() => (this.offLabel() && this.offLabel().length > 0) as boolean);
 
     readonly active = computed(() => this.checked() === true);
+
+    // An icon without a label for the current state needs no nbsp placeholder: it would push the icon off-center.
+    readonly isIconOnly = computed<boolean>(() => !!(this.onIcon() || this.offIcon() || this.iconTemplate()) && !(this.checked() ? this.hasOnLabel() : this.hasOffLabel()));
 
     readonly _iconTemplate = computed<TemplateRef<ToggleButtonIconTemplateContext> | undefined>(
         () =>

@@ -838,6 +838,19 @@ describe('ToggleButton', () => {
             expect(labelElement.nativeElement.textContent.trim()).toBe('' as any);
         });
 
+        it('should not render an nbsp label for an icon-only button (optimus-ui#68)', async () => {
+            component.onLabel = '';
+            component.offLabel = '';
+            component.onIcon = 'pi pi-user';
+            component.offIcon = 'pi pi-user';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(fixture.debugElement.query(By.css('[data-pc-section="icon"]'))).toBeTruthy();
+            expect(fixture.debugElement.query(By.css('[data-pc-section="label"]'))).toBeNull();
+        });
+
         it('should handle allowEmpty false with initial true state', async () => {
             component.checked = true;
             component.allowEmpty = false;
