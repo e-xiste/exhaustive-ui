@@ -103,7 +103,8 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
 
     onInit() {
         if (this.ngControl) {
-            (this.ngControl as any).valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+            // Signal Forms provide an NgControl without valueChanges; typed values still reach updateState through the input event, and autoResize runs after each view check.
+            (this.ngControl as any).valueChanges?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
                 this.updateState();
             });
         }

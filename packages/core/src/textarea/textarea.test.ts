@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Directive, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { provideExhaustive } from '@exhaustive-ui/core/config';
@@ -737,6 +737,36 @@ describe('Textarea', () => {
                 fixture.destroy();
                 expect(hookCalled).toBe(true);
             });
+        });
+    });
+
+    describe('NgControl without valueChanges (#203)', () => {
+        // Stands in for the NgControl that Angular Signal Forms provide: no FormControl, so no valueChanges.
+        @Directive({ selector: '[fakeSignalControl]', standalone: true, providers: [{ provide: NgControl, useExisting: FakeSignalControl }] })
+        class FakeSignalControl extends NgControl {
+            constructor() {
+                super();
+            }
+            override get control() {
+                return null as any;
+            }
+            override viewToModelUpdate() {}
+        }
+
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            standalone: true,
+            imports: [Textarea, FakeSignalControl],
+            template: `<textarea pTextarea fakeSignalControl [autoResize]="true"></textarea>`
+        })
+        class TestSignalControlTextareaComponent {}
+
+        it('starts without throwing', async () => {
+            await TestBed.configureTestingModule({ imports: [TestSignalControlTextareaComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+            const fixture = TestBed.createComponent(TestSignalControlTextareaComponent);
+
+            expect(() => fixture.detectChanges()).not.toThrow();
+            expect(fixture.nativeElement.querySelector('textarea')).toBeTruthy();
         });
     });
 });
