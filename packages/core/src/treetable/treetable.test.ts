@@ -4567,3 +4567,60 @@ describe('TreeTable Signal Query API', () => {
         expect(scrollableView.scroller()).toBeUndefined();
     });
 });
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" selectionMode="checkbox" dataKey="key" [selectionKeys]="selectionKeys()" (selectionKeysChange)="selectionKeys.set($event)">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td>
+                        <p-treetable-checkbox [value]="rowNode" />
+                        {{ rowData.name }}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableCheckboxHostComponent {
+    nodes: TreeNode[] = [
+        { key: '0', data: { name: 'Root' }, expanded: true, children: [{ key: '0-0', data: { name: 'Child' } }] },
+        { key: '1', data: { name: 'Other' } }
+    ];
+    selectionKeys = signal<any>({});
+}
+
+describe('TreeTable checkboxes', () => {
+    let fixture: ComponentFixture<TreeTableCheckboxHostComponent>;
+
+    const render = async () => {
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+    const checkboxInputs = () => fixture.debugElement.queryAll(By.css('p-treetable-checkbox input[type="checkbox"]')).map((input) => input.nativeElement as HTMLInputElement);
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableCheckboxHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        fixture = TestBed.createComponent(TreeTableCheckboxHostComponent);
+        await render();
+    });
+
+    it('should reflect selectionKeys assigned after the first render', async () => {
+        expect(checkboxInputs().map((input) => input.checked)).toEqual([false, false, false]);
+
+        // e.g. keys loaded asynchronously from a backend
+        fixture.componentInstance.selectionKeys.set({ '1': { checked: true, partialChecked: false } });
+        await render();
+
+        expect(checkboxInputs().map((input) => input.checked)).toEqual([false, false, true]);
+    });
+});

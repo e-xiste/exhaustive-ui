@@ -1105,6 +1105,8 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 }
 
                 this.selectionKeysChange.emit(selectionKeys);
+                // checkboxes refresh on selection changes only: notify them of keys assigned from outside (e.g. loaded asynchronously)
+                this.tableService.onSelectionChange();
             });
         });
     }
