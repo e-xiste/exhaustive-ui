@@ -1802,7 +1802,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     formatDateKey(date: Date): string {
-        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     }
 
     setCurrentHourPM(hours: number) {

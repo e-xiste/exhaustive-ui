@@ -2767,6 +2767,14 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(picker.value()).toEqual(new Date(1995, 11, 17, 3, 25, 0));
     });
 
+    it('uses a 1-based month in the data-date attribute (optimus-ui#215)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2025, 10, 6));
+        await render();
+
+        expect(dayCell(6).getAttribute('data-date')).toBe('2025-11-6');
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;
