@@ -1107,6 +1107,20 @@ describe('PanelMenu', () => {
     });
 
     describe('Edge Cases and Error Handling', () => {
+        it('should not open an empty content area when a root item without children is clicked (optimus-ui#183)', async () => {
+            component.model = [{ label: 'Shipments' }, { label: 'Files', items: [{ label: 'Item' }] }];
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const header = panelMenuElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+            header.click();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            const container = panelMenuElement.querySelector('[data-pc-section="contentcontainer"]') as HTMLElement;
+            expect(container.getBoundingClientRect().height).toBe(0);
+        });
+
         it('should handle empty model gracefully', () => {
             const emptyFixture = TestBed.createComponent(TestEmptyPanelMenuComponent);
             emptyFixture.detectChanges();

@@ -1159,7 +1159,9 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
             }
         }
 
-        this.setItemExpanded(item, !this.isItemActive(item));
+        if (this.isItemGroup(item)) {
+            this.setItemExpanded(item, !this.isItemActive(item));
+        }
         this.changeActiveItem(event, item, index);
         focus(event.currentTarget as HTMLElement);
     }
