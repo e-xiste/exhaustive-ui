@@ -378,13 +378,18 @@ describe('ToggleSwitch', () => {
 
             if (input) {
                 expect(input.nativeElement.getAttribute('role')).toBe('switch');
-                expect(input.nativeElement.getAttribute('aria-checked')).toBe('false');
+                expect(input.nativeElement.checked).toBe(false);
             } else {
                 expect(testComponent.checked).toBe(false);
             }
         });
 
-        it('should update aria-checked when state changes', () => {
+        it('should not set aria-checked on the native checkbox (optimus-ui#351)', () => {
+            const input = testFixture.debugElement.query(By.css('input'));
+            expect(input.nativeElement.hasAttribute('aria-checked')).toBe(false);
+        });
+
+        it('should update the checked state when state changes', () => {
             const toggleSwitchComponent = testFixture.debugElement.query(By.css('p-toggleswitch')).componentInstance;
 
             // Set checked state through the component's model
@@ -393,7 +398,7 @@ describe('ToggleSwitch', () => {
 
             const input = testFixture.debugElement.query(By.css('input'));
             if (input) {
-                expect(input.nativeElement.getAttribute('aria-checked')).toBe('true');
+                expect(input.nativeElement.checked).toBe(true);
             } else {
                 expect(toggleSwitchComponent.checked()).toBe(true);
             }
