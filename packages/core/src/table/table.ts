@@ -6383,7 +6383,7 @@ export class ColumnFilter extends BaseComponent {
     get hasFilter(): boolean {
         let fieldFilter = this.dataTable._filters()[<string>this.field()];
         if (fieldFilter) {
-            if (Array.isArray(fieldFilter)) return !this.dataTable.isFilterBlank((<FilterMetadata[]>fieldFilter)[0].value);
+            if (Array.isArray(fieldFilter)) return (<FilterMetadata[]>fieldFilter).some((meta) => !this.dataTable.isFilterBlank(meta.value));
             else return !this.dataTable.isFilterBlank(fieldFilter.value);
         }
 

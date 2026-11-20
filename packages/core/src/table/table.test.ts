@@ -3693,4 +3693,12 @@ describe('Table column filter menu', () => {
         expect(clearButton.textContent).toContain('Clear');
         expect(clearButton.classList).not.toContain('p-button-outlined');
     });
+
+    it('reports a filter when a rule other than the first has a value (optimus-ui#467)', () => {
+        columnFilter.addConstraint();
+        columnFilter.fieldConstraints![1].value = 'A';
+
+        expect(columnFilter.fieldConstraints![0].value).toBeNull();
+        expect(columnFilter.hasFilter).toBe(true);
+    });
 });
