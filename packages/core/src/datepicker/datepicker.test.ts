@@ -2775,6 +2775,23 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(dayCell(6).getAttribute('data-date')).toBe('2025-11-6');
     });
 
+    it('renders the icon input with iconDisplay input (optimus-ui#456)', async () => {
+        fixture.componentRef.setInput('showIcon', true);
+        fixture.componentRef.setInput('iconDisplay', 'input');
+        fixture.componentRef.setInput('icon', 'pi pi-clock');
+        await render();
+        const container = el.querySelector('.p-datepicker-input-icon-container')!;
+        const icon = container.querySelector<HTMLElement>('.pi-clock');
+
+        expect(icon).toBeTruthy();
+        expect(icon!.classList).toContain('p-datepicker-input-icon');
+        expect(container.querySelector('svg')).toBeNull();
+
+        icon!.click();
+        await render();
+        expect(picker.overlayVisible()).toBe(true);
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;

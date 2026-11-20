@@ -153,7 +153,11 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
             @if (iconDisplay() === 'input' && showIcon()) {
                 <span [class]="cx('inputIconContainer')" [pBind]="ptm('inputIconContainer')" [attr.data-p]="inputIconDataP">
                     @if (!inputIconTemplate() && !_inputIconTemplate()) {
-                        <svg data-p-icon="calendar" (click)="onButtonClick($event)" [class]="cx('inputIcon')" [pBind]="ptm('inputIcon')" />
+                        @if (icon()) {
+                            <span (click)="onButtonClick($event)" [class]="cn(cx('inputIcon'), icon())" [pBind]="ptm('inputIcon')"></span>
+                        } @else {
+                            <svg data-p-icon="calendar" (click)="onButtonClick($event)" [class]="cx('inputIcon')" [pBind]="ptm('inputIcon')" />
+                        }
                     }
 
                     <ng-container *ngTemplateOutlet="inputIconTemplate() || _inputIconTemplate(); context: { clickCallBack: onButtonClick.bind(this) }"></ng-container>
