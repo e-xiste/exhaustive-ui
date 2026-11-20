@@ -62,6 +62,9 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
                 } else if (this._blocked()) {
                     // Only unblock if currently blocked
                     this.unblock();
+                } else if (!this.animationEndListener()) {
+                    // Keep the mask and its content hidden until the first block
+                    this.renderer.setStyle(this.el.nativeElement, 'display', 'none');
                 }
             });
         });

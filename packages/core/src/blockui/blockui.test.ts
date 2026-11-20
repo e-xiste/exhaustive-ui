@@ -1122,3 +1122,33 @@ describe('BlockUI Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [BlockUI],
+    template: `
+        <p-blockui [blocked]="blocked">
+            <ng-template #content><span class="initial-content">Loading</span></ng-template>
+        </p-blockui>
+    `
+})
+class BlockUIInitiallyUnblockedHostComponent {
+    blocked = false;
+}
+
+describe('BlockUI initial unblocked state', () => {
+    it('should hide the mask and its content on first render when blocked is false', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [BlockUIInitiallyUnblockedHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(BlockUIInitiallyUnblockedHostComponent);
+        await fixture.whenStable();
+
+        const element: HTMLElement = fixture.debugElement.query(By.directive(BlockUI)).nativeElement;
+        expect(element.style.display).toBe('none');
+        expect((element.querySelector('.initial-content') as HTMLElement).getClientRects().length).toBe(0);
+    });
+});
