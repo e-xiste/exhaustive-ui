@@ -237,13 +237,13 @@ export class MeterGroup extends BaseComponent<MeterGroupPassThrough> {
 
     _componentStyle = inject(MeterGroupStyle);
 
-    percent(meter = 0) {
+    percent(meter = 0, round = true) {
         if (this.max() === this.min()) {
             return 100; // When min = max, any value should be 100%
         }
-        const percentOfItem = ((meter - this.min()) / (this.max() - this.min())) * 100;
+        const percentOfItem = Math.max(0, Math.min(100, ((meter - this.min()) / (this.max() - this.min())) * 100));
 
-        return Math.round(Math.max(0, Math.min(100, percentOfItem)));
+        return round ? Math.round(percentOfItem) : percentOfItem;
     }
 
     percentValue(meter: number) {
@@ -253,8 +253,8 @@ export class MeterGroup extends BaseComponent<MeterGroupPassThrough> {
     meterStyle(val: MeterItem) {
         return {
             backgroundColor: val.color,
-            width: this.orientation() === 'horizontal' && this.percentValue(val.value || 0),
-            height: this.orientation() === 'vertical' && this.percentValue(val.value || 0)
+            width: this.orientation() === 'horizontal' && this.percent(val.value || 0, false) + '%',
+            height: this.orientation() === 'vertical' && this.percent(val.value || 0, false) + '%'
         };
     }
 

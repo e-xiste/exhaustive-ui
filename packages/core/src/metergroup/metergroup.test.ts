@@ -302,6 +302,24 @@ describe('MeterGroup', () => {
             const percent = meterGroup.percent(150);
             expect(percent).toBe(100); // Should be clamped to 100
         });
+
+        it('should fill the whole meter when the values add up to max', async () => {
+            component.value = [
+                { label: 'A', value: 1, color: '#ff0000' },
+                { label: 'B', value: 1, color: '#00ff00' },
+                { label: 'C', value: 1, color: '#0000ff' }
+            ];
+            component.max = 3;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const meters = Array.from(element.querySelectorAll<HTMLElement>('.p-metergroup-meter'));
+            const total = meters.reduce((sum, meter) => sum + parseFloat(meter.style.width), 0);
+
+            expect(meters.length).toBe(3);
+            expect(total).toBeCloseTo(100, 2);
+        });
     });
 
     describe('Orientation and Label Position', () => {
