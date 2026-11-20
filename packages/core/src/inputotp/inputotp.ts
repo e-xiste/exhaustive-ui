@@ -311,17 +311,24 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
 
                 break;
 
-            default:
+            default: {
+                // Only printable characters are filtered: Tab, Enter, Escape, Delete and the other named keys keep
+                // their native behaviour, so focus can leave the field and Enter submits the form.
+                if (event.key.length !== 1) {
+                    break;
+                }
+
                 const target = event.target;
                 const hasSelection = target.selectionStart !== target.selectionEnd;
                 const isAtMaxLength = this.tokens().join('').length >= this.length();
                 const isValidKey = this.integerOnly() ? /^[0-9]$/.test(event.key) : true;
 
-                if (!isValidKey || (isAtMaxLength && event.key !== 'Delete' && !hasSelection)) {
+                if (!isValidKey || (isAtMaxLength && !hasSelection)) {
                     event.preventDefault();
                 }
 
                 break;
+            }
         }
     }
 

@@ -1062,4 +1062,54 @@ describe('InputOtp Signal Query API', () => {
         expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
         expect(templates[0].template).toBeDefined();
     });
+
+    describe('Native keys (#340)', () => {
+        let fixture: ComponentFixture<TestBasicInputOtpComponent>;
+
+        beforeEach(async () => {
+            await TestBed.configureTestingModule({
+                imports: [TestBasicInputOtpComponent],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+
+            fixture = TestBed.createComponent(TestBasicInputOtpComponent);
+            fixture.detectChanges();
+        });
+
+        const press = (input: HTMLInputElement, key: string) => {
+            const event = new KeyboardEvent('keydown', { key, cancelable: true, bubbles: true });
+            input.dispatchEvent(event);
+            return event;
+        };
+
+        it('lets Tab and Enter through, even with integerOnly or when every cell is filled', async () => {
+            const otp = fixture.debugElement.query(By.directive(InputOtp)).componentInstance as InputOtp;
+            otp.tokens.set(['1', '2', '3', '4']);
+            const input = fixture.debugElement.queryAll(By.css('input'))[0].nativeElement as HTMLInputElement;
+
+            expect(press(input, 'Tab').defaultPrevented).toBe(false);
+            expect(press(input, 'Enter').defaultPrevented).toBe(false);
+            expect(press(input, 'Escape').defaultPrevented).toBe(false);
+            // printable characters are still filtered once the code is complete
+            expect(press(input, '5').defaultPrevented).toBe(true);
+        });
+
+        it('lets Tab and Enter through with integerOnly', async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({
+                imports: [TestAdvancedInputOtpComponent],
+                providers: [provideZonelessChangeDetection()]
+            }).compileComponents();
+            const advanced = TestBed.createComponent(TestAdvancedInputOtpComponent);
+            advanced.componentInstance.integerOnly = true;
+            advanced.changeDetectorRef.markForCheck();
+            advanced.detectChanges();
+            await advanced.whenStable();
+            const input = advanced.debugElement.queryAll(By.css('input'))[0].nativeElement as HTMLInputElement;
+
+            expect(press(input, 'Tab').defaultPrevented).toBe(false);
+            expect(press(input, 'Enter').defaultPrevented).toBe(false);
+            expect(press(input, 'a').defaultPrevented).toBe(true);
+        });
+    });
 });
