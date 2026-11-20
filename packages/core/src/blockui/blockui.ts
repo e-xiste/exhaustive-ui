@@ -114,6 +114,9 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
 
     block() {
         if (isPlatformBrowser(this.platformId)) {
+            // Cancel a pending unblock so its animationend does not tear down this block
+            this.unbindAnimationEndListener();
+            this.renderer.removeClass(this.el.nativeElement, 'p-overlay-mask-leave-active');
             this._blocked.set(true);
             (this.el as ElementRef).nativeElement.style.display = 'flex';
 

@@ -1151,4 +1151,29 @@ describe('BlockUI initial unblocked state', () => {
         expect(element.style.display).toBe('none');
         expect((element.querySelector('.initial-content') as HTMLElement).getClientRects().length).toBe(0);
     });
+
+    it('should stay blocked when blocked again before the unblock animation ends', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [BlockUIInitiallyUnblockedHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(BlockUIInitiallyUnblockedHostComponent);
+        await fixture.whenStable();
+        const blockUI: BlockUI = fixture.debugElement.query(By.directive(BlockUI)).componentInstance;
+        const element: HTMLElement = fixture.debugElement.query(By.directive(BlockUI)).nativeElement;
+
+        blockUI.block();
+        blockUI.unblock();
+        blockUI.block();
+        element.dispatchEvent(new Event('animationend'));
+
+        expect(element.style.display).toBe('flex');
+        expect(element.classList.contains('p-overlay-mask')).toBe(true);
+        expect(element.classList.contains('p-overlay-mask-leave-active')).toBe(false);
+        expect(element.parentElement).toBe(document.body);
+
+        blockUI.unblock();
+        element.dispatchEvent(new Event('animationend'));
+    });
 });
