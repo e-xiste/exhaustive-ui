@@ -596,12 +596,12 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                     rows: calculateFirst(index[0], numToleratedItems[0]),
                     cols: calculateFirst(index[1], numToleratedItems[1])
                 };
-                scrollTo(calculateCoord(newFirst.cols, itemSize[1], contentPos.left), calculateCoord(newFirst.rows, itemSize[0], contentPos.top));
+                scrollTo(calculateCoord(index[1], itemSize[1], contentPos.left), calculateCoord(index[0], itemSize[0], contentPos.top));
                 isScrollChanged = this.lastScrollPos().top !== scrollTop || this.lastScrollPos().left !== scrollLeft;
                 isRangeChanged = newFirst.rows !== first.rows || newFirst.cols !== first.cols;
             } else {
                 newFirst = calculateFirst(index as number, numToleratedItems);
-                this.horizontal() ? scrollTo(calculateCoord(newFirst, itemSize, contentPos.left), scrollTop) : scrollTo(scrollLeft, calculateCoord(newFirst, itemSize, contentPos.top));
+                this.horizontal() ? scrollTo(calculateCoord(index, itemSize, contentPos.left), scrollTop) : scrollTo(scrollLeft, calculateCoord(index, itemSize, contentPos.top));
                 isScrollChanged = this.lastScrollPos() !== (this.horizontal() ? scrollLeft : scrollTop);
                 isRangeChanged = newFirst !== first;
             }

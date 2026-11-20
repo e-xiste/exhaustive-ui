@@ -4685,3 +4685,38 @@ describe('Scroller', () => {
         });
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items" [itemSize]="50" [numToleratedItems]="8" scrollHeight="200px">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestScrollToIndexScrollerComponent {
+    items = Array.from({ length: 1000 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller scrollToIndex', () => {
+    it('scrolls to a small index instead of the top (optimus-ui#318)', async () => {
+        TestBed.configureTestingModule({ imports: [TestScrollToIndexScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestScrollToIndexScrollerComponent);
+        await fixture.whenStable();
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        const scrollTo = vi.spyOn(scroller, 'scrollTo');
+
+        scroller.scrollToIndex(5);
+        expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 250, behavior: 'auto' });
+
+        scroller.scrollToIndex(8);
+        expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 400, behavior: 'auto' });
+
+        scroller.scrollToIndex(20);
+        expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 1000, behavior: 'auto' });
+    });
+});
