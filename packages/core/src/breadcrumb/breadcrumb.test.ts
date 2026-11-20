@@ -248,6 +248,23 @@ describe('Breadcrumb', () => {
             expect(freshBreadcrumb.homeAriaLabel()).toBeUndefined();
         });
 
+        it('should name the nav landmark with a default aria-label (optimus-ui#51)', () => {
+            const freshFixture = TestBed.createComponent(TestMinimalBreadcrumbComponent);
+            freshFixture.detectChanges();
+
+            const nav = freshFixture.nativeElement.querySelector('nav');
+            expect(nav.getAttribute('aria-label')).toBe('Breadcrumb');
+        });
+
+        it('should name the nav landmark with the ariaLabel input (optimus-ui#51)', () => {
+            const freshFixture = TestBed.createComponent(Breadcrumb);
+            freshFixture.componentRef.setInput('ariaLabel', 'Page path');
+            freshFixture.detectChanges();
+
+            const nav = freshFixture.nativeElement.querySelector('nav');
+            expect(nav.getAttribute('aria-label')).toBe('Page path');
+        });
+
         it('should accept custom values', async () => {
             const testModel: MenuItem[] = [{ label: 'Test', url: '/test' }];
             const testHome: MenuItem = { icon: 'pi pi-home', url: '/' };

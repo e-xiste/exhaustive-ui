@@ -18,7 +18,7 @@ import { BreadCrumbStyle } from './style/breadcrumbstyle';
     selector: 'p-breadcrumb',
     imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, TooltipModule, ChevronRightIcon, HomeIcon, SharedModule, Bind, Badge],
     template: `
-        <nav [pBind]="ptm('root')" [class]="cn(cx('root'), styleClass())" [style]="style()">
+        <nav [pBind]="ptm('root')" [class]="cn(cx('root'), styleClass())" [style]="style()" [attr.aria-label]="ariaLabel()">
             <ol [class]="cx('list')" [pBind]="ptm('list')">
                 @if (home() && home()?.visible !== false) {
                     <li [attr.id]="home().id" [class]="cn(cx('homeItem'), home().styleClass)" [ngStyle]="home().style" pTooltip [tooltipOptions]="home().tooltipOptions" [pBind]="ptm('homeItem')" [unstyled]="unstyled()">
@@ -242,6 +242,12 @@ export class Breadcrumb extends BaseComponent<BreadcrumbPassThrough> {
      * @group Props
      */
     readonly homeAriaLabel = input<string | undefined>();
+    /**
+     * Defines a string that labels the nav landmark for accessibility. Give each breadcrumb on a page a distinct label.
+     * @defaultValue 'Breadcrumb'
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>('Breadcrumb');
     /**
      * Fired when an item is selected.
      * @param {BreadcrumbItemClickEvent} event - custom click event.
