@@ -134,7 +134,7 @@ const classes = {
     mask: 'p-datatable-mask p-overlay-mask',
     loadingIcon: 'p-datatable-loading-icon',
     header: 'p-datatable-header',
-    pcPaginator: ({ instance }) => 'p-datatable-paginator-' + instance.paginatorPosition(),
+    pcPaginator: ({ position }) => 'p-datatable-paginator-' + position,
     tableContainer: 'p-datatable-table-container',
     table: ({ instance }) => [
         'p-datatable-table',

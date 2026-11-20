@@ -2532,4 +2532,21 @@ describe('Table medium-severity fixes', () => {
         expect(() => table.sortMultiple()).not.toThrow();
         expect(table._value().map((r: any) => r.name)).toEqual(['c', 'b', 'a']);
     });
+
+    it('applies the top and bottom paginator position classes (optimus-ui#515)', async () => {
+        fixture.componentRef.setInput('value', [{ name: 'a' }, { name: 'b' }]);
+        fixture.componentRef.setInput('paginator', true);
+        fixture.componentRef.setInput('rows', 1);
+        fixture.componentRef.setInput('paginatorPosition', 'both');
+        fixture.componentRef.setInput('paginatorStyleClass', 'custom-paginator');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const paginators = fixture.nativeElement.querySelectorAll('p-paginator');
+        expect(paginators.length).toBe(2);
+        expect(paginators[0].classList).toContain('p-datatable-paginator-top');
+        expect(paginators[0].classList).toContain('custom-paginator');
+        expect(paginators[1].classList).toContain('p-datatable-paginator-bottom');
+        expect(paginators[1].classList).toContain('custom-paginator');
+    });
 });
