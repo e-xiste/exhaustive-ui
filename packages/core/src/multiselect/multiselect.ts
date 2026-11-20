@@ -6,6 +6,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    effect,
     ElementRef,
     forwardRef,
     inject,
@@ -16,6 +17,7 @@ import {
     numberAttribute,
     signal,
     TemplateRef,
+    untracked,
     ViewEncapsulation,
     viewChild,
     contentChild,
@@ -1343,6 +1345,14 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         });
         afterEveryRender(() => {
             this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+        });
+        // the list can change size while the overlay is open: position it again once the new content is rendered
+        effect(() => {
+            this._options();
+            this.scrollHeight();
+            if (untracked(() => this._overlayVisible())) {
+                setTimeout(() => this.overlayViewChild()?.alignOverlay());
+            }
         });
     }
 

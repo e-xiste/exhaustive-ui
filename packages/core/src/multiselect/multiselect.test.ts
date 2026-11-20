@@ -4770,6 +4770,17 @@ describe('MultiSelect low bug fixes', () => {
         expect(multiSelect.modelValue()).toEqual(['PRS']);
     });
 
+    it('realigns the open overlay when the options change (optimus-ui#1841)', async () => {
+        multiSelect.show();
+        await waitForOverlay();
+        const alignSpy = vi.spyOn(multiSelect.overlayViewChild(), 'alignOverlay');
+
+        fixture.componentRef.setInput('options', [...cities, { label: 'Lyon', value: 'LY' }]);
+        await waitForOverlay();
+
+        expect(alignSpy).toHaveBeenCalled();
+    });
+
     it('scrolls the selected option into view when the virtual scroller opens (optimus-ui#22)', async () => {
         const many = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
         fixture.componentRef.setInput('options', many);
