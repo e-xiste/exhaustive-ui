@@ -2129,3 +2129,39 @@ describe('ConfirmPopup blockScroll', () => {
         expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmPopup],
+    template: `
+        <p-confirmpopup dir="rtl" />
+        <button class="rtl-target" (click)="confirm($event)">Open</button>
+    `
+})
+class ConfirmPopupRtlHostComponent {
+    confirmationService = inject_1(ConfirmationService);
+
+    confirm(event: Event) {
+        this.confirmationService.confirm({ target: event.currentTarget as EventTarget, message: 'Sure?' });
+    }
+}
+
+describe('ConfirmPopup direction', () => {
+    it('should keep the dir of p-confirmpopup once appended to the body (optimus-ui#648)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmPopupRtlHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmPopupRtlHostComponent);
+        await fixture.whenStable();
+
+        (fixture.nativeElement.querySelector('.rtl-target') as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const container = document.querySelector('.p-confirmpopup') as HTMLElement;
+        expect(container.parentElement).toBe(document.body);
+        expect(container.matches(':dir(rtl)')).toBe(true);
+    });
+});

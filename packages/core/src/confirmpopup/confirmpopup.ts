@@ -438,6 +438,12 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     appendOverlay() {
         if (this.$appendTo() && this.$appendTo() !== 'self') {
+            // Keep the text direction set on p-confirmpopup (or an ancestor) once moved out of it
+            const dir = (this.el.nativeElement as HTMLElement).closest('[dir]')?.getAttribute('dir');
+            if (dir) {
+                this.container()!.setAttribute('dir', dir);
+            }
+
             if (this.$appendTo() === 'body') {
                 appendChild(this.document.body, this.container()!);
             } else {
