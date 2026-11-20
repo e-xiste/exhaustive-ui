@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { InputGroup } from './inputgroup';
 import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Button } from '@exhaustive-ui/core/button';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 @Component({
@@ -447,6 +448,43 @@ describe('InputGroup PassThrough Tests', () => {
             hookFixture.destroy();
 
             expect(hooksCalled).toContain('onDestroy');
+        });
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [InputGroup, InputGroupAddon, Button],
+    template: `
+        <p-inputgroup>
+            <input type="text" style="height: 60px" />
+            <p-inputgroup-addon>
+                <p-button icon="pi pi-search" />
+            </p-inputgroup-addon>
+            <p-inputgroup-addon>
+                <p-button label="Search" />
+            </p-inputgroup-addon>
+        </p-inputgroup>
+    `
+})
+class InputGroupButtonAddonHostComponent {}
+
+describe('InputGroup button addon height (optimus-ui#298, optimus-ui#477, optimus-ui#685)', () => {
+    it('should stretch a button inside an addon to the full height of the group', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [InputGroupButtonAddonHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(InputGroupButtonAddonHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const addons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('p-inputgroup-addon')) as HTMLElement[];
+        addons.forEach((addon) => {
+            const button = addon.querySelector('button.p-button') as HTMLElement;
+            expect(addon.clientHeight).toBeGreaterThan(50);
+            expect(button.getBoundingClientRect().height).toBe(addon.clientHeight);
         });
     });
 });

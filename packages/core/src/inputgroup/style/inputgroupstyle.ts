@@ -36,6 +36,15 @@ const style = /*css*/ `
     .p-inputgroup > p-inputmask > .p-inputtext {
         width: 100%;
     }
+
+    /* A button in an addon fills the height of the group, whatever the input height of the preset */
+    .p-inputgroupaddon:has(.p-button) {
+        align-items: stretch;
+    }
+
+    .p-inputgroupaddon > p-button {
+        display: flex;
+    }
 `;
 
 const classes = {
