@@ -1313,15 +1313,11 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             if (isNotEmpty(this.maxSelectedLabels()) && modelValue?.length > (this.maxSelectedLabels() || 0)) {
                 return this.getSelectedItemsLabel();
             } else {
-                label = '';
-
-                for (let i = 0; i < modelValue.length; i++) {
-                    if (i !== 0) {
-                        label += ', ';
-                    }
-
-                    label += this.getLabelByValue(modelValue[i]);
-                }
+                // values without a matching option (unknown, or options not loaded yet) have no label to show
+                label = modelValue
+                    .map((value) => this.getLabelByValue(value))
+                    .filter((optionLabel) => optionLabel !== null && optionLabel !== undefined)
+                    .join(', ');
             }
         } else {
             label = this.placeholder() || '';

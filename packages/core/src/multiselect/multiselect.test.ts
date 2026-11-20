@@ -4640,4 +4640,18 @@ describe('MultiSelect medium bug fixes', () => {
             expect(scrollSpy).not.toHaveBeenCalled();
         });
     });
+
+    it('does not show "null" for values that have no option, nor before async options arrive (optimus-ui#824, optimus-ui#869)', () => {
+        fixture.componentRef.setInput('optionLabel', 'label');
+        fixture.componentRef.setInput('optionValue', 'value');
+        multiSelect.writeValue(['RM', 'PRS']);
+        fixture.detectChanges();
+
+        expect(multiSelect.label()).not.toContain('null');
+
+        fixture.componentRef.setInput('options', groups[0].items);
+        fixture.detectChanges();
+
+        expect(multiSelect.label()).toBe('Rome');
+    });
 });
