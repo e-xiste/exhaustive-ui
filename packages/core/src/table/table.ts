@@ -2529,7 +2529,19 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             });
         } else {
             if (this.rowExpandMode() === 'single') {
+                const expandedKeys = Object.keys(this._expandedRowKeys());
                 this._expandedRowKeys.set({});
+
+                for (const expandedKey of expandedKeys) {
+                    const collapsedRowData = (this._value() || []).find((data) => String(ObjectUtils.resolveFieldData(data, this.groupRowsBy() ? this.groupRowsBy() : this.dataKey())) === expandedKey);
+
+                    if (collapsedRowData) {
+                        this.onRowCollapse.emit({
+                            originalEvent: <Event>event,
+                            data: collapsedRowData
+                        });
+                    }
+                }
             }
 
             this._expandedRowKeys()[dataKeyValue] = true;

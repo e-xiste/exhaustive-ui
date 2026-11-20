@@ -2549,4 +2549,23 @@ describe('Table medium-severity fixes', () => {
         expect(paginators[1].classList).toContain('p-datatable-paginator-bottom');
         expect(paginators[1].classList).toContain('custom-paginator');
     });
+
+    it('emits onRowCollapse for the previously expanded row in single expand mode (optimus-ui#378)', () => {
+        const rows = [
+            { id: '1', name: 'A' },
+            { id: '2', name: 'B' }
+        ];
+        fixture.componentRef.setInput('value', rows);
+        fixture.componentRef.setInput('dataKey', 'id');
+        fixture.componentRef.setInput('rowExpandMode', 'single');
+        const collapseSpy = vi.spyOn(table.onRowCollapse, 'emit');
+
+        table.toggleRow(rows[0]);
+        table.toggleRow(rows[1]);
+
+        expect(collapseSpy).toHaveBeenCalledTimes(1);
+        expect(collapseSpy).toHaveBeenCalledWith(expect.objectContaining({ data: rows[0] }));
+        expect(table.isRowExpanded(rows[1])).toBe(true);
+        expect(table.isRowExpanded(rows[0])).toBe(false);
+    });
 });
