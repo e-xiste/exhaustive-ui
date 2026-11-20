@@ -644,6 +644,8 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     private zIndexForLayering = signal<number | undefined>(undefined);
 
+    private previouslyFocusedElement: HTMLElement | null = null;
+
     get maximizeLabel(): string {
         return this.config.getTranslation(TranslationKeys.ARIA)['maximizeLabel'];
     }
@@ -689,7 +691,14 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
             if (!focused) {
                 focused = this._focus(this.headerViewChild()?.nativeElement);
                 if (!focused) {
-                    this._focus(this.contentViewChild()?.nativeElement);
+                    // nothing focusable inside: focus the dialog itself so focus does not stay behind the mask
+                    const container = this.container();
+                    if (container) {
+                        container.setAttribute('tabindex', '-1');
+                        this.zone.runOutsideAngular(() => {
+                            setTimeout(() => container.focus(), 5);
+                        });
+                    }
                 }
             }
         }
@@ -1047,6 +1056,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
     }
 
     onBeforeEnter(event: MotionEvent) {
+        this.previouslyFocusedElement = this.document.activeElement as HTMLElement | null;
         this.container.set(event.element as HTMLDivElement);
         this.wrapper.set(this.container()?.parentElement);
         this.$attrSelector && this.container()?.setAttribute(this.$attrSelector, '');
@@ -1075,6 +1085,14 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
     }
 
     onAfterLeave() {
+        const container = this.container();
+        const previouslyFocusedElement = this.previouslyFocusedElement;
+        this.previouslyFocusedElement = null;
+        // return focus to the element that had it before the dialog opened, unless the app moved it elsewhere
+        if (previouslyFocusedElement?.isConnected && (!this.document.activeElement || this.document.activeElement === this.document.body || container?.contains(this.document.activeElement))) {
+            previouslyFocusedElement.focus();
+        }
+
         this.onContainerDestroy();
         this.renderDialog.set(false);
 

@@ -2131,3 +2131,48 @@ describe('Dialog appendTo', () => {
         expect(target.querySelector('.p-dialog')).toBeTruthy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog],
+    template: `
+        <button class="dialog-opener" (click)="visible.set(true)">Open</button>
+        <p-dialog [(visible)]="visible" [modal]="true" [closable]="false" header="Text only">Only text, nothing to focus</p-dialog>
+    `
+})
+class FocusDialogHostComponent {
+    visible = signal(false);
+}
+
+describe('Dialog focus management', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should move focus into a dialog without focusable content and return it to the opener on close', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [FocusDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(FocusDialogHostComponent);
+        await fixture.whenStable();
+
+        const opener = fixture.nativeElement.querySelector('.dialog-opener') as HTMLButtonElement;
+        opener.focus();
+        opener.click();
+        await fixture.whenStable();
+        await wait(600);
+
+        const dialogEl = document.querySelector('.p-dialog') as HTMLElement;
+        expect(dialogEl.contains(document.activeElement)).toBe(true);
+
+        fixture.componentInstance.visible.set(false);
+        await fixture.whenStable();
+        await wait(400);
+
+        expect(document.activeElement).toBe(opener);
+    });
+});
