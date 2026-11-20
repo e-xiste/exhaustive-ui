@@ -30,7 +30,9 @@
             "style": "./src/v4/index.css",
             "import": "./src/v3/index.ts",
             "require": "./src/v3/index.ts"
-        }
+        },
+        "./v4": "./src/v4/index.css",
+        "./v4/*": "./src/v4/*"
     },
     "publishConfig": {
         "main": "./v3/index.js",
@@ -43,7 +45,9 @@
                 "style": "./v4/index.css",
                 "import": "./v3/index.js",
                 "require": "./v3/index.cjs"
-            }
+            },
+            "./v4": "./v4/index.css",
+            "./v4/*": "./v4/*"
         },
         "directory": "dist",
         "linkDirectory": false,

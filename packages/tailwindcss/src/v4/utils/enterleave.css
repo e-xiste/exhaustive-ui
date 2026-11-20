@@ -18,56 +18,142 @@
 
 @utility fade-in-* {
     --p-enter-opacity: calc(--value(integer) * 0.01);
+    --p-enter-opacity: --value([*]);
 }
 
 @utility fade-out-* {
     --p-leave-opacity: calc(--value(integer) * 0.01);
+    --p-leave-opacity: --value([*]);
 }
 
 @utility zoom-in-* {
     --p-enter-scale: calc(--value(integer) * 0.01);
+    --p-enter-scale: --value([*]);
 }
 
 @utility zoom-out-* {
     --p-leave-scale: calc(--value(integer) * 0.01);
+    --p-leave-scale: --value([*]);
 }
 
 @utility spin-in-* {
-    --p-enter-rotate: --value(integer)deg;
+    --p-enter-rotate: calc(--value(integer) * 1deg);
+    --p-enter-rotate: --value([*]);
 }
 
 @utility spin-out-* {
-    --p-leave-rotate: --value(integer)deg;
+    --p-leave-rotate: calc(--value(integer) * 1deg);
+    --p-leave-rotate: --value([*]);
 }
 
 @utility slide-in-from-t-* {
-    --p-enter-translate-y: calc(var(--spacing) * --value(integer) * -1);
+    --p-enter-translate-y: calc(var(--spacing) * --value(number) * -1);
+    --p-enter-translate-y: calc(--value(ratio) * -100%);
+    --p-enter-translate-y: calc(--value([*]) * -1);
+}
+
+@utility slide-in-from-t-px {
+    --p-enter-translate-y: -1px;
+}
+
+@utility slide-in-from-t-full {
+    --p-enter-translate-y: -100%;
 }
 
 @utility slide-in-from-b-* {
-    --p-enter-translate-y: calc(var(--spacing) * --value(integer));
+    --p-enter-translate-y: calc(var(--spacing) * --value(number));
+    --p-enter-translate-y: calc(--value(ratio) * 100%);
+    --p-enter-translate-y: calc(--value([*]));
+}
+
+@utility slide-in-from-b-px {
+    --p-enter-translate-y: 1px;
+}
+
+@utility slide-in-from-b-full {
+    --p-enter-translate-y: 100%;
 }
 
 @utility slide-in-from-l-* {
-    --p-enter-translate-x: calc(var(--spacing) * --value(integer) * -1);
+    --p-enter-translate-x: calc(var(--spacing) * --value(number) * -1);
+    --p-enter-translate-x: calc(--value(ratio) * -100%);
+    --p-enter-translate-x: calc(--value([*]) * -1);
+}
+
+@utility slide-in-from-l-px {
+    --p-enter-translate-x: -1px;
+}
+
+@utility slide-in-from-l-full {
+    --p-enter-translate-x: -100%;
 }
 
 @utility slide-in-from-r-* {
-    --p-enter-translate-x: calc(var(--spacing) * --value(integer));
+    --p-enter-translate-x: calc(var(--spacing) * --value(number));
+    --p-enter-translate-x: calc(--value(ratio) * 100%);
+    --p-enter-translate-x: calc(--value([*]));
+}
+
+@utility slide-in-from-r-px {
+    --p-enter-translate-x: 1px;
+}
+
+@utility slide-in-from-r-full {
+    --p-enter-translate-x: 100%;
 }
 
 @utility slide-out-from-t-* {
-    --p-leave-translate-y: calc(var(--spacing) * --value(integer) * -1);
+    --p-leave-translate-y: calc(var(--spacing) * --value(number) * -1);
+    --p-leave-translate-y: calc(--value(ratio) * -100%);
+    --p-leave-translate-y: calc(--value([*]) * -1);
+}
+
+@utility slide-out-from-t-px {
+    --p-leave-translate-y: -1px;
+}
+
+@utility slide-out-from-t-full {
+    --p-leave-translate-y: -100%;
 }
 
 @utility slide-out-from-b-* {
-    --p-leave-translate-y: calc(var(--spacing) * --value(integer));
+    --p-leave-translate-y: calc(var(--spacing) * --value(number));
+    --p-leave-translate-y: calc(--value(ratio) * 100%);
+    --p-leave-translate-y: calc(--value([*]));
+}
+
+@utility slide-out-from-b-px {
+    --p-leave-translate-y: 1px;
+}
+
+@utility slide-out-from-b-full {
+    --p-leave-translate-y: 100%;
 }
 
 @utility slide-out-from-l-* {
-    --p-leave-translate-x: calc(var(--spacing) * --value(integer) * -1);
+    --p-leave-translate-x: calc(var(--spacing) * --value(number) * -1);
+    --p-leave-translate-x: calc(--value(ratio) * -100%);
+    --p-leave-translate-x: calc(--value([*]) * -1);
+}
+
+@utility slide-out-from-l-px {
+    --p-leave-translate-x: -1px;
+}
+
+@utility slide-out-from-l-full {
+    --p-leave-translate-x: -100%;
 }
 
 @utility slide-out-from-r-* {
-    --p-leave-translate-x: calc(var(--spacing) * --value(integer));
+    --p-leave-translate-x: calc(var(--spacing) * --value(number));
+    --p-leave-translate-x: calc(--value(ratio) * 100%);
+    --p-leave-translate-x: calc(--value([*]));
+}
+
+@utility slide-out-from-r-px {
+    --p-leave-translate-x: 1px;
+}
+
+@utility slide-out-from-r-full {
+    --p-leave-translate-x: 100%;
 }

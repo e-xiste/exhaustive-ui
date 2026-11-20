@@ -6,7 +6,7 @@
 
 Tailwind CSS utilities for [ExhaustiveUI](https://github.com/e-xiste/exhaustive-ui) — first-class integration between ExhaustiveUI theming and Tailwind CSS, plus the animation utilities missing from core Tailwind.
 
-This package ships two libraries: a CSS package compatible with Tailwind CSS v4, and a JS plugin for Tailwind CSS v3.
+This package ships two libraries: a CSS package for Tailwind CSS v4 (recommended) and a JS plugin for Tailwind CSS v3. Both provide the same utilities.
 
 ## Installation
 
@@ -21,6 +21,14 @@ In the CSS file that contains the `tailwindcss` import, add the import for this 
 ```css
 @import 'tailwindcss';
 @import '@exhaustive-ui/tailwindcss';
+```
+
+The stylesheet is also exported as `@exhaustive-ui/tailwindcss/v4` (and `@exhaustive-ui/tailwindcss/v4/index.css`) for tools that do not read the `style` export condition.
+
+To align the `dark:` variant with the `darkModeSelector` of the theme, declare a custom variant:
+
+```css
+@custom-variant dark (&:where(.my-app-dark, .my-app-dark *));
 ```
 
 ## Tailwind CSS v3
@@ -40,6 +48,6 @@ export default {
 
 - Semantic color utilities backed by the ExhaustiveUI theme (e.g. `bg-primary`, `text-surface-500`, `text-muted-color`) that work in both styled and unstyled modes.
 - Animation utilities: `animate-*` keyframes, duration, delay, direction, fill-mode, iteration, play-state, timing-function, and enter/leave helpers.
-- Variants such as `p-dark` for dark-mode styling of ExhaustiveUI components.
+- Tailwind v4 variants for component states, such as `p-invalid:`, `p-disabled:` or `p-checked:`, for styling unstyled components through pass-through.
 
-See the [ExhaustiveUI Tailwind documentation](https://github.com/e-xiste/exhaustive-ui) for usage details.
+See the [ExhaustiveUI Tailwind documentation](https://exhaustive-ui.com/tailwind) for usage details.
