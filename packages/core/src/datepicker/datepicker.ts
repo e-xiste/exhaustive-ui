@@ -1392,6 +1392,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         this.translationSubscription.set(
             this.config.translationObserver.subscribe(() => {
                 this.createWeekDays();
+                this.createMonths(this.currentMonth(), this.currentYear());
                 this.cd.markForCheck();
             })
         );

@@ -2487,4 +2487,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(weekDays.length).toBe(7);
         expect(weekDays.every((day) => day.length > 0)).toBe(true);
     });
+    it('rebuilds the day grid when the translation changes firstDayOfWeek (optimus-ui#882)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2024, 7, 16));
+        await render();
+
+        picker.config.setTranslation({ firstDayOfWeek: 1 });
+        await render();
+
+        const firstCell = picker.months()[0].dates![0][0];
+        expect(new Date(firstCell.year, firstCell.month, firstCell.day).getDay()).toBe(1);
+        expect(el.querySelector('.p-datepicker-weekday')!.textContent!.trim()).toBe(picker.getTranslation('dayNamesMin')[1]);
+    });
 });
