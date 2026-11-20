@@ -2650,4 +2650,20 @@ describe('DatePicker Optimus UI bug fixes', () => {
         // let the delayed updateFocus of navBackward/navForward run before the fixture is destroyed
         await new Promise((resolve) => setTimeout(resolve, 10));
     });
+
+    it('keeps the hour at the minDate hour when decrementing below it (optimus-ui#35, optimus-ui#143, optimus-ui#839)', async () => {
+        fixture.componentRef.setInput('showTime', true);
+        fixture.componentRef.setInput('minDate', new Date(2026, 4, 10, 9, 0));
+        await render();
+        picker.writeValue(new Date(2026, 4, 10, 9, 30));
+        expect(picker.currentHour()).toBe(9);
+
+        picker.decrementHour(new Event('click'));
+        expect(picker.currentHour()).toBe(9);
+
+        fixture.componentRef.setInput('minDate', new Date(2026, 4, 10, 12, 0));
+        picker.writeValue(new Date(2026, 4, 10, 12, 30));
+        picker.decrementHour(new Event('click'));
+        expect(picker.currentHour()).toBe(12);
+    });
 });
