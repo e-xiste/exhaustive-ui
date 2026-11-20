@@ -6,7 +6,6 @@ import {
     Component,
     computed,
     ElementRef,
-    HostListener,
     inject,
     input,
     NgModule,
@@ -163,6 +162,8 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
     documentClickListener = signal<VoidListener>(undefined);
 
+    documentEscapeListener = signal<VoidListener>(undefined);
+
     target = signal<any>(undefined);
 
     scrollHandler = signal<Nullable<ConnectedOverlayScrollHandler>>(undefined);
@@ -219,6 +220,22 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
                     })
                 );
             }
+        }
+    }
+
+    // Bound only while the panel is shown, so a page with many popovers does not run every one of them on Escape
+    bindDocumentEscapeListener() {
+        if (isPlatformBrowser(this.platformId) && !this.documentEscapeListener()) {
+            const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : this.document;
+            this.documentEscapeListener.set(this.renderer.listen(documentTarget, 'keydown.escape', (event: KeyboardEvent) => this.onEscapeKeydown(event)));
+        }
+    }
+
+    unbindDocumentEscapeListener() {
+        const documentEscapeListener = this.documentEscapeListener();
+        if (documentEscapeListener) {
+            documentEscapeListener();
+            this.documentEscapeListener.set(null);
         }
     }
 
@@ -344,6 +361,7 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
         this.align();
         this.setZIndex();
         this.bindDocumentClickListener();
+        this.bindDocumentEscapeListener();
         this.bindDocumentResizeListener();
         this.bindScrollListener();
 
@@ -407,7 +425,6 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
         event.preventDefault();
     }
 
-    @HostListener('document:keydown.escape', ['$event'])
     onEscapeKeydown(_event: KeyboardEvent) {
         this.hide();
     }
@@ -464,6 +481,7 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
         }
 
         this.unbindDocumentClickListener();
+        this.unbindDocumentEscapeListener();
         this.unbindDocumentResizeListener();
         this.unbindScrollListener();
     }

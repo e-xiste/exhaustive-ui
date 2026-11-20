@@ -480,6 +480,20 @@ describe('Popover', () => {
             expect(popoverInstance.overlayVisible()).toBe(false);
         });
 
+        it('should not listen to Escape on the document while hidden (optimus-ui#405)', async () => {
+            const escapeSpy = vi.spyOn(popoverInstance, 'onEscapeKeydown');
+
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            expect(escapeSpy).not.toHaveBeenCalled();
+
+            popoverInstance.show(new MouseEvent('click'), component.targetButton().nativeElement);
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            expect(popoverInstance.overlayVisible()).toBe(false);
+        });
+
         it('should drop the flipped state when a later align() places the popover below its target (optimus-ui#398)', async () => {
             const target = component.targetButton().nativeElement;
 
