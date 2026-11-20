@@ -266,7 +266,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     </div>
                     <div>
                         <label class="text-color font-medium leading-6">Tag (Optional)</label>
-                        <p-autocomplete [(ngModel)]="filesTag" styleClass="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
+                        <p-autocomplete [(ngModel)]="filesTag" class="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
                     </div>
                     <div class="flex items-center gap-2">
                         <label
@@ -313,7 +313,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div>
                         <div class="text-muted-color leading-6">Email</div>
                         <div class="flex items-start gap-3 mt-2">
-                            <p-autocomplete [(ngModel)]="emailChips" inputId="multiple-ac-2" styleClass="w-full" class="flex-1" multiple (onSelect)="search($event)" [typeahead]="false" />
+                            <p-autocomplete [(ngModel)]="emailChips" inputId="multiple-ac-2" class="flex-1 w-full" multiple (onSelect)="search($event)" [typeahead]="false" />
                             <p-button label="Invite" />
                         </div>
                     </div>

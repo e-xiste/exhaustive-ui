@@ -834,4 +834,15 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/foo.ts')).toBe(content);
         expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
     });
+
+    it('removes autoZIndex/baseZIndex/showTransitionOptions/hideTransitionOptions from p-autoComplete, p-autocomplete and p-auto-complete', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-autoComplete [suggestions]="items" [autoZIndex]="false" baseZIndex="10" (completeMethod)="search($event)"></p-autoComplete>\n<p-autocomplete showTransitionOptions=".2s" [hideTransitionOptions]="hide" [motionOptions]="motion"></p-autocomplete>\n<p-auto-complete autoZIndex [baseZIndex]="z" dropdown></p-auto-complete>\n<p-dialog [autoZIndex]="false" [baseZIndex]="10"></p-dialog>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-autoComplete [suggestions]="items" (completeMethod)="search($event)"></p-autoComplete>\n<p-autocomplete [motionOptions]="motion"></p-autocomplete>\n<p-auto-complete dropdown></p-auto-complete>\n<p-dialog [autoZIndex]="false" [baseZIndex]="10"></p-dialog>\n`
+        );
+    });
 });

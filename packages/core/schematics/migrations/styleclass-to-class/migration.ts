@@ -103,7 +103,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-orderlist',
     'p-orderList',
     'p-order-list',
-    'p-table'
+    'p-table',
+    'p-autocomplete',
+    'p-autoComplete',
+    'p-auto-complete'
 ];
 
 /**

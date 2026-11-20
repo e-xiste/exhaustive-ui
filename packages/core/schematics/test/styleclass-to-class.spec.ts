@@ -1622,4 +1622,33 @@ describe('styleclass-to-class', () => {
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-orderlist class="existing my-orderlist" [value]="products"></p-orderlist>\n`);
     });
+
+    it('rewrites a static styleClass to class on p-autocomplete, p-autoComplete and p-auto-complete', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-autocomplete [(ngModel)]="value" styleClass="w-full" (completeMethod)="search($event)"></p-autocomplete>\n<p-autoComplete styleClass="mt-2" [suggestions]="items"></p-autoComplete>\n<p-auto-complete styleClass="w-56"></p-auto-complete>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-autocomplete [(ngModel)]="value" class="w-full" (completeMethod)="search($event)"></p-autocomplete>\n<p-autoComplete class="mt-2" [suggestions]="items"></p-autoComplete>\n<p-auto-complete class="w-56"></p-auto-complete>\n`
+        );
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-autocomplete', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-autocomplete [suggestions]="items" [styleClass]="acClass"></p-autocomplete>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-autocomplete [suggestions]="items" [class]="acClass"></p-autocomplete>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-autocomplete without touching inputStyleClass/panelStyleClass', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-autocomplete inputStyleClass="in" styleClass="w-full" class="flex-1" panelStyleClass="panel" multiple></p-autocomplete>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-autocomplete inputStyleClass="in" class="flex-1 w-full" panelStyleClass="panel" multiple></p-autocomplete>\n`);
+    });
 });

@@ -75,6 +75,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `visible`/`itemSize` on SelectItem were stored but never read (and never bound by Select): the option
  * height comes from the scroller options and every rendered option is visible.
  * `frozenColumns`/`frozenWidth` on Table were stored but never read: frozen columns are declared with the `pFrozenColumn` directive.
+ * `autoZIndex`/`baseZIndex` and the deprecated `showTransitionOptions`/`hideTransitionOptions` on AutoComplete
+ * were stored but never read or forwarded to its overlay, whose layering and animation come from `overlayOptions`/`motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -134,7 +136,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] },
     { selector: 'p-selectItem', names: ['visible', 'itemSize'] },
-    { selector: 'p-table', names: ['frozenColumns', 'frozenWidth'] }
+    { selector: 'p-table', names: ['frozenColumns', 'frozenWidth'] },
+    { selector: 'p-autoComplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-autocomplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-auto-complete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
@@ -226,7 +231,7 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
  * inputLabel and emptyMessage, never read; DatePicker's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; ConfirmDialog's closeAriaLabel,
- * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; the internal TreeNode's rowNode, root, firstChild and lastChild, never read; SelectItem's visible and itemSize, never read; and Table's frozenColumns and frozenWidth, never read (frozen columns use pFrozenColumn).
+ * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; the internal TreeNode's rowNode, root, firstChild and lastChild, never read; SelectItem's visible and itemSize, never read; Table's frozenColumns and frozenWidth, never read (frozen columns use pFrozenColumn); and AutoComplete's autoZIndex, baseZIndex, showTransitionOptions and hideTransitionOptions, never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.
