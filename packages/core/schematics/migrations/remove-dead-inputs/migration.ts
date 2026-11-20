@@ -67,6 +67,9 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * The deprecated `transitionOptions` on Dialog only delayed the focus of the first focusable element, which
  * already runs once the enter animation driven by `motionOptions` is over, and `rtl` on Dialog was stored
  * but never read.
+ * `closeAriaLabel`, `acceptAriaLabel`, `rejectAriaLabel`, `rtl`, `transitionOptions` and `focusTrap` on
+ * ConfirmDialog were stored but never read or forwarded to the inner dialog, and its `defaultFocus` was only
+ * read by `getElementToFocus()`, which nothing called.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -120,7 +123,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-datePicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-datepicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-date-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-dialog', names: ['transitionOptions', 'rtl'] }
+    { selector: 'p-dialog', names: ['transitionOptions', 'rtl'] },
+    { selector: 'p-confirmDialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
+    { selector: 'p-confirmdialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
+    { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] }
 ];
 
 /**
@@ -128,7 +134,7 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * `size` is left out on purpose: a name-only scan cannot tell an OverlayBadge instance's `size` apart
  * from the countless other `size` properties (Map#size, DOM sizes, option objects) in an application.
  * Fieldset's, Panel's, Accordion's and Drawer's `transitionOptions` is left out too: the same input is still alive on
- * other components (p-dialog, p-stepper, ...), so a name-only scan cannot tell their reads apart.
+ * other components (p-stepper, ...), so a name-only scan cannot tell their reads apart.
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
  * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
  * SplitButton's `plain` is left out too: Button and pButton still expose a working `plain`.
@@ -141,9 +147,31 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * MegaMenuSub's `disabled` and `queryMatches` are left out too: `disabled` is a live input almost
  * everywhere and MegaMenu itself still exposes `queryMatches`.
  * CascadeSelect's `emptyMessage` is left out too: Select, Listbox, Table and other components still read it.
+ * ConfirmDialog's `closeAriaLabel`, `focusTrap` and `defaultFocus` are left out too: Dialog still reads
+ * `closeAriaLabel` and `focusTrap`, and ConfirmPopup still reads `defaultFocus`.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'disabled', 'queryMatches', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex', 'emptyMessage'].includes(name)
+    (name) =>
+        ![
+            'size',
+            'transitionOptions',
+            'inputId',
+            'ariaCloseLabel',
+            'plain',
+            'autoZIndex',
+            'baseZIndex',
+            'popup',
+            'disabled',
+            'queryMatches',
+            'mobileActive',
+            'ariaLabel',
+            'ariaLabelledBy',
+            'tabindex',
+            'emptyMessage',
+            'closeAriaLabel',
+            'focusTrap',
+            'defaultFocus'
+        ].includes(name)
 );
 
 /**
@@ -178,7 +206,8 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; FileUpload's
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
  * inputLabel and emptyMessage, never read; DatePicker's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); and Dialog's deprecated transitionOptions and never-read rtl.
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; and ConfirmDialog's closeAriaLabel,
+ * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

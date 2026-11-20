@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
-    AfterContentInit,
+    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -9,19 +9,17 @@ import {
     inject,
     InjectionToken,
     input,
-    Input,
+    model,
     NgModule,
-    NgZone,
     numberAttribute,
-    OnDestroy,
-    OnInit,
+    signal,
     TemplateRef,
     ViewEncapsulation,
     contentChild,
     contentChildren,
     output
 } from '@angular/core';
-import { findSingle, setAttribute, uuid } from '@exhaustive-ui/utils';
+import { setAttribute, uuid } from '@exhaustive-ui/utils';
 import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -40,39 +38,38 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
  */
 @Component({
     selector: 'p-confirmDialog, p-confirmdialog, p-confirm-dialog',
-    standalone: true,
     imports: [CommonModule, Button, Dialog, SharedModule, Bind],
     template: `
         <p-dialog
-            [pt]="pt"
+            [pt]="pt()"
             #dialog
-            [visible]="visible"
+            [visible]="visible()"
             (visibleChange)="onVisibleChange($event)"
             role="alertdialog"
             [closable]="option('closable')"
-            [styleClass]="cn(cx('root'), styleClass)"
+            [styleClass]="cn(cx('root'), styleClass())"
             [modal]="option('modal')"
             [header]="option('header')"
             [closeOnEscape]="option('closeOnEscape')"
             [blockScroll]="option('blockScroll')"
             [appendTo]="$appendTo()"
             [position]="option('position')"
-            [style]="style"
+            [style]="style()"
             [dismissableMask]="option('dismissableMask')"
-            [draggable]="draggable"
-            [baseZIndex]="baseZIndex"
-            [autoZIndex]="autoZIndex"
-            [maskStyleClass]="cn(cx('mask'), maskStyleClass)"
+            [draggable]="draggable()"
+            [baseZIndex]="baseZIndex()"
+            [autoZIndex]="autoZIndex()"
+            [maskStyleClass]="cn(cx('mask'), maskStyleClass())"
             [unstyled]="unstyled()"
             (onHide)="onDialogHide()"
         >
-            @if (headlessTemplate() || _headlessTemplate) {
+            @if (headlessTemplate() || _headlessTemplate()) {
                 <ng-template #headless>
                     <ng-container
                         *ngTemplateOutlet="
-                            headlessTemplate() || _headlessTemplate;
+                            headlessTemplate() || _headlessTemplate();
                             context: {
-                                $implicit: confirmation,
+                                $implicit: confirmation(),
                                 onAccept: onAccept.bind(this),
                                 onReject: onReject.bind(this)
                             }
@@ -80,31 +77,31 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                     ></ng-container>
                 </ng-template>
             } @else {
-                @if (headerTemplate() || _headerTemplate) {
+                @if (headerTemplate() || _headerTemplate()) {
                     <ng-template #header>
-                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
                     </ng-template>
                 }
 
                 <ng-template #content>
-                    @if (iconTemplate() || _iconTemplate) {
-                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate"></ng-template>
-                    } @else if (!iconTemplate() && !_iconTemplate && !_messageTemplate && !messageTemplate()) {
+                    @if (iconTemplate() || _iconTemplate()) {
+                        <ng-template *ngTemplateOutlet="iconTemplate() || _iconTemplate()"></ng-template>
+                    } @else if (!iconTemplate() && !_iconTemplate() && !_messageTemplate() && !messageTemplate()) {
                         <i [ngClass]="cx('icon')" [class]="option('icon')" [pBind]="ptm('icon')" *ngIf="option('icon')"></i>
                     }
-                    @if (messageTemplate() || _messageTemplate) {
-                        <ng-template *ngTemplateOutlet="messageTemplate() || _messageTemplate; context: { $implicit: confirmation }"></ng-template>
+                    @if (messageTemplate() || _messageTemplate()) {
+                        <ng-template *ngTemplateOutlet="messageTemplate() || _messageTemplate(); context: { $implicit: confirmation() }"></ng-template>
                     } @else {
                         <span [class]="cx('message')" [pBind]="ptm('message')" [innerHTML]="option('message')"> </span>
                     }
                 </ng-template>
             }
             <ng-template #footer>
-                @if (footerTemplate() || _footerTemplate) {
+                @if (footerTemplate() || _footerTemplate()) {
                     <ng-content select="p-footer"></ng-content>
-                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate()"></ng-container>
                 }
-                @if (!footerTemplate() && !_footerTemplate) {
+                @if (!footerTemplate() && !_footerTemplate()) {
                     <p-button
                         [pt]="ptm('pcRejectButton')"
                         *ngIf="option('rejectVisible')"
@@ -116,10 +113,10 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                         [unstyled]="unstyled()"
                     >
                         <ng-template #icon>
-                            @if (option('rejectIcon') && !rejectIconTemplate() && !_rejectIconTemplate) {
+                            @if (option('rejectIcon') && !rejectIconTemplate() && !_rejectIconTemplate()) {
                                 <i *ngIf="option('rejectIcon')" [class]="option('rejectIcon')" [pBind]="ptm('pcRejectButton')['icon']"></i>
                             }
-                            <ng-template *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="rejectIconTemplate() || _rejectIconTemplate()"></ng-template>
                         </ng-template>
                     </p-button>
                     <p-button
@@ -133,10 +130,10 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                         [unstyled]="unstyled()"
                     >
                         <ng-template #icon>
-                            @if (option('acceptIcon') && !_acceptIconTemplate && !acceptIconTemplate()) {
+                            @if (option('acceptIcon') && !_acceptIconTemplate() && !acceptIconTemplate()) {
                                 <i *ngIf="option('acceptIcon')" [class]="option('acceptIcon')" [pBind]="ptm('pcAcceptButton')['icon']"></i>
                             }
-                            <ng-template *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate"></ng-template>
+                            <ng-template *ngTemplateOutlet="acceptIconTemplate() || _acceptIconTemplate()"></ng-template>
                         </ng-template>
                     </p-button>
                 }
@@ -148,9 +145,8 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
     providers: [ConfirmDialogStyle, { provide: CONFIRMDIALOG_INSTANCE, useExisting: ConfirmDialog }, { provide: PARENT_INSTANCE, useExisting: ConfirmDialog }],
     hostDirectives: [Bind]
 })
-export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> implements OnInit, AfterContentInit, OnDestroy {
+export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
     private confirmationService = inject(ConfirmationService);
-    zone = inject(NgZone);
 
     componentName = 'ConfirmDialog';
 
@@ -158,126 +154,96 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('host'));
-    }
-
     /**
      * Title text of the dialog.
      * @group Props
      */
-    @Input() header: string | undefined;
+    header = input<string | undefined>(undefined);
     /**
      * Icon to display next to message.
      * @group Props
      */
-    @Input() icon: string | undefined;
+    icon = input<string | undefined>(undefined);
     /**
      * Message of the confirmation.
      * @group Props
      */
-    @Input() message: string | undefined;
+    message = input<string | undefined>(undefined);
     /**
      * Inline style of the element.
      * @group Props
      */
-    @Input() get style(): { [klass: string]: any } | null | undefined {
-        return this._style;
-    }
-    set style(value: { [klass: string]: any } | null | undefined) {
-        this._style = value;
-        this.cd.markForCheck();
-    }
+    style = input<{ [klass: string]: any } | null | undefined>(undefined);
     /**
      * Class of the element.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    styleClass = input<string | undefined>(undefined);
     /**
      * Specify the CSS class(es) for styling the mask element
      * @group Props
      */
-    @Input() maskStyleClass: string | undefined;
+    maskStyleClass = input<string | undefined>(undefined);
     /**
      * Icon of the accept button.
      * @group Props
      */
-    @Input() acceptIcon: string | undefined;
+    acceptIcon = input<string | undefined>(undefined);
     /**
      * Label of the accept button.
      * @group Props
      */
-    @Input() acceptLabel: string | undefined;
-    /**
-     * Defines a string that labels the close button for accessibility.
-     * @group Props
-     */
-    @Input() closeAriaLabel: string | undefined;
-    /**
-     * Defines a string that labels the accept button for accessibility.
-     * @group Props
-     */
-    @Input() acceptAriaLabel: string | undefined;
+    acceptLabel = input<string | undefined>(undefined);
     /**
      * Visibility of the accept button.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) acceptVisible: boolean = true;
+    acceptVisible = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Icon of the reject button.
      * @group Props
      */
-    @Input() rejectIcon: string | undefined;
+    rejectIcon = input<string | undefined>(undefined);
     /**
      * Label of the reject button.
      * @group Props
      */
-    @Input() rejectLabel: string | undefined;
-    /**
-     * Defines a string that labels the reject button for accessibility.
-     * @group Props
-     */
-    @Input() rejectAriaLabel: string | undefined;
+    rejectLabel = input<string | undefined>(undefined);
     /**
      * Visibility of the reject button.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) rejectVisible: boolean = true;
+    rejectVisible = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Style class of the accept button.
      * @group Props
      */
-    @Input() acceptButtonStyleClass: string | undefined;
+    acceptButtonStyleClass = input<string | undefined>(undefined);
     /**
      * Style class of the reject button.
      * @group Props
      */
-    @Input() rejectButtonStyleClass: string | undefined;
+    rejectButtonStyleClass = input<string | undefined>(undefined);
     /**
      * Specifies if pressing escape key should hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) closeOnEscape: boolean = true;
+    closeOnEscape = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Specifies if clicking the modal background should hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) dismissableMask: boolean | undefined;
+    dismissableMask = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Determines whether scrolling behavior should be blocked within the component.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) blockScroll: boolean = true;
-    /**
-     * When enabled dialog is displayed in RTL direction.
-     * @group Props
-     */
-    @Input({ transform: booleanAttribute }) rtl: boolean = false;
+    blockScroll = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Adds a close icon to the header to hide the dialog.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) closable: boolean = true;
+    closable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Target element to attach the overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @defaultValue 'body'
@@ -288,69 +254,43 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
      * Optional key to match the key of confirm object, necessary to use when component tree has multiple confirm dialogs.
      * @group Props
      */
-    @Input() key: string | undefined;
+    key = input<string | undefined>(undefined);
     /**
      * Whether to automatically manage layering.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
+    autoZIndex = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Base zIndex value to use in layering.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
-    /**
-     * Transition options of the animation.
-     * @group Props
-     */
-    @Input() transitionOptions: string = '150ms cubic-bezier(0, 0, 0.2, 1)';
-    /**
-     * When enabled, can only focus on elements inside the confirm dialog.
-     * @group Props
-     */
-    @Input({ transform: booleanAttribute }) focusTrap: boolean = true;
-    /**
-     * Element to receive the focus when the dialog gets visible.
-     * @group Props
-     */
-    @Input() defaultFocus: 'accept' | 'reject' | 'close' | 'none' = 'accept';
+    baseZIndex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * Object literal to define widths per screen size.
      * @group Props
      */
-    @Input() breakpoints: any;
+    breakpoints = input<any>();
     /**
      * Defines if background should be blocked when dialog is displayed.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) modal: boolean = true;
+    modal = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Current visible state as a boolean.
+     * Emits `visibleChange` with the new value when the dialog is shown or hidden.
      * @group Props
      */
-    @Input() get visible(): any {
-        return this._visible;
-    }
-
-    set visible(value: any) {
-        this._visible = value;
-
-        if (this._visible && !this.maskVisible) {
-            this.maskVisible = true;
-        }
-
-        this.cd.markForCheck();
-    }
+    visible = model<any>(undefined);
     /**
      *  Allows getting the position of the component.
      * @group Props
      */
-    @Input() position: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright' = 'center';
+    position = input<'center' | 'top' | 'bottom' | 'left' | 'right' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright'>('center');
     /**
      * Enables dragging to change the position using header.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) draggable: boolean = true;
+    draggable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Callback to invoke when dialog is hidden.
      * @param {ConfirmEventType} enum - Custom confirm event.
@@ -406,123 +346,105 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    _headerTemplate: TemplateRef<void> | undefined;
+    _headerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
-    _footerTemplate: TemplateRef<void> | undefined;
+    _footerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
 
-    _rejectIconTemplate: TemplateRef<void> | undefined;
+    _rejectIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'rejecticon')
+                .at(-1)?.template
+    );
 
-    _acceptIconTemplate: TemplateRef<void> | undefined;
+    _acceptIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'accepticon')
+                .at(-1)?.template
+    );
 
-    _messageTemplate: TemplateRef<ConfirmDialogMessageTemplateContext> | undefined;
+    _messageTemplate = computed<TemplateRef<ConfirmDialogMessageTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'message')
+                .at(-1)?.template
+    );
 
-    _iconTemplate: TemplateRef<void> | undefined;
+    _iconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'icon')
+                .at(-1)?.template
+    );
 
-    _headlessTemplate: TemplateRef<ConfirmDialogHeadlessTemplateContext> | undefined;
+    _headlessTemplate = computed<TemplateRef<ConfirmDialogHeadlessTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'headless')
+                .at(-1)?.template
+    );
 
-    confirmation: Nullable<Confirmation>;
-
-    _visible: boolean | undefined;
-
-    _style: { [klass: string]: any } | null | undefined;
-
-    maskVisible: boolean | undefined;
-
-    dialog: Nullable<Dialog>;
-
-    wrapper: Nullable<HTMLElement>;
-
-    contentContainer: Nullable<HTMLDivElement>;
+    confirmation = signal<Nullable<Confirmation>>(undefined);
 
     subscription: Subscription;
 
-    preWidth: number | undefined;
-
-    styleElement: any;
+    styleElement = signal<any>(undefined);
 
     id = uuid('pn_id_');
-
-    ariaLabelledBy: string | null = this.getAriaLabelledBy();
 
     translationSubscription: Subscription | undefined;
 
     constructor() {
         super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
         this.subscription = this.confirmationService.requireConfirmation$.subscribe((confirmation) => {
             if (!confirmation) {
                 this.hide();
                 return;
             }
-            if (confirmation.key === this.key) {
-                this.confirmation = confirmation;
+            if (confirmation.key === this.key()) {
+                this.confirmation.set(confirmation);
 
-                if (this.confirmation.accept) {
-                    this.confirmation.acceptEvent = new Subject();
-                    this.confirmation.acceptEvent.subscribe(this.confirmation.accept as () => void);
+                if (confirmation.accept) {
+                    confirmation.acceptEvent = new Subject();
+                    confirmation.acceptEvent.subscribe(confirmation.accept as () => void);
                 }
 
-                if (this.confirmation.reject) {
-                    this.confirmation.rejectEvent = new Subject();
-                    this.confirmation.rejectEvent.subscribe(this.confirmation.reject as () => void);
+                if (confirmation.reject) {
+                    confirmation.rejectEvent = new Subject();
+                    confirmation.rejectEvent.subscribe(confirmation.reject as () => void);
                 }
 
-                this.visible = true;
+                this.visible.set(true);
             }
         });
     }
 
     onInit() {
-        if (this.breakpoints) {
+        if (this.breakpoints()) {
             this.createStyle();
         }
 
         this.translationSubscription = this.config.translationObserver.subscribe(() => {
-            if (this.visible) {
+            if (this.visible()) {
                 this.cd.markForCheck();
             }
         });
     }
 
-    onAfterContentInit() {
-        this.templates()?.forEach((item) => {
-            switch (item.getType()) {
-                case 'header':
-                    this._headerTemplate = item.template;
-                    break;
-
-                case 'footer':
-                    this._footerTemplate = item.template;
-                    break;
-
-                case 'message':
-                    this._messageTemplate = item.template;
-                    break;
-
-                case 'icon':
-                    this._iconTemplate = item.template;
-                    break;
-
-                case 'rejecticon':
-                    this._rejectIconTemplate = item.template;
-                    break;
-
-                case 'accepticon':
-                    this._acceptIconTemplate = item.template;
-                    break;
-
-                case 'headless':
-                    this._headlessTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
-    getAriaLabelledBy() {
-        return this.header !== null ? uuid('pn_id_') + '_header' : null;
-    }
-
     option(name: string, k?: string) {
-        const confirmation: { [key: string]: any } = this.confirmation ?? {};
+        const confirmation: { [key: string]: any } = this.confirmation() ?? {};
         const source: { [key: string]: any } = Object.prototype.hasOwnProperty.call(confirmation, name) ? confirmation : this;
 
         if (Object.prototype.hasOwnProperty.call(source, name)) {
@@ -540,53 +462,34 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
         return [cxClass, optionClass].filter(Boolean).join(' ');
     }
 
-    getElementToFocus() {
-        if (!this.dialog?.el?.nativeElement) return;
-
-        switch (this.option('defaultFocus')) {
-            case 'accept':
-                return findSingle(this.dialog.el.nativeElement, '.p-confirm-dialog-accept');
-
-            case 'reject':
-                return findSingle(this.dialog.el.nativeElement, '.p-confirm-dialog-reject');
-
-            case 'close':
-                return findSingle(this.dialog.el.nativeElement, '.p-dialog-header-close');
-
-            case 'none':
-                return null;
-
-            //backward compatibility
-            default:
-                return findSingle(this.dialog.el.nativeElement, '.p-confirm-dialog-accept');
-        }
-    }
-
     createStyle() {
-        if (!this.styleElement) {
-            this.styleElement = this.document.createElement('style');
-            this.styleElement.type = 'text/css';
-            setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
-            this.document.head.appendChild(this.styleElement);
+        if (!this.styleElement()) {
+            const styleElement = this.document.createElement('style');
+            this.styleElement.set(styleElement);
+            styleElement.type = 'text/css';
+            setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
+            this.document.head.appendChild(styleElement);
+            const breakpoints = this.breakpoints();
             let innerHTML = '';
-            for (let breakpoint in this.breakpoints) {
+            for (let breakpoint in breakpoints) {
                 innerHTML += `
                     @media screen and (max-width: ${breakpoint}) {
                         .p-dialog[${this.id}] {
-                            width: ${this.breakpoints[breakpoint]} !important;
+                            width: ${breakpoints[breakpoint]} !important;
                         }
                     }
                 `;
             }
 
-            this.styleElement.innerHTML = innerHTML;
-            setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
+            styleElement.innerHTML = innerHTML;
+            setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
         }
     }
 
     close() {
-        if (this.confirmation?.rejectEvent) {
-            this.confirmation.rejectEvent.next(ConfirmEventType.CANCEL);
+        const confirmation = this.confirmation();
+        if (confirmation?.rejectEvent) {
+            confirmation.rejectEvent.next(ConfirmEventType.CANCEL);
         }
 
         this.hide(ConfirmEventType.CANCEL);
@@ -594,19 +497,20 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
 
     hide(type?: ConfirmEventType) {
         this.onHide.emit(type);
-        this.visible = false;
+        this.visible.set(false);
         // Unsubscribe from confirmation events when the dialogue is closed, because events are created when the dialogue is opened.
         this.unsubscribeConfirmationEvents();
     }
 
     onDialogHide() {
-        this.confirmation = null;
+        this.confirmation.set(null);
     }
 
     destroyStyle() {
-        if (this.styleElement) {
-            this.document.head.removeChild(this.styleElement);
-            this.styleElement = null;
+        const styleElement = this.styleElement();
+        if (styleElement) {
+            this.document.head.removeChild(styleElement);
+            this.styleElement.set(null);
         }
     }
 
@@ -626,29 +530,32 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> imple
         if (!value) {
             this.close();
         } else {
-            this.visible = value;
+            this.visible.set(value);
         }
     }
 
     onAccept() {
-        if (this.confirmation && this.confirmation.acceptEvent) {
-            this.confirmation.acceptEvent.next(undefined);
+        const confirmation = this.confirmation();
+        if (confirmation && confirmation.acceptEvent) {
+            confirmation.acceptEvent.next(undefined);
         }
         this.hide(ConfirmEventType.ACCEPT);
     }
 
     onReject() {
-        if (this.confirmation && this.confirmation.rejectEvent) {
-            this.confirmation.rejectEvent.next(ConfirmEventType.REJECT);
+        const confirmation = this.confirmation();
+        if (confirmation && confirmation.rejectEvent) {
+            confirmation.rejectEvent.next(ConfirmEventType.REJECT);
         }
 
         this.hide(ConfirmEventType.REJECT);
     }
 
     unsubscribeConfirmationEvents() {
-        if (this.confirmation) {
-            this.confirmation.acceptEvent?.unsubscribe();
-            this.confirmation.rejectEvent?.unsubscribe();
+        const confirmation = this.confirmation();
+        if (confirmation) {
+            confirmation.acceptEvent?.unsubscribe();
+            confirmation.rejectEvent?.unsubscribe();
         }
     }
 

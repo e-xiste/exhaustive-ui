@@ -90,6 +90,43 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-dialog header="Edit" [(visible)]="visible" [motionOptions]="motion"></p-dialog>\n<p-dialog [modal]="true"></p-dialog>\n`);
     });
 
+    it('removes the never-read inputs from every p-confirmdialog selector while keeping the live ones', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html':
+                `<p-confirmdialog key="delete" closeAriaLabel="Close" acceptAriaLabel="Yes" [rejectAriaLabel]="noLabel" [rtl]="true" header="Confirm"></p-confirmdialog>\n` +
+                `<p-confirmDialog transitionOptions="150ms ease" [focusTrap]="false" defaultFocus="reject" [visible]="visible"></p-confirmDialog>\n` +
+                `<p-confirm-dialog rtl focusTrap [closable]="false"></p-confirm-dialog>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-confirmdialog key="delete" header="Confirm"></p-confirmdialog>\n<p-confirmDialog [visible]="visible"></p-confirmDialog>\n<p-confirm-dialog [closable]="false"></p-confirm-dialog>\n`);
+    });
+
+    it('keeps closeAriaLabel and focusTrap on p-dialog and defaultFocus on p-confirmpopup', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-dialog closeAriaLabel="Close" [focusTrap]="false"></p-dialog>\n<p-confirmpopup defaultFocus="reject"></p-confirmpopup>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(content);
+    });
+
+    it('does not report a programmatic closeAriaLabel, focusTrap or defaultFocus access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(dialog: { closeAriaLabel: string; focusTrap: boolean; defaultFocus: string }) {\n        return [dialog.closeAriaLabel, dialog.focusTrap, dialog.defaultFocus];\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings).toEqual([]);
+    });
+
     it('removes the deprecated transitionOptions from p-drawer while keeping motionOptions and ariaCloseLabel', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
