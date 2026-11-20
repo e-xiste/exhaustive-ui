@@ -1815,7 +1815,8 @@ export class Select extends BaseInput<SelectPassThrough> {
             matched = true;
         }
 
-        if (optionIndex === -1 && this.focusedOptionIndex() === -1) {
+        // an editable Select keeps unmatched text as its value, so it must not fall back to an option
+        if (optionIndex === -1 && this.focusedOptionIndex() === -1 && !this.editable()) {
             optionIndex = this.findFirstFocusedOptionIndex();
         }
 

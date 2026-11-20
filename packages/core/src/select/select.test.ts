@@ -5002,4 +5002,38 @@ describe('Select medium bug fixes', () => {
         fixture.detectChanges();
         expect(input.getAttribute('aria-label')).toBe('City');
     });
+
+    describe('editable typing (optimus-ui#306, optimus-ui#330)', () => {
+        const editableInput = () => fixture.nativeElement.querySelector('input.p-select-label') as HTMLInputElement;
+        const type = async (value: string) => {
+            editableInput().value = value;
+            editableInput().dispatchEvent(new Event('input', { bubbles: true }));
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 20));
+            fixture.detectChanges();
+        };
+
+        beforeEach(() => {
+            fixture.componentRef.setInput('editable', true);
+            fixture.detectChanges();
+        });
+
+        it('does not focus the first option on every other unmatched keystroke', async () => {
+            for (const value of ['d', 'dd', 'ddd', 'dddd']) {
+                await type(value);
+                expect(select.focusedOptionIndex()).toBe(-1);
+            }
+        });
+
+        it('keeps a typed value that only partially matches an option on Enter', async () => {
+            for (const value of ['N', 'Ne', 'New', 'NewD', 'NewDo']) {
+                await type(value);
+            }
+
+            editableInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
+            fixture.detectChanges();
+
+            expect(select.modelValue()).toBe('NewDo');
+        });
+    });
 });
