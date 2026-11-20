@@ -17,12 +17,10 @@ import { AppCode } from '@/components/doc/app.code';
 export class ProviderDoc {
     code: Code = {
         typescript: `import { ApplicationConfig } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideAnimationsAsync(),
         provideExhaustive({ /* options */ })
     ]
 };`

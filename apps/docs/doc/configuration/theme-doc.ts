@@ -18,14 +18,12 @@ import { RouterModule } from '@angular/router';
 export class ThemeDoc {
     code: Code = {
         typescript: `import { ApplicationConfig } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
 import Aura from '@exhaustive-ui/themes/aura';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideAnimationsAsync(),
         provideExhaustive({
             theme: {
                 preset: Aura,
