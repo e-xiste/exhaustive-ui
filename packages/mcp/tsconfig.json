@@ -16,5 +16,6 @@
         "noEmit": true
     },
     "include": ["src/**/*", "test/**/*", "tsdown.config.ts", "vitest.config.ts"],
-    "exclude": ["node_modules", "dist", "data"]
+    // v22-sync imports the schematics of @exhaustive-ui/core, which follow that package's compiler options; vitest still runs it.
+    "exclude": ["node_modules", "dist", "data", "test/v22-sync.test.ts"]
 }

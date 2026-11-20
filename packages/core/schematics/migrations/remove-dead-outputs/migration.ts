@@ -8,7 +8,7 @@ import { findLeftoversInTypeScript, removeBindings, removeBindingsInTypeScript }
  * `leftoverGuidance` for references a template-binding removal can't safely rewrite (a
  * `.subscribe()`/`.emit()` call, or a config-object property of the same name).
  */
-interface RemovedOutputGroup {
+export interface RemovedOutputGroup {
     /** Human-readable label used in the summary log line. */
     label: string;
     /** Output property names in this group, e.g. ['onAnimationStart', 'onAnimationDone']. */
@@ -17,7 +17,7 @@ interface RemovedOutputGroup {
     leftoverGuidance: string;
 }
 
-const REMOVED_OUTPUT_GROUPS: readonly RemovedOutputGroup[] = [
+export const REMOVED_OUTPUT_GROUPS: readonly RemovedOutputGroup[] = [
     {
         label: 'Overlay onAnimationStart/onAnimationDone',
         names: ['onAnimationStart', 'onAnimationDone'],

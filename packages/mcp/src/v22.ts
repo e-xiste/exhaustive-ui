@@ -7,9 +7,64 @@ import { compact } from './text';
  * validate_usage can name the replacement instead of only reporting an unknown binding.
  */
 
-const STYLE_CLASS_REMOVED = ['toast', 'message', 'tag', 'skeleton', 'card', 'radiobutton', 'progressbar', 'divider', 'progressspinner', 'timeline', 'toolbar', 'avatar', 'chip', 'inputgroup', 'iconfield', 'inputicon', 'toggleswitch'];
+export const STYLE_CLASS_REMOVED: readonly string[] = [
+    'accordion',
+    'autocomplete',
+    'avatar',
+    'badge',
+    'blockui',
+    'card',
+    'carousel',
+    'cascadeselect',
+    'checkbox',
+    'chip',
+    'colorpicker',
+    'dataview',
+    'datepicker',
+    'divider',
+    'dock',
+    'editor',
+    'iconfield',
+    'image',
+    'inplace',
+    'inputgroup',
+    'inputicon',
+    'inputnumber',
+    'knob',
+    'listbox',
+    'megamenu',
+    'menubar',
+    'message',
+    'metergroup',
+    'multiselect',
+    'orderlist',
+    'organizationchart',
+    'paginator',
+    'panel',
+    'panelmenu',
+    'password',
+    'progressbar',
+    'progressspinner',
+    'radiobutton',
+    'scrollpanel',
+    'select',
+    'skeleton',
+    'slider',
+    'splitbutton',
+    'splitter',
+    'table',
+    'tag',
+    'terminal',
+    'timeline',
+    'toast',
+    'togglebutton',
+    'toggleswitch',
+    'toolbar',
+    'tree',
+    'treetable'
+];
 
-const RENAMED: Record<string, Record<string, string>> = {
+export const RENAMED: Record<string, Record<string, string>> = {
     drawer: { showcloseicon: 'closable' },
     paginator: { dropdownappendto: 'appendTo' },
     autocomplete: { minlength: 'minQueryLength' },
@@ -17,34 +72,48 @@ const RENAMED: Record<string, Record<string, string>> = {
     treetable: { virtualrowheight: 'virtualScrollItemSize' }
 };
 
-const TRANSITIONS = ['showTransitionOptions', 'hideTransitionOptions'];
-
-const DEAD_INPUTS: Record<string, string[]> = {
-    toast: ['showTransformOptions', 'hideTransformOptions', ...TRANSITIONS],
-    message: TRANSITIONS,
-    overlay: TRANSITIONS,
-    colorpicker: TRANSITIONS,
+export const DEAD_INPUTS: Record<string, readonly string[]> = {
+    toast: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'],
+    toastitem: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'],
+    message: ['showTransitionOptions', 'hideTransitionOptions'],
+    overlay: ['showTransitionOptions', 'hideTransitionOptions'],
+    colorpicker: ['showTransitionOptions', 'hideTransitionOptions'],
     overlaybadge: ['size'],
     fieldset: ['transitionOptions'],
     panel: ['transitionOptions'],
     accordion: ['transitionOptions'],
-    scrolltop: TRANSITIONS,
-    confirmpopup: TRANSITIONS,
+    scrolltop: ['showTransitionOptions', 'hideTransitionOptions'],
+    confirmpopup: ['showTransitionOptions', 'hideTransitionOptions'],
     togglebutton: ['inputId'],
-    popover: [...TRANSITIONS, 'ariaCloseLabel'],
-    image: [...TRANSITIONS, 'modalEnterAnimation', 'modalLeaveAnimation'],
+    popover: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'],
+    image: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'],
     drawer: ['transitionOptions'],
-    menu: TRANSITIONS,
-    splitbutton: [...TRANSITIONS, 'plain'],
-    password: TRANSITIONS,
+    menu: ['showTransitionOptions', 'hideTransitionOptions'],
+    splitbutton: ['showTransitionOptions', 'hideTransitionOptions', 'plain'],
+    password: ['showTransitionOptions', 'hideTransitionOptions'],
     button: ['badgeClass'],
-    tieredmenu: TRANSITIONS,
+    contextmenusub: ['autoZIndex', 'baseZIndex', 'popup'],
+    tieredmenu: ['showTransitionOptions', 'hideTransitionOptions'],
     menubar: ['autoZIndex', 'baseZIndex'],
-    panelmenu: ['transitionOptions', 'tabindex']
+    menubarsub: ['autoZIndex', 'baseZIndex', 'mobileActive', 'ariaLabel', 'ariaLabelledBy'],
+    panelmenu: ['transitionOptions', 'tabindex'],
+    megamenusub: ['disabled', 'queryMatches'],
+    galleria: ['showTransitionOptions', 'hideTransitionOptions', 'containerClass'],
+    fileupload: ['removeStyleClass'],
+    cascadeselect: ['inputLabel', 'emptyMessage'],
+    datepicker: ['showTransitionOptions', 'hideTransitionOptions'],
+    dialog: ['transitionOptions', 'rtl'],
+    confirmdialog: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'],
+    treenode: ['rowNode', 'root', 'firstChild', 'lastChild'],
+    selectitem: ['visible', 'itemSize'],
+    table: ['frozenColumns', 'frozenWidth'],
+    autocomplete: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'],
+    multiselect: ['filterFields']
 };
 
-const DEAD_OUTPUTS: Record<string, string[]> = {
-    overlay: ['onAnimationStart', 'onAnimationDone']
+export const DEAD_OUTPUTS: Record<string, readonly string[]> = {
+    overlay: ['onAnimationStart', 'onAnimationDone'],
+    menubarsub: ['menuFocus', 'menuBlur', 'menuKeydown']
 };
 
 function tagKey(tag: string): string {
@@ -79,11 +148,13 @@ export function removedInputHint(tag: string, name: string): { message: string; 
 
 /** Replacement guidance for an output that no longer exists on `tag`, or undefined when it was not removed in v22. */
 export function removedOutputHint(tag: string, name: string): { message: string; suggestion?: string } | undefined {
-    if (has(DEAD_OUTPUTS[tagKey(tag)], name)) {
-        return {
-            message: `${name} was removed in v22: use onOverlayBeforeEnter/onOverlayAfterEnter (show) or onOverlayBeforeLeave/onOverlayAfterLeave (hide) instead (ng update applies the remove-dead-outputs migration).`
-        };
+    const key = tagKey(tag);
+
+    if (!has(DEAD_OUTPUTS[key], name)) {
+        return undefined;
     }
 
-    return undefined;
+    const replacement = key === 'overlay' ? 'use onOverlayBeforeEnter/onOverlayAfterEnter (show) or onOverlayBeforeLeave/onOverlayAfterLeave (hide) instead' : 'it never fired, bind the native focus/blur/keydown events of the element instead';
+
+    return { message: `${name} was removed in v22: ${replacement} (ng update applies the remove-dead-outputs migration).` };
 }

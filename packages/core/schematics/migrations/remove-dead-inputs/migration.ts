@@ -80,7 +80,7 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `filterFields` on MultiSelect was stored but never read: the filter searches `filterBy`, else `optionLabel`
  * (kept out of the leftover scan, Select and Listbox still read it).
  */
-const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
+export const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-toastItem', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
     { selector: 'p-message', names: ['showTransitionOptions', 'hideTransitionOptions'] },
