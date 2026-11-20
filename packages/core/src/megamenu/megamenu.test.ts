@@ -1760,6 +1760,32 @@ describe('MegaMenu', () => {
                 expect(hostElement.getAttribute('aria-label')).toBe('TEST_GLOBAL_ARIA_LABEL');
             });
 
+            it('should apply global PT configuration to item sections (optimus-ui#32)', async () => {
+                await TestBed.resetTestingModule();
+                await TestBed.configureTestingModule({
+                    declarations: [TestBasicMegaMenuComponent],
+                    imports: [MegaMenu, SharedModule, RouterTestingModule],
+                    providers: [
+                        provideZonelessChangeDetection(),
+                        provideExhaustive({
+                            pt: {
+                                megamenu: {
+                                    itemLabel: { class: 'GLOBAL_ITEM_LABEL_CLASS' }
+                                }
+                            }
+                        })
+                    ]
+                }).compileComponents();
+
+                const globalFixture = TestBed.createComponent(TestBasicMegaMenuComponent);
+                globalFixture.detectChanges();
+                await globalFixture.whenStable();
+
+                const labels = globalFixture.debugElement.queryAll(By.css('.p-megamenu-item-label'));
+                expect(labels.length).toBeGreaterThan(0);
+                labels.forEach((label) => expect(label.nativeElement.classList.contains('GLOBAL_ITEM_LABEL_CLASS')).toBe(true));
+            });
+
             it('should apply global CSS from Exhaustive config', async () => {
                 await TestBed.resetTestingModule();
                 await TestBed.configureTestingModule({

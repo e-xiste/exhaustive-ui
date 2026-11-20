@@ -244,6 +244,8 @@ const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INST
     hostDirectives: [Bind]
 })
 export class MegaMenuSub extends BaseComponent<MegaMenuPassThrough> {
+    hostName = 'MegaMenu';
+
     bindDirectiveInstance = inject(Bind, { self: true });
 
     $pcMegaMenu: MegaMenu | undefined = inject(MEGAMENU_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
