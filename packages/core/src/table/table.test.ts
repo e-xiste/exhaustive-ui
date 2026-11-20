@@ -1090,6 +1090,32 @@ describe('Table', () => {
 
                 expect(outputComponent.onColReorder.emit).toHaveBeenCalledWith(expect.objectContaining({ dragIndex: 0, dropIndex: 1 }));
             });
+
+            it('keeps every measured width when reordering resized columns (#178)', async () => {
+                outputFixture.componentRef.setInput('reorderableColumns', true);
+                outputFixture.componentRef.setInput('resizableColumns', true);
+                outputFixture.componentRef.setInput('columns', [{ field: 'a' }, { field: 'b' }, { field: 'c' }]);
+                outputFixture.changeDetectorRef.markForCheck();
+                await outputFixture.whenStable();
+                outputFixture.detectChanges();
+
+                const row = document.createElement('tr');
+                const cols = [0, 1, 2].map(() => {
+                    const th = document.createElement('th');
+                    th.setAttribute('preorderablecolumn', '');
+                    row.appendChild(th);
+                    return th;
+                });
+
+                outputComponent.resizeColumnElement.set(cols[1] as any);
+                vi.spyOn(outputComponent as any, '_totalTableWidth').mockReturnValue([100, 200, 300]);
+                const updateStyle = vi.spyOn(outputComponent, 'updateStyleElement');
+                outputComponent.onColumnDragStart({ dataTransfer: { setData: vi.fn() } } as any, cols[0]);
+
+                outputComponent.onColumnDrop({ preventDefault: vi.fn() } as unknown as Event, cols[2]);
+
+                expect(updateStyle).toHaveBeenCalledWith([200, 300, 100], -1, 0, null);
+            });
         });
 
         describe('Row reorder output', () => {
@@ -2410,5 +2436,53 @@ describe('Table internals Signal Query API', () => {
 
         const rb = fixture.debugElement.query(By.directive(TableRadioButton)).componentInstance;
         expect(rb.inputViewChild()).toBeDefined();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Column reorder together with column resize (#187)
+// ---------------------------------------------------------------------------
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [resizableColumns]="true" [reorderableColumns]="true">
+            <ng-template #header>
+                <tr>
+                    <th pReorderableColumn pResizableColumn>Name</th>
+                    <th pReorderableColumn pResizableColumn>Price</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.price }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableReorderResizeHostComponent {
+    rows = [{ name: 'A', price: 1 }];
+}
+
+describe('Table column reorder with resizable columns', () => {
+    it('keeps a header cell draggable unless the press starts on its resizer (#187)', async () => {
+        await TestBed.configureTestingModule({ imports: [TableReorderResizeHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableReorderResizeHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const th = fixture.nativeElement.querySelector('th') as HTMLElement;
+        const resizer = th.querySelector('[data-pc-column-resizer="true"]') as HTMLElement;
+        expect(resizer).toBeTruthy();
+
+        th.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect(th.draggable).toBe(true);
+
+        resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect(th.draggable).toBe(false);
     });
 });

@@ -2718,10 +2718,16 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             }
 
-            if (this.resizableColumns() && this.resizeColumnElement()) {
-                let width = this.columnResizeMode() === 'expand' ? <number[]>this._initialColWidths() : this._totalTableWidth();
-                ObjectUtils.reorderArray(width, dragIndex + 1, dropIndex + 1);
-                this.updateStyleElement(width, dragIndex, 0, 0);
+            if (allowDrop && this.resizableColumns() && this.resizeColumnElement()) {
+                // The widths are indexed by header cell, the drag/drop indexes by reorderable column only.
+                const offset = DomHandler.index(this.draggedColumn()) - dragIndex;
+                const width = [...((this.columnResizeMode() === 'expand' ? this._initialColWidths() : undefined) ?? this._totalTableWidth())];
+                ObjectUtils.reorderArray(width, dragIndex + offset, dropIndex + offset);
+                if (this.columnResizeMode() === 'expand') {
+                    this._initialColWidths.set(width);
+                }
+                // Keep every width as measured: no column is resized by a reorder.
+                this.updateStyleElement(width, -1, 0, null);
             }
 
             (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.display = 'none';
@@ -4403,7 +4409,7 @@ export class ReorderableColumn extends BaseComponent {
     }
 
     onMouseDown(event: any) {
-        if (event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA' || findSingle(event.target, '[data-pc-column-resizer="true"]')) this.el.nativeElement.draggable = false;
+        if (event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA' || event.target.closest?.('[data-pc-column-resizer="true"]')) this.el.nativeElement.draggable = false;
         else this.el.nativeElement.draggable = true;
     }
 
