@@ -70,6 +70,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `closeAriaLabel`, `acceptAriaLabel`, `rejectAriaLabel`, `rtl`, `transitionOptions` and `focusTrap` on
  * ConfirmDialog were stored but never read or forwarded to the inner dialog, and its `defaultFocus` was only
  * read by `getElementToFocus()`, which nothing called.
+ * `rowNode`/`root`/`firstChild`/`lastChild` on the internal TreeNode were bound by Tree but never read (and
+ * are left out of the leftover scan: TreeTable still exposes `rowNode`, and the others are DOM/common names).
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -126,7 +128,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-dialog', names: ['transitionOptions', 'rtl'] },
     { selector: 'p-confirmDialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-confirmdialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
-    { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] }
+    { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
+    { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] }
 ];
 
 /**
@@ -170,7 +173,11 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
             'emptyMessage',
             'closeAriaLabel',
             'focusTrap',
-            'defaultFocus'
+            'defaultFocus',
+            'rowNode',
+            'root',
+            'firstChild',
+            'lastChild'
         ].includes(name)
 );
 
@@ -206,8 +213,8 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; FileUpload's
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
  * inputLabel and emptyMessage, never read; DatePicker's deprecated
- * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; and ConfirmDialog's closeAriaLabel,
- * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read.
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; ConfirmDialog's closeAriaLabel,
+ * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; and the internal TreeNode's rowNode, root, firstChild and lastChild, never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

@@ -755,4 +755,30 @@ describe('remove-dead-inputs', () => {
         expect(html).not.toContain('removeStyleClass');
         expect(html).toBe(`<p-fileupload name="demo[]" chooseStyleClass="choose"></p-fileupload>\n<p-fileUpload [uploadStyleClass]="uploadClass" styleClass="w-full"></p-fileUpload>\n`);
     });
+
+    it('removes rowNode/root/firstChild/lastChild from p-treeNode while keeping its live inputs', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-treeNode [node]="node" [rowNode]="row" root [firstChild]="first" [lastChild]="last" [index]="0"></p-treeNode>\n<p-treetable [value]="files"><ng-template #body let-rowNode><tr [ttRow]="rowNode"></tr></ng-template></p-treetable>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-treeNode [node]="node" [index]="0"></p-treeNode>\n<p-treetable [value]="files"><ng-template #body let-rowNode><tr [ttRow]="rowNode"></tr></ng-template></p-treetable>\n`);
+    });
+
+    it('does not report a programmatic rowNode, root, firstChild or lastChild access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(el: HTMLElement, row: { rowNode: unknown; root: boolean }) {\n        return [el.firstChild, el.lastChild, row.rowNode, row.root];\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
+    });
 });

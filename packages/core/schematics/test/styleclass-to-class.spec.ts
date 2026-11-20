@@ -1477,4 +1477,31 @@ describe('styleclass-to-class', () => {
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-datepicker class="existing my-datepicker" [showIcon]="true"></p-datepicker>\n`);
     });
+
+    it('rewrites a static styleClass to class on p-tree', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-tree [value]="files" styleClass="w-full md:w-120"></p-tree>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-tree [value]="files" class="w-full md:w-120"></p-tree>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-tree but leaves p-treetable and p-treeNode alone', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-tree [value]="files" [styleClass]="treeClass"></p-tree>\n<p-treetable [value]="files" styleClass="table"></p-treetable>\n<p-treeNode styleClass="node"></p-treeNode>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-tree [value]="files" [class]="treeClass"></p-tree>\n<p-treetable [value]="files" styleClass="table"></p-treetable>\n<p-treeNode styleClass="node"></p-treeNode>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-tree', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-tree class="existing" styleClass="my-tree" [value]="files"></p-tree>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-tree class="existing my-tree" [value]="files"></p-tree>\n`);
+    });
 });

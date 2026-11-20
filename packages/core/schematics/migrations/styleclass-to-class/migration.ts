@@ -94,7 +94,8 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-cascade-select',
     'p-datePicker',
     'p-datepicker',
-    'p-date-picker'
+    'p-date-picker',
+    'p-tree'
 ];
 
 /**
