@@ -831,7 +831,8 @@ export class Carousel extends BaseComponent {
     startAutoplay() {
         this.interval.set(
             setInterval(() => {
-                if (this.totalDots() > 0) {
+                // with a single page every item is already visible: nothing to scroll to
+                if (this.totalDots() > 1) {
                     if (this._page() === this.totalDots() - 1) {
                         this.step(-1, 0);
                     } else {

@@ -1771,3 +1771,39 @@ describe('Carousel Signal Query API', () => {
         expect(instance.indicatorContent()).toBeDefined();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [Carousel],
+    template: `
+        <p-carousel [value]="items" [numVisible]="3" [numScroll]="3" [circular]="true" [autoplayInterval]="50">
+            <ng-template #item let-item>{{ item }}</ng-template>
+        </p-carousel>
+    `
+})
+class CarouselAllItemsVisibleHostComponent {
+    items = [1, 2, 3];
+}
+
+describe('Carousel autoplay with every item visible', () => {
+    it('should not scroll when all the items fit in one page', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CarouselAllItemsVisibleHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CarouselAllItemsVisibleHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const instance: Carousel = fixture.debugElement.query(By.directive(Carousel)).componentInstance;
+        const stepSpy = vi.spyOn(instance, 'step');
+
+        instance.startAutoplay();
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        instance.stopAutoplay();
+
+        expect(instance.totalDots()).toBe(1);
+        expect(stepSpy).not.toHaveBeenCalled();
+        expect(instance._page()).toBe(0);
+    });
+});
