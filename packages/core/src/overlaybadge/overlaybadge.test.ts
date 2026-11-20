@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Badge } from '@exhaustive-ui/core/badge';
 import { OverlayBadge, OverlayBadgeModule } from './overlaybadge';
 
 @Component({
@@ -31,6 +32,15 @@ class TestOverlayBadgeComponent {
 })
 class TestOverlayBadgeAliasesComponent {}
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [OverlayBadge],
+    template: `<p-overlaybadge value="2" [dt]="dt" [unstyled]="true"></p-overlaybadge>`
+})
+class TestOverlayBadgeTokensComponent {
+    dt = { sm: { fontSize: '20px' }, contrast: { background: 'red' } };
+}
+
 describe('OverlayBadge', () => {
     let fixture: ComponentFixture<TestOverlayBadgeComponent>;
     let host: TestOverlayBadgeComponent;
@@ -39,7 +49,7 @@ describe('OverlayBadge', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [TestOverlayBadgeComponent, TestOverlayBadgeAliasesComponent],
+            imports: [TestOverlayBadgeComponent, TestOverlayBadgeAliasesComponent, TestOverlayBadgeTokensComponent],
             providers: [provideZonelessChangeDetection()]
         }).compileComponents();
 
@@ -141,5 +151,16 @@ describe('OverlayBadge', () => {
 
         expect(badges.length).toBe(2);
         badges.forEach((badge) => expect(badge.nativeElement.querySelector('div')?.classList.contains('p-overlaybadge')).toBe(true));
+    });
+
+    it('should forward dt and unstyled to the inner badge', async () => {
+        const tokensFixture = TestBed.createComponent(TestOverlayBadgeTokensComponent);
+        tokensFixture.detectChanges();
+        await tokensFixture.whenStable();
+
+        const badge = tokensFixture.debugElement.query(By.directive(Badge)).componentInstance as Badge;
+
+        expect(badge.dt()).toEqual(tokensFixture.componentInstance.dt);
+        expect(badge.unstyled()).toBe(true);
     });
 });
