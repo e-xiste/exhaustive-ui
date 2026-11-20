@@ -174,6 +174,11 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
      */
     readonly minSizes = input<number[]>([]);
     /**
+     * Maximum size of the elements relative to 100%.
+     * @group Props
+     */
+    readonly maxSizes = input<number[]>([]);
+    /**
      * Size of the elements relative to 100%.
      * @group Props
      */
@@ -414,13 +419,25 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
     }
 
     validateResize(newPrevPanelSize: number, newNextPanelSize: number) {
+        // the sizes are those of the two panels around the dragged gutter
+        const prevIndex = this.prevPanelIndex() ?? 0;
+        const nextIndex = prevIndex + 1;
         const minSizes = this.minSizes();
+        const maxSizes = this.maxSizes();
 
-        if (minSizes.length >= 1 && minSizes[0] && minSizes[0] > newPrevPanelSize) {
+        if (minSizes[prevIndex] && minSizes[prevIndex] > newPrevPanelSize) {
             return false;
         }
 
-        if (minSizes.length > 1 && minSizes[1] && minSizes[1] > newNextPanelSize) {
+        if (minSizes[nextIndex] && minSizes[nextIndex] > newNextPanelSize) {
+            return false;
+        }
+
+        if (maxSizes[prevIndex] && maxSizes[prevIndex] < newPrevPanelSize) {
+            return false;
+        }
+
+        if (maxSizes[nextIndex] && maxSizes[nextIndex] < newNextPanelSize) {
             return false;
         }
 

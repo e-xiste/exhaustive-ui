@@ -342,6 +342,25 @@ describe('Splitter', () => {
             expect(splitterInstance.validateResize(15, 35)).toBe(false);
             expect(splitterInstance.validateResize(25, 25)).toBe(false);
         });
+
+        it('should check the minSizes of the two panels around the dragged gutter', () => {
+            const splitter = TestBed.createComponent(Splitter);
+            splitter.componentRef.setInput('minSizes', [10, 10, 40]);
+            splitter.componentInstance.prevPanelIndex.set(1);
+
+            expect(splitter.componentInstance.validateResize(30, 35)).toBe(false);
+            expect(splitter.componentInstance.validateResize(20, 45)).toBe(true);
+        });
+
+        it('should check the maxSizes of the two panels around the dragged gutter', () => {
+            const splitter = TestBed.createComponent(Splitter);
+            splitter.componentRef.setInput('maxSizes', [0, 50, 60]);
+            splitter.componentInstance.prevPanelIndex.set(1);
+
+            expect(splitter.componentInstance.validateResize(55, 20)).toBe(false);
+            expect(splitter.componentInstance.validateResize(20, 65)).toBe(false);
+            expect(splitter.componentInstance.validateResize(45, 35)).toBe(true);
+        });
     });
 
     describe('Touch Resize Operations', () => {
