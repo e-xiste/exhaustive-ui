@@ -234,6 +234,26 @@ export const style = /*css*/ `
         color: inherit;
     }
 
+    .p-autocomplete-input-multiple-sm {
+        font-size: dt('form.field.sm.font.size');
+        padding-block: calc(dt('form.field.sm.padding.y') / 2);
+        padding-inline: dt('form.field.sm.padding.x');
+    }
+
+    .p-autocomplete-input-multiple-sm .p-autocomplete-input-chip input {
+        font-size: dt('form.field.sm.font.size');
+    }
+
+    .p-autocomplete-input-multiple-lg {
+        font-size: dt('form.field.lg.font.size');
+        padding-block: calc(dt('form.field.lg.padding.y') / 2);
+        padding-inline: dt('form.field.lg.padding.x');
+    }
+
+    .p-autocomplete-input-multiple-lg .p-autocomplete-input-chip input {
+        font-size: dt('form.field.lg.font.size');
+    }
+
     .p-autocomplete-input-chip input::placeholder {
         color: dt('autocomplete.placeholder.color');
     }

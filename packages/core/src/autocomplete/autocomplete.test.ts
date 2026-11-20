@@ -3275,4 +3275,22 @@ describe('AutoComplete medium bug fixes', () => {
         fixture.detectChanges();
         expect(listbox.getAttribute('aria-labelledby')).toBe('tags-label');
     });
+
+    it('applies size to the multiple container instead of the native size attribute (optimus-ui#559)', () => {
+        const container = () => fixture.nativeElement.querySelector('ul.p-autocomplete-input-multiple') as HTMLElement;
+
+        fixture.componentRef.setInput('size', 'large');
+        fixture.detectChanges();
+        expect(container().classList).toContain('p-autocomplete-input-multiple-lg');
+        expect(input().hasAttribute('size')).toBe(false);
+
+        fixture.componentRef.setInput('size', 'small');
+        fixture.detectChanges();
+        expect(container().classList).toContain('p-autocomplete-input-multiple-sm');
+        expect(container().classList).not.toContain('p-autocomplete-input-multiple-lg');
+
+        fixture.componentRef.setInput('inputSize', 12);
+        fixture.detectChanges();
+        expect(input().getAttribute('size')).toBe('12');
+    });
 });

@@ -58,7 +58,9 @@ const classes = {
         'p-autocomplete-input-multiple',
         {
             'p-disabled': instance.$disabled(),
-            'p-variant-filled': instance.$variant() === 'filled'
+            'p-variant-filled': instance.$variant() === 'filled',
+            'p-autocomplete-input-multiple-sm': instance.size() === 'small',
+            'p-autocomplete-input-multiple-lg': instance.size() === 'large'
         }
     ],
     chipItem: ({ instance, i }) => [
