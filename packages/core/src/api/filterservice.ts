@@ -250,9 +250,11 @@ export class FilterService {
             if (value === undefined || value === null) {
                 return false;
             }
-            value.setHours(0, 0, 0, 0);
+            // Compare a copy: the row's own Date must not be modified by filtering.
+            const date = new Date(value.getTime());
+            date.setHours(0, 0, 0, 0);
 
-            return value.getTime() > filter.getTime();
+            return date.getTime() > filter.getTime();
         }
     };
 
