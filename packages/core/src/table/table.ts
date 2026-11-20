@@ -3628,22 +3628,29 @@ export class FrozenColumn extends BaseComponent {
 
     updateStickyPosition() {
         if (this.frozen()) {
+            // alignFrozen is logical: in RTL the start (left alignment) is the physical right side
+            const isRTL = getComputedStyle(this.el.nativeElement).direction === 'rtl';
+            const startSide = isRTL ? 'right' : 'left';
+            const endSide = isRTL ? 'left' : 'right';
+
             if (this.alignFrozen() === 'right') {
-                let right = 0;
+                let end = 0;
                 let sibling = this.el.nativeElement.nextElementSibling;
                 while (sibling) {
-                    right += this.getFrozenWidth(sibling);
+                    end += this.getFrozenWidth(sibling);
                     sibling = sibling.nextElementSibling;
                 }
-                this.el.nativeElement.style.right = right + 'px';
+                this.el.nativeElement.style[endSide] = end + 'px';
+                this.el.nativeElement.style[startSide] = '';
             } else {
-                let left = 0;
+                let start = 0;
                 let sibling = this.el.nativeElement.previousElementSibling;
                 while (sibling) {
-                    left += this.getFrozenWidth(sibling);
+                    start += this.getFrozenWidth(sibling);
                     sibling = sibling.previousElementSibling;
                 }
-                this.el.nativeElement.style.left = left + 'px';
+                this.el.nativeElement.style[startSide] = start + 'px';
+                this.el.nativeElement.style[endSide] = '';
             }
 
             const filterRow = this.el.nativeElement?.parentElement?.nextElementSibling;

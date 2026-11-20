@@ -3465,4 +3465,14 @@ describe('Table frozen column positions', () => {
         expect(headers[2].style.left).toBe(headers[0].offsetWidth + 'px');
         fixture.nativeElement.remove();
     });
+
+    it('sticks frozen columns to the start (right) side in RTL (optimus-ui#151, optimus-ui#708)', async () => {
+        const fixture = await render('rtl');
+        const headers = fixture.nativeElement.querySelectorAll('thead th');
+
+        expect(headers[0].style.right).toBe('0px');
+        expect(headers[0].style.left).toBe('');
+        expect(headers[2].style.right).toBe(headers[0].offsetWidth + 'px');
+        fixture.nativeElement.remove();
+    });
 });
