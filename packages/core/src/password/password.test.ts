@@ -2569,3 +2569,35 @@ describe('Password Signal Query API', () => {
         expect(instance.input()).toBeDefined();
     });
 });
+
+describe('Password toggleMask keyboard access (optimus-ui#823)', () => {
+    it('should make the mask toggle focusable, named, and operable with Enter and Space', async () => {
+        await TestBed.configureTestingModule({
+            imports: [Password],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(Password);
+        fixture.componentRef.setInput('toggleMask', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const eye = fixture.debugElement.query(By.css('[data-p-icon="eye"]')).nativeElement as HTMLElement;
+        expect(eye.getAttribute('tabindex')).toBe('0');
+        expect(eye.getAttribute('role')).toBe('button');
+        expect(eye.getAttribute('aria-label')).toBe('Show Password');
+
+        eye.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.componentInstance.unmasked()).toBe(true);
+
+        const eyeSlash = fixture.debugElement.query(By.css('[data-p-icon="eyeslash"]')).nativeElement as HTMLElement;
+        expect(eyeSlash.getAttribute('tabindex')).toBe('0');
+        expect(eyeSlash.getAttribute('aria-label')).toBe('Hide Password');
+
+        eyeSlash.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.componentInstance.unmasked()).toBe(false);
+    });
+});
