@@ -2026,6 +2026,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     isYearSelected(year: number) {
         if (this.isComparable()) {
+            if (this.isRangeSelection() && this.value()[1]) {
+                // like isMonthSelected, a complete range highlights every year it spans
+                return this.value()[0]?.getFullYear() <= year && year <= this.value()[1].getFullYear();
+            }
+
             let value = this.isRangeSelection() ? this.value()[0] : this.value();
 
             return !this.isMultipleSelection() ? value?.getFullYear() === year : false;

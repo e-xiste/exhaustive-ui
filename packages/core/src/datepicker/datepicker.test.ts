@@ -2808,6 +2808,17 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(value.getTime()).toBeLessThanOrEqual(Date.now());
     });
 
+    it('highlights every year of a range in the year view (optimus-ui#705)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'range');
+        await render();
+        picker.writeValue([new Date(2010, 1, 1), new Date(2018, 9, 2)]);
+
+        expect([2009, 2010, 2014, 2018, 2019].map((year) => picker.isYearSelected(year))).toEqual([false, true, true, true, false]);
+
+        picker.writeValue([new Date(2010, 1, 1), null]);
+        expect([2010, 2011].map((year) => picker.isYearSelected(year))).toEqual([true, false]);
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;
