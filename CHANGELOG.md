@@ -81,6 +81,10 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
+## 22.0.0-alpha.8 (2026-11-20)
+
+- `CONTRIBUTING.md` updated for v22: the v22 code conventions (signals only, OnPush, built-in control flow, migrations for removed or renamed inputs), what a user-visible change must update, the schematics, MCP and docs commands, and how releases are cut.
+
 ## 22.0.0-alpha.7 (2026-11-20)
 
 - New `CHANGELOG.md` at the repository root, linked from the README: a summary of 22.0.0 and an entry for every published version.
