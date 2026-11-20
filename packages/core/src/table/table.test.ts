@@ -3411,3 +3411,58 @@ describe('Table column reorder in RTL', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <div [attr.dir]="dir">
+            <p-table [value]="rows" [scrollable]="true">
+                <ng-template #header>
+                    <tr>
+                        <th pFrozenColumn style="min-width: 100px">Id</th>
+                        <th style="min-width: 150px">Name</th>
+                        <th pFrozenColumn style="min-width: 120px">Code</th>
+                        <th style="min-width: 300px">Price</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr>
+                        <td>{{ row.id }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.code }}</td>
+                        <td>{{ row.price }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class TableFrozenColumnsHostComponent {
+    dir = 'ltr';
+    rows = [{ id: 1, name: 'A', code: 'a', price: 1 }];
+}
+
+describe('Table frozen column positions', () => {
+    const render = async (dir: string) => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableFrozenColumnsHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableFrozenColumnsHostComponent);
+        fixture.componentInstance.dir = dir;
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve));
+        fixture.detectChanges();
+        return fixture;
+    };
+
+    it('offsets a frozen column by the frozen columns before it only (optimus-ui#151)', async () => {
+        const fixture = await render('ltr');
+        const headers = fixture.nativeElement.querySelectorAll('thead th');
+
+        expect(headers[0].style.left).toBe('0px');
+        expect(headers[2].style.left).toBe(headers[0].offsetWidth + 'px');
+        fixture.nativeElement.remove();
+    });
+});

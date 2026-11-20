@@ -3549,7 +3549,8 @@ export class RowGroupHeader extends BaseComponent {
     selector: '[pFrozenColumn]',
     standalone: false,
     host: {
-        '[class]': 'cx("frozenColumn")'
+        '[class]': 'cx("frozenColumn")',
+        '[attr.data-p-frozen-column]': 'frozen()'
     },
     providers: [TableStyle]
 })
@@ -3631,7 +3632,7 @@ export class FrozenColumn extends BaseComponent {
                 let right = 0;
                 let sibling = this.el.nativeElement.nextElementSibling;
                 while (sibling) {
-                    right += DomHandler.getOuterWidth(sibling);
+                    right += this.getFrozenWidth(sibling);
                     sibling = sibling.nextElementSibling;
                 }
                 this.el.nativeElement.style.right = right + 'px';
@@ -3639,7 +3640,7 @@ export class FrozenColumn extends BaseComponent {
                 let left = 0;
                 let sibling = this.el.nativeElement.previousElementSibling;
                 while (sibling) {
-                    left += DomHandler.getOuterWidth(sibling);
+                    left += this.getFrozenWidth(sibling);
                     sibling = sibling.previousElementSibling;
                 }
                 this.el.nativeElement.style.left = left + 'px';
@@ -3654,6 +3655,11 @@ export class FrozenColumn extends BaseComponent {
                 }
             }
         }
+    }
+
+    // only the frozen (sticky) cells stay between a frozen cell and the edge: the others scroll away
+    private getFrozenWidth(cell: HTMLElement): number {
+        return cell.getAttribute('data-p-frozen-column') === 'true' ? DomHandler.getOuterWidth(cell) : 0;
     }
 
     onDestroy() {
