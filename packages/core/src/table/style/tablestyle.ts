@@ -222,7 +222,7 @@ const classes = {
     rowEditorCancel: 'p-datatable-row-editor-cancel',
     frozenColumn: ({ instance }) => ({
         'p-datatable-frozen-column': instance.frozen(),
-        'p-datatable-frozen-column-left': instance.alignFrozenLeft === 'left'
+        'p-datatable-frozen-column-left': instance.alignFrozen() === 'left'
     }),
     contextMenuRowSelected: ({ instance }) => ({
         'p-datatable-contextmenu-row-selected': instance.selected()

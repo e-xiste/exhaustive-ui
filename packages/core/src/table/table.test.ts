@@ -3476,3 +3476,43 @@ describe('Table frozen column positions', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th pFrozenColumn id="left">Left</th>
+                    <th pFrozenColumn alignFrozen="right" id="right">Right</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.a }}</td>
+                    <td>{{ row.b }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestFrozenColumnAlignComponent {
+    rows = [{ a: 1, b: 2 }];
+}
+
+describe('Table FrozenColumn', () => {
+    it('adds p-datatable-frozen-column-left only to left-aligned frozen columns (found during triage)', async () => {
+        TestBed.configureTestingModule({ imports: [TestFrozenColumnAlignComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestFrozenColumnAlignComponent);
+        await fixture.whenStable();
+
+        const left = fixture.nativeElement.querySelector('#left') as HTMLElement;
+        const right = fixture.nativeElement.querySelector('#right') as HTMLElement;
+
+        expect(left.classList).toContain('p-datatable-frozen-column');
+        expect(left.classList).toContain('p-datatable-frozen-column-left');
+        expect(right.classList).toContain('p-datatable-frozen-column');
+        expect(right.classList).not.toContain('p-datatable-frozen-column-left');
+    });
+});
