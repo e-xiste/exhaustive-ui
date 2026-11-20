@@ -1255,9 +1255,12 @@ describe('Tabs Signal Query API', () => {
         expect(tablist.content()).toBeDefined();
         expect(tablist.tabs()).toBeDefined();
         expect(tablist.inkbar()).toBeDefined();
-        // navigator buttons only render while scrolling is possible
-        expect(tablist.prevButton()).toBeUndefined();
-        expect(tablist.nextButton()).toBeUndefined();
+        // navigator buttons only render while scrolling is possible, which depends on the available width:
+        // the viewChild queries must agree with whatever the template actually rendered
+        const prevEl = fixture.nativeElement.querySelector('.p-tablist-prev-button');
+        const nextEl = fixture.nativeElement.querySelector('.p-tablist-next-button');
+        expect(tablist.prevButton()?.nativeElement ?? null).toBe(prevEl);
+        expect(tablist.nextButton()?.nativeElement ?? null).toBe(nextEl);
 
         const tabpanel = fixture.debugElement.query(By.directive(TabPanel)).componentInstance;
         expect(tabpanel.content()).toBeDefined();
