@@ -496,6 +496,8 @@ describe('Popover', () => {
 
         it('should drop the flipped state when a later align() places the popover below its target (optimus-ui#398)', async () => {
             const target = component.targetButton().nativeElement;
+            // keep the target at the top of the viewport, whatever earlier tests left in the page, so there is room below it
+            Object.assign(target.style, { position: 'fixed', top: '10px', left: '10px' });
 
             popoverInstance.show(new MouseEvent('click'), target);
             await new Promise((resolve) => setTimeout(resolve, 100));

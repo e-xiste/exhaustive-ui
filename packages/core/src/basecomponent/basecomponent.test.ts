@@ -1,9 +1,22 @@
+import { Base } from '@exhaustive-ui/core/base';
+import { Theme } from '@exhaustive-ui/styled';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { Button } from '@exhaustive-ui/core/button';
 import { TableModule } from '@exhaustive-ui/core/table';
 import Aura from '@exhaustive-ui/themes/aura';
+
+// Tests that load a theme preset change the global Theme state and add <style> tags to the document,
+// which every test file shares: reset them after each test (the styles are added again on demand)
+// so the following files keep their layout.
+afterEach(() => {
+    Theme._theme = undefined;
+    Theme._tokens = {};
+    Theme.clearLoadedStyleNames();
+    Base.clearLoadedStyleNames();
+    document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+});
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

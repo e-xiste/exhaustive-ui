@@ -1,3 +1,5 @@
+import { Base } from '@exhaustive-ui/core/base';
+import { Theme } from '@exhaustive-ui/styled';
 import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -5,6 +7,17 @@ import { By } from '@angular/platform-browser';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import Aura from '@exhaustive-ui/themes/aura';
 import { InputText } from './inputtext';
+
+// Tests that load a theme preset change the global Theme state and add <style> tags to the document,
+// which every test file shares: reset them after each test (the styles are added again on demand)
+// so the following files keep their layout.
+afterEach(() => {
+    Theme._theme = undefined;
+    Theme._tokens = {};
+    Theme.clearLoadedStyleNames();
+    Base.clearLoadedStyleNames();
+    document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+});
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
