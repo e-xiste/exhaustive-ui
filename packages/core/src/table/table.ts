@@ -5643,7 +5643,7 @@ export class ReorderableRow extends BaseComponent {
                             @if (showClearButton()) {
                                 <p-button
                                     #clearBtn
-                                    [outlined]="true"
+                                    [outlined]="filterButtonProps()?.popover?.clear?.outlined ?? true"
                                     (onClick)="clearFilter()"
                                     [attr.aria-label]="clearButtonLabel"
                                     [label]="clearButtonLabel"

@@ -3637,3 +3637,60 @@ describe('Table ReorderableColumn', () => {
         expect(table.draggedColumn()).toBeNull();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th>Name <p-columnFilter type="text" field="name" display="menu" [filterButtonProps]="buttonProps"></p-columnFilter></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestColumnFilterMenuComponent {
+    rows = [{ name: 'A' }, { name: 'B' }];
+    buttonProps: any = {
+        filter: { severity: 'secondary', text: true, rounded: true },
+        popover: { apply: { size: 'small' }, clear: { outlined: false, size: 'small' } }
+    };
+}
+
+describe('Table column filter menu', () => {
+    let fixture: ComponentFixture<TestColumnFilterMenuComponent>;
+    let columnFilter: ColumnFilter;
+
+    const openMenu = async () => {
+        columnFilter.toggleMenu(new MouseEvent('click'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return columnFilter.overlay() as HTMLElement;
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestColumnFilterMenuComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TestColumnFilterMenuComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        columnFilter = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+    });
+
+    afterEach(() => columnFilter.hide());
+
+    it('takes the clear button outlined option from filterButtonProps (optimus-ui#222)', async () => {
+        const overlay = await openMenu();
+        const clearButton = overlay.querySelector('.p-datatable-filter-buttonbar button') as HTMLElement;
+
+        expect(clearButton.textContent).toContain('Clear');
+        expect(clearButton.classList).not.toContain('p-button-outlined');
+    });
+});
