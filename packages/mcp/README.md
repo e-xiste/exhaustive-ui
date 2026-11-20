@@ -85,16 +85,16 @@ args = ["-y", "@exhaustive-ui/mcp"]
 
 ## Tools
 
-| Tool             | Purpose                                                                                                                                                                                                                                                       |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `list`           | List components, directives, guides, code examples or MCP resources (`kind`, `limit`, `offset`).                                                                                                                                                              |
-| `search`         | Search component docs, guides, API members (inputs, outputs, templates, PT keys, CSS classes, tokens) and code examples (`query`, `scope`).                                                                                                                    |
-| `get_component`  | Read a component: selectors, import path, sections, available examples; optionally its API and compiled declarations (`includeApi`), example code (`includeExamples`) and the full Markdown document (`detail: "full"`). Accepts a batch of up to 10 `components`. |
-| `get_guide`      | Read a guide by name or route (`installation`, `configuration`, `theming/styled`, `tailwind`, `guides/accessibility`...), optionally one `section` or the full document.                                                                                        |
-| `get_example`    | Return one complete, source-backed code example of a component (a standalone Angular component with template and imports), by `section` or feature `variant`.                                                                                                 |
-| `get_setup`      | Return the setup guidance for an `environment`: `angular-cli` (default), `configuration`, `styled`, `unstyled`, `tailwind`, `icons`, `custom-icons`, `passthrough`.                                                                                             |
-| `validate_usage` | Check an Angular template or component source against the compiled API of a component: unknown inputs and outputs, invalid literal values, unsupported two-way bindings, deprecated inputs, wrong selectors and PrimeNG imports. Accepts a batch of `usages`. |
-| `version`        | Return the server version, the documented library version, where the docs are read from (live site, cache, offline snapshot) and the registered tools, resources and prompts.                                                                                 |
+| Tool             | Purpose                                                                                                                                                                                                                                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `list`           | List components, directives, guides, code examples or MCP resources (`kind`, `limit`, `offset`).                                                                                                                                                                                                                                     |
+| `search`         | Search component docs, guides, API members (inputs, outputs, templates, PT keys, CSS classes, tokens) and code examples (`query`, `scope`).                                                                                                                                                                                          |
+| `get_component`  | Read a component: selectors, import path, sections, available examples; optionally its API and compiled declarations (`includeApi`), example code (`includeExamples`) and the full Markdown document (`detail: "full"`). Accepts a batch of up to 10 `components`.                                                                   |
+| `get_guide`      | Read a guide by name or route (`installation`, `configuration`, `theming/styled`, `tailwind`, `guides/accessibility`...), optionally one `section` or the full document.                                                                                                                                                             |
+| `get_example`    | Return one complete, source-backed code example of a component (a standalone Angular component with template and imports), by `section` or feature `variant`.                                                                                                                                                                        |
+| `get_setup`      | Return the setup guidance for an `environment`: `angular-cli` (default), `configuration`, `styled`, `unstyled`, `tailwind`, `icons`, `custom-icons`, `passthrough`.                                                                                                                                                                  |
+| `validate_usage` | Check an Angular template or component source against the compiled API of a component: unknown inputs and outputs, invalid literal values, unsupported two-way bindings, deprecated inputs, inputs and outputs removed or renamed in v22 (with their replacement), wrong selectors and PrimeNG imports. Accepts a batch of `usages`. |
+| `version`        | Return the server version, the documented library version, where the docs are read from (live site, cache, offline snapshot) and the registered tools, resources and prompts.                                                                                                                                                        |
 
 Component names are resolved loosely: `button`, `p-button`, `Button`, `[pTooltip]`, `@exhaustive-ui/core/select`, a docs URL, and the PrimeNG names of renamed components (`dropdown`, `calendar`, `sidebar`, `overlaypanel`, `inputswitch`, `tabview`...) all work.
 
@@ -116,7 +116,7 @@ Resource templates:
 - `guide-docs`: `exhaustive-ui://docs/pages/{guide}.md`
 - `example-docs`: `exhaustive-ui://docs/examples/{component}/{section}.md`
 
-Prompts: `use_component`, `build_form`, `theme_component`, `migrate_from_primeng`, `audit_component_usage`.
+Prompts: `use_component`, `build_form`, `theme_component`, `migrate_from_primeng`, `update_to_v22`, `audit_component_usage`.
 
 ## Where the docs come from
 
@@ -126,13 +126,13 @@ The server reads these files from the live site at runtime and keeps them in mem
 
 ## Environment variables
 
-| Variable                          | Default                             | Purpose                                                                        |
-| --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------ |
-| `EXHAUSTIVE_UI_DOCS_URL`          | `https://exhaustive-ui.com` | Docs site to read from, for instance a local `ng serve` of the docs app.       |
-| `EXHAUSTIVE_UI_MCP_CACHE_TTL`     | `900`                               | Seconds a fetched document is reused before it is fetched again.               |
-| `EXHAUSTIVE_UI_MCP_FETCH_TIMEOUT` | `10000`                             | Milliseconds before a request to the docs site is abandoned.                   |
-| `EXHAUSTIVE_UI_MCP_OFFLINE`       | unset                               | Set to `1` to never contact the site and only use the bundled snapshot.        |
-| `EXHAUSTIVE_UI_MCP_SNAPSHOT_DIR`  | the package's `data/` directory     | Directory of the offline snapshot (a copy of the site's `/llms/` directory).   |
+| Variable                          | Default                         | Purpose                                                                      |
+| --------------------------------- | ------------------------------- | ---------------------------------------------------------------------------- |
+| `EXHAUSTIVE_UI_DOCS_URL`          | `https://exhaustive-ui.com`     | Docs site to read from, for instance a local `ng serve` of the docs app.     |
+| `EXHAUSTIVE_UI_MCP_CACHE_TTL`     | `900`                           | Seconds a fetched document is reused before it is fetched again.             |
+| `EXHAUSTIVE_UI_MCP_FETCH_TIMEOUT` | `10000`                         | Milliseconds before a request to the docs site is abandoned.                 |
+| `EXHAUSTIVE_UI_MCP_OFFLINE`       | unset                           | Set to `1` to never contact the site and only use the bundled snapshot.      |
+| `EXHAUSTIVE_UI_MCP_SNAPSHOT_DIR`  | the package's `data/` directory | Directory of the offline snapshot (a copy of the site's `/llms/` directory). |
 
 Example, Claude Code pointed at a local docs server:
 

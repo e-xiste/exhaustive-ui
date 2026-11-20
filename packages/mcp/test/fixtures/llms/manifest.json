@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@exhaustive-ui/core",
-  "version": "3.0.0-alpha.0",
+  "version": "22.0.0-alpha.3",
   "site": "https://exhaustive-ui.com",
   "entryPoints": [
     {
@@ -34,12 +34,6 @@
               "name": "badge",
               "type": "string | undefined",
               "description": "Value of the badge."
-            },
-            {
-              "name": "badgeClass",
-              "type": "string | undefined",
-              "description": "Style class of the badge.",
-              "deprecated": "use badgeSeverity instead."
             },
             {
               "name": "badgeSeverity",

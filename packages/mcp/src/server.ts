@@ -164,7 +164,7 @@ function registerTools(server: McpServer, ctx: ToolContext): void {
         {
             title: 'Validate component usage',
             description:
-                'Check an Angular template or component source against the compiled API of an ExhaustiveUI component: unknown inputs and outputs, invalid literal values, unsupported two-way bindings, deprecated inputs, wrong selectors and PrimeNG imports. Accepts a batch of up to 10 usages.',
+                'Check an Angular template or component source against the compiled API of an ExhaustiveUI component: unknown inputs and outputs, invalid literal values, unsupported two-way bindings, deprecated inputs, inputs and outputs removed or renamed in v22 (with their replacement), wrong selectors and PrimeNG imports. Accepts a batch of up to 10 usages.',
             inputSchema: validateUsageInput,
             annotations: readOnly
         },
@@ -374,9 +374,21 @@ const PROMPTS: Record<(typeof PROMPT_NAMES)[number], { title: string; descriptio
         title: 'Migrate from PrimeNG',
         description: 'Plan the migration of PrimeNG (or Optimus UI) code to ExhaustiveUI.',
         steps: [
+            'ExhaustiveUI v22 requires Angular v22: the workspace must be on PrimeNG v21, then updated to Angular v22, before running `ng generate @exhaustive-ui/core:migrate-from-primeng`.',
             'Call get_guide for "faq" (migration notes) and get_setup for "angular-cli".',
             'For each PrimeNG component used, call get_component with the PrimeNG name: renamed components (dropdown, calendar, sidebar, overlaypanel, inputswitch, tabview...) resolve to their ExhaustiveUI equivalent.',
             'Replace `primeng/<name>` imports with `@exhaustive-ui/core/<name>` and call validate_usage on each migrated template.'
+        ]
+    },
+    update_to_v22: {
+        title: 'Update to ExhaustiveUI v22',
+        description: 'Update an application to ExhaustiveUI v22 (Angular v22, Signals API) and fix what ng update leaves for review.',
+        steps: [
+            'Call get_guide for "update" and read its v22 section.',
+            'Update Angular first (`ng update @angular/core@22 @angular/cli@22`), then run `ng update @exhaustive-ui/core@22`; its migrations rewrite styleClass to class, renamed inputs and bindings of removed inputs and outputs, and print what they left for review.',
+            'In TypeScript code that holds a component instance (viewChild, ViewChild, injected component), read inputs as signals (`table.selection()`), write two-way properties with `.set()` (`drawer.visible.set(true)`), and call signal queries.',
+            'Components are OnPush (except Table, TreeTable and DynamicDialog): pass new arrays or objects, or signals, instead of mutating data bound to them in place.',
+            'Call validate_usage on each template that uses a `p-*` element: removed or renamed v22 inputs are reported with their replacement.'
         ]
     },
     audit_component_usage: {

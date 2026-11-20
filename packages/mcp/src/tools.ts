@@ -62,7 +62,7 @@ export const STATIC_RESOURCE_URIS = [`${RESOURCE_BASE_URI}/llms.txt`, `${RESOURC
 
 export const RESOURCE_TEMPLATE_NAMES = ['component-docs', 'component-api', 'guide-docs', 'example-docs'];
 
-export const PROMPT_NAMES = ['use_component', 'build_form', 'theme_component', 'migrate_from_primeng', 'audit_component_usage'] as const;
+export const PROMPT_NAMES = ['use_component', 'build_form', 'theme_component', 'migrate_from_primeng', 'update_to_v22', 'audit_component_usage'] as const;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Input schemas

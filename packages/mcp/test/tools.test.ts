@@ -285,16 +285,25 @@ describe('validate_usage', () => {
         expect(structured(invalid).issues).toContainEqual(expect.objectContaining({ kind: 'unknown-prop', name: 'rounded' }));
     });
 
+    it('names the replacement of inputs removed or renamed in v22', async () => {
+        const result = await validateUsageTool(ctx, { component: 'button', code: `<p-button label="Inbox" badge="2" badgeClass="p-badge-danger" />` });
+        const issue = structured(result).issues.find((entry: { name?: string }) => entry.name === 'badgeClass');
+
+        expect(issue).toMatchObject({ kind: 'unknown-prop', severity: 'error' });
+        expect(issue.message).toContain('removed in v22');
+        expect(issue.message).toContain('remove-dead-inputs');
+    });
+
     it('validates two-way bindings and deprecated inputs', async () => {
         const result = await validateUsageTool(ctx, { component: 'tabs', code: `<p-tabs [(value)]="active" [(scrollable)]="scroll"></p-tabs>` });
 
         expect(structured(result).issues).toEqual([expect.objectContaining({ kind: 'two-way-binding-unsupported', name: 'scrollable' })]);
 
-        const deprecated = await validateUsageTool(ctx, { component: 'button', code: `<p-button badge="2" badgeClass="p-badge-danger" />` });
+        const deprecated = await validateUsageTool(ctx, { component: 'select', code: `<p-select [options]="items" styleClass="w-full" />` });
 
         expect(deprecated.isError).toBeUndefined();
         expect(structured(deprecated)).toMatchObject({ valid: true });
-        expect(structured(deprecated).issues).toEqual([expect.objectContaining({ kind: 'deprecated-prop', name: 'badgeClass', severity: 'warning' })]);
+        expect(structured(deprecated).issues).toEqual([expect.objectContaining({ kind: 'deprecated-prop', name: 'styleClass', severity: 'warning' })]);
     });
 
     it('warns when ngModel is bound to a component without forms support', async () => {
@@ -353,7 +362,7 @@ describe('version', () => {
         const result = structured(await versionTool(ctx));
 
         expect(result.server).toEqual({ name: '@exhaustive-ui/mcp', version: '0.0.0-test' });
-        expect(result.data).toMatchObject({ libraryVersion: '3.0.0-alpha.0', site: 'https://exhaustive-ui.com', counts: { components: 5, directives: 5, guides: 4 } });
+        expect(result.data).toMatchObject({ libraryVersion: '22.0.0-alpha.3', site: 'https://exhaustive-ui.com', counts: { components: 5, directives: 5, guides: 4 } });
         expect(result.tools).toEqual(['list', 'search', 'get_component', 'get_guide', 'get_example', 'get_setup', 'validate_usage', 'version']);
         expect(result.resources.static).toContain('exhaustive-ui://docs/llms.txt');
         expect(result.prompts).toContain('use_component');

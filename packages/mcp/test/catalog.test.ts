@@ -13,7 +13,7 @@ describe('buildCatalog', () => {
     it('normalizes components, guides and directives from the generated indexes', async () => {
         const catalog = await loadCatalog();
 
-        expect(catalog.libraryVersion).toBe('3.0.0-alpha.0');
+        expect(catalog.libraryVersion).toBe('22.0.0-alpha.3');
         expect(catalog.site).toBe('https://exhaustive-ui.com');
         expect(catalog.components.map((component) => component.name)).toEqual(['button', 'inputtext', 'select', 'tabs', 'tooltip']);
         expect(catalog.guides.map((guide) => guide.route)).toEqual(['/installation', '/configuration', '/theming/styled', '/tailwind']);

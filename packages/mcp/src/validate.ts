@@ -1,6 +1,7 @@
 import { COMPONENT_ALIASES, attributeSelectorName, splitSelectors } from './catalog';
 import { isInterpolated, literalOfBinding, scanElements, scanImports, type TemplateElement } from './template';
 import { compact, slugify } from './text';
+import { removedInputHint, removedOutputHint } from './v22';
 import type { Catalog, ComponentEntry, ManifestDeclaration, ManifestInput } from './types';
 
 export type IssueSeverity = 'error' | 'warning';
@@ -326,12 +327,15 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                         break;
                     }
 
+                    const removed = isOwnElement ? removedInputHint(element.name, attribute.name) : undefined;
+
                     issues.push({
                         kind: 'unknown-prop',
                         severity: 'error',
                         name: attribute.name,
-                        message: `"${attribute.name}" is not an input of ${label}.`,
-                        allowedProps
+                        message: `"${attribute.name}" is not an input of ${label}.${removed ? ` ${removed.message}` : ''}`,
+                        allowedProps,
+                        ...(removed?.suggestion ? { suggestion: removed.suggestion } : {})
                     });
                     break;
                 }
@@ -371,11 +375,13 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                 }
 
                 if (/^on[A-Z]/.test(attribute.name)) {
+                    const removed = isOwnElement ? removedOutputHint(element.name, attribute.name) : undefined;
+
                     issues.push({
                         kind: 'unknown-output',
                         severity: 'error',
                         name: attribute.name,
-                        message: `"${attribute.name}" is not an output of ${label}.`,
+                        message: `"${attribute.name}" is not an output of ${label}.${removed ? ` ${removed.message}` : ''}`,
                         allowedEvents
                     });
                 }
