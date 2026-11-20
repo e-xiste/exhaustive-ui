@@ -3294,3 +3294,50 @@ describe('AutoComplete medium bug fixes', () => {
         expect(input().getAttribute('size')).toBe('12');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AutoComplete, FormsModule],
+    template: `
+        <p-autocomplete [(ngModel)]="value" [showClear]="true" [suggestions]="[]">
+            <ng-template #clearicon><button type="button" class="custom-clear">x</button></ng-template>
+        </p-autocomplete>
+    `
+})
+class TestAutocompleteClearIconComponent {
+    value = 'Alpha';
+}
+
+describe('AutoComplete low bug fixes', () => {
+    let fixture: ComponentFixture<AutoComplete>;
+    let autocomplete: AutoComplete;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoComplete, TestAutocompleteClearIconComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(AutoComplete);
+        autocomplete = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-autocomplete-overlay').forEach((el) => el.remove());
+    });
+
+    const input = () => fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+
+    it('does not hide a custom clear icon template from assistive technology (optimus-ui#26)', async () => {
+        const host = TestBed.createComponent(TestAutocompleteClearIconComponent);
+        host.detectChanges();
+        await host.whenStable();
+        host.detectChanges();
+
+        const button = host.nativeElement.querySelector('.custom-clear') as HTMLElement;
+        expect(button).toBeTruthy();
+        expect(button.closest('[aria-hidden="true"]')).toBeNull();
+    });
+});

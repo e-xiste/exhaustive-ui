@@ -123,7 +123,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 <svg data-p-icon="times" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear()" [attr.aria-hidden]="true" />
             }
             @if (clearIconTemplate() || _clearIconTemplate()) {
-                <span [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear()" [attr.aria-hidden]="true">
+                <span [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear()">
                     <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate()"></ng-template>
                 </span>
             }
