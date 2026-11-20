@@ -5439,6 +5439,13 @@ export class ReorderableRow extends BaseComponent {
                     </ng-template>
                 </p-button>
             }
+            @if (showClearButton() && display() === 'row' && type() === 'boolean' && hasFilter) {
+                <p-button [styleClass]="cx('pcColumnFilterClearButton')" [ariaLabel]="clearButtonLabel" (click)="clearFilter()" [buttonProps]="filterButtonProps()?.inline?.clear" [unstyled]="unstyled()">
+                    <ng-template #icon>
+                        <svg data-p-icon="filter-slash" />
+                    </ng-template>
+                </p-button>
+            }
             @if (renderOverlay()) {
                 <div
                     [pMotion]="showMenu() && overlayVisible()"

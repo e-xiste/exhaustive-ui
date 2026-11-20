@@ -2851,4 +2851,23 @@ describe('Table boolean column filter', () => {
         const input: HTMLInputElement = fixture.nativeElement.querySelector('p-checkbox input');
         expect(input.getAttribute('aria-label')).toBe('Verified filter');
     });
+
+    it('shows a clear button that resets a set boolean filter (optimus-ui#214)', async () => {
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        expect(fixture.nativeElement.querySelector('[data-p-icon="filter-slash"]')).toBeNull();
+
+        fixture.debugElement.query(By.directive(ColumnFilterFormElement)).componentInstance.onModelChange(true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(table.filteredValue()!.length).toBe(1);
+
+        const clearIcon: HTMLElement = fixture.nativeElement.querySelector('[data-p-icon="filter-slash"]');
+        expect(clearIcon).toBeTruthy();
+        (clearIcon.closest('button') as HTMLButtonElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect((table._filters()['verified'] as any).value).toBeNull();
+        expect(table.filteredValue()).toBeNull();
+    });
 });
