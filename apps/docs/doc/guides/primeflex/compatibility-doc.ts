@@ -8,8 +8,8 @@ import { Component } from '@angular/core';
     template: `
         <app-docsectiontext>
             <p>
-                If you are staying on PrimeFlex for now, ExhaustiveUI pairs with PrimeFlex v4 — the same combination that worked with PrimeNG v18 and newer, since the styling architecture is unchanged. PrimeFlex v3 targeted the older PrimeNG
-                releases and is not a supported pairing here.
+                If you are staying on PrimeFlex for now, ExhaustiveUI pairs with PrimeFlex v4 — the same combination that worked with PrimeNG v18 and newer, since the styling architecture is unchanged. PrimeFlex v3 targeted the older PrimeNG releases
+                and is not a supported pairing here.
             </p>
             <p>Neither version is tested against ExhaustiveUI releases, so treat this as "should work", not as a supported configuration. The migration below is the path we actually maintain.</p>
         </app-docsectiontext>

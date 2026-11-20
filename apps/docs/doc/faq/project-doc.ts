@@ -22,7 +22,10 @@ import { RouterModule } from '@angular/router';
             </p>
 
             <h3>Which PrimeNG version is this forked from?</h3>
-            <p>PrimeNG v21, the last version published under the MIT license, by way of Optimus UI v2. ExhaustiveUI v22 is that codebase, rebranded and migrated to the Angular Signals API, with the fixes that have landed since; its major version number follows Angular's.</p>
+            <p>
+                PrimeNG v21, the last version published under the MIT license, by way of Optimus UI v2. ExhaustiveUI v22 is that codebase, rebranded and migrated to the Angular Signals API, with the fixes that have landed since; its major version
+                number follows Angular's.
+            </p>
 
             <h3>Who maintains it, and how is it funded?</h3>
             <p>
