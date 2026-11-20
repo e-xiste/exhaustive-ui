@@ -88,6 +88,46 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
+## Unreleased
+
+Fixes for 108 low-severity bugs reported on [Optimus UI](https://github.com/openng-org/optimus-ui/issues) that still affected ExhaustiveUI. Each one has a regression test, except documentation fixes, which are checked by the docs build. The issue numbers are Optimus UI's.
+
+### Behaviour changes
+
+- TieredMenu: with `autoDisplay`, submenus open on hover from the start, without a first click, as documented (#655). A tap on a touch screen still opens them on the click.
+- ContextMenu: showing a context menu closes any other one that is open (#359).
+- Select, MultiSelect and CascadeSelect use the SVG spinner of Button as their default loading icon, instead of the `pi-spin` icon class (#1600).
+- InputText: when `[invalid]` is bound, it alone decides the invalid style; the automatic `ng-invalid.ng-dirty` border no longer applies on top of it (#372).
+- InputNumber: a keystroke that would make the formatted value longer than `maxlength` is rejected instead of truncating the text (#362). The native `min`/`max` attributes are gone; the bounds stay in `aria-valuemin`/`aria-valuemax` (#326).
+- DatePicker: the `data-date` attribute of day cells uses a 1-based month (#215).
+- MeterGroup: meter widths use the exact percentage; labels keep the rounded value (#536).
+
+### Type changes
+
+- Table `onFilter`: `filters` is typed `FilterMetadata | FilterMetadata[]`, which is what the table emits (#56).
+- TreeTable `TreeTableLazyLoadEvent`: `first` is a `number` and `last` an optional `number`, as in `TableLazyLoadEvent` (#931).
+- CascadeSelect `options` is typed as an array (#277, #360).
+- Dialog/ConfirmDialog `pt.root` is typed as the options of the root element (#91).
+- New exported `ChartDataSelectEvent` type for Chart `onDataSelect` (#394).
+- `Confirmation` accepts `draggable` (#60).
+
+### New optional inputs
+
+- Password `readonly` (#235), OrderList `focusOnHover` (#401), TreeSelect `togglerAriaLabel` (#624), Breadcrumb `ariaLabel` (#51). DatePicker `hourFormat` also accepts a number (#309).
+
+### Fixes
+
+- Table: empty message shown once with frozen rows, reorder cursor and indicators, filter menu clear button, active state and spacing, state saved when the selection is set from code, Trusted Types support for the generated column styles, frozen footer background (#121, #589, #132, #377, #222, #467, #542, #573, #327, #186).
+- DatePicker: invalid placeholder colour, ISO week numbers, panel realigned when the month changes height, time change on the `defaultDate` day, RTL chevrons, the input icon, the Today button time, year ranges in the year view (#53, #97, #179, #197, #305, #456, #574, #705).
+- InputNumber: paste no longer cancelled, decimal steps without floating point artefacts, no dirty state on a blur without edit, ".5" gives 0.5 (#8, #383, #428, #678).
+- Select, MultiSelect: touched state while open, disabled option checkboxes, dropdown icon and empty toggle-all, Tab key, custom filter templates, focus after filtering, scroll to the selection with virtual scroll, overlay realigned when the options change (#724, #439, #111, #675, #331, #752, #22, #1841).
+- AutoComplete, Listbox, PickList, Tree, TreeSelect, TreeTable: custom clear icon, separator key, `[object Object]` labels, `minQueryLength` with `completeOnFocus`, list and checkbox names, toggle button label, touched state, listener cleanup, virtual scroll indentation (#26, #267, #901, #921, #347, #389, #275, #624, #575, #474, #315).
+- Overlays: ConfirmDialog `p-footer`, Drawer `maskStyle`, mask fade-out and close button, FileUpload basic mode icon and drag highlight, Popover flip state and Escape listener, ConfirmPopup `blockScroll` and `dir`, positioned Dialog header click, centered Toast with breakpoints (#290, #488, #69, #273, #123, #876, #398, #405, #557, #648, #447, #469).
+- Menus and layout: Card layout, MegaMenu global pass-through, PanelMenu root items and separators, Tabs scroll into view and active bar, ContextMenu hidden icon focus, Menu hidden separators, Paginator "All" option, Fieldset labelling, Stepper as a BlockUI target (#28, #32, #183, #635, #199, #697, #323, #518, #703, #766, #885).
+- Form inputs: icon-only ToggleButton, disabled ToggleSwitch tooltip and ARIA, Editor colour picker and toolbar tokens, pPassword strength bar, SelectButton RTL border, NG0955 warning and `p-fluid`, InputGroup button height, IconField `iconPosition="right"`, FloatLabel over a select placeholder, Slider passive touch events (#68, #90, #351, #834, #99, #954, #285, #301, #364, #505, #298, #477, #685, #867, #501, #787).
+- Theming: OverlayBadge `dt` and `unstyled`, component-level `dt` css, Lara token references, nested ScrollPanel bars (#18, #633, #1874, #943).
+- Documentation: accessibility class name, setup examples without `provideAnimationsAsync`, Tree multiple selection value, Image in the LLM docs (and so in the MCP server), theme preferences kept across reloads on the docs site (#119, #147, #825, #1867, #1616).
+
 ## 22.0.0-alpha.10 (2026-11-20)
 
 Fixes for 170 medium-severity bugs reported on [Optimus UI](https://github.com/openng-org/optimus-ui/issues) that still affected ExhaustiveUI. Each one has a regression test; the issue numbers are Optimus UI's.
