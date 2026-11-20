@@ -2666,4 +2666,18 @@ describe('DatePicker Optimus UI bug fixes', () => {
         picker.decrementHour(new Event('click'));
         expect(picker.currentHour()).toBe(12);
     });
+
+    it('applies the minDate hour constraint before a value is set (optimus-ui#388)', async () => {
+        const minDate = new Date();
+        minDate.setHours(10, 0, 0, 0);
+        fixture.componentRef.setInput('showTime', true);
+        fixture.componentRef.setInput('minDate', minDate);
+        await render();
+        picker.currentHour.set(10);
+        picker.currentMinute.set(0);
+
+        picker.decrementHour(new Event('click'));
+
+        expect(picker.currentHour()).toBe(10);
+    });
 });

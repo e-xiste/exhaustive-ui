@@ -2834,7 +2834,8 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 value = this.value()[this.value().length - 1];
             }
         }
-        const valueDateString = value && isDate(value) ? value.toDateString() : null;
+        // without a value, updateTime builds the new value on today's date
+        const valueDateString = (value && isDate(value) ? value : new Date()).toDateString();
         let isMinDate = this.minDate() && valueDateString && this.minDate()!.toDateString() === valueDateString;
         let isMaxDate = this.maxDate() && valueDateString && this.maxDate()!.toDateString() === valueDateString;
 
