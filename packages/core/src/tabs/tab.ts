@@ -132,7 +132,8 @@ export class Tab extends BaseComponent<TabPassThrough> {
                 break;
 
             default:
-                break;
+                // let unhandled keys (Escape, Tab...) reach the ancestors, e.g. a Dialog
+                return;
         }
 
         event.stopPropagation();

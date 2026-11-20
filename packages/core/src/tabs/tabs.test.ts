@@ -475,6 +475,18 @@ describe('Tabs', () => {
             tabs[0].nativeElement.focus();
         });
 
+        it('should let keys it does not handle bubble up', () => {
+            const parentListener = vi.fn();
+            fixture.nativeElement.addEventListener('keydown', parentListener);
+
+            tabs[0].nativeElement.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
+            tabs[0].nativeElement.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowRight', bubbles: true }));
+
+            expect(parentListener).toHaveBeenCalledTimes(1);
+            expect(parentListener.mock.calls[0][0].code).toBe('Escape');
+            fixture.nativeElement.removeEventListener('keydown', parentListener);
+        });
+
         it('should handle right arrow key navigation', () => {
             const rightArrowEvent = new KeyboardEvent('keydown', { code: 'ArrowRight' });
             vi.spyOn(rightArrowEvent, 'preventDefault').mockImplementation(() => {});
