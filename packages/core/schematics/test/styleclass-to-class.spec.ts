@@ -1453,13 +1453,13 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-table [value]="products" [class]="tableClass" [paginator]="true"></p-table>\n`);
     });
 
-    it('merges styleClass into an existing static class on p-table and leaves p-treeTable alone', async () => {
+    it('merges styleClass into an existing static class on p-table', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
-            '/src/app/app.html': `<p-table class="existing" styleClass="my-table" [value]="products"></p-table>\n<p-treeTable styleClass="my-tree" [value]="files"></p-treeTable>\n`
+            '/src/app/app.html': `<p-table class="existing" styleClass="my-table" [value]="products"></p-table>\n`
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
-        expect(result.readContent('/src/app/app.html')).toBe(`<p-table class="existing my-table" [value]="products"></p-table>\n<p-treeTable styleClass="my-tree" [value]="files"></p-treeTable>\n`);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-table class="existing my-table" [value]="products"></p-table>\n`);
     });
 
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
@@ -1514,13 +1514,13 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-tree [value]="files" class="w-full md:w-120"></p-tree>\n`);
     });
 
-    it('rewrites a bound [styleClass] to [class] on p-tree but leaves p-treetable and p-treeNode alone', async () => {
+    it('rewrites a bound [styleClass] to [class] on p-tree but leaves p-treeNode alone', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
-            '/src/app/app.html': `<p-tree [value]="files" [styleClass]="treeClass"></p-tree>\n<p-treetable [value]="files" styleClass="table"></p-treetable>\n<p-treeNode styleClass="node"></p-treeNode>\n`
+            '/src/app/app.html': `<p-tree [value]="files" [styleClass]="treeClass"></p-tree>\n<p-treeNode styleClass="node"></p-treeNode>\n`
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
-        expect(result.readContent('/src/app/app.html')).toBe(`<p-tree [value]="files" [class]="treeClass"></p-tree>\n<p-treetable [value]="files" styleClass="table"></p-treetable>\n<p-treeNode styleClass="node"></p-treeNode>\n`);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-tree [value]="files" [class]="treeClass"></p-tree>\n<p-treeNode styleClass="node"></p-treeNode>\n`);
     });
 
     it('merges styleClass into an existing static class on p-tree', async () => {
@@ -1679,5 +1679,32 @@ describe('styleclass-to-class', () => {
         });
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-multiselect class="existing w-full" [options]="cities"></p-multiselect>\n`);
+    });
+
+    it('rewrites a static styleClass to class on p-treetable, p-treeTable and p-tree-table', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-treetable [value]="files" styleClass="p-treetable-sm"></p-treetable>\n<p-treeTable [value]="files" styleClass="a"></p-treeTable>\n<p-tree-table [value]="files" styleClass="b"></p-tree-table>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-treetable [value]="files" class="p-treetable-sm"></p-treetable>\n<p-treeTable [value]="files" class="a"></p-treeTable>\n<p-tree-table [value]="files" class="b"></p-tree-table>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-treetable', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-treetable [value]="files" [styleClass]="tableClass" [scrollable]="true"></p-treetable>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-treetable [value]="files" [class]="tableClass" [scrollable]="true"></p-treetable>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-treetable without touching tableStyleClass/paginatorStyleClass', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-treetable class="existing" styleClass="my-tree" tableStyleClass="t" paginatorStyleClass="p" [value]="files"></p-treetable>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-treetable class="existing my-tree" tableStyleClass="t" paginatorStyleClass="p" [value]="files"></p-treetable>\n`);
     });
 });
