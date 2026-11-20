@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DebugElement, PLATFORM_ID, provideZ
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import type { ChartDataSelectEvent } from '@exhaustive-ui/core/types/chart';
 import { ChartModule, UIChart } from './chart';
 
 const basicData = () => ({
@@ -469,6 +470,21 @@ describe('UIChart', () => {
             expect(emitSpy.mock.calls[0][0].dataset).toBe(dataset);
             expect(emitSpy.mock.calls[0][0].originalEvent).toBeInstanceOf(Event);
             expect(component.selected.element).toBe(element);
+        });
+
+        it('should emit a typed ChartDataSelectEvent (optimus-ui#394)', () => {
+            const element = { datasetIndex: 0, index: 1 };
+            vi.spyOn(chart.chart(), 'getElementsAtEventForMode').mockReturnValue([element]);
+
+            let selected: ChartDataSelectEvent | undefined;
+            chart.onDataSelect.subscribe((event: ChartDataSelectEvent) => (selected = event));
+            // @ts-expect-error the event is typed, its element is not a string
+            chart.onDataSelect.subscribe((event: { element: string }) => event);
+
+            canvas.click();
+
+            expect(selected?.element.index).toBe(1);
+            expect(selected?.dataset[0].datasetIndex).toBe(0);
         });
 
         it('should not emit onDataSelect when nothing is hit', () => {

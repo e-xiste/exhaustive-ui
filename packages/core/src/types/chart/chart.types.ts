@@ -1,4 +1,5 @@
 import type { PassThrough, PassThroughOption } from '@exhaustive-ui/core/api';
+import type { ActiveElement } from 'chart.js';
 
 /**
  * Custom pass-through(pt) options.
@@ -29,3 +30,23 @@ export interface ChartPassThroughOptions<I = unknown> {
  * @template I Type of instance.
  */
 export type ChartPassThrough<I = unknown> = PassThrough<I, ChartPassThroughOptions<I>>;
+
+/**
+ * Custom data select event.
+ * @see {@link UIChart.onDataSelect}
+ * @group Events
+ */
+export interface ChartDataSelectEvent {
+    /**
+     * Browser click event.
+     */
+    originalEvent: Event;
+    /**
+     * Chart element nearest to the click.
+     */
+    element: ActiveElement;
+    /**
+     * Elements of the dataset that was clicked.
+     */
+    dataset: ActiveElement[];
+}

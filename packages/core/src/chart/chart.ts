@@ -5,7 +5,7 @@ import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { ChartStyle } from './style/chartstyle';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
-import type { ChartPassThrough } from '@exhaustive-ui/core/types/chart';
+import type { ChartDataSelectEvent, ChartPassThrough } from '@exhaustive-ui/core/types/chart';
 
 /**
  * Chart groups a collection of contents in tabs.
@@ -105,7 +105,7 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
      * Callback to execute when an element on chart is clicked.
      * @group Emits
      */
-    readonly onDataSelect = output<any>();
+    readonly onDataSelect = output<ChartDataSelectEvent>();
 
     initialized = signal<boolean | undefined>(undefined);
 
