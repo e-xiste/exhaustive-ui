@@ -2084,3 +2084,48 @@ describe('ConfirmPopup opened for another target', () => {
         expect(container.hasAttribute('data-p-confirmpopup-flipped')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmPopup],
+    template: `
+        <p-confirmpopup />
+        <button class="block-target" (click)="confirm($event)">Open</button>
+    `
+})
+class ConfirmPopupBlockScrollHostComponent {
+    confirmationService = inject_1(ConfirmationService);
+
+    confirm(event: Event) {
+        this.confirmationService.confirm({ target: event.currentTarget as EventTarget, message: 'Sure?', blockScroll: true });
+    }
+}
+
+describe('ConfirmPopup blockScroll', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should block the body scroll while a blockScroll confirmation is shown (optimus-ui#557)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmPopupBlockScrollHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmPopupBlockScrollHostComponent);
+        const popup: ConfirmPopup = fixture.debugElement.query(By.directive(ConfirmPopup)).componentInstance;
+        await fixture.whenStable();
+
+        (fixture.nativeElement.querySelector('.block-target') as HTMLElement).click();
+        await fixture.whenStable();
+        await wait(100);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        popup.onReject();
+        await fixture.whenStable();
+        await wait(400);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
+});

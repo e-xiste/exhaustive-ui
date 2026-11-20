@@ -30,7 +30,7 @@ import { Confirmation, ConfirmationService, OverlayService, PrimeTemplate, Share
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ConnectedOverlayScrollHandler } from '@exhaustive-ui/core/dom';
+import { blockBodyScroll, ConnectedOverlayScrollHandler, unblockBodyScroll } from '@exhaustive-ui/core/dom';
 import { FocusTrap } from '@exhaustive-ui/core/focustrap';
 import { MotionModule } from '@exhaustive-ui/core/motion';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
@@ -329,6 +329,11 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
+    /**
+     * Whether the body scroll is blocked by the blockScroll option of the shown confirmation.
+     */
+    private scrollBlocked = false;
+
     option(name: string, k?: string) {
         const confirmation: { [key: string]: any } = this.confirmation() ?? {};
         const source: { [key: string]: any } = Object.prototype.hasOwnProperty.call(confirmation, name) ? confirmation : this;
@@ -357,6 +362,11 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
             const focus = this.option('defaultFocus');
             this.autoFocusAccept.set(focus === 'accept');
             this.autoFocusReject.set(focus === 'reject');
+        }
+
+        if (this.confirmation()?.blockScroll && !this.scrollBlocked) {
+            blockBodyScroll();
+            this.scrollBlocked = true;
         }
 
         this.container.set(event.element as HTMLElement);
@@ -578,6 +588,11 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
     }
 
     onContainerDestroy() {
+        if (this.scrollBlocked) {
+            unblockBodyScroll();
+            this.scrollBlocked = false;
+        }
+
         this.unbindListeners();
         this.unsubscribeConfirmationSubscriptions();
 
