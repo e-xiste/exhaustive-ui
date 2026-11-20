@@ -117,6 +117,8 @@ export class TabList extends BaseComponent<TabListPassThrough> {
 
     resizeObserver!: ResizeObserver;
 
+    mutationObserver: MutationObserver | undefined;
+
     showNavigators = computed(() => this.pcTabs.showNavigators());
 
     tabindex = computed(() => this.pcTabs.tabindex());
@@ -230,6 +232,9 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     bindResizeObserver() {
         this.resizeObserver = new ResizeObserver(() => this.updateButtonState());
         this.resizeObserver.observe(this.el.nativeElement);
+        // tabs added or removed later change the scroll width without resizing the host
+        this.mutationObserver = new MutationObserver(() => this.updateButtonState());
+        this.mutationObserver.observe(this.tabs().nativeElement, { childList: true });
     }
 
     unbindResizeObserver() {
@@ -237,5 +242,8 @@ export class TabList extends BaseComponent<TabListPassThrough> {
             this.resizeObserver.unobserve(this.el.nativeElement);
             this.resizeObserver = null!;
         }
+
+        this.mutationObserver?.disconnect();
+        this.mutationObserver = undefined;
     }
 }

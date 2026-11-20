@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZonelessChangeDetection, signal, ViewEncapsulation } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
@@ -1320,5 +1320,70 @@ describe('TabPanel content template', () => {
         const panel = fixture.nativeElement.querySelector('p-tabpanel');
         expect(panel.querySelector('.holder')).toBeTruthy();
         expect(panel.querySelector('.nested-content')).toBeNull();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TabsModule],
+    encapsulation: ViewEncapsulation.None,
+    template: `
+        <div style="width: 200px">
+            <p-tabs value="0" scrollable>
+                <p-tablist>
+                    @for (tab of tabs(); track tab) {
+                        <p-tab [value]="tab">Dynamic tab {{ tab }}</p-tab>
+                    }
+                </p-tablist>
+            </p-tabs>
+        </div>
+    `,
+    styles: [
+        `
+            .p-tablist {
+                display: flex;
+                position: relative;
+            }
+            .p-tablist-content {
+                overflow-x: auto;
+                flex-grow: 1;
+            }
+            .p-tablist-tab-list {
+                display: flex;
+            }
+            .p-tab {
+                flex-shrink: 0;
+                white-space: nowrap;
+                padding: 0 8px;
+            }
+        `
+    ]
+})
+class TabsDynamicScrollableHostComponent {
+    tabs = signal<string[]>(['0']);
+}
+
+describe('TabList navigators with dynamic tabs', () => {
+    it('should show the next button once added tabs overflow the list', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TabsDynamicScrollableHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TabsDynamicScrollableHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        // let the initial ResizeObserver callback run
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const tablist: TabList = fixture.debugElement.query(By.directive(TabList)).componentInstance;
+        expect(tablist.isNextButtonEnabled()).toBe(false);
+
+        fixture.componentInstance.tabs.set(Array.from({ length: 10 }, (_, i) => `${i}`));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await vi.waitFor(() => expect(tablist.isNextButtonEnabled()).toBe(true));
     });
 });
