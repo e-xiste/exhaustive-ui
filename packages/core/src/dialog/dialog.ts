@@ -134,7 +134,7 @@ const DIALOG_INSTANCE = new InjectionToken<Dialog>('DIALOG_INSTANCE');
                                             <p-button
                                                 [pt]="ptm('pcCloseButton')"
                                                 [styleClass]="cx('pcCloseButton')"
-                                                [ariaLabel]="closeAriaLabel()"
+                                                [ariaLabel]="closeAriaLabel() || closeLabel"
                                                 (onClick)="close($event)"
                                                 (keydown.enter)="close($event)"
                                                 [tabindex]="closeTabindex()"
@@ -649,6 +649,10 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     get minimizeLabel(): string {
         return this.config.getTranslation(TranslationKeys.ARIA)['minimizeLabel'];
+    }
+
+    get closeLabel(): string {
+        return this.config.getTranslation(TranslationKeys.ARIA)['close'];
     }
     zone: NgZone = inject(NgZone);
 

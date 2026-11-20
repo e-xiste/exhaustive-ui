@@ -1980,6 +1980,12 @@ describe('Dialog Signal API', () => {
         expect(query('.p-dialog-mask')?.style.alignItems).toBe('flex-start');
     });
 
+    it('should give the close button the translated close label by default', async () => {
+        await open();
+
+        expect(query('.p-dialog-close-button')?.getAttribute('aria-label')).toBe('Close');
+    });
+
     it('should re-render the role attribute when role changes', async () => {
         await open();
         expect(query('.p-dialog')?.getAttribute('role')).toBe('dialog');
