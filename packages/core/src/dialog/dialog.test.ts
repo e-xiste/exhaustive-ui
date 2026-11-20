@@ -2176,3 +2176,51 @@ describe('Dialog focus management', () => {
         expect(document.activeElement).toBe(opener);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog],
+    template: `<p-dialog [(visible)]="visible" position="top" [draggable]="true" [modal]="false" header="Positioned" [style]="{ width: '300px' }">Content</p-dialog>`
+})
+class PositionedDraggableDialogHostComponent {
+    visible = signal(true);
+}
+
+describe('Dialog drag of a positioned dialog', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    it('should not move the dialog on a header click without drag (optimus-ui#447)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [PositionedDraggableDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(PositionedDraggableDialogHostComponent);
+        await fixture.whenStable();
+        await wait(400);
+
+        const dialogEl = document.querySelector('.p-dialog') as HTMLElement;
+        const header = dialogEl.querySelector('.p-dialog-header') as HTMLElement;
+        const before = dialogEl.getBoundingClientRect();
+
+        const rect = header.getBoundingClientRect();
+        const init = { bubbles: true, clientX: rect.left + 10, clientY: rect.top + 10 };
+        header.dispatchEvent(new MouseEvent('mousedown', init));
+        document.dispatchEvent(new MouseEvent('mouseup', init));
+        await fixture.whenStable();
+
+        const after = dialogEl.getBoundingClientRect();
+        expect(after.top).toBe(before.top);
+        expect(after.left).toBe(before.left);
+
+        // a real drag moves it by the pointer delta from where it was
+        header.dispatchEvent(new MouseEvent('mousedown', init));
+        document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: init.clientX + 20, clientY: init.clientY + 30 }));
+        document.dispatchEvent(new MouseEvent('mouseup', init));
+        await fixture.whenStable();
+
+        const moved = dialogEl.getBoundingClientRect();
+        expect(moved.left).toBeCloseTo(before.left + 20, 0);
+        expect(moved.top).toBeCloseTo(before.top + 30, 0);
+    });
+});

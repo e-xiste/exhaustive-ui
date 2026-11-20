@@ -811,7 +811,6 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
             this.lastPageX.set(event.pageX);
             this.lastPageY.set(event.pageY);
 
-            (this.container() as HTMLDivElement).style.margin = '0';
             this.document.body.setAttribute('data-p-unselectable-text', 'true');
             !this.$unstyled() && addStyle(this.document.body, { 'user-select': 'none' });
         }
@@ -824,6 +823,8 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
             const deltaX = event.pageX - (this.lastPageX() as number);
             const deltaY = event.pageY - (this.lastPageY() as number);
             const offset = this.container()!.getBoundingClientRect();
+            // Drop the position margin only once the dialog really moves, so a plain header click does not shift it
+            this.container()!.style.margin = '0';
 
             const containerComputedStyle = getComputedStyle(this.container() as HTMLDivElement);
 
