@@ -1,6 +1,6 @@
 {
     "name": "@exhaustive-ui/mcp",
-    "version": "3.0.0-alpha.0",
+    "version": "3.0.0-alpha.1",
     "author": "e-xiste",
     "description": "Model Context Protocol (MCP) server for the ExhaustiveUI Angular component library",
     "keywords": ["exhaustive-ui", "mcp", "model-context-protocol", "ai", "llm", "angular", "components"],
