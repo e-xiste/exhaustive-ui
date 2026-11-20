@@ -2010,7 +2010,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         if (this.isComparable()) {
             let value = this.isRangeSelection() ? this.value()[0] : this.value();
 
-            return !this.isMultipleSelection() ? value.getFullYear() === year : false;
+            return !this.isMultipleSelection() ? value?.getFullYear() === year : false;
         }
 
         return false;

@@ -2418,3 +2418,51 @@ describe('DatePicker Signals API', () => {
         expect(picker.isMultipleSelection()).toBe(true);
     });
 });
+
+describe('DatePicker Optimus UI bug fixes', () => {
+    let fixture: ComponentFixture<DatePicker>;
+    let picker: DatePicker;
+    let el: HTMLElement;
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const keydown = (target: HTMLElement, key: string, which: number, init: KeyboardEventInit = {}) => {
+        const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init });
+        Object.defineProperty(event, 'which', { get: () => which });
+        Object.defineProperty(event, 'keyCode', { get: () => which });
+        target.dispatchEvent(event);
+        return event;
+    };
+
+    const dayCell = (day: number) => Array.from(el.querySelectorAll<HTMLElement>('td:not(.p-datepicker-other-month) span.p-datepicker-day')).find((span) => span.textContent?.trim() === String(day))!;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DatePicker],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(DatePicker);
+        picker = fixture.componentInstance;
+        el = fixture.nativeElement;
+    });
+
+    afterEach(() => {
+        fixture.destroy();
+    });
+
+    it('does not crash the year view with an empty range value (optimus-ui#153)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'range');
+        await render();
+
+        picker.writeValue([]);
+        expect(() => picker.isYearSelected(2026)).not.toThrow();
+
+        picker.writeValue([null]);
+        expect(picker.isYearSelected(2026)).toBe(false);
+    });
+});
