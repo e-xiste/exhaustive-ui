@@ -2568,4 +2568,19 @@ describe('Table medium-severity fixes', () => {
         expect(table.isRowExpanded(rows[1])).toBe(true);
         expect(table.isRowExpanded(rows[0])).toBe(false);
     });
+
+    it('keeps the bound first and rows when the stored state has none (optimus-ui#144)', () => {
+        const stateKey = 'medium-fix-144';
+        window.sessionStorage.setItem(stateKey, JSON.stringify({ sortField: 'name', sortOrder: 1 }));
+        fixture.componentRef.setInput('stateKey', stateKey);
+        fixture.componentRef.setInput('paginator', true);
+        table.first.set(0);
+        table.rows.set(10);
+
+        table.restoreState();
+
+        expect(table.first()).toBe(0);
+        expect(table.rows()).toBe(10);
+        window.sessionStorage.removeItem(stateKey);
+    });
 });
