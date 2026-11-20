@@ -375,7 +375,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     (keyup.enter)="onTimePickerElementMouseUp($event)"
                                     (keyup.space)="onTimePickerElementMouseUp($event)"
                                     (mouseleave)="onTimePickerElementMouseLeave()"
-                                    [ariaLabel]="getTranslation('nextHour')\"
+                                    [ariaLabel]="getTranslation('nextHour')"
                                     [pt]="ptm('pcIncrementButton')"
                                     [attr.data-pc-group-section]="'timepickerbutton'"
                                 >
@@ -400,7 +400,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     (keyup.enter)="onTimePickerElementMouseUp($event)"
                                     (keyup.space)="onTimePickerElementMouseUp($event)"
                                     (mouseleave)="onTimePickerElementMouseLeave()"
-                                    [ariaLabel]="getTranslation('prevHour')\"
+                                    [ariaLabel]="getTranslation('prevHour')"
                                     [pt]="ptm('pcDecrementButton')"
                                     [attr.data-pc-group-section]="'timepickerbutton'"
                                 >
@@ -429,7 +429,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     (keyup.enter)="onTimePickerElementMouseUp($event)"
                                     (keyup.space)="onTimePickerElementMouseUp($event)"
                                     (mouseleave)="onTimePickerElementMouseLeave()"
-                                    [ariaLabel]="getTranslation('nextMinute')\"
+                                    [ariaLabel]="getTranslation('nextMinute')"
                                     [pt]="ptm('pcIncrementButton')"
                                     [attr.data-pc-group-section]="'timepickerbutton'"
                                 >
@@ -454,7 +454,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     (keyup.enter)="onTimePickerElementMouseUp($event)"
                                     (keyup.space)="onTimePickerElementMouseUp($event)"
                                     (mouseleave)="onTimePickerElementMouseLeave()"
-                                    [ariaLabel]="getTranslation('prevMinute')\"
+                                    [ariaLabel]="getTranslation('prevMinute')"
                                     [pt]="ptm('pcDecrementButton')"
                                     [attr.data-pc-group-section]="'timepickerbutton'"
                                 >
@@ -486,7 +486,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                         (keyup.enter)="onTimePickerElementMouseUp($event)"
                                         (keyup.space)="onTimePickerElementMouseUp($event)"
                                         (mouseleave)="onTimePickerElementMouseLeave()"
-                                        [ariaLabel]="getTranslation('nextSecond')\"
+                                        [ariaLabel]="getTranslation('nextSecond')"
                                         [pt]="ptm('pcIncrementButton')"
                                         [attr.data-pc-group-section]="'timepickerbutton'"
                                     >
@@ -511,7 +511,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                         (keyup.enter)="onTimePickerElementMouseUp($event)"
                                         (keyup.space)="onTimePickerElementMouseUp($event)"
                                         (mouseleave)="onTimePickerElementMouseLeave()"
-                                        [ariaLabel]="getTranslation('prevSecond')\"
+                                        [ariaLabel]="getTranslation('prevSecond')"
                                         [pt]="ptm('pcDecrementButton')"
                                         [attr.data-pc-group-section]="'timepickerbutton'"
                                     >
@@ -539,7 +539,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                         (keydown)="onContainerButtonKeydown($event)"
                                         (onClick)="toggleAMPM($event)"
                                         (keydown.enter)="toggleAMPM($event)"
-                                        [ariaLabel]="getTranslation('am')\"
+                                        [ariaLabel]="getTranslation('am')"
                                         [pt]="ptm('pcIncrementButton')"
                                         [attr.data-pc-group-section]="'timepickerbutton'"
                                     >
@@ -559,7 +559,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                         (keydown)="onContainerButtonKeydown($event)"
                                         (click)="toggleAMPM($event)"
                                         (keydown.enter)="toggleAMPM($event)"
-                                        [ariaLabel]="getTranslation('pm')\"
+                                        [ariaLabel]="getTranslation('pm')"
                                         [pt]="ptm('pcDecrementButton')"
                                         [attr.data-pc-group-section]="'timepickerbutton'"
                                     >
