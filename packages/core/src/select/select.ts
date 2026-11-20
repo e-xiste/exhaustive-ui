@@ -1178,7 +1178,7 @@ export class Select extends BaseInput<SelectPassThrough> {
 
     onOptionMouseEnter(event, index) {
         if (this.focusOnHover()) {
-            this.changeFocusedOptionIndex(event, index);
+            this.changeFocusedOptionIndex(event, index, false);
         }
     }
 
@@ -1562,10 +1562,10 @@ export class Select extends BaseInput<SelectPassThrough> {
         event.stopPropagation();
     }
 
-    changeFocusedOptionIndex(event, index) {
+    changeFocusedOptionIndex(event, index, scroll = true) {
         if (this.focusedOptionIndex() !== index) {
             this.focusedOptionIndex.set(index);
-            this.scrollInView();
+            scroll && this.scrollInView();
 
             if (this.selectOnFocus()) {
                 const option = this.visibleOptions()[index];

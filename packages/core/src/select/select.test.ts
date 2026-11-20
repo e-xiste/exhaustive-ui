@@ -4915,3 +4915,53 @@ describe('Select Signals API', () => {
         });
     });
 });
+
+describe('Select medium bug fixes', () => {
+    let fixture: ComponentFixture<Select>;
+    let select: Select;
+    const cities = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' },
+        { name: 'London', code: 'LDN' },
+        { name: 'Istanbul', code: 'IST' },
+        { name: 'Paris', code: 'PRS' }
+    ];
+
+    const waitForOverlay = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Select],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(Select);
+        select = fixture.componentInstance;
+        fixture.componentRef.setInput('options', cities);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('optionValue', 'code');
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('does not scroll the list when an option is hovered (optimus-ui#14)', async () => {
+        select.show();
+        await waitForOverlay();
+        const scrollSpy = vi.spyOn(Element.prototype, 'scrollIntoView');
+
+        select.onOptionMouseEnter(new MouseEvent('mouseenter'), 3);
+
+        expect(select.focusedOptionIndex()).toBe(3);
+        expect(scrollSpy).not.toHaveBeenCalled();
+    });
+});

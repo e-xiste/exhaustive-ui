@@ -1882,7 +1882,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onOptionMouseEnter(event, index) {
         if (this.focusOnHover()) {
-            this.changeFocusedOptionIndex(event, index);
+            this.changeFocusedOptionIndex(event, index, false);
         }
     }
 
@@ -1937,10 +1937,10 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         event.originalEvent.stopPropagation();
     }
 
-    changeFocusedOptionIndex(event, index) {
+    changeFocusedOptionIndex(event, index, scroll = true) {
         if (this.focusedOptionIndex() !== index) {
             this.focusedOptionIndex.set(index);
-            this.scrollInView();
+            scroll && this.scrollInView();
         }
     }
 
@@ -1965,7 +1965,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     allSelected = computed(() => (this.selectAll() !== null ? this.selectAll() : isNotEmpty(this.visibleOptions()) && this.visibleOptions().every((option) => this.isOptionGroup(option) || this.isOptionDisabled(option) || this.isSelected(option))));
 
-    partialSelected = computed(() => this.selectedOptions() && this.selectedOptions().length > 0 && this.selectedOptions().length < (this._options()?.length || 0));
+    partialSelected = computed(() => this.selectedOptions() && this.selectedOptions().length > 0 && this.selectedOptions().length < this.getAllVisibleAndNonVisibleOptions().filter((option) => !this.isOptionGroup(option)).length);
 
     /**
      * Displays the panel.

@@ -4567,3 +4567,77 @@ describe('MultiSelect pTemplate fallbacks', () => {
         document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
     });
 });
+
+describe('MultiSelect medium bug fixes', () => {
+    let fixture: ComponentFixture<MultiSelect>;
+    let multiSelect: MultiSelect;
+    const groups = [
+        {
+            label: 'Italy',
+            items: [
+                { label: 'Rome', value: 'RM' },
+                { label: 'Milan', value: 'MI' }
+            ]
+        },
+        {
+            label: 'France',
+            items: [
+                { label: 'Paris', value: 'PRS' },
+                { label: 'Lyon', value: 'LY' }
+            ]
+        }
+    ];
+
+    const waitForOverlay = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [MultiSelect],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(MultiSelect);
+        multiSelect = fixture.componentInstance;
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
+    });
+
+    describe('grouped options and hover (optimus-ui#14)', () => {
+        beforeEach(() => {
+            fixture.componentRef.setInput('options', groups);
+            fixture.componentRef.setInput('group', true);
+            fixture.componentRef.setInput('optionLabel', 'label');
+            fixture.componentRef.setInput('optionValue', 'value');
+            fixture.componentRef.setInput('optionGroupLabel', 'label');
+            fixture.componentRef.setInput('optionGroupChildren', 'items');
+            fixture.detectChanges();
+        });
+
+        it('keeps the header checkbox partially selected when as many options as groups are selected', () => {
+            multiSelect.writeValue(['RM', 'PRS']);
+            fixture.detectChanges();
+
+            expect(multiSelect.partialSelected()).toBe(true);
+        });
+
+        it('does not scroll the list when an option is hovered', async () => {
+            multiSelect.show();
+            await waitForOverlay();
+            const scrollSpy = vi.spyOn(Element.prototype, 'scrollIntoView');
+
+            multiSelect.onOptionMouseEnter(new MouseEvent('mouseenter'), 2);
+
+            expect(multiSelect.focusedOptionIndex()).toBe(2);
+            expect(scrollSpy).not.toHaveBeenCalled();
+        });
+    });
+});
