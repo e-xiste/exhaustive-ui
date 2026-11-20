@@ -19,7 +19,7 @@ import { FieldsetStyle } from './style/fieldsetstyle';
     imports: [CommonModule, MinusIcon, PlusIcon, SharedModule, BindModule, MotionModule],
     template: `
         <fieldset [attr.id]="id" [ngStyle]="style()" [class]="cn(cx('root'), styleClass())" [pBind]="ptm('root')" [attr.data-p]="dataP()">
-            <legend [class]="cx('legend')" [pBind]="ptm('legend')" [attr.data-p]="dataP()">
+            <legend [attr.id]="toggleable() ? undefined : id + '_header'" [class]="cx('legend')" [pBind]="ptm('legend')" [attr.data-p]="dataP()">
                 @if (toggleable()) {
                     <button
                         [attr.id]="id + '_header'"

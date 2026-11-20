@@ -160,6 +160,19 @@ describe('Fieldset', () => {
     });
 
     describe('Basic Fieldset', () => {
+        it('should point the content aria-labelledby to an existing element when not toggleable (optimus-ui#766)', async () => {
+            component.legend = 'My Fieldset';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const contentContainer = fixture.debugElement.query(By.css('.p-fieldset-content-container')).nativeElement as HTMLElement;
+            const labelId = contentContainer.getAttribute('aria-labelledby');
+            const label = fixture.nativeElement.querySelector(`[id="${labelId}"]`) as HTMLElement;
+
+            expect(label).toBeTruthy();
+            expect(label.textContent?.trim()).toBe('My Fieldset');
+        });
+
         it('should display legend text', async () => {
             component.legend = 'My Fieldset';
             fixture.changeDetectorRef.markForCheck();
