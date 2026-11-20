@@ -561,6 +561,8 @@ export class ButtonDirective extends BaseComponent {
         <button
             [attr.type]="type() || buttonProps()?.type"
             [attr.aria-label]="ariaLabel() || buttonProps()?.ariaLabel"
+            [attr.aria-expanded]="ariaExpanded()"
+            [attr.aria-controls]="ariaControls()"
             [ngStyle]="style() || buttonProps()?.style"
             [disabled]="disabled() || loading() || buttonProps()?.disabled"
             [class]="cn(cx('root'), styleClass(), buttonProps()?.styleClass)"
@@ -723,6 +725,16 @@ export class Button extends BaseComponent<ButtonPassThrough> {
      * @group Props
      */
     readonly ariaLabel = input<string | undefined>();
+    /**
+     * Value of the aria-expanded attribute of the button, for a button that shows or hides an element.
+     * @group Props
+     */
+    readonly ariaExpanded = input<boolean | undefined>();
+    /**
+     * Id of the element the button controls, set as its aria-controls attribute.
+     * @group Props
+     */
+    readonly ariaControls = input<string | undefined>();
 
     /**
      * When present, it specifies that the component should automatically get focus on load.

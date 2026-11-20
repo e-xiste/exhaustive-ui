@@ -356,7 +356,7 @@ describe('Panel', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            const toggleButton = testFixture.debugElement.query(By.css('p-button'));
+            const toggleButton = testFixture.debugElement.query(By.css('p-button button'));
             expect(toggleButton.nativeElement.getAttribute('aria-expanded')).toBe((!panelInstance.collapsed()).toString());
 
             testComponent.collapsed = true;
@@ -493,10 +493,10 @@ describe('Panel', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            const toggleButton = testFixture.debugElement.query(By.css('p-button'));
+            const toggleButton = testFixture.debugElement.query(By.css('p-button button'));
             const contentContainer = testFixture.debugElement.query(By.css('.p-panel-content-container'));
 
-            expect(toggleButton.nativeElement.getAttribute('role')).toBe('button');
+            expect(toggleButton.nativeElement.tagName.toLowerCase()).toBe('button');
             expect(toggleButton.nativeElement.getAttribute('aria-expanded')).toBeTruthy();
             expect(toggleButton.nativeElement.getAttribute('aria-controls')).toBeTruthy();
             expect(toggleButton.nativeElement.getAttribute('aria-label')).toBe(testComponent.header);
@@ -505,13 +505,26 @@ describe('Panel', () => {
             expect(contentContainer.nativeElement.getAttribute('aria-labelledby')).toBeTruthy();
         });
 
+        it('should not put ARIA attributes on the p-button host', async () => {
+            testComponent.toggleable = true;
+            testFixture.changeDetectorRef.markForCheck();
+            await testFixture.whenStable();
+
+            const host = testFixture.debugElement.query(By.css('p-button')).nativeElement as HTMLElement;
+            expect(host.getAttribute('role')).toBeNull();
+            expect(host.getAttribute('aria-label')).toBeNull();
+            expect(host.getAttribute('aria-expanded')).toBeNull();
+            expect(host.getAttribute('aria-controls')).toBeNull();
+            expect(host.querySelector('button')!.getAttribute('aria-controls')).toBe(panelInstance.id() + '_content');
+        });
+
         it('should update aria-expanded when collapsed state changes', async () => {
             testComponent.toggleable = true;
             testComponent.collapsed = false;
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            const toggleButton = testFixture.debugElement.query(By.css('p-button'));
+            const toggleButton = testFixture.debugElement.query(By.css('p-button button'));
             expect(toggleButton.nativeElement.getAttribute('aria-expanded')).toBe((!panelInstance.collapsed()).toString());
 
             testComponent.collapsed = true;
@@ -1078,7 +1091,7 @@ describe('Panel', () => {
             directFixture.componentRef.setInput('header', 'Second');
             directFixture.detectChanges();
             expect(titleEl.nativeElement.textContent.trim()).toBe('Second');
-            expect(directFixture.debugElement.query(By.css('p-button')).nativeElement.getAttribute('aria-label')).toBe('Second');
+            expect(directFixture.debugElement.query(By.css('p-button button')).nativeElement.getAttribute('aria-label')).toBe('Second');
         });
 
         it('should re-render when toggleable changes', () => {
@@ -1094,7 +1107,7 @@ describe('Panel', () => {
         });
 
         it('should re-render when collapsed changes', () => {
-            const toggleButton = directFixture.debugElement.query(By.css('p-button'));
+            const toggleButton = directFixture.debugElement.query(By.css('p-button button'));
             const contentContainer = directFixture.debugElement.query(By.css('.p-panel-content-container'));
             expect(toggleButton.nativeElement.getAttribute('aria-expanded')).toBe('true');
             expect(directFixture.nativeElement.classList.contains('p-panel-expanded')).toBe(true);
@@ -1113,7 +1126,7 @@ describe('Panel', () => {
         it('should re-render and emit collapsedChange when collapsed is set programmatically', () => {
             const emitted: (boolean | undefined)[] = [];
             directFixture.componentInstance.collapsed.subscribe((value) => emitted.push(value));
-            const toggleButton = directFixture.debugElement.query(By.css('p-button'));
+            const toggleButton = directFixture.debugElement.query(By.css('p-button button'));
 
             directFixture.componentInstance.collapse();
             directFixture.detectChanges();
@@ -1148,7 +1161,7 @@ describe('Panel', () => {
             headerEl.nativeElement.click();
             directFixture.detectChanges();
             expect(directFixture.componentInstance.collapsed()).toBe(true);
-            expect(directFixture.debugElement.query(By.css('p-button')).nativeElement.getAttribute('aria-expanded')).toBe('false');
+            expect(directFixture.debugElement.query(By.css('p-button button')).nativeElement.getAttribute('aria-expanded')).toBe('false');
         });
 
         it('should re-render when iconPos changes', () => {
