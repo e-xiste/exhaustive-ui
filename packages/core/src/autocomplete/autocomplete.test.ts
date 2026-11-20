@@ -3375,4 +3375,21 @@ describe('AutoComplete low bug fixes', () => {
         expect(autocomplete.inputValue()).toBe('');
         expect(input().value).toBe('');
     });
+
+    it('respects minQueryLength when completeOnFocus searches (optimus-ui#921)', () => {
+        const spy = vi.fn();
+        autocomplete.completeMethod.subscribe(spy);
+        fixture.componentRef.setInput('completeOnFocus', true);
+        fixture.componentRef.setInput('minQueryLength', 2);
+        fixture.detectChanges();
+
+        input().value = 'A';
+        input().dispatchEvent(new FocusEvent('focus'));
+        expect(spy).not.toHaveBeenCalled();
+
+        autocomplete.dirty.set(false);
+        input().value = 'Al';
+        input().dispatchEvent(new FocusEvent('focus'));
+        expect(spy).toHaveBeenCalledTimes(1);
+    });
 });

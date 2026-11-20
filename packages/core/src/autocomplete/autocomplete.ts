@@ -1192,7 +1192,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             return;
         }
 
-        if (!this.dirty() && this.completeOnFocus()) {
+        if (!this.dirty() && this.completeOnFocus() && (event.target.value ?? '').length >= (this.minQueryLength() ?? 0)) {
             this.search(event, event.target.value, 'focus');
         }
         this.dirty.set(true);
