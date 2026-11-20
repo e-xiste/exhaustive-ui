@@ -79,6 +79,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - InputOtp: Tab, Enter and the other named keys keep working, so focus can leave the field and Enter submits the form (optimus-ui#340).
 - Accordion: arrow, Home and End keys work again in inputs and textareas placed inside a panel (optimus-ui#608).
 - Textarea: no longer crashes with an `NgControl` that has no `valueChanges`, as provided by Angular Signal Forms (optimus-ui#203).
+- 170 medium-severity bugs inherited from Optimus UI, across Table, DatePicker, the tree, select, input, overlay and menu components and the theming engine: see 22.0.0-alpha.10.
 
 ### Tooling and documentation
 
@@ -86,6 +87,37 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The `exhaustive-ui` agent skill (`npx skills add https://exhaustive-ui.com`) describes the v22 conventions and bundles the update guide.
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
+
+## 22.0.0-alpha.10 (2026-11-20)
+
+Fixes for 170 medium-severity bugs reported on [Optimus UI](https://github.com/openng-org/optimus-ui/issues) that still affected ExhaustiveUI. Each one has a regression test; the issue numbers are Optimus UI's.
+
+### Behaviour changes
+
+- Theming: a token overridden under `colorScheme.light` now wins over the preset's top-level token, as it does in dark mode (#1754). A top-level override passed to `definePreset`, `updatePreset` or `usePreset` still wins over the base preset's `colorScheme.light` value.
+- Tooltip honours the global `overlayAppendTo` option (#48).
+- A popup TieredMenu gives the focus back to its trigger when an item is picked, as SplitButton (#137).
+- Stepper: the `tablist` role is on `p-step-list` (#2, #585). Splitter: the `separator` role is on the focusable gutter handle (#458). FocusTrap sentinels are no longer `aria-hidden` (#418). ConfirmDialog no longer puts `role` on the `p-dialog` host (#694).
+
+### New optional inputs
+
+- DatePicker `ariaDescribedBy` (#494), Splitter `maxSizes` (#615), Button `ariaExpanded` and `ariaControls` (#626), Image `previewAriaLabel` (#381), OrderList `optionLabel` (#443), TreeTable checkbox `ariaLabel` and `ariaLabelledBy` (#262), AutoComplete chip list `ariaLabel` and `ariaLabelledBy` (#348, #625).
+
+### Fixes
+
+- Table:
+  - Filtering: negated global filters, menu filters that wait for Apply, constraints kept when filtering by code and recreated on reset, boolean filter clear button and aria label, the filter menu closes on outside clicks and keeps the focus inside (#910, #375, #352, #794, #722, #214, #149, #38, #135, #785, #350).
+  - Sorting and paging: the bound array is no longer sorted in place, keyboard multi-sort with Ctrl/Cmd, the page is kept or moved back when the value changes, state without `first`/`rows` restored (#772, #33, #828, #396, #144).
+  - Rows: `onRowCollapse` in single expand mode, `loadingbody` with expandable rows, group headers before their first row and with virtual scroll, selectable rows stay tabbable, editable cells reachable from the keyboard and restored on cancel (#378, #899, #517, #159, #604, #594, #248, #846).
+  - Columns: frozen columns stay in place on reorder, offsets only count the frozen columns before them, RTL support for frozen columns and drops, widths measured on the last header row, `p-datatable-frozen-column-left` applied (#729, #151, #708, #150, #78).
+  - Paginator position classes (#515); sortable headers keep a valid role (#392).
+- DatePicker: crashes and parsing (empty range in the year view, day-of-year formats, pasted values), minDate time handling (#35, #143, #839, #388, #889), localized am/pm, the weekday header after a view switch, the day grid after a translation change, inline datepicker marked touched, outside clicks inside a shadow root, and keyboard and screen-reader support of the grid and header (#153, #363, #930, #437, #565, #31, #882, #393, #503, #7, #24, #459, #898).
+- Tree, TreeSelect, TreeTable: keyboard context menu, lazy node focus, programmatic expand with virtual scroll, duplicate parents, `onFilter` and the filter text on reopen, partially checked parents on reset and preselection, custom multiple sort per level, checkbox events and updates with `selectionKeys`, keys typed in inputs inside rows (#36, #495, #547, #551, #400, #256, #138, #425, #509, #916, #85, #88, #586, #847, #549, #749).
+- Select, MultiSelect, Listbox, AutoComplete, OrderList, PickList: keyboard clear icon, editable input name and focus, body scroll unlocked after a responsive overlay, grouped counts, "null" labels, emptied models, disabled options kept on toggle all, Enter in multiple AutoComplete, readonly chips, `size` in multiple mode, Space and Enter in item templates, double-click in PickList (#253, #462, #265, #306, #330, #857, #14, #824, #869, #908, #830, #294, #299, #559, #737, #915).
+- Inputs: InputNumber and InputMask on soft keyboards and Android, InputMask pristine state and partial values, InputOtp on Android keyboards, KeyFilter at the caret, after dead keys and on Android, Slider after a min/max change, Password toggle from the keyboard, Textarea keeps the scroll position, RadioButton groups, SelectButton labels, Quill 2 lists in Editor (#62, #508, #892, #507, #941, #792, #868, #12, #687, #157, #853, #191, #584, #823, #646, #257, #572, #11, #300, #376).
+- Overlays: BlockUI before the first block and during unblock, Toast clear all and breakpoints, Tooltip after a scroll, Dialog and Drawer scroll locks with nested modals, Drawer mask, Dialog `appendTo`, labels and focus, ConfirmDialog confirmations from callbacks, `defaultFocus` and `closeButtonProps`, Overlay reopened during its leave animation, Image preview name, Carousel autoplay and tab order, ConfirmPopup arrow, DynamicDialog with a content template (#37, #145, #818, #81, #116, #1934, #1922, #361, #329, #93, #1613, #246, #429, #709, #591, #341, #391, #521, #522, #1951, #381, #793, #324, #671, #84).
+- Menus and layout: single tap on TieredMenu and Menubar on touch screens, while a mouse still opens submenus on hover (#2104), Menubar autoHide and submenus inside the viewport, ContextMenu submenus and Escape, Menu popup focus, PanelMenu sub-item badges and frozen models, Tabs keys, `#content` templates and scroll buttons, Accordion boolean attributes, Splitter `minSizes`, pButton variant classes, Panel toggle ARIA (#136, #152, #528, #534, #221, #2092, #61, #282, #619, #181, #255, #588, #445, #569, #626).
+- Theming and shared code: component `extend` tokens deep-merged, element-scoped dark mode, global Table PassThrough, FilterService `startsWith`/`endsWith`/`notEquals`, scrollbar measuring, Paginator labels after `setTranslation`, ProgressBar ARIA, ScrollPanel focus ring, ScrollTop in a parent, Scroller `scrollToIndex`, shrinking items and loader, `pi-spin` with a custom Select/CascadeSelect loading icon, Button icon position classes (#163, #670, #25, #220, #316, #224, #634, #2080, #2088, #9, #577, #318, #47, #877).
 
 ## 22.0.0-alpha.9 (2026-11-20)
 
