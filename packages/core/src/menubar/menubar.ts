@@ -1,6 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
     afterEveryRender,
+    afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -22,7 +23,7 @@ import {
     output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { findLastIndex, findSingle, focus, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, resolve, uuid } from '@exhaustive-ui/utils';
+import { calculateScrollbarWidth, findLastIndex, findSingle, focus, getViewport, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, nestedPosition, resolve, uuid } from '@exhaustive-ui/utils';
 import { MenuItem, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -546,6 +547,31 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
         effect(() => {
             this.menubarService.autoHide = this.autoHide();
             this.menubarService.autoHideDelay = this.autoHideDelay();
+        });
+        afterRenderEffect(() => {
+            const path = this.activeItemPath();
+
+            untracked(() => this.positionSubmenus(path));
+        });
+    }
+
+    positionSubmenus(path: any[]) {
+        if (!isPlatformBrowser(this.platformId) || this.queryMatches()) return;
+
+        (path || []).forEach((processedItem) => {
+            const sublist = findSingle(this.el.nativeElement, `li[id="${this.rootmenu().getItemId(processedItem)}"] > ul`) as HTMLElement | null;
+
+            if (!sublist) return;
+
+            if (processedItem.level === 0) {
+                // a dropdown of the bar opens below its item: shift it left when it runs out of the viewport
+                sublist.style.left = '';
+                const overflow = sublist.getBoundingClientRect().right - (getViewport().width - calculateScrollbarWidth());
+
+                overflow > 0 && (sublist.style.left = sublist.offsetLeft - overflow + 'px');
+            } else {
+                nestedPosition(sublist, processedItem.level);
+            }
         });
     }
 

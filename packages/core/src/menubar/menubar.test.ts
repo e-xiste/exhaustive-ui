@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, ViewEncapsulation } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -1778,5 +1778,96 @@ describe('Menubar Signal Query API', () => {
 
         expect(instance.menubutton()).toBeDefined();
         expect(instance.rootmenu()).toBeInstanceOf(MenubarSub);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [Menubar],
+    encapsulation: ViewEncapsulation.None,
+    template: `
+        <div [style]="wrapperStyle">
+            <p-menubar [model]="model" breakpoint="100px" />
+        </div>
+    `,
+    styles: [
+        `
+            .p-menubar-submenu {
+                position: absolute;
+                flex-direction: column;
+                width: 200px;
+                margin: 0;
+                padding: 0;
+            }
+            .p-menubar-submenu > .p-menubar-item-active > .p-menubar-submenu {
+                left: 100%;
+                top: 0;
+            }
+            .p-menubar-item {
+                position: relative;
+            }
+            .p-menubar-item-content {
+                height: 30px;
+                overflow: hidden;
+            }
+        `
+    ]
+})
+class TestViewportMenubarComponent {
+    wrapperStyle = 'position: fixed; top: 0; right: 0; width: 120px;';
+
+    model: MenuItem[] = [];
+}
+
+describe('Menubar submenu viewport position', () => {
+    let fixture: ComponentFixture<TestViewportMenubarComponent>;
+
+    const clickItem = async (label: string) => {
+        const link = Array.from(fixture.nativeElement.querySelectorAll('.p-menubar-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.trim() === label)!;
+        link.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const submenuOf = (label: string) => {
+        const content = Array.from(fixture.nativeElement.querySelectorAll('.p-menubar-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.trim() === label)!;
+        return content.parentElement!.querySelector(':scope > ul') as HTMLElement;
+    };
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestViewportMenubarComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TestViewportMenubarComponent);
+    });
+
+    it('should keep the submenus of a menubar placed on the right inside the viewport', async () => {
+        fixture.componentInstance.model = [{ label: 'Right', items: [{ label: 'Sub', items: [{ label: 'Leaf' }] }] }];
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await clickItem('Right');
+        await clickItem('Sub');
+
+        expect(submenuOf('Right').getBoundingClientRect().right).toBeLessThanOrEqual(window.innerWidth);
+        expect(submenuOf('Sub').getBoundingClientRect().right).toBeLessThanOrEqual(window.innerWidth);
+    });
+
+    it('should open a nested submenu upwards when it would overflow the bottom of the viewport', async () => {
+        fixture.componentInstance.wrapperStyle = 'position: fixed; top: 0; left: 0; width: 120px;';
+        const items: MenuItem[] = Array.from({ length: 24 }, (_, i) => ({ label: `Item ${i}` }));
+        items[23] = { label: 'Last', items: Array.from({ length: 12 }, (_, i) => ({ label: `Leaf ${i}` })) };
+        fixture.componentInstance.model = [{ label: 'Root', items }];
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await clickItem('Root');
+        await clickItem('Last');
+
+        const rect = submenuOf('Last').getBoundingClientRect();
+        expect(rect.height).toBeGreaterThan(0);
+        expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight);
     });
 });
