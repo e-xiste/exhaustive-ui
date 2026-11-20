@@ -1,6 +1,6 @@
 {
     "name": "@exhaustive-ui/motion",
-    "version": "3.0.0-alpha.1",
+    "version": "22.0.0-alpha.0",
     "author": "e-xiste",
     "description": "Motion utilities for ExhaustiveUI Libraries",
     "keywords": ["motion", "animation", "transition", "composition utilities", "exhaustive-ui", "angular"],

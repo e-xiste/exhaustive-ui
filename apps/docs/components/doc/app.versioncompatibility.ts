@@ -28,5 +28,5 @@ interface VersionCompatibilityEntry {
     `
 })
 export class AppVersionCompatibility {
-    entries: VersionCompatibilityEntry[] = [{ exhaustiveUi: 'v3', angular: 'v22' }];
+    entries: VersionCompatibilityEntry[] = [{ exhaustiveUi: 'v22', angular: 'v22' }];
 }
