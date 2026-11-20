@@ -6,6 +6,7 @@ import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { Button } from '@exhaustive-ui/core/button';
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { ScrollPanel } from '@exhaustive-ui/core/scrollpanel';
 import { ScrollTop, ScrollTopModule } from './scrolltop';
 
 @Component({
@@ -1650,5 +1651,39 @@ describe('ScrollTop', () => {
                 expect(callOrder.indexOf('onAfterContentInit')).toBeLessThan(callOrder.indexOf('onAfterViewInit'));
             }
         });
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ScrollPanel, ScrollTop],
+    template: `
+        <p-scrollpanel style="width: 200px; height: 150px;">
+            <div style="height: 1000px;">Content</div>
+            <p-scrolltop target="parent" [threshold]="100" />
+        </p-scrollpanel>
+    `
+})
+class TestScrollPanelParentScrollTopComponent {}
+
+describe('ScrollTop inside a ScrollPanel', () => {
+    it('binds the parent scroll listener once projected (optimus-ui#577)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestScrollPanelParentScrollTopComponent],
+            providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'browser' }]
+        });
+        const fixture = TestBed.createComponent(TestScrollPanelParentScrollTopComponent);
+        await fixture.whenStable();
+
+        const scrollTop = fixture.debugElement.query(By.directive(ScrollTop)).componentInstance as ScrollTop;
+        const content = fixture.debugElement.query(By.css('.p-scrollpanel-content')).nativeElement as HTMLElement;
+        expect(scrollTop.el.nativeElement.parentElement).toBe(content);
+        expect(scrollTop.parentScrollListener()).toBeTruthy();
+
+        Object.defineProperty(content, 'scrollTop', { configurable: true, get: () => 300 });
+        content.dispatchEvent(new Event('scroll'));
+        await fixture.whenStable();
+
+        expect(scrollTop.visible()).toBe(true);
     });
 });

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { afterEveryRender, ChangeDetectionStrategy, Component, computed, inject, input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { afterEveryRender, afterNextRender, ChangeDetectionStrategy, Component, computed, inject, input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { getWindowScrollTop } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -191,6 +191,17 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
 
     bindParentScrollListener() {
         if (isPlatformBrowser(this.platformId)) {
+            if (!this.el.nativeElement.parentElement) {
+                // Not attached yet, e.g. projected in an @if block of the parent component (ScrollPanel).
+                afterNextRender(
+                    () => {
+                        if (this.el.nativeElement.parentElement && !this.parentScrollListener()) this.bindParentScrollListener();
+                    },
+                    { injector: this.injector }
+                );
+                return;
+            }
+
             this.parentScrollListener.set(
                 this.renderer.listen(this.el.nativeElement.parentElement, 'scroll', () => {
                     this.checkVisibility(this.el.nativeElement.parentElement.scrollTop);
