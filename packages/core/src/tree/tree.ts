@@ -596,11 +596,15 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
 
     onArrowRight(event: KeyboardEvent) {
         if (!this.node()?.expanded && !this.tree.isNodeLeaf(<TreeNode>this.node())) {
+            const nodeElement = <HTMLDivElement>event.currentTarget;
             this.expand(event);
-            (<HTMLDivElement>event.currentTarget).tabIndex = -1;
 
             setTimeout(() => {
-                this.onArrowDown(event);
+                // a lazy node has no children until they are loaded: keep the focus on it rather than on the next sibling
+                if (this.node()?.children?.length) {
+                    nodeElement.tabIndex = -1;
+                    this.onArrowDown(event);
+                }
             }, 1);
         }
         event.preventDefault();

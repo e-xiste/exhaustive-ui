@@ -1560,6 +1560,24 @@ describe('Tree', () => {
             const parentNode = component.nodes[0];
             expect(tree.isNodeLeaf(parentNode)).toBe(false);
         });
+
+        it('should not move focus to the next sibling when ArrowRight expands a node whose children are not loaded yet', async () => {
+            component.nodes = [
+                { key: '0', label: 'Lazy 0', leaf: false },
+                { key: '1', label: 'Lazy 1', leaf: false }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const items = fixture.debugElement.queryAll(By.css('[role="treeitem"]')).map((item) => item.nativeElement as HTMLElement);
+            items[0].focus();
+            items[0].dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowRight', bubbles: true, cancelable: true }));
+            await new Promise((resolve) => setTimeout(resolve, 20));
+
+            expect(document.activeElement).not.toBe(items[1]);
+            expect(document.activeElement).toBe(items[0]);
+        });
     });
 
     // Comprehensive Template and Content Projection Tests (originally in tree-templates.spec.ts)
