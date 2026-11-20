@@ -1412,7 +1412,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
         this.onLazyLoad.emit({
             ...this.createLazyLoadMetadata(),
             ...event,
-            rows: event.last - event.first
+            rows: event.last! - event.first
         });
     }
     /**

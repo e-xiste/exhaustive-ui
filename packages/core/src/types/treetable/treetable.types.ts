@@ -200,11 +200,11 @@ export interface TreeTableLazyLoadEvent extends LazyLoadMeta {
     /**
      * First element in viewport.
      */
-    first: any;
+    first: number;
     /**
      * Last element in viewport.
      */
-    last: any;
+    last?: number;
 }
 /**
  * Custom column reorder event.
