@@ -31,18 +31,20 @@ jobs:
               run: |
                   pnpm run build:packages
 
+            # Trusted publishing: npm authenticates this workflow through GitHub's OIDC token (id-token: write),
+            # configured per package on npmjs.com (release.yml, environment npm). No npm token is used here.
             - name: Publish @exhaustive-ui/* to npm
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
-                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
                   pnpm recursive publish --filter './packages/*' --no-git-checks --report-summary --tag ${{ inputs.tag }}
 
+            # dist-tags are not covered by the trusted publisher permissions: this step uses the NPM_TOKEN secret.
             - name: Add extra dist-tags
               if: ${{ inputs.extra_tags != '' }}
               env:
                   EXTRA_TAGS: ${{ inputs.extra_tags }}
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
+                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
                   for dir in packages/*/; do
                       name=$(node -p "require('./${dir}package.json').name")
                       version=$(node -p "require('./${dir}package.json').version")
