@@ -552,7 +552,8 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     dragging = signal<boolean | undefined>(undefined);
 
-    headerId = computed<string | null>(() => (this.header() !== null ? this.id + '_header' : null));
+    // the title span carrying this id is not rendered without a header or with a headless template
+    headerId = computed<string | null>(() => (this.header() !== null && this.showHeader() && !this._headlessTemplate() && !this.headlessTemplate() && !this.headlessT() ? this.id + '_header' : null));
 
     computedAriaLabelledBy = computed<string | null>(() => this.ariaLabelledBy() ?? this.headerId());
 

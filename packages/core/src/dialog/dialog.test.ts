@@ -1067,6 +1067,17 @@ describe('Dialog', () => {
                 expect(headlessContent.nativeElement.textContent).toContain('Headless Dialog');
             });
 
+            it('should not point aria-labelledby at a header that is not rendered', async () => {
+                headlessComponent.visible = true;
+                headlessFixture.changeDetectorRef.markForCheck();
+                await headlessFixture.whenStable();
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                const dialogEl = document.querySelector('.p-dialog') as HTMLElement;
+                expect(dialogEl).toBeTruthy();
+                expect(dialogEl.hasAttribute('aria-labelledby')).toBe(false);
+            });
+
             it('should handle headless template close button', async () => {
                 headlessComponent.visible = true;
                 headlessFixture.changeDetectorRef.markForCheck();
