@@ -132,7 +132,8 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         tooltipLabel: this.content() ?? null,
         tooltipPosition: this.tooltipPosition() ?? 'right',
         tooltipEvent: this.tooltipEvent(),
-        appendTo: this.appendTo() ?? 'body',
+        // a global overlayAppendTo of 'self' keeps the tooltip default, body
+        appendTo: this.appendTo() ?? (this.config.overlayAppendTo() && this.config.overlayAppendTo() !== 'self' ? this.config.overlayAppendTo() : 'body'),
         positionStyle: this.positionStyle() ?? null,
         tooltipStyleClass: this.tooltipStyleClass() ?? null,
         tooltipZIndex: this.tooltipZIndex() ?? 'auto',

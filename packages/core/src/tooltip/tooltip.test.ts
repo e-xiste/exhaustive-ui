@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { TooltipOptions } from '@exhaustive-ui/core/api';
+import { Exhaustive } from '@exhaustive-ui/core/config';
 import { Tooltip } from './tooltip';
 
 @Component({
@@ -824,6 +825,23 @@ describe('Tooltip', () => {
             expect(tooltipDirective.getOption('positionStyle')).toBeNull();
             expect(tooltipDirective.getOption('showDelay')).toBeFalsy();
             expect(tooltipDirective.getOption('id')).toMatch(/^pn_id_.*_tooltip$/);
+        });
+
+        it('should append the tooltip to the global overlayAppendTo target', () => {
+            const target = document.createElement('div');
+            document.body.appendChild(target);
+            TestBed.inject(Exhaustive).overlayAppendTo.set(target);
+
+            const configFixture = TestBed.createComponent(TestBasicTooltipComponent);
+            configFixture.detectChanges();
+            const directive = configFixture.debugElement.query(By.directive(Tooltip)).injector.get(Tooltip);
+
+            expect(directive.getOption('appendTo')).toBe(target);
+            directive.activate();
+            expect(target.querySelector('.p-tooltip')).toBeTruthy();
+
+            directive.deactivate();
+            target.remove();
         });
 
         it('should let tooltipOptions override the matching inputs', async () => {
