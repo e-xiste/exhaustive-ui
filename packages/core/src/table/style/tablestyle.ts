@@ -153,15 +153,15 @@ const classes = {
     pcSortBadge: 'p-datatable-sort-badge',
     filter: ({ instance }) => ({
         'p-datatable-filter': true,
-        'p-datatable-inline-filter': instance.display === 'row',
-        'p-datatable-popover-filter': instance.display === 'menu'
+        'p-datatable-inline-filter': instance.display() === 'row',
+        'p-datatable-popover-filter': instance.display() === 'menu'
     }),
     filterElementContainer: 'p-datatable-filter-element-container',
     pcColumnFilterButton: 'p-datatable-column-filter-button',
     pcColumnFilterClearButton: 'p-datatable-column-filter-clear-button',
     filterOverlay: ({ instance }) => ({
         'p-datatable-filter-overlay p-component': true,
-        'p-datatable-filter-overlay-popover': instance.display === 'menu'
+        'p-datatable-filter-overlay-popover': instance.display() === 'menu'
     }),
     filterConstraintList: 'p-datatable-filter-constraint-list',
 

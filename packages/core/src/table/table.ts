@@ -4,7 +4,6 @@ import {
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
     computed,
     Directive,
@@ -15,7 +14,6 @@ import {
     Injectable,
     InjectionToken,
     input,
-    Input,
     linkedSignal,
     model,
     NgModule,
@@ -5345,55 +5343,55 @@ export class ReorderableRow extends BaseComponent {
     template: `
         <div [class]="cx('filter')">
             <p-columnFilterFormElement
-                *ngIf="display === 'row'"
+                *ngIf="display() === 'row'"
                 class="p-fluid"
-                [type]="type"
-                [field]="field"
-                [ariaLabel]="ariaLabel"
-                [filterConstraint]="dataTable._filters()[field]"
-                [filterTemplate]="filterTemplate() || _filterTemplate"
-                [placeholder]="placeholder"
-                [minFractionDigits]="minFractionDigits"
-                [maxFractionDigits]="maxFractionDigits"
-                [prefix]="prefix"
-                [suffix]="suffix"
-                [locale]="locale"
-                [localeMatcher]="localeMatcher"
-                [currency]="currency"
-                [currencyDisplay]="currencyDisplay"
-                [useGrouping]="useGrouping"
-                [showButtons]="showButtons"
-                [filterOn]="filterOn"
+                [type]="type()"
+                [field]="field()"
+                [ariaLabel]="ariaLabel()"
+                [filterConstraint]="dataTable._filters()[field()]"
+                [filterTemplate]="filterTemplate() || _filterTemplate()"
+                [placeholder]="placeholder()"
+                [minFractionDigits]="minFractionDigits()"
+                [maxFractionDigits]="maxFractionDigits()"
+                [prefix]="prefix()"
+                [suffix]="suffix()"
+                [locale]="locale()"
+                [localeMatcher]="localeMatcher()"
+                [currency]="currency()"
+                [currencyDisplay]="currencyDisplay()"
+                [useGrouping]="useGrouping()"
+                [showButtons]="showButtons()"
+                [filterOn]="filterOn()"
                 [pt]="pt()"
                 [unstyled]="unstyled()"
             ></p-columnFilterFormElement>
             <p-button
-                *ngIf="showMenuButton"
+                *ngIf="showMenuButton()"
                 [styleClass]="cx('pcColumnFilterButton')"
                 [pt]="ptm('pcColumnFilterButton')"
                 [attr.aria-haspopup]="true"
                 [ariaLabel]="filterMenuButtonAriaLabel"
-                [attr.aria-controls]="overlayVisible ? overlayId : null"
-                [attr.aria-expanded]="overlayVisible ?? false"
+                [attr.aria-controls]="overlayVisible() ? overlayId() : null"
+                [attr.aria-expanded]="overlayVisible() ?? false"
                 (click)="toggleMenu($event)"
                 (keydown)="onToggleButtonKeyDown($event)"
-                [buttonProps]="filterButtonProps?.filter"
+                [buttonProps]="filterButtonProps()?.filter"
                 #menuButton
                 [unstyled]="unstyled()"
             >
                 <ng-template #icon>
                     <ng-container>
-                        <svg data-p-icon="filter" *ngIf="!filterIconTemplate() && !_filterIconTemplate && !hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
-                        <svg data-p-icon="filter-fill" *ngIf="!filterIconTemplate() && !_filterIconTemplate && hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
-                        <span *ngIf="filterIconTemplate() || _filterIconTemplate" [pBind]="ptm('pcColumnFilterButton')['icon']" [attr.data-pc-section]="'columnfilterbuttonicon'">
-                            <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate; context: { hasFilter: hasFilter }"></ng-template>
+                        <svg data-p-icon="filter" *ngIf="!filterIconTemplate() && !_filterIconTemplate() && !hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
+                        <svg data-p-icon="filter-fill" *ngIf="!filterIconTemplate() && !_filterIconTemplate() && hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
+                        <span *ngIf="filterIconTemplate() || _filterIconTemplate()" [pBind]="ptm('pcColumnFilterButton')['icon']" [attr.data-pc-section]="'columnfilterbuttonicon'">
+                            <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate(); context: { hasFilter: hasFilter }"></ng-template>
                         </span>
                     </ng-container>
                 </ng-template>
             </p-button>
             @if (renderOverlay()) {
                 <div
-                    [pMotion]="showMenu && overlayVisible"
+                    [pMotion]="showMenu() && overlayVisible()"
                     [pMotionAppear]="true"
                     pMotionName="p-anchored-overlay"
                     (pMotionOnBeforeEnter)="onOverlayBeforeEnter($event)"
@@ -5401,16 +5399,16 @@ export class ReorderableRow extends BaseComponent {
                     [pMotionOptions]="computedMotionOptions()"
                     [class]="cx('filterOverlay')"
                     [pBind]="ptm('filterOverlay')"
-                    [id]="overlayId"
+                    [id]="overlayId()"
                     [attr.aria-modal]="true"
                     role="dialog"
                     (click)="onContentClick()"
                     (keydown.escape)="onEscape()"
                 >
-                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate; context: { $implicit: field }"></ng-container>
-                    <ul *ngIf="display === 'row'; else menu" [class]="cx('filterConstraintList')" [pBind]="ptm('filterConstraintList')">
+                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate(); context: { $implicit: field() }"></ng-container>
+                    <ul *ngIf="display() === 'row'; else menu" [class]="cx('filterConstraintList')" [pBind]="ptm('filterConstraintList')">
                         <li
-                            *ngFor="let matchMode of matchModes; let i = index"
+                            *ngFor="let matchMode of matchModes(); let i = index"
                             (click)="onRowMatchModeChange(matchMode.value)"
                             (keydown)="onRowMatchModeKeyDown($event)"
                             (keydown.enter)="onRowMatchModeChange(matchMode.value)"
@@ -5427,11 +5425,11 @@ export class ReorderableRow extends BaseComponent {
                         </li>
                     </ul>
                     <ng-template #menu>
-                        <div [class]="cx('filterOperator')" [pBind]="ptm('filterOperator')" *ngIf="isShowOperator">
+                        <div [class]="cx('filterOperator')" [pBind]="ptm('filterOperator')" *ngIf="isShowOperator()">
                             <p-select
-                                [options]="operatorOptions"
+                                [options]="operatorOptions()"
                                 [pt]="ptm('pcFilterOperatorDropdown')"
-                                [ngModel]="operator"
+                                [ngModel]="_operator()"
                                 [ngModelOptions]="{ standalone: true }"
                                 (ngModelChange)="onOperatorChange($event)"
                                 [class]="cx('pcFilterOperatorDropdown')"
@@ -5441,8 +5439,8 @@ export class ReorderableRow extends BaseComponent {
                         <div [class]="cx('filterRuleList')" [pBind]="ptm('filterRuleList')">
                             <div *ngFor="let fieldConstraint of fieldConstraints; let i = index" [ngClass]="cx('filterRule')" [pBind]="ptm('filterRule')">
                                 <p-select
-                                    *ngIf="showMatchModes && matchModes"
-                                    [options]="matchModes"
+                                    *ngIf="showMatchModes() && matchModes()"
+                                    [options]="matchModes()"
                                     [ngModel]="fieldConstraint.matchMode"
                                     [ngModelOptions]="{ standalone: true }"
                                     (ngModelChange)="onMenuMatchModeChange($event, fieldConstraint)"
@@ -5451,21 +5449,21 @@ export class ReorderableRow extends BaseComponent {
                                     [unstyled]="unstyled()"
                                 ></p-select>
                                 <p-columnFilterFormElement
-                                    [type]="type"
-                                    [field]="field"
+                                    [type]="type()"
+                                    [field]="field()"
                                     [filterConstraint]="fieldConstraint"
-                                    [filterTemplate]="filterTemplate() || _filterTemplate"
-                                    [placeholder]="placeholder"
-                                    [minFractionDigits]="minFractionDigits"
-                                    [maxFractionDigits]="maxFractionDigits"
-                                    [prefix]="prefix"
-                                    [suffix]="suffix"
-                                    [locale]="locale"
-                                    [localeMatcher]="localeMatcher"
-                                    [currency]="currency"
-                                    [currencyDisplay]="currencyDisplay"
-                                    [useGrouping]="useGrouping"
-                                    [filterOn]="filterOn"
+                                    [filterTemplate]="filterTemplate() || _filterTemplate()"
+                                    [placeholder]="placeholder()"
+                                    [minFractionDigits]="minFractionDigits()"
+                                    [maxFractionDigits]="maxFractionDigits()"
+                                    [prefix]="prefix()"
+                                    [suffix]="suffix()"
+                                    [locale]="locale()"
+                                    [localeMatcher]="localeMatcher()"
+                                    [currency]="currency()"
+                                    [currencyDisplay]="currencyDisplay()"
+                                    [useGrouping]="useGrouping()"
+                                    [filterOn]="filterOn()"
                                     [pt]="pt()"
                                     [unstyled]="unstyled()"
                                 ></p-columnFilterFormElement>
@@ -5480,12 +5478,12 @@ export class ReorderableRow extends BaseComponent {
                                         (onClick)="removeConstraint(fieldConstraint)"
                                         [ariaLabel]="removeRuleButtonLabel"
                                         [label]="removeRuleButtonLabel"
-                                        [buttonProps]="filterButtonProps?.popover?.removeRule"
+                                        [buttonProps]="filterButtonProps()?.popover?.removeRule"
                                         [unstyled]="unstyled()"
                                     >
                                         <ng-template #icon>
-                                            <svg data-p-icon="trash" *ngIf="!removeRuleIconTemplate() && !_removeRuleIconTemplate" [pBind]="ptm('pcFilterRemoveRuleButton')['icon']" />
-                                            <ng-template *ngTemplateOutlet="removeRuleIconTemplate() || _removeRuleIconTemplate"></ng-template>
+                                            <svg data-p-icon="trash" *ngIf="!removeRuleIconTemplate() && !_removeRuleIconTemplate()" [pBind]="ptm('pcFilterRemoveRuleButton')['icon']" />
+                                            <ng-template *ngTemplateOutlet="removeRuleIconTemplate() || _removeRuleIconTemplate()"></ng-template>
                                         </ng-template>
                                     </p-button>
                                 </div>
@@ -5501,40 +5499,40 @@ export class ReorderableRow extends BaseComponent {
                                 [text]="true"
                                 size="small"
                                 (onClick)="addConstraint()"
-                                [buttonProps]="filterButtonProps?.popover?.addRule"
+                                [buttonProps]="filterButtonProps()?.popover?.addRule"
                                 [unstyled]="unstyled()"
                             >
                                 <ng-template #icon>
-                                    <svg data-p-icon="plus" *ngIf="!addRuleIconTemplate() && !_addRuleIconTemplate" [pBind]="ptm('pcAddRuleButtonLabel')['icon']" />
-                                    <ng-template *ngTemplateOutlet="addRuleIconTemplate() || _addRuleIconTemplate"></ng-template>
+                                    <svg data-p-icon="plus" *ngIf="!addRuleIconTemplate() && !_addRuleIconTemplate()" [pBind]="ptm('pcAddRuleButtonLabel')['icon']" />
+                                    <ng-template *ngTemplateOutlet="addRuleIconTemplate() || _addRuleIconTemplate()"></ng-template>
                                 </ng-template>
                             </p-button>
                         }
                         <div [class]="cx('filterButtonbar')" [pBind]="ptm('filterButtonBar')">
                             <p-button
                                 #clearBtn
-                                *ngIf="showClearButton"
+                                *ngIf="showClearButton()"
                                 [outlined]="true"
                                 (onClick)="clearFilter()"
                                 [attr.aria-label]="clearButtonLabel"
                                 [label]="clearButtonLabel"
-                                [buttonProps]="filterButtonProps?.popover?.clear"
+                                [buttonProps]="filterButtonProps()?.popover?.clear"
                                 [pt]="ptm('pcFilterClearButton')"
                                 [unstyled]="unstyled()"
                             />
                             <p-button
-                                *ngIf="showApplyButton"
+                                *ngIf="showApplyButton()"
                                 (onClick)="applyFilter()"
                                 size="small"
                                 [label]="applyButtonLabel"
                                 [attr.aria-label]="applyButtonLabel"
-                                [buttonProps]="filterButtonProps?.popover?.apply"
+                                [buttonProps]="filterButtonProps()?.popover?.apply"
                                 [pt]="ptm('pcFilterApplyButton')"
                                 [unstyled]="unstyled()"
                             />
                         </div>
                     </ng-template>
-                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate; context: { $implicit: field }"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate(); context: { $implicit: field() }"></ng-container>
                 </div>
             }
         </div>
@@ -5550,8 +5548,9 @@ export class ColumnFilter extends BaseComponent {
 
     _componentStyle = inject(TableStyle);
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('columnFilter'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('columnFilter')));
     }
 
     ptmFilterConstraintOptions(matchMode) {
@@ -5565,142 +5564,142 @@ export class ColumnFilter extends BaseComponent {
      * Property represented by the column.
      * @group Props
      */
-    @Input() field: string | undefined;
+    readonly field = input<string | undefined>();
     /**
      * Type of the input.
      * @group Props
      */
-    @Input() type: string = 'text';
+    readonly type = input<string>('text');
     /**
      * Filter display.
      * @group Props
      */
-    @Input() display: string = 'row';
+    readonly display = input<string>('row');
     /**
      * Decides whether to display filter menu popup.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showMenu: boolean = true;
+    readonly showMenu = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Filter match mode.
      * @group Props
      */
-    @Input() matchMode: string | undefined;
+    readonly matchMode = input<string | undefined>();
     /**
      * Filter operator.
      * @defaultValue 'AND'
      * @group Props
      */
-    @Input() operator: string = FilterOperator.AND;
+    readonly operator = input<string>(FilterOperator.AND);
+
+    readonly _operator = linkedSignal(() => this.operator());
     /**
      * Decides whether to display filter operator.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showOperator: boolean = true;
+    readonly showOperator = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Decides whether to display clear filter button when display is menu.
      * @defaultValue true
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showClearButton: boolean = true;
+    readonly showClearButton = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Decides whether to display apply filter button when display is menu.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showApplyButton: boolean = true;
+    readonly showApplyButton = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Decides whether to display filter match modes when display is menu.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showMatchModes: boolean = true;
+    readonly showMatchModes = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Decides whether to display add filter button when display is menu.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showAddButton: boolean = true;
+    readonly showAddButton = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Decides whether to close popup on clear button click.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnClear: boolean = true;
+    readonly hideOnClear = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Filter placeholder.
      * @group Props
      */
-    @Input() placeholder: string | undefined;
+    readonly placeholder = input<string | undefined>();
     /**
      * Filter match mode options.
      * @group Props
      */
-    @Input() matchModeOptions: SelectItem[] | undefined;
+    readonly matchModeOptions = input<SelectItem[] | undefined>();
     /**
      * Defines maximum amount of constraints.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) maxConstraints: number = 2;
+    readonly maxConstraints = input<number, unknown>(2, { transform: numberAttribute });
     /**
      * Defines minimum fraction of digits.
      * @group Props
      */
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) })
-    minFractionDigits: number | undefined;
+    readonly minFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
     /**
      * Defines maximum fraction of digits.
      * @group Props
      */
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) })
-    maxFractionDigits: number | undefined;
+    readonly maxFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
     /**
      * Defines prefix of the filter.
      * @group Props
      */
-    @Input() prefix: string | undefined;
+    readonly prefix = input<string | undefined>();
     /**
      * Defines suffix of the filter.
      * @group Props
      */
-    @Input() suffix: string | undefined;
+    readonly suffix = input<string | undefined>();
     /**
      * Defines filter locale.
      * @group Props
      */
-    @Input() locale: string | undefined;
+    readonly locale = input<string | undefined>();
     /**
      * Defines filter locale matcher.
      * @group Props
      */
-    @Input() localeMatcher: string | undefined;
+    readonly localeMatcher = input<string | undefined>();
     /**
      * Enables currency input.
      * @group Props
      */
-    @Input() currency: string | undefined;
+    readonly currency = input<string | undefined>();
     /**
      * Defines the display of the currency input.
      * @group Props
      */
-    @Input() currencyDisplay: string | undefined;
+    readonly currencyDisplay = input<string | undefined>();
     /**
      * Default trigger to run filtering on built-in text and numeric filters, valid values are 'enter' and 'input'.
      * @defaultValue enter
      * @group Props
      */
-    @Input() filterOn: string | undefined = 'enter';
+    readonly filterOn = input<string | undefined>('enter');
     /**
      * Defines if filter grouping will be enabled.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) useGrouping: boolean = true;
+    readonly useGrouping = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Defines the visibility of buttons.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showButtons: boolean = true;
+    readonly showButtons = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Defines the aria-label of the form element.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
     /**
      * Used to pass all filter button property object
      * @defaultValue {
@@ -5717,7 +5716,7 @@ export class ColumnFilter extends BaseComponent {
      }
      @group Props
      */
-    @Input() filterButtonProps: TableFilterButtonPropsOptions = {
+    readonly filterButtonProps = input<TableFilterButtonPropsOptions>({
         filter: { severity: 'secondary', text: true, rounded: true },
         inline: {
             clear: { severity: 'secondary', text: true, rounded: true }
@@ -5728,7 +5727,7 @@ export class ColumnFilter extends BaseComponent {
             apply: { size: 'small' },
             clear: { outlined: true, size: 'small' }
         }
-    };
+    });
     motionOptions = input<MotionOptions | undefined>(undefined);
 
     computedMotionOptions = computed<MotionOptions>(() => {
@@ -5769,86 +5768,122 @@ export class ColumnFilter extends BaseComponent {
      * @group Templates
      */
     readonly headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
-    _headerTemplate: Nullable<TemplateRef<any>>;
+    readonly _headerTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
     /**
      * Custom filter template.
      * @group Templates
      */
     readonly filterTemplate = contentChild<TemplateRef<any>>('filter', { descendants: false });
-    _filterTemplate: Nullable<TemplateRef<any>>;
+    readonly _filterTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'filter' || !ColumnFilter.KNOWN_TEMPLATE_TYPES.includes(item.getType()))
+                .at(-1)?.template
+    );
 
     /**
      * Custom footer template.
      * @group Templates
      */
     readonly footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
-    _footerTemplate: Nullable<TemplateRef<any>>;
+    readonly _footerTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
     /**
      * Custom filter icon template.
      * @group Templates
      */
     readonly filterIconTemplate = contentChild<TemplateRef<any>>('filtericon', { descendants: false });
-    _filterIconTemplate: Nullable<TemplateRef<any>>;
+    readonly _filterIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'filtericon')
+                .at(-1)?.template
+    );
 
     /**
      * Custom remove rule button icon template.
      * @group Templates
      */
     readonly removeRuleIconTemplate = contentChild<TemplateRef<any>>('removeruleicon', { descendants: false });
-    _removeRuleIconTemplate: Nullable<TemplateRef<any>>;
+    readonly _removeRuleIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'removeruleicon')
+                .at(-1)?.template
+    );
 
     /**
      * Custom add rule button icon template.
      * @group Templates
      */
     readonly addRuleIconTemplate = contentChild<TemplateRef<any>>('addruleicon', { descendants: false });
-    _addRuleIconTemplate: Nullable<TemplateRef<any>>;
+    readonly _addRuleIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'addruleicon')
+                .at(-1)?.template
+    );
 
-    _clearFilterIconTemplate: Nullable<TemplateRef<any>>;
+    readonly _clearFilterIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'clearfiltericon')
+                .at(-1)?.template
+    );
 
-    operatorOptions: any[] | undefined;
+    // pTemplate types that are not routed to the filter template.
+    private static readonly KNOWN_TEMPLATE_TYPES = ['header', 'footer', 'filtericon', 'clearfiltericon', 'removeruleicon', 'addruleicon'];
 
-    overlayVisible: boolean | undefined;
+    readonly operatorOptions = signal<any[] | undefined>(undefined);
 
-    overlay: HTMLElement | undefined | null;
+    readonly overlayVisible = signal<boolean | undefined>(undefined);
 
-    scrollHandler: ConnectedOverlayScrollHandler | null | undefined;
+    readonly overlay = signal<HTMLElement | undefined | null>(undefined);
 
-    documentClickListener: VoidListener;
+    readonly scrollHandler = signal<ConnectedOverlayScrollHandler | null | undefined>(undefined);
 
-    documentResizeListener: VoidListener;
+    readonly documentClickListener = signal<VoidListener>(undefined);
 
-    matchModes: SelectItem[] | undefined;
+    readonly documentResizeListener = signal<VoidListener>(undefined);
+
+    readonly matchModes = signal<SelectItem[] | undefined>(undefined);
 
     translationSubscription: Subscription | undefined;
 
     resetSubscription: Subscription | undefined;
 
-    selfClick: boolean | undefined;
+    readonly selfClick = signal<boolean | undefined>(undefined);
 
-    overlayEventListener: any;
+    readonly overlayEventListener = signal<any>(undefined);
 
-    overlayId: any;
+    readonly overlayId = signal<any>(undefined);
 
+    // fieldConstraints, showRemoveIcon, isShowAddConstraint and hasFilter stay getters: they read the
+    // table's filter metadata, which is mutated in place (constraints pushed/removed, values typed in).
     get fieldConstraints(): FilterMetadata[] | undefined | null {
-        return this.dataTable._filters() ? <FilterMetadata[]>this.dataTable._filters()[<string>this.field] : null;
+        return this.dataTable._filters() ? <FilterMetadata[]>this.dataTable._filters()[<string>this.field()] : null;
     }
 
     get showRemoveIcon(): boolean {
         return this.fieldConstraints ? this.fieldConstraints.length > 1 : false;
     }
 
-    get showMenuButton(): boolean {
-        return this.showMenu && (this.display === 'row' ? this.type !== 'boolean' : true);
-    }
+    readonly showMenuButton = computed<boolean>(() => this.showMenu() && (this.display() === 'row' ? this.type() !== 'boolean' : true));
 
-    get isShowOperator(): boolean {
-        return this.showOperator && this.type !== 'boolean';
-    }
+    readonly isShowOperator = computed<boolean>(() => this.showOperator() && this.type() !== 'boolean');
 
     get isShowAddConstraint(): boolean | undefined | null {
-        return this.showAddButton && this.type !== 'boolean' && this.fieldConstraints && this.fieldConstraints.length < this.maxConstraints;
+        return this.showAddButton() && this.type() !== 'boolean' && this.fieldConstraints && this.fieldConstraints.length < this.maxConstraints();
     }
 
     get showMenuButtonLabel() {
@@ -5876,7 +5911,7 @@ export class ColumnFilter extends BaseComponent {
     }
 
     get filterMenuButtonAriaLabel() {
-        return this.config?.translation ? (this.overlayVisible ? this.config?.translation?.aria?.hideFilterMenu : this.config?.translation?.aria?.showFilterMenu) : undefined;
+        return this.config?.translation ? (this.overlayVisible() ? this.config?.translation?.aria?.hideFilterMenu : this.config?.translation?.aria?.showFilterMenu) : undefined;
     }
 
     get removeRuleButtonAriaLabel() {
@@ -5896,8 +5931,8 @@ export class ColumnFilter extends BaseComponent {
     overlayService = inject(OverlayService);
 
     onInit() {
-        this.overlayId = UniqueComponentId();
-        if (!this.dataTable._filters()[<string>this.field]) {
+        this.overlayId.set(UniqueComponentId());
+        if (!this.dataTable._filters()[<string>this.field()]) {
             this.initFieldFilterConstraint();
         }
 
@@ -5911,18 +5946,19 @@ export class ColumnFilter extends BaseComponent {
     }
 
     generateMatchModeOptions() {
-        this.matchModes =
-            this.matchModeOptions ||
-            (this.config as any).filterMatchModeOptions[this.type]?.map((key: any) => {
-                return {
-                    label: this.config.getTranslation(key),
-                    value: key
-                };
-            });
+        this.matchModes.set(
+            this.matchModeOptions() ||
+                (this.config as any).filterMatchModeOptions[this.type()]?.map((key: any) => {
+                    return {
+                        label: this.config.getTranslation(key),
+                        value: key
+                    };
+                })
+        );
     }
 
     generateOperatorOptions() {
-        this.operatorOptions = [
+        this.operatorOptions.set([
             {
                 label: this.config.getTranslation(TranslationKeys.MATCH_ALL),
                 value: FilterOperator.AND
@@ -5931,57 +5967,19 @@ export class ColumnFilter extends BaseComponent {
                 label: this.config.getTranslation(TranslationKeys.MATCH_ANY),
                 value: FilterOperator.OR
             }
-        ];
-    }
-
-    onAfterContentInit() {
-        this._templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'header':
-                    this._headerTemplate = item.template;
-                    break;
-
-                case 'filter':
-                    this._filterTemplate = item.template;
-                    break;
-
-                case 'footer':
-                    this._footerTemplate = item.template;
-                    break;
-
-                case 'filtericon':
-                    this._filterIconTemplate = item.template;
-                    break;
-
-                case 'clearfiltericon':
-                    this._clearFilterIconTemplate = item.template;
-                    break;
-
-                case 'removeruleicon':
-                    this._removeRuleIconTemplate = item.template;
-                    break;
-
-                case 'addruleicon':
-                    this._addRuleIconTemplate = item.template;
-                    break;
-
-                default:
-                    this._filterTemplate = item.template;
-                    break;
-            }
-        });
+        ]);
     }
 
     initFieldFilterConstraint() {
         let defaultMatchMode = this.getDefaultMatchMode();
-        this.dataTable._filters()[<string>this.field] =
-            this.display == 'row'
+        this.dataTable._filters()[<string>this.field()] =
+            this.display() == 'row'
                 ? { value: null, matchMode: defaultMatchMode }
                 : [
                       {
                           value: null,
                           matchMode: defaultMatchMode,
-                          operator: this.operator
+                          operator: this._operator()
                       }
                   ];
     }
@@ -5989,13 +5987,13 @@ export class ColumnFilter extends BaseComponent {
     onMenuMatchModeChange(value: any, filterMeta: FilterMetadata) {
         filterMeta.matchMode = value;
 
-        if (!this.showApplyButton) {
+        if (!this.showApplyButton()) {
             this.dataTable._filter();
         }
     }
 
     onRowMatchModeChange(matchMode: string) {
-        const fieldFilter = <FilterMetadata>this.dataTable._filters()[<string>this.field];
+        const fieldFilter = <FilterMetadata>this.dataTable._filters()[<string>this.field()];
         fieldFilter.matchMode = matchMode;
 
         if (fieldFilter.value) {
@@ -6039,11 +6037,11 @@ export class ColumnFilter extends BaseComponent {
     }
 
     isRowMatchModeSelected(matchMode: string) {
-        return (<FilterMetadata>this.dataTable._filters()[<string>this.field]).matchMode === matchMode;
+        return (<FilterMetadata>this.dataTable._filters()[<string>this.field()]).matchMode === matchMode;
     }
 
     addConstraint() {
-        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).push({
+        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field()]).push({
             value: null,
             matchMode: this.getDefaultMatchMode(),
             operator: this.getDefaultOperator()
@@ -6052,26 +6050,26 @@ export class ColumnFilter extends BaseComponent {
     }
 
     removeConstraint(filterMeta: FilterMetadata) {
-        this.dataTable._filters()[<string>this.field] = (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).filter((meta) => meta !== filterMeta);
-        if (!this.showApplyButton) {
+        this.dataTable._filters()[<string>this.field()] = (<FilterMetadata[]>this.dataTable._filters()[<string>this.field()]).filter((meta) => meta !== filterMeta);
+        if (!this.showApplyButton()) {
             this.dataTable._filter();
         }
         DomHandler.focus(this.clearButtonViewChild()?.nativeElement);
     }
 
     onOperatorChange(value: any) {
-        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).forEach((filterMeta) => {
+        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field()]).forEach((filterMeta) => {
             filterMeta.operator = value;
-            this.operator = value;
+            this._operator.set(value);
         });
 
-        if (!this.showApplyButton) {
+        if (!this.showApplyButton()) {
             this.dataTable._filter();
         }
     }
 
     toggleMenu(event: Event) {
-        if (this.overlayVisible) {
+        if (this.overlayVisible()) {
             this.hide();
         } else {
             this.show();
@@ -6087,14 +6085,14 @@ export class ColumnFilter extends BaseComponent {
                 break;
 
             case 'ArrowDown':
-                if (this.overlayVisible) {
-                    let focusable = DomHandler.getFocusableElements(<HTMLElement>this.overlay);
+                if (this.overlayVisible()) {
+                    let focusable = DomHandler.getFocusableElements(<HTMLElement>this.overlay());
                     if (focusable) {
                         focusable[0].focus();
                     }
                     event.preventDefault();
                 } else if (event.altKey) {
-                    this.overlayVisible = true;
+                    this.overlayVisible.set(true);
                     event.preventDefault();
                 }
                 break;
@@ -6125,30 +6123,31 @@ export class ColumnFilter extends BaseComponent {
     }
 
     onContentClick() {
-        this.selfClick = true;
+        this.selfClick.set(true);
     }
 
     onOverlayBeforeEnter(event: MotionEvent) {
-        this.overlay = event.element as HTMLElement;
-        if (this.overlay && this.overlay.parentElement !== this.document.body) {
+        const overlay = event.element as HTMLElement;
+        this.overlay.set(overlay);
+        if (overlay && overlay.parentElement !== this.document.body) {
             const buttonEl = <HTMLButtonElement>findSingle(this.el.nativeElement, '[data-pc-name="pccolumnfilterbutton"]');
-            appendChild(this.document.body, this.overlay);
-            addStyle(this.overlay!, { position: 'absolute', top: '0' });
-            absolutePosition(this.overlay, buttonEl);
-            ZIndexUtils.set('overlay', this.overlay, this.config.zIndex.overlay);
+            appendChild(this.document.body, overlay);
+            addStyle(overlay, { position: 'absolute', top: '0' });
+            absolutePosition(overlay, buttonEl);
+            ZIndexUtils.set('overlay', overlay, this.config.zIndex.overlay);
         }
 
         this.bindDocumentClickListener();
         this.bindDocumentResizeListener();
         this.bindScrollListener();
 
-        this.overlayEventListener = (e: any) => {
-            if (this.overlay && this.overlay.contains(e.target)) {
-                this.selfClick = true;
+        this.overlayEventListener.set((e: any) => {
+            if (this.overlay()?.contains(e.target)) {
+                this.selfClick.set(true);
             }
-        };
+        });
 
-        this.overlaySubscription = this.overlayService.clickObservable.subscribe(this.overlayEventListener);
+        this.overlaySubscription = this.overlayService.clickObservable.subscribe(this.overlayEventListener());
 
         this.onShow.emit({ originalEvent: event as any });
         this.focusOnFirstElement();
@@ -6156,7 +6155,7 @@ export class ColumnFilter extends BaseComponent {
 
     onOverlayAnimationAfterLeave(event: MotionEvent) {
         this.restoreOverlayAppend();
-        ZIndexUtils.clear(this.overlay);
+        ZIndexUtils.clear(this.overlay());
         this.onOverlayHide();
         this.renderOverlay.set(false);
         if (this.overlaySubscription) {
@@ -6167,38 +6166,41 @@ export class ColumnFilter extends BaseComponent {
     }
 
     restoreOverlayAppend() {
-        if (this.overlay) {
-            this.el.nativeElement.appendChild(this.overlay!);
+        const overlay = this.overlay();
+        if (overlay) {
+            this.el.nativeElement.appendChild(overlay);
         }
     }
 
     focusOnFirstElement() {
-        if (this.overlay) {
-            DomHandler.focus(DomHandler.getFirstFocusableElement(this.overlay, ''));
+        const overlay = this.overlay();
+        if (overlay) {
+            DomHandler.focus(DomHandler.getFirstFocusableElement(overlay, ''));
         }
     }
 
     getDefaultMatchMode(): string {
-        if (this.matchMode) {
-            return this.matchMode;
+        const matchMode = this.matchMode();
+        if (matchMode) {
+            return matchMode;
         } else {
-            if (this.type === 'text') return FilterMatchMode.STARTS_WITH;
-            else if (this.type === 'numeric') return FilterMatchMode.EQUALS;
-            else if (this.type === 'date') return FilterMatchMode.DATE_IS;
+            if (this.type() === 'text') return FilterMatchMode.STARTS_WITH;
+            else if (this.type() === 'numeric') return FilterMatchMode.EQUALS;
+            else if (this.type() === 'date') return FilterMatchMode.DATE_IS;
             else return FilterMatchMode.CONTAINS;
         }
     }
 
     getDefaultOperator(): string | undefined {
-        return this.dataTable._filters() ? (<FilterMetadata[]>this.dataTable._filters()[<string>(<string>this.field)])[0].operator : this.operator;
+        return this.dataTable._filters() ? (<FilterMetadata[]>this.dataTable._filters()[<string>(<string>this.field())])[0].operator : this._operator();
     }
 
     hasRowFilter() {
-        return this.dataTable._filters()[<string>this.field] && !this.dataTable.isFilterBlank((<FilterMetadata>this.dataTable._filters()[<string>this.field]).value);
+        return this.dataTable._filters()[<string>this.field()] && !this.dataTable.isFilterBlank((<FilterMetadata>this.dataTable._filters()[<string>this.field()]).value);
     }
 
     get hasFilter(): boolean {
-        let fieldFilter = this.dataTable._filters()[<string>this.field];
+        let fieldFilter = this.dataTable._filters()[<string>this.field()];
         if (fieldFilter) {
             if (Array.isArray(fieldFilter)) return !this.dataTable.isFilterBlank((<FilterMetadata[]>fieldFilter)[0].value);
             else return !this.dataTable.isFilterBlank(fieldFilter.value);
@@ -6210,10 +6212,10 @@ export class ColumnFilter extends BaseComponent {
     isOutsideClicked(event: any): boolean {
         const icon = this.icon();
         return !(
-            findSingle((this.overlay as HTMLElement).nextElementSibling!, '[data-pc-section="filteroverlay"]') ||
-            findSingle((this.overlay as HTMLElement).nextElementSibling!, '[data-pc-name="popover"]') ||
-            this.overlay?.isSameNode(event.target) ||
-            this.overlay?.contains(event.target) ||
+            findSingle((this.overlay() as HTMLElement).nextElementSibling!, '[data-pc-section="filteroverlay"]') ||
+            findSingle((this.overlay() as HTMLElement).nextElementSibling!, '[data-pc-name="popover"]') ||
+            this.overlay()?.isSameNode(event.target) ||
+            this.overlay()?.contains(event.target) ||
             icon?.nativeElement.isSameNode(event.target) ||
             icon?.nativeElement.contains(event.target) ||
             findSingle(event.target, '[data-pc-name="pcaddrulebuttonlabel"]') ||
@@ -6224,86 +6226,88 @@ export class ColumnFilter extends BaseComponent {
     }
 
     bindDocumentClickListener() {
-        if (!this.documentClickListener) {
+        if (!this.documentClickListener()) {
             const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : 'document';
 
-            this.documentClickListener = this.renderer.listen(documentTarget, 'mousedown', (event) => {
-                const dialogElements = document.querySelectorAll('[role="dialog"]');
-                const targetIsColumnFilterMenuButton = event.target.closest('[data-pc-name="pccolumnfilterbutton"]');
-                if (this.overlayVisible && this.isOutsideClicked(event) && (targetIsColumnFilterMenuButton || dialogElements?.length <= 1)) {
-                    this.hide();
-                }
+            this.documentClickListener.set(
+                this.renderer.listen(documentTarget, 'mousedown', (event) => {
+                    const dialogElements = document.querySelectorAll('[role="dialog"]');
+                    const targetIsColumnFilterMenuButton = event.target.closest('[data-pc-name="pccolumnfilterbutton"]');
+                    if (this.overlayVisible() && this.isOutsideClicked(event) && (targetIsColumnFilterMenuButton || dialogElements?.length <= 1)) {
+                        this.hide();
+                    }
 
-                this.selfClick = false;
-            });
+                    this.selfClick.set(false);
+                })
+            );
         }
     }
 
     unbindDocumentClickListener() {
-        if (this.documentClickListener) {
-            this.documentClickListener();
-            this.documentClickListener = null;
-            this.selfClick = false;
+        if (this.documentClickListener()) {
+            this.documentClickListener()!();
+            this.documentClickListener.set(null);
+            this.selfClick.set(false);
         }
     }
 
     bindDocumentResizeListener() {
-        if (!this.documentResizeListener) {
-            this.documentResizeListener = this.renderer.listen(this.document.defaultView, 'resize', (event) => {
-                if (this.overlayVisible && !DomHandler.isTouchDevice()) {
-                    this.hide();
-                }
-            });
+        if (!this.documentResizeListener()) {
+            this.documentResizeListener.set(
+                this.renderer.listen(this.document.defaultView, 'resize', () => {
+                    if (this.overlayVisible() && !DomHandler.isTouchDevice()) {
+                        this.hide();
+                    }
+                })
+            );
         }
     }
 
     unbindDocumentResizeListener() {
-        if (this.documentResizeListener) {
-            this.documentResizeListener();
-            this.documentResizeListener = null;
+        if (this.documentResizeListener()) {
+            this.documentResizeListener()!();
+            this.documentResizeListener.set(null);
         }
     }
 
     bindScrollListener() {
-        if (!this.scrollHandler) {
-            this.scrollHandler = new ConnectedOverlayScrollHandler(this.icon()?.nativeElement, () => {
-                if (this.overlayVisible) {
-                    this.hide();
-                }
-            });
+        if (!this.scrollHandler()) {
+            this.scrollHandler.set(
+                new ConnectedOverlayScrollHandler(this.icon()?.nativeElement, () => {
+                    if (this.overlayVisible()) {
+                        this.hide();
+                    }
+                })
+            );
         }
 
-        this.scrollHandler.bindScrollListener();
+        this.scrollHandler()!.bindScrollListener();
     }
 
     unbindScrollListener() {
-        if (this.scrollHandler) {
-            this.scrollHandler.unbindScrollListener();
-        }
+        this.scrollHandler()?.unbindScrollListener();
     }
 
     show() {
         this.renderOverlay.set(true);
-        this.overlayVisible = true;
-        this.cd.markForCheck();
+        this.overlayVisible.set(true);
     }
 
     hide() {
-        this.overlayVisible = false;
-        this.cd.markForCheck();
+        this.overlayVisible.set(false);
     }
 
     onOverlayHide() {
         this.unbindDocumentClickListener();
         this.unbindDocumentResizeListener();
         this.unbindScrollListener();
-        this.overlay = null;
+        this.overlay.set(null);
     }
 
     clearFilter() {
         this.initFieldFilterConstraint();
         this.dataTable._filter();
-        if (this.hideOnClear) this.hide();
+        if (this.hideOnClear()) this.hide();
     }
 
     applyFilter() {
@@ -6312,9 +6316,9 @@ export class ColumnFilter extends BaseComponent {
     }
 
     onDestroy() {
-        if (this.overlay) {
+        if (this.overlay()) {
             this.restoreOverlayAppend();
-            ZIndexUtils.clear(this.overlay);
+            ZIndexUtils.clear(this.overlay());
             this.onOverlayHide();
         }
 
@@ -6337,64 +6341,64 @@ export class ColumnFilter extends BaseComponent {
     selector: 'p-columnFilterFormElement',
     standalone: false,
     template: `
-        @if (filterTemplate) {
+        @if (filterTemplate()) {
             <ng-container
                 *ngTemplateOutlet="
-                    filterTemplate;
+                    filterTemplate();
                     context: {
-                        $implicit: filterConstraint.value,
+                        $implicit: filterConstraint().value,
                         filterCallback: filterCallback,
-                        type: type,
-                        field: field,
-                        filterConstraint: filterConstraint,
-                        placeholder: placeholder,
-                        minFractionDigits: minFractionDigits,
-                        maxFractionDigits: maxFractionDigits,
-                        prefix: prefix,
-                        suffix: suffix,
-                        locale: locale,
-                        localeMatcher: localeMatcher,
-                        currency: currency,
-                        currencyDisplay: currencyDisplay,
-                        useGrouping: useGrouping,
-                        showButtons: showButtons
+                        type: type(),
+                        field: field(),
+                        filterConstraint: filterConstraint(),
+                        placeholder: placeholder(),
+                        minFractionDigits: minFractionDigits(),
+                        maxFractionDigits: maxFractionDigits(),
+                        prefix: prefix(),
+                        suffix: suffix(),
+                        locale: locale(),
+                        localeMatcher: localeMatcher(),
+                        currency: currency(),
+                        currencyDisplay: currencyDisplay(),
+                        useGrouping: useGrouping(),
+                        showButtons: showButtons()
                     }
                 "
             ></ng-container>
         } @else {
-            @switch (type) {
+            @switch (type()) {
                 @case ('text') {
                     <input
                         type="text"
-                        [ariaLabel]="ariaLabel"
+                        [ariaLabel]="ariaLabel()"
                         pInputText
                         [pt]="ptm('pcFilterInputText')"
-                        [value]="filterConstraint?.value"
+                        [value]="filterConstraint()?.value"
                         (input)="onModelChange($event.target.value)"
                         (keydown.enter)="onTextInputEnterKeyDown($event)"
-                        [attr.placeholder]="placeholder"
+                        [attr.placeholder]="placeholder()"
                         [unstyled]="unstyled()"
                     />
                 }
                 @case ('numeric') {
                     <p-inputNumber
-                        [ngModel]="filterConstraint?.value"
+                        [ngModel]="filterConstraint()?.value"
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"
                         (onKeyDown)="onNumericInputKeyDown($event)"
-                        [showButtons]="showButtons"
-                        [minFractionDigits]="minFractionDigits"
-                        [maxFractionDigits]="maxFractionDigits"
-                        [ariaLabel]="ariaLabel"
-                        [prefix]="prefix"
-                        [suffix]="suffix"
-                        [placeholder]="placeholder"
-                        [mode]="currency ? 'currency' : 'decimal'"
-                        [locale]="locale"
-                        [localeMatcher]="localeMatcher"
-                        [currency]="currency"
-                        [currencyDisplay]="currencyDisplay"
-                        [useGrouping]="useGrouping"
+                        [showButtons]="showButtons()"
+                        [minFractionDigits]="minFractionDigits()"
+                        [maxFractionDigits]="maxFractionDigits()"
+                        [ariaLabel]="ariaLabel()"
+                        [prefix]="prefix()"
+                        [suffix]="suffix()"
+                        [placeholder]="placeholder()"
+                        [mode]="currency() ? 'currency' : 'decimal'"
+                        [locale]="locale()"
+                        [localeMatcher]="localeMatcher()"
+                        [currency]="currency()"
+                        [currencyDisplay]="currencyDisplay()"
+                        [useGrouping]="useGrouping()"
                         [pt]="ptm('pcFilterInputNumber')"
                         [unstyled]="unstyled()"
                     ></p-inputNumber>
@@ -6402,9 +6406,9 @@ export class ColumnFilter extends BaseComponent {
                 @case ('boolean') {
                     <p-checkbox
                         [pt]="ptm('pcFilterCheckbox')"
-                        [indeterminate]="filterConstraint?.value === null"
+                        [indeterminate]="filterConstraint()?.value === null"
                         [binary]="true"
-                        [ngModel]="filterConstraint?.value"
+                        [ngModel]="filterConstraint()?.value"
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"
                         [unstyled]="unstyled()"
@@ -6413,9 +6417,9 @@ export class ColumnFilter extends BaseComponent {
                 @case ('date') {
                     <p-datepicker
                         [pt]="ptm('pcFilterDatePicker')"
-                        [ariaLabel]="ariaLabel"
-                        [placeholder]="placeholder"
-                        [ngModel]="filterConstraint?.value"
+                        [ariaLabel]="ariaLabel()"
+                        [placeholder]="placeholder()"
+                        [ngModel]="filterConstraint()?.value"
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"
                         appendTo="body"
@@ -6439,61 +6443,54 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
 
     _componentStyle = inject(TableStyle);
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('columnFilterFormElement'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('columnFilterFormElement')));
     }
 
-    @Input() field: string | undefined;
+    readonly field = input<string | undefined>();
 
-    @Input() type: string | undefined;
+    readonly type = input<string | undefined>();
 
-    @Input() filterConstraint: FilterMetadata | undefined;
+    readonly filterConstraint = input<FilterMetadata | undefined>();
 
-    @Input() filterTemplate: Nullable<TemplateRef<any>>;
+    readonly filterTemplate = input<Nullable<TemplateRef<any>>>();
 
-    @Input() placeholder: string | undefined;
+    readonly placeholder = input<string | undefined>();
 
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) })
-    minFractionDigits: number | undefined;
+    readonly minFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
 
-    @Input({ transform: (value: unknown) => numberAttribute(value, undefined) })
-    maxFractionDigits: number | undefined;
+    readonly maxFractionDigits = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => numberAttribute(value, undefined) });
 
-    @Input() prefix: string | undefined;
+    readonly prefix = input<string | undefined>();
 
-    @Input() suffix: string | undefined;
+    readonly suffix = input<string | undefined>();
 
-    @Input() locale: string | undefined;
+    readonly locale = input<string | undefined>();
 
-    @Input() localeMatcher: string | undefined;
+    readonly localeMatcher = input<string | undefined>();
 
-    @Input() currency: string | undefined;
+    readonly currency = input<string | undefined>();
 
-    @Input() currencyDisplay: string | undefined;
+    readonly currencyDisplay = input<string | undefined>();
 
-    @Input({ transform: booleanAttribute }) useGrouping: boolean = true;
+    readonly useGrouping = input<boolean, unknown>(true, { transform: booleanAttribute });
 
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
 
-    @Input() filterOn: string | undefined;
+    readonly filterOn = input<string | undefined>();
 
-    get showButtons(): boolean {
-        return this.colFilter.showButtons;
-    }
+    readonly showButtons = computed<boolean>(() => this.colFilter.showButtons());
 
-    filterCallback: any;
-
-    onInit() {
-        this.filterCallback = (value: any) => {
-            (<any>this.filterConstraint).value = value;
-            this.dataTable._filter();
-        };
-    }
+    filterCallback = (value: any) => {
+        (<any>this.filterConstraint()).value = value;
+        this.dataTable._filter();
+    };
 
     onModelChange(value: any) {
-        (<any>this.filterConstraint).value = value;
+        (<any>this.filterConstraint()).value = value;
 
-        if (this.type === 'date' || this.type === 'boolean' || ((this.type === 'text' || this.type === 'numeric') && this.filterOn === 'input') || !value) {
+        if (this.type() === 'date' || this.type() === 'boolean' || ((this.type() === 'text' || this.type() === 'numeric') && this.filterOn() === 'input') || !value) {
             this.dataTable._filter();
         }
     }
