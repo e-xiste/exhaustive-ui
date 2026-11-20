@@ -7,6 +7,7 @@ import { Step, StepItem, StepList, StepPanel, StepPanels, Stepper } from './step
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { StepperModule } from './stepper';
+import { BlockUI } from '@exhaustive-ui/core/blockui';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -883,5 +884,36 @@ describe('Stepper Signal Query API', () => {
         const stepItem = fixture.debugElement.query(By.directive(StepItem)).componentInstance;
         expect(stepItem.step()).toBeDefined();
         expect(stepItem.stepPanel()).toBeDefined();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [StepperModule, BlockUI],
+    template: `
+        <p-blockui [target]="stepper" [blocked]="true" />
+        <p-stepper #stepper [value]="1">
+            <p-step-list>
+                <p-step [value]="1">One</p-step>
+            </p-step-list>
+        </p-stepper>
+    `
+})
+class TestBlockedStepperComponent {}
+
+describe('Stepper as a BlockUI target (optimus-ui#885)', () => {
+    it('should expose its host element to BlockUI', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestBlockedStepperComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestBlockedStepperComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const stepperEl = fixture.debugElement.query(By.directive(Stepper));
+        expect(stepperEl.componentInstance.getBlockableElement()).toBe(stepperEl.nativeElement);
+        expect(stepperEl.nativeElement.querySelector('.p-blockui')).toBeTruthy();
     });
 });

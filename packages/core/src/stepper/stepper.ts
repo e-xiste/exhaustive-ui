@@ -22,7 +22,7 @@ import {
 
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { find, findIndexInList, uuid } from '@exhaustive-ui/utils';
-import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
+import { BlockableUI, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { MotionModule } from '@exhaustive-ui/core/motion';
@@ -465,7 +465,7 @@ export class StepPanels extends BaseComponent<StepPanelsPassThrough> {
     },
     hostDirectives: [Bind]
 })
-export class Stepper extends BaseComponent<StepperPassThrough> {
+export class Stepper extends BaseComponent<StepperPassThrough> implements BlockableUI {
     componentName = 'Stepper';
 
     $pcStepper: Stepper | undefined = inject(STEPPER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
@@ -476,6 +476,10 @@ export class Stepper extends BaseComponent<StepperPassThrough> {
 
     onAfterViewChecked(): void {
         this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    }
+
+    getBlockableElement(): HTMLElement {
+        return this.el.nativeElement;
     }
     /**
      * A model that can hold a numeric value or be undefined.
