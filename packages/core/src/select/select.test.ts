@@ -4986,4 +4986,20 @@ describe('Select medium bug fixes', () => {
         fixture.detectChanges();
         expect(select.modelValue()).toBeNull();
     });
+
+    it('names the editable input from ariaLabel or ariaLabelledBy, never from the selected value (optimus-ui#265)', () => {
+        fixture.componentRef.setInput('editable', true);
+        fixture.componentRef.setInput('ariaLabelledBy', 'city-label');
+        select.writeValue('RM');
+        fixture.detectChanges();
+
+        const input = fixture.nativeElement.querySelector('input.p-select-label') as HTMLInputElement;
+        expect(input).toBeTruthy();
+        expect(input.getAttribute('aria-labelledby')).toBe('city-label');
+        expect(input.getAttribute('aria-label')).toBeNull();
+
+        fixture.componentRef.setInput('ariaLabel', 'City');
+        fixture.detectChanges();
+        expect(input.getAttribute('aria-label')).toBe('City');
+    });
 });
