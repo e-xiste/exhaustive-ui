@@ -2843,3 +2843,27 @@ describe('DatePicker themed RTL', () => {
         expect(icons()).toEqual(['none', 'none']);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `<p-datepicker [showTime]="true" [hourFormat]="12" />`
+})
+class TestNumericHourFormatDatePickerComponent {}
+
+describe('DatePicker numeric hourFormat', () => {
+    it('accepts a numeric hourFormat binding (optimus-ui#309)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestNumericHourFormatDatePickerComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TestNumericHourFormatDatePickerComponent);
+        await fixture.whenStable();
+        const picker = fixture.debugElement.query(By.directive(DatePicker)).componentInstance as DatePicker;
+
+        expect(picker.hourFormat()).toBe('12');
+        picker.writeValue(new Date(2026, 4, 10, 15, 0));
+        expect(picker.currentHour()).toBe(3);
+        expect(picker.pm()).toBe(true);
+    });
+});

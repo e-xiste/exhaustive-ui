@@ -728,7 +728,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
      * Specifies 12 or 24 hour format.
      * @group Props
      */
-    hourFormat = input<string>('24');
+    hourFormat = input<string, string | number>('24', { transform: (value: string | number) => String(value) });
     /**
      * Whether to display timepicker only.
      * @group Props
