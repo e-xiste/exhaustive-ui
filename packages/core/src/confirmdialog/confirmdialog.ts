@@ -19,7 +19,6 @@ import {
     contentChildren,
     output
 } from '@angular/core';
-import { setAttribute, uuid } from '@exhaustive-ui/utils';
 import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -55,6 +54,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
             [appendTo]="$appendTo()"
             [position]="option('position')"
             [style]="style()"
+            [breakpoints]="breakpoints()"
             [dismissableMask]="option('dismissableMask')"
             [draggable]="draggable()"
             [baseZIndex]="baseZIndex()"
@@ -399,10 +399,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
 
     subscription: Subscription;
 
-    styleElement = signal<any>(undefined);
-
-    id = uuid('pn_id_');
-
     translationSubscription: Subscription | undefined;
 
     constructor() {
@@ -432,10 +428,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
     }
 
     onInit() {
-        if (this.breakpoints()) {
-            this.createStyle();
-        }
-
         this.translationSubscription = this.config.translationObserver.subscribe(() => {
             if (this.visible()) {
                 this.cd.markForCheck();
@@ -462,30 +454,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
         return [cxClass, optionClass].filter(Boolean).join(' ');
     }
 
-    createStyle() {
-        if (!this.styleElement()) {
-            const styleElement = this.document.createElement('style');
-            this.styleElement.set(styleElement);
-            styleElement.type = 'text/css';
-            setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
-            this.document.head.appendChild(styleElement);
-            const breakpoints = this.breakpoints();
-            let innerHTML = '';
-            for (let breakpoint in breakpoints) {
-                innerHTML += `
-                    @media screen and (max-width: ${breakpoint}) {
-                        .p-dialog[${this.id}] {
-                            width: ${breakpoints[breakpoint]} !important;
-                        }
-                    }
-                `;
-            }
-
-            styleElement.innerHTML = innerHTML;
-            setAttribute(styleElement, 'nonce', this.config?.csp()?.nonce);
-        }
-    }
-
     close() {
         const confirmation = this.confirmation();
         if (confirmation?.rejectEvent) {
@@ -506,14 +474,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
         this.confirmation.set(null);
     }
 
-    destroyStyle() {
-        const styleElement = this.styleElement();
-        if (styleElement) {
-            this.document.head.removeChild(styleElement);
-            this.styleElement.set(null);
-        }
-    }
-
     onDestroy() {
         this.subscription.unsubscribe();
         // Unsubscribe from confirmation events if the dialogue is opened and this component is somehow destroyed.
@@ -522,8 +482,6 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
         if (this.translationSubscription) {
             this.translationSubscription.unsubscribe();
         }
-
-        this.destroyStyle();
     }
 
     onVisibleChange(value: boolean) {
