@@ -2283,4 +2283,16 @@ describe('OrderList medium bug fixes', () => {
         const labels = fixture.debugElement.queryAll(By.css('.p-listbox-option')).map((o) => o.nativeElement.textContent.trim());
         expect(labels).toEqual(['Alpha', 'Beta']);
     });
+
+    it('passes focusOnHover to the inner listbox (optimus-ui#401)', async () => {
+        fixture.componentRef.setInput('value', [{ name: 'Alpha' }, { name: 'Beta' }]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const listbox = fixture.debugElement.query(By.css('p-listbox')).componentInstance;
+        expect(listbox.focusOnHover()).toBe(true);
+
+        fixture.componentRef.setInput('focusOnHover', false);
+        fixture.detectChanges();
+        expect(listbox.focusOnHover()).toBe(false);
+    });
 });

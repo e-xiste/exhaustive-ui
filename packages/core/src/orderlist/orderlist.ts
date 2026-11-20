@@ -115,6 +115,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             [metaKeySelection]="metaKeySelection()"
             [scrollHeight]="scrollHeight()"
             [autoOptionFocus]="autoOptionFocus()"
+            [focusOnHover]="focusOnHover()"
             [filter]="filterBy()"
             [filterBy]="filterBy()"
             [filterLocale]="filterLocale()"
@@ -297,6 +298,11 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @group Props
      */
     readonly autoOptionFocus = input<boolean, unknown>(true, { transform: booleanAttribute });
+    /**
+     * When enabled, the hovered option will be focused.
+     * @group Props
+     */
+    readonly focusOnHover = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Name of the field that uniquely identifies the record in the data.
      * @group Props
