@@ -45,7 +45,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
             #dialog
             [visible]="visible()"
             (visibleChange)="onVisibleChange($event)"
-            role="alertdialog"
+            [role]="'alertdialog'"
             [closable]="option('closable')"
             [styleClass]="cn(cx('root'), styleClass())"
             [modal]="option('modal')"
@@ -82,8 +82,8 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
                 </ng-template>
             } @else {
                 @if (headerTemplate() || _headerTemplate()) {
-                    <ng-template #header>
-                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
+                    <ng-template #header let-ariaLabelledBy="ariaLabelledBy">
+                        <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate(); context: { ariaLabelledBy: ariaLabelledBy }"></ng-container>
                     </ng-template>
                 }
 

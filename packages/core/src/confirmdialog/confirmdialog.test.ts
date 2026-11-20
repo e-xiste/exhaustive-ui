@@ -320,7 +320,9 @@ describe('ConfirmDialog', () => {
 
         it('should have proper data attributes', () => {
             const dialogElement = fixture.debugElement.query(By.css('p-dialog'));
-            expect(dialogElement.nativeElement.getAttribute('role')).toBe('alertdialog');
+            // the role goes to the dialog container, not to the unnamed p-dialog host
+            expect(dialogElement.componentInstance.role()).toBe('alertdialog');
+            expect(dialogElement.nativeElement.hasAttribute('role')).toBe(false);
         });
     });
 
@@ -901,7 +903,8 @@ describe('ConfirmDialog', () => {
             await new Promise((resolve) => setTimeout(resolve, 0));
 
             const dialog = accessibilityFixture.debugElement.query(By.css('p-dialog'));
-            expect(dialog.nativeElement.getAttribute('role')).toBe('alertdialog');
+            expect(dialog.componentInstance.role()).toBe('alertdialog');
+            expect(dialog.nativeElement.hasAttribute('role')).toBe(false);
         });
 
         it('should have proper focus trap behavior', async () => {
@@ -1814,5 +1817,38 @@ describe('ConfirmDialog Signal API', () => {
 
         expect(confirmDialog.rejectButtonLabel).toBe('Keep');
         expect(query('.p-confirmdialog-reject-button')?.textContent?.trim()).toBe('Keep');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmDialog],
+    template: `
+        <p-confirmdialog appendTo="self" [visible]="true" message="Delete?">
+            <ng-template #header let-ariaLabelledBy="ariaLabelledBy">
+                <h2 class="custom-confirm-title" [id]="ariaLabelledBy">Custom title</h2>
+            </ng-template>
+        </p-confirmdialog>
+    `
+})
+class ConfirmDialogHeaderTemplateHostComponent {}
+
+describe('ConfirmDialog header template', () => {
+    it('should give the header template the id the alertdialog is labelled by', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmDialogHeaderTemplateHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmDialogHeaderTemplateHostComponent);
+        await fixture.whenStable();
+
+        // every alertdialog node needs an accessible name: only the dialog container may carry the role
+        const alertDialogs = fixture.nativeElement.querySelectorAll('[role="alertdialog"]');
+        expect(alertDialogs.length).toBe(1);
+
+        const labelledBy = alertDialogs[0].getAttribute('aria-labelledby') as string;
+        expect(labelledBy).toBeTruthy();
+        expect(document.getElementById(labelledBy)?.textContent?.trim()).toBe('Custom title');
     });
 });
