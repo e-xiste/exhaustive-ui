@@ -150,6 +150,8 @@ export class ToastItem extends BaseComponent<ToastPassThrough> {
 
         effect(() => {
             if (this.clearAll()) {
+                this.isClosing.set(true);
+                this.clearTimeout();
                 this.visible.set(false);
             }
         });

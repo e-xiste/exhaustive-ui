@@ -1553,6 +1553,18 @@ describe('ToastItem', () => {
             // Enter key sets visible to false, onClose emits after animation ends
             expect(component.visible()).toBe(false);
         });
+
+        it('should stay hidden after clear all when the pointer leaves the toast', async () => {
+            component.onMouseEnter();
+            fixture.componentRef.setInput('clearAll', {});
+            await fixture.whenStable();
+            expect(component.visible()).toBe(false);
+
+            component.onMouseLeave();
+
+            expect(component.visible()).toBe(false);
+            expect(component.timeout).toBeFalsy();
+        });
     });
 
     describe('Message Display', () => {
