@@ -3066,11 +3066,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onUserInput(event: KeyboardEvent | any) {
-        // IE 11 Workaround for input placeholder : https://github.com/primefaces/primeng/issues/2026
-
-        if (!this.isKeydown()) {
-            return;
-        }
+        // The input event alone is handled: a paste or drop from the context menu fires no keydown before it
         this.isKeydown.set(false);
 
         let val = (<HTMLInputElement>event.target).value;

@@ -2717,4 +2717,17 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(input.value).toBe('05/10/2026');
         expect(picker.value().getDate()).toBe(10);
     });
+
+    it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
+        await render();
+        const input = el.querySelector('input')!;
+
+        input.value = '11/01/2023';
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste' }));
+        input.dispatchEvent(new Event('blur'));
+        await render();
+
+        expect(picker.value()).toEqual(new Date(2023, 10, 1));
+        expect(input.value).toBe('11/01/2023');
+    });
 });
