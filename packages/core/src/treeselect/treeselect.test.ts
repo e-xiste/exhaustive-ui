@@ -862,6 +862,28 @@ describe('TreeSelect', () => {
             expect(treeSelectInstance.onFilter.emit).toHaveBeenCalled();
         });
 
+        it('should emit onFilter when the user types in the filter input', async () => {
+            testComponent.filter = true;
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
+
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance as TreeSelect;
+            vi.spyOn(treeSelectInstance.onFilter, 'emit');
+
+            treeSelectInstance.show();
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
+            await testFixture.whenStable();
+            testFixture.detectChanges();
+
+            const filterInput = treeSelectInstance.treeViewChild()!.filterViewChild()!.nativeElement as HTMLInputElement;
+            filterInput.value = 'Work';
+            filterInput.dispatchEvent(new Event('input'));
+
+            expect(treeSelectInstance.onFilter.emit).toHaveBeenCalledWith(expect.objectContaining({ filter: 'Work' }));
+            expect(treeSelectInstance.filterValue()).toBe('Work');
+        });
+
         it('should emit onShow event', async () => {
             const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
 

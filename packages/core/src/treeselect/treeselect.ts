@@ -169,6 +169,7 @@ const TREESELECT_INSTANCE = new InjectionToken<TreeSelect>('TREESELECT_INSTANCE'
                             (onNodeSelect)="onSelect($event)"
                             [emptyMessage]="emptyMessage()"
                             (onNodeUnselect)="onUnselect($event)"
+                            (onFilter)="onTreeFilter($event)"
                             [filter]="filter()"
                             [filterBy]="filterBy()"
                             [filterMode]="filterMode()"
@@ -839,6 +840,14 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             filter: filterValue,
             filteredValue: treeViewChild?.filteredNodes()
         });
+        setTimeout(() => {
+            this.overlayViewChild().alignOverlay();
+        });
+    }
+
+    onTreeFilter(event: TreeFilterEvent) {
+        this.filterValue.set(event.filter);
+        this.onFilter.emit(event);
         setTimeout(() => {
             this.overlayViewChild().alignOverlay();
         });
