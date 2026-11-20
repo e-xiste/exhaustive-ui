@@ -1488,6 +1488,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             }
         }
         if (!this.overlayVisible()) {
+            // Enter adds a chip in multiple mode, it must not submit the surrounding form
+            this.multiple() && event.preventDefault();
             return;
         } else {
             if (this.focusedOptionIndex() !== -1) {

@@ -3211,3 +3211,36 @@ describe('AutoComplete Signals API', () => {
         });
     });
 });
+
+describe('AutoComplete medium bug fixes', () => {
+    let fixture: ComponentFixture<AutoComplete>;
+    let autocomplete: AutoComplete;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoComplete],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(AutoComplete);
+        autocomplete = fixture.componentInstance;
+        fixture.componentRef.setInput('multiple', true);
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-autocomplete-overlay').forEach((el) => el.remove());
+    });
+
+    const input = () => fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+
+    it('does not let Enter submit the form in multiple mode (optimus-ui#294)', () => {
+        input().value = 'Alpha';
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true, cancelable: true });
+        input().dispatchEvent(enter);
+
+        expect(autocomplete.overlayVisible()).toBeFalsy();
+        expect(enter.defaultPrevented).toBe(true);
+    });
+});
