@@ -182,6 +182,11 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
 
     onInput(event, index) {
         const value = event.target.value;
+        // Soft keyboards send no usable keydown key, so integerOnly must also be enforced on the typed value.
+        if (this.integerOnly() && !/^[0-9]*$/.test(value)) {
+            event.target.value = this.tokens()[index] || '';
+            return;
+        }
         if (index === 0 && value.length > 1) {
             this.handleOnPaste(value, event);
             event.stopPropagation();

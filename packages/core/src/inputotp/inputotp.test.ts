@@ -1156,4 +1156,19 @@ describe('InputOtp soft keyboard input', () => {
         expect(document.activeElement).toBe(inputs[2]);
         expect(fixture.componentInstance.value).toBe('AB');
     });
+
+    it('should reject non-digit characters typed without a keydown key when integerOnly is set (optimus-ui#687)', async () => {
+        fixture.componentInstance.integerOnly = true;
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await softType(inputs[0], '1', 'insertText');
+        expect(document.activeElement).toBe(inputs[1]);
+
+        await softType(inputs[1], 'a', 'insertText');
+        expect(inputs[1].value).toBe('');
+        expect(document.activeElement).toBe(inputs[1]);
+        expect(fixture.componentInstance.value).toBe('1');
+    });
 });
