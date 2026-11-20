@@ -1169,6 +1169,11 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
     }
 
     onDragLeave(event: DragEvent) {
+        // Moving onto a child of the content also fires dragleave: keep the highlight until the drag leaves the content
+        if (event.relatedTarget instanceof Node && this.content()?.nativeElement.contains(event.relatedTarget)) {
+            return;
+        }
+
         if (!this.disabled()) {
             !this.$unstyled() && removeClass(this.content()?.nativeElement, 'p-fileupload-highlight');
             this.content()?.nativeElement.setAttribute('data-p-highlight', false);

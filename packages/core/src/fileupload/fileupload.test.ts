@@ -341,6 +341,18 @@ describe('FileUpload', () => {
             expect(contentElement.getAttribute('data-p-highlight')).toBe('false');
         });
 
+        it('should keep the highlight when the drag moves onto a child of the content (optimus-ui#876)', () => {
+            fixture.componentRef.setInput('disabled', false);
+            const child = document.createElement('span');
+            contentElement.appendChild(child);
+            component.onDragOver(new DragEvent('dragover'));
+
+            component.onDragLeave(new DragEvent('dragleave', { relatedTarget: child }));
+
+            expect(contentElement.getAttribute('data-p-highlight')).toBe('true');
+            expect(contentElement.classList).toContain('p-fileupload-highlight');
+        });
+
         it('should handle drop event', async () => {
             fixture.componentRef.setInput('disabled', false);
             fixture.componentRef.setInput('multiple', true);
