@@ -2720,6 +2720,31 @@ describe('Table cell edit cancel', () => {
         expect(fixture.componentInstance.products[0].name).toBe('Original');
         expect(fixture.componentInstance.cancelled.data.name).toBe('Original');
     });
+
+    it('makes editable cells reachable and editable from the keyboard (optimus-ui#248)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableCellEditCancelHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableCellEditCancelHostComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const cell: HTMLElement = fixture.nativeElement.querySelector('td');
+        expect(cell.tabIndex).toBe(0);
+
+        cell.focus();
+        cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(cell.getAttribute('data-p-cell-editing')).toBe('true');
+
+        cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(cell.getAttribute('data-p-cell-editing')).toBe('false');
+        expect(document.activeElement).toBe(cell);
+        fixture.nativeElement.remove();
+    });
 });
 
 @Component({

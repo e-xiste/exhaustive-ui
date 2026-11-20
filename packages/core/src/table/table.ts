@@ -4499,7 +4499,8 @@ export class ReorderableColumn extends BaseComponent {
     selector: '[pEditableColumn]',
     standalone: false,
     host: {
-        '[attr.data-p-editable-column]': 'true'
+        '[attr.data-p-editable-column]': 'true',
+        '[attr.tabindex]': 'isEnabled() ? "0" : null'
     }
 })
 export class EditableColumn extends BaseComponent {
@@ -4628,8 +4629,12 @@ export class EditableColumn extends BaseComponent {
     @HostListener('keydown.enter', ['$event'])
     onEnterKeyDown(event: KeyboardEvent) {
         if (this.isEnabled() && !event.shiftKey) {
-            if (this.dataTable.isEditingCellValid()) {
+            if (!this.dataTable.editingCell()) {
+                // keyboard alternative to the click that opens the editor of a focused cell
+                this.openCell();
+            } else if (this.dataTable.isEditingCellValid()) {
                 this.closeEditingCell(true, event);
+                this.el.nativeElement.focus();
             }
 
             event.preventDefault();
@@ -4652,6 +4657,7 @@ export class EditableColumn extends BaseComponent {
         if (this.isEnabled()) {
             if (this.dataTable.isEditingCellValid()) {
                 this.closeEditingCell(false, event);
+                this.el.nativeElement.focus();
             }
 
             event.preventDefault();
