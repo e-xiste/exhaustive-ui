@@ -653,6 +653,10 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
                         lastMatch = i;
                         break;
                     }
+                    if (c === this.getPlaceholder(i)) {
+                        // An empty slot of an already formatted value stays empty instead of pulling the next characters into it.
+                        break;
+                    }
                 }
                 if (pos > test.length) {
                     this.clearBuffer(i + 1, this.len() as number);
@@ -1354,6 +1358,10 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                             });
                         }
                         lastMatch = i;
+                        break;
+                    }
+                    if (c === this.getPlaceholder(i)) {
+                        // An empty slot of an already formatted value stays empty instead of pulling the next characters into it.
                         break;
                     }
                 }

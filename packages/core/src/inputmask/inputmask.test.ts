@@ -2256,4 +2256,21 @@ describe('InputMask regressions', () => {
 
         expect(model.dirty).toBe(false);
     });
+
+    it('should keep a partial value typed in the middle of the mask on blur when autoClear is false (optimus-ui#792)', async () => {
+        fixture.componentInstance.mask = '99/99/9999';
+        fixture.componentInstance.autoClear = false;
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        input.dispatchEvent(new Event('focus'));
+        input.value = '__/09/____';
+        input.dispatchEvent(new Event('blur'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(input.value).toBe('__/09/____');
+    });
 });
