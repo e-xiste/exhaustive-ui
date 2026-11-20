@@ -58,8 +58,8 @@ export const style = /*css*/ `
         visibility: hidden;
     }
 
-    .p-scrollpanel:hover .p-scrollpanel-bar,
-    .p-scrollpanel:active .p-scrollpanel-bar {
+    .p-scrollpanel:hover > .p-scrollpanel-bar,
+    .p-scrollpanel:active > .p-scrollpanel-bar {
         opacity: 1;
     }
 

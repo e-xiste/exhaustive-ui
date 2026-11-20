@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import Aura from '@exhaustive-ui/themes/aura';
+import { userEvent } from 'vitest/browser';
 import { ScrollPanel } from './scrollpanel';
 
 @Component({
@@ -1092,5 +1093,53 @@ describe('ScrollPanel themed focus', () => {
         expect(style.opacity).toBe('1');
         expect(style.outlineStyle).toBe('solid');
         expect(parseFloat(style.outlineWidth)).toBeGreaterThan(0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ScrollPanel],
+    template: `
+        <p-scrollpanel class="outer" style="width: 300px; height: 200px;">
+            <div style="width: 600px; height: 600px;">
+                <div class="outer-only" style="height: 50px;">Outer</div>
+                <p-scrollpanel class="inner" style="width: 200px; height: 100px;">
+                    <div style="width: 400px; height: 400px;">Inner</div>
+                </p-scrollpanel>
+            </div>
+        </p-scrollpanel>
+    `
+})
+class TestNestedScrollPanelComponent {}
+
+describe('ScrollPanel nested hover', () => {
+    let noTransition: HTMLStyleElement;
+
+    beforeEach(() => {
+        noTransition = document.createElement('style');
+        noTransition.textContent = '.p-scrollpanel-bar { transition: none !important; }';
+        document.head.appendChild(noTransition);
+    });
+
+    afterEach(() => {
+        noTransition.remove();
+    });
+
+    it('shows only the bars of the hovered panel (optimus-ui#943)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestNestedScrollPanelComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestNestedScrollPanelComponent);
+        await fixture.whenStable();
+
+        const root = fixture.nativeElement as HTMLElement;
+        await userEvent.hover(root.querySelector('.outer-only') as HTMLElement);
+
+        const outerBar = root.querySelector('.outer > .p-scrollpanel-bar-y') as HTMLElement;
+        const innerBar = root.querySelector('.inner > .p-scrollpanel-bar-y') as HTMLElement;
+
+        expect(getComputedStyle(outerBar).opacity).toBe('1');
+        expect(getComputedStyle(innerBar).opacity).toBe('0');
     });
 });
