@@ -1362,6 +1362,19 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
 
     emptyMessageLabel = computed<string>(() => this.emptyMessage() || this.translation()[TranslationKeys.EMPTY_MESSAGE]);
 
+    onDoCheck() {
+        // nodes expanded or collapsed programmatically (node.expanded mutated in place) must be re-serialized for the virtual scroller
+        if (this.virtualScroll() && this.isSerializedValueStale()) {
+            this.updateSerializedValue();
+        }
+    }
+
+    isSerializedValueStale() {
+        const rows = (this.serializedValue() as any[]) || [];
+
+        return rows.some((row, i) => !!(row.node.expanded && row.node.children?.length) !== (rows[i + 1]?.parent === row.node));
+    }
+
     updateSerializedValue() {
         this.serializedValue.set([]);
         this.serializeNodes(null, this.getRootNode(), 0, true);

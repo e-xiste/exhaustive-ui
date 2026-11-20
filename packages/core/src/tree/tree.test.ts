@@ -1536,6 +1536,40 @@ describe('Tree', () => {
             const visibleNodes = fixture.debugElement.queryAll(By.css('[role="treeitem"]'));
             expect(visibleNodes.length).toBe(10);
         });
+
+        it('should show and hide children of nodes expanded or collapsed programmatically with virtual scroll', async () => {
+            component.virtualScroll = true;
+            component.virtualScrollItemSize = 30;
+            component.scrollHeight = '400px';
+            component.nodes = [
+                { key: '0', label: 'Parent 0', children: [{ key: '0-0', label: 'Child 0-0' }] },
+                { key: '1', label: 'Parent 1', children: [{ key: '1-0', label: 'Child 1-0' }] }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            // the virtual scroller renders the serialized rows
+            const renderedKeys = () => ((tree.serializedValue() as any[]) || []).map((row) => row.node.key);
+            expect(renderedKeys()).toEqual(['0', '1']);
+
+            // expand all without changing the value reference
+            component.nodes.forEach((node) => (node.expanded = true));
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(renderedKeys()).toEqual(['0', '0-0', '1', '1-0']);
+
+            component.nodes.forEach((node) => (node.expanded = false));
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(renderedKeys()).toEqual(['0', '1']);
+        });
     });
 
     describe('Lazy Loading', () => {
