@@ -8,6 +8,8 @@ import type { DatePickerMonthChangeEvent, DatePickerYearChangeEvent } from '@exh
 import { DatePicker } from './datepicker';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -2729,5 +2731,34 @@ describe('DatePicker Optimus UI bug fixes', () => {
 
         expect(picker.value()).toEqual(new Date(2023, 10, 1));
         expect(input.value).toBe('11/01/2023');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, ReactiveFormsModule],
+    template: `<p-datepicker [formControl]="control" placeholder="Select date" />`
+})
+class TestThemedInvalidDatePickerComponent {
+    control = new FormControl<Date | null>(null, [Validators.required]);
+}
+
+describe('DatePicker themed invalid state', () => {
+    it('colors the placeholder of an invalid dirty FormControl (optimus-ui#53)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedInvalidDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedInvalidDatePickerComponent);
+        await fixture.whenStable();
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        const pristineColor = getComputedStyle(input, '::placeholder').color;
+
+        fixture.componentInstance.control.markAsDirty();
+        fixture.changeDetectorRef.markForCheck();
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelector('p-datepicker').classList).toContain('ng-invalid');
+        expect(getComputedStyle(input, '::placeholder').color).not.toBe(pristineColor);
     });
 });

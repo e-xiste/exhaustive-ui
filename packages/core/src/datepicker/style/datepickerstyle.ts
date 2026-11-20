@@ -9,6 +9,10 @@ ${datepicker_style}
 .p-datepicker.ng-invalid.ng-dirty .p-inputtext {
     border-color: dt('inputtext.invalid.border.color');
 }
+
+.p-datepicker.ng-invalid.ng-dirty .p-inputtext::placeholder {
+    color: dt('inputtext.invalid.placeholder.color');
+}
 `;
 
 const inlineStyles = {
