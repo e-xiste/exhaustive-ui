@@ -206,3 +206,34 @@ describe('ThemeUtils.getPreset extend', () => {
         expect(result.css).toContain('--p-button-panel-shadow:none');
     });
 });
+
+describe('ThemeUtils element-scoped dark mode', () => {
+    const preset = {
+        semantic: {
+            focusRing: { color: '{primary.color}' },
+            colorScheme: { light: { primary: { color: '#111' } }, dark: { primary: { color: '#eee' } } }
+        }
+    };
+
+    it('redeclares component tokens in a class darkModeSelector so their references resolve there (optimus-ui#670)', () => {
+        const result = callGetPreset({ background: '{form.field.background}' }, { darkModeSelector: '.p-dark' });
+        const darkRule = result.css.slice(result.css.indexOf('.p-dark'));
+
+        expect(darkRule).toContain('--p-button-background:var(--p-form-field-background)');
+    });
+
+    it('redeclares semantic tokens in a class darkModeSelector (optimus-ui#670)', () => {
+        const result = callGetCommon({ preset, options: { darkModeSelector: '.p-dark' } });
+        const darkRule = result.semantic.css.slice(result.semantic.css.indexOf('.p-dark'));
+
+        expect(darkRule).toContain('--p-focus-ring-color:var(--p-primary-color)');
+        expect(darkRule.indexOf('--p-focus-ring-color')).toBeLessThan(darkRule.indexOf('--p-primary-color:#eee'));
+    });
+
+    it('does not redeclare them for a media darkModeSelector', () => {
+        const result = callGetCommon({ preset, options: { darkModeSelector: 'system' } });
+        const darkRule = result.semantic.css.slice(result.semantic.css.indexOf('@media'));
+
+        expect(darkRule).not.toContain('--p-focus-ring-color');
+    });
+});

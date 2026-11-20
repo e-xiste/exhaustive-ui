@@ -81,13 +81,13 @@ export default {
             primitive_tokens = prim_tokens;
 
             const semantic_light_css = this.transformCSS(name, `${sRest_css}${csRest_css}`, 'light', 'variable', options, set, defaults);
-            const semantic_dark_css = this.transformCSS(name, `${csDark_css}`, 'dark', 'variable', options, set, defaults);
+            const semantic_dark_css = this.transformCSS(name, `${csDark_css}`, 'dark', 'variable', options, set, defaults, undefined, sRest_css);
 
             semantic_css = `${semantic_light_css}${semantic_dark_css}`;
             semantic_tokens = [...new Set([...sRest_tokens, ...csRest_tokens, ...csDark_tokens])];
 
             const global_light_css = this.transformCSS(name, `${eRest_css}${ecsRest_css}color-scheme:light`, 'light', 'variable', options, set, defaults);
-            const global_dark_css = this.transformCSS(name, `${ecsDark_css}color-scheme:dark`, 'dark', 'variable', options, set, defaults);
+            const global_dark_css = this.transformCSS(name, `${ecsDark_css}color-scheme:dark`, 'dark', 'variable', options, set, defaults, undefined, eRest_css);
 
             global_css = `${global_light_css}${global_dark_css}`;
             global_tokens = [...new Set([...eRest_tokens, ...ecsRest_tokens, ...ecsDark_tokens])];
@@ -133,7 +133,7 @@ export default {
             const [csDark_css, csDark_tokens] = [csDark_var.declarations ?? '', csDark_var.tokens || []];
 
             const light_variable_css = this.transformCSS(_name, `${vRest_css}${csRest_css}`, 'light', 'variable', options, set, defaults, selector);
-            const dark_variable_css = this.transformCSS(_name, csDark_css, 'dark', 'variable', options, set, defaults, selector);
+            const dark_variable_css = this.transformCSS(_name, csDark_css, 'dark', 'variable', options, set, defaults, selector, vRest_css);
 
             p_css = `${light_variable_css}${dark_variable_css}`;
             p_tokens = [...new Set([...vRest_tokens, ...csRest_tokens, ...csDark_tokens])];
@@ -332,8 +332,13 @@ export default {
     getSelectorRule(selector1: any, selector2: any, type: string, css: string) {
         return type === 'class' || type === 'attr' ? getRule(isNotEmpty(selector2) ? `${selector1}${selector2},${selector1} ${selector2}` : selector1, css) : getRule(selector1, getRule(selector2 ?? ':root,:host', css));
     },
-    transformCSS(name: string, css: string, mode?: string, type?: string, options: any = {}, set?: any, defaults?: any, selector?: string) {
-        if (isNotEmpty(css)) {
+    /**
+     * `scopedCss` holds the mode-independent variables of a dark rule. They are redeclared in an element-scoped
+     * dark selector (class, attribute or custom), so that their references to dark variables resolve inside it:
+     * a custom property is resolved where it is declared, and the :root declaration only sees the light values.
+     */
+    transformCSS(name: string, css: string, mode?: string, type?: string, options: any = {}, set?: any, defaults?: any, selector?: string, scopedCss?: string) {
+        if (isNotEmpty(css) || (mode === 'dark' && isNotEmpty(scopedCss))) {
             const { cssLayer } = options;
 
             if (type !== 'style') {
@@ -342,14 +347,18 @@ export default {
                 css =
                     mode === 'dark'
                         ? colorSchemeOption.reduce((acc, { type, selector: _selector }) => {
-                              if (isNotEmpty(_selector)) {
-                                  acc += _selector.includes('[CSS]') ? _selector.replace('[CSS]', css) : this.getSelectorRule(_selector, selector, type, css);
+                              const _css = type !== 'media' && type !== 'system' ? `${scopedCss ?? ''}${css ?? ''}` : css;
+
+                              if (isNotEmpty(_selector) && isNotEmpty(_css)) {
+                                  acc += _selector.includes('[CSS]') ? _selector.replace('[CSS]', _css) : this.getSelectorRule(_selector, selector, type, _css);
                               }
 
                               return acc;
                           }, '')
                         : getRule(selector ?? ':root,:host', css);
             }
+
+            if (isEmpty(css)) return '';
 
             if (cssLayer) {
                 const layerOptions = {
