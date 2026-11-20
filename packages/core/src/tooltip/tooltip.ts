@@ -701,6 +701,9 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
             this.scrollHandler.set(
                 new ConnectedOverlayScrollHandler(this.el.nativeElement, () => {
                     if (this.container()) {
+                        // End the interaction so the next mouseenter can show the tooltip again
+                        this.pointerInside.set(false);
+                        this.deactivate();
                         this.hide();
                     }
                 })

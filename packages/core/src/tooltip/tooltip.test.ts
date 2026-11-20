@@ -363,6 +363,19 @@ describe('Tooltip', () => {
             expect(document.querySelector('.p-tooltip')).toBeTruthy();
         });
 
+        it('should show again on the next mouse enter after a scroll closed it', () => {
+            enter();
+            expect(document.querySelector('.p-tooltip')).toBeTruthy();
+
+            // a scroll of an ancestor closes the tooltip while the pointer stays on the host
+            tooltipDirective.scrollHandler().listener();
+            expect(document.querySelector('.p-tooltip')).toBeFalsy();
+
+            enter();
+
+            expect(document.querySelector('.p-tooltip')).toBeTruthy();
+        });
+
         it('should reset the pointer state when the events are unbound', () => {
             enter();
             expect(tooltipDirective.pointerInside()).toBe(true);
