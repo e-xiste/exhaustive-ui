@@ -2817,3 +2817,29 @@ describe('DatePicker themed invalid state', () => {
         expect(getComputedStyle(input, '::placeholder').color).not.toBe(pristineColor);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `<div dir="rtl"><p-datepicker [inline]="true" /></div>`
+})
+class TestThemedDirDatePickerComponent {}
+
+describe('DatePicker themed RTL', () => {
+    it('mirrors the prev and next chevrons in RTL (optimus-ui#305)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedDirDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedDirDatePickerComponent);
+        await fixture.whenStable();
+        const icons = () => ['.p-datepicker-prev-button svg', '.p-datepicker-next-button svg'].map((selector) => getComputedStyle(fixture.nativeElement.querySelector(selector)).transform);
+
+        // p-motion keeps the inline panel hidden until its enter transition has run
+        await vi.waitFor(() => expect(getComputedStyle(fixture.nativeElement.querySelector('p-motion')).display).not.toBe('none'));
+        expect(icons().every((transform) => transform !== 'none')).toBe(true);
+
+        fixture.nativeElement.querySelector('div').setAttribute('dir', 'ltr');
+        expect(icons()).toEqual(['none', 'none']);
+    });
+});

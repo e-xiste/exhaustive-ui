@@ -120,6 +120,11 @@ export const style = /*css*/ `
         order: 1;
     }
 
+    .p-datepicker-prev-button:dir(rtl) > svg,
+    .p-datepicker-next-button:dir(rtl) > svg {
+        transform: scaleX(-1);
+    }
+
     .p-datepicker-title {
         display: flex;
         align-items: center;
