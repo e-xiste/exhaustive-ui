@@ -1,6 +1,6 @@
 {
     "name": "@exhaustive-ui/utils",
-    "version": "22.0.0-alpha.4",
+    "version": "22.0.0-alpha.5",
     "author": "e-xiste",
     "description": "Utility functions and helpers for ExhaustiveUI Libraries",
     "keywords": ["utilities", "helpers", "exhaustive-ui", "angular"],
