@@ -1614,7 +1614,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
 
             const currentSelection = (this.selection() as TreeNode[]) || [];
             if (select && selectedCount == node.children.length) {
-                this.selection.set([...currentSelection, node]);
+                if (!this.isSelected(node)) this.selection.set([...currentSelection, node]);
                 node.partialSelected = false;
             } else {
                 if (!select) {

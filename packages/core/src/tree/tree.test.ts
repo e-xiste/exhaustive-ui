@@ -1441,6 +1441,24 @@ describe('Tree', () => {
             expect(tree.propagateSelectionUp()).toBe(true);
             expect(tree.propagateSelectionDown()).toBe(true);
         });
+
+        it('should not add the parent twice when its children are selected after it without propagateSelectionDown', async () => {
+            component.propagateSelectionDown = false;
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const contents = () => fixture.debugElement.queryAll(By.css('.p-tree-node-content'));
+            for (const index of [0, 1, 2]) {
+                contents()[index].nativeElement.click();
+                fixture.detectChanges();
+                await fixture.whenStable();
+            }
+
+            const labels = ((tree.selection() as TreeNode[]) || []).map((node) => node.label);
+            expect(labels.filter((label) => label === 'Root').length).toBe(1);
+            expect(labels.length).toBe(3);
+        });
     });
 
     describe('Checkbox Selection with Filter', () => {
