@@ -102,7 +102,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             [options]="value()"
             [ngModel]="selection()"
             [ngModelOptions]="{ standalone: true }"
-            [optionLabel]="dataKey() ?? 'name'"
+            [optionLabel]="optionLabel() ?? dataKey() ?? 'name'"
             [id]="id + '_list'"
             [listStyle]="listStyle()"
             [striped]="stripedRows()"
@@ -302,6 +302,11 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @group Props
      */
     readonly dataKey = input<string | undefined>();
+    /**
+     * Name of the label field of an option, used to display it and to search it with the keyboard. Defaults to dataKey, then to 'name'.
+     * @group Props
+     */
+    readonly optionLabel = input<string | undefined>();
     /**
      * A list of values that are currently selected. Two-way bindable with `[(selection)]`: `selectionChange` is emitted with the new selection when it changes.
      * @group Props

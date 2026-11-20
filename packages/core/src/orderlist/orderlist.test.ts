@@ -2256,3 +2256,31 @@ describe('OrderList filter wiring', () => {
         expect(filterInput().getAttribute('aria-label')).toBe('Search items');
     });
 });
+
+describe('OrderList medium bug fixes', () => {
+    let fixture: ComponentFixture<OrderList>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [OrderList],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(OrderList);
+    });
+
+    it('renders the field named by optionLabel instead of a hard coded name (optimus-ui#443)', async () => {
+        fixture.componentRef.setInput('value', [
+            { id: '1', title: 'Alpha' },
+            { id: '2', title: 'Beta' }
+        ]);
+        fixture.componentRef.setInput('dataKey', 'id');
+        fixture.componentRef.setInput('optionLabel', 'title');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const labels = fixture.debugElement.queryAll(By.css('.p-listbox-option')).map((o) => o.nativeElement.textContent.trim());
+        expect(labels).toEqual(['Alpha', 'Beta']);
+    });
+});
