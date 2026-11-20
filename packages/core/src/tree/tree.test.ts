@@ -3491,3 +3491,24 @@ describe('Tree Signal API', () => {
         expect(arrowDownSpy).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('Tree low bug fixes', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('labels the node toggle buttons with togglerAriaLabel (optimus-ui#624)', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [{ key: 'a', label: 'A', children: [{ key: 'a-0', label: 'A0' }] }]);
+        fixture.componentRef.setInput('togglerAriaLabel', 'Toggle row');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const button = fixture.nativeElement.querySelector('button[data-pc-section="nodetogglebutton"]') as HTMLButtonElement;
+        expect(button.getAttribute('aria-label')).toBe('Toggle row');
+    });
+});

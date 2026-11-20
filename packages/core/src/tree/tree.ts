@@ -104,7 +104,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                     [draggable]="tree.draggableNodes()"
                     [pBind]="getPTOptions('nodeContent')"
                 >
-                    <button type="button" [class]="cx('nodeToggleButton')" (click)="toggle($event)" pRipple tabindex="-1" [pBind]="getPTOptions('nodeToggleButton')">
+                    <button type="button" [class]="cx('nodeToggleButton')" (click)="toggle($event)" pRipple tabindex="-1" [attr.aria-label]="tree.togglerAriaLabel()" [pBind]="getPTOptions('nodeToggleButton')">
                         @if (!tree.togglerIconTemplate() && !tree._togglerIconTemplate()) {
                             @if (!node()!.loading) {
                                 @if (!node()!.expanded) {

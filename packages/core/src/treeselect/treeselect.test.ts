@@ -1951,3 +1951,36 @@ describe('TreeSelect Signal API', () => {
         expect(labelEl().textContent?.trim()).toBe('Pick one');
     });
 });
+
+describe('TreeSelect low bug fixes', () => {
+    let fixture: ComponentFixture<TreeSelect>;
+    let treeSelect: TreeSelect;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TreeSelect],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TreeSelect);
+        treeSelect = fixture.componentInstance;
+        fixture.componentRef.setInput('options', [{ key: 'a', label: 'A', children: [{ key: 'a-0', label: 'A0' }] }]);
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-treeselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('passes togglerAriaLabel to the tree toggle buttons (optimus-ui#624)', async () => {
+        fixture.componentRef.setInput('togglerAriaLabel', 'Toggle row');
+        treeSelect.show();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const button = document.querySelector('.p-treeselect-overlay button[data-pc-section="nodetogglebutton"]') as HTMLButtonElement;
+        expect(button.getAttribute('aria-label')).toBe('Toggle row');
+    });
+});
