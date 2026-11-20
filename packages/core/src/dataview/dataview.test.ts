@@ -50,14 +50,14 @@ import { Exhaustive } from '@exhaustive-ui/core/config';
         >
             <ng-template #list let-items>
                 <div class="list-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="list-item">{{ item.name }} - {{ item.price }}</div>
                     }
                 </div>
             </ng-template>
             <ng-template #grid let-items>
                 <div class="grid-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="grid-item">{{ item.name }} - {{ item.price }}</div>
                     }
                 </div>
@@ -135,7 +135,7 @@ class TestBasicDataViewComponent {
             </p-header>
             <ng-template #list let-items>
                 <div class="list-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="list-item">
                             {{ item.name }}
                         </div>
@@ -162,7 +162,7 @@ class TestHeaderFooterDataViewComponent {
         <p-dataview [value]="products" [paginator]="true" [rows]="2">
             <ng-template #list let-items>
                 <div class="list-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="list-item">
                             {{ item.name }}
                         </div>
@@ -198,14 +198,14 @@ class TestTemplatesDataViewComponent {
         <p-dataview [value]="products()" [layout]="layout">
             <ng-template #list let-items>
                 <div class="list-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="list-item">List: {{ item.name }}</div>
                     }
                 </div>
             </ng-template>
             <ng-template #grid let-items>
                 <div class="grid-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="grid-item">Grid: {{ item.name }}</div>
                     }
                 </div>
@@ -1721,14 +1721,14 @@ describe('DataView', () => {
         >
             <ng-template #list let-items>
                 <div class="dynamic-list-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="dynamic-list-item">{{ item.name }} - {{ item.price }}</div>
                     }
                 </div>
             </ng-template>
             <ng-template #grid let-items>
                 <div class="dynamic-grid-container">
-                    @for (item of items; track item) {
+                    @for (item of items; track item.id) {
                         <div class="dynamic-grid-item">{{ item.name }} - {{ item.price }}</div>
                     }
                 </div>

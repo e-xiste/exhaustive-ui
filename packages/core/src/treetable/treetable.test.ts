@@ -816,7 +816,7 @@ describe('TreeTable', () => {
             });
 
             it('should handle rowTrackBy function', async () => {
-                const trackByFn = (index: number, item: any) => item.id;
+                const trackByFn = (index: number, item: any) => item.node;
                 component.rowTrackBy = trackByFn;
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
@@ -1689,7 +1689,7 @@ describe('TreeTable', () => {
             });
 
             it('should handle function properties', async () => {
-                const customTrackBy = (index: number, item: any) => `custom-${item.id}`;
+                const customTrackBy = (index: number, item: any) => `custom-${item.node.key ?? index}`;
                 component.rowTrackBy = customTrackBy;
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
