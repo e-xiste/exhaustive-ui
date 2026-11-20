@@ -3,7 +3,7 @@ import { uuid } from '@exhaustive-ui/utils';
 import { BaseIcon } from '@exhaustive-ui/core/icons/baseicon';
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: '[data-p-icon="th-large"]',
     standalone: true,
     template: `

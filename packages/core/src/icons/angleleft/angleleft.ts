@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BaseIcon } from '@exhaustive-ui/core/icons/baseicon';
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: '[data-p-icon="angle-left"]',
     standalone: true,
     template: `

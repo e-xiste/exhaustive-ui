@@ -10,7 +10,7 @@ import { InplaceContentTemplateContext, InplacePassThrough } from '@exhaustive-u
 import { InplaceStyle } from './style/inplacestyle';
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-inplacedisplay, p-inplaceDisplay',
     imports: [],
     template: '<ng-content></ng-content>'
@@ -18,7 +18,7 @@ import { InplaceStyle } from './style/inplacestyle';
 export class InplaceDisplay extends BaseComponent {}
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-inplacecontent, p-inplaceContent',
     imports: [],
     template: '<ng-content></ng-content>'
