@@ -57,6 +57,7 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                 [pMotionLeaveActiveClass]="$leaveAnimation()"
                 [pMotionOptions]="computedMotionOptions()"
                 (pMotionOnBeforeEnter)="onBeforeEnter($event)"
+                (pMotionOnBeforeLeave)="onBeforeLeave()"
                 (pMotionOnAfterLeave)="onAfterLeave($event)"
                 [class]="cn(cx('root'), styleClass())"
                 [style]="style()"
@@ -407,7 +408,8 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
 
     disableModality() {
         const mask = this.mask();
-        if (mask) {
+        // The mask leave animation is already running (started by close() or by the panel leave)
+        if (mask && !this.animationEndListener()) {
             !this.$unstyled() && removeClass(mask, 'p-overlay-mask-enter-active');
             !this.$unstyled() && addClass(mask, 'p-overlay-mask-leave-active');
             const { animationName, animationDuration } = getComputedStyle(mask);
@@ -443,6 +445,13 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
 
         if (this.closeOnEscape()) {
             this.bindDocumentEscapeListener();
+        }
+    }
+
+    onBeforeLeave() {
+        // Fade the mask out together with the panel, also when visible is set to false from outside
+        if (this.modal()) {
+            this.disableModality();
         }
     }
 

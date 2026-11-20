@@ -1649,3 +1649,43 @@ describe('Drawer mask without a leave animation', () => {
         expect(mask.parentElement).toBeNull();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Drawer],
+    template: `<p-drawer [(visible)]="visible">Drawer</p-drawer>`
+})
+class DrawerProgrammaticCloseHostComponent {
+    visible = signal(false);
+}
+
+describe('Drawer mask on a programmatic close', () => {
+    it('should start the mask leave animation together with the panel (optimus-ui#69)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DrawerProgrammaticCloseHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(DrawerProgrammaticCloseHostComponent);
+        const drawer: Drawer = fixture.debugElement.query(By.directive(Drawer)).componentInstance;
+        await fixture.whenStable();
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        const mask = drawer.mask() as HTMLElement;
+        expect(mask?.parentElement).toBe(document.body);
+
+        fixture.componentInstance.visible.set(false);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+
+        // the panel is still leaving, the mask must already be leaving too
+        expect(drawer.modalVisible()).toBe(true);
+        expect(mask.classList).toContain('p-overlay-mask-leave-active');
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        expect(drawer.mask()).toBeNull();
+        expect(mask.parentElement).toBeNull();
+    });
+});
