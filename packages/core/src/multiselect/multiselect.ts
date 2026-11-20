@@ -38,7 +38,7 @@ import { Chip } from '@exhaustive-ui/core/chip';
 import { DomHandler, unblockBodyScroll } from '@exhaustive-ui/core/dom';
 import { Fluid } from '@exhaustive-ui/core/fluid';
 import { IconField } from '@exhaustive-ui/core/iconfield';
-import { CheckIcon, ChevronDownIcon, SearchIcon, TimesIcon } from '@exhaustive-ui/core/icons';
+import { CheckIcon, ChevronDownIcon, SearchIcon, SpinnerIcon, TimesIcon } from '@exhaustive-ui/core/icons';
 import { InputIcon } from '@exhaustive-ui/core/inputicon';
 import { InputText } from '@exhaustive-ui/core/inputtext';
 import { Overlay } from '@exhaustive-ui/core/overlay';
@@ -184,7 +184,7 @@ export class MultiSelectItem extends BaseComponent {
  */
 @Component({
     selector: 'p-multiSelect, p-multiselect, p-multi-select',
-    imports: [CommonModule, MultiSelectItem, Overlay, SharedModule, Tooltip, Scroller, AutoFocus, CheckIcon, SearchIcon, TimesIcon, ChevronDownIcon, IconField, InputIcon, InputText, Chip, Checkbox, FormsModule, BindModule],
+    imports: [CommonModule, MultiSelectItem, Overlay, SharedModule, Tooltip, Scroller, AutoFocus, CheckIcon, SearchIcon, SpinnerIcon, TimesIcon, ChevronDownIcon, IconField, InputIcon, InputText, Chip, Checkbox, FormsModule, BindModule],
     hostDirectives: [Bind],
     template: `
         <div class="p-hidden-accessible" [attr.data-p-hidden-accessible]="true" [pBind]="ptm('hiddenInputContainer')">
@@ -297,7 +297,7 @@ export class MultiSelectItem extends BaseComponent {
                         <span [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon())" [attr.aria-hidden]="true"></span>
                     }
                     @if (!loadingIcon()) {
-                        <span [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [attr.aria-hidden]="true"></span>
+                        <svg data-p-icon="spinner" [pBind]="ptm('loadingIcon')" [class]="cx('loadingIcon')" [spin]="true" [attr.aria-hidden]="true" />
                     }
                 }
             } @else {

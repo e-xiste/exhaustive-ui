@@ -5153,6 +5153,17 @@ describe('Select low bug fixes', () => {
         expect(parentKeydown).toHaveBeenCalledTimes(2);
     });
 
+    it('renders the default loading indicator as the SVG spinner (optimus-ui#1600)', () => {
+        fixture.componentRef.setInput('loading', true);
+        fixture.detectChanges();
+
+        const icon = fixture.nativeElement.querySelector('.p-select-loading-icon') as Element;
+        expect(icon.tagName.toLowerCase()).toBe('svg');
+        expect(icon.classList).toContain('p-icon-spin');
+        expect(icon.classList).not.toContain('pi-spin');
+        expect(icon.getAttribute('aria-hidden')).toBe('true');
+    });
+
     it('navigates the options with ArrowDown from a custom filter template (optimus-ui#331)', async () => {
         const hostFixture = TestBed.createComponent(TestSelectCustomFilterComponent);
         hostFixture.detectChanges();

@@ -34,7 +34,7 @@ import { BaseInput } from '@exhaustive-ui/core/baseinput';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { unblockBodyScroll } from '@exhaustive-ui/core/dom';
 import { IconField } from '@exhaustive-ui/core/iconfield';
-import { BlankIcon, CheckIcon, ChevronDownIcon, SearchIcon, TimesIcon } from '@exhaustive-ui/core/icons';
+import { BlankIcon, CheckIcon, ChevronDownIcon, SearchIcon, SpinnerIcon, TimesIcon } from '@exhaustive-ui/core/icons';
 import { InputIcon } from '@exhaustive-ui/core/inputicon';
 import { InputText } from '@exhaustive-ui/core/inputtext';
 import { Overlay } from '@exhaustive-ui/core/overlay';
@@ -172,7 +172,7 @@ export class SelectItem extends BaseComponent {
 
 @Component({
     selector: 'p-select',
-    imports: [CommonModule, SelectItem, Overlay, Tooltip, AutoFocus, TimesIcon, ChevronDownIcon, SearchIcon, InputText, IconField, InputIcon, Scroller, SharedModule, BindModule],
+    imports: [CommonModule, SelectItem, Overlay, Tooltip, AutoFocus, TimesIcon, ChevronDownIcon, SearchIcon, SpinnerIcon, InputText, IconField, InputIcon, Scroller, SharedModule, BindModule],
     template: `
         @if (!editable()) {
             <span
@@ -276,7 +276,7 @@ export class SelectItem extends BaseComponent {
                         <span [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon())" [pBind]="ptm('loadingIcon')" aria-hidden="true"></span>
                     }
                     @if (!loadingIcon()) {
-                        <span [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [pBind]="ptm('loadingIcon')" aria-hidden="true"></span>
+                        <svg data-p-icon="spinner" [class]="cx('loadingIcon')" [pBind]="ptm('loadingIcon')" [spin]="true" aria-hidden="true" />
                     }
                 }
             } @else {

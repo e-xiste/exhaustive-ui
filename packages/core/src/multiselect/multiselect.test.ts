@@ -4781,6 +4781,17 @@ describe('MultiSelect low bug fixes', () => {
         expect(alignSpy).toHaveBeenCalled();
     });
 
+    it('renders the default loading indicator as the SVG spinner (optimus-ui#1600)', () => {
+        fixture.componentRef.setInput('loading', true);
+        fixture.detectChanges();
+
+        const icon = fixture.nativeElement.querySelector('.p-multiselect-loading-icon') as Element;
+        expect(icon.tagName.toLowerCase()).toBe('svg');
+        expect(icon.classList).toContain('p-icon-spin');
+        expect(icon.classList).not.toContain('pi-spin');
+        expect(icon.getAttribute('aria-hidden')).toBe('true');
+    });
+
     it('scrolls the selected option into view when the virtual scroller opens (optimus-ui#22)', async () => {
         const many = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
         fixture.componentRef.setInput('options', many);

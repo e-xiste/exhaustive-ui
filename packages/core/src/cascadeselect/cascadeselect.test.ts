@@ -2542,4 +2542,16 @@ describe('CascadeSelect low bug fixes', () => {
 
         expect(fixture.componentInstance.options()).toBe(countries);
     });
+
+    it('renders the default loading indicator as the SVG spinner (optimus-ui#1600)', () => {
+        const fixture = TestBed.createComponent(CascadeSelect);
+        fixture.componentRef.setInput('loading', true);
+        fixture.detectChanges();
+
+        const icon = fixture.nativeElement.querySelector('.p-cascadeselect-loading-icon') as Element;
+        expect(icon.tagName.toLowerCase()).toBe('svg');
+        expect(icon.classList).toContain('p-icon-spin');
+        expect(icon.classList).not.toContain('pi-spin');
+        expect(icon.getAttribute('aria-hidden')).toBe('true');
+    });
 });

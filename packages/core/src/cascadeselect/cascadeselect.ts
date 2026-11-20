@@ -35,7 +35,7 @@ import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponen
 import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { Fluid } from '@exhaustive-ui/core/fluid';
-import { AngleRightIcon, ChevronDownIcon, TimesIcon } from '@exhaustive-ui/core/icons';
+import { AngleRightIcon, ChevronDownIcon, SpinnerIcon, TimesIcon } from '@exhaustive-ui/core/icons';
 import { Overlay } from '@exhaustive-ui/core/overlay';
 import { Ripple } from '@exhaustive-ui/core/ripple';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
@@ -253,7 +253,7 @@ export class CascadeSelectSub extends BaseComponent {
  */
 @Component({
     selector: 'p-cascadeSelect, p-cascadeselect, p-cascade-select',
-    imports: [CommonModule, Overlay, AutoFocus, CascadeSelectSub, ChevronDownIcon, TimesIcon, SharedModule, Bind],
+    imports: [CommonModule, Overlay, AutoFocus, CascadeSelectSub, ChevronDownIcon, SpinnerIcon, TimesIcon, SharedModule, Bind],
     template: `
         <div class="p-hidden-accessible" [pBind]="ptm('hiddenInputWrapper')">
             <input
@@ -309,7 +309,7 @@ export class CascadeSelectSub extends BaseComponent {
                         <span [class]="cn(cx('loadingIcon'), loadingIcon() + ' pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>
                     }
                     @if (!loadingIcon()) {
-                        <span [class]="cn(cx('loadingIcon'), loadingIcon() + ' pi pi-spinner pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>
+                        <svg data-p-icon="spinner" [class]="cx('loadingIcon')" [spin]="true" aria-hidden="true" [pBind]="ptm('loadingIcon')" />
                     }
                 }
             } @else {
