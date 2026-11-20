@@ -2765,7 +2765,7 @@ export class TTScrollableView extends BaseComponent {
         '[class]': 'cx("sortableColumn")',
         '[tabindex]': 'isEnabled() ? "0" : null',
         role: 'columnheader',
-        '[attr.aria-sort]': 'ariaSorted'
+        '[attr.aria-sort]': 'ariaSorted()'
     },
     providers: [TreeTableStyle],
     hostDirectives: [Bind]
@@ -2777,28 +2777,25 @@ export class TTSortableColumn extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('sortableColumn', { context: { sorted: this.sorted } }));
-    }
+    readonly field = input<string | undefined>(undefined, { alias: 'ttSortableColumn' });
 
-    @Input('ttSortableColumn') field: string | undefined;
+    readonly ttSortableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input({ transform: booleanAttribute }) ttSortableColumnDisabled: boolean | undefined;
-
-    sorted: boolean | undefined;
+    readonly sorted = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
     _componentStyle = inject(TreeTableStyle);
 
-    get ariaSorted() {
-        if (this.sorted && this.tt._sortOrder() < 0) return 'descending';
-        else if (this.sorted && this.tt._sortOrder() > 0) return 'ascending';
+    readonly ariaSorted = computed(() => {
+        if (this.sorted() && this.tt._sortOrder() < 0) return 'descending';
+        else if (this.sorted() && this.tt._sortOrder() > 0) return 'ascending';
         else return 'none';
-    }
+    });
 
     constructor() {
         super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('sortableColumn', { context: { sorted: this.sorted() } })));
         if (this.isEnabled()) {
             this.subscription = this.tt.tableService.sortSource$.subscribe((sortMeta) => {
                 this.updateSortState();
@@ -2813,7 +2810,7 @@ export class TTSortableColumn extends BaseComponent {
     }
 
     updateSortState() {
-        this.sorted = this.tt.isSorted(<string>this.field) as boolean;
+        this.sorted.set(this.tt.isSorted(<string>this.field()) as boolean);
     }
 
     @HostListener('click', ['$event'])
@@ -2822,7 +2819,7 @@ export class TTSortableColumn extends BaseComponent {
             this.updateSortState();
             this.tt.sort({
                 originalEvent: event,
-                field: this.field
+                field: this.field()
             });
 
             clearSelection();
@@ -2835,7 +2832,7 @@ export class TTSortableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttSortableColumnDisabled !== true;
+        return this.ttSortableColumnDisabled() !== true;
     }
 
     onDestroy() {
@@ -2850,19 +2847,19 @@ export class TTSortableColumn extends BaseComponent {
     standalone: false,
     template: `
         @if (!tt.sortIconTemplate() && !tt._sortIconTemplate()) {
-            @if (sortOrder === 0) {
+            @if (sortOrder() === 0) {
                 <svg data-p-icon="sort-alt" [class]="cx('sortableColumnIcon')" [pBind]="ptm('sortableColumnIcon')" />
             }
-            @if (sortOrder === 1) {
+            @if (sortOrder() === 1) {
                 <svg data-p-icon="sort-amount-up-alt" [class]="cx('sortableColumnIcon')" [pBind]="ptm('sortableColumnIcon')" />
             }
-            @if (sortOrder === -1) {
+            @if (sortOrder() === -1) {
                 <svg data-p-icon="sort-amount-down" [class]="cx('sortableColumnIcon')" [pBind]="ptm('sortableColumnIcon')" />
             }
         }
         @if (tt.sortIconTemplate() || tt._sortIconTemplate()) {
             <span [class]="cx('sortableColumnIcon')" [pBind]="ptm('sortableColumnIcon')">
-                <ng-template *ngTemplateOutlet="tt.sortIconTemplate() || tt._sortIconTemplate(); context: { $implicit: sortOrder }"></ng-template>
+                <ng-template *ngTemplateOutlet="tt.sortIconTemplate() || tt._sortIconTemplate(); context: { $implicit: sortOrder() }"></ng-template>
             </span>
         }
         @if (isMultiSorted()) {
@@ -2875,19 +2872,18 @@ export class TTSortableColumn extends BaseComponent {
 })
 export class TTSortIcon extends BaseComponent {
     tt = inject(TreeTable);
-    cd = inject(ChangeDetectorRef);
 
     hostName = 'TreeTable';
 
-    @Input() field: string | undefined;
+    readonly field = input<string | undefined>();
 
-    @Input() ariaLabelDesc: string | undefined;
+    readonly ariaLabelDesc = input<string | undefined>();
 
-    @Input() ariaLabelAsc: string | undefined;
+    readonly ariaLabelAsc = input<string | undefined>();
 
     subscription: Subscription | undefined;
 
-    sortOrder: number | undefined;
+    readonly sortOrder = signal<number | undefined>(undefined);
 
     _componentStyle = inject(TreeTableStyle);
 
@@ -2895,7 +2891,6 @@ export class TTSortIcon extends BaseComponent {
         super();
         this.subscription = this.tt.tableService.sortSource$.subscribe((sortMeta) => {
             this.updateSortState();
-            this.cd.markForCheck();
         });
     }
 
@@ -2914,7 +2909,7 @@ export class TTSortIcon extends BaseComponent {
         if (multiSortMeta && this.tt.sortMode() === 'multiple' && multiSortMeta.length > 1) {
             for (let i = 0; i < multiSortMeta.length; i++) {
                 let meta = multiSortMeta[i];
-                if (meta.field === this.field || meta.field === this.field) {
+                if (meta.field === this.field() || meta.field === this.field()) {
                     index = i;
                     break;
                 }
@@ -2926,10 +2921,10 @@ export class TTSortIcon extends BaseComponent {
 
     updateSortState() {
         if (this.tt.sortMode() === 'single') {
-            this.sortOrder = this.tt.isSorted(<string>this.field) ? this.tt._sortOrder() : 0;
+            this.sortOrder.set(this.tt.isSorted(<string>this.field()) ? this.tt._sortOrder() : 0);
         } else if (this.tt.sortMode() === 'multiple') {
-            let sortMeta = this.tt.getSortMeta(<string>this.field);
-            this.sortOrder = sortMeta ? sortMeta.order : 0;
+            let sortMeta = this.tt.getSortMeta(<string>this.field());
+            this.sortOrder.set(sortMeta ? sortMeta.order : 0);
         }
     }
 
@@ -3137,7 +3132,7 @@ export class TTReorderableColumn extends BaseComponent {
     standalone: false,
     host: {
         '[class]': 'cx("row")',
-        '[attr.aria-selected]': 'selected'
+        '[attr.aria-selected]': 'selected()'
     },
     providers: [TreeTableStyle]
 })
@@ -3145,11 +3140,11 @@ export class TTSelectableRow extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
 
-    @Input('ttSelectableRow') rowNode: any;
+    readonly rowNode = input<any>(undefined, { alias: 'ttSelectableRow' });
 
-    @Input({ transform: booleanAttribute }) ttSelectableRowDisabled: boolean | undefined;
+    readonly ttSelectableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3159,14 +3154,14 @@ export class TTSelectableRow extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.tt.tableService.selectionSource$.subscribe(() => {
-                this.selected = this.tt.isSelected(this.rowNode.node);
+                this.selected.set(this.tt.isSelected(this.rowNode().node));
             });
         }
     }
 
     onInit() {
         if (this.isEnabled()) {
-            this.selected = this.tt.isSelected(this.rowNode.node);
+            this.selected.set(this.tt.isSelected(this.rowNode().node));
         }
     }
 
@@ -3175,7 +3170,7 @@ export class TTSelectableRow extends BaseComponent {
         if (this.isEnabled()) {
             this.tt.handleRowClick({
                 originalEvent: event,
-                rowNode: this.rowNode
+                rowNode: this.rowNode()
             });
         }
     }
@@ -3204,7 +3199,7 @@ export class TTSelectableRow extends BaseComponent {
         if (this.tt.selectionMode() === 'checkbox') {
             this.tt.toggleNodeWithCheckbox({
                 originalEvent: event,
-                rowNode: this.rowNode
+                rowNode: this.rowNode()
             });
         } else {
             this.onClick(event);
@@ -3213,7 +3208,7 @@ export class TTSelectableRow extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttSelectableRowDisabled !== true;
+        return this.ttSelectableRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -3235,11 +3230,11 @@ export class TTSelectableRowDblClick extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
 
-    @Input('ttSelectableRowDblClick') rowNode: any;
+    readonly rowNode = input<any>(undefined, { alias: 'ttSelectableRowDblClick' });
 
-    @Input({ transform: booleanAttribute }) ttSelectableRowDisabled: boolean | undefined;
+    readonly ttSelectableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3249,14 +3244,14 @@ export class TTSelectableRowDblClick extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.tt.tableService.selectionSource$.subscribe(() => {
-                this.selected = this.tt.isSelected(this.rowNode.node);
+                this.selected.set(this.tt.isSelected(this.rowNode().node));
             });
         }
     }
 
     onInit() {
         if (this.isEnabled()) {
-            this.selected = this.tt.isSelected(this.rowNode.node);
+            this.selected.set(this.tt.isSelected(this.rowNode().node));
         }
     }
 
@@ -3265,13 +3260,13 @@ export class TTSelectableRowDblClick extends BaseComponent {
         if (this.isEnabled()) {
             this.tt.handleRowClick({
                 originalEvent: event,
-                rowNode: this.rowNode
+                rowNode: this.rowNode()
             });
         }
     }
 
     isEnabled() {
-        return this.ttSelectableRowDisabled !== true;
+        return this.ttSelectableRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -3294,11 +3289,11 @@ export class TTContextMenuRow extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
 
-    @Input('ttContextMenuRow') rowNode: any | undefined;
+    readonly rowNode = input<any | undefined>(undefined, { alias: 'ttContextMenuRow' });
 
-    @Input({ transform: booleanAttribute }) ttContextMenuRowDisabled: boolean | undefined;
+    readonly ttContextMenuRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3308,7 +3303,7 @@ export class TTContextMenuRow extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.tt.tableService.contextMenuSource$.subscribe((node) => {
-                this.selected = node ? this.tt.equals(this.rowNode.node, node) : false;
+                this.selected.set(node ? this.tt.equals(this.rowNode().node, node) : false);
             });
         }
     }
@@ -3318,7 +3313,7 @@ export class TTContextMenuRow extends BaseComponent {
         if (this.isEnabled()) {
             this.tt.handleRowRightClick({
                 originalEvent: event,
-                rowNode: this.rowNode
+                rowNode: this.rowNode()
             });
 
             this.el.nativeElement.focus();
@@ -3328,7 +3323,7 @@ export class TTContextMenuRow extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttContextMenuRowDisabled !== true;
+        return this.ttContextMenuRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -3343,20 +3338,20 @@ export class TTContextMenuRow extends BaseComponent {
     standalone: false,
     template: `
         <p-checkbox
-            [ngModel]="checked"
+            [ngModel]="checked()"
             [ngModelOptions]="{ standalone: true }"
             [pt]="ptm('pcRowCheckbox')"
             (onChange)="onClick($event)"
             [binary]="true"
-            [disabled]="disabled"
-            [indeterminate]="partialChecked"
+            [disabled]="disabled()"
+            [indeterminate]="partialChecked()"
             [class]="cx('pcNodeCheckbox')"
             [tabIndex]="-1"
             [unstyled]="unstyled()"
         >
             @if (tt.checkboxIconTemplate() || tt._checkboxIconTemplate()) {
                 <ng-template pTemplate="icon">
-                    <ng-template *ngTemplateOutlet="tt.checkboxIconTemplate() || tt._checkboxIconTemplate(); context: { $implicit: checked, partialSelected: partialChecked }"></ng-template>
+                    <ng-template *ngTemplateOutlet="tt.checkboxIconTemplate() || tt._checkboxIconTemplate(); context: { $implicit: checked(), partialSelected: partialChecked() }"></ng-template>
                 </ng-template>
             }
         </p-checkbox>
@@ -3368,19 +3363,18 @@ export class TTContextMenuRow extends BaseComponent {
 export class TTCheckbox extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
-    cd = inject(ChangeDetectorRef);
 
     hostName = 'TreeTable';
 
-    @Input({ transform: booleanAttribute }) disabled: boolean | undefined;
+    readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input('value') rowNode: any;
+    readonly rowNode = input<any>(undefined, { alias: 'value' });
 
-    checked: boolean | undefined;
+    readonly checked = signal<boolean | undefined>(undefined);
 
-    partialChecked: boolean | undefined;
+    readonly partialChecked = signal<boolean | undefined>(undefined);
 
-    focused: boolean | undefined;
+    readonly focused = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3390,40 +3384,39 @@ export class TTCheckbox extends BaseComponent {
         super();
         this.subscription = this.tt.tableService.selectionSource$.subscribe(() => {
             if (this.tt.selectionKeys()) {
-                this.checked = this.tt.isNodeSelected(this.rowNode.node);
-                this.partialChecked = this.tt.isNodePartialSelected(this.rowNode.node);
+                this.checked.set(this.tt.isNodeSelected(this.rowNode().node));
+                this.partialChecked.set(this.tt.isNodePartialSelected(this.rowNode().node));
             } else {
-                this.checked = this.tt.isSelected(this.rowNode.node);
-                this.partialChecked = this.rowNode.node.partialSelected;
+                this.checked.set(this.tt.isSelected(this.rowNode().node));
+                this.partialChecked.set(this.rowNode().node.partialSelected);
             }
-            this.cd.markForCheck();
         });
     }
 
     onInit() {
         if (this.tt.selectionKeys()) {
-            this.checked = this.tt.isNodeSelected(this.rowNode.node);
-            this.partialChecked = this.tt.isNodePartialSelected(this.rowNode.node);
+            this.checked.set(this.tt.isNodeSelected(this.rowNode().node));
+            this.partialChecked.set(this.tt.isNodePartialSelected(this.rowNode().node));
         } else {
             // for backward compatibility
-            this.checked = this.tt.isSelected(this.rowNode.node);
-            this.partialChecked = this.rowNode.node.partialSelected;
+            this.checked.set(this.tt.isSelected(this.rowNode().node));
+            this.partialChecked.set(this.rowNode().node.partialSelected);
         }
     }
 
     onClick(event: Event) {
-        if (!this.disabled) {
+        if (!this.disabled()) {
             if (this.tt.selectionKeys()) {
-                const _check = !this.checked;
+                const _check = !this.checked();
                 this.tt.toggleCheckbox({
                     originalEvent: event,
                     check: _check,
-                    rowNode: this.rowNode
+                    rowNode: this.rowNode()
                 });
             } else {
                 this.tt.toggleNodeWithCheckbox({
                     originalEvent: event,
-                    rowNode: this.rowNode
+                    rowNode: this.rowNode()
                 });
             }
         }
@@ -3431,11 +3424,11 @@ export class TTCheckbox extends BaseComponent {
     }
 
     onFocus() {
-        this.focused = true;
+        this.focused.set(true);
     }
 
     onBlur() {
-        this.focused = false;
+        this.focused.set(false);
     }
 
     onDestroy() {
@@ -3449,10 +3442,10 @@ export class TTCheckbox extends BaseComponent {
     selector: 'p-treeTableHeaderCheckbox',
     standalone: false,
     template: `
-        <p-checkbox [ngModel]="checked" [ngModelOptions]="{ standalone: true }" [pt]="ptm('pcHeaderCheckbox')" (onChange)="onClick($event)" [binary]="true" [disabled]="!tt.value() || tt.value()!.length === 0" [unstyled]="unstyled()">
+        <p-checkbox [ngModel]="checked()" [ngModelOptions]="{ standalone: true }" [pt]="ptm('pcHeaderCheckbox')" (onChange)="onClick($event)" [binary]="true" [disabled]="!tt.value() || tt.value()!.length === 0" [unstyled]="unstyled()">
             @if (tt.headerCheckboxIconTemplate() || tt._headerCheckboxIconTemplate()) {
                 <ng-template pTemplate="icon">
-                    <ng-template *ngTemplateOutlet="tt.headerCheckboxIconTemplate() || tt._headerCheckboxIconTemplate(); context: { $implicit: checked }"></ng-template>
+                    <ng-template *ngTemplateOutlet="tt.headerCheckboxIconTemplate() || tt._headerCheckboxIconTemplate(); context: { $implicit: checked() }"></ng-template>
                 </ng-template>
             }
         </p-checkbox>
@@ -3464,7 +3457,7 @@ export class TTHeaderCheckbox extends BaseComponent {
     tt = inject(TreeTable);
     tableService = inject(TreeTableService);
 
-    checked: boolean | undefined;
+    readonly checked = signal<boolean | undefined>(undefined);
 
     disabled: boolean | undefined;
 
@@ -3475,21 +3468,21 @@ export class TTHeaderCheckbox extends BaseComponent {
     constructor() {
         super();
         this.valueChangeSubscription = this.tt.tableService.uiUpdateSource$.subscribe(() => {
-            this.checked = this.updateCheckedState();
+            this.checked.set(this.updateCheckedState());
         });
 
         this.selectionChangeSubscription = this.tt.tableService.selectionSource$.subscribe(() => {
-            this.checked = this.updateCheckedState();
+            this.checked.set(this.updateCheckedState());
         });
     }
 
     onInit() {
-        this.checked = this.updateCheckedState();
+        this.checked.set(this.updateCheckedState());
     }
 
     onClick(event: Event) {
         if ((this.tt?.value() || this.tt?.filteredNodes()) && ((this.tt?.value() && this.tt.value()!.length > 0) || (this.tt?.filteredNodes() && this.tt.filteredNodes()!.length > 0))) {
-            this.tt?.toggleNodesWithCheckbox(event, !this.checked);
+            this.tt?.toggleNodesWithCheckbox(event, !this.checked());
         }
 
         clearSelection();
@@ -3506,7 +3499,6 @@ export class TTHeaderCheckbox extends BaseComponent {
     }
 
     updateCheckedState() {
-        this.cd.markForCheck();
         let checked!: boolean;
         const data = this.tt.filteredNodes() || this.tt.value();
 
@@ -3798,23 +3790,24 @@ export class TTRow extends BaseComponent {
 
     treeTable = inject(TreeTable);
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('row', this.ptmOptions()));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('row', this.ptmOptions())));
     }
 
     get level() {
-        return this.rowNode?.['level'] + 1;
+        return this.rowNode()?.['level'] + 1;
     }
 
     get styleClass() {
-        return this.rowNode?.node['styleClass'] || '';
+        return this.rowNode()?.node['styleClass'] || '';
     }
 
     get expanded() {
-        return this.rowNode?.node['expanded'];
+        return this.rowNode()?.node['expanded'];
     }
 
-    @Input('ttRow') rowNode: any;
+    readonly rowNode = input<any>(undefined, { alias: 'ttRow' });
 
     _componentStyle = inject(TreeTableStyle);
 
@@ -3876,7 +3869,7 @@ export class TTRow extends BaseComponent {
         const currentTarget = <HTMLElement>event.currentTarget;
         const isHiddenIcon = (findSingle(currentTarget, 'button') as any).style.visibility === 'hidden';
 
-        if (!isHiddenIcon && !this.expanded && this.rowNode.node['children']) {
+        if (!isHiddenIcon && !this.expanded && this.rowNode().node['children']) {
             this.expand(event);
 
             currentTarget.tabIndex = -1;
@@ -3934,25 +3927,25 @@ export class TTRow extends BaseComponent {
 
     expand(event: Event) {
         this.tt.toggleRowIndex.set(getIndex(this.el.nativeElement));
-        this.rowNode.node['expanded'] = true;
+        this.rowNode().node['expanded'] = true;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
-        this.rowNode.node['children'] ? this.restoreFocus(this.tt.toggleRowIndex()! + 1) : this.restoreFocus();
+        this.rowNode().node['children'] ? this.restoreFocus(this.tt.toggleRowIndex()! + 1) : this.restoreFocus();
 
         this.tt.onNodeExpand.emit({
             originalEvent: event,
-            node: this.rowNode.node
+            node: this.rowNode().node
         });
     }
 
     collapse(event: Event) {
-        this.rowNode.node['expanded'] = false;
+        this.rowNode().node['expanded'] = false;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
 
-        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.rowNode.node });
+        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.rowNode().node });
     }
 
     focusRowChange(firstFocusableRow, currentFocusedRow, lastVisibleDescendant?) {
@@ -3989,9 +3982,9 @@ export class TTRow extends BaseComponent {
         return {
             context: {
                 selectable: this.treeTable?.rowHover() || this.treeTable.selectionMode() === 'row',
-                selected: this.treeTable.isSelected((<any>this.rowNode)?.node),
+                selected: this.treeTable.isSelected((<any>this.rowNode())?.node),
                 scrollable: this.treeTable?.scrollable(),
-                rowNode: this.rowNode
+                rowNode: this.rowNode()
             }
         };
     }
@@ -4009,20 +4002,20 @@ export class TTRow extends BaseComponent {
             (click)="onClick($event)"
             tabindex="-1"
             pRipple
-            [style.visibility]="rowNode.node.leaf === false || (rowNode.node.children && rowNode.node.children.length) ? 'visible' : 'hidden'"
-            [style.marginInlineStart]="rowNode.level * 16 + 'px'"
+            [style.visibility]="rowNode().node.leaf === false || (rowNode().node.children && rowNode().node.children.length) ? 'visible' : 'hidden'"
+            [style.marginInlineStart]="rowNode().level * 16 + 'px'"
             [attr.data-pc-group-section]="'rowactionbutton'"
             [attr.aria-label]="toggleButtonAriaLabel"
         >
             @if (!tt.togglerIconTemplate() && !tt._togglerIconTemplate()) {
-                @if (rowNode.node.expanded) {
+                @if (rowNode().node.expanded) {
                     <svg data-p-icon="chevron-down" [pBind]="ptm('nodetoggleicon')" [attr.aria-hidden]="true" />
                 }
-                @if (!rowNode.node.expanded) {
+                @if (!rowNode().node.expanded) {
                     <svg data-p-icon="chevron-right" [pBind]="ptm('nodetoggleicon')" [attr.aria-hidden]="true" />
                 }
             }
-            <ng-template *ngTemplateOutlet="tt.togglerIconTemplate() || tt._togglerIconTemplate(); context: { $implicit: rowNode.node.expanded }"></ng-template>
+            <ng-template *ngTemplateOutlet="tt.togglerIconTemplate() || tt._togglerIconTemplate(); context: { $implicit: rowNode().node.expanded }"></ng-template>
         </button>
     `,
     encapsulation: ViewEncapsulation.None,
@@ -4036,30 +4029,31 @@ export class TreeTableToggler extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('toggler'));
-    }
-
-    @Input() rowNode: any;
+    readonly rowNode = input<any>();
 
     _componentStyle = inject(TreeTableStyle);
 
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('toggler')));
+    }
+
     get toggleButtonAriaLabel() {
-        return this.config.translation ? (this.rowNode.expanded ? this.config.translation?.aria?.collapseRow : this.config.translation?.aria?.expandRow) : undefined;
+        return this.config.translation ? (this.rowNode().expanded ? this.config.translation?.aria?.collapseRow : this.config.translation?.aria?.expandRow) : undefined;
     }
 
     onClick(event: Event) {
-        this.rowNode.node.expanded = !this.rowNode.node.expanded;
+        this.rowNode().node.expanded = !this.rowNode().node.expanded;
 
-        if (this.rowNode.node.expanded) {
+        if (this.rowNode().node.expanded) {
             this.tt.onNodeExpand.emit({
                 originalEvent: event,
-                node: this.rowNode.node
+                node: this.rowNode().node
             });
         } else {
             this.tt.onNodeCollapse.emit({
                 originalEvent: event,
-                node: this.rowNode.node
+                node: this.rowNode().node
             });
         }
 

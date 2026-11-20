@@ -534,7 +534,7 @@ const classes = {
     thead: 'p-treetable-thead',
     sortableColumn: ({ instance }) => ({
         'p-sortable-column': instance.isEnabled(),
-        'p-treetable-column-sorted': instance.sorted
+        'p-treetable-column-sorted': instance.sorted()
     }),
     sortableColumnIcon: 'p-treetable-sort-icon',
     sortableColumnBadge: 'p-sortable-column-badge',
@@ -545,10 +545,10 @@ const classes = {
     pcSortBadge: 'p-treetable-sort-badge',
     tbody: 'p-treetable-tbody',
     row: ({ instance }) => ({
-        'p-treetable-row-selected': instance.selected
+        'p-treetable-row-selected': instance.selected()
     }),
     contextMenuRow: ({ instance }) => ({
-        'p-treetable-contextmenu-row-selected': instance.selected
+        'p-treetable-contextmenu-row-selected': instance.selected()
     }),
     toggler: 'p-treetable-toggler',
     nodeToggleButton: 'p-treetable-node-toggle-button',

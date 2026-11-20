@@ -2942,16 +2942,16 @@ describe('TreeTable', () => {
 
             it('should emit onNodeExpand from the real toggler onClick()', () => {
                 const toggler = firstToggler();
-                expect(toggler.rowNode.node.expanded).toBeFalsy();
+                expect(toggler.rowNode().node.expanded).toBeFalsy();
 
                 vi.spyOn(templatesTreetable.onNodeExpand, 'emit').mockImplementation(() => {});
 
                 toggler.onClick(new MouseEvent('click'));
 
-                expect(toggler.rowNode.node.expanded).toBe(true);
+                expect(toggler.rowNode().node.expanded).toBe(true);
                 expect(templatesTreetable.onNodeExpand.emit).toHaveBeenCalledWith({
                     originalEvent: expect.any(MouseEvent),
-                    node: toggler.rowNode.node
+                    node: toggler.rowNode().node
                 });
             });
 
@@ -2960,16 +2960,16 @@ describe('TreeTable', () => {
 
                 // Expand first via the real method so the toggler is in the "expanded" state.
                 toggler.onClick(new MouseEvent('click'));
-                expect(toggler.rowNode.node.expanded).toBe(true);
+                expect(toggler.rowNode().node.expanded).toBe(true);
 
                 vi.spyOn(templatesTreetable.onNodeCollapse, 'emit').mockImplementation(() => {});
 
                 toggler.onClick(new MouseEvent('click'));
 
-                expect(toggler.rowNode.node.expanded).toBe(false);
+                expect(toggler.rowNode().node.expanded).toBe(false);
                 expect(templatesTreetable.onNodeCollapse.emit).toHaveBeenCalledWith({
                     originalEvent: expect.any(MouseEvent),
-                    node: toggler.rowNode.node
+                    node: toggler.rowNode().node
                 });
             });
         });
