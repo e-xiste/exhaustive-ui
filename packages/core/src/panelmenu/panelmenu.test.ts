@@ -609,6 +609,25 @@ describe('PanelMenu', () => {
             const separators = fixture.debugElement.queryAll(By.css('li[role="separator"]'));
             expect(separators.length).toBe(1);
         });
+
+        it('should draw separators inside submenus (optimus-ui#635)', async () => {
+            // no theme preset is loaded in unit tests, so define the token the separator uses
+            fixture.nativeElement.style.setProperty('--p-content-border-color', 'rgb(0, 0, 0)');
+            component.model = [
+                {
+                    label: 'Panel',
+                    expanded: true,
+                    items: [{ label: 'Item 1' }, { separator: true }, { label: 'Item 2' }]
+                }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const separator = fixture.debugElement.query(By.css('li[role="separator"]')).nativeElement as HTMLElement;
+            expect(getComputedStyle(separator).borderTopStyle).toBe('solid');
+            expect(separator.getBoundingClientRect().height).toBeGreaterThan(0);
+            fixture.nativeElement.style.removeProperty('--p-content-border-color');
+        });
     });
 
     describe('Template Tests', () => {
