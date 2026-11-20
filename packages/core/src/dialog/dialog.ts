@@ -1036,7 +1036,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     appendContainer() {
         if (this.$appendTo() !== 'self') {
-            appendChild(this.document.body, this.wrapper() as HTMLElement);
+            appendChild(this.$appendTo() || this.document.body, this.wrapper() as HTMLElement);
         }
     }
 

@@ -2100,3 +2100,34 @@ describe('Dialog stacked modals', () => {
         expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog],
+    template: `
+        <div #target class="dialog-append-target"></div>
+        <p-dialog [(visible)]="visible" [appendTo]="target" header="Appended">Appended</p-dialog>
+    `
+})
+class AppendToElementDialogHostComponent {
+    visible = signal(false);
+}
+
+describe('Dialog appendTo', () => {
+    it('should append the dialog to the given element', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AppendToElementDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(AppendToElementDialogHostComponent);
+        await fixture.whenStable();
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const target = fixture.nativeElement.querySelector('.dialog-append-target') as HTMLElement;
+        expect(target.querySelector('.p-dialog')).toBeTruthy();
+    });
+});
