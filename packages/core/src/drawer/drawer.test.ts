@@ -1609,3 +1609,38 @@ describe('Drawer with a nested modal Dialog', () => {
         expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Drawer],
+    template: `<p-drawer [(visible)]="visible" [unstyled]="true">Drawer</p-drawer>`
+})
+class DrawerNoMaskAnimationHostComponent {
+    visible = signal(false);
+}
+
+describe('Drawer mask without a leave animation', () => {
+    it('should remove the mask when it has no animation to wait for', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DrawerNoMaskAnimationHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(DrawerNoMaskAnimationHostComponent);
+        const drawer: Drawer = fixture.debugElement.query(By.directive(Drawer)).componentInstance;
+        await fixture.whenStable();
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        const mask = drawer.mask() as HTMLElement;
+        expect(mask?.parentElement).toBe(document.body);
+
+        fixture.componentInstance.visible.set(false);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        expect(drawer.mask()).toBeNull();
+        expect(mask.parentElement).toBeNull();
+    });
+});

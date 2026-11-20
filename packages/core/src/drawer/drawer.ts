@@ -410,7 +410,13 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
         if (mask) {
             !this.$unstyled() && removeClass(mask, 'p-overlay-mask-enter-active');
             !this.$unstyled() && addClass(mask, 'p-overlay-mask-leave-active');
-            this.animationEndListener.set(this.renderer.listen(mask, 'animationend', this.destroyModal.bind(this)));
+            const { animationName, animationDuration } = getComputedStyle(mask);
+            if (animationName === 'none' || parseFloat(animationDuration) === 0) {
+                // No leave animation runs (unstyled, animations disabled or overridden): animationend would never fire
+                this.destroyModal();
+            } else {
+                this.animationEndListener.set(this.renderer.listen(mask, 'animationend', this.destroyModal.bind(this)));
+            }
         }
     }
 
