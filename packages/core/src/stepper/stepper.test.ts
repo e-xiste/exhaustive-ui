@@ -427,9 +427,27 @@ describe('Stepper', () => {
             const stepButtons = fixture.debugElement.queryAll(By.css('p-step button'));
             const stepPanels = fixture.debugElement.queryAll(By.css('p-step-panel'));
 
-            expect(stepperElement.nativeElement.getAttribute('role')).toBe('tablist');
+            expect(stepperElement.nativeElement.getAttribute('role')).toBeNull();
             expect(stepButtons[0].nativeElement.getAttribute('role')).toBe('tab');
             expect(stepPanels[0].nativeElement.getAttribute('role')).toBe('tabpanel');
+        });
+
+        it('should keep the tabs in a tablist that holds no tab panel', () => {
+            const tablists = fixture.debugElement.queryAll(By.css('[role="tablist"]'));
+            const stepButtons = fixture.debugElement.queryAll(By.css('p-step button'));
+
+            expect(tablists.length).toBe(1);
+            expect(tablists[0].nativeElement.tagName.toLowerCase()).toBe('p-step-list');
+            stepButtons.forEach((button) => expect(button.nativeElement.closest('[role="tablist"]')).toBe(tablists[0].nativeElement));
+            expect(tablists[0].nativeElement.querySelector('[role="tabpanel"]')).toBeNull();
+        });
+
+        it('should keep the tablist role on the stepper of a vertical stepper', async () => {
+            const verticalFixture = TestBed.createComponent(TestVerticalStepperComponent);
+            verticalFixture.detectChanges();
+            await verticalFixture.whenStable();
+
+            expect(verticalFixture.debugElement.query(By.css('p-stepper')).nativeElement.getAttribute('role')).toBe('tablist');
         });
 
         it('should have correct ARIA attributes', () => {

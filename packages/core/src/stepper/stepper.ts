@@ -77,7 +77,8 @@ export interface StepPanelContentTemplateContext {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': 'cx("root")'
+        '[class]': 'cx("root")',
+        '[attr.role]': '"tablist"'
     },
     providers: [StepListStyle, { provide: STEPLIST_INSTANCE, useExisting: StepList }, { provide: PARENT_INSTANCE, useExisting: StepList }],
     hostDirectives: [Bind]
@@ -459,7 +460,7 @@ export class StepPanels extends BaseComponent<StepPanelsPassThrough> {
     providers: [StepperStyle, { provide: STEPPER_INSTANCE, useExisting: Stepper }, { provide: PARENT_INSTANCE, useExisting: Stepper }],
     host: {
         '[class]': 'cx("root")',
-        '[attr.role]': '"tablist"',
+        '[attr.role]': 'stepList() ? undefined : "tablist"',
         '[attr.id]': 'id()'
     },
     hostDirectives: [Bind]
