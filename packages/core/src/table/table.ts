@@ -3723,6 +3723,11 @@ export class SortableColumn extends BaseComponent {
 
     @HostListener('keydown.space', ['$event'])
     @HostListener('keydown.enter', ['$event'])
+    // with a modifier the key adds the column to a multi-sort, like a meta/ctrl click
+    @HostListener('keydown.meta.space', ['$event'])
+    @HostListener('keydown.meta.enter', ['$event'])
+    @HostListener('keydown.control.space', ['$event'])
+    @HostListener('keydown.control.enter', ['$event'])
     onEnterKey(event: MouseEvent) {
         this.onClick(event);
 

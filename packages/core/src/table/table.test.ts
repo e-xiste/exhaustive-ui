@@ -2849,6 +2849,57 @@ describe('Table selectable row tab order', () => {
     standalone: true,
     imports: [TableModule],
     template: `
+        <p-table [value]="rows" sortMode="multiple">
+            <ng-template #header>
+                <tr>
+                    <th pSortableColumn="name">Name</th>
+                    <th pSortableColumn="price">Price</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.price }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableKeyboardMultiSortHostComponent {
+    rows = [
+        { name: 'A', price: 2 },
+        { name: 'B', price: 1 }
+    ];
+}
+
+describe('Table keyboard multi-sort', () => {
+    it('adds a column to the multi-sort with Ctrl/Cmd+Enter (optimus-ui#33)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableKeyboardMultiSortHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableKeyboardMultiSortHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        const headers = fixture.nativeElement.querySelectorAll('th');
+
+        headers[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        headers[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', metaKey: true, bubbles: true }));
+
+        expect(table._multiSortMeta()!.map((meta) => meta.field)).toEqual(['name', 'price']);
+
+        headers[0].dispatchEvent(new KeyboardEvent('keydown', { key: ' ', ctrlKey: true, bubbles: true }));
+
+        expect(table._multiSortMeta()).toEqual([
+            { field: 'name', order: -1 },
+            { field: 'price', order: 1 }
+        ]);
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
         <p-table [value]="rows">
             <ng-template #header>
                 <tr>
