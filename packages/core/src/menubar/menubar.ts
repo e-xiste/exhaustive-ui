@@ -82,7 +82,13 @@ export class MenubarService {
                     [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
                     [pTooltipUnstyled]="unstyled()"
                 >
-                    <div [class]="cx('itemContent')" [pBind]="getPTOptions(processedItem, index, 'itemContent')" (click)="onItemClick($event, processedItem)" (mouseenter)="onItemMouseEnter({ $event, processedItem })">
+                    <div
+                        [class]="cx('itemContent')"
+                        [pBind]="getPTOptions(processedItem, index, 'itemContent')"
+                        (click)="onItemClick($event, processedItem)"
+                        (pointerenter)="lastPointerType = $event.pointerType"
+                        (mouseenter)="onItemMouseEnter({ $event, processedItem })"
+                    >
                         @if (!itemTemplate()) {
                             @if (!getItemProp(processedItem, 'routerLink')) {
                                 <a
@@ -321,10 +327,14 @@ export class MenubarSub extends BaseComponent<MenubarPassThrough> {
         );
     }
 
+    /** Type of the pointer that last entered an item: a tap's emulated mouseenter comes after a touch pointerenter. */
+    protected lastPointerType: string | undefined;
+
     onItemMouseEnter(param: any) {
         if (this.autoDisplay()) {
             const { event, processedItem } = param;
-            this.itemMouseEnter.emit({ originalEvent: event, processedItem });
+            // an event re-emitted by a nested submenu already carries the pointer type of its own item
+            this.itemMouseEnter.emit({ originalEvent: event, processedItem, pointerType: param.pointerType ?? this.lastPointerType });
         }
     }
 
@@ -742,12 +752,11 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onItemMouseEnter(event: any) {
-        if (!isTouchDevice()) {
-            if (this.dirty()) {
-                this.onItemChange(event, 'hover');
-            }
-        } else {
-            this.onItemChange({ event, processedItem: event.processedItem, focus: this.autoDisplay() }, 'hover');
+        // a tap fires an emulated mouseenter right before its click: opening the submenu here made that
+        // click close it again, so a touch pointer leaves it to the click. The pointer type is checked
+        // rather than the device, so a mouse on a touchscreen laptop still opens submenus on hover.
+        if (event.pointerType !== 'touch' && this.dirty()) {
+            this.onItemChange(event, 'hover');
         }
     }
 

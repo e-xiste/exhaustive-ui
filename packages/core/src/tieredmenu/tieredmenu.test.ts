@@ -240,6 +240,58 @@ describe('TieredMenu', () => {
         fixture.detectChanges();
     });
 
+    describe('Touch devices', () => {
+        beforeEach(() => {
+            Object.defineProperty(navigator, 'maxTouchPoints', { value: 5, configurable: true });
+        });
+
+        afterEach(() => {
+            delete (navigator as any).maxTouchPoints;
+        });
+
+        it('should open a submenu with a single tap', async () => {
+            // desktop layout, where submenus are overlays opened on hover
+            const desktopFixture = TestBed.createComponent(TestBreakpointTieredMenuComponent);
+            desktopFixture.componentInstance.breakpoint = '100px';
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const content = Array.from(desktopFixture.nativeElement.querySelectorAll('.p-tieredmenu-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.includes('Mobile'))!;
+            // a tap: touch pointerenter, then the emulated mouseenter, then the click
+            content.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'touch' }));
+            content.dispatchEvent(new MouseEvent('mouseenter'));
+            content.click();
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            expect(content.parentElement!.getAttribute('aria-expanded')).toBe('true');
+        });
+
+        it('still opens submenus on mouse hover on a touchscreen laptop', async () => {
+            const desktopFixture = TestBed.createComponent(TestBreakpointTieredMenuComponent);
+            desktopFixture.componentInstance.breakpoint = '100px';
+            desktopFixture.componentInstance.model = [
+                { label: 'Mobile', items: [{ label: 'Phone' }] },
+                { label: 'Desktop', items: [{ label: 'Laptop' }] }
+            ];
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const contentOf = (label: string) => Array.from(desktopFixture.nativeElement.querySelectorAll('.p-tieredmenu-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.trim() === label)!;
+            contentOf('Mobile').click();
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const desktop = contentOf('Desktop');
+            desktop.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
+            desktop.dispatchEvent(new MouseEvent('mouseenter'));
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            expect(desktop.parentElement!.getAttribute('aria-expanded')).toBe('true');
+        });
+    });
+
     describe('Component Initialization', () => {
         it('should create', () => {
             expect(component).toBeTruthy();

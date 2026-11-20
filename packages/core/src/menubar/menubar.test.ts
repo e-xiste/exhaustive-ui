@@ -346,6 +346,65 @@ describe('Menubar', () => {
         fixture.detectChanges();
     });
 
+    describe('Touch devices', () => {
+        beforeEach(() => {
+            Object.defineProperty(navigator, 'maxTouchPoints', { value: 5, configurable: true });
+        });
+
+        afterEach(() => {
+            delete (navigator as any).maxTouchPoints;
+        });
+
+        it('should open a nested submenu with a single tap', async () => {
+            // desktop layout, where submenus are overlays opened on hover
+            const desktopFixture = TestBed.createComponent(TestBasicMenubarComponent);
+            desktopFixture.componentInstance.breakpoint = '100px';
+            desktopFixture.componentInstance.model = [{ label: 'Projects', items: [{ label: 'Templates', items: [{ label: 'Apollo' }] }] }];
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const contentOf = (label: string) => Array.from(desktopFixture.nativeElement.querySelectorAll('.p-menubar-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.trim() === label)!;
+
+            contentOf('Projects').click();
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            // a tap: touch pointerenter, then the emulated mouseenter, then the click
+            const templates = contentOf('Templates');
+            templates.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'touch' }));
+            templates.dispatchEvent(new MouseEvent('mouseenter'));
+            templates.click();
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            expect(templates.parentElement!.getAttribute('aria-expanded')).toBe('true');
+        });
+
+        it('still opens submenus on mouse hover on a touchscreen laptop', async () => {
+            const desktopFixture = TestBed.createComponent(TestBasicMenubarComponent);
+            desktopFixture.componentInstance.breakpoint = '100px';
+            desktopFixture.componentInstance.model = [
+                { label: 'Projects', items: [{ label: 'Apollo' }] },
+                { label: 'Users', items: [{ label: 'New' }] }
+            ];
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const contentOf = (label: string) => Array.from(desktopFixture.nativeElement.querySelectorAll('.p-menubar-item-content') as NodeListOf<HTMLElement>).find((el) => el.textContent?.trim() === label)!;
+            contentOf('Projects').click();
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            const users = contentOf('Users');
+            users.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
+            users.dispatchEvent(new MouseEvent('mouseenter'));
+            desktopFixture.detectChanges();
+            await desktopFixture.whenStable();
+
+            expect(users.parentElement!.getAttribute('aria-expanded')).toBe('true');
+        });
+    });
+
     describe('Component Initialization', () => {
         it('should create the component', () => {
             expect(menubarInstance).toBeTruthy();
