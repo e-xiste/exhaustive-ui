@@ -479,6 +479,25 @@ describe('Popover', () => {
 
             expect(popoverInstance.overlayVisible()).toBe(false);
         });
+
+        it('should drop the flipped state when a later align() places the popover below its target (optimus-ui#398)', async () => {
+            const target = component.targetButton().nativeElement;
+
+            popoverInstance.show(new MouseEvent('click'), target);
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+
+            const container = popoverInstance.container() as HTMLDivElement;
+            // left over from a previous position above the target
+            container.setAttribute('data-p-popover-flipped', 'true');
+            container.classList.add('p-popover-flipped');
+
+            popoverInstance.align();
+
+            expect(container.getBoundingClientRect().top).toBeGreaterThan(target.getBoundingClientRect().top);
+            expect(container.hasAttribute('data-p-popover-flipped')).toBe(false);
+            expect(container.classList).not.toContain('p-popover-flipped');
+        });
     });
 
     describe('CSS Classes and Styling', () => {

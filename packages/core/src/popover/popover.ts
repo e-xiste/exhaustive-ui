@@ -22,7 +22,7 @@ import {
 } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { $dt } from '@exhaustive-ui/styled';
-import { absolutePosition, addClass, appendChild, findSingle, getOffset, isIOS, isTouchDevice } from '@exhaustive-ui/utils';
+import { absolutePosition, addClass, appendChild, findSingle, getOffset, isIOS, isTouchDevice, removeClass } from '@exhaustive-ui/utils';
 import { OverlayService, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -329,6 +329,9 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
             if (containerOffset.top < targetOffset.top) {
                 container.setAttribute('data-p-popover-flipped', 'true');
                 !this.$unstyled() && addClass(container, 'p-popover-flipped');
+            } else {
+                container.removeAttribute('data-p-popover-flipped');
+                !this.$unstyled() && removeClass(container, 'p-popover-flipped');
             }
         }
     }
