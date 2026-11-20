@@ -636,13 +636,6 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      */
     readonly value = input<TreeNode<any>[] | undefined>([]);
     /**
-     * Indicates the height of rows to be scrolled.
-     * @defaultValue 28
-     * @group Props
-     * @deprecated use virtualScrollItemSize property instead.
-     */
-    readonly virtualRowHeight = input<number>(28);
-    /**
      * A map of keys to control the selection state.
      * @group Props
      */
@@ -1097,22 +1090,6 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
             const totalRecords = this._totalRecords();
 
             untracked(() => this.tableService.onTotalRecordsChange(totalRecords));
-        });
-        let virtualRowHeightInitialized = false;
-        effect(() => {
-            const virtualRowHeight = this.virtualRowHeight();
-
-            untracked(() => {
-                if (!virtualRowHeightInitialized) {
-                    virtualRowHeightInitialized = true;
-
-                    if (virtualRowHeight === 28) {
-                        return;
-                    }
-                }
-
-                console.log('The virtualRowHeight property is deprecated, use virtualScrollItemSize property instead.');
-            });
         });
         let selectionKeysInitialized = false;
         effect(() => {
@@ -2475,7 +2452,7 @@ export class TTBody extends BaseComponent {
                 [styleClass]="cx('scrollableBody')"
                 [style]="{ height: tt.scrollHeight() !== 'flex' ? tt.scrollHeight() : undefined }"
                 [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
-                [itemSize]="tt.virtualScrollItemSize() || tt.virtualRowHeight()"
+                [itemSize]="tt.virtualScrollItemSize() || 28"
                 [lazy]="tt.lazy()"
                 (onLazyLoad)="tt.onLazyItemLoad($event)"
                 [options]="tt.virtualScrollOptions()"

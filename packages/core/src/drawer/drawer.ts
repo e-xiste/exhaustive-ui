@@ -74,7 +74,7 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                         @if (header()) {
                             <div [pBind]="ptm('title')" [class]="cx('title')">{{ header() }}</div>
                         }
-                        @if (showCloseIcon() && closable()) {
+                        @if (closable()) {
                             <p-button
                                 [pt]="ptm('pcCloseButton')"
                                 [ngClass]="cx('pcCloseButton')"
@@ -186,12 +186,6 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
      * @group Props
      */
     dismissible = input<boolean, unknown>(true, { transform: booleanAttribute });
-    /**
-     * Whether to display the close icon.
-     * @group Props
-     * @deprecated use 'closable' instead.
-     */
-    showCloseIcon = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Specifies if pressing escape key should hide the drawer.
      * @group Props

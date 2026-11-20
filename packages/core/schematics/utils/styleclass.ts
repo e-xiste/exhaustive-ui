@@ -68,8 +68,6 @@ function makeAttrRegex(namePattern: string): RegExp {
     return new RegExp(`(\\s${namePattern}\\s*=\\s*)(?:(["'])((?:\\\\.|(?!\\2)[^\\\\])*)\\2|([^\\s/>"']+))`);
 }
 
-const STATIC_STYLE_CLASS = makeAttrRegex('styleClass');
-const BOUND_STYLE_CLASS = makeAttrRegex('\\[styleClass\\]');
 const STATIC_CLASS = makeAttrRegex('class');
 const BOUND_CLASS = makeAttrRegex('\\[class\\]');
 
@@ -165,7 +163,8 @@ function execUnmasked(regex: RegExp, text: string): RegExpExecArray | null {
 }
 
 /**
- * Rewrites `styleClass`/`[styleClass]` on a single opening tag into `class`/`[class]`:
+ * Rewrites `styleClass`/`[styleClass]` (or another class alias named by `from`, e.g. TreeSelect's
+ * `containerStyleClass`) on a single opening tag into `class`/`[class]`:
  *
  * - `styleClass="x"` with no existing `class` attribute becomes `class="x"`; with an existing
  *   static `class="y"` the two are merged into `class="y x"`.
@@ -185,7 +184,9 @@ function execUnmasked(regex: RegExp, text: string): RegExpExecArray | null {
  * `styleClass`/`class` text that merely appears inside a different attribute's quoted value is
  * never treated as a real attribute.
  */
-function rewriteTag(tag: string): { text: string; rewritten: number; conflict: boolean } {
+export function rewriteTag(tag: string, from = 'styleClass'): { text: string; rewritten: number; conflict: boolean } {
+    const STATIC_STYLE_CLASS = makeAttrRegex(escapeRegExp(from));
+    const BOUND_STYLE_CLASS = makeAttrRegex(`\\[${escapeRegExp(from)}\\]`);
     let text = tag;
     let rewritten = 0;
     let conflict = false;
@@ -197,7 +198,7 @@ function rewriteTag(tag: string): { text: string; rewritten: number; conflict: b
             conflict = true;
         } else {
             const quote = boundStyleClass.quote ?? '"';
-            const replacement = `${boundStyleClass.prefix.replace('[styleClass]', '[class]')}${quote}${boundStyleClass.value}${quote}`;
+            const replacement = `${boundStyleClass.prefix.replace(`[${from}]`, '[class]')}${quote}${boundStyleClass.value}${quote}`;
             text = text.slice(0, boundStyleClass.index) + replacement + text.slice(boundStyleClass.index + boundStyleClass.length);
             rewritten++;
         }
@@ -221,7 +222,7 @@ function rewriteTag(tag: string): { text: string; rewritten: number; conflict: b
                 text = reMatch ? withoutStyleClass.slice(0, reMatch.index) + reMatch.prefix + quote + merged + quote + withoutStyleClass.slice(reMatch.index + reMatch.length) : withoutStyleClass;
             } else {
                 const quote = staticStyleClass.quote ?? '"';
-                const replacement = `${staticStyleClass.prefix.replace('styleClass', 'class')}${quote}${staticStyleClass.value}${quote}`;
+                const replacement = `${staticStyleClass.prefix.replace(from, 'class')}${quote}${staticStyleClass.value}${quote}`;
                 text = text.slice(0, staticStyleClass.index) + replacement + text.slice(staticStyleClass.index + staticStyleClass.length);
             }
             rewritten++;

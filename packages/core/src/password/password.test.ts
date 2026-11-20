@@ -1079,7 +1079,7 @@ describe('Password', () => {
             fixture.componentRef.setInput('tabindex', 5);
             fixture.componentRef.setInput('placeholder', 'Type a password');
             fixture.componentRef.setInput('autocomplete', 'new-password');
-            fixture.componentRef.setInput('maxLength', 20);
+            fixture.componentRef.setInput('maxlength', 20);
             fixture.componentRef.setInput('inputStyleClass', 'custom-input');
             fixture.componentRef.setInput('inputStyle', { width: '200px' });
             fixture.detectChanges();
@@ -1094,14 +1094,6 @@ describe('Password', () => {
             expect(inputEl.getAttribute('maxlength')).toBe('20');
             expect(inputEl.classList.contains('custom-input')).toBe(true);
             expect(inputEl.style.width).toBe('200px');
-        });
-
-        it('should prefer maxlength over the deprecated maxLength', () => {
-            fixture.componentRef.setInput('maxLength', 20);
-            fixture.componentRef.setInput('maxlength', 12);
-            fixture.detectChanges();
-
-            expect(inputEl.getAttribute('maxlength')).toBe('12');
         });
 
         it('should render the toggle mask icon and switch the input type when unmasked', () => {
@@ -1249,9 +1241,9 @@ describe('Password', () => {
     });
 
     describe('Input Properties', () => {
-        it('should handle maxLength property', () => {
-            fixture.componentRef.setInput('maxLength', 20);
-            expect(component.maxLength()).toBe(20);
+        it('should handle maxlength property', () => {
+            fixture.componentRef.setInput('maxlength', 20);
+            expect(component.maxlength()).toBe(20);
         });
 
         it('should handle autocomplete attribute', () => {

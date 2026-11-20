@@ -35,7 +35,7 @@ const mockItems = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
             [disabled]="disabled"
             [readonly]="readonly"
             [placeholder]="placeholder"
-            [minLength]="minLength"
+            [minQueryLength]="minLength"
             [delay]="delay"
             [showClear]="showClear"
             [dropdown]="dropdown"
@@ -451,7 +451,7 @@ describe('AutoComplete', () => {
         });
 
         it('should have default values', () => {
-            expect(component.minQueryLength() || component.minLength()).toBe(1);
+            expect(component.minQueryLength()).toBeUndefined();
             expect(component.delay()).toBe(300);
             expect(component.type()).toBe('text');
             expect(component.scrollHeight()).toBe('200px');

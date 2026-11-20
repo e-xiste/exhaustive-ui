@@ -467,7 +467,7 @@ export const Password_VALUE_ACCESSOR: any = {
             [value]="value()"
             [variant]="$variant()"
             [attr.name]="name()"
-            [attr.maxlength]="maxlength() || maxLength()"
+            [attr.maxlength]="maxlength()"
             [attr.minlength]="minlength()"
             [attr.required]="required() ? '' : undefined"
             [attr.disabled]="$disabled() ? '' : undefined"
@@ -593,12 +593,6 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * @group Props
      */
     mediumLabel = input<string | undefined>();
-    /**
-     * specifies the maximum number of characters allowed in the input element.
-     * @deprecated since v20.0.0, use maxlength instead.
-     * @group Props
-     */
-    maxLength = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Text for a strong password. Defaults to Exhaustive I18N API configuration.
      * @group Props

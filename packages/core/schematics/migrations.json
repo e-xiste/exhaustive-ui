@@ -20,6 +20,11 @@
             "version": "3.0.0",
             "factory": "./migrations/config-overlay-options-signal/migration",
             "description": "Rewrite programmatic access to Exhaustive.overlayOptions, which is a signal in this version: assignments become .set(value) and reads become () calls."
+        },
+        "renamed-inputs": {
+            "version": "3.0.0",
+            "factory": "./migrations/renamed-inputs/migration",
+            "description": "Rename bindings of deprecated input aliases removed in this version to their replacement: showCloseIcon to closable on p-drawer; dropdownAppendTo to appendTo on p-paginator; maxLength to maxlength on p-password; minLength to minQueryLength on p-autoComplete/p-autocomplete/p-auto-complete; containerStyleClass to class and containerStyle to style on p-treeSelect/p-treeselect/p-tree-select; virtualRowHeight to virtualScrollItemSize on p-treeTable/p-treetable/p-tree-table. A tag that already binds the replacement is reported for manual review, as are programmatic reads/writes of the removed names."
         }
     }
 }

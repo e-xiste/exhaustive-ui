@@ -98,7 +98,7 @@ const PAGINATOR_INSTANCE = new InjectionToken<Paginator>('PAGINATOR_INSTANCE');
                 [attr.aria-label]="getAriaLabel('jumpToPageDropdownLabel')"
                 [class]="cx('pcJumpToPageDropdown')"
                 (onChange)="onPageDropdownChange($event)"
-                [appendTo]="dropdownAppendTo() || $appendTo()"
+                [appendTo]="$appendTo()"
                 [scrollHeight]="dropdownScrollHeight()"
                 [pt]="ptm('pcJumpToPageDropdown')"
                 [unstyled]="unstyled()"
@@ -157,7 +157,7 @@ const PAGINATOR_INSTANCE = new InjectionToken<Paginator>('PAGINATOR_INSTANCE');
                 [class]="cx('pcRowPerPageDropdown')"
                 [disabled]="empty()"
                 (onChange)="onRppChange($event)"
-                [appendTo]="dropdownAppendTo() || $appendTo()"
+                [appendTo]="$appendTo()"
                 [scrollHeight]="dropdownScrollHeight()"
                 [ariaLabel]="getAriaLabel('rowsPerPageLabel')"
                 [pt]="ptm('pcRowPerPageDropdown')"
@@ -215,12 +215,6 @@ export class Paginator extends BaseComponent<PaginatorPassThrough> {
      * @group Props
      */
     readonly alwaysShow = input<boolean, unknown>(true, { transform: booleanAttribute });
-    /**
-     * Target element to attach the dropdown overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
-     * @deprecated since v20.0.0. Use `appendTo` instead.
-     * @group Props
-     */
-    readonly dropdownAppendTo = input<HTMLElement | ElementRef | TemplateRef<any> | string | null | undefined | any>();
     /**
      * Template instance to inject into the left side of the paginator.
      * @param {PaginatorTemplateContext} context - Paginator template context.

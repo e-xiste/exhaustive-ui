@@ -25,7 +25,7 @@ const style = /*css*/ `
 `;
 
 const inlineStyles = {
-    root: ({ instance }) => ({ position: instance.$appendTo() === 'self' ? 'relative' : undefined, ...instance.containerStyle() })
+    root: ({ instance }) => ({ position: instance.$appendTo() === 'self' ? 'relative' : undefined })
 };
 
 const classes = {

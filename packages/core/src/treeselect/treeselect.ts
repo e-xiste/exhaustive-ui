@@ -240,7 +240,7 @@ const TREESELECT_INSTANCE = new InjectionToken<TreeSelect>('TREESELECT_INSTANCE'
     ],
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': "cn(cx('root'), containerStyleClass())",
+        '[class]': "cx('root')",
         '[style]': "sx('root')"
     }
 })
@@ -322,18 +322,6 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
      * @group Props
      */
     panelStyleClass = input<string | undefined>();
-    /**
-     * Inline style of the container element.
-     * @deprecated since v20.0.0, use `style` instead.
-     * @group Props
-     */
-    containerStyle = input<{ [klass: string]: any } | null | undefined>();
-    /**
-     * Style class of the container element.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    containerStyleClass = input<string | undefined>();
     /**
      * Inline style of the label element.
      * @group Props

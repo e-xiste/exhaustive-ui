@@ -19,7 +19,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
             [closeOnEscape]="closeOnEscape"
             [header]="header"
             [closable]="closable"
-            [showCloseIcon]="showCloseIcon"
             [blockScroll]="blockScroll"
             [style]="style"
             [styleClass]="styleClass"
@@ -46,7 +45,6 @@ class TestDrawerBasicComponent {
     closeOnEscape = true;
     header = '';
     closable = true;
-    showCloseIcon = true;
     blockScroll = false;
     style: any = null as any;
     styleClass = '';
@@ -250,7 +248,6 @@ describe('Drawer', () => {
         expect(component.baseZIndex()).toBe(0);
         expect(component.modal()).toBe(true);
         expect(component.dismissible()).toBe(true);
-        expect(component.showCloseIcon()).toBe(true);
         expect(component.closeOnEscape()).toBe(true);
         expect(component.position()).toBe('left');
         expect(component.fullScreen()).toBe(false);
@@ -954,17 +951,6 @@ describe('Drawer', () => {
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
-            expect(testFixture.debugElement.query(By.css('p-button'))).toBeFalsy();
-        });
-
-        it('should re-render the close button when the deprecated showCloseIcon changes', async () => {
-            expect(testFixture.debugElement.query(By.css('p-button'))).toBeTruthy();
-
-            testComponent.showCloseIcon = false;
-            testFixture.changeDetectorRef.markForCheck();
-            await testFixture.whenStable();
-
-            expect(drawerComponent.showCloseIcon()).toBe(false);
             expect(testFixture.debugElement.query(By.css('p-button'))).toBeFalsy();
         });
 

@@ -81,7 +81,7 @@ const mockTreeNodes: TreeNode[] = [
             [ariaLabelledBy]="ariaLabelledBy"
             [panelClass]="panelClass"
             [panelStyle]="panelStyle"
-            [containerStyle]="containerStyle"
+            [style]="containerStyle"
             [labelStyle]="labelStyle"
             [labelStyleClass]="labelStyleClass"
             [appendTo]="appendTo"
@@ -779,7 +779,9 @@ describe('TreeSelect', () => {
             testFixture.detectChanges();
 
             const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
-            expect(treeSelectInstance.containerStyle()).toEqual({ border: '2px solid blue', padding: '5px' });
+            const host = testFixture.debugElement.query(By.directive(TreeSelect)).nativeElement as HTMLElement;
+            expect(host.style.border).toBe('2px solid blue');
+            expect(host.style.padding).toBe('5px');
             expect(treeSelectInstance.labelStyle()).toEqual({ color: 'red', fontWeight: 'bold' });
             expect(treeSelectInstance.labelStyleClass()).toBe('custom-label');
             expect(treeSelectInstance.panelClass()).toBe('custom-panel');
@@ -1663,8 +1665,8 @@ describe('TreeSelect Signal Query API', () => {
             [display]="display()"
             [selectionMode]="selectionMode()"
             [showClear]="showClear()"
-            [containerStyleClass]="containerStyleClass()"
-            [containerStyle]="containerStyle()"
+            [class]="containerStyleClass()"
+            [style]="containerStyle()"
             [labelStyleClass]="labelStyleClass()"
             [ariaLabel]="ariaLabel()"
             [appendTo]="'self'"
@@ -1759,7 +1761,7 @@ describe('TreeSelect Signal API', () => {
         expect(el().querySelector('.ptemplate-clear')).toBeTruthy();
     });
 
-    it('should apply containerStyleClass, containerStyle and labelStyleClass changes', async () => {
+    it('should apply class, style and labelStyleClass changes', async () => {
         host.containerStyleClass.set('custom-container');
         host.containerStyle.set({ width: '240px' });
         host.labelStyleClass.set('custom-label');

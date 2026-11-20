@@ -32,7 +32,7 @@ import { PrimeTemplate } from '@exhaustive-ui/core/api';
             [currentPageReportTemplate]="currentPageReportTemplate"
             [dropdownScrollHeight]="dropdownScrollHeight"
             [class]="styleClass"
-            [dropdownAppendTo]="dropdownAppendTo"
+            [appendTo]="appendTo"
             [locale]="locale"
             [templateLeft]="leftTemplate"
             [templateRight]="rightTemplate"
@@ -64,7 +64,7 @@ class TestBasicPaginatorComponent {
     currentPageReportTemplate = '{currentPage} of {totalPages}';
     dropdownScrollHeight = '200px';
     styleClass: string | undefined;
-    dropdownAppendTo: any;
+    appendTo: any;
     locale: string | undefined;
 
     pageChangeEvent: PaginatorState | null = null as any;
@@ -1045,13 +1045,13 @@ describe('Paginator', () => {
             expect(paginator.alwaysShow()).toBe(false);
         });
 
-        it('should handle dropdownAppendTo property', async () => {
+        it('should handle appendTo property', async () => {
             const element = document.createElement('div');
-            component.dropdownAppendTo = element;
+            component.appendTo = element;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(paginator.dropdownAppendTo()).toBe(element);
+            expect(paginator.$appendTo()).toBe(element);
         });
 
         it('should handle dropdownScrollHeight property', async () => {

@@ -346,13 +346,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
     bindDirectiveInstance = inject(Bind, { self: true });
 
     /**
-     * Minimum number of characters to initiate a search.
-     * @deprecated since v20.0.0, use `minQueryLength` instead.
-     * @group Props
-     */
-    minLength = input<number, unknown>(1, { transform: numberAttribute });
-    /**
-     * Minimum number of characters to initiate a search.
+     * Minimum number of characters to initiate a search, 1 when not set.
      * @group Props
      */
     minQueryLength = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
@@ -1119,7 +1113,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     onInput(event) {
         if (this.typeahead()) {
-            const _minLength = this.minQueryLength() || this.minLength();
+            const _minLength = this.minQueryLength() || 1;
 
             if (this.searchTimeout()) {
                 clearTimeout(this.searchTimeout());
@@ -1636,7 +1630,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             return;
         }
 
-        const _minLength = this.minQueryLength() ?? this.minLength();
+        const _minLength = this.minQueryLength() ?? 1;
 
         if (!inputCleared && input.value.length < _minLength) {
             return;
