@@ -964,7 +964,6 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
 
     _id = computed(() => this.id() || uuid('pn_id_'));
 
-    readonly containerViewChild = viewChild<ElementRef>('container');
     /**
      * Template option of submenu icon.
      * @group Templates
@@ -1113,13 +1112,14 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
     }
 
     findFirstHeader() {
-        const containerViewChild = this.containerViewChild();
-        return containerViewChild?.nativeElement ? this.findNextHeader(containerViewChild.nativeElement.firstElementChild, true) : null;
+        // The panels are rendered directly inside the host element.
+        const firstPanel = this.el.nativeElement.firstElementChild;
+        return firstPanel ? this.findNextHeader(firstPanel, true) : null;
     }
 
     findLastHeader() {
-        const containerViewChild = this.containerViewChild();
-        return containerViewChild?.nativeElement ? this.findPrevHeader(containerViewChild.nativeElement.lastElementChild, true) : null;
+        const lastPanel = this.el.nativeElement.lastElementChild;
+        return lastPanel ? this.findPrevHeader(lastPanel, true) : null;
     }
 
     onHeaderClick(event, item, index) {

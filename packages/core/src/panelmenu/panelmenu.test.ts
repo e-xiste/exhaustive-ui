@@ -756,8 +756,6 @@ describe('PanelMenu', () => {
 
         it('should handle Arrow Down key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
-            const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { firstElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));
@@ -780,8 +778,6 @@ describe('PanelMenu', () => {
 
         it('should handle Arrow Up key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
-            const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { lastElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeaders = keyboardFixture.debugElement.queryAll(By.css('[data-pc-section="header"]'));
@@ -808,8 +804,6 @@ describe('PanelMenu', () => {
 
         it('should handle Home key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
-            const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { firstElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));
@@ -831,8 +825,6 @@ describe('PanelMenu', () => {
 
         it('should handle End key navigation', () => {
             const keyboardFixture = TestBed.createComponent(TestKeyboardPanelMenuComponent);
-            const keyboardPanelMenu = keyboardFixture.debugElement.query(By.directive(PanelMenu)).componentInstance;
-            keyboardPanelMenu.containerViewChild = () => ({ nativeElement: { lastElementChild: null } });
             keyboardFixture.detectChanges();
 
             const panelHeader = keyboardFixture.debugElement.query(By.css('[data-pc-section="header"]'));
@@ -850,6 +842,47 @@ describe('PanelMenu', () => {
                 // Expected to handle gracefully
                 expect(panelHeader).toBeTruthy();
             }
+        });
+    });
+
+    describe('Header Home/End keyboard navigation', () => {
+        async function setupHeaders() {
+            component.model = [
+                { label: 'First', items: [{ label: 'A' }] },
+                { label: 'Disabled', disabled: true, items: [{ label: 'B' }] },
+                { label: 'Middle', items: [{ label: 'C' }] },
+                { label: 'Last', items: [{ label: 'D' }] }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            return fixture.debugElement.queryAll(By.css('[data-pc-section="header"]')).map((h) => h.nativeElement as HTMLElement);
+        }
+
+        it('should move focus to the first header on Home', async () => {
+            const headers = await setupHeaders();
+            headers[3].focus();
+
+            headers[3].dispatchEvent(new KeyboardEvent('keydown', { code: 'Home', bubbles: true, cancelable: true }));
+
+            expect(document.activeElement).toBe(headers[0]);
+        });
+
+        it('should move focus to the last header on End', async () => {
+            const headers = await setupHeaders();
+            headers[0].focus();
+
+            headers[0].dispatchEvent(new KeyboardEvent('keydown', { code: 'End', bubbles: true, cancelable: true }));
+
+            expect(document.activeElement).toBe(headers[3]);
+        });
+
+        it('should wrap to the first header on ArrowDown from the last header', async () => {
+            const headers = await setupHeaders();
+            headers[3].focus();
+
+            headers[3].dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowDown', bubbles: true, cancelable: true }));
+
+            expect(document.activeElement).toBe(headers[0]);
         });
     });
 
