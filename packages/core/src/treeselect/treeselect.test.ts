@@ -618,6 +618,37 @@ describe('TreeSelect', () => {
             expect(options[0].partialSelected).toBe(false);
         });
 
+        it('should mark the parents of preselected checkbox nodes as partially selected', async () => {
+            const options: TreeNode[] = [
+                {
+                    key: 'p',
+                    label: 'Parent',
+                    children: [
+                        {
+                            key: 'c1',
+                            label: 'Child 1',
+                            children: [
+                                { key: 'g1', label: 'Grandchild 1' },
+                                { key: 'g2', label: 'Grandchild 2' }
+                            ]
+                        },
+                        { key: 'c2', label: 'Child 2' }
+                    ]
+                },
+                { key: 'o', label: 'Other', children: [{ key: 'o1', label: 'Other 1' }] }
+            ];
+            fixture.componentRef.setInput('selectionMode', 'checkbox');
+            fixture.componentRef.setInput('options', options);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            component.writeValue([options[0].children![0].children![0]]);
+
+            expect(options[0].children![0].partialSelected).toBe(true);
+            expect(options[0].partialSelected).toBe(true);
+            expect(options[1].partialSelected).toBe(false);
+        });
+
         it('should work with reactive forms', async () => {
             testComponent.showReactiveForm = true;
             testFixture.changeDetectorRef.markForCheck();

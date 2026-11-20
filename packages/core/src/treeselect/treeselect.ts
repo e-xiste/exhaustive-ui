@@ -942,6 +942,9 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             if (selectedNodes && this.options()) {
                 this.updateTreeBranchState(null, null, selectedNodes);
             }
+            if (this.selectionMode() === 'checkbox' && this.propagateSelectionUp()) {
+                this.updatePartialSelected(this.options());
+            }
         } else {
             // e.g. a form reset: no partially checked parent can be left behind
             this.resetPartialSelected();
@@ -1015,6 +1018,23 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
                 this.resetPartialSelected(node.children);
             }
         }
+    }
+
+    /**
+     * Marks the parents of a programmatically set value as partially selected, as the tree does when nodes are checked from the UI.
+     * Returns whether one of the nodes is selected or partially selected.
+     */
+    updatePartialSelected(nodes: TreeNode[] | undefined | null): boolean {
+        let hasSelection = false;
+
+        for (let node of nodes || []) {
+            const selected = this.isSelected(node);
+            const childSelected = this.updatePartialSelected(node.children);
+            node.partialSelected = !selected && childSelected;
+            hasSelection = hasSelection || selected || childSelected;
+        }
+
+        return hasSelection;
     }
 
     isSelected(node: TreeNode) {
