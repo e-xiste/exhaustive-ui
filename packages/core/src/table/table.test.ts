@@ -3645,7 +3645,7 @@ describe('Table ReorderableColumn', () => {
         <p-table [value]="rows">
             <ng-template #header>
                 <tr>
-                    <th>Name <p-columnFilter type="text" field="name" display="menu" [filterButtonProps]="buttonProps"></p-columnFilter></th>
+                    <th>Name <p-columnFilter type="text" field="name" display="menu" [filterButtonProps]="buttonProps" [showApplyButton]="showApply()" [showClearButton]="showClear()"></p-columnFilter></th>
                 </tr>
             </ng-template>
             <ng-template #body let-row>
@@ -3658,6 +3658,8 @@ describe('Table ReorderableColumn', () => {
 })
 class TestColumnFilterMenuComponent {
     rows = [{ name: 'A' }, { name: 'B' }];
+    showApply = signal(true);
+    showClear = signal(true);
     buttonProps: any = {
         filter: { severity: 'secondary', text: true, rounded: true },
         popover: { apply: { size: 'small' }, clear: { outlined: false, size: 'small' } }
@@ -3700,5 +3702,16 @@ describe('Table column filter menu', () => {
 
         expect(columnFilter.fieldConstraints![0].value).toBeNull();
         expect(columnFilter.hasFilter).toBe(true);
+    });
+
+    it('renders no empty remove-rule wrapper nor empty button bar (optimus-ui#542)', async () => {
+        fixture.componentInstance.showApply.set(false);
+        fixture.componentInstance.showClear.set(false);
+        await fixture.whenStable();
+        const overlay = await openMenu();
+        const rule = overlay.querySelector('.p-datatable-filter-rule') as HTMLElement;
+
+        expect(rule.lastElementChild!.tagName.toLowerCase()).toBe('p-columnfilterformelement');
+        expect(overlay.querySelector('.p-datatable-filter-buttonbar')).toBeNull();
     });
 });

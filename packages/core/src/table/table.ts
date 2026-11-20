@@ -5592,8 +5592,8 @@ export class ReorderableRow extends BaseComponent {
                                         [pt]="pt()"
                                         [unstyled]="unstyled()"
                                     ></p-columnFilterFormElement>
-                                    <div>
-                                        @if (showRemoveIcon) {
+                                    @if (showRemoveIcon) {
+                                        <div>
                                             <p-button
                                                 [styleClass]="cx('pcFilterRemoveRuleButton')"
                                                 [pt]="ptm('pcFilterRemoveRuleButton')"
@@ -5613,8 +5613,8 @@ export class ReorderableRow extends BaseComponent {
                                                     <ng-template *ngTemplateOutlet="removeRuleIconTemplate() || _removeRuleIconTemplate()"></ng-template>
                                                 </ng-template>
                                             </p-button>
-                                        }
-                                    </div>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
@@ -5639,31 +5639,33 @@ export class ReorderableRow extends BaseComponent {
                                 </ng-template>
                             </p-button>
                         }
-                        <div [class]="cx('filterButtonbar')" [pBind]="ptm('filterButtonBar')">
-                            @if (showClearButton()) {
-                                <p-button
-                                    #clearBtn
-                                    [outlined]="filterButtonProps()?.popover?.clear?.outlined ?? true"
-                                    (onClick)="clearFilter()"
-                                    [attr.aria-label]="clearButtonLabel"
-                                    [label]="clearButtonLabel"
-                                    [buttonProps]="filterButtonProps()?.popover?.clear"
-                                    [pt]="ptm('pcFilterClearButton')"
-                                    [unstyled]="unstyled()"
-                                />
-                            }
-                            @if (showApplyButton()) {
-                                <p-button
-                                    (onClick)="applyFilter()"
-                                    size="small"
-                                    [label]="applyButtonLabel"
-                                    [attr.aria-label]="applyButtonLabel"
-                                    [buttonProps]="filterButtonProps()?.popover?.apply"
-                                    [pt]="ptm('pcFilterApplyButton')"
-                                    [unstyled]="unstyled()"
-                                />
-                            }
-                        </div>
+                        @if (showClearButton() || showApplyButton()) {
+                            <div [class]="cx('filterButtonbar')" [pBind]="ptm('filterButtonBar')">
+                                @if (showClearButton()) {
+                                    <p-button
+                                        #clearBtn
+                                        [outlined]="filterButtonProps()?.popover?.clear?.outlined ?? true"
+                                        (onClick)="clearFilter()"
+                                        [attr.aria-label]="clearButtonLabel"
+                                        [label]="clearButtonLabel"
+                                        [buttonProps]="filterButtonProps()?.popover?.clear"
+                                        [pt]="ptm('pcFilterClearButton')"
+                                        [unstyled]="unstyled()"
+                                    />
+                                }
+                                @if (showApplyButton()) {
+                                    <p-button
+                                        (onClick)="applyFilter()"
+                                        size="small"
+                                        [label]="applyButtonLabel"
+                                        [attr.aria-label]="applyButtonLabel"
+                                        [buttonProps]="filterButtonProps()?.popover?.apply"
+                                        [pt]="ptm('pcFilterApplyButton')"
+                                        [unstyled]="unstyled()"
+                                    />
+                                }
+                            </div>
+                        }
                     }
                     <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate(); context: { $implicit: field() }"></ng-container>
                 </div>
