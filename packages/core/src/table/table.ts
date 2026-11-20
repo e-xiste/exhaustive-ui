@@ -1317,11 +1317,18 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
 
                 if (!this.lazy()) {
+                    // re-applying the filters to a new value must not move back to the first page
+                    const first = this.first();
+
                     if (this.sortMode() == 'single' && (this._sortField() || this.groupRowsBy())) this.sortSingle();
                     else if (this.sortMode() == 'multiple' && (this._multiSortMeta() || this.groupRowsBy())) this.sortMultiple();
                     else if (this.hasFilter())
                         //sort already filters
                         this._filter();
+
+                    if (this.hasFilter()) {
+                        this.first.set(first);
+                    }
                 }
 
                 this.tableService.onValueChange(value);

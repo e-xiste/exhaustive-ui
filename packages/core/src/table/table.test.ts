@@ -2583,4 +2583,21 @@ describe('Table medium-severity fixes', () => {
         expect(table.rows()).toBe(10);
         window.sessionStorage.removeItem(stateKey);
     });
+
+    it('keeps the current page when the value changes while a filter is applied (optimus-ui#828)', async () => {
+        const rows = Array.from({ length: 30 }, (_, i) => ({ name: 'item' + i }));
+        fixture.componentRef.setInput('value', rows);
+        fixture.componentRef.setInput('paginator', true);
+        fixture.componentRef.setInput('rows', 10);
+        fixture.componentRef.setInput('filters', { name: { value: 'item', matchMode: 'startsWith' } });
+        fixture.detectChanges();
+        await fixture.whenStable();
+        table.first.set(10);
+
+        fixture.componentRef.setInput('value', [...rows, { name: 'item30' }]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(table.first()).toBe(10);
+    });
 });
