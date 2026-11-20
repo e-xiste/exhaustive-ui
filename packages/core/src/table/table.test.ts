@@ -3307,3 +3307,57 @@ describe('Table column resize with a grouped header', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [columns]="cols" [reorderableColumns]="true">
+            <ng-template #header let-columns>
+                <tr>
+                    @for (col of columns; track col.field; let first = $first) {
+                        @if (first) {
+                            <th pFrozenColumn>{{ col.header }}</th>
+                        } @else {
+                            <th pReorderableColumn>{{ col.header }}</th>
+                        }
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-row let-columns="columns">
+                <tr>
+                    @for (col of columns; track col.field) {
+                        <td>{{ row[col.field] }}</td>
+                    }
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableFrozenReorderHostComponent {
+    rows = [{ id: 1, name: 'A', price: 2 }];
+    cols = [
+        { field: 'id', header: 'Id' },
+        { field: 'name', header: 'Name' },
+        { field: 'price', header: 'Price' }
+    ];
+}
+
+describe('Table column reorder next to a frozen column', () => {
+    it('reorders the columns at the dragged and dropped header positions (optimus-ui#729)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableFrozenReorderHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableFrozenReorderHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        const headers = fixture.nativeElement.querySelectorAll('thead th');
+
+        // drag "Price" before "Name"
+        table.draggedColumn.set(headers[2]);
+        table.dropPosition.set(-1);
+        table.onColumnDrop(new Event('drop'), headers[1]);
+
+        expect(table._columns()!.map((col: any) => col.field)).toEqual(['id', 'price', 'name']);
+    });
+});

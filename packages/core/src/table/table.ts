@@ -2724,8 +2724,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     onColumnDrop(event: Event, dropColumn: any) {
         event.preventDefault();
         if (this.draggedColumn()) {
-            let dragIndex = DomHandler.indexWithinGroup(this.draggedColumn(), 'preorderablecolumn');
-            let dropIndex = DomHandler.indexWithinGroup(dropColumn, 'preorderablecolumn');
+            // when the header row has one cell per column, index the cells themselves so that the
+            // non-reorderable columns (e.g. frozen ones) keep their place in _columns
+            const headerCells = this.draggedColumn().parentElement ? DomHandler.find(this.draggedColumn().parentElement, ':scope > th') : [];
+            const indexByCell = !!this._columns() && this._columns()!.length === headerCells.length;
+            let dragIndex = indexByCell ? DomHandler.index(this.draggedColumn()) : DomHandler.indexWithinGroup(this.draggedColumn(), 'preorderablecolumn');
+            let dropIndex = indexByCell ? DomHandler.index(dropColumn) : DomHandler.indexWithinGroup(dropColumn, 'preorderablecolumn');
             let allowDrop = dragIndex != dropIndex;
             if (allowDrop && ((dropIndex - dragIndex == 1 && this.dropPosition() === -1) || (dragIndex - dropIndex == 1 && this.dropPosition() === 1))) {
                 allowDrop = false;
