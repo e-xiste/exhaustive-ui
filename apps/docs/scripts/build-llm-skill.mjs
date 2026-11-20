@@ -119,7 +119,7 @@ Check the guides when in doubt; these are here so simple tasks don't need a look
 - Since v22 the library is on the Angular Signals API. Templates bind as usual (\`[name]\`, \`[(name)]\`, \`(name)\`), but code holding a component instance (\`viewChild\`, \`@ViewChild\`) reads inputs as signals (\`table.selection()\`), writes two-way properties with \`.set()\` (\`drawer.visible.set(true)\`) and calls queries; it never assigns inputs.
 - Components use \`OnPush\` change detection, except Table, TreeTable and DynamicDialog: give them new arrays and objects (or signals) instead of mutating bound data in place.
 - Use the built-in \`@if\` / \`@for\` control flow (with a \`track\` expression) in examples and generated code, not \`*ngIf\` / \`*ngFor\`.
-- Several inputs removed in v22 have a native or renamed replacement: \`styleClass\` becomes \`class\` on the simple components (Tag, Card, Chip, Avatar, Toast, Message, ...), \`showCloseIcon\` becomes \`closable\` on Drawer. The API tables are authoritative; \`references/guides/update.md\` lists the \`ng update\` migrations and the v22 changes.
+- Several inputs removed in v22 have a native or renamed replacement: \`styleClass\` becomes the native \`class\` attribute on most components (Tag, Card, Select, Table, DatePicker, Panel, ...), \`showCloseIcon\` becomes \`closable\` on Drawer. The API tables are authoritative; \`references/guides/update.md\` lists the \`ng update\` migrations and the v22 changes.
 
 ## Keeping the docs up to date
 

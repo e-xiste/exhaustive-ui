@@ -32,18 +32,20 @@ ng add @exhaustive-ui/core
 This installs the library and wires `provideExhaustive({ theme: { preset: Aura } })` into your
 application config (pick a different preset with `--theme Lara|Material|Nora`).
 
-Please note that ExhaustiveUI requires **Angular 22** (its major version follows Angular's). 
+ExhaustiveUI v22 requires **Angular 22**: its major versions follow Angular's.
 
 `ng add` only sets up new projects — on a workspace that already uses PrimeNG it makes no changes
 and points you to the migration schematic below.
 
 ## Migrating from PrimeNG
 
-ExhaustiveUI is API-compatible with PrimeNG v21. On a PrimeNG v21 workspace, run the dedicated
-migration schematic:
+ExhaustiveUI is API-compatible with PrimeNG v21. On a PrimeNG v21 workspace updated to Angular 22, run the
+dedicated migration schematic:
 
 ```bash
-ng generate @exhaustive-ui/core@1:migrate-from-primeng          # options: --skip-install, --force
+npm install @exhaustive-ui/core
+ng generate @exhaustive-ui/core:migrate-from-primeng          # options: --skip-install, --force
+ng update @exhaustive-ui/core --migrate-only --from=3.0.0      # apply the v22 migrations below
 ```
 
 This replaces `primeng` and `@primeuix/*` dependencies with their `@exhaustive-ui` counterparts, rewrites
@@ -53,6 +55,22 @@ TypeScript imports (`primeng/button` → `@exhaustive-ui/core/button`, `@primeui
 listed as a warning for manual review.
 
 Projects on PrimeNG v20 or older: upgrade to PrimeNG v21 first, then migrate.
+
+## Updating to v22
+
+v22 moves the library to the Angular Signals API. Templates bind as before, but code holding a component
+instance reads inputs as signals (`table.selection()`) and writes two-way properties with `.set()`
+(`drawer.visible.set(true)`). Components use `OnPush` change detection (except Table, TreeTable and
+DynamicDialog), and inputs that were deprecated or had no effect are removed: `styleClass` becomes the
+native `class` attribute on most components, Drawer's `showCloseIcon` becomes `closable`, and so on.
+
+```bash
+ng update @angular/core@22 @angular/cli@22
+ng update @exhaustive-ui/core@22
+```
+
+`ng update` rewrites the affected templates and lists what it left for review. See the
+[update guide](https://exhaustive-ui.com/migration/update#v22).
 
 
 ## 🚀 Quick Start
