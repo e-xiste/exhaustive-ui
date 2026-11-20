@@ -455,7 +455,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
      * An array of selectitems to display as the available options.
      * @group Props
      */
-    options = input<string[] | string | undefined>();
+    options = input<any[] | null | undefined>();
     /**
      * Property name or getter function to use as the label of an option.
      * @group Props

@@ -2524,3 +2524,22 @@ describe('CascadeSelect custom loadingIcon', () => {
         expect(icon.classList).toContain('pi-refresh');
     });
 });
+
+describe('CascadeSelect low bug fixes', () => {
+    beforeEach(() => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [CascadeSelect], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+    });
+
+    it('accepts an array of objects as options (optimus-ui#277, optimus-ui#360)', () => {
+        const countries: ReturnType<CascadeSelect['options']> = [{ name: 'Australia', states: [{ name: 'New South Wales', cities: [{ cname: 'Sydney', code: 'A-SY' }] }] }];
+        const fixture = TestBed.createComponent(CascadeSelect);
+        fixture.componentRef.setInput('options', countries);
+        fixture.componentRef.setInput('optionLabel', 'cname');
+        fixture.componentRef.setInput('optionGroupLabel', 'name');
+        fixture.componentRef.setInput('optionGroupChildren', ['states', 'cities']);
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.options()).toBe(countries);
+    });
+});
