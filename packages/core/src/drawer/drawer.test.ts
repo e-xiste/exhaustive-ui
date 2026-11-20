@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { PrimeTemplate } from '@exhaustive-ui/core/api';
+import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Drawer } from './drawer';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -1557,5 +1558,54 @@ describe('Drawer Signal Query API', () => {
         expect(templates.length).toBe(2);
         expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
         expect(templates[0].template).toBeDefined();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Drawer, Dialog],
+    template: `
+        <p-drawer [(visible)]="drawer" [blockScroll]="true">
+            Drawer
+            <p-dialog [(visible)]="dialog" [modal]="true" header="Nested">Dialog</p-dialog>
+        </p-drawer>
+    `
+})
+class DrawerNestedDialogHostComponent {
+    drawer = signal(false);
+    dialog = signal(false);
+}
+
+describe('Drawer with a nested modal Dialog', () => {
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should keep the body scroll lock when the nested dialog closes', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DrawerNestedDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(DrawerNestedDialogHostComponent);
+        const host = fixture.componentInstance;
+        await fixture.whenStable();
+
+        host.drawer.set(true);
+        await fixture.whenStable();
+        await wait(50);
+        host.dialog.set(true);
+        await fixture.whenStable();
+        await wait(50);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        host.dialog.set(false);
+        await fixture.whenStable();
+        await wait(400);
+
+        expect(host.drawer()).toBe(true);
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
     });
 });

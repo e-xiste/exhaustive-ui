@@ -65,6 +65,7 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                 pFocusTrap
                 [attr.data-p]="dataP()"
                 [attr.data-p-open]="visible()"
+                [attr.data-p-scrollblocker-active]="modal() && blockScroll()"
             >
                 @if (headlessTemplate() || _headlessTemplate()) {
                     <ng-container *ngTemplateOutlet="headlessTemplate() || _headlessTemplate()"></ng-container>
