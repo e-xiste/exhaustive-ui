@@ -3075,8 +3075,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
         let val = (<HTMLInputElement>event.target).value;
         try {
-            let value = this.parseValueFromString(val);
+            let value: any = this.parseValueFromString(val);
             if (this.isValidSelection(value)) {
+                // a typed minDate/maxDate day is selectable but parses at 00:00: keep it within the bounds, as selectDate does
+                const constrain = (date: Date) => (this.minDate() && this.minDate()! > date ? new Date(this.minDate()!) : this.maxDate() && this.maxDate()! < date ? new Date(this.maxDate()!) : date);
+                value = Array.isArray(value) ? value.map((date) => date && constrain(date)) : constrain(value);
                 this.updateModel(value);
                 this.updateUI();
             } else if (this.keepInvalid()) {

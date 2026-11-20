@@ -2702,4 +2702,19 @@ describe('DatePicker Optimus UI bug fixes', () => {
 
         expect(outside).toBe(false);
     });
+
+    it('keeps a typed minDate-day date on blur (optimus-ui#889)', async () => {
+        fixture.componentRef.setInput('minDate', new Date(2026, 4, 10, 10, 0));
+        await render();
+        const input = el.querySelector('input')!;
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: '6' }));
+        input.value = '05/10/2026';
+        input.dispatchEvent(new Event('input'));
+        input.dispatchEvent(new Event('blur'));
+        await render();
+
+        expect(input.value).toBe('05/10/2026');
+        expect(picker.value().getDate()).toBe(10);
+    });
 });
