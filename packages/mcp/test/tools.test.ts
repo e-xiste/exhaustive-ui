@@ -353,7 +353,7 @@ describe('version', () => {
         const result = structured(await versionTool(ctx));
 
         expect(result.server).toEqual({ name: '@exhaustive-ui/mcp', version: '0.0.0-test' });
-        expect(result.data).toMatchObject({ libraryVersion: '3.0.0-alpha.0', site: 'https://exhaustive-ui.e-xiste.com', counts: { components: 5, directives: 5, guides: 4 } });
+        expect(result.data).toMatchObject({ libraryVersion: '3.0.0-alpha.0', site: 'https://exhaustive-ui.com', counts: { components: 5, directives: 5, guides: 4 } });
         expect(result.tools).toEqual(['list', 'search', 'get_component', 'get_guide', 'get_example', 'get_setup', 'validate_usage', 'version']);
         expect(result.resources.static).toContain('exhaustive-ui://docs/llms.txt');
         expect(result.prompts).toContain('use_component');

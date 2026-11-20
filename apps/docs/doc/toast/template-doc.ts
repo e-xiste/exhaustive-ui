@@ -19,7 +19,7 @@ import { AvatarModule } from '@exhaustive-ui/core/avatar';
                 <ng-template let-message #message>
                     <div class="flex flex-col items-start flex-auto">
                         <div class="flex items-center gap-2">
-                            <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
+                            <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
                             <span class="font-bold">Amy Elsner</span>
                         </div>
                         <div class="font-medium text-lg my-4">{{ message.summary }}</div>

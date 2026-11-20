@@ -35,7 +35,7 @@ export class FloatLabelStyle extends BaseStyle {
  *
  * FloatLabel visually integrates a label with its form element.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/floatlabel/)
+ * [Live Demo](https://exhaustive-ui.com/floatlabel/)
  *
  * @module floatlabelstyle
  *

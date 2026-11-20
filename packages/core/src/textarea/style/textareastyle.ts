@@ -42,7 +42,7 @@ export class TextareaStyle extends BaseStyle {
  *
  * Textarea is a multi-line text input element.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/textarea/)
+ * [Live Demo](https://exhaustive-ui.com/textarea/)
  *
  * @module textareastyle
  *

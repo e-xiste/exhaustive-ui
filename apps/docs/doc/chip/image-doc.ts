@@ -12,10 +12,10 @@ import { ChipModule } from '@exhaustive-ui/core/chip';
             <p>The <i>image</i> property is used to display an image like an avatar.</p>
         </app-docsectiontext>
         <div class="card flex items-center gap-2 flex-wrap">
-            <p-chip label="Amy Elsner" image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" alt="Avatar image" />
-            <p-chip label="Asiya Javayant" image="https://exhaustive-ui.e-xiste.com/demo/avatar/asiyajavayant.png" alt="Avatar image" />
-            <p-chip label="Onyama Limba" image="https://exhaustive-ui.e-xiste.com/demo/avatar/onyamalimba.png" alt="Avatar image" />
-            <p-chip label="Xuxue Feng" image="https://exhaustive-ui.e-xiste.com/demo/avatar/xuxuefeng.png" alt="Avatar image" [removable]="true" />
+            <p-chip label="Amy Elsner" image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" alt="Avatar image" />
+            <p-chip label="Asiya Javayant" image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" alt="Avatar image" />
+            <p-chip label="Onyama Limba" image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" alt="Avatar image" />
+            <p-chip label="Xuxue Feng" image="https://exhaustive-ui.com/demo/avatar/xuxuefeng.png" alt="Avatar image" [removable]="true" />
         </div>
         <app-code></app-code>
     `

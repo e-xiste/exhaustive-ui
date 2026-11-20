@@ -55,7 +55,7 @@ export class ButtonStyle extends BaseStyle {
  *
  * Button is an extension to standard button element with icons and theming.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/button/)
+ * [Live Demo](https://exhaustive-ui.com/button/)
  *
  * @module buttonstyle
  *

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://exhaustive-ui.e-xiste.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
+  <img src="https://exhaustive-ui.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
 
   <h1>ExhaustiveUI</h1>
   <p><strong>A rich set of open-source UI Components for Angular</strong></p>
@@ -77,7 +77,7 @@ export class AppComponent {}
 
 For detailed documentation, interactive component demos, theming guides, and more, please visit the official website:
 
-**[ExhaustiveUI Documentation](https://exhaustive-ui.e-xiste.com/)**
+**[ExhaustiveUI Documentation](https://exhaustive-ui.com/)**
 
 
 ## 🤝 Contributing

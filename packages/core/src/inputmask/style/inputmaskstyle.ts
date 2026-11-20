@@ -64,7 +64,7 @@ export class InputMaskStyle extends BaseStyle {
  *
  * InputMask component is used to enter input in a certain format such as numeric, date, currency, email and phone.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/inputmask/)
+ * [Live Demo](https://exhaustive-ui.com/inputmask/)
  *
  * @module inputmaskstyle
  *

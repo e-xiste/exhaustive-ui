@@ -99,7 +99,7 @@ export class PasswordStyle extends BaseStyle {
  *
  * Password displays strength indicator for password fields.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/password/)
+ * [Live Demo](https://exhaustive-ui.com/password/)
  *
  * @module passwordstyle
  *

@@ -31,7 +31,7 @@ export class SkeletonStyle extends BaseStyle {
  *
  * Skeleton is a placeholder to display instead of the actual content.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/skeleton/)
+ * [Live Demo](https://exhaustive-ui.com/skeleton/)
  *
  * @module skeletonstyle
  *

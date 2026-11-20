@@ -60,7 +60,7 @@ export class BadgeStyle extends BaseStyle {
  *
  * Badge represents people using icons, labels and images.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/badge)
+ * [Live Demo](https://exhaustive-ui.com/badge)
  *
  * @module badgestyle
  *

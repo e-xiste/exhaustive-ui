@@ -33,7 +33,7 @@ export class ColorPickerStyle extends BaseStyle {
  *
  * ColorPicker groups a collection of contents in tabs.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/colorpicker/)
+ * [Live Demo](https://exhaustive-ui.com/colorpicker/)
  *
  * @module colorpickerstyle
  *

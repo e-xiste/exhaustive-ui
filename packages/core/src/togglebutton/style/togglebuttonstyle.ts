@@ -47,7 +47,7 @@ export class ToggleButtonStyle extends BaseStyle {
  *
  * ToggleButton is used to select a boolean value using a button.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/togglebutton/)
+ * [Live Demo](https://exhaustive-ui.com/togglebutton/)
  *
  * @module togglebuttonstyle
  *

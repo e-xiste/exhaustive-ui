@@ -48,7 +48,7 @@ export declare namespace OverlayBadgeTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface OverlayBadgeDesignTokens extends DesignTokens<OverlayBadgeDesignTokens> {

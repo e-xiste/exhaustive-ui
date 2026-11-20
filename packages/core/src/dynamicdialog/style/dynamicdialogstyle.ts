@@ -10,7 +10,7 @@ export class DynamicDialogStyle extends DialogStyle {
  *
  * DynamicDialog is a container to display content in an overlay window.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/dynamicdialog)
+ * [Live Demo](https://exhaustive-ui.com/dynamicdialog)
  *
  * @module dynamicdialogstyle
  *

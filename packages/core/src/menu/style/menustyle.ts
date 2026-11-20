@@ -47,7 +47,7 @@ export class MenuStyle extends BaseStyle {
  *
  * Menu is a navigation / command component that supports dynamic and static positioning.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/menu/)
+ * [Live Demo](https://exhaustive-ui.com/menu/)
  *
  * @module menustyle
  *

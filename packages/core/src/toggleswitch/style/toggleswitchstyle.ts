@@ -45,7 +45,7 @@ export class ToggleSwitchStyle extends BaseStyle {
  *
  * ToggleSwitch is used to select a boolean value.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/toggleswitch/)
+ * [Live Demo](https://exhaustive-ui.com/toggleswitch/)
  *
  * @module toggleswitchstyle
  *

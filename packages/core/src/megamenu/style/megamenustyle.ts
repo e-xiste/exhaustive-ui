@@ -93,7 +93,7 @@ export class MegaMenuStyle extends BaseStyle {
  *
  * MegaMenu is navigation component that displays submenus together.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/megamenu/)
+ * [Live Demo](https://exhaustive-ui.com/megamenu/)
  *
  * @module megamenustyle
  *

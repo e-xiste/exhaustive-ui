@@ -207,7 +207,7 @@ describe('resolveConfig', () => {
     it('applies defaults and parses the environment', () => {
         const config = resolveConfig({});
 
-        expect(config.docsUrl).toBe('https://exhaustive-ui.e-xiste.com');
+        expect(config.docsUrl).toBe('https://exhaustive-ui.com');
         expect(config.cacheTtlMs).toBe(15 * 60 * 1000);
         expect(config.fetchTimeoutMs).toBe(10000);
         expect(config.offline).toBe(false);

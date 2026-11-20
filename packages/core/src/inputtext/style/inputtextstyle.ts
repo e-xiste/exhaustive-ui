@@ -42,7 +42,7 @@ export class InputTextStyle extends BaseStyle {
  *
  * InputText renders a text field to enter data.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/inputtext/)
+ * [Live Demo](https://exhaustive-ui.com/inputtext/)
  *
  * @module inputtextstyle
  *

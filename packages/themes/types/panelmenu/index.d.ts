@@ -196,7 +196,7 @@ export declare namespace PanelMenuTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface PanelMenuDesignTokens extends DesignTokens<PanelMenuDesignTokens> {

@@ -46,7 +46,7 @@ export class BaseIconStyle extends BaseStyle {
 }
 /**
  *
- * [Live Demo](https:/exhaustive-ui.e-xiste.com/)
+ * [Live Demo](https:/exhaustive-ui.com/)
  *
  * @module baseiconstyle
  *

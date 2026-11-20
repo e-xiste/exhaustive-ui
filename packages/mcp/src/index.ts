@@ -20,7 +20,7 @@ The server speaks MCP over stdio; register it in your MCP client, for example:
   claude mcp add exhaustive-ui -- npx -y @exhaustive-ui/mcp
 
 Environment variables:
-  EXHAUSTIVE_UI_DOCS_URL           Docs site to read from (default https://exhaustive-ui.e-xiste.com)
+  EXHAUSTIVE_UI_DOCS_URL           Docs site to read from (default https://exhaustive-ui.com)
   EXHAUSTIVE_UI_MCP_CACHE_TTL      Seconds a fetched document is reused (default 900)
   EXHAUSTIVE_UI_MCP_FETCH_TIMEOUT  Milliseconds before a request to the docs site is abandoned (default 10000)
   EXHAUSTIVE_UI_MCP_OFFLINE        Set to 1 to only use the offline snapshot bundled with the package

@@ -1041,14 +1041,14 @@ function generateMarkdownOutput(components, apiDocs, guidePages = []) {
 function generateLlmsTxt(components, pages = []) {
     let content = '# ExhaustiveUI\n\n';
     content += '> A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.\n\n';
-    content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.e-xiste.com/llms/manifest.json\n\n';
+    content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.com/llms/manifest.json\n\n';
 
     // Add Guides section
     if (pages.length > 0) {
         content += '## Guides\n\n';
 
         for (const page of pages) {
-            content += `- [${page.title}](https://exhaustive-ui.e-xiste.com/${page.route}): ${page.description}\n`;
+            content += `- [${page.title}](https://exhaustive-ui.com/${page.route}): ${page.description}\n`;
         }
 
         content += '\n';
@@ -1061,7 +1061,7 @@ function generateLlmsTxt(components, pages = []) {
 
     for (const comp of sorted) {
         const route = COMPONENT_ROUTE_MAP[comp.name] ?? comp.name;
-        content += `- [${comp.title}](https://exhaustive-ui.e-xiste.com/${route}): ${comp.description}\n`;
+        content += `- [${comp.title}](https://exhaustive-ui.com/${route}): ${comp.description}\n`;
     }
 
     const outputPath = path.join(OUTPUT_DIR, 'llms.txt');

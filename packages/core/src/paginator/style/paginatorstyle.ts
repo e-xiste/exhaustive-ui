@@ -61,7 +61,7 @@ export class PaginatorStyle extends BaseStyle {
  *
  * Paginator is a generic component to display content in paged format.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/paginator)
+ * [Live Demo](https://exhaustive-ui.com/paginator)
  *
  * @module paginatorstyle
  *

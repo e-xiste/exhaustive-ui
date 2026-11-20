@@ -26,7 +26,7 @@ export class EditorStyle extends BaseStyle {
  *
  * Editor groups a collection of contents in tabs.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/editor/)
+ * [Live Demo](https://exhaustive-ui.com/editor/)
  *
  * @module editorstyle
  *

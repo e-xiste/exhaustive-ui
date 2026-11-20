@@ -48,7 +48,7 @@ export class ButtonGroupStyle extends BaseStyle {
  *
  * A set of Buttons can be displayed together using the ButtonGroup component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/button/)
+ * [Live Demo](https://exhaustive-ui.com/button/)
  *
  * @module buttongroupstyle
  *

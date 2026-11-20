@@ -5,7 +5,7 @@ import { collectApi, PACKAGE_NAME } from './manifest/api.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SITE_URL = 'https://exhaustive-ui.e-xiste.com';
+const SITE_URL = 'https://exhaustive-ui.com';
 const SCHEMA_VERSION = 1;
 const LIB_DIR = path.resolve(__dirname, '../../../packages/core');
 const API_DOC_PATH = path.resolve(__dirname, '../doc/apidoc/index.json');

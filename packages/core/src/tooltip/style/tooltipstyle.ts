@@ -21,7 +21,7 @@ export class TooltipStyle extends BaseStyle {
  *
  * Tooltip directive provides advisory information for a component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/tooltip)
+ * [Live Demo](https://exhaustive-ui.com/tooltip)
  *
  * @module tooltipstyle
  *

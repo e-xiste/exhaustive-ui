@@ -84,7 +84,7 @@ export class ListBoxStyle extends BaseStyle {
  *
  * ListBox is used to select one or more values from a list of items.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/listbox/)
+ * [Live Demo](https://exhaustive-ui.com/listbox/)
  *
  * @module listboxstyle
  *

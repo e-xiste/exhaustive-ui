@@ -68,7 +68,7 @@ export class InputNumberStyle extends BaseStyle {
  *
  * InputNumber is an input component to provide numerical input.
  *
- * [Live Demo](https:/exhaustive-ui.e-xiste.com/inputnumber/)
+ * [Live Demo](https:/exhaustive-ui.com/inputnumber/)
  *
  * @module inputnumberstyle
  *

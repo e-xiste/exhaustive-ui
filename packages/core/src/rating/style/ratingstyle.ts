@@ -44,7 +44,7 @@ export class RatingStyle extends BaseStyle {
  *
  * Rating component is a star based selection input.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/rating/)
+ * [Live Demo](https://exhaustive-ui.com/rating/)
  *
  * @module ratingstyle
  *

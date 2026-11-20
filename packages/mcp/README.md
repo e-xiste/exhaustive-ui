@@ -1,6 +1,6 @@
 # @exhaustive-ui/mcp
 
-[Model Context Protocol](https://modelcontextprotocol.io/) server for the [ExhaustiveUI](https://exhaustive-ui.e-xiste.com) Angular component library (`@exhaustive-ui/core`).
+[Model Context Protocol](https://modelcontextprotocol.io/) server for the [ExhaustiveUI](https://exhaustive-ui.com) Angular component library (`@exhaustive-ui/core`).
 
 It gives coding agents (Claude Code, Cursor, Claude Desktop, VS Code, Codex...) tools to read the ExhaustiveUI documentation and compiled API instead of guessing from PrimeNG memory: list and search components, read a component's docs and API, fetch complete code examples, read the setup guides and validate Angular templates against the real inputs, outputs and allowed values.
 
@@ -120,7 +120,7 @@ Prompts: `use_component`, `build_form`, `theme_component`, `migrate_from_primeng
 
 ## Where the docs come from
 
-The docs site publishes machine-readable documentation under [`/llms/`](https://exhaustive-ui.e-xiste.com/llms): `llms.txt`, `llms-full.txt`, `manifest.json` (compiled selectors, inputs, outputs, templates, PT keys of every entry point), `components.json` (sections, examples and API of every component, plus the guides), and one Markdown file per component and guide.
+The docs site publishes machine-readable documentation under [`/llms/`](https://exhaustive-ui.com/llms): `llms.txt`, `llms-full.txt`, `manifest.json` (compiled selectors, inputs, outputs, templates, PT keys of every entry point), `components.json` (sections, examples and API of every component, plus the guides), and one Markdown file per component and guide.
 
 The server reads these files from the live site at runtime and keeps them in memory for 15 minutes, so it always reflects the deployed documentation without republishing the package. A snapshot of the same files is bundled in the package (`data/`) and used when the site cannot be reached; after a connection failure the site is not retried for a minute so an offline session stays responsive. The `version` tool reports which source answered.
 
@@ -128,7 +128,7 @@ The server reads these files from the live site at runtime and keeps them in mem
 
 | Variable                          | Default                             | Purpose                                                                        |
 | --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------ |
-| `EXHAUSTIVE_UI_DOCS_URL`          | `https://exhaustive-ui.e-xiste.com` | Docs site to read from, for instance a local `ng serve` of the docs app.       |
+| `EXHAUSTIVE_UI_DOCS_URL`          | `https://exhaustive-ui.com` | Docs site to read from, for instance a local `ng serve` of the docs app.       |
 | `EXHAUSTIVE_UI_MCP_CACHE_TTL`     | `900`                               | Seconds a fetched document is reused before it is fetched again.               |
 | `EXHAUSTIVE_UI_MCP_FETCH_TIMEOUT` | `10000`                             | Milliseconds before a request to the docs site is abandoned.                   |
 | `EXHAUSTIVE_UI_MCP_OFFLINE`       | unset                               | Set to `1` to never contact the site and only use the bundled snapshot.        |
@@ -158,8 +158,8 @@ pnpm --filter @exhaustive-ui/mcp test    # vitest, against the fixture snapshot 
 
 ## Links
 
-- [ExhaustiveUI documentation](https://exhaustive-ui.e-xiste.com/)
-- [LLM documentation endpoints](https://exhaustive-ui.e-xiste.com/llms)
+- [ExhaustiveUI documentation](https://exhaustive-ui.com/)
+- [LLM documentation endpoints](https://exhaustive-ui.com/llms)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [GitHub repository](https://github.com/e-xiste/exhaustive-ui)
 

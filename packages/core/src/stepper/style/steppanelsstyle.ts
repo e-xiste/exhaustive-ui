@@ -16,7 +16,7 @@ export class StepPanelsStyle extends BaseStyle {
  *
  * StepPanel is a helper component for Stepper component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/stepper/)
+ * [Live Demo](https://exhaustive-ui.com/stepper/)
  *
  * @module steppanelsstyle
  *

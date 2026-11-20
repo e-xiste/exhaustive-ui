@@ -127,7 +127,7 @@ export class DatePickerStyle extends BaseStyle {
  *
  * DatePicker is a form component to work with dates.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/datepicker/)
+ * [Live Demo](https://exhaustive-ui.com/datepicker/)
  *
  * @module datepickerstyle
  *

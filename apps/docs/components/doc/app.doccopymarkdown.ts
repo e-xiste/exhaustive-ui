@@ -33,7 +33,7 @@ export class AppDocCopyMarkdown implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
             return this.document.location.origin;
         }
-        return 'https://exhaustive-ui.e-xiste.com';
+        return 'https://exhaustive-ui.com';
     }
 
     get currentComponentName(): string {

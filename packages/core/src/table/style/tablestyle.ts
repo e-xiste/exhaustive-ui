@@ -257,7 +257,7 @@ export class TableStyle extends BaseStyle {
  *
  * DataTable displays data in tabular format.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/table/)
+ * [Live Demo](https://exhaustive-ui.com/table/)
  *
  * @module tablestyle
  *

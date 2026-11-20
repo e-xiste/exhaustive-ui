@@ -28,7 +28,7 @@ export class SplitterStyle extends BaseStyle {
  *
  * Splitter is utilized to separate and resize panels.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/splitter/)
+ * [Live Demo](https://exhaustive-ui.com/splitter/)
  *
  * @module splitterstyle
  *

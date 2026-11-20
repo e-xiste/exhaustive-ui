@@ -34,7 +34,7 @@ export class FileUploadStyle extends BaseStyle {
  *
  * FileUpload is an advanced uploader with dragdrop support, multi file uploads, auto uploading, progress tracking and validations.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/fileupload/)
+ * [Live Demo](https://exhaustive-ui.com/fileupload/)
  *
  * @module fileuploadstyle
  *

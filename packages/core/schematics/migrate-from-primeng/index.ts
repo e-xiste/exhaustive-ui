@@ -183,7 +183,7 @@ function isLockfile(path: string): boolean {
     return LOCKFILE_NAMES.has(basename);
 }
 
-const MIGRATION_GUIDE_URL = 'https://exhaustive-ui.e-xiste.com/migration/primeng';
+const MIGRATION_GUIDE_URL = 'https://exhaustive-ui.com/migration/primeng';
 
 function reportLeftovers(tree: Tree, context: SchematicContext, isIgnored: IgnoreMatcher): void {
     const leftovers: string[] = [];

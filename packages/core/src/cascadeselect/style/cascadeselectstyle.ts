@@ -87,7 +87,7 @@ export class CascadeSelectStyle extends BaseStyle {
  *
  * CascadeSelect is a form component to select a value from a nested structure of options.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/cascadeselect/)
+ * [Live Demo](https://exhaustive-ui.com/cascadeselect/)
  *
  * @module cascadeselectstyle
  *

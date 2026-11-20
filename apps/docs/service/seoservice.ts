@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
-export const SITE_URL = 'https://exhaustive-ui.e-xiste.com';
+export const SITE_URL = 'https://exhaustive-ui.com';
 
 /**
  * Keeps the canonical link and the URL/title-derived Open Graph tags in sync

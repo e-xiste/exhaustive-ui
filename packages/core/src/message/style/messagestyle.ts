@@ -25,7 +25,7 @@ export class MessageStyle extends BaseStyle {
  *
  * Message groups a collection of contents in tabs.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/message/)
+ * [Live Demo](https://exhaustive-ui.com/message/)
  *
  * @module messagestyle
  *

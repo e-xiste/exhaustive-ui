@@ -23,7 +23,7 @@ export class ConfirmDialogStyle extends BaseStyle {
  *
  * ConfirmDialog uses a Dialog UI with confirmDialog method or <ConfirmDialog> tag.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/confirmdialog)
+ * [Live Demo](https://exhaustive-ui.com/confirmdialog)
  *
  * @module confirmdialogstyle
  *

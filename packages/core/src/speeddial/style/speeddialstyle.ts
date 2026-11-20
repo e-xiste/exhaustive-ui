@@ -51,7 +51,7 @@ export class SpeedDialStyle extends BaseStyle {
  *
  * When pressed, a floating action button can display multiple primary actions that can be performed on a page.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/speeddial/)
+ * [Live Demo](https://exhaustive-ui.com/speeddial/)
  *
  * @module speeddialstyle
  *

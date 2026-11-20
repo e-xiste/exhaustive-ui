@@ -43,7 +43,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
             <p-button [pTooltip]="tooltipContent" severity="secondary" tooltipPosition="bottom" label="Button" />
             <ng-template #tooltipContent>
                 <div class="flex items-center">
-                    <img src="https://exhaustive-ui.e-xiste.com/logo-icon.svg" alt="ExhaustiveUI" width="32" height="32" class="mr-2" />
+                    <img src="https://exhaustive-ui.com/logo-icon.svg" alt="ExhaustiveUI" width="32" height="32" class="mr-2" />
                     <span> <b>ExhaustiveUI</b> rocks! </span>
                 </div>
             </ng-template>

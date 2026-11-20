@@ -48,7 +48,7 @@ export class TreeStyle extends BaseStyle {
  *
  * Tree is used to display hierarchical data.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/tree/)
+ * [Live Demo](https://exhaustive-ui.com/tree/)
  *
  * @module treestyle
  *

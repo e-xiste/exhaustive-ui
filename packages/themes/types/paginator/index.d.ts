@@ -177,7 +177,7 @@ export declare namespace PaginatorTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface PaginatorDesignTokens extends DesignTokens<PaginatorDesignTokens> {

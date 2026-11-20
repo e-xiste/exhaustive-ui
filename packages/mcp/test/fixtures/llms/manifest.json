@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "package": "@exhaustive-ui/core",
   "version": "3.0.0-alpha.0",
-  "site": "https://exhaustive-ui.e-xiste.com",
+  "site": "https://exhaustive-ui.com",
   "entryPoints": [
     {
       "name": "button",

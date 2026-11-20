@@ -32,7 +32,7 @@ export class FieldsetStyle extends BaseStyle {
  *
  * Fieldset is a grouping component with the optional content toggle feature.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/fieldset/)
+ * [Live Demo](https://exhaustive-ui.com/fieldset/)
  *
  * @module fieldsetstyle
  *

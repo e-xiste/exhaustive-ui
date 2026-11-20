@@ -101,7 +101,7 @@ export class AutoCompleteStyle extends BaseStyle {
  *
  * AutoComplete is an input component that provides real-time suggestions while being typed.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/autocomplete/)
+ * [Live Demo](https://exhaustive-ui.com/autocomplete/)
  *
  * @module autocompletestyle
  *

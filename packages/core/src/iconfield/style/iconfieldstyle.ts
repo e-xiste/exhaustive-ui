@@ -25,7 +25,7 @@ export class IconFieldStyle extends BaseStyle {
  *
  * IconField wraps an input and an icon.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/iconfield/)
+ * [Live Demo](https://exhaustive-ui.com/iconfield/)
  *
  * @module iconfieldstyle
  *

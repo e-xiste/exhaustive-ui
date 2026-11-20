@@ -30,7 +30,7 @@ export class SplitButtonStyle extends BaseStyle {
  *
  * SplitButton groups a set of commands in an overlay with a default command.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/splitbutton/)
+ * [Live Demo](https://exhaustive-ui.com/splitbutton/)
  *
  * @module splitbuttonstyle
  *

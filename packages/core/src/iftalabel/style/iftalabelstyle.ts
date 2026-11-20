@@ -28,7 +28,7 @@ export class IftaLabelStyle extends BaseStyle {
  *
  * IftaLabel visually integrates a label within its form element.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/iftalabel/)
+ * [Live Demo](https://exhaustive-ui.com/iftalabel/)
  *
  * @module iftalabelstyle
  *

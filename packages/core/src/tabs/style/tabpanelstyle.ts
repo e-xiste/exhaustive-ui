@@ -21,7 +21,7 @@ export class TabPanelStyle extends BaseStyle {
  *
  * Tab is a helper component for Tabs component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/tabs/)
+ * [Live Demo](https://exhaustive-ui.com/tabs/)
  *
  * @module tabstyle
  *

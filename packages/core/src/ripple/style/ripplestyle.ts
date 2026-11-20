@@ -40,7 +40,7 @@ export class RippleStyle extends BaseStyle {
  *
  * Ripple directive adds ripple effect to the host element.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/ripple)
+ * [Live Demo](https://exhaustive-ui.com/ripple)
  *
  * @module ripplestyle
  *

@@ -27,7 +27,7 @@ export class ProgressBarStyle extends BaseStyle {
  *
  * ProgressBar is a process status indicator.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/progressbar)
+ * [Live Demo](https://exhaustive-ui.com/progressbar)
  *
  * @module progressbarstyle
  *

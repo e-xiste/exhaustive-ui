@@ -20,7 +20,7 @@ interface UploadEvent {
         </app-docsectiontext>
         <div class="card">
             <p-toast />
-            <p-fileupload name="demo[]" url="https://exhaustive-ui.e-xiste.com/api/upload" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
+            <p-fileupload name="demo[]" url="https://exhaustive-ui.com/api/upload" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
                 <ng-template #empty>
                     <div>Drag and drop files to here to upload.</div>
                 </ng-template>

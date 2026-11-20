@@ -20,7 +20,7 @@ export class ScrollTopStyle extends BaseStyle {
  *
  * ScrollTop gets displayed after a certain scroll position and used to navigates to the top of the page quickly.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/scrolltop/)
+ * [Live Demo](https://exhaustive-ui.com/scrolltop/)
  *
  * @module scrolltopstyle
  *

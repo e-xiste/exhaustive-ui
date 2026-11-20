@@ -20,7 +20,7 @@ export class ImageCompareStyle extends BaseStyle {
  *
  * ImageCompare compares two images side by side with a slider.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/imagecompare/)
+ * [Live Demo](https://exhaustive-ui.com/imagecompare/)
  *
  * @module imagecomparestyle
  *

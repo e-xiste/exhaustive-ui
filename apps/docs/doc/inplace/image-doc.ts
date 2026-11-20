@@ -20,7 +20,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     </span>
                 </ng-template>
                 <ng-template #content>
-                    <img class="w-full sm:w-80 shadow-md" src="https://exhaustive-ui.e-xiste.com/demo/galleria/galleria5.jpg" alt="Nature" />
+                    <img class="w-full sm:w-80 shadow-md" src="https://exhaustive-ui.com/demo/galleria/galleria5.jpg" alt="Nature" />
                 </ng-template>
             </p-inplace>
         </div>

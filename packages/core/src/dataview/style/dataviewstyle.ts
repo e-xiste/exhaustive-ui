@@ -33,7 +33,7 @@ export class DataViewStyle extends BaseStyle {
  *
  * DataView displays data in grid or list layout with pagination and sorting features.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/dataview/)
+ * [Live Demo](https://exhaustive-ui.com/dataview/)
  *
  * @module dataviewstyle
  *

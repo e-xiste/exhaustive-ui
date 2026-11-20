@@ -21,7 +21,7 @@ export class TabListStyle extends BaseStyle {
  *
  * Tabs facilitates seamless switching between different views.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/tabs/)
+ * [Live Demo](https://exhaustive-ui.com/tabs/)
  *
  * @module tabliststyle
  *

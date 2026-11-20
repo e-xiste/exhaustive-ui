@@ -55,7 +55,7 @@ export class AccordionStyle extends BaseStyle {
  *
  * Accordion groups a collection of contents in tabs.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/accordion/)
+ * [Live Demo](https://exhaustive-ui.com/accordion/)
  *
  * @module accordionstyle
  *

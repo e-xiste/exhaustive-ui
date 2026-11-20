@@ -50,7 +50,7 @@ export class MenuBarStyle extends BaseStyle {
  *
  * Menubar is a horizontal menu component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/menubar/)
+ * [Live Demo](https://exhaustive-ui.com/menubar/)
  *
  * @module menubarstyle
  *

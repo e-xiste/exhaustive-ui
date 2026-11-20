@@ -43,7 +43,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     width: 100%;
                     height: 450px;
                     position: relative;
-                    background-image: url('https://exhaustive-ui.e-xiste.com/demo/dock/window.jpg');
+                    background-image: url('https://exhaustive-ui.com/demo/dock/window.jpg');
                     background-repeat: no-repeat;
                     background-size: cover;
                 }
@@ -83,19 +83,19 @@ export class BasicDoc implements OnInit {
         this.items = [
             {
                 label: 'Finder',
-                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/finder.svg'
+                icon: 'https://exhaustive-ui.com/demo/dock/finder.svg'
             },
             {
                 label: 'App Store',
-                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/appstore.svg'
+                icon: 'https://exhaustive-ui.com/demo/dock/appstore.svg'
             },
             {
                 label: 'Photos',
-                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/photos.svg'
+                icon: 'https://exhaustive-ui.com/demo/dock/photos.svg'
             },
             {
                 label: 'Trash',
-                icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/trash.png'
+                icon: 'https://exhaustive-ui.com/demo/dock/trash.png'
             }
         ];
     }

@@ -411,7 +411,7 @@ export declare namespace MultiSelectTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface MultiSelectDesignTokens extends DesignTokens<MultiSelectDesignTokens> {

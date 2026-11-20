@@ -36,7 +36,7 @@ export class ChipStyle extends BaseStyle {
  *
  * Chip represents people using icons, labels and images.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/chip)
+ * [Live Demo](https://exhaustive-ui.com/chip)
  *
  * @module chipstyle
  *

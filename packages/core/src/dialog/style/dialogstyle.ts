@@ -70,7 +70,7 @@ export class DialogStyle extends BaseStyle {
  *
  * Dialog is a container to display content in an overlay window.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/dialog)
+ * [Live Demo](https://exhaustive-ui.com/dialog)
  *
  * @module dialogstyle
  *

@@ -27,7 +27,7 @@ export class TerminalStyle extends BaseStyle {
  *
  * Terminal is a text based user interface.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/terminal)
+ * [Live Demo](https://exhaustive-ui.com/terminal)
  *
  * @module terminalstyle
  *

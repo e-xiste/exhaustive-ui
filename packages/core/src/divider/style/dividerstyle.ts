@@ -40,7 +40,7 @@ export class DividerStyle extends BaseStyle {
  *
  * Divider is used to separate contents.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/divider)
+ * [Live Demo](https://exhaustive-ui.com/divider)
  *
  * @module dividerstyle
  *

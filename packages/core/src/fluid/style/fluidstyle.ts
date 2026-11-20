@@ -16,7 +16,7 @@ export class FluidStyle extends BaseStyle {
  *
  * Fluid is a layout component to make descendant components span full width of their container.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/fluid/)
+ * [Live Demo](https://exhaustive-ui.com/fluid/)
  *
  * @module fluidstyle
  *

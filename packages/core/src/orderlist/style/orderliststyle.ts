@@ -29,7 +29,7 @@ export class OrderListStyle extends BaseStyle {
  *
  * OrderList is used to maneged the order of a collection.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/orderlist)
+ * [Live Demo](https://exhaustive-ui.com/orderlist)
  *
  * @module orderliststyle
  *

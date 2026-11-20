@@ -1280,7 +1280,7 @@ export declare namespace ButtonTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface ButtonDesignTokens extends DesignTokens<ButtonDesignTokens> {

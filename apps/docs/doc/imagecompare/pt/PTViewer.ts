@@ -11,10 +11,10 @@ import { ImageCompareModule } from '@exhaustive-ui/core/imagecompare';
         <app-docptviewer [docs]="docs">
             <p-imagecompare>
                 <ng-template #left>
-                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island1.jpg" />
+                    <img src="https://exhaustive-ui.com/demo/compare/island1.jpg" />
                 </ng-template>
                 <ng-template #right>
-                    <img src="https://exhaustive-ui.e-xiste.com/demo/compare/island2.jpg" />
+                    <img src="https://exhaustive-ui.com/demo/compare/island2.jpg" />
                 </ng-template>
             </p-imagecompare>
         </app-docptviewer>

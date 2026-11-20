@@ -50,7 +50,7 @@ export class TieredMenuStyle extends BaseStyle {
  *
  * TieredMenu displays submenus in nested overlays.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/menu/)
+ * [Live Demo](https://exhaustive-ui.com/menu/)
  *
  * @module tieredmenustyle
  *

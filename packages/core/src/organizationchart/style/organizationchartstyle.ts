@@ -31,7 +31,7 @@ export class OrganizationChartStyle extends BaseStyle {
  *
  * OrganizationChart visualizes hierarchical organization data.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/organizationchart)
+ * [Live Demo](https://exhaustive-ui.com/organizationchart)
  *
  * @module organizationchartstyle
  *

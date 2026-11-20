@@ -38,7 +38,7 @@ export class MeterGroupStyle extends BaseStyle {
  *
  * MeterGroup is a group of process status indicators.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/metergroup)
+ * [Live Demo](https://exhaustive-ui.com/metergroup)
  *
  * @module metergroupstyle
  *

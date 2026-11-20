@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-organization-chart [value]="data" [collapsible]="true">
                 <ng-template let-node pTemplate="default">
                     <div class="flex flex-col items-center">
-                        <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [alt]="node.label" [class]="'flag' + ' flag-' + node.data" width="32" />
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [alt]="node.label" [class]="'flag' + ' flag-' + node.data" width="32" />
                         <div class="mt-4 font-medium text-lg">{{ node.label }}</div>
                     </div>
                 </ng-template>

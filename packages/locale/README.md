@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="https://exhaustive-ui.e-xiste.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
+  <img src="https://exhaustive-ui.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
 </div>
 
 # ExhaustiveUI Locale
 
-i18n and l7n locales for the components of [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/), vendored from the community supported [PrimeLocale](https://github.com/primefaces/primelocale) repository.
+i18n and l7n locales for the components of [ExhaustiveUI](https://exhaustive-ui.com/), vendored from the community supported [PrimeLocale](https://github.com/primefaces/primelocale) repository.
 
 ## Installation
 

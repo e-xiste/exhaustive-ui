@@ -29,7 +29,7 @@ export class AvatarStyle extends BaseStyle {
  *
  * Avatar represents people using icons, labels and images.
  *
- * - [Live Demo](https://exhaustive-ui.e-xiste.com/avatar)
+ * - [Live Demo](https://exhaustive-ui.com/avatar)
  *
  * @module avatarstyle
  *

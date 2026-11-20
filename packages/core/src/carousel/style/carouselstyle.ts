@@ -67,7 +67,7 @@ export class CarouselStyle extends BaseStyle {
  *
  * Carousel is a content slider featuring various customization options.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/carousel/)
+ * [Live Demo](https://exhaustive-ui.com/carousel/)
  *
  * @module carouselstyle
  *

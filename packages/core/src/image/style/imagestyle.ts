@@ -44,7 +44,7 @@ export class ImageStyle extends BaseStyle {
  *
  * Displays an image with preview and tranformation options. For multiple image, see Galleria.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/image/)
+ * [Live Demo](https://exhaustive-ui.com/image/)
  *
  * @module imagestyle
  *

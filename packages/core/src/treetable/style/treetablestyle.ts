@@ -589,7 +589,7 @@ export class TreeTableStyle extends BaseStyle {
  *
  * TreeTable is used to display hierarchical data in tabular format.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/treetable/)
+ * [Live Demo](https://exhaustive-ui.com/treetable/)
  *
  * @module treetablestyle
  *

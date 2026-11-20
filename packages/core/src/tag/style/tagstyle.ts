@@ -32,7 +32,7 @@ export class TagStyle extends BaseStyle {
  *
  * Tag component is used to categorize content.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/tag)
+ * [Live Demo](https://exhaustive-ui.com/tag)
  *
  * @module tagstyle
  *

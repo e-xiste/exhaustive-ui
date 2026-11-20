@@ -82,7 +82,7 @@ export declare namespace PopoverTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface PopoverDesignTokens extends DesignTokens<PopoverDesignTokens> {

@@ -269,7 +269,7 @@ describe('migrate-from-primeng', () => {
         expect(combined).toContain('1 reference in 1 file');
         expect(combined).toContain('still need manual review');
         expect(combined).toContain('CREATE/UPDATE');
-        expect(combined).toContain('https://exhaustive-ui.e-xiste.com/migration/primeng');
+        expect(combined).toContain('https://exhaustive-ui.com/migration/primeng');
     });
 
     it('says so when there is nothing left to review', async () => {

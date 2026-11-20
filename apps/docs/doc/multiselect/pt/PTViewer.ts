@@ -24,7 +24,7 @@ import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
             >
                 <ng-template #group let-group>
                     <div class="flex items-center">
-                        <img [alt]="group.label" src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + group.code.toLowerCase() + ' mr-2'" style="width: 18px" />
+                        <img [alt]="group.label" src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + group.code.toLowerCase() + ' mr-2'" style="width: 18px" />
                         <div>{{ group.label }}</div>
                     </div>
                 </ng-template>

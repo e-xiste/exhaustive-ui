@@ -25,7 +25,7 @@ export class TimelineStyle extends BaseStyle {
  *
  * Timeline visualizes a series of chained events.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/timeline)
+ * [Live Demo](https://exhaustive-ui.com/timeline)
  *
  * @module timelinestyle
  *

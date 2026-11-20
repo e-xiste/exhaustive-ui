@@ -28,7 +28,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
 })
 export class AgentSkillDoc {
     code: Code = {
-        command: `npx skills add https://exhaustive-ui.e-xiste.com
+        command: `npx skills add https://exhaustive-ui.com
 
 # update to the latest docs
 npx skills update exhaustive-ui`

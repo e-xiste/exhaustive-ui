@@ -29,7 +29,7 @@ export class StepsStyle extends BaseStyle {
  *
  * Steps components is an indicator for the steps in a wizard workflow. Example below uses nested routes with Steps.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/steps/)
+ * [Live Demo](https://exhaustive-ui.com/steps/)
  *
  * @module stepsstyle
  *

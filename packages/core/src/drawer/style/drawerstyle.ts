@@ -123,7 +123,7 @@ export class DrawerStyle extends BaseStyle {
  *
  * Drawer is a panel component displayed as an overlay at the edges of the screen.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/drawer)
+ * [Live Demo](https://exhaustive-ui.com/drawer)
  *
  * @module drawerstyle
  *

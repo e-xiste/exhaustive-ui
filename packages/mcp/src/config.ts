@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-export const DEFAULT_DOCS_URL = 'https://exhaustive-ui.e-xiste.com';
+export const DEFAULT_DOCS_URL = 'https://exhaustive-ui.com';
 export const DEFAULT_CACHE_TTL_SECONDS = 15 * 60;
 export const DEFAULT_FETCH_TIMEOUT_MS = 10_000;
 export const RESOURCE_BASE_URI = 'exhaustive-ui://docs';

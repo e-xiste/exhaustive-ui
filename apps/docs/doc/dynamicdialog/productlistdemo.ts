@@ -27,7 +27,7 @@ import { TableModule } from '@exhaustive-ui/core/table';
                     <td>{{ product.code }}</td>
                     <td>{{ product.name }}</td>
                     <td>
-                        <img src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.image" class="w-16" />
+                        <img src="https://exhaustive-ui.com/demo/product/{{ product.image }}" [alt]="product.image" class="w-16" />
                     </td>
                     <td>{{ product.category }}</td>
                     <td>

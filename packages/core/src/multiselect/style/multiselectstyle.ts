@@ -82,7 +82,7 @@ export class MultiSelectStyle extends BaseStyle {
  *
  * MultiSelect is used to select multiple items from a collection.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/multiselect/)
+ * [Live Demo](https://exhaustive-ui.com/multiselect/)
  *
  * @module multiselectstyle
  *

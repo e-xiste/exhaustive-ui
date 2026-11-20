@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <span>Target Element</span>
             </div>
             <p-popover #op>
-                <img src="https://exhaustive-ui.e-xiste.com/demo/product/bamboo-watch.jpg" alt="product" />
+                <img src="https://exhaustive-ui.com/demo/product/bamboo-watch.jpg" alt="product" />
             </p-popover>
         </div>
         <app-code></app-code>

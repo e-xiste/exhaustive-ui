@@ -20,7 +20,7 @@ export class InputOtpStyle extends BaseStyle {
  *
  * InputOtp is used to enter one time passwords.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/inputotp/)
+ * [Live Demo](https://exhaustive-ui.com/inputotp/)
  *
  * @module inputotpstyle
  *

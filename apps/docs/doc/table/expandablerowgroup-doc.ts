@@ -33,7 +33,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         <tr>
                             <td colspan="5">
                                 <button type="button" pButton pRipple [pRowToggler]="customer" text rounded plain class="mr-2" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                                <img [alt]="customer.representative.name" src="https://exhaustive-ui.e-xiste.com/demo/avatar/{{ customer.representative.image }}" width="32" style="vertical-align: middle; display: inline-block" />
+                                <img [alt]="customer.representative.name" src="https://exhaustive-ui.com/demo/avatar/{{ customer.representative.image }}" width="32" style="vertical-align: middle; display: inline-block" />
                                 <span class="font-bold ml-2">{{ customer.representative.name }}</span>
                             </td>
                         </tr>
@@ -51,7 +51,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
+                                    <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
                                     <span>{{ customer.country.name }}</span>
                                 </div>
                             </td>

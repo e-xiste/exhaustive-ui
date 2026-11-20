@@ -94,7 +94,7 @@ export class ScrollerStyle extends BaseStyle {
  *
  * VirtualScroller is a performant approach to handle huge data efficiently.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/scroller/)
+ * [Live Demo](https://exhaustive-ui.com/scroller/)
  *
  * @module scrollerstyle
  *

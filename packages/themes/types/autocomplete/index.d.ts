@@ -462,7 +462,7 @@ export declare namespace AutoCompleteTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface AutoCompleteDesignTokens extends DesignTokens<AutoCompleteDesignTokens> {

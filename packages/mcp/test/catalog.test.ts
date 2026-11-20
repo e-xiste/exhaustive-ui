@@ -14,7 +14,7 @@ describe('buildCatalog', () => {
         const catalog = await loadCatalog();
 
         expect(catalog.libraryVersion).toBe('3.0.0-alpha.0');
-        expect(catalog.site).toBe('https://exhaustive-ui.e-xiste.com');
+        expect(catalog.site).toBe('https://exhaustive-ui.com');
         expect(catalog.components.map((component) => component.name)).toEqual(['button', 'inputtext', 'select', 'tabs', 'tooltip']);
         expect(catalog.guides.map((guide) => guide.route)).toEqual(['/installation', '/configuration', '/theming/styled', '/tailwind']);
         expect(catalog.directives.map((directive) => directive.selector)).toEqual(['[pButton]', '[pButtonIcon]', '[pButtonLabel]', '[pInputText]', '[pTooltip]']);
@@ -34,8 +34,8 @@ describe('buildCatalog', () => {
         expect(button.modules).toEqual(['ButtonModule']);
         expect(button.resourceUri).toBe('exhaustive-ui://docs/components/button.md');
         expect(button.apiResourceUri).toBe('exhaustive-ui://docs/components/button/api.json');
-        expect(button.publicUrl).toBe('https://exhaustive-ui.e-xiste.com/button');
-        expect(button.markdownUrl).toBe('https://exhaustive-ui.e-xiste.com/llms/components/button.md');
+        expect(button.publicUrl).toBe('https://exhaustive-ui.com/button');
+        expect(button.markdownUrl).toBe('https://exhaustive-ui.com/llms/components/button.md');
         expect(button.docPath).toBe('components/button.md');
         expect(button.sections.map((section) => section.id)).toContain('basic');
         expect(button.sections.find((section) => section.id === 'basic')).toMatchObject({ hasCode: true, codeLanguage: 'typescript' });
@@ -45,7 +45,7 @@ describe('buildCatalog', () => {
     it('describes a guide with its route-derived URLs', async () => {
         const styled = findGuide(await loadCatalog(), 'theming/styled');
 
-        expect(styled).toMatchObject({ name: 'styled', route: '/theming/styled', publicUrl: 'https://exhaustive-ui.e-xiste.com/theming/styled', docPath: 'pages/styled.md', resourceUri: 'exhaustive-ui://docs/pages/styled.md' });
+        expect(styled).toMatchObject({ name: 'styled', route: '/theming/styled', publicUrl: 'https://exhaustive-ui.com/theming/styled', docPath: 'pages/styled.md', resourceUri: 'exhaustive-ui://docs/pages/styled.md' });
     });
 });
 
@@ -85,7 +85,7 @@ describe('findComponent', () => {
         expect(findComponent(catalog, 'InputText').name).toBe('inputtext');
         expect(findComponent(catalog, 'dropdown').name).toBe('select');
         expect(findComponent(catalog, 'TabView').name).toBe('tabs');
-        expect(findComponent(catalog, 'https://exhaustive-ui.e-xiste.com/select').name).toBe('select');
+        expect(findComponent(catalog, 'https://exhaustive-ui.com/select').name).toBe('select');
         expect(findComponent(catalog, 'exhaustive-ui://docs/components/tabs.md').name).toBe('tabs');
         expect(findComponent(catalog, '@exhaustive-ui/core/tooltip').name).toBe('tooltip');
     });
@@ -113,7 +113,7 @@ describe('findGuide', () => {
         expect(findGuide(catalog, '/theming/styled').name).toBe('styled');
         expect(findGuide(catalog, 'styled').name).toBe('styled');
         expect(findGuide(catalog, 'Styled Mode').name).toBe('styled');
-        expect(findGuide(catalog, 'https://exhaustive-ui.e-xiste.com/tailwind').name).toBe('tailwind');
+        expect(findGuide(catalog, 'https://exhaustive-ui.com/tailwind').name).toBe('tailwind');
         expect(findGuide(catalog, 'exhaustive-ui://docs/pages/configuration.md').name).toBe('configuration');
         expect(findGuide(catalog, 'pages/configuration.md').name).toBe('configuration');
     });

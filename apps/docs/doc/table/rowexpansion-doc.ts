@@ -52,7 +52,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
                             </td>
                             <td>{{ product.name }}</td>
                             <td>
-                                <img [src]="'https://exhaustive-ui.e-xiste.com/demo/product/' + product.image" [alt]="product.name" width="50" class="shadow-lg" />
+                                <img [src]="'https://exhaustive-ui.com/demo/product/' + product.image" [alt]="product.name" width="50" class="shadow-lg" />
                             </td>
                             <td>{{ product.price | currency: 'USD' }}</td>
                             <td>{{ product.category }}</td>

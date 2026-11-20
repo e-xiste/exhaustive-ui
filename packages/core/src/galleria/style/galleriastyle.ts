@@ -93,7 +93,7 @@ export class GalleriaStyle extends BaseStyle {
  *
  * Galleria is an advanced content gallery component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/galleria/)
+ * [Live Demo](https://exhaustive-ui.com/galleria/)
  *
  * @module galleriastyle
  *

@@ -16,7 +16,7 @@ import { MessageModule } from '@exhaustive-ui/core/message';
             <p-message severity="info" icon="pi pi-send" text="Info Message" class="h-full" />
             <p-message severity="success">
                 <ng-template #icon>
-                    <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
+                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
                 </ng-template>
                 <span class="ms-2">How may I help you?</span>
             </p-message>

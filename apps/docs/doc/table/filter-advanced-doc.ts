@@ -60,7 +60,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                             <p-multiselect [(ngModel)]="value" [options]="representatives()" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
                                                 <ng-template let-option #item>
                                                     <div class="flex items-center gap-2">
-                                                        <img [alt]="option.label" src="https://exhaustive-ui.e-xiste.com/demo/avatar/{{ option.image }}" style="width: 32px" />
+                                                        <img [alt]="option.label" src="https://exhaustive-ui.com/demo/avatar/{{ option.image }}" style="width: 32px" />
                                                         <span>{{ option.name }}</span>
                                                     </div>
                                                 </ng-template>
@@ -124,13 +124,13 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <img src="https://exhaustive-ui.e-xiste.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
+                                    <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + customer.country.code" style="width: 20px" />
                                     <span>{{ customer.country.name }}</span>
                                 </div>
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <img [alt]="customer.representative.name" src="https://exhaustive-ui.e-xiste.com/demo/avatar/{{ customer.representative.image }}" width="32" />
+                                    <img [alt]="customer.representative.name" src="https://exhaustive-ui.com/demo/avatar/{{ customer.representative.image }}" width="32" />
                                     <span>{{ customer.representative.name }}</span>
                                 </div>
                             </td>

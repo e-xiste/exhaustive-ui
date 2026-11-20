@@ -37,7 +37,7 @@ export class SliderStyle extends BaseStyle {
  *
  * Slider is a component to provide input with a drag handle.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/slider/)
+ * [Live Demo](https://exhaustive-ui.com/slider/)
  *
  * @module sliderstyle
  *

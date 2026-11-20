@@ -67,7 +67,7 @@ export declare namespace InputOtpTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface InputOtpDesignTokens extends DesignTokens<InputOtpDesignTokens> {

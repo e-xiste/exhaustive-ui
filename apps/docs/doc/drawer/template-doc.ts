@@ -17,7 +17,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-drawer [(visible)]="visible" [closable]="false">
                 <ng-template #header>
                     <div class="flex items-center gap-2">
-                        <p-avatar image="https://exhaustive-ui.e-xiste.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
                         <span class="font-bold">Amy Elsner</span>
                     </div>
                 </ng-template>

@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(PACKAGE_ROOT, 'data');
 const LOCAL_LLMS_DIR = path.resolve(PACKAGE_ROOT, '../../apps/docs/public/llms');
-const DEFAULT_DOCS_URL = 'https://exhaustive-ui.e-xiste.com';
+const DEFAULT_DOCS_URL = 'https://exhaustive-ui.com';
 const STATIC_FILES = ['components.json', 'manifest.json', 'llms.txt', 'llms-full.txt'];
 
 function docsUrl() {

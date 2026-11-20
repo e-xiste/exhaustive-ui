@@ -26,7 +26,7 @@ export class BreadCrumbStyle extends BaseStyle {
  *
  * Breadcrumb provides contextual information about page hierarchy.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/breadcrumb/)
+ * [Live Demo](https://exhaustive-ui.com/breadcrumb/)
  *
  * @module breadcrumbstyle
  *

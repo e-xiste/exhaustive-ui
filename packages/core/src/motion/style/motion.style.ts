@@ -24,7 +24,7 @@ export class MotionStyle extends BaseStyle {
  *
  * Motion and MotionDirective provide an easy way to add motion effects to Angular applications.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/motion)
+ * [Live Demo](https://exhaustive-ui.com/motion)
  *
  * @module motionstyle
  *

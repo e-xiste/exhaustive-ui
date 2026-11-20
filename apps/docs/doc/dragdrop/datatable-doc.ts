@@ -22,7 +22,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                 <div *ngFor="let product of availableProducts">
                     <div class="product-item" pDraggable="products" (onDragStart)="dragStart(product)" (onDragEnd)="dragEnd()">
                         <div class="image-container">
-                            <img src="https://exhaustive-ui.e-xiste.com/demo/product/{{ product.image }}" [alt]="product.name" class="product-image" />
+                            <img src="https://exhaustive-ui.com/demo/product/{{ product.image }}" [alt]="product.name" class="product-image" />
                         </div>
                         <div class="product-list-detail">
                             <h5 class="mb-2">{{ product.name }}</h5>

@@ -16,7 +16,7 @@ export class AvatarGroupStyle extends BaseStyle {
  *
  * A set of Avatars can be displayed together using the AvatarGroup component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/avatar/)
+ * [Live Demo](https://exhaustive-ui.com/avatar/)
  *
  * @module avatargroupstyle
  *

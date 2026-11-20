@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-latest
         environment:
             name: docs
-            url: https://exhaustive-ui.e-xiste.com
+            url: https://exhaustive-ui.com
 
         steps:
             - uses: actions/checkout@v7

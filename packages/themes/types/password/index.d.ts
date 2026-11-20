@@ -127,7 +127,7 @@ export declare namespace PasswordTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface PasswordDesignTokens extends DesignTokens<PasswordDesignTokens> {

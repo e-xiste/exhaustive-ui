@@ -4,7 +4,7 @@
     "author": "e-xiste",
     "description": "Model Context Protocol (MCP) server for the ExhaustiveUI Angular component library",
     "keywords": ["exhaustive-ui", "mcp", "model-context-protocol", "ai", "llm", "angular", "components"],
-    "homepage": "https://exhaustive-ui.e-xiste.com/llms",
+    "homepage": "https://exhaustive-ui.com/llms",
     "license": "MIT",
     "repository": {
         "type": "git",

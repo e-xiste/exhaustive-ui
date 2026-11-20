@@ -81,7 +81,7 @@ export class SelectStyle extends BaseStyle {
  *
  * Select also known as Select, is used to choose an item from a collection of options.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/select/)
+ * [Live Demo](https://exhaustive-ui.com/select/)
  *
  * @module selectstyle
  *

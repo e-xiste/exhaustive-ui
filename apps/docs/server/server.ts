@@ -14,7 +14,7 @@ export function app(): express.Express {
     const llmsFolder = join(browserDistFolder, 'llms');
 
     const commonEngine = new CommonEngine({
-        allowedHosts: ['*.vercel.app', 'exhaustive-ui.e-xiste.com', '*.exhaustive-ui.e-xiste.com']
+        allowedHosts: ['*.vercel.app', 'exhaustive-ui.com', '*.exhaustive-ui.com']
     });
 
     server.set('view engine', 'html');

@@ -24,19 +24,19 @@ export class PTViewer {
     items = [
         {
             label: 'Finder',
-            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/finder.svg'
+            icon: 'https://exhaustive-ui.com/demo/dock/finder.svg'
         },
         {
             label: 'App Store',
-            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/appstore.svg'
+            icon: 'https://exhaustive-ui.com/demo/dock/appstore.svg'
         },
         {
             label: 'Photos',
-            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/photos.svg'
+            icon: 'https://exhaustive-ui.com/demo/dock/photos.svg'
         },
         {
             label: 'Trash',
-            icon: 'https://exhaustive-ui.e-xiste.com/demo/dock/trash.png'
+            icon: 'https://exhaustive-ui.com/demo/dock/trash.png'
         }
     ];
 

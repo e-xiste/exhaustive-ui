@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://exhaustive-ui.e-xiste.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
+<img src="https://exhaustive-ui.com/large-icon.svg" alt="ExhaustiveUI" width="140" />
 
 # ExhaustiveUI
 
@@ -10,7 +10,7 @@
 [![license](https://img.shields.io/badge/license-MIT-black.svg)](LICENSE.md)
 [![angular](https://img.shields.io/badge/angular-%3E%3D22-black.svg)](https://angular.dev)
 
-[Documentation](https://exhaustive-ui.e-xiste.com) · [Getting started](https://exhaustive-ui.e-xiste.com/installation) · [Philosophy](https://exhaustive-ui.e-xiste.com/philosophy) · [FAQ](https://exhaustive-ui.e-xiste.com/faq)
+[Documentation](https://exhaustive-ui.com) · [Getting started](https://exhaustive-ui.com/installation) · [Philosophy](https://exhaustive-ui.com/philosophy) · [FAQ](https://exhaustive-ui.com/faq)
 
 </div>
 
@@ -22,11 +22,11 @@ In June 2026 PrimeTek archived the PrimeNG repository and moved future major ver
 
 ExhaustiveUI is a fork of Optimus UI, maintained by [e-xiste](https://e-xiste.com) and the community. It exists to ship fixes and releases at a steadier pace, starting from Optimus UI's `next` branch and its migration of every component to the Angular Signals API. It stays MIT. There is no paid tier and none is planned.
 
-It is not affiliated with, endorsed by, or sponsored by PrimeTek or OpenNG. The [philosophy page](https://exhaustive-ui.e-xiste.com/philosophy) sets out what the project commits to and — just as importantly — what it does not do.
+It is not affiliated with, endorsed by, or sponsored by PrimeTek or OpenNG. The [philosophy page](https://exhaustive-ui.com/philosophy) sets out what the project commits to and — just as importantly — what it does not do.
 
 ## Quick start
 
-Check which Angular versions each ExhaustiveUI release supports in the [Angular version compatibility table](https://exhaustive-ui.e-xiste.com/installation#compatibility), then run:
+Check which Angular versions each ExhaustiveUI release supports in the [Angular version compatibility table](https://exhaustive-ui.com/installation#compatibility), then run:
 
 ```bash
 ng add @exhaustive-ui/core
@@ -42,7 +42,7 @@ import { Button } from '@exhaustive-ui/core/button';
 <p-button label="Check" />
 ```
 
-Full setup, including the manual path and icons, is in the [getting started guide](https://exhaustive-ui.e-xiste.com/installation).
+Full setup, including the manual path and icons, is in the [getting started guide](https://exhaustive-ui.com/installation).
 
 ## Migrating from Optimus UI
 
@@ -101,7 +101,7 @@ pnpm install     # dependencies + git hooks
 pnpm run dev     # run the documentation site locally
 ```
 
-The [contribution guide](https://exhaustive-ui.e-xiste.com/contribution) covers the workflow, and the [roadmap](https://exhaustive-ui.e-xiste.com/roadmap) covers what is planned.
+The [contribution guide](https://exhaustive-ui.com/contribution) covers the workflow, and the [roadmap](https://exhaustive-ui.com/roadmap) covers what is planned.
 
 ## Support
 

@@ -34,7 +34,7 @@ export class CardStyle extends BaseStyle {
  *
  * Card is a flexible container component.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/card/)
+ * [Live Demo](https://exhaustive-ui.com/card/)
  *
  * @module cardstyle
  *

@@ -13,7 +13,7 @@ import { ImageModule } from '@exhaustive-ui/core/image';
             <p>Image is used as the native <i>img</i> element and supports all properties that the native element has. For multiple image, see <a [routerLink]="['/galleria']">Galleria.</a></p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-image src="https://exhaustive-ui.e-xiste.com/demo/galleria/galleria10.jpg" alt="Image" width="250" />
+            <p-image src="https://exhaustive-ui.com/demo/galleria/galleria10.jpg" alt="Image" width="250" />
         </div>
         <app-code></app-code>
     `

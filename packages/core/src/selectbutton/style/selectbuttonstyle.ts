@@ -35,7 +35,7 @@ export class SelectButtonStyle extends BaseStyle {
  *
  * SelectButton is used to choose single or multiple items from a list using buttons.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/selectbutton/)
+ * [Live Demo](https://exhaustive-ui.com/selectbutton/)
  *
  * @module selectbuttonstyle
  *

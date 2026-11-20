@@ -22,7 +22,7 @@ export class ToolbarStyle extends BaseStyle {
  *
  * Toolbar is a grouping component for buttons and other content.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/toolbar/)
+ * [Live Demo](https://exhaustive-ui.com/toolbar/)
  *
  * @module toolbarstyle
  *

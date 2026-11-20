@@ -60,7 +60,7 @@ export class InputGroupStyle extends BaseStyle {
  *
  * InputGroup displays text, icon, buttons and other content can be grouped next to an input.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/inputgroup/)
+ * [Live Demo](https://exhaustive-ui.com/inputgroup/)
  *
  * @module inputgroupstyle
  *

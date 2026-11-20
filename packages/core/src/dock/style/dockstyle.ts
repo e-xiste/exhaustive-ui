@@ -37,7 +37,7 @@ export class DockStyle extends BaseStyle {
  *
  * Dock is a navigation component consisting of menuitems.
  *
- * [Live Demo](https://exhaustive-ui.e-xiste.com/dock/)
+ * [Live Demo](https://exhaustive-ui.com/dock/)
  *
  * @module dockstyle
  *

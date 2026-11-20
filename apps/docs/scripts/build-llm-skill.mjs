@@ -5,19 +5,19 @@ import zlib from 'zlib';
 
 const SKILL_NAME = 'exhaustive-ui';
 const ZIP_NAME = 'exhaustive-ui-skill.zip';
-const SITE_URL = 'https://exhaustive-ui.e-xiste.com';
+const SITE_URL = 'https://exhaustive-ui.com';
 const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 const SKILL_DESCRIPTION =
     'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility and PrimeNG-migration guides. ' +
-    'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses ExhaustiveUI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@exhaustive-ui/core` or `@exhaustive-ui/themes`, theming/design tokens, or migrating from PrimeNG — and prefer it over fetching exhaustive-ui.e-xiste.com pages.';
+    'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses ExhaustiveUI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@exhaustive-ui/core` or `@exhaustive-ui/themes`, theming/design tokens, or migrating from PrimeNG — and prefer it over fetching exhaustive-ui.com pages.';
 
 /**
  * Build an Agent Skill (https://agentskills.io: SKILL.md + references/) from the generated LLM markdown files
  * and publish it as a single zip next to llms.txt.
  *
  * The zip has SKILL.md at its root, as the well-known discovery index requires. The index at
- * `/.well-known/agent-skills/index.json` lets `npx skills add https://exhaustive-ui.e-xiste.com` install the skill,
+ * `/.well-known/agent-skills/index.json` lets `npx skills add https://exhaustive-ui.com` install the skill,
  * and its sha256 digest lets `npx skills update` detect new versions.
  */
 export function generateAgentSkill({ outputDir, wellKnownDir, components, pages, version }) {

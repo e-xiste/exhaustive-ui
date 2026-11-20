@@ -167,7 +167,7 @@ export declare namespace FloatLabelTokenSections {
  * --- ---
  * **Compatible Libraries**
  *
- * [ExhaustiveUI](https://exhaustive-ui.e-xiste.com/theming/styled)
+ * [ExhaustiveUI](https://exhaustive-ui.com/theming/styled)
  *
  */
 export interface FloatLabelDesignTokens extends DesignTokens<FloatLabelDesignTokens> {

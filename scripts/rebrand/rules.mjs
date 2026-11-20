@@ -32,8 +32,8 @@ export const RULES = [
     [/every @openng package/g, 'every @exhaustive-ui package'],
 
     // --- URLs and org
-    [/optimus\.openng\.org/g, 'exhaustive-ui.e-xiste.com'],
-    [/https:\/\/www\.openng\.org\//g, 'https://exhaustive-ui.e-xiste.com/'],
+    [/optimus\.openng\.org/g, 'exhaustive-ui.com'],
+    [/https:\/\/www\.openng\.org\//g, 'https://exhaustive-ui.com/'],
     [/openng-org\/optimus-ui/g, 'e-xiste/exhaustive-ui'],
     [/openng-fundation\/open-prime/g, 'e-xiste/exhaustive-ui'],
 
