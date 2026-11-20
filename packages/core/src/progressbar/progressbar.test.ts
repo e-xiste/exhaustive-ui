@@ -568,14 +568,15 @@ describe('ProgressBar', () => {
             expect(rootElement.nativeElement.getAttribute('aria-valuenow')).toBe('80');
         });
 
-        it('should set aria-level with value and unit', async () => {
+        it('should expose the value and unit as aria-valuetext, not aria-level (optimus-ui#2088)', async () => {
             component.value = 45;
             component.unit = ' MB';
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
             const rootElement = fixture.debugElement.query(By.directive(ProgressBar));
-            expect(rootElement.nativeElement.getAttribute('aria-level')).toBe('45 MB');
+            expect(rootElement.nativeElement.hasAttribute('aria-level')).toBe(false);
+            expect(rootElement.nativeElement.getAttribute('aria-valuetext')).toBe('45 MB');
         });
 
         it('should handle undefined value in ARIA attributes', async () => {
@@ -584,8 +585,22 @@ describe('ProgressBar', () => {
             await fixture.whenStable();
 
             const rootElement = fixture.debugElement.query(By.directive(ProgressBar));
-            const ariaValueNow = rootElement.nativeElement.getAttribute('aria-valuenow');
-            expect(ariaValueNow === 'null' || ariaValueNow === 'NaN').toBe(true);
+            expect(rootElement.nativeElement.hasAttribute('aria-valuenow')).toBe(false);
+            expect(rootElement.nativeElement.hasAttribute('aria-valuetext')).toBe(false);
+            expect(rootElement.nativeElement.hasAttribute('aria-level')).toBe(false);
+            expect(rootElement.nativeElement.outerHTML).not.toContain('NaN');
+        });
+
+        it('should not render NaN for a null value with showValue (optimus-ui#2088)', async () => {
+            component.value = null as any;
+            component.showValue = true;
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const rootElement = fixture.debugElement.query(By.directive(ProgressBar));
+            expect(progressBarInstance.value()).toBeUndefined();
+            expect(rootElement.nativeElement.hasAttribute('aria-valuenow')).toBe(false);
+            expect(rootElement.nativeElement.outerHTML).not.toContain('NaN');
         });
     });
 
@@ -598,8 +613,7 @@ describe('ProgressBar', () => {
             await fixture.whenStable();
 
             expect(() => fixture.detectChanges()).not.toThrow();
-            const actualValue = progressBarInstance.value();
-            expect(actualValue === undefined || isNaN(actualValue)).toBe(true);
+            expect(progressBarInstance.value()).toBeUndefined();
             expect(progressBarInstance.color()).toBeUndefined();
             expect(progressBarElement.nativeElement.classList).toContain('p-progressbar');
         });

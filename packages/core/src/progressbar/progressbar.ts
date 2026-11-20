@@ -36,7 +36,7 @@ import { ProgressBarStyle } from './style/progressbarstyle';
         '[attr.aria-valuemin]': '0',
         '[attr.aria-valuenow]': 'value()',
         '[attr.aria-valuemax]': '100',
-        '[attr.aria-level]': 'value() + unit()',
+        '[attr.aria-valuetext]': 'value() != null ? value() + unit() : null',
         '[class]': "cx('root')",
         '[attr.data-p]': 'dataP()'
     },
@@ -51,7 +51,7 @@ export class ProgressBar extends BaseComponent<ProgressBarPassThrough> {
      * Current value of the progress.
      * @group Props
      */
-    readonly value = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
+    readonly value = input<number | undefined, unknown>(undefined, { transform: (value: unknown) => (isNaN(numberAttribute(value)) ? undefined : numberAttribute(value)) });
     /**
      * Whether to display the progress bar value.
      * @group Props
