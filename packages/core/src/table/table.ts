@@ -5503,7 +5503,7 @@ export class ReorderableRow extends BaseComponent {
                                 [ngModel]="operator"
                                 [ngModelOptions]="{ standalone: true }"
                                 (ngModelChange)="onOperatorChange($event)"
-                                [styleClass]="cx('pcFilterOperatorDropdown')"
+                                [class]="cx('pcFilterOperatorDropdown')"
                                 [unstyled]="unstyled()"
                             ></p-select>
                         </div>
@@ -5515,7 +5515,7 @@ export class ReorderableRow extends BaseComponent {
                                     [ngModel]="fieldConstraint.matchMode"
                                     [ngModelOptions]="{ standalone: true }"
                                     (ngModelChange)="onMenuMatchModeChange($event, fieldConstraint)"
-                                    [styleClass]="cx('pcFilterConstraintDropdown')"
+                                    [class]="cx('pcFilterConstraintDropdown')"
                                     [pt]="ptm('pcFilterConstraintDropdown')"
                                     [unstyled]="unstyled()"
                                 ></p-select>

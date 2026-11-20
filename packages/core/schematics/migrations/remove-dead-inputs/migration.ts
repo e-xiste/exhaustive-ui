@@ -72,6 +72,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * read by `getElementToFocus()`, which nothing called.
  * `rowNode`/`root`/`firstChild`/`lastChild` on the internal TreeNode were bound by Tree but never read (and
  * are left out of the leftover scan: TreeTable still exposes `rowNode`, and the others are DOM/common names).
+ * `visible`/`itemSize` on SelectItem were stored but never read (and never bound by Select): the option
+ * height comes from the scroller options and every rendered option is visible.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -129,7 +131,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-confirmDialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-confirmdialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
-    { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] }
+    { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] },
+    { selector: 'p-selectItem', names: ['visible', 'itemSize'] }
 ];
 
 /**
@@ -152,6 +155,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * CascadeSelect's `emptyMessage` is left out too: Select, Listbox, Table and other components still read it.
  * ConfirmDialog's `closeAriaLabel`, `focusTrap` and `defaultFocus` are left out too: Dialog still reads
  * `closeAriaLabel` and `focusTrap`, and ConfirmPopup still reads `defaultFocus`.
+ * SelectItem's `visible` and `itemSize` are left out as well: Dialog, Overlay and many others still expose
+ * `visible`, and Scroller still exposes `itemSize`.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
     (name) =>
@@ -177,7 +182,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
             'rowNode',
             'root',
             'firstChild',
-            'lastChild'
+            'lastChild',
+            'visible',
+            'itemSize'
         ].includes(name)
 );
 
@@ -214,7 +221,7 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
  * inputLabel and emptyMessage, never read; DatePicker's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; ConfirmDialog's closeAriaLabel,
- * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; and the internal TreeNode's rowNode, root, firstChild and lastChild, never read.
+ * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; the internal TreeNode's rowNode, root, firstChild and lastChild, never read; and SelectItem's visible and itemSize, never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

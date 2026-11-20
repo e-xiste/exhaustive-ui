@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DebugElement, provideZonelessChangeDetection, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DebugElement, provideZonelessChangeDetection, signal, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -29,7 +29,10 @@ import { SharedModule } from '@exhaustive-ui/core/api';
             [ariaLabel]="ariaLabel"
             [ariaLabelledBy]="ariaLabelledBy"
             [autofocus]="autofocus"
-            [styleClass]="styleClass"
+            [class]="styleClass"
+            [virtualScroll]="virtualScroll"
+            [virtualScrollItemSize]="virtualScrollItemSize"
+            [lazy]="lazy"
             (onChange)="onSelectionChange($event)"
             (onFilter)="onFilterChange($event)"
             (onShow)="onShowEvent($event)"
@@ -61,6 +64,9 @@ class TestBasicSelectComponent {
     ariaLabelledBy: string | undefined;
     autofocus = false;
     styleClass: string | undefined;
+    virtualScroll: boolean | undefined;
+    virtualScrollItemSize: number | undefined;
+    lazy = false;
 
     changeEvent: any;
     filterEvent: any;
@@ -860,11 +866,11 @@ describe('Select', () => {
         it('should have default values', () => {
             // Note: component uses bound values from TestBasicSelectComponent
             expect(selectInstance.placeholder()).toBe('Select an option');
-            expect(selectInstance.loading).toBe(false);
+            expect(selectInstance.loading()).toBe(false);
             expect(selectInstance.$disabled()).toBe(false);
-            expect(selectInstance.filter).toBe(false);
-            expect(selectInstance.showClear).toBe(false);
-            expect(selectInstance.checkmark).toBe(false);
+            expect(selectInstance.filter()).toBe(false);
+            expect(selectInstance.showClear()).toBe(false);
+            expect(selectInstance.checkmark()).toBe(false);
         });
 
         it('should accept custom values', () => {
@@ -877,26 +883,26 @@ describe('Select', () => {
             fixture.detectChanges();
 
             expect(selectInstance.placeholder()).toBe('Custom placeholder');
-            expect(selectInstance.loading).toBe(true);
+            expect(selectInstance.loading()).toBe(true);
             expect(selectInstance.$disabled()).toBe(true);
-            expect(selectInstance.filter).toBe(true);
-            expect(selectInstance.showClear).toBe(true);
-            expect(selectInstance.checkmark).toBe(true);
+            expect(selectInstance.filter()).toBe(true);
+            expect(selectInstance.showClear()).toBe(true);
+            expect(selectInstance.checkmark()).toBe(true);
         });
     });
 
     describe('Options and Data', () => {
         it('should display options correctly', () => {
-            expect(selectInstance.options).toBeDefined();
-            expect(selectInstance.options!.length).toBe(3);
-            expect(selectInstance.options![0].name).toBe('Option 1');
+            expect(selectInstance.options()).toBeDefined();
+            expect(selectInstance.options()!.length).toBe(3);
+            expect(selectInstance.options()![0].name).toBe('Option 1');
         });
 
         it('should handle empty options array', () => {
             component.options = [];
             fixture.detectChanges();
 
-            expect(selectInstance.options!.length).toBe(0);
+            expect(selectInstance.options()!.length).toBe(0);
             expect(selectInstance.isEmpty()).toBe(true);
         });
 
@@ -904,7 +910,7 @@ describe('Select', () => {
             component.options = null as any;
             fixture.detectChanges();
 
-            expect(selectInstance.options).toBe(null);
+            expect(selectInstance.options()).toBe(null);
             expect(selectInstance.isEmpty()).toBe(true);
         });
 
@@ -912,7 +918,7 @@ describe('Select', () => {
             component.options = undefined as any;
             fixture.detectChanges();
 
-            expect(selectInstance.options).toBeUndefined();
+            expect(selectInstance.options()).toBeUndefined();
             expect(selectInstance.isEmpty()).toBe(true);
         });
     });
@@ -1005,20 +1011,21 @@ describe('Select', () => {
             ];
 
             // Create a new select instance with grouped options
-            selectInstance.group = true;
-            selectInstance.options = groupedOptions;
-            selectInstance.optionGroupChildren = 'items';
-            selectInstance.optionLabel = 'label';
-            selectInstance.optionValue = 'value';
+            const groupedFixture = TestBed.createComponent(Select);
+            groupedFixture.componentRef.setInput('group', true);
+            groupedFixture.componentRef.setInput('options', groupedOptions);
+            groupedFixture.componentRef.setInput('optionGroupChildren', 'items');
+            groupedFixture.componentRef.setInput('optionLabel', 'label');
+            groupedFixture.componentRef.setInput('optionValue', 'value');
 
             // Set disabled option as initial value
-            selectInstance.writeModelValue('Berlin');
-            fixture.detectChanges();
+            groupedFixture.componentInstance.writeModelValue('Berlin');
+            groupedFixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
-            await fixture.whenStable();
+            await groupedFixture.whenStable();
 
             // Check the DOM element with p-select-label class
-            const labelElement = fixture.debugElement.query(By.css('.p-select-label'));
+            const labelElement = groupedFixture.debugElement.query(By.css('.p-select-label'));
             expect(labelElement).toBeTruthy();
             expect(labelElement.nativeElement.textContent.trim()).toBe('Berlin');
         });
@@ -1030,7 +1037,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should hide overlay programmatically', async () => {
@@ -1042,7 +1049,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
         });
 
         it('should clear value programmatically', () => {
@@ -1093,7 +1100,7 @@ describe('Select', () => {
             const focusEvent = new FocusEvent('focus');
             selectInstance.onInputFocus(focusEvent);
 
-            expect(selectInstance.focused).toBe(true);
+            expect(selectInstance.focused()).toBe(true);
             expect(component.focusEvent).toBeDefined();
         });
 
@@ -1101,7 +1108,7 @@ describe('Select', () => {
             const blurEvent = new FocusEvent('blur');
             selectInstance.onInputBlur(blurEvent);
 
-            expect(selectInstance.focused).toBe(false);
+            expect(selectInstance.focused()).toBe(false);
             expect(component.blurEvent).toBeDefined();
         });
 
@@ -1111,7 +1118,7 @@ describe('Select', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
 
             // Trigger the real overlay animation-lifecycle callback that emits onShow
             selectInstance.onOverlayBeforeEnter({} as any);
@@ -1125,7 +1132,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
             fixture.detectChanges();
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
 
             // Now hide it
             selectInstance.hide();
@@ -1136,7 +1143,7 @@ describe('Select', () => {
             // Wait for overlay hide animation to complete
             // Overlay might use animation frames, so we need to wait longer
             let attempts = 0;
-            while (selectInstance.overlayVisible && attempts < 20) {
+            while (selectInstance.overlayVisible() && attempts < 20) {
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 await fixture.whenStable(); // Longer intervals
                 fixture.detectChanges();
@@ -1144,14 +1151,14 @@ describe('Select', () => {
             }
 
             // If still visible after reasonable wait, force the state
-            if (selectInstance.overlayVisible) {
+            if (selectInstance.overlayVisible()) {
                 // Manually trigger overlay close (as a last resort)
-                selectInstance.overlayVisible = false;
+                selectInstance.overlayVisible.set(false);
                 fixture.detectChanges();
             }
 
             // Overlay should now be hidden
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
 
             // Trigger the real overlay animation-lifecycle callback that emits onHide
             selectInstance.onOverlayAfterLeave({} as any);
@@ -1162,9 +1169,9 @@ describe('Select', () => {
         it('should handle lazy load event via virtual scroller', async () => {
             // Enable virtual scroll so the internal p-scroller (which owns the real
             // "(onLazyLoad)" wiring: (onLazyLoad)="onLazyLoad.emit($event)") renders.
-            selectInstance.virtualScroll = true;
-            selectInstance.virtualScrollItemSize = 38;
-            selectInstance.lazy = true;
+            component.virtualScroll = true;
+            component.virtualScrollItemSize = 38;
+            component.lazy = true;
             fixture.detectChanges();
 
             selectInstance.show();
@@ -1192,7 +1199,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should handle Arrow Up key', async () => {
@@ -1205,7 +1212,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
         });
 
         it('should handle Enter key', async () => {
@@ -1236,7 +1243,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
         });
 
         it('should handle Space key', async () => {
@@ -1245,7 +1252,7 @@ describe('Select', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should handle Tab key', async () => {
@@ -1255,12 +1262,12 @@ describe('Select', () => {
 
             const keyEvent = new KeyboardEvent('keydown', { code: 'Tab' });
 
-            if (selectInstance.overlayVisible) {
+            if (selectInstance.overlayVisible()) {
                 try {
                     selectInstance.onKeyDown(keyEvent);
                     await new Promise((resolve) => setTimeout(resolve, 100));
                     await fixture.whenStable();
-                    expect(selectInstance.overlayVisible).not.toBe(true);
+                    expect(selectInstance.overlayVisible()).not.toBe(true);
                 } catch (error) {
                     expect(true).toBe(true);
                 }
@@ -1346,7 +1353,7 @@ describe('Select', () => {
             fixture.detectChanges();
 
             // Only reset if resetFilterOnHide is enabled
-            if (selectInstance.resetFilterOnHide) {
+            if (selectInstance.resetFilterOnHide()) {
                 expect(selectInstance._filterValue()).toBeNull();
             } else {
                 expect(selectInstance._filterValue()).toBe('test');
@@ -1397,7 +1404,7 @@ describe('Select', () => {
             if (autoFocusElement) {
                 expect(autoFocusElement).toBeTruthy();
             } else {
-                expect(selectInstance.autofocus).toBe(true);
+                expect(selectInstance.autofocus()).toBe(true);
             }
         });
     });
@@ -1415,12 +1422,12 @@ describe('Select', () => {
             selectInstance.onContainerClick(clickEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
 
             selectInstance.onContainerClick(clickEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
         });
 
         it('should handle null/undefined values gracefully', () => {
@@ -1433,6 +1440,7 @@ describe('Select', () => {
 
             component.selectedValue = undefined as any;
             selectInstance.writeModelValue(undefined);
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             expect(selectInstance.modelValue()).toBeUndefined();
@@ -1456,19 +1464,29 @@ describe('Select', () => {
             ];
             fixture.detectChanges();
 
-            expect(selectInstance.options![0].name).toContain('"quotes"');
-            expect(selectInstance.options![1].name).toContain('<tags>');
-            expect(selectInstance.options![2].name).toContain('& ampersand');
+            expect(selectInstance.options()![0].name).toContain('"quotes"');
+            expect(selectInstance.options()![1].name).toContain('<tags>');
+            expect(selectInstance.options()![2].name).toContain('& ampersand');
         });
     });
 
     describe('CSS Classes and Styling', () => {
-        it('should apply custom style class', () => {
+        it('should merge the native class attribute with the root class', () => {
             component.styleClass = 'custom-select';
+            fixture.changeDetectorRef.markForCheck();
             fixture.detectChanges();
 
             const rootElement = selectElement.nativeElement;
+            expect(rootElement.classList.contains('p-select')).toBe(true);
             expect(rootElement.classList.contains('custom-select')).toBe(true);
+
+            component.styleClass = 'other-select';
+            fixture.changeDetectorRef.markForCheck();
+            fixture.detectChanges();
+
+            expect(rootElement.classList.contains('custom-select')).toBe(false);
+            expect(rootElement.classList.contains('other-select')).toBe(true);
+            expect(rootElement.classList.contains('p-select')).toBe(true);
         });
 
         it('should apply disabled state class', () => {
@@ -1482,7 +1500,7 @@ describe('Select', () => {
             component.loading = true;
             fixture.detectChanges();
 
-            expect(selectInstance.loading).toBe(true);
+            expect(selectInstance.loading()).toBe(true);
         });
     });
 });
@@ -1588,9 +1606,9 @@ describe('Select - Grouped Options', () => {
     });
 
     it('should handle grouped options', () => {
-        expect(selectInstance.group).toBe(true);
-        expect(selectInstance.options!.length).toBe(2);
-        expect(selectInstance.options![0].items.length).toBe(2);
+        expect(selectInstance.group()).toBe(true);
+        expect(selectInstance.options()!.length).toBe(2);
+        expect(selectInstance.options()![0].items.length).toBe(2);
     });
 
     it('should get option group label', () => {
@@ -1673,7 +1691,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(customItems[0].nativeElement.textContent).toContain('(tpl1)');
         } else {
             // Template may not be rendered immediately - just verify component shows
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1706,7 +1724,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(customHeader.nativeElement.textContent).toBe('Available Options');
         } else {
             // Fallback: check that overlay is visible when header should render
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1721,7 +1739,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(customFooter.nativeElement.textContent).toContain('Total: 2 options');
         } else {
             // Fallback: check that overlay is visible when footer should render
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1738,7 +1756,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(customEmpty.nativeElement.textContent).toBe('No options available');
         } else {
             // Fallback: check that overlay is visible when empty template should render
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1754,7 +1772,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(customEmptyFilter.nativeElement.textContent).toBe('No results found');
         } else {
             // Fallback: check that overlay is visible when empty filter template should render
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1770,7 +1788,7 @@ describe('Select - pTemplate Content Projection', () => {
             expect(filterInput).toBeTruthy();
         } else {
             // Fallback: just check that overlay is visible when filter template should render
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         }
     });
 
@@ -1780,7 +1798,7 @@ describe('Select - pTemplate Content Projection', () => {
 
         // Just verify component works with loader template
         expect(component).toBeTruthy();
-        expect(selectInstance.loading).toBe(true);
+        expect(selectInstance.loading()).toBe(true);
 
         expect(() => {
             selectInstance.show();
@@ -1807,7 +1825,7 @@ describe('Select - pTemplate Content Projection', () => {
 
         // Just verify component works with clear icon template
         expect(component).toBeTruthy();
-        expect(selectInstance.showClear).toBe(true);
+        expect(selectInstance.showClear()).toBe(true);
     });
 
     it('should render filter icon template', async () => {
@@ -1816,7 +1834,7 @@ describe('Select - pTemplate Content Projection', () => {
 
         // Just verify component works with filter enabled and template
         expect(component).toBeTruthy();
-        expect(selectInstance.filter).toBe(true);
+        expect(selectInstance.filter()).toBe(true);
 
         expect(() => {
             selectInstance.show();
@@ -1830,7 +1848,7 @@ describe('Select - pTemplate Content Projection', () => {
 
         // Just verify component works with loading template
         expect(component).toBeTruthy();
-        expect(selectInstance.loading).toBe(true);
+        expect(selectInstance.loading()).toBe(true);
 
         expect(() => {
             fixture.detectChanges();
@@ -1978,14 +1996,15 @@ describe('Select - #template Reference Content Projection', () => {
 
     it('should render clear icon template reference with class context when showClear is true', () => {
         component.selectedValue = 'ref1';
-        selectInstance.showClear = true;
+        component.showClear = true;
         fixture.detectChanges();
 
         expect(selectInstance.clearIconTemplate()).toBeDefined();
     });
 
     it('should render filter icon template reference', async () => {
-        selectInstance.filter = true;
+        component.filter = true;
+        fixture.detectChanges();
         selectInstance.show();
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
@@ -1997,7 +2016,7 @@ describe('Select - #template Reference Content Projection', () => {
         }
 
         // Add explicit expectation to avoid "no expectations" warning
-        expect(selectInstance.filter).toBe(true);
+        expect(selectInstance.filter()).toBe(true);
     });
 
     it('should render loading icon template reference when loading', () => {
@@ -2031,9 +2050,9 @@ describe('Select - Dynamic and Signal-based Properties', () => {
     });
 
     it('should handle dynamic signal-based options', () => {
-        expect(selectInstance.options).toBeDefined();
-        expect(selectInstance.options!.length).toBe(2);
-        expect(selectInstance.options![0].label).toBe('Dynamic 1');
+        expect(selectInstance.options()).toBeDefined();
+        expect(selectInstance.options()!.length).toBe(2);
+        expect(selectInstance.options()![0].label).toBe('Dynamic 1');
     });
 
     it('should update when signal-based options change', async () => {
@@ -2048,8 +2067,8 @@ describe('Select - Dynamic and Signal-based Properties', () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
 
-        expect(selectInstance.options!.length).toBe(3);
-        expect(selectInstance.options![0].label).toBe('Updated 1');
+        expect(selectInstance.options()!.length).toBe(3);
+        expect(selectInstance.options()![0].label).toBe('Updated 1');
     });
 
     it('should handle dynamic placeholder changes', async () => {
@@ -2083,14 +2102,14 @@ describe('Select - Dynamic and Signal-based Properties', () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
 
-        expect(selectInstance.loading).toBe(true);
+        expect(selectInstance.loading()).toBe(true);
 
         component.updateLoading(false);
         fixture.detectChanges();
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
 
-        expect(selectInstance.loading).toBe(false);
+        expect(selectInstance.loading()).toBe(false);
     });
 
     it('should handle async data loading', async () => {
@@ -2111,8 +2130,8 @@ describe('Select - Dynamic and Signal-based Properties', () => {
         await new Promise((resolve) => setTimeout(resolve, 150));
         await fixture.whenStable();
 
-        expect(selectInstance.options!.length).toBe(2);
-        expect(selectInstance.options![0].label).toBe('Async 1');
+        expect(selectInstance.options()!.length).toBe(2);
+        expect(selectInstance.options()![0].label).toBe('Async 1');
     });
 
     it('should handle undefined/null dynamic values', async () => {
@@ -2121,7 +2140,7 @@ describe('Select - Dynamic and Signal-based Properties', () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
 
-        expect(selectInstance.options).toBe(null);
+        expect(selectInstance.options()).toBe(null);
         expect(() => fixture.detectChanges()).not.toThrow();
 
         component.updateOptions(undefined as any);
@@ -2129,7 +2148,7 @@ describe('Select - Dynamic and Signal-based Properties', () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
         await fixture.whenStable();
 
-        expect(selectInstance.options).toBeUndefined();
+        expect(selectInstance.options()).toBeUndefined();
         expect(() => fixture.detectChanges()).not.toThrow();
     });
 });
@@ -2168,7 +2187,7 @@ describe('Select - Performance and Large Datasets', () => {
         const endTime = performance.now();
 
         expect(endTime - startTime).toBeLessThan(2000); // Should render in less than 2 seconds
-        expect(selectInstance.options!.length).toBe(1000);
+        expect(selectInstance.options()!.length).toBe(1000);
     });
 
     it('should handle rapid selection changes without errors', async () => {
@@ -2222,9 +2241,9 @@ describe('Select Dynamic Data Sources', () => {
         it('should work with signal options', () => {
             const signalSelect = dynamicFixture.debugElement.query(By.css('.signal-select'))?.componentInstance;
             if (signalSelect) {
-                expect(signalSelect.options?.length || 0).toBe(2);
-                if (signalSelect.options?.[0]) {
-                    expect(signalSelect.options[0].label).toBe('Signal Option 1');
+                expect(signalSelect.options()?.length || 0).toBe(2);
+                if (signalSelect.options()?.[0]) {
+                    expect(signalSelect.options()[0].label).toBe('Signal Option 1');
                 }
             } else {
                 expect(dynamicComponent.signalOptions().length).toBe(2);
@@ -2286,8 +2305,8 @@ describe('Select Dynamic Data Sources', () => {
             dynamicFixture.detectChanges();
 
             const observableSelect = dynamicFixture.debugElement.query(By.css('.observable-select')).componentInstance;
-            expect(observableSelect.options.length).toBe(1);
-            expect(observableSelect.options[0].name).toBe('Updated Observable Option');
+            expect(observableSelect.options().length).toBe(1);
+            expect(observableSelect.options()[0].name).toBe('Updated Observable Option');
         });
 
         it('should work with observable optionLabel via async pipe', async () => {
@@ -2305,15 +2324,15 @@ describe('Select Dynamic Data Sources', () => {
             dynamicFixture.detectChanges();
 
             const observableSelect = dynamicFixture.debugElement.query(By.css('.observable-select')).componentInstance;
-            expect(observableSelect.optionLabel).toBe('id');
+            expect(observableSelect.optionLabel()).toBe('id');
         });
     });
 
     describe('Getter-based Properties', () => {
         it('should work with getter options', () => {
             const getterSelect = dynamicFixture.debugElement.query(By.css('.getter-select')).componentInstance;
-            expect(getterSelect.options.length).toBe(2);
-            expect(getterSelect.options[0].title).toBe('Getter Option 1');
+            expect(getterSelect.options().length).toBe(2);
+            expect(getterSelect.options()[0].title).toBe('Getter Option 1');
         });
 
         it('should update when getter options change', async () => {
@@ -2323,27 +2342,27 @@ describe('Select Dynamic Data Sources', () => {
             await dynamicFixture.whenStable();
 
             const getterSelect = dynamicFixture.debugElement.query(By.css('.getter-select')).componentInstance;
-            expect(getterSelect.options.length).toBe(1);
-            expect(getterSelect.options[0].title).toBe('Updated Getter Option');
+            expect(getterSelect.options().length).toBe(1);
+            expect(getterSelect.options()[0].title).toBe('Updated Getter Option');
         });
 
         it('should work with getter optionLabel and optionValue', () => {
             const getterSelect = dynamicFixture.debugElement.query(By.css('.getter-select')).componentInstance;
-            expect(getterSelect.optionLabel).toBe('title');
-            expect(getterSelect.optionValue).toBe('code');
+            expect(getterSelect.optionLabel()).toBe('title');
+            expect(getterSelect.optionValue()).toBe('code');
         });
     });
 
     describe('Function-based Properties', () => {
         it('should work with function-based options', () => {
             const functionSelect = dynamicFixture.debugElement.query(By.css('.function-select')).componentInstance;
-            expect(functionSelect.options.length).toBe(2);
-            expect(functionSelect.options[0].displayName).toBe('Function Option 1');
+            expect(functionSelect.options().length).toBe(2);
+            expect(functionSelect.options()[0].displayName).toBe('Function Option 1');
         });
 
         it('should work with function-based optionLabel', () => {
             const functionSelect = dynamicFixture.debugElement.query(By.css('.function-select')).componentInstance;
-            expect(functionSelect.optionLabel).toBe('displayName');
+            expect(functionSelect.optionLabel()).toBe('displayName');
         });
     });
 
@@ -2392,13 +2411,13 @@ describe('Select Dynamic Data Sources', () => {
     describe('Computed Properties', () => {
         it('should work with computed options', () => {
             const computedSelect = dynamicFixture.debugElement.query(By.css('.computed-select')).componentInstance;
-            const options = computedSelect.options || [];
+            const options = computedSelect.options() || [];
             expect(Array.isArray(options) ? options.length : 0).toBeGreaterThanOrEqual(0);
         });
 
         it('should update when computed conditions change', async () => {
             const computedSelect = dynamicFixture.debugElement.query(By.css('.computed-select')).componentInstance;
-            const options = computedSelect.options || [];
+            const options = computedSelect.options() || [];
             expect(Array.isArray(options) ? options.length : 0).toBeGreaterThanOrEqual(0);
 
             dynamicComponent.toggleShowInactive();
@@ -2406,7 +2425,7 @@ describe('Select Dynamic Data Sources', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await dynamicFixture.whenStable();
 
-            const updatedOptions = computedSelect.options || [];
+            const updatedOptions = computedSelect.options() || [];
             expect(Array.isArray(updatedOptions) ? updatedOptions.length : 0).toBeGreaterThanOrEqual(0);
         });
 
@@ -2683,7 +2702,7 @@ describe('Select ViewChild Properties', () => {
         viewChildFixture.detectChanges();
 
         expect(selectInstance.overlayViewChild).toBeTruthy();
-        expect(selectInstance.overlayVisible).toBe(true);
+        expect(selectInstance.overlayVisible()).toBe(true);
     });
 
     it('should render filter input ViewChild when filter is enabled', async () => {
@@ -2790,8 +2809,8 @@ describe('Select Complex Edge Cases', () => {
             edgeFixture.detectChanges();
 
             // Component should still be functional
-            expect(rapidSelect.options).toBeDefined();
-            expect(rapidSelect.options.length).toBeGreaterThan(0);
+            expect(rapidSelect.options()).toBeDefined();
+            expect(rapidSelect.options().length).toBeGreaterThan(0);
 
             // Clear interval to avoid test pollution
             await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -2824,8 +2843,8 @@ describe('Select Complex Edge Cases', () => {
             edgeFixture.detectChanges();
 
             // Should handle large dataset without errors
-            expect(memorySelect.options.length).toBe(10000);
-            expect(memorySelect.virtualScroll).toBe(true);
+            expect(memorySelect.options().length).toBe(10000);
+            expect(memorySelect.virtualScroll()).toBe(true);
         });
 
         it('should not cause memory leaks with large datasets', () => {
@@ -2840,7 +2859,7 @@ describe('Select Complex Edge Cases', () => {
         it('should handle XSS attempts safely', () => {
             const unicodeSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Unicode test"]')).componentInstance;
 
-            expect(unicodeSelect.options[0].text).toContain('<script>');
+            expect(unicodeSelect.options()[0].text).toContain('<script>');
 
             // Should not execute script
             expect(() => {
@@ -2851,28 +2870,28 @@ describe('Select Complex Edge Cases', () => {
         it('should display unicode characters correctly', () => {
             const unicodeSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Unicode test"]')).componentInstance;
 
-            const unicodeOption = unicodeSelect.options.find((opt: any) => opt.id === 'unicode');
+            const unicodeOption = unicodeSelect.options().find((opt: any) => opt.id === 'unicode');
             expect(unicodeOption.text).toBe('Unicode: 你好世界 🌍 🚀');
         });
 
         it('should handle special characters', () => {
             const unicodeSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Unicode test"]')).componentInstance;
 
-            const specialOption = unicodeSelect.options.find((opt: any) => opt.id === 'special');
+            const specialOption = unicodeSelect.options().find((opt: any) => opt.id === 'special');
             expect(specialOption.text).toBe('Special: !@#$%^&*()');
         });
 
         it('should handle RTL languages', () => {
             const unicodeSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Unicode test"]')).componentInstance;
 
-            const rtlOption = unicodeSelect.options.find((opt: any) => opt.id === 'rtl');
+            const rtlOption = unicodeSelect.options().find((opt: any) => opt.id === 'rtl');
             expect(rtlOption.text).toBe('RTL: مرحبا بالعالم');
         });
 
         it('should handle newlines and tabs in text', () => {
             const unicodeSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Unicode test"]')).componentInstance;
 
-            const newlinesOption = unicodeSelect.options.find((opt: any) => opt.id === 'newlines');
+            const newlinesOption = unicodeSelect.options().find((opt: any) => opt.id === 'newlines');
             expect(newlinesOption.text).toBe('Newlines\nand\ttabs');
         });
     });
@@ -2881,7 +2900,7 @@ describe('Select Complex Edge Cases', () => {
         it('should handle circular references without infinite loops', async () => {
             const circularSelect = edgeFixture.debugElement.query(By.css('p-select[placeholder="Circular test"]')).componentInstance;
 
-            expect(circularSelect.options.length).toBe(2);
+            expect(circularSelect.options().length).toBe(2);
 
             // Should not cause infinite loops during rendering
             circularSelect.show();
@@ -2889,7 +2908,7 @@ describe('Select Complex Edge Cases', () => {
             await edgeFixture.whenStable();
             edgeFixture.detectChanges();
 
-            expect(circularSelect.overlayVisible).toBe(true);
+            expect(circularSelect.overlayVisible()).toBe(true);
         });
 
         it('should serialize circular objects safely', () => {
@@ -2919,7 +2938,7 @@ describe('Select Complex Edge Cases', () => {
             if (edgeSelect) {
                 const selectInstance = edgeSelect.componentInstance;
                 expect(() => {
-                    selectInstance.options;
+                    selectInstance.options();
                 }).not.toThrow();
             } else {
                 // If no select found, test component data directly
@@ -3039,7 +3058,7 @@ describe('Select Advanced Accessibility', () => {
             const listbox = fixture.debugElement.query(By.css('[role="listbox"]'));
 
             if (listbox) {
-                const expectedId = selectInstance.id + '_list';
+                const expectedId = selectInstance._id() + '_list';
                 expect(combobox.nativeElement.getAttribute('aria-controls')).toBe(expectedId);
             }
         });
@@ -3059,7 +3078,7 @@ describe('Select Advanced Accessibility', () => {
             const activeDescendant = combobox.nativeElement.getAttribute('aria-activedescendant');
 
             if (activeDescendant) {
-                expect(activeDescendant).toContain(selectInstance.id);
+                expect(activeDescendant).toContain(selectInstance._id());
             } else {
                 // Fallback: just check that focusedOptionIndex was set correctly
                 expect(selectInstance.focusedOptionIndex()).toBe(0);
@@ -3069,25 +3088,25 @@ describe('Select Advanced Accessibility', () => {
 
     describe('Keyboard Navigation', () => {
         it('should open dropdown with Enter key', async () => {
-            expect(selectInstance.overlayVisible).toBeFalsy();
+            expect(selectInstance.overlayVisible()).toBeFalsy();
 
             const keyEvent = new KeyboardEvent('keydown', { code: 'Enter' });
             selectInstance.onKeyDown(keyEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should open dropdown with Space key', async () => {
-            expect(selectInstance.overlayVisible).toBeFalsy();
+            expect(selectInstance.overlayVisible()).toBeFalsy();
 
             const keyEvent = new KeyboardEvent('keydown', { key: ' ' });
             selectInstance.onKeyDown(keyEvent);
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should navigate options with Arrow keys', async () => {
@@ -3151,7 +3170,7 @@ describe('Select Advanced Accessibility', () => {
             const endEvent = new KeyboardEvent('keydown', { code: 'End' });
             selectInstance.onKeyDown(endEvent);
 
-            const lastIndex = selectInstance.options!.length - 1;
+            const lastIndex = selectInstance.options()!.length - 1;
             expect(selectInstance.focusedOptionIndex()).toBe(lastIndex);
 
             const homeEvent = new KeyboardEvent('keydown', { code: 'Home' });
@@ -3208,7 +3227,7 @@ describe('Select Advanced Accessibility', () => {
             fixture.detectChanges();
 
             // Should handle focus management
-            expect(selectInstance.overlayVisible).toBe(true);
+            expect(selectInstance.overlayVisible()).toBe(true);
         });
 
         it('should return focus when closing', async () => {
@@ -3221,7 +3240,7 @@ describe('Select Advanced Accessibility', () => {
             await fixture.whenStable();
             fixture.detectChanges();
 
-            expect(selectInstance.overlayVisible).toBe(false);
+            expect(selectInstance.overlayVisible()).toBe(false);
         });
 
         it('should handle focus trap in overlay', async () => {
@@ -3261,6 +3280,9 @@ describe('Select PT (PassThrough)', () => {
                 [optionGroupLabel]="optionGroupLabel"
                 [optionGroupChildren]="optionGroupChildren"
                 [group]="group"
+                [loading]="loading"
+                [virtualScroll]="virtualScroll"
+                [virtualScrollItemSize]="virtualScrollItemSize"
             >
             </p-select>
         `
@@ -3281,6 +3303,9 @@ describe('Select PT (PassThrough)', () => {
         optionGroupLabel: string | undefined;
         optionGroupChildren: string | undefined;
         group = false;
+        loading: boolean | undefined = false;
+        virtualScroll: boolean | undefined;
+        virtualScrollItemSize: number | undefined;
     }
 
     let fixture: ComponentFixture<TestPTSelectComponent>;
@@ -3929,7 +3954,7 @@ describe('Select PT (PassThrough)', () => {
             component.pt = {
                 loadingIcon: { class: 'CUSTOM_LOADING_ICON' }
             };
-            selectInstance.loading = true;
+            component.loading = true;
             fixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
@@ -4095,8 +4120,8 @@ describe('Select PT (PassThrough)', () => {
                     spacer: { class: 'CUSTOM_VSCROLLER_SPACER', 'data-vscroller': 'spacer' }
                 }
             };
-            selectInstance.virtualScroll = true;
-            selectInstance.virtualScrollItemSize = 38;
+            component.virtualScroll = true;
+            component.virtualScrollItemSize = 38;
             fixture.detectChanges();
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
@@ -4576,5 +4601,317 @@ describe('SelectItem', () => {
         fixture.detectChanges();
 
         expect(component.mouseEnterEvent).toBeDefined();
+    });
+
+    it('should re-render when its inputs change', () => {
+        const li = itemElement.nativeElement as HTMLElement;
+        expect(li.getAttribute('aria-label')).toBe('Option 1');
+        expect(li.getAttribute('aria-selected')).toBe('false');
+        expect(li.getAttribute('data-p-disabled')).toBe('false');
+        expect(li.textContent?.trim()).toBe('Option 1');
+
+        component.label = 'Option A';
+        component.selected = true;
+        component.disabled = true;
+        fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
+        fixture.detectChanges();
+
+        expect(li.getAttribute('aria-label')).toBe('Option A');
+        expect(li.getAttribute('aria-selected')).toBe('true');
+        expect(li.getAttribute('data-p-selected')).toBe('true');
+        expect(li.getAttribute('data-p-disabled')).toBe('true');
+        expect(li.textContent?.trim()).toBe('Option A');
+    });
+
+    it('should render the check and blank icons from checkmark and selected', () => {
+        const itemFixture = TestBed.createComponent(SelectItem);
+        itemFixture.componentRef.setInput('label', 'Rome');
+        itemFixture.componentRef.setInput('checkmark', true);
+        itemFixture.detectChanges();
+
+        const el = itemFixture.nativeElement as HTMLElement;
+        expect(el.querySelector('[data-p-icon="blank"]')).toBeTruthy();
+        expect(el.querySelector('[data-p-icon="check"]')).toBeNull();
+
+        itemFixture.componentRef.setInput('selected', true);
+        itemFixture.componentRef.setInput('focused', true);
+        itemFixture.detectChanges();
+
+        expect(el.querySelector('[data-p-icon="check"]')).toBeTruthy();
+        expect(el.querySelector('[data-p-icon="blank"]')).toBeNull();
+        expect(el.querySelector('li')?.getAttribute('data-p-focused')).toBe('true');
+        expect(el.querySelector('li')?.classList.contains('p-focus')).toBe(true);
+    });
+});
+
+describe('Select Signals API', () => {
+    let fixture: ComponentFixture<Select>;
+    let select: Select;
+    const cities = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' },
+        { name: 'London', code: 'LDN' }
+    ];
+
+    const waitForOverlay = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [Select],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(Select);
+        select = fixture.componentInstance;
+        fixture.componentRef.setInput('options', cities);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('optionValue', 'code');
+        fixture.detectChanges();
+    });
+
+    const host = () => fixture.nativeElement as HTMLElement;
+    const combobox = () => host().querySelector('[role="combobox"]') as HTMLElement;
+
+    describe('OnPush re-rendering', () => {
+        it('should re-render the combobox attributes when the inputs change', () => {
+            fixture.componentRef.setInput('inputId', 'city-input');
+            fixture.componentRef.setInput('tabindex', 4);
+            fixture.componentRef.setInput('ariaLabel', 'City');
+            fixture.componentRef.setInput('ariaLabelledBy', 'city-label');
+            fixture.detectChanges();
+
+            expect(combobox().getAttribute('id')).toBe('city-input');
+            expect(combobox().getAttribute('tabindex')).toBe('4');
+            expect(combobox().getAttribute('aria-label')).toBe('City');
+            expect(combobox().getAttribute('aria-labelledby')).toBe('city-label');
+        });
+
+        it('should re-render the host id when the id input changes', () => {
+            expect(host().getAttribute('id')).toMatch(/^pn_id_/);
+
+            fixture.componentRef.setInput('id', 'city-select');
+            fixture.detectChanges();
+
+            expect(host().getAttribute('id')).toBe('city-select');
+            expect(select._id()).toBe('city-select');
+        });
+
+        it('should re-render the label when placeholder, options or the model value change', () => {
+            fixture.componentRef.setInput('placeholder', 'Pick a city');
+            fixture.detectChanges();
+            expect(combobox().textContent?.trim()).toBe('Pick a city');
+
+            select.writeValue('RM');
+            fixture.detectChanges();
+            expect(combobox().textContent?.trim()).toBe('Rome');
+
+            fixture.componentRef.setInput('options', [{ name: 'Roma', code: 'RM' }]);
+            fixture.detectChanges();
+            expect(combobox().textContent?.trim()).toBe('Roma');
+
+            fixture.componentRef.setInput('optionLabel', 'code');
+            fixture.detectChanges();
+            expect(combobox().textContent?.trim()).toBe('RM');
+        });
+
+        it('should re-render the loading and dropdown icons when loading/dropdownIcon change', () => {
+            fixture.componentRef.setInput('dropdownIcon', 'pi pi-star');
+            fixture.detectChanges();
+            expect(host().querySelector('.p-select-dropdown-icon.pi-star')).toBeTruthy();
+
+            fixture.componentRef.setInput('loading', true);
+            fixture.detectChanges();
+            expect(host().querySelector('.p-select-loading-icon')).toBeTruthy();
+            expect(host().querySelector('.p-select-dropdown-icon')).toBeNull();
+        });
+
+        it('should re-render the clear icon when showClear changes', () => {
+            select.writeValue('NY');
+            fixture.detectChanges();
+            expect(host().querySelector('[data-pc-section="clearicon"]')).toBeNull();
+
+            fixture.componentRef.setInput('showClear', true);
+            fixture.detectChanges();
+            expect(host().querySelector('[data-pc-section="clearicon"]')).toBeTruthy();
+        });
+
+        it('should switch to the editable input when editable/readonly change', () => {
+            fixture.componentRef.setInput('editable', true);
+            fixture.componentRef.setInput('readonly', true);
+            fixture.detectChanges();
+
+            const input = host().querySelector('input.p-select-label') as HTMLInputElement;
+            expect(input).toBeTruthy();
+            expect(input.hasAttribute('readonly')).toBe(true);
+            expect(combobox()).toBeNull();
+        });
+
+        it('should re-render the overlay content when the overlay related inputs change', async () => {
+            fixture.componentRef.setInput('filter', true);
+            fixture.componentRef.setInput('filterPlaceholder', 'Search cities');
+            fixture.componentRef.setInput('panelStyleClass', 'city-panel');
+            fixture.componentRef.setInput('scrollHeight', '120px');
+            fixture.componentRef.setInput('checkmark', true);
+            select.writeValue('LDN');
+            select.show();
+            await waitForOverlay();
+
+            const filterInput = document.querySelector('.p-select-filter') as HTMLInputElement;
+            expect(filterInput).toBeTruthy();
+            expect(filterInput.getAttribute('placeholder')).toBe('Search cities');
+            expect(document.querySelector('.p-select-overlay.city-panel')).toBeTruthy();
+            expect((document.querySelector('.p-select-list-container') as HTMLElement).style.maxHeight).toBe('120px');
+            expect(document.querySelectorAll('li[role="option"]').length).toBe(3);
+            expect(document.querySelectorAll('.p-select-option-check-icon').length).toBe(1);
+            expect(document.querySelectorAll('.p-select-option-blank-icon').length).toBe(2);
+
+            fixture.componentRef.setInput('options', []);
+            fixture.componentRef.setInput('emptyMessage', 'No cities');
+            await waitForOverlay();
+
+            expect(document.querySelector('.p-select-empty-message')?.textContent?.trim()).toBe('No cities');
+        });
+
+        it('should re-render aria-expanded and the open class when overlayVisible changes', async () => {
+            expect(combobox().getAttribute('aria-expanded')).toBe('false');
+            expect(host().classList.contains('p-select-open')).toBe(false);
+
+            select.show();
+            await waitForOverlay();
+
+            expect(select.overlayVisible()).toBe(true);
+            expect(combobox().getAttribute('aria-expanded')).toBe('true');
+            expect(host().classList.contains('p-select-open')).toBe(true);
+
+            select.hide();
+            await waitForOverlay();
+
+            expect(combobox().getAttribute('aria-expanded')).toBe('false');
+            expect(host().classList.contains('p-select-open')).toBe(false);
+        });
+
+        it('should re-render the focus class when focused changes', () => {
+            combobox().dispatchEvent(new Event('focus'));
+            fixture.detectChanges();
+
+            expect(select.focused()).toBe(true);
+            expect(host().classList.contains('p-focus')).toBe(true);
+
+            combobox().dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+
+            expect(select.focused()).toBe(false);
+            expect(host().classList.contains('p-focus')).toBe(false);
+        });
+    });
+
+    describe('linked signals', () => {
+        it('should reset _filterValue when the filterValue input changes and keep a typed filter in between', async () => {
+            fixture.componentRef.setInput('filter', true);
+            fixture.componentRef.setInput('filterValue', 'Ro');
+            fixture.detectChanges();
+
+            expect(select._filterValue()).toBe('Ro');
+            expect(select.visibleOptions().map((option) => option.code)).toEqual(['RM']);
+
+            select.show();
+            await waitForOverlay();
+            const filterInput = document.querySelector('.p-select-filter') as HTMLInputElement;
+            filterInput.value = 'Lon';
+            filterInput.dispatchEvent(new Event('input'));
+            fixture.detectChanges();
+
+            expect(select._filterValue()).toBe('Lon');
+            expect(select.visibleOptions().map((option) => option.code)).toEqual(['LDN']);
+
+            fixture.componentRef.setInput('filterValue', 'New');
+            fixture.detectChanges();
+
+            expect(select._filterValue()).toBe('New');
+            expect(select.visibleOptions().map((option) => option.code)).toEqual(['NY']);
+        });
+
+        it('should reset _placeholder when the placeholder input changes and keep a floating label placeholder in between', () => {
+            fixture.componentRef.setInput('placeholder', 'Pick a city');
+            fixture.detectChanges();
+            expect(select._placeholder()).toBe('Pick a city');
+
+            select._placeholder.set('From the floating label');
+            fixture.detectChanges();
+            expect(combobox().textContent?.trim()).toBe('From the floating label');
+
+            fixture.componentRef.setInput('placeholder', 'Choose a city');
+            fixture.detectChanges();
+            expect(select._placeholder()).toBe('Choose a city');
+            expect(combobox().textContent?.trim()).toBe('Choose a city');
+        });
+
+        it('should follow the model value with selectedOption', () => {
+            expect(select.selectedOption()).toBeUndefined();
+
+            select.writeValue('RM');
+            fixture.detectChanges();
+            expect(select.selectedOption()).toEqual({ name: 'Rome', code: 'RM' });
+
+            select.writeValue('LDN');
+            fixture.detectChanges();
+            expect(select.selectedOption()).toEqual({ name: 'London', code: 'LDN' });
+        });
+
+        it('should keep the same _options reference when an equal options array is set', () => {
+            const before = select._options();
+
+            fixture.componentRef.setInput(
+                'options',
+                cities.map((city) => ({ ...city }))
+            );
+            fixture.detectChanges();
+            expect(select._options()).toBe(before);
+
+            fixture.componentRef.setInput('options', [{ name: 'Paris', code: 'PRS' }]);
+            fixture.detectChanges();
+            expect(select._options()).toEqual([{ name: 'Paris', code: 'PRS' }]);
+        });
+    });
+
+    describe('computed state', () => {
+        it('should expose filterOptions only when filterBy is set', () => {
+            expect(select.filterOptions()).toBeUndefined();
+
+            fixture.componentRef.setInput('filterBy', 'name');
+            fixture.detectChanges();
+
+            const filterOptions = select.filterOptions();
+            expect(filterOptions).toBeDefined();
+            filterOptions?.filter?.({ target: { value: 'Lon' } });
+            expect(select._filterValue()).toBe('Lon');
+            filterOptions?.reset?.();
+            expect(select._filterValue()).toBeNull();
+        });
+
+        it('should derive the focused option id from the id and the focused option index', () => {
+            fixture.componentRef.setInput('id', 'city');
+            fixture.detectChanges();
+            expect(select.focusedOptionId()).toBeNull();
+
+            select.focusedOptionIndex.set(2);
+            expect(select.focusedOptionId()).toBe('city_2');
+        });
+
+        it('should derive the empty message labels from the inputs and the translation', () => {
+            expect(select.emptyMessageLabel()).toBe('No results found');
+
+            fixture.componentRef.setInput('emptyMessage', 'Nothing here');
+            fixture.componentRef.setInput('emptyFilterMessage', 'Nothing found');
+            fixture.detectChanges();
+
+            expect(select.emptyMessageLabel()).toBe('Nothing here');
+            expect(select.emptyFilterMessageLabel()).toBe('Nothing found');
+        });
     });
 });

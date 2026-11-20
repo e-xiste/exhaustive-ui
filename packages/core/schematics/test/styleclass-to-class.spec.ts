@@ -1504,4 +1504,41 @@ describe('styleclass-to-class', () => {
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-tree class="existing my-tree" [value]="files"></p-tree>\n`);
     });
+
+    it('rewrites a static styleClass to class on p-select', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-select [options]="cities" [(ngModel)]="city" styleClass="w-full md:w-56"></p-select>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-select [options]="cities" [(ngModel)]="city" class="w-full md:w-56"></p-select>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-select', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-select [options]="cities" optionLabel="name" [styleClass]="selectClass"></p-select>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-select [options]="cities" optionLabel="name" [class]="selectClass"></p-select>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-select', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-select class="existing" styleClass="w-full" [options]="cities"></p-select>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-select class="existing w-full" [options]="cities"></p-select>\n`);
+    });
+
+    it('leaves styleClass on p-selectbutton and p-select-button untouched while rewriting p-select', async () => {
+        const runner = createMigrationRunner();
+        const content = `<p-selectbutton [options]="states" styleClass="keep"></p-selectbutton>\n<p-select-button [options]="states" [styleClass]="keepClass"></p-select-button>\n<p-select [options]="cities" styleClass="rewrite"></p-select>\n`;
+        const tree = createAppTree({ '/src/app/app.html': content });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-selectbutton [options]="states" styleClass="keep"></p-selectbutton>\n<p-select-button [options]="states" [styleClass]="keepClass"></p-select-button>\n<p-select [options]="cities" class="rewrite"></p-select>\n`
+        );
+    });
 });

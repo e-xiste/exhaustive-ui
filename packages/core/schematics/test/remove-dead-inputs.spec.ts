@@ -781,4 +781,32 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/foo.ts')).toBe(content);
         expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
     });
+
+    it('removes visible/itemSize from p-selectItem while keeping its live inputs', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-selectItem [option]="option" [visible]="true" itemSize="38" [label]="label"></p-selectItem>\n<p-selectItem visible [itemSize]="size" [selected]="selected"></p-selectItem>\n<p-dialog [visible]="shown"></p-dialog>\n<p-scroller [itemSize]="50"></p-scroller>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-selectItem [option]="option" [label]="label"></p-selectItem>\n<p-selectItem [selected]="selected"></p-selectItem>\n<p-dialog [visible]="shown"></p-dialog>\n<p-scroller [itemSize]="50"></p-scroller>\n`
+        );
+    });
+
+    it('does not report programmatic visible/itemSize accesses as leftovers', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(dialog: { visible: boolean }, scroller: { itemSize: number }) {\n        return dialog.visible && scroller.itemSize;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
+    });
 });
