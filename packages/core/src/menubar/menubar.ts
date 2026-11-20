@@ -56,7 +56,7 @@ export class MenubarService {
     selector: 'p-menubarSub, p-menubarsub, [pMenubarSub]',
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, BindModule],
     template: `
-        @for (processedItem of items(); track processedItem; let index = $index) {
+        @for (processedItem of items(); track processedItem.key; let index = $index) {
             @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
                 <li [attr.id]="getItemId(processedItem)" [style]="getItemProp(processedItem, 'style')" [class]="cn(cx('separator'), processedItem?.styleClass)" role="separator" [pBind]="ptm('separator')"></li>
             }

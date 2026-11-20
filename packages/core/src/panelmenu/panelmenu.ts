@@ -41,7 +41,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
     selector: 'ul[pPanelMenuSub]',
     imports: [CommonModule, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
-        @for (processedItem of items(); track processedItem; let index = $index) {
+        @for (processedItem of items(); track processedItem.key; let index = $index) {
             @if (processedItem.separator) {
                 <li [class]="cn(cx('separator'), getItemProp(processedItem, 'styleClass'))" role="separator" [pBind]="ptm('separator')"></li>
             }
@@ -780,7 +780,7 @@ export class PanelMenuList extends BaseComponent {
     selector: 'p-panelMenu, p-panelmenu, p-panel-menu',
     imports: [CommonModule, PanelMenuList, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
-        @for (item of model(); track item; let f = $first; let l = $last; let i = $index) {
+        @for (item of model(); track $index; let f = $first; let l = $last; let i = $index) {
             @if (isItemVisible(item)) {
                 <div [class]="cn(cx('panel'), getItemProp(item, 'headerClass'))" [ngStyle]="getItemProp(item, 'style')" [pBind]="ptm('panel')">
                     <div

@@ -383,7 +383,7 @@ export class SelectItem extends BaseComponent {
 
                         <ng-template #buildInItems let-items let-scrollerOptions="options">
                             <ul #items [attr.id]="_id() + '_list'" [attr.aria-label]="listLabel()" [class]="cn(cx('list'), scrollerOptions.contentStyleClass)" [style]="scrollerOptions.contentStyle" role="listbox" [pBind]="ptm('list')">
-                                @for (option of items; track option; let i = $index) {
+                                @for (option of items; track $index; let i = $index) {
                                     @if (isOptionGroup(option)) {
                                         <li [class]="cx('optionGroup')" [attr.id]="_id() + '_' + getOptionIndex(i, scrollerOptions)" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option" [pBind]="ptm('optionGroup')">
                                             @if (!groupTemplate() && !_groupTemplate()) {

@@ -293,7 +293,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
 
                     <ng-template #buildInItems let-items let-scrollerOptions="options">
                         <ul #items [pBind]="ptm('list')" [class]="cn(cx('list'), scrollerOptions.contentStyleClass)" [style]="scrollerOptions.contentStyle" role="listbox" [attr.id]="_id() + '_list'" [attr.aria-label]="listLabel()">
-                            @for (option of items; track option; let i = $index) {
+                            @for (option of items; track $index; let i = $index) {
                                 @if (isOptionGroup(option)) {
                                     <li [pBind]="ptm('optionGroup')" [attr.id]="_id() + '_' + getOptionIndex(i, scrollerOptions)" [class]="cx('optionGroup')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
                                         @if (!groupTemplate() && !_groupTemplate()) {

@@ -49,7 +49,7 @@ const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INST
                 {{ getItemLabel(submenu()) }}
             </li>
         }
-        @for (processedItem of items(); track processedItem; let index = $index) {
+        @for (processedItem of items(); track processedItem.key; let index = $index) {
             @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
                 <li [attr.id]="getItemId(processedItem)" [style]="getItemProp(processedItem, 'style')" [class]="cn(cx('separator'), this.getItemProp(processedItem, 'class'))" role="separator" [pBind]="ptm('separator')"></li>
             }
@@ -192,9 +192,9 @@ const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INST
                     @if (isItemVisible(processedItem) && isItemGroup(processedItem)) {
                         <div [class]="cx('overlay')" [pBind]="ptm('overlay')">
                             <div [class]="cx('grid')" [pBind]="ptm('grid')">
-                                @for (col of processedItem.items; track col) {
+                                @for (col of processedItem.items; track $index) {
                                     <div [class]="cx('column', { processedItem })" [pBind]="ptm('column')">
-                                        @for (submenu of col; track submenu) {
+                                        @for (submenu of col; track submenu.key) {
                                             <ul
                                                 pMegaMenuSub
                                                 [id]="getSubListId(submenu)"

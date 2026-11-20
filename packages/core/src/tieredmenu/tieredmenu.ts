@@ -72,7 +72,7 @@ const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_
                 (pMotionOnBeforeEnter)="onBeforeEnter($event)"
                 (pMotionOnAfterLeave)="onAfterLeave()"
             >
-                @for (processedItem of items(); track processedItem; let index = $index) {
+                @for (processedItem of items(); track processedItem.key; let index = $index) {
                     @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
                         <li
                             [attr.id]="getItemId(processedItem)"

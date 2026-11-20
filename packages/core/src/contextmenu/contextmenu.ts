@@ -85,7 +85,7 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
                 (pMotionOnBeforeEnter)="onBeforeEnter($event)"
                 (pMotionOnAfterLeave)="onAfterLeave()"
             >
-                @for (processedItem of items(); track processedItem; let index = $index) {
+                @for (processedItem of items(); track processedItem.key; let index = $index) {
                     @if (isItemVisible(processedItem) && getItemProp(processedItem, 'separator')) {
                         <li [attr.id]="getItemId(processedItem)" [style]="getItemProp(processedItem, 'style')" [class]="cn(cx('separator'), getItemProp(processedItem, 'styleClass'))" role="separator" [pBind]="_ptm('separator')"></li>
                     }

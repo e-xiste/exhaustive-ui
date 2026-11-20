@@ -230,7 +230,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                         (keydown)="onListKeyDown($event)"
                         [pBind]="ptm('list')"
                     >
-                        @for (option of items; track option; let i = $index) {
+                        @for (option of items; track $index; let i = $index) {
                             @if (isOptionGroup(option)) {
                                 <li
                                     [attr.id]="_id() + '_' + getOptionIndex(i, scrollerOptions)"

@@ -233,7 +233,7 @@ export class MultiSelectItem extends BaseComponent {
                         @if (chipSelectedItems() && chipSelectedItems().length === maxSelectedLabels()) {
                             {{ getSelectedItemsLabel() }}
                         } @else {
-                            @for (item of chipSelectedItems(); track item; let i = $index) {
+                            @for (item of chipSelectedItems(); track $index; let i = $index) {
                                 <div #token [pBind]="ptm('chipItem')" [class]="cx('chipItem')">
                                     <p-chip
                                         [pt]="ptm('pcChip')"
@@ -445,7 +445,7 @@ export class MultiSelectItem extends BaseComponent {
 
                         <ng-template #buildInItems let-items let-scrollerOptions="options">
                             <ul #items [pBind]="ptm('list')" [class]="cn(cx('list'), scrollerOptions.contentStyleClass)" [style]="scrollerOptions.contentStyle" role="listbox" aria-multiselectable="true" [attr.aria-label]="listLabel()">
-                                @for (option of items; track option; let i = $index) {
+                                @for (option of items; track $index; let i = $index) {
                                     @if (isOptionGroup(option)) {
                                         <li [pBind]="ptm('optionGroup')" [attr.id]="_id() + '_' + getOptionIndex(i, scrollerOptions)" [class]="cx('optionGroup')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
                                             @if (!groupTemplate() && !_groupTemplate() && option.optionGroup) {
