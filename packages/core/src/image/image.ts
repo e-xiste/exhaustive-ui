@@ -73,6 +73,7 @@ import { ImageStyle } from './style/imagestyle';
                 #mask
                 [class]="cx('mask')"
                 [attr.aria-modal]="maskVisible()"
+                [attr.aria-label]="previewAriaLabel() || alt() || zoomImageAriaLabel"
                 role="dialog"
                 (click)="onMaskClick()"
                 (keydown)="onMaskKeydown($event)"
@@ -216,6 +217,11 @@ export class Image extends BaseComponent<ImagePassThrough> {
      * @group Props
      */
     alt = input<string | undefined>(undefined);
+    /**
+     * Accessible name of the preview dialog. Defaults to the alt text, then to the zoomImage ARIA translation.
+     * @group Props
+     */
+    previewAriaLabel = input<string | undefined>(undefined);
     /**
      * Attribute of the image element.
      * @group Props

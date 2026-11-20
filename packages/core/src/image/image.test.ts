@@ -239,6 +239,16 @@ describe('Image', () => {
             expect(maskElement).toBeTruthy();
         });
 
+        it('should give the preview dialog an accessible name', async () => {
+            imageInstance.onImageClick();
+            await testFixture.whenStable();
+            testFixture.detectChanges();
+
+            const dialog = document.querySelector('.p-image-mask[role="dialog"]') as HTMLElement;
+            expect(dialog).toBeTruthy();
+            expect(dialog.getAttribute('aria-label')).toBe('Preview Test Image');
+        });
+
         it('should close preview when clicking outside', async () => {
             imageInstance.onImageClick();
             await testFixture.whenStable();
