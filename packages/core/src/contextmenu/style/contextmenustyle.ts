@@ -7,15 +7,19 @@ const inlineStyles = {
 };
 
 const classes = {
-    root: () => ['p-contextmenu p-component'],
+    root: ({ instance }) => [
+        'p-contextmenu p-component',
+        {
+            'p-contextmenu-mobile': instance.queryMatches()
+        }
+    ],
     rootList: 'p-contextmenu-root-list',
     item: ({ instance, processedItem }) => [
         'p-contextmenu-item',
         {
             'p-contextmenu-item-active': instance.isItemActive(processedItem),
             'p-focus': instance.isItemFocused(processedItem),
-            'p-disabled': instance.isItemDisabled(processedItem),
-            'p-contextmenu-mobile': instance.queryMatches
+            'p-disabled': instance.isItemDisabled(processedItem)
         }
     ],
     itemContent: 'p-contextmenu-item-content',

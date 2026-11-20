@@ -878,6 +878,30 @@ describe('ContextMenu', () => {
             expect(containerElement.nativeElement.classList.contains('p-contextmenu')).toBe(true);
         });
 
+        it('should toggle the mobile class on the root element when the breakpoint query matches', async () => {
+            contextMenuInstance.show({ pageX: 10, pageY: 10, stopPropagation: vi.fn(), preventDefault: vi.fn() });
+            contextMenuInstance.queryMatches.set(false);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const root = fixture.debugElement.query(By.css('[data-pc-name="contextmenu"]')).nativeElement as HTMLElement;
+            expect(root.classList.contains('p-contextmenu-mobile')).toBe(false);
+
+            contextMenuInstance.queryMatches.set(true);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            expect(root.classList.contains('p-contextmenu-mobile')).toBe(true);
+            // The mobile class belongs on the root only (the theme uses `.p-contextmenu-mobile .p-contextmenu-submenu`).
+            expect(fixture.debugElement.queryAll(By.css('.p-contextmenu-item.p-contextmenu-mobile')).length).toBe(0);
+
+            contextMenuInstance.queryMatches.set(false);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            expect(root.classList.contains('p-contextmenu-mobile')).toBe(false);
+        });
+
         it('should apply custom styles when visible', async () => {
             const styleFixture = TestBed.createComponent(TestStyledContextMenuComponent);
             const styleComponent = styleFixture.componentInstance;
