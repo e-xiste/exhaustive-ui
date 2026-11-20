@@ -1062,4 +1062,33 @@ describe('Accordion', () => {
             expect(onHeader.defaultPrevented).toBe(true);
         });
     });
+    describe('Bare boolean attributes', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.OnPush,
+            imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
+            template: `
+                <p-accordion multiple selectOnFocus>
+                    <p-accordion-panel value="1" disabled>
+                        <p-accordion-header>First</p-accordion-header>
+                        <p-accordion-content>First content</p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            `
+        })
+        class TestBareAttributesAccordionComponent {}
+
+        it('treats multiple, selectOnFocus and disabled written without a value as true', async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({ imports: [TestBareAttributesAccordionComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+            const fixture = TestBed.createComponent(TestBareAttributesAccordionComponent);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const accordion: Accordion = fixture.debugElement.query(By.directive(Accordion)).componentInstance;
+            const panel: AccordionPanel = fixture.debugElement.query(By.directive(AccordionPanel)).componentInstance;
+            expect(accordion.multiple()).toBe(true);
+            expect(accordion.selectOnFocus()).toBe(true);
+            expect(panel.disabled()).toBe(true);
+        });
+    });
 });

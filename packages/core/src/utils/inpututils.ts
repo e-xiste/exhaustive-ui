@@ -1,5 +1,6 @@
 export const transformToBoolean = (value: any): boolean => {
-    return !!value;
+    // a bare attribute (<p-accordion multiple>) is bound as an empty string
+    return value === '' || !!value;
 };
 
 export const transformToNumber = (value: string | number): number => {
