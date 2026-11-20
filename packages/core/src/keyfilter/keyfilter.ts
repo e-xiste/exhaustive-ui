@@ -174,6 +174,20 @@ export class KeyFilter implements Validator {
             }
 
             this.lastValue.set(this.el.nativeElement.value);
+        } else if (!this.isAndroid && !this.pValidateOnly() && (e as unknown as InputEvent).inputType === 'insertCompositionText') {
+            // Characters composed after a dead key or through an IME fire no keypress, so they are checked here.
+            const lastVal = this.lastValue();
+            if (lastVal != null && !this.regex().test(this.el.nativeElement.value)) {
+                this.el.nativeElement.value = lastVal;
+                this.ngModelChange.emit(lastVal);
+            }
+        }
+    }
+
+    @HostListener('keydown')
+    onKeyDown() {
+        if (!this.isAndroid && !this.pValidateOnly()) {
+            this.lastValue.set(this.el.nativeElement.value);
         }
     }
 

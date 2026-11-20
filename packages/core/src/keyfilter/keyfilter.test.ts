@@ -805,4 +805,22 @@ describe('KeyFilter regressions', () => {
         await fixture.whenStable();
         expect(input.value).toBe('a12');
     });
+
+    it('should reject a forbidden character composed after a dead key, which fires no keypress (optimus-ui#853)', async () => {
+        await setPattern(/^[^<>*!]+$/);
+        input.value = 'abc';
+        input.focus();
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Dead', keyCode: 229, bubbles: true }));
+        input.value = 'abc<';
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertCompositionText', data: '<', bubbles: true }));
+        await fixture.whenStable();
+        expect(input.value).toBe('abc');
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Dead', keyCode: 229, bubbles: true }));
+        input.value = 'abcé';
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertCompositionText', data: 'é', bubbles: true }));
+        await fixture.whenStable();
+        expect(input.value).toBe('abcé');
+    });
 });
