@@ -80,6 +80,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - Accordion: arrow, Home and End keys work again in inputs and textareas placed inside a panel (optimus-ui#608).
 - Textarea: no longer crashes with an `NgControl` that has no `valueChanges`, as provided by Angular Signal Forms (optimus-ui#203).
 - 170 medium-severity bugs inherited from Optimus UI, across Table, DatePicker, the tree, select, input, overlay and menu components and the theming engine: see 22.0.0-alpha.10.
+- 108 low-severity bugs inherited from Optimus UI, plus a Splitter listener leak: see 22.0.0-alpha.11.
 
 ### Tooling and documentation
 
@@ -88,7 +89,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
-## Unreleased
+## 22.0.0-alpha.11 (2026-11-21)
 
 Fixes for 108 low-severity bugs reported on [Optimus UI](https://github.com/openng-org/optimus-ui/issues) that still affected ExhaustiveUI. Each one has a regression test, except documentation fixes, which are checked by the docs build. The issue numbers are Optimus UI's.
 
