@@ -1,7 +1,7 @@
 import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
-import { FormsModule, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, FormControl, FormGroup, NgModel, Validators, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { InputMask, InputMaskModule, InputMaskDirective } from './inputmask';
 import { SharedModule } from '@exhaustive-ui/core/api';
@@ -2218,5 +2218,42 @@ describe('InputMask initial form value', () => {
         expect(input.value).toBe('123-456');
         expect(fixture.componentInstance.form.value.code).toBe('123456');
         expect(fixture.componentInstance.form.pristine).toBe(true);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [InputMask, FormsModule],
+    template: ` <p-inputmask [mask]="mask" [(ngModel)]="value" #model="ngModel" [autoClear]="autoClear" /> `
+})
+class TestInputMaskRegressionComponent {
+    mask = 'aaa';
+    value: string = '';
+    autoClear = true;
+}
+
+describe('InputMask regressions', () => {
+    let fixture: ComponentFixture<TestInputMaskRegressionComponent>;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestInputMaskRegressionComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestInputMaskRegressionComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    it('should keep the control pristine when the mask changes programmatically (optimus-ui#941)', async () => {
+        const model = fixture.debugElement.query(By.directive(InputMask)).injector.get(NgModel);
+        expect(model.dirty).toBe(false);
+
+        fixture.componentInstance.mask = 'aaaa';
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(model.dirty).toBe(false);
     });
 });

@@ -785,8 +785,12 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
 
             if (maskBound) {
                 untracked(() => {
+                    const hadValue = this.value() != null && this.value() !== '';
                     this.writeValue('');
-                    this.onModelChange(this.value());
+                    // Only report the cleared value when there was one: a programmatic mask change must not mark an empty control dirty.
+                    if (hadValue) {
+                        this.onModelChange(this.value());
+                    }
                 });
             }
             maskBound = true;
