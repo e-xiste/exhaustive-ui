@@ -1767,6 +1767,7 @@ export class Select extends BaseInput<SelectPassThrough> {
             if (this.overlayVisible() && this.hasFocusableElements()) {
                 focus(event.shiftKey ? this.lastHiddenFocusableElementOnOverlay()?.nativeElement : this.firstHiddenFocusableElementOnOverlay()?.nativeElement);
                 event.preventDefault();
+                event.stopPropagation();
             } else {
                 if (this.focusedOptionIndex() !== -1 && this.overlayVisible()) {
                     const option = this.visibleOptions()[this.focusedOptionIndex()];
@@ -1775,7 +1776,6 @@ export class Select extends BaseInput<SelectPassThrough> {
                 this.overlayVisible() && this.hide(this.filter());
             }
         }
-        event.stopPropagation();
     }
 
     onFirstHiddenFocus(event) {

@@ -5120,4 +5120,18 @@ describe('Select low bug fixes', () => {
 
         expect(fixture.nativeElement.querySelector('.p-select-dropdown-icon').getAttribute('aria-hidden')).toBe('true');
     });
+
+    it('lets the Tab keydown propagate (optimus-ui#675)', async () => {
+        const parentKeydown = vi.fn();
+        fixture.nativeElement.addEventListener('keydown', parentKeydown);
+        const focusInput = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true }));
+        expect(parentKeydown).toHaveBeenCalledTimes(1);
+
+        select.show();
+        await waitForOverlay();
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true }));
+        expect(parentKeydown).toHaveBeenCalledTimes(2);
+    });
 });
