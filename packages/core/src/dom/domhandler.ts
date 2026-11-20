@@ -529,6 +529,7 @@ export class DomHandler {
 
             let scrollDiv = document.createElement('div');
             scrollDiv.className = 'p-scrollbar-measure';
+            scrollDiv.style.cssText = 'width: 100px; height: 100px; overflow: scroll; position: absolute; top: -9999px;';
             document.body.appendChild(scrollDiv);
 
             let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
@@ -545,12 +546,13 @@ export class DomHandler {
 
         let scrollDiv = document.createElement('div');
         scrollDiv.className = 'p-scrollbar-measure';
+        scrollDiv.style.cssText = 'width: 100px; height: 100px; overflow: scroll; position: absolute; top: -9999px;';
         document.body.appendChild(scrollDiv);
 
         let scrollbarHeight = scrollDiv.offsetHeight - scrollDiv.clientHeight;
         document.body.removeChild(scrollDiv);
 
-        this.calculatedScrollbarWidth = scrollbarHeight;
+        this.calculatedScrollbarHeight = scrollbarHeight;
 
         return scrollbarHeight;
     }
