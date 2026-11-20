@@ -400,8 +400,12 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> {
         const viewport = getViewport();
         const sublistWidth = sublist.offsetParent ? sublist.offsetWidth : getHiddenElementOuterWidth(sublist);
         const itemOuterWidth = <any>getOuterWidth(parentItem.children[0]);
+        const sublistHeight = sublist.offsetParent ? sublist.offsetHeight : getHiddenElementOuterHeight(sublist);
+        const parentItemTop = parentItem.getBoundingClientRect().top;
+        // move the submenu up just enough to keep it inside the viewport, never above its top edge
+        const overflowBottom = parentItemTop + sublistHeight - viewport.height;
 
-        sublist.style.top = '0px';
+        sublist.style.top = overflowBottom > 0 ? -1 * Math.min(overflowBottom, Math.max(parentItemTop, 0)) + 'px' : '0px';
 
         if (parseInt(containerOffset.left, 10) + itemOuterWidth + sublistWidth > viewport.width - calculateScrollbarWidth()) {
             sublist.style.left = -1 * sublistWidth + 'px';

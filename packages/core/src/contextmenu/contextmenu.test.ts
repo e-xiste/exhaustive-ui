@@ -1860,6 +1860,39 @@ describe('ContextMenuSub', () => {
         expect(instance).toBeTruthy();
     });
 
+    describe('submenu position', () => {
+        let parentItem: HTMLLIElement;
+        let sublist: HTMLUListElement;
+
+        const createSubmenu = (top: number, height: number) => {
+            parentItem = document.createElement('li');
+            parentItem.style.cssText = `position: fixed; top: ${top}px; left: 10px; width: 100px;`;
+            const content = document.createElement('div');
+            content.style.height = '30px';
+            const host = document.createElement('div');
+            sublist = document.createElement('ul');
+            sublist.style.cssText = `position: absolute; margin: 0; width: 100px; height: ${height}px;`;
+            host.appendChild(sublist);
+            parentItem.append(content, host);
+            document.body.appendChild(parentItem);
+        };
+
+        afterEach(() => parentItem.remove());
+
+        it('should open the submenu downwards when it fits in the viewport', () => {
+            createSubmenu(10, 100);
+            instance.position(sublist);
+            expect(sublist.style.top).toBe('0px');
+        });
+
+        it('should move the submenu up when it would overflow the bottom of the viewport', () => {
+            createSubmenu(window.innerHeight - 40, 200);
+            instance.position(sublist);
+            expect(sublist.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight);
+            expect(sublist.getBoundingClientRect().top).toBeGreaterThanOrEqual(0);
+        });
+    });
+
     it('should have default input values', () => {
         expect(instance.root()).toBe(false);
         expect(instance.level()).toBe(0);
