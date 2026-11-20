@@ -2415,3 +2415,89 @@ describe('CascadeSelect Signals API', () => {
         expect(cascadeSelect.searchTimeout()).toBeNull();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CascadeSelect, SharedModule],
+    template: `
+        <p-cascadeselect [options]="options" optionLabel="cname" optionGroupLabel="name" optionDisabled="disabled" [optionGroupChildren]="['states', 'cities']">
+            <ng-template pTemplate="optiongroupicon">
+                <i class="nested-groupicon"></i>
+            </ng-template>
+        </p-cascadeselect>
+    `
+})
+class CascadeSelectNestedHostComponent {
+    options = [
+        {
+            name: 'Australia',
+            states: [
+                {
+                    name: 'New South Wales',
+                    disabled: true,
+                    cities: [{ cname: 'Sydney' }]
+                },
+                {
+                    name: 'Queensland',
+                    cities: [{ cname: 'Brisbane' }, { cname: 'Townsville', disabled: true }]
+                }
+            ]
+        },
+        {
+            name: 'Canada',
+            disabled: true,
+            states: [{ name: 'Quebec', cities: [{ cname: 'Montreal' }] }]
+        }
+    ];
+}
+
+describe('CascadeSelect nested sub lists', () => {
+    let fixture: ComponentFixture<CascadeSelectNestedHostComponent>;
+    let cascadeSelect: CascadeSelect;
+
+    const optionByLabel = (label: string): HTMLElement => document.querySelector(`.p-cascadeselect-overlay li[aria-label="${label}"]`) as HTMLElement;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [CascadeSelectNestedHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(CascadeSelectNestedHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        cascadeSelect = fixture.debugElement.query(By.directive(CascadeSelect)).componentInstance;
+
+        cascadeSelect.show();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const australia: any = cascadeSelect.processedOptions()![0];
+        cascadeSelect.activeOptionPath.set([australia, australia.children[1]]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    afterEach(() => {
+        cascadeSelect.hide();
+        fixture.destroy();
+    });
+
+    it('disables options of nested levels through optionDisabled', () => {
+        expect(optionByLabel('Canada').classList.contains('p-disabled')).toBe(true);
+        expect(optionByLabel('Australia').classList.contains('p-disabled')).toBe(false);
+
+        expect(optionByLabel('New South Wales').classList.contains('p-disabled')).toBe(true);
+        expect(optionByLabel('Queensland').classList.contains('p-disabled')).toBe(false);
+
+        expect(optionByLabel('Townsville').classList.contains('p-disabled')).toBe(true);
+        expect(optionByLabel('Brisbane').classList.contains('p-disabled')).toBe(false);
+    });
+
+    it('renders the custom group icon template in nested levels', () => {
+        expect(optionByLabel('Australia').querySelector('.nested-groupicon')).toBeTruthy();
+        expect(optionByLabel('New South Wales').querySelector('.nested-groupicon')).toBeTruthy();
+        expect(optionByLabel('New South Wales').querySelector('[data-p-icon="angle-right"]')).toBeNull();
+    });
+});
