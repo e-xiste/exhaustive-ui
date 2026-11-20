@@ -5403,7 +5403,6 @@ export class ReorderableRow extends BaseComponent {
                     [currency]="currency()"
                     [currencyDisplay]="currencyDisplay()"
                     [useGrouping]="useGrouping()"
-                    [showButtons]="showButtons()"
                     [filterOn]="filterOn()"
                     [pt]="pt()"
                     [unstyled]="unstyled()"
@@ -5508,6 +5507,7 @@ export class ReorderableRow extends BaseComponent {
                                     <p-columnFilterFormElement
                                         [type]="type()"
                                         [field]="field()"
+                                        [ariaLabel]="ariaLabel()"
                                         [filterConstraint]="fieldConstraint"
                                         [filterTemplate]="filterTemplate() || _filterTemplate()"
                                         [placeholder]="placeholder()"
@@ -6483,6 +6483,7 @@ export class ColumnFilter extends BaseComponent {
                         [pt]="ptm('pcFilterCheckbox')"
                         [indeterminate]="filterConstraint()?.value === null"
                         [binary]="true"
+                        [ariaLabel]="ariaLabel()"
                         [ngModel]="filterConstraint()?.value"
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"

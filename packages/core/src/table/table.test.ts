@@ -2813,3 +2813,42 @@ describe('Table menu column filter with an Apply button', () => {
         expect(filterSpy).not.toHaveBeenCalled();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th><p-columnFilter type="boolean" field="verified" ariaLabel="Verified filter"></p-columnFilter></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.verified }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableBooleanFilterHostComponent {
+    rows = [{ verified: true }, { verified: false }];
+}
+
+describe('Table boolean column filter', () => {
+    let fixture: ComponentFixture<TableBooleanFilterHostComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableBooleanFilterHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TableBooleanFilterHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    it('forwards ariaLabel to the checkbox (optimus-ui#149)', () => {
+        const input: HTMLInputElement = fixture.nativeElement.querySelector('p-checkbox input');
+        expect(input.getAttribute('aria-label')).toBe('Verified filter');
+    });
+});
