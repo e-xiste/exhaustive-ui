@@ -306,7 +306,7 @@ export class CascadeSelectSub extends BaseComponent {
                 }
                 @if (!loadingIconTemplate() && !_loadingIconTemplate()) {
                     @if (loadingIcon()) {
-                        <span [class]="cn(cx('loadingIcon'), loadingIcon() + 'pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>
+                        <span [class]="cn(cx('loadingIcon'), loadingIcon() + ' pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>
                     }
                     @if (!loadingIcon()) {
                         <span [class]="cn(cx('loadingIcon'), loadingIcon() + ' pi pi-spinner pi-spin')" aria-hidden="true" [pBind]="ptm('loadingIcon')"></span>

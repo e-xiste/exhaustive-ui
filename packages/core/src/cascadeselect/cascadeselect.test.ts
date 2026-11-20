@@ -2501,3 +2501,26 @@ describe('CascadeSelect nested sub lists', () => {
         expect(optionByLabel('New South Wales').querySelector('[data-p-icon="angle-right"]')).toBeNull();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CascadeSelect],
+    template: `<p-cascadeselect [options]="options" [loading]="true" loadingIcon="pi pi-refresh" />`
+})
+class TestCascadeSelectCustomLoadingIconComponent {
+    options = [];
+}
+
+describe('CascadeSelect custom loadingIcon', () => {
+    it('separates pi-spin from the custom loadingIcon classes (found during triage)', async () => {
+        TestBed.configureTestingModule({ imports: [TestCascadeSelectCustomLoadingIconComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestCascadeSelectCustomLoadingIconComponent);
+        await fixture.whenStable();
+
+        const icon = fixture.nativeElement.querySelector('.p-cascadeselect-loading-icon') as HTMLElement;
+
+        expect(icon.classList).toContain('pi-spin');
+        expect(icon.classList).toContain('pi');
+        expect(icon.classList).toContain('pi-refresh');
+    });
+});
