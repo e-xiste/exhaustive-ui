@@ -1786,3 +1786,44 @@ describe('InputNumber OnPush Rendering Tests', () => {
         expect(fixture.nativeElement.getAttribute('data-p')).toContain('disabled');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [InputNumber, FormsModule],
+    template: `<p-inputnumber [(ngModel)]="value" mode="decimal" locale="de-DE" [minFractionDigits]="0" [maxFractionDigits]="7" />`
+})
+class TestDecimalDeleteInputNumberComponent {
+    value: number | null = 0.7;
+}
+
+describe('InputNumber fraction digit deletion (optimus-ui#62)', () => {
+    it('should keep the decimal separator after deleting the last fraction digit', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestDecimalDeleteInputNumberComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestDecimalDeleteInputNumberComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        expect(input.value).toBe('0,7');
+        input.focus();
+        input.setSelectionRange(3, 3);
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', code: 'Backspace', keyCode: 8, cancelable: true, bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(input.value).toBe('0,');
+        expect(fixture.componentInstance.value).toBe(0);
+
+        input.dispatchEvent(new KeyboardEvent('keypress', { key: '5', code: 'Digit5', keyCode: 53, charCode: 53, which: 53, cancelable: true, bubbles: true } as KeyboardEventInit));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(input.value).toBe('0,5');
+        expect(fixture.componentInstance.value).toBe(0.5);
+    });
+});

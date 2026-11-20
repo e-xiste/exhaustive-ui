@@ -1261,7 +1261,11 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     handleOnInput(event: Event, currentValue: string, newValue: any) {
         if (this.isValueChanged(currentValue, newValue)) {
-            (this.input() as ElementRef).nativeElement.value = this.formatValue(newValue);
+            const inputEl = (this.input() as ElementRef).nativeElement;
+            // updateInput() already rendered the value; reformatting it would drop an in-progress fraction such as '0,'.
+            if (this.parseValue(inputEl.value) !== newValue) {
+                inputEl.value = this.formatValue(newValue);
+            }
             this.input().nativeElement.setAttribute('aria-valuenow', newValue);
             this.updateModel(event, newValue);
             this.onInput.emit({ originalEvent: event, value: newValue, formattedValue: currentValue });
@@ -1428,6 +1432,13 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     formattedValue = computed(() => {
         const val = !this.value() && !this.allowEmpty() ? 0 : this.value();
+        // While editing, keep the typed text when it already holds this value (e.g. '0,' after deleting the last fraction digit).
+        if (this.focused()) {
+            const inputValue = this.input()?.nativeElement.value;
+            if (inputValue && this.parseValue(inputValue) === val) {
+                return inputValue;
+            }
+        }
         return this.formatValue(val);
     });
 
