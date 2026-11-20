@@ -2520,4 +2520,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
 
         expect(el.querySelector('input')!.getAttribute('aria-describedby')).toBe('dp-help');
     });
+
+    it('puts the time picker aria labels on the inner buttons (optimus-ui#459)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('showTime', true);
+        fixture.componentRef.setInput('hourFormat', '12');
+        await render();
+
+        const buttons = Array.from(el.querySelectorAll<HTMLButtonElement>('[data-pc-group-section="timepickerbutton"] button'));
+        expect(buttons.length).toBe(6);
+        buttons.forEach((button) => expect(button.getAttribute('aria-label')).toBeTruthy());
+        expect(buttons[0].getAttribute('aria-label')).toBe(picker.getTranslation('nextHour'));
+    });
 });
