@@ -3366,4 +3366,13 @@ describe('AutoComplete low bug fixes', () => {
         expect(onDuplicate.defaultPrevented).toBe(true);
         expect(autocomplete.modelValue()).toEqual(['Alpha']);
     });
+
+    it('does not show [object Object] when the option label resolves to null (optimus-ui#901)', () => {
+        fixture.componentRef.setInput('optionLabel', 'name');
+        autocomplete.writeValue({ name: null, code: 'XX' });
+        fixture.detectChanges();
+
+        expect(autocomplete.inputValue()).toBe('');
+        expect(input().value).toBe('');
+    });
 });
