@@ -2200,6 +2200,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     }
 
                     if (this._filters()['global'] && !globalMatch && globalFilterFieldsArray) {
+                        // a negated match mode only matches when no field contains the term
+                        const globalMatchMode = (<FilterMetadata>this._filters()['global']).matchMode;
+                        const negated = globalMatchMode === FilterMatchMode.NOT_CONTAINS || globalMatchMode === FilterMatchMode.NOT_EQUALS;
+
                         for (let j = 0; j < globalFilterFieldsArray.length; j++) {
                             let globalFilterField = globalFilterFieldsArray[j].field || globalFilterFieldsArray[j];
                             globalMatch = (<any>this.filterService).filters[(<any>this._filters()['global']).matchMode](
@@ -2208,7 +2212,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                                 this.filterLocale()
                             );
 
-                            if (globalMatch) {
+                            if (negated ? !globalMatch : globalMatch) {
                                 break;
                             }
                         }

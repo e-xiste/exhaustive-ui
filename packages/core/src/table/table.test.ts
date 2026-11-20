@@ -2486,3 +2486,33 @@ describe('Table column reorder with resizable columns', () => {
         expect(th.draggable).toBe(false);
     });
 });
+
+// ---------------------------------------------------------------------------
+// Medium-severity bugs inherited from Optimus UI
+// ---------------------------------------------------------------------------
+
+describe('Table medium-severity fixes', () => {
+    let fixture: ComponentFixture<Table>;
+    let table: Table;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableModule], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(Table);
+        table = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('excludes a row from a global notContains filter when any field contains the term (optimus-ui#910)', () => {
+        fixture.componentRef.setInput('value', [
+            { name: 'James', city: 'Paris' },
+            { name: 'Anna', city: 'Rome' }
+        ]);
+        fixture.componentRef.setInput('globalFilterFields', ['name', 'city']);
+        table._filters()['global'] = { value: 'James', matchMode: 'notContains' };
+
+        table._filter();
+
+        expect(table.filteredValue()!.map((r: any) => r.name)).toEqual(['Anna']);
+    });
+});
