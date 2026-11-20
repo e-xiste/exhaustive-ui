@@ -1981,6 +1981,17 @@ describe('InputNumber Optimus UI bug fixes', () => {
         expect(values).toEqual([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
         expect(changes).toEqual(values);
     });
+
+    it('starts a number with the decimal separator (optimus-ui#678)', async () => {
+        await create({ locale: 'en-US', minFractionDigits: 1, maxFractionDigits: 2 }, null);
+        input.focus();
+
+        await keypress('.');
+        await keypress('5');
+
+        expect(input.value).toBe('0.5');
+        expect(inputNumber.value()).toBe(0.5);
+    });
 });
 
 @Component({

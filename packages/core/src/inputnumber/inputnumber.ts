@@ -1157,8 +1157,9 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
                 newValueStr = this.insertText(inputValue, text, selectionStart, selectionEnd);
                 this.updateValue(event, newValueStr, text, 'insert');
             } else if (decimalCharIndex === -1 && this.maxFractionDigits()) {
-                newValueStr = this.insertText(inputValue, text, selectionStart, selectionEnd);
-                this.updateValue(event, newValueStr, text, 'insert');
+                // a decimal separator typed in an empty input starts the fraction of 0
+                newValueStr = inputValue ? this.insertText(inputValue, text, selectionStart, selectionEnd) : '0' + text;
+                this.updateValue(event, newValueStr, inputValue ? text : newValueStr, 'insert');
             }
         } else {
             const maxFractionDigits = this.numberFormat().resolvedOptions().maximumFractionDigits;
