@@ -91,6 +91,15 @@ import { TreeTableStyle } from './style/treetablestyle';
 
 const TREETABLE_INSTANCE = new InjectionToken<TreeTable>('TREETABLE_INSTANCE');
 
+/**
+ * Whether a key event comes from a form field inside a row (e.g. a cell editor), whose keys must not drive the row.
+ */
+function isEditableTarget(event: KeyboardEvent): boolean {
+    const target = event.target as HTMLElement;
+
+    return target !== event.currentTarget && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.nodeName));
+}
+
 @Injectable()
 export class TreeTableService {
     private sortSource = new Subject<SortMeta | SortMeta[] | null>();
@@ -3834,6 +3843,10 @@ export class TTRow extends BaseComponent {
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
+        if (isEditableTarget(event)) {
+            return;
+        }
+
         switch (event.code) {
             case 'ArrowDown':
                 this.onArrowDownKey(event);

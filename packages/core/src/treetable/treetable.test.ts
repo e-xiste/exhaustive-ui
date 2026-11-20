@@ -4698,4 +4698,24 @@ describe('TreeTable row keyboard', () => {
 
         expect(node.expanded).toBe(true);
     });
+
+    it('should let arrow keys move the caret in an input inside a row', async () => {
+        const node = fixture.componentInstance.nodes[0];
+        node.expanded = true;
+        fixture.componentInstance.nodes = [...fixture.componentInstance.nodes];
+        await render();
+
+        const input = rows()[0].querySelector('input') as HTMLInputElement;
+        input.focus();
+        const left = keydown(input, 'ArrowLeft');
+        const right = keydown(input, 'ArrowRight');
+        const down = keydown(input, 'ArrowDown');
+        await render();
+
+        expect(node.expanded).toBe(true);
+        expect(left.defaultPrevented).toBe(false);
+        expect(right.defaultPrevented).toBe(false);
+        expect(down.defaultPrevented).toBe(false);
+        expect(document.activeElement).toBe(input);
+    });
 });
