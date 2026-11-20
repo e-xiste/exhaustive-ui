@@ -2475,4 +2475,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(date.getDate()).toBe(19);
         expect(() => picker.parseDate('60/2026', 'o/yy')).not.toThrow();
     });
+    it('renders the weekday header after the view switches from month to date (optimus-ui#31)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('view', 'month');
+        await render();
+
+        fixture.componentRef.setInput('view', 'date');
+        await render();
+
+        const weekDays = Array.from(el.querySelectorAll('.p-datepicker-weekday')).map((day) => day.textContent!.trim());
+        expect(weekDays.length).toBe(7);
+        expect(weekDays.every((day) => day.length > 0)).toBe(true);
+    });
 });

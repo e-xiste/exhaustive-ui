@@ -1384,12 +1384,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         this.currentYear.set(date.getFullYear());
         this.yearOptions.set([]);
 
-        if (this.view() === 'date') {
-            this.createWeekDays();
-            this.initTime(date);
-            this.createMonths(this.currentMonth(), this.currentYear());
-            this.ticksTo1970.set(((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) + Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000);
-        }
+        this.createWeekDays();
+        this.initTime(date);
+        this.createMonths(this.currentMonth(), this.currentYear());
+        this.ticksTo1970.set(((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) + Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000);
 
         this.translationSubscription.set(
             this.config.translationObserver.subscribe(() => {
