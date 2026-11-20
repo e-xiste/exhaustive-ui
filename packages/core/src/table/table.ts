@@ -5418,10 +5418,7 @@ export class ReorderableRow extends BaseComponent {
                 <p-button
                     [styleClass]="cx('pcColumnFilterButton')"
                     [pt]="ptm('pcColumnFilterButton')"
-                    [attr.aria-haspopup]="true"
                     [ariaLabel]="filterMenuButtonAriaLabel"
-                    [attr.aria-controls]="overlayVisible() ? overlayId() : null"
-                    [attr.aria-expanded]="overlayVisible() ?? false"
                     (click)="toggleMenu($event)"
                     (keydown)="onToggleButtonKeyDown($event)"
                     [buttonProps]="filterButtonProps()?.filter"
@@ -5628,7 +5625,10 @@ export class ColumnFilter extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('columnFilter')));
+        afterEveryRender(() => {
+            this.bindDirectiveInstance.setAttrs(this.ptm('columnFilter'));
+            this.updateMenuButtonAria();
+        });
         // the table filters can be replaced at any time (e.g. reset to {}): recreate the default constraint
         effect(() => {
             const filters = this.dataTable._filters();
@@ -5639,6 +5639,22 @@ export class ColumnFilter extends BaseComponent {
                 }
             });
         });
+    }
+
+    // the popup state belongs to the focusable <button>, not to the p-button host (which has no role)
+    updateMenuButtonAria() {
+        const button = this.showMenuButton() ? (<HTMLElement | undefined>this.icon()?.nativeElement)?.querySelector('button') : null;
+
+        if (button) {
+            button.setAttribute('aria-haspopup', 'true');
+            button.setAttribute('aria-expanded', String(this.overlayVisible() ?? false));
+
+            if (this.overlayVisible()) {
+                button.setAttribute('aria-controls', this.overlayId());
+            } else {
+                button.removeAttribute('aria-controls');
+            }
+        }
     }
 
     ptmFilterConstraintOptions(matchMode) {

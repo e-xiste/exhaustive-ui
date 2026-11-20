@@ -3077,3 +3077,51 @@ describe('Table column filter outside click', () => {
         columnFilter.hide();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableFilterButtonAriaHostComponent {
+    rows = [{ name: 'A' }];
+}
+
+describe('Table column filter menu button ARIA', () => {
+    it('exposes the popup state on the focusable button, not on the p-button host (optimus-ui#350)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableFilterButtonAriaHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableFilterButtonAriaHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const columnFilter: ColumnFilter = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+        const host: HTMLElement = fixture.nativeElement.querySelector('p-columnfilter p-button');
+        const button: HTMLButtonElement = host.querySelector('button')!;
+
+        expect(host.hasAttribute('aria-expanded')).toBe(false);
+        expect(host.hasAttribute('aria-haspopup')).toBe(false);
+        expect(button.getAttribute('aria-haspopup')).toBe('true');
+        expect(button.getAttribute('aria-expanded')).toBe('false');
+
+        columnFilter.toggleMenu(new MouseEvent('click'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(button.getAttribute('aria-expanded')).toBe('true');
+        expect(button.getAttribute('aria-controls')).toBe(columnFilter.overlayId());
+        columnFilter.hide();
+    });
+});
