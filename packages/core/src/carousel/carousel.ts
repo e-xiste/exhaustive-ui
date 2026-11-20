@@ -78,6 +78,7 @@ import { CarouselStyle } from './style/carouselstyle';
                             <div
                                 [class]="cx('itemClone', { index })"
                                 [attr.aria-hidden]="!(totalShiftedItems() * -1 === value().length)"
+                                [attr.inert]="totalShiftedItems() * -1 === value().length ? null : ''"
                                 [attr.aria-label]="ariaSlideNumber(index)"
                                 [attr.aria-roledescription]="ariaSlideLabel()"
                                 [attr.data-p-carousel-item-active]="totalShiftedItems() * -1 === value().length + _numVisible()"
@@ -93,6 +94,7 @@ import { CarouselStyle } from './style/carouselstyle';
                                 [class]="cx('item', { index })"
                                 role="group"
                                 [attr.aria-hidden]="!(firstIndex() <= index && lastIndex() >= index)"
+                                [attr.inert]="firstIndex() <= index && lastIndex() >= index ? null : ''"
                                 [attr.aria-label]="ariaSlideNumber(index)"
                                 [attr.aria-roledescription]="ariaSlideLabel()"
                                 [attr.data-p-carousel-item-active]="firstIndex() <= index && lastIndex() >= index"

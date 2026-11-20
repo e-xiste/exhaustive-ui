@@ -1807,3 +1807,41 @@ describe('Carousel autoplay with every item visible', () => {
         expect(instance._page()).toBe(0);
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [Carousel],
+    template: `
+        <p-carousel [value]="items" [numVisible]="1" [numScroll]="1">
+            <ng-template #item let-item>
+                <button class="slide-button">{{ item }}</button>
+            </ng-template>
+        </p-carousel>
+    `
+})
+class CarouselFocusableItemsHostComponent {
+    items = [1, 2, 3];
+}
+
+describe('Carousel off-page items', () => {
+    it('should keep the content of off-page items out of the focus order', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CarouselFocusableItemsHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(CarouselFocusableItemsHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const buttons = fixture.nativeElement.querySelectorAll('.p-carousel-item .slide-button') as NodeListOf<HTMLButtonElement>;
+        expect(buttons.length).toBe(3);
+
+        buttons[0].focus();
+        expect(document.activeElement).toBe(buttons[0]);
+
+        // tabbing into a hidden slide would scroll the viewport and desync the indicators
+        buttons[1].focus();
+        expect(document.activeElement).not.toBe(buttons[1]);
+    });
+});
