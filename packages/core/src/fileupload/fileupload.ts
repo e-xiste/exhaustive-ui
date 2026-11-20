@@ -337,31 +337,32 @@ export class FileContent extends BaseComponent {
                         (onClick)="onBasicUploaderClick()"
                         (keydown)="onBasicKeydown($event)"
                         [buttonProps]="chooseButtonProps()"
+                        [iconPos]="chooseButtonProps()?.iconPos || 'left'"
                         [pt]="ptm('pcChooseButton')"
                         [unstyled]="unstyled()"
                     >
                         <ng-template #icon>
                             @if (hasFiles() && !auto()) {
                                 @if (uploadIcon()) {
-                                    <span class="p-button-icon p-button-icon-left" [ngClass]="uploadIcon()" [pBind]="ptm('pcChooseButton')?.icon"></span>
+                                    <span [class]="basicIconClass()" [ngClass]="uploadIcon()" [pBind]="ptm('pcChooseButton')?.icon"></span>
                                 }
                                 @if (!uploadIcon()) {
                                     @if (!uploadIconTemplate() && !_uploadIconTemplate()) {
-                                        <svg data-p-icon="upload" [class]="'p-button-icon p-button-icon-left'" [pBind]="ptm('pcChooseButton')?.icon" />
+                                        <svg data-p-icon="upload" [class]="basicIconClass()" [pBind]="ptm('pcChooseButton')?.icon" />
                                     }
                                     @if (_uploadIconTemplate() || uploadIconTemplate()) {
-                                        <span class="p-button-icon p-button-icon-left" [pBind]="ptm('pcChooseButton')?.icon">
+                                        <span [class]="basicIconClass()" [pBind]="ptm('pcChooseButton')?.icon">
                                             <ng-template *ngTemplateOutlet="_uploadIconTemplate() || uploadIconTemplate()"></ng-template>
                                         </span>
                                     }
                                 }
                             } @else {
                                 @if (chooseIcon()) {
-                                    <span class="p-button-icon p-button-icon-left pi" [ngClass]="chooseIcon()" [pBind]="ptm('pcChooseButton')?.icon"></span>
+                                    <span [class]="basicIconClass() + ' pi'" [ngClass]="chooseIcon()" [pBind]="ptm('pcChooseButton')?.icon"></span>
                                 }
                                 @if (!chooseIcon()) {
                                     @if (!chooseIconTemplate() && !_chooseIconTemplate()) {
-                                        <svg data-p-icon="plus" [pBind]="ptm('pcChooseButton')?.icon" />
+                                        <svg data-p-icon="plus" [class]="basicIconClass()" [pBind]="ptm('pcChooseButton')?.icon" />
                                     }
                                     <ng-template *ngTemplateOutlet="chooseIconTemplate() || _chooseIconTemplate()"></ng-template>
                                 }
@@ -612,6 +613,12 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
      * @group Props
      */
     readonly chooseButtonProps = input<ButtonProps>();
+
+    /**
+     * Icon classes of the basic mode choose button, following chooseButtonProps.iconPos.
+     */
+    basicIconClass = computed(() => `p-button-icon p-button-icon-${this.chooseButtonProps()?.iconPos || 'left'}`);
+
     /**
      * Used to pass all properties of the ButtonProps to the upload button inside the component.
      * @group Props

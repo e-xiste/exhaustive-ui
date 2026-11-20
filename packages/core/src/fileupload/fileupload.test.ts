@@ -561,6 +561,19 @@ describe('FileUpload', () => {
             expect(component.onBasicUploaderClick).toHaveBeenCalled();
             expect(enterEvent.preventDefault).toHaveBeenCalled();
         });
+
+        it('should place the choose icon after the label with chooseButtonProps.iconPos right (optimus-ui#123)', async () => {
+            fixture.componentRef.setInput('chooseLabel', 'Choose a file');
+            fixture.componentRef.setInput('chooseButtonProps', { iconPos: 'right' });
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const icon = fixture.nativeElement.querySelector('[data-pc-section="basiccontent"] svg[data-p-icon="plus"]') ?? fixture.nativeElement.querySelector('svg[data-p-icon="plus"]');
+            const label = fixture.nativeElement.querySelector('.p-button-label') as HTMLElement;
+
+            expect(icon.classList).toContain('p-button-icon-right');
+            expect(icon.getBoundingClientRect().left).toBeGreaterThan(label.getBoundingClientRect().left);
+        });
     });
 
     describe('Focus and Blur Events', () => {
