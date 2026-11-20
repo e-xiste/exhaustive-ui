@@ -33,4 +33,13 @@ describe('FilterService', () => {
         expect(service.filters.endsWith('abc', '')).toBe(true);
     });
 
+    it('notEquals ignores a blank filter (optimus-ui#316)', () => {
+        const service = TestBed.inject(FilterService);
+
+        expect(service.filters.notEquals('a', undefined)).toBe(true);
+        expect(service.filters.notEquals('a', null)).toBe(true);
+        expect(service.filters.notEquals('a', '')).toBe(true);
+        expect(service.filters.notEquals('a', 'a')).toBe(false);
+        expect(service.filters.notEquals('a', 'b')).toBe(true);
+    });
 });
