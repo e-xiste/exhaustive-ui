@@ -2513,4 +2513,11 @@ describe('DatePicker Optimus UI bug fixes', () => {
 
         expect(touched).toHaveBeenCalled();
     });
+
+    it('forwards ariaDescribedBy to the input (optimus-ui#494)', async () => {
+        fixture.componentRef.setInput('ariaDescribedBy', 'dp-help');
+        await render();
+
+        expect(el.querySelector('input')!.getAttribute('aria-describedby')).toBe('dp-help');
+    });
 });

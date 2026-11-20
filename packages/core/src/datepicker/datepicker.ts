@@ -93,6 +93,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                 [attr.aria-controls]="overlayVisible() ? panelId : null"
                 [attr.aria-labelledby]="ariaLabelledBy()"
                 [attr.aria-label]="ariaLabel()"
+                [attr.aria-describedby]="ariaDescribedBy()"
                 [value]="inputFieldValue()"
                 (focus)="onInputFocus($event)"
                 (keydown)="onInputKeydown($event)"
@@ -662,6 +663,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
      * @group Props
      */
     ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the input and the element(s) that describe it, as one or more element IDs.
+     * @group Props
+     */
+    ariaDescribedBy = input<string | undefined>();
 
     /**
      * Defines a string that labels the icon button for accessibility.
