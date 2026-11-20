@@ -1827,3 +1827,54 @@ describe('InputNumber fraction digit deletion (optimus-ui#62)', () => {
         expect(fixture.componentInstance.value).toBe(0.5);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [InputNumber, FormsModule],
+    template: `<p-inputnumber [(ngModel)]="value" />`
+})
+class TestSoftKeyboardInputNumberComponent {
+    value: number | null = 12;
+}
+
+describe('InputNumber soft keyboard input (optimus-ui#508, optimus-ui#892)', () => {
+    it('should filter characters inserted without a keypress', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestSoftKeyboardInputNumberComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSoftKeyboardInputNumberComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        expect(input.value).toBe('12');
+        input.focus();
+
+        const softType = async (char: string) => {
+            const caret = input.selectionStart as number;
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229, bubbles: true }));
+            input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+            input.setSelectionRange(caret + 1, caret + 1);
+            input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: char, bubbles: true }));
+            fixture.detectChanges();
+            await fixture.whenStable();
+        };
+
+        input.setSelectionRange(2, 2);
+        await softType('.');
+        expect(input.value).toBe('12');
+
+        await softType('a');
+        expect(input.value).toBe('12');
+
+        await softType('#');
+        expect(input.value).toBe('12');
+
+        await softType('3');
+        expect(input.value).toBe('123');
+        expect(fixture.componentInstance.value).toBe(123);
+    });
+});

@@ -793,8 +793,26 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             return;
         }
 
+        const target = event.target as HTMLInputElement;
+        const { inputType, data } = event as InputEvent;
+
         if (this.isSpecialChar()) {
-            (event.target as HTMLInputElement).value = this.lastValue() as string;
+            target.value = this.lastValue() as string;
+        } else if (inputType === 'insertText' && data && this.lastValue() != null) {
+            // Soft keyboards insert text without a keypress, where characters are filtered: undo the raw insertion
+            // and insert the accepted characters the way onInputKeyPress does.
+            const caret = Math.max((target.selectionStart ?? data.length) - data.length, 0);
+            target.value = this.lastValue() as string;
+            target.setSelectionRange(caret, caret);
+
+            for (const char of data) {
+                const isDecimalSign = this.isDecimalSign(char);
+                const isMinusSign = this.isMinusSign(char);
+
+                if ((char >= '0' && char <= '9') || isDecimalSign || isMinusSign) {
+                    this.insert(event, char, { isDecimalSign, isMinusSign });
+                }
+            }
         }
         this.isSpecialChar.set(false);
     }
