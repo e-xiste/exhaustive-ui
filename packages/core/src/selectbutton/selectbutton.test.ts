@@ -404,6 +404,23 @@ describe('SelectButton', () => {
     });
 
     describe('Input Properties', () => {
+        it('should autofocus only the first option when autofocus is set', async () => {
+            document.body.appendChild(fixture.nativeElement);
+            fixture.componentRef.setInput('options', [
+                { label: 'One', value: 1 },
+                { label: 'Two', value: 2 },
+                { label: 'Three', value: 3 }
+            ]);
+            fixture.componentRef.setInput('autofocus', true);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const buttons = fixture.nativeElement.querySelectorAll('p-togglebutton');
+            expect(buttons.length).toBe(3);
+            expect(document.activeElement).toBe(buttons[0]);
+            fixture.nativeElement.remove();
+        });
+
         it('should handle size input', () => {
             // For input signals, we can't set them directly in tests
             // Instead, we test that the component accepts the input
