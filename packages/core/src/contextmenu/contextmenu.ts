@@ -131,7 +131,6 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
                                                     [ngStyle]="getItemProp(processedItem, 'iconStyle')"
                                                     [pBind]="getPTOptions(processedItem, index, 'itemIcon')"
                                                     [attr.aria-hidden]="true"
-                                                    [attr.tabindex]="-1"
                                                 >
                                                 </span>
                                             }
@@ -184,7 +183,6 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
                                                     [ngStyle]="getItemProp(processedItem, 'iconStyle')"
                                                     [pBind]="getPTOptions(processedItem, index, 'itemIcon')"
                                                     [attr.aria-hidden]="true"
-                                                    [attr.tabindex]="-1"
                                                 >
                                                 </span>
                                             }

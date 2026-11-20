@@ -1078,6 +1078,19 @@ describe('ContextMenu', () => {
             expect(contextMenuInstance.visible()).toBe(true);
         });
 
+        it('should not let the aria-hidden item icon take focus (optimus-ui#323)', async () => {
+            contextMenuInstance.show({ pageX: 100, pageY: 150, stopPropagation: vi.fn(), preventDefault: vi.fn() });
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+
+            const icon = document.querySelector('.p-contextmenu-item-icon') as HTMLElement;
+            expect(icon).toBeTruthy();
+            expect(icon.getAttribute('aria-hidden')).toBe('true');
+
+            icon.focus();
+            expect(document.activeElement).not.toBe(icon);
+        });
+
         it('should update focused item info correctly', () => {
             const focusedItemInfo = { index: 1, level: 0, parentKey: '', item: null };
 
