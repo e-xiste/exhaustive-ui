@@ -87,7 +87,7 @@ description: ${SKILL_DESCRIPTION}
 
 # ExhaustiveUI docs (local copy)
 
-ExhaustiveUI is a community-maintained, MIT-licensed continuation of PrimeNG: 80+ accessible Angular components, targeting Angular v21+. This skill bundles the documentation published at <${SITE_URL}/llms/llms.txt> (generated from ExhaustiveUI v${version}), so you can read it from disk instead of fetching \`${SITE_URL}/llms/components/<name>.md\` each time.
+ExhaustiveUI is a community-maintained, MIT-licensed continuation of PrimeNG: 80+ accessible Angular components, targeting Angular v22. This skill bundles the documentation published at <${SITE_URL}/llms/llms.txt> (generated from ExhaustiveUI v${version}), so you can read it from disk instead of fetching \`${SITE_URL}/llms/components/<name>.md\` each time.
 
 All paths below are relative to this skill's directory (the folder containing this SKILL.md).
 

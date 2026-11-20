@@ -32,7 +32,7 @@ ng add @exhaustive-ui/core
 This installs the library and wires `provideExhaustive({ theme: { preset: Aura } })` into your
 application config (pick a different preset with `--theme Lara|Material|Nora`).
 
-Please note that ExhaustiveUI requires **Angular 21+**. 
+Please note that ExhaustiveUI requires **Angular 22** (its major version follows Angular's). 
 
 `ng add` only sets up new projects — on a workspace that already uses PrimeNG it makes no changes
 and points you to the migration schematic below.
