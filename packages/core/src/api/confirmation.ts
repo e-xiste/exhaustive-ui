@@ -114,4 +114,8 @@ export interface Confirmation {
      * @defaultValue true
      */
     modal?: boolean;
+    /**
+     * Enables dragging to change the position using header.
+     */
+    draggable?: boolean;
 }

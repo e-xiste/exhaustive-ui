@@ -1852,3 +1852,29 @@ describe('ConfirmDialog header template', () => {
         expect(document.getElementById(labelledBy)?.textContent?.trim()).toBe('Custom title');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmDialog],
+    template: `<p-confirmdialog appendTo="self" key="drag" />`
+})
+class ConfirmDialogDraggableHostComponent {}
+
+describe('ConfirmDialog draggable from the confirmation', () => {
+    it('should apply the draggable option of the confirmation (optimus-ui#60)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmDialogDraggableHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmDialogDraggableHostComponent);
+        await fixture.whenStable();
+        const confirmationService = TestBed.inject(ConfirmationService);
+
+        confirmationService.confirm({ key: 'drag', message: 'Not draggable', draggable: false });
+        await fixture.whenStable();
+
+        const dialog: Dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance;
+        expect(dialog.draggable()).toBe(false);
+    });
+});
