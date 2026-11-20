@@ -2766,6 +2766,50 @@ describe('Table loading body with a row expansion template', () => {
     standalone: true,
     imports: [TableModule],
     template: `
+        <p-table [value]="rows" dataKey="id" rowGroupMode="subheader" groupRowsBy="category">
+            <ng-template #groupheader let-row>
+                <tr class="group-header">
+                    <td>{{ row.category }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr class="data-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #expandedrow let-row>
+                <tr class="expanded-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableGroupedExpansionHostComponent {
+    rows = [
+        { id: '1', name: 'Bamboo Watch', category: 'Accessories' },
+        { id: '2', name: 'Black Watch', category: 'Accessories' },
+        { id: '3', name: 'Blue Band', category: 'Fitness' }
+    ];
+}
+
+describe('Table row grouping with expandable rows', () => {
+    it('renders the group header before the first row of its group (optimus-ui#517)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableGroupedExpansionHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableGroupedExpansionHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const classes = Array.from(fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLElement>).map((tr) => tr.className);
+        expect(classes).toEqual(['group-header', 'data-row', 'data-row', 'group-header', 'data-row']);
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
         <p-table [value]="rows">
             <ng-template #header>
                 <tr>

@@ -3265,21 +3265,6 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
         @if ((dataTable.expandedRowTemplate() || dataTable._expandedRowTemplate()) && !(frozen() && (dataTable.frozenExpandedRowTemplate() || dataTable._frozenExpandedRowTemplate()))) {
             @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
-                @if (!(dataTable.groupHeaderTemplate() && dataTable._groupHeaderTemplate())) {
-                    <ng-container
-                        *ngTemplateOutlet="
-                            rowData ? template() : dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate();
-                            context: {
-                                $implicit: rowData,
-                                rowIndex: getRowIndex(rowIndex),
-                                columns: columns(),
-                                expanded: dataTable.isRowExpanded(rowData),
-                                editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
-                                frozen: frozen()
-                            }
-                        "
-                    ></ng-container>
-                }
                 @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
@@ -3296,6 +3281,21 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                             "
                         ></ng-container>
                     </ng-container>
+                }
+                @if (!(dataTable.groupHeaderTemplate() && dataTable._groupHeaderTemplate())) {
+                    <ng-container
+                        *ngTemplateOutlet="
+                            rowData ? template() : dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate();
+                            context: {
+                                $implicit: rowData,
+                                rowIndex: getRowIndex(rowIndex),
+                                columns: columns(),
+                                expanded: dataTable.isRowExpanded(rowData),
+                                editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                frozen: frozen()
+                            }
+                        "
+                    ></ng-container>
                 }
                 @if (dataTable.isRowExpanded(rowData)) {
                     <ng-container
