@@ -126,6 +126,7 @@ Fixes for 108 low-severity bugs reported on [Optimus UI](https://github.com/open
 - Menus and layout: Card layout, MegaMenu global pass-through, PanelMenu root items and separators, Tabs scroll into view and active bar, ContextMenu hidden icon focus, Menu hidden separators, Paginator "All" option, Fieldset labelling, Stepper as a BlockUI target (#28, #32, #183, #635, #199, #697, #323, #518, #703, #766, #885).
 - Form inputs: icon-only ToggleButton, disabled ToggleSwitch tooltip and ARIA, Editor colour picker and toolbar tokens, pPassword strength bar, SelectButton RTL border, NG0955 warning and `p-fluid`, InputGroup button height, IconField `iconPosition="right"`, FloatLabel over a select placeholder, Slider passive touch events (#68, #90, #351, #834, #99, #954, #285, #301, #364, #505, #298, #477, #685, #867, #501, #787).
 - Theming: OverlayBadge `dt` and `unstyled`, component-level `dt` css, Lara token references, nested ScrollPanel bars (#18, #633, #1874, #943).
+- Splitter: a splitter destroyed during a resize removes its document listeners instead of throwing on the next mouse move (found while fixing the tests).
 - Documentation: accessibility class name, setup examples without `provideAnimationsAsync`, Tree multiple selection value, Image in the LLM docs (and so in the MCP server), theme preferences kept across reloads on the docs site (#119, #147, #825, #1867, #1616).
 
 ## 22.0.0-alpha.10 (2026-11-20)
