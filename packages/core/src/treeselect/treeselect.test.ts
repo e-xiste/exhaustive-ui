@@ -1983,4 +1983,21 @@ describe('TreeSelect low bug fixes', () => {
         const button = document.querySelector('.p-treeselect-overlay button[data-pc-section="nodetogglebutton"]') as HTMLButtonElement;
         expect(button.getAttribute('aria-label')).toBe('Toggle row');
     });
+
+    it('marks the control touched when the overlay closes, not when focus moves into it (optimus-ui#575)', () => {
+        const touched = vi.fn();
+        treeSelect.registerOnTouched(touched);
+        const input = fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+
+        treeSelect.show();
+        input.dispatchEvent(new FocusEvent('blur'));
+        expect(touched).not.toHaveBeenCalled();
+
+        treeSelect.hide();
+        expect(touched).toHaveBeenCalled();
+
+        touched.mockClear();
+        input.dispatchEvent(new FocusEvent('blur'));
+        expect(touched).toHaveBeenCalled();
+    });
 });

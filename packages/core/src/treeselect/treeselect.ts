@@ -897,6 +897,7 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
     hide(event?: any) {
         this.overlayVisible.set(false);
         this.resetFilter();
+        this.onModelTouched();
 
         this.onHide.emit(event);
     }
@@ -1096,7 +1097,10 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
     onInputBlur(event: Event) {
         this.focused.set(false);
         this.onBlur.emit(event);
-        this.onModelTouched();
+        // focus moving into the open overlay is not a touch, closing the overlay is (see hide)
+        if (!this.overlayVisible()) {
+            this.onModelTouched();
+        }
     }
 
     /**
