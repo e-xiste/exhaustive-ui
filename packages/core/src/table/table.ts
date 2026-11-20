@@ -3500,42 +3500,53 @@ export class RowGroupHeader extends BaseComponent {
     providers: [TableStyle]
 })
 export class FrozenColumn extends BaseComponent {
-    @Input() get frozen(): boolean {
-        return this._frozen;
-    }
+    /**
+     * Whether the column is frozen.
+     * @group Props
+     */
+    readonly frozen = input<boolean>(true);
 
-    set frozen(val: boolean) {
-        this._frozen = val;
-        Promise.resolve(null).then(() => this.updateStickyPosition());
-    }
+    /**
+     * Side the frozen column sticks to.
+     * @group Props
+     */
+    readonly alignFrozen = input<string>('left');
 
-    @Input() alignFrozen: string = 'left';
+    resizeListener = signal<VoidListener>(undefined);
 
-    resizeListener: VoidListener;
-
-    private resizeObserver?: ResizeObserver;
+    private resizeObserver = signal<ResizeObserver | undefined>(undefined);
 
     _componentStyle = inject(TableStyle);
 
-    onAfterViewInit() {
-        this.bindResizeListener();
-        this.observeChanges();
+    constructor() {
+        super();
+        effect(() => {
+            this.frozen();
+
+            untracked(() => Promise.resolve(null).then(() => this.updateStickyPosition()));
+        });
+        afterNextRender(() => {
+            this.bindResizeListener();
+            this.observeChanges();
+        });
     }
 
     bindResizeListener() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.resizeListener) {
-                this.resizeListener = this.renderer.listen(this.document.defaultView, 'resize', () => {
-                    this.recalculateColumns();
-                });
+            if (!this.resizeListener()) {
+                this.resizeListener.set(
+                    this.renderer.listen(this.document.defaultView, 'resize', () => {
+                        this.recalculateColumns();
+                    })
+                );
             }
         }
     }
 
     unbindResizeListener() {
-        if (this.resizeListener) {
-            this.resizeListener();
-            this.resizeListener = null;
+        if (this.resizeListener()) {
+            this.resizeListener()!();
+            this.resizeListener.set(null);
         }
     }
 
@@ -3546,7 +3557,7 @@ export class FrozenColumn extends BaseComponent {
             });
 
             resizeObserver.observe(this.el.nativeElement);
-            this.resizeObserver = resizeObserver;
+            this.resizeObserver.set(resizeObserver);
         }
     }
 
@@ -3560,11 +3571,9 @@ export class FrozenColumn extends BaseComponent {
         }, time);
     }
 
-    _frozen: boolean = true;
-
     updateStickyPosition() {
-        if (this._frozen) {
-            if (this.alignFrozen === 'right') {
+        if (this.frozen()) {
+            if (this.alignFrozen() === 'right') {
                 let right = 0;
                 let sibling = this.el.nativeElement.nextElementSibling;
                 while (sibling) {
@@ -3595,9 +3604,7 @@ export class FrozenColumn extends BaseComponent {
 
     onDestroy() {
         this.unbindResizeListener();
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-        }
+        this.resizeObserver()?.disconnect();
     }
 }
 @Directive({
@@ -3607,22 +3614,22 @@ export class FrozenColumn extends BaseComponent {
         '[class]': "cx('sortableColumn')",
         '[tabindex]': 'isEnabled() ? "0" : null',
         role: 'columnheader',
-        '[attr.aria-sort]': 'sortOrder'
+        '[attr.aria-sort]': 'sortOrder()'
     },
     providers: [TableStyle]
 })
 export class SortableColumn extends BaseComponent {
     dataTable = inject(Table);
 
-    @Input('pSortableColumn') field: string | undefined;
+    readonly field = input<string | undefined>(undefined, { alias: 'pSortableColumn' });
 
-    @Input({ transform: booleanAttribute }) pSortableColumnDisabled: boolean | undefined;
+    readonly pSortableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     role = this.el.nativeElement?.tagName !== 'TH' ? 'columnheader' : null;
 
-    sorted: boolean | undefined;
+    readonly sorted = signal<boolean | undefined>(undefined);
 
-    sortOrder: string | undefined;
+    readonly sortOrder = signal<string | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3631,7 +3638,7 @@ export class SortableColumn extends BaseComponent {
     constructor() {
         super();
         if (this.isEnabled()) {
-            this.subscription = this.dataTable.tableService.sortSource$.subscribe((sortMeta) => {
+            this.subscription = this.dataTable.tableService.sortSource$.subscribe(() => {
                 this.updateSortState();
             });
         }
@@ -3648,16 +3655,16 @@ export class SortableColumn extends BaseComponent {
         let sortOrder = 0;
 
         if (this.dataTable.sortMode() === 'single') {
-            sorted = this.dataTable.isSorted(<string>this.field) as boolean;
+            sorted = this.dataTable.isSorted(<string>this.field()) as boolean;
             sortOrder = this.dataTable._sortOrder();
         } else if (this.dataTable.sortMode() === 'multiple') {
-            const sortMeta = this.dataTable.getSortMeta(<string>this.field);
+            const sortMeta = this.dataTable.getSortMeta(<string>this.field());
             sorted = !!sortMeta;
             sortOrder = sortMeta ? sortMeta.order : 0;
         }
 
-        this.sorted = sorted;
-        this.sortOrder = sorted ? (sortOrder === 1 ? 'ascending' : 'descending') : 'none';
+        this.sorted.set(sorted);
+        this.sortOrder.set(sorted ? (sortOrder === 1 ? 'ascending' : 'descending') : 'none');
     }
 
     @HostListener('click', ['$event'])
@@ -3666,7 +3673,7 @@ export class SortableColumn extends BaseComponent {
             this.updateSortState();
             this.dataTable.sort({
                 originalEvent: event,
-                field: this.field
+                field: this.field()
             });
 
             DomHandler.clearSelection();
@@ -3682,7 +3689,7 @@ export class SortableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pSortableColumnDisabled !== true;
+        return this.pSortableColumnDisabled() !== true;
     }
 
     isFilterElement(element: HTMLElement) {
@@ -3705,19 +3712,19 @@ export class SortableColumn extends BaseComponent {
     standalone: false,
     template: `
         @if (!(dataTable.sortIconTemplate() || dataTable._sortIconTemplate())) {
-            @if (sortOrder === 0) {
+            @if (sortOrder() === 0) {
                 <svg data-p-icon="sort-alt" [class]="cx('sortableColumnIcon')" />
             }
-            @if (sortOrder === 1) {
+            @if (sortOrder() === 1) {
                 <svg data-p-icon="sort-amount-up-alt" [class]="cx('sortableColumnIcon')" />
             }
-            @if (sortOrder === -1) {
+            @if (sortOrder() === -1) {
                 <svg data-p-icon="sort-amount-down" [class]="cx('sortableColumnIcon')" />
             }
         }
         @if (dataTable.sortIconTemplate() || dataTable._sortIconTemplate()) {
             <span [class]="cx('sortableColumnIcon')">
-                <ng-template *ngTemplateOutlet="dataTable.sortIconTemplate() || dataTable._sortIconTemplate(); context: { $implicit: sortOrder }"></ng-template>
+                <ng-template *ngTemplateOutlet="dataTable.sortIconTemplate() || dataTable._sortIconTemplate(); context: { $implicit: sortOrder() }"></ng-template>
             </span>
         }
         @if (isMultiSorted()) {
@@ -3730,19 +3737,18 @@ export class SortableColumn extends BaseComponent {
 })
 export class SortIcon extends BaseComponent {
     dataTable = inject(Table);
-    cd = inject(ChangeDetectorRef);
 
-    @Input() field: string | undefined;
+    readonly field = input<string | undefined>();
 
     subscription: Subscription | undefined;
 
-    sortOrder: number | undefined;
+    readonly sortOrder = signal<number | undefined>(undefined);
 
     _componentStyle = inject(TableStyle);
 
     constructor() {
         super();
-        this.subscription = this.dataTable.tableService.sortSource$.subscribe((sortMeta) => {
+        this.subscription = this.dataTable.tableService.sortSource$.subscribe(() => {
             this.updateSortState();
         });
     }
@@ -3757,13 +3763,11 @@ export class SortIcon extends BaseComponent {
 
     updateSortState() {
         if (this.dataTable.sortMode() === 'single') {
-            this.sortOrder = this.dataTable.isSorted(<string>this.field) ? this.dataTable._sortOrder() : 0;
+            this.sortOrder.set(this.dataTable.isSorted(<string>this.field()) ? this.dataTable._sortOrder() : 0);
         } else if (this.dataTable.sortMode() === 'multiple') {
-            let sortMeta = this.dataTable.getSortMeta(<string>this.field);
-            this.sortOrder = sortMeta ? sortMeta.order : 0;
+            let sortMeta = this.dataTable.getSortMeta(<string>this.field());
+            this.sortOrder.set(sortMeta ? sortMeta.order : 0);
         }
-
-        this.cd.markForCheck();
     }
 
     getMultiSortMetaIndex() {
@@ -3773,7 +3777,7 @@ export class SortIcon extends BaseComponent {
         if (multiSortMeta && this.dataTable.sortMode() === 'multiple' && this.dataTable.showInitialSortBadge() && multiSortMeta.length > 1) {
             for (let i = 0; i < multiSortMeta.length; i++) {
                 let meta = multiSortMeta[i];
-                if (meta.field === this.field || meta.field === this.field) {
+                if (meta.field === this.field()) {
                     index = i;
                     break;
                 }
@@ -3814,13 +3818,13 @@ export class SelectableRow extends BaseComponent {
     dataTable = inject(Table);
     tableService = inject(TableService);
 
-    @Input('pSelectableRow') data: any;
+    readonly data = input<any>(undefined, { alias: 'pSelectableRow' });
 
-    @Input('pSelectableRowIndex') index: number | undefined;
+    readonly index = input<number | undefined>(undefined, { alias: 'pSelectableRowIndex' });
 
-    @Input({ transform: booleanAttribute }) pSelectableRowDisabled: boolean | undefined;
+    readonly pSelectableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -3830,20 +3834,20 @@ export class SelectableRow extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
-                this.selected = this.dataTable.isSelected(this.data);
+                this.selected.set(this.dataTable.isSelected(this.data()));
             });
         }
     }
 
     setRowTabIndex() {
         if (this.dataTable.selectionMode() === 'single' || this.dataTable.selectionMode() === 'multiple') {
-            return !this.dataTable.selection() ? 0 : this.dataTable.anchorRowIndex() === this.index ? 0 : -1;
+            return !this.dataTable.selection() ? 0 : this.dataTable.anchorRowIndex() === this.index() ? 0 : -1;
         }
     }
 
     onInit() {
         if (this.isEnabled()) {
-            this.selected = this.dataTable.isSelected(this.data);
+            this.selected.set(this.dataTable.isSelected(this.data()));
         }
     }
 
@@ -3852,8 +3856,8 @@ export class SelectableRow extends BaseComponent {
         if (this.isEnabled()) {
             this.dataTable.handleRowClick({
                 originalEvent: event,
-                rowData: this.data,
-                rowIndex: this.index
+                rowData: this.data(),
+                rowIndex: this.index()
             });
         }
     }
@@ -3941,8 +3945,8 @@ export class SelectableRow extends BaseComponent {
 
         this.dataTable.handleRowClick({
             originalEvent: event,
-            rowData: this.data,
-            rowIndex: this.index
+            rowData: this.data(),
+            rowIndex: this.index()
         });
     }
 
@@ -3955,8 +3959,8 @@ export class SelectableRow extends BaseComponent {
             const lastSelectableRowIndex = DomHandler.getAttribute(lastRow, 'index');
 
             this.dataTable.anchorRowIndex.set(lastSelectableRowIndex);
-            this.dataTable.selection.set(data.slice(this.index || 0, data.length));
-            this.dataTable.selectRange(event, this.index || 0);
+            this.dataTable.selection.set(data.slice(this.index() || 0, data.length));
+            this.dataTable.selectRange(event, this.index() || 0);
         }
         event.preventDefault();
     }
@@ -3971,8 +3975,8 @@ export class SelectableRow extends BaseComponent {
             const firstSelectableRowIndex = DomHandler.getAttribute(firstRow, 'index');
 
             this.dataTable.anchorRowIndex.set(this.dataTable.anchorRowIndex() || firstSelectableRowIndex || 0);
-            this.dataTable.selection.set(data.slice(0, (this.index || 0) + 1));
-            this.dataTable.selectRange(event, this.index || 0);
+            this.dataTable.selection.set(data.slice(0, (this.index() || 0) + 1));
+            this.dataTable.selectRange(event, this.index() || 0);
         }
         event.preventDefault();
     }
@@ -3993,14 +3997,14 @@ export class SelectableRow extends BaseComponent {
                     firstSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection()[0], data);
                     lastSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection()[this.dataTable.selection().length - 1], data);
 
-                    index = (this.index || 0) <= firstSelectedRowIndex ? lastSelectedRowIndex : firstSelectedRowIndex;
+                    index = (this.index() || 0) <= firstSelectedRowIndex ? lastSelectedRowIndex : firstSelectedRowIndex;
                 } else {
                     index = ObjectUtils.findIndexInList(this.dataTable.selection(), data);
                 }
 
                 this.dataTable.anchorRowIndex.set(index || 0);
-                this.dataTable.selection.set(index !== this.index ? data.slice(Math.min(index || 0, this.index || 0), Math.max(index || 0, this.index || 0) + 1) : [this.data]);
-                this.dataTable.selectRange(event, this.index || 0);
+                this.dataTable.selection.set(index !== this.index() ? data.slice(Math.min(index || 0, this.index() || 0), Math.max(index || 0, this.index() || 0) + 1) : [this.data()]);
+                this.dataTable.selectRange(event, this.index() || 0);
             }
 
             event.preventDefault();
@@ -4047,7 +4051,7 @@ export class SelectableRow extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pSelectableRowDisabled !== true;
+        return this.pSelectableRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -4069,13 +4073,13 @@ export class SelectableRowDblClick extends BaseComponent {
     dataTable = inject(Table);
     tableService = inject(TableService);
 
-    @Input('pSelectableRowDblClick') data: any;
+    readonly data = input<any>(undefined, { alias: 'pSelectableRowDblClick' });
 
-    @Input('pSelectableRowIndex') index: number | undefined;
+    readonly index = input<number | undefined>(undefined, { alias: 'pSelectableRowIndex' });
 
-    @Input({ transform: booleanAttribute }) pSelectableRowDisabled: boolean | undefined;
+    readonly pSelectableRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -4085,14 +4089,14 @@ export class SelectableRowDblClick extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
-                this.selected = this.dataTable.isSelected(this.data);
+                this.selected.set(this.dataTable.isSelected(this.data()));
             });
         }
     }
 
     onInit() {
         if (this.isEnabled()) {
-            this.selected = this.dataTable.isSelected(this.data);
+            this.selected.set(this.dataTable.isSelected(this.data()));
         }
     }
 
@@ -4101,14 +4105,14 @@ export class SelectableRowDblClick extends BaseComponent {
         if (this.isEnabled()) {
             this.dataTable.handleRowClick({
                 originalEvent: event,
-                rowData: this.data,
-                rowIndex: this.index
+                rowData: this.data(),
+                rowIndex: this.index()
             });
         }
     }
 
     isEnabled() {
-        return this.pSelectableRowDisabled !== true;
+        return this.pSelectableRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -4131,13 +4135,13 @@ export class ContextMenuRow extends BaseComponent {
     dataTable = inject(Table);
     tableService = inject(TableService);
 
-    @Input('pContextMenuRow') data: any;
+    readonly data = input<any>(undefined, { alias: 'pContextMenuRow' });
 
-    @Input('pContextMenuRowIndex') index: number | undefined;
+    readonly index = input<number | undefined>(undefined, { alias: 'pContextMenuRowIndex' });
 
-    @Input({ transform: booleanAttribute }) pContextMenuRowDisabled: boolean | undefined;
+    readonly pContextMenuRowDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    selected: boolean | undefined;
+    readonly selected = signal<boolean | undefined>(undefined);
 
     subscription: Subscription | undefined;
 
@@ -4147,7 +4151,7 @@ export class ContextMenuRow extends BaseComponent {
         super();
         if (this.isEnabled()) {
             this.subscription = this.dataTable.tableService.contextMenuSource$.subscribe((data) => {
-                this.selected = data ? this.dataTable.equals(this.data, data) : false;
+                this.selected.set(data ? this.dataTable.equals(this.data(), data) : false);
             });
         }
     }
@@ -4157,8 +4161,8 @@ export class ContextMenuRow extends BaseComponent {
         if (this.isEnabled()) {
             this.dataTable.handleRowRightClick({
                 originalEvent: event,
-                rowData: this.data,
-                rowIndex: this.index
+                rowData: this.data(),
+                rowIndex: this.index()
             });
 
             this.el.nativeElement.focus();
@@ -4167,7 +4171,7 @@ export class ContextMenuRow extends BaseComponent {
     }
 
     isEnabled() {
-        return this.pContextMenuRowDisabled !== true;
+        return this.pContextMenuRowDisabled() !== true;
     }
 
     onDestroy() {
@@ -4184,20 +4188,20 @@ export class ContextMenuRow extends BaseComponent {
 export class RowToggler extends BaseComponent {
     dataTable = inject(Table);
 
-    @Input('pRowToggler') data: any;
+    readonly data = input<any>(undefined, { alias: 'pRowToggler' });
 
-    @Input({ transform: booleanAttribute }) pRowTogglerDisabled: boolean | undefined;
+    readonly pRowTogglerDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     @HostListener('click', ['$event'])
     onClick(event: Event) {
         if (this.isEnabled()) {
-            this.dataTable.toggleRow(this.data, event);
+            this.dataTable.toggleRow(this.data(), event);
             event.preventDefault();
         }
     }
 
     isEnabled() {
-        return this.pRowTogglerDisabled !== true;
+        return this.pRowTogglerDisabled() !== true;
     }
 }
 
@@ -4910,9 +4914,9 @@ export class CellEditor extends BaseComponent {
         [disabled]="disabled()"
         [inputId]="inputId()"
         [name]="name()"
-        [ariaLabel]="ariaLabel"
+        [ariaLabel]="_ariaLabel()"
         [binary]="true"
-        [value]="value"
+        [value]="value()"
         (onClick)="onClick($event)"
         [unstyled]="unstyled()"
     /> `,
@@ -4921,35 +4925,35 @@ export class CellEditor extends BaseComponent {
 })
 export class TableRadioButton extends BaseComponent {
     dataTable = inject(Table);
-    cd = inject(ChangeDetectorRef);
 
-    @Input() value: any;
+    readonly value = input<any>();
 
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     readonly index = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     readonly inputId = input<string | undefined>();
     readonly name = input<string | undefined>();
 
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
+
+    readonly _ariaLabel = linkedSignal(() => this.ariaLabel());
 
     readonly inputViewChild = viewChild.required<RadioButton>('rb');
 
-    checked: boolean | undefined;
+    readonly checked = signal<boolean | undefined>(undefined);
 
     subscription: Subscription;
 
     constructor() {
         super();
         this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
-            this.checked = this.dataTable.isSelected(this.value);
+            this.checked.set(this.dataTable.isSelected(this.value()));
 
-            this.ariaLabel = this.ariaLabel || (this.dataTable.config.translation.aria ? (this.checked ? this.dataTable.config.translation.aria.selectRow : this.dataTable.config.translation.aria.unselectRow) : undefined);
-            this.cd.markForCheck();
+            this._ariaLabel.set(this._ariaLabel() || (this.dataTable.config.translation.aria ? (this.checked() ? this.dataTable.config.translation.aria.selectRow : this.dataTable.config.translation.aria.unselectRow) : undefined));
         });
     }
 
     onInit() {
-        this.checked = this.dataTable.isSelected(this.value);
+        this.checked.set(this.dataTable.isSelected(this.value()));
     }
 
     onClick(event: RadioButtonClickEvent) {
@@ -4959,7 +4963,7 @@ export class TableRadioButton extends BaseComponent {
                     originalEvent: event.originalEvent,
                     rowIndex: this.index()
                 },
-                this.value
+                this.value()
             );
 
             this.inputViewChild().inputViewChild().nativeElement?.focus();
@@ -4987,12 +4991,12 @@ export class TableRadioButton extends BaseComponent {
             [disabled]="disabled()"
             [inputId]="inputId()"
             [name]="name()"
-            [ariaLabel]="ariaLabel"
+            [ariaLabel]="_ariaLabel()"
             [unstyled]="unstyled()"
         >
             @if (dataTable.checkboxIconTemplate() || dataTable._checkboxIconTemplate(); as template) {
                 <ng-template pTemplate="icon">
-                    <ng-template *ngTemplateOutlet="template; context: { $implicit: checked }" />
+                    <ng-template *ngTemplateOutlet="template; context: { $implicit: checked() }" />
                 </ng-template>
             }
         </p-checkbox>
@@ -5004,7 +5008,7 @@ export class TableCheckbox extends BaseComponent {
     dataTable = inject(Table);
     tableService = inject(TableService);
 
-    @Input() value: any;
+    readonly value = input<any>();
 
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     readonly required = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
@@ -5012,23 +5016,24 @@ export class TableCheckbox extends BaseComponent {
     readonly inputId = input<string | undefined>();
     readonly name = input<string | undefined>();
 
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
 
-    checked: boolean | undefined;
+    readonly _ariaLabel = linkedSignal(() => this.ariaLabel());
+
+    readonly checked = signal<boolean | undefined>(undefined);
 
     subscription: Subscription;
 
     constructor() {
         super();
         this.subscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
-            this.checked = this.dataTable.isSelected(this.value);
-            this.ariaLabel = this.ariaLabel || (this.dataTable.config.translation.aria ? (this.checked ? this.dataTable.config.translation.aria.selectRow : this.dataTable.config.translation.aria.unselectRow) : undefined);
-            this.cd.markForCheck();
+            this.checked.set(this.dataTable.isSelected(this.value()));
+            this._ariaLabel.set(this._ariaLabel() || (this.dataTable.config.translation.aria ? (this.checked() ? this.dataTable.config.translation.aria.selectRow : this.dataTable.config.translation.aria.unselectRow) : undefined));
         });
     }
 
     onInit() {
-        this.checked = this.dataTable.isSelected(this.value);
+        this.checked.set(this.dataTable.isSelected(this.value()));
     }
 
     onClick({ originalEvent }: CheckboxChangeEvent) {
@@ -5038,7 +5043,7 @@ export class TableCheckbox extends BaseComponent {
                     originalEvent: originalEvent!,
                     rowIndex: this.index() || 0
                 },
-                this.value
+                this.value()
             );
         }
         DomHandler.clearSelection();
@@ -5064,12 +5069,12 @@ export class TableCheckbox extends BaseComponent {
             [disabled]="isDisabled()"
             [inputId]="inputId()"
             [name]="name()"
-            [ariaLabel]="ariaLabel"
+            [ariaLabel]="_ariaLabel()"
             [unstyled]="unstyled()"
         >
             @if (dataTable.headerCheckboxIconTemplate() || dataTable._headerCheckboxIconTemplate(); as template) {
                 <ng-template pTemplate="icon">
-                    <ng-template *ngTemplateOutlet="template; context: { $implicit: checked }" />
+                    <ng-template *ngTemplateOutlet="template; context: { $implicit: checked() }" />
                 </ng-template>
             }
         </p-checkbox>
@@ -5086,17 +5091,15 @@ export class TableHeaderCheckbox extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('headerCheckbox'));
-    }
-
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     readonly inputId = input<string | undefined>();
     readonly name = input<string | undefined>();
 
-    @Input() ariaLabel: string | undefined;
+    readonly ariaLabel = input<string | undefined>();
 
-    checked: boolean | undefined;
+    readonly _ariaLabel = linkedSignal(() => this.ariaLabel());
+
+    readonly checked = signal<boolean | null | undefined>(undefined);
 
     selectionChangeSubscription: Subscription;
 
@@ -5104,24 +5107,25 @@ export class TableHeaderCheckbox extends BaseComponent {
 
     constructor() {
         super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('headerCheckbox')));
         this.valueChangeSubscription = this.dataTable.tableService.valueSource$.subscribe(() => {
-            this.checked = this.updateCheckedState();
-            this.ariaLabel = this.ariaLabel || (this.dataTable.config.translation.aria ? (this.checked ? this.dataTable.config.translation.aria.selectAll : this.dataTable.config.translation.aria.unselectAll) : undefined);
+            this.checked.set(this.updateCheckedState());
+            this._ariaLabel.set(this._ariaLabel() || (this.dataTable.config.translation.aria ? (this.checked() ? this.dataTable.config.translation.aria.selectAll : this.dataTable.config.translation.aria.unselectAll) : undefined));
         });
 
         this.selectionChangeSubscription = this.dataTable.tableService.selectionSource$.subscribe(() => {
-            this.checked = this.updateCheckedState();
+            this.checked.set(this.updateCheckedState());
         });
     }
 
     onInit() {
-        this.checked = this.updateCheckedState();
+        this.checked.set(this.updateCheckedState());
     }
 
     onClick(event: CheckboxChangeEvent) {
         if (!this.disabled()) {
             if (this.dataTable._value() && this.dataTable._value().length > 0) {
-                this.dataTable.toggleRowsWithCheckbox(event, this.checked || false);
+                this.dataTable.toggleRowsWithCheckbox(event, this.checked() || false);
             }
         }
 
@@ -5143,8 +5147,6 @@ export class TableHeaderCheckbox extends BaseComponent {
     }
 
     updateCheckedState() {
-        this.cd.markForCheck();
-
         if (this.dataTable.selectAll() !== null) {
             return this.dataTable.selectAll();
         } else {

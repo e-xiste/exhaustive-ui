@@ -209,23 +209,23 @@ const classes = {
     rowReorderIndicatorDown: 'p-datatable-row-reorder-indicator-down',
     sortableColumn: ({ instance }) => ({
         'p-datatable-sortable-column': instance.isEnabled(),
-        ' p-datatable-column-sorted': instance.sorted
+        ' p-datatable-column-sorted': instance.sorted()
     }),
     sortableColumnIcon: 'p-datatable-sort-icon',
     sortableColumnBadge: 'p-sortable-column-badge',
     selectableRow: ({ instance }) => ({
         'p-datatable-selectable-row': instance.isEnabled(),
-        'p-datatable-row-selected': instance.selected
+        'p-datatable-row-selected': instance.selected()
     }),
     resizableColumn: 'p-datatable-resizable-column',
     reorderableColumn: 'p-datatable-reorderable-column',
     rowEditorCancel: 'p-datatable-row-editor-cancel',
     frozenColumn: ({ instance }) => ({
-        'p-datatable-frozen-column': instance.frozen,
+        'p-datatable-frozen-column': instance.frozen(),
         'p-datatable-frozen-column-left': instance.alignFrozenLeft === 'left'
     }),
     contextMenuRowSelected: ({ instance }) => ({
-        'p-datatable-contextmenu-row-selected': instance.selected
+        'p-datatable-contextmenu-row-selected': instance.selected()
     })
 };
 
