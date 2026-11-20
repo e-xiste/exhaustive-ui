@@ -1329,6 +1329,13 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     if (this.hasFilter()) {
                         this.first.set(first);
                     }
+
+                    // a shorter value can leave the current page empty: move back to the last page
+                    const rows = this.rows();
+                    const totalRecords = this._totalRecords();
+                    if (this.paginator() && rows && totalRecords > 0 && (this.first() ?? 0) >= totalRecords) {
+                        this.first.set(Math.floor((totalRecords - 1) / rows) * rows);
+                    }
                 }
 
                 this.tableService.onValueChange(value);

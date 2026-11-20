@@ -2600,4 +2600,20 @@ describe('Table medium-severity fixes', () => {
 
         expect(table.first()).toBe(10);
     });
+
+    it('moves back to the last existing page when the value shrinks (optimus-ui#396)', async () => {
+        const rows = Array.from({ length: 30 }, (_, i) => ({ name: 'item' + i }));
+        fixture.componentRef.setInput('value', rows);
+        fixture.componentRef.setInput('paginator', true);
+        fixture.componentRef.setInput('rows', 10);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        table.first.set(20);
+
+        fixture.componentRef.setInput('value', rows.slice(0, 5));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(table.first()).toBe(0);
+    });
 });
