@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <span class="font-medium capitalize block mb-2 text-center sm:text-left">{{ color }}</span>
                         <div class="flex gap-4 flex-auto flex-col sm:flex-row">
                             <div *ngFor="let shade of shades" [ngClass]="{ invisible: color === 'primary' && shade === 0 }" class="flex flex-col items-center gap-1 flex-1">
-                                <div class="rounded h-8 w-full" [ngStyle]="{ 'background-color': 'var(--p-' + color + '-' + shade + ')' }"></div>
+                                <div class="rounded-sm h-8 w-full" [ngStyle]="{ 'background-color': 'var(--p-' + color + '-' + shade + ')' }"></div>
                                 <span class="text-sm text-surface-500 dark:text-surface-400 font-medium">{{ shade }}</span>
                             </div>
                         </div>

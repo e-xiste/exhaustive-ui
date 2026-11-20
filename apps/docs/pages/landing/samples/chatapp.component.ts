@@ -45,13 +45,13 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                     }"
                 >
                     <div class="relative">
-                        <p-badge *ngIf="chat.active !== undefined" [severity]="chat.active ? 'success' : 'danger'" class="absolute top-0 right-0 p-[1px] bg-surface-0 dark:bg-surface-950 rounded-full flex items-center justify-center" />
+                        <p-badge *ngIf="chat.active !== undefined" [severity]="chat.active ? 'success' : 'danger'" class="absolute top-0 right-0 p-px bg-surface-0 dark:bg-surface-950 rounded-full flex items-center justify-center" />
 
                         <p-avatar
                             [image]="chat.image"
                             [label]="!chat.image ? chat.capName : ''"
                             [ngClass]="{
-                                '!bg-primary-100 !text-primary-950': !chat.image
+                                'bg-primary-100! text-primary-950!': !chat.image
                             }"
                             class="text-base font-medium flex"
                             size="large"

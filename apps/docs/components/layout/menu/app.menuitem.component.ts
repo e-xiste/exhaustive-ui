@@ -33,7 +33,7 @@ import { MenuItem } from './app.menu.component';
             <p-tag *ngIf="item.badge" [value]="item.badge" />
         </a>
         <span *ngIf="!root && item.children" class="menu-child-category">{{ item.name }}</span>
-        <div *ngIf="item.children" class="overflow-y-hidden transition-all duration-[400ms] ease-in-out" [ngClass]="{ hidden: item.children && root && isActiveRootMenuItem(item) }">
+        <div *ngIf="item.children" class="overflow-y-hidden transition-all duration-400 ease-in-out" [ngClass]="{ hidden: item.children && root && isActiveRootMenuItem(item) }">
             <ol>
                 <li *ngFor="let child of item.children" app-menuitem [root]="false" [item]="child"></li>
             </ol>

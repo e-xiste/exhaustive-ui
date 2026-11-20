@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A bar chart or bar graph is a chart that presents grouped data with rectangular bars with lengths proportional to the values that they represent.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+            <p-chart type="bar" [data]="data" [options]="options" class="h-120" />
         </div>
         <app-code></app-code>
     `

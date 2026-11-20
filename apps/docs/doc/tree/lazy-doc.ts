@@ -16,7 +16,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-tree class="w-full md:w-[30rem]" [value]="nodes()" loadingMode="icon" (onNodeExpand)="onNodeExpand($event)" />
+            <p-tree class="w-full md:w-120" [value]="nodes()" loadingMode="icon" (onNodeExpand)="onNodeExpand($event)" />
         </div>
         <app-code></app-code>
     `

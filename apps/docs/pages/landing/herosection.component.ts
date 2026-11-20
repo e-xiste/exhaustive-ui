@@ -213,7 +213,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                     <customers-app *ngIf="selectedSampleAppsSidebarNav === 'Customers'" />
                 </div>
             </div>
-            <p-drawer [(visible)]="dashboardSidebarVisible" position="right" closeIcon="pi pi-sign-out" styleClass="!max-w-2xl !w-full !h-screen rounded-l-2xl">
+            <p-drawer [(visible)]="dashboardSidebarVisible" position="right" closeIcon="pi pi-sign-out" styleClass="max-w-2xl! w-full! h-screen! rounded-l-2xl">
                 <ng-template #headless>
                     <div class="flex flex-col h-screen overflow-auto">
                         <div class="">
@@ -235,7 +235,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Call Logs</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 !border-surface !bg-surface-0 dark:!bg-surface-900 hover:opacity-75 transition-all" severity="secondary" text />
+                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
                                     <div *ngFor="let data of callLogs" class="flex items-center gap-3 p-2">
@@ -254,7 +254,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Email Records</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 !border-surface !bg-surface-0 dark:!bg-surface-900 hover:opacity-75 transition-all" severity="secondary" text />
+                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
                                     <div *ngFor="let data of emailRecords" class="flex items-center gap-3 p-2">
@@ -280,7 +280,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Meeting Notes</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 !border-surface !bg-surface-0 dark:!bg-surface-900 hover:opacity-75 transition-all leading-none" severity="secondary" text />
+                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all leading-none" severity="secondary" text />
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 p-4 flex flex-col rounded-lg overflow-hidden">
                                     <div class="flex items-start justify-between gap-1">
@@ -339,7 +339,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="font-medium text-color p-2">Customer Satisfaction Score</div>
                                     </div>
-                                    <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
+                                    <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
                                         <p-knob [(ngModel)]="customerSatisfaction" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
                                     </div>
                                 </div>
@@ -347,7 +347,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="font-medium text-color p-2">Estimated Lifetime Value</div>
                                     </div>
-                                    <div class="flex-1 flex items-center gap-2 justify-center mt-2 p-2 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
+                                    <div class="flex-1 flex items-center gap-2 justify-center mt-2 p-2 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
                                         <div class="font-semibold text-lg leading-none text-color border border-surface py-3.5 px-2 rounded-lg">$</div>
                                         <div class="font-semibold text-lg leading-none text-color border border-surface py-3.5 px-2 rounded-lg">272</div>
                                         <div class="font-semibold text-lg leading-none text-color border border-surface py-3.5 px-2 rounded-lg">123</div>
@@ -358,20 +358,20 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="font-medium text-color p-2">Product Usage</div>
                                     </div>
-                                    <div class="flex-1 mt-2 py-4 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
+                                    <div class="flex-1 mt-2 py-4 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
                                         <p-chart type="line" [data]="lineChartData" [options]="lineChartOptions" styleClass="min-h-44 w-full" width="100%" height="11rem" />
                                     </div>
                                 </div>
                                 <div class="w-full h-full flex flex-col p-3 rounded-xl bg-emphasis">
                                     <div class="font-medium text-color p-2">Churn Risk</div>
-                                    <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
+                                    <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
                                         <p-knob [(ngModel)]="churnRisk" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-4 w-full flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="font-medium text-color p-2">Total Purchases</div>
-                                <div class="flex-1 py-4 px-2 w-full mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-sm">
+                                <div class="flex-1 py-4 px-2 w-full mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
                                     <p-chart type="bar" [data]="chartData2" [options]="chartOptions2" height="15rem" class="w-full" />
                                 </div>
                             </div>

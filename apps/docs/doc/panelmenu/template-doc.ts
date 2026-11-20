@@ -22,7 +22,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                         <i [class]="item.icon + ' text-primary group-hover:text-inherit'"></i>
                         <span class="ms-2">{{ item.label }}</span>
                         <p-badge *ngIf="item.badge" class="ms-auto" [value]="item.badge" />
-                        <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
+                        <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded-sm bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
                     </a>
                 </ng-template>
             </p-panelmenu>

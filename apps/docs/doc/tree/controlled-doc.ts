@@ -19,7 +19,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
                 <p-button icon="pi pi-plus" label="Expand all" (click)="expandAll()" />
                 <p-button icon="pi pi-minus" label="Collapse all" (click)="collapseAll()" />
             </div>
-            <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+            <p-tree [value]="files()" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

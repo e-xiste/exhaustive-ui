@@ -20,7 +20,7 @@ import { TimelineModule } from '@exhaustive-ui/core/timeline';
             <div class="card mt-8">
                 <p-timeline [value]="events" align="alternate" class="customized-timeline">
                     <ng-template #content let-event>
-                        <div class="p-4 mb-4 border rounded-xl shadow-sm bg-surface-0 dark:bg-surface-900 border-surface-200 dark:border-surface-800">
+                        <div class="p-4 mb-4 border rounded-xl shadow-xs bg-surface-0 dark:bg-surface-900 border-surface-200 dark:border-surface-800">
                             <div class="flex items-center gap-2 mb-2">
                                 <h3 class="text-xl font-semibold m-0">{{ event.title }}</h3>
                                 <p-tag *ngIf="event.shipped" value="Shipped" severity="success" />

@@ -19,11 +19,11 @@ import { TagModule } from '@exhaustive-ui/core/tag';
         <div class="card">
             <p-carousel [value]="products()" [numVisible]="3" [numScroll]="1" [circular]="true" [responsiveOptions]="responsiveOptions" autoplayInterval="3000">
                 <ng-template let-product #item>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+                    <div class="border border-surface-200 dark:border-surface-700 rounded-sm m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
                                 <img src="https://exhaustive-ui.com/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
-                                <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                                <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:bg-surface-900!" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
                             </div>
                         </div>
                         <div class="mb-4 font-medium">{{ product.name }}</div>

@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Apply responsive styles to the container element to optimize display per screen size.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-imagecompare class="sm:!w-96 shadow-lg rounded-2xl">
+            <p-imagecompare class="sm:w-96! shadow-lg rounded-2xl">
                 <ng-template #left>
                     <img src="https://exhaustive-ui.com/demo/compare/island1.jpg" />
                 </ng-template>

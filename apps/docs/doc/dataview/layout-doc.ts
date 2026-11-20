@@ -34,8 +34,8 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                     <div *ngFor="let item of items; let first = first">
                         <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
                             <div class="md:w-40 relative">
-                                <img class="block xl:block mx-auto rounded w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
-                                <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute dark:!bg-surface-900" [style.left.px]="4" [style.top.px]="4" />
+                                <img class="block xl:block mx-auto rounded-sm w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
+                                <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute dark:bg-surface-900!" [style.left.px]="4" [style.top.px]="4" />
                             </div>
                             <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                                 <div class="flex flex-row md:flex-col justify-between items-start gap-2">
@@ -64,11 +64,11 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                 <ng-template #grid let-items>
                     <div class="grid grid-cols-12 gap-4">
                         <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-6 p-2">
-                            <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
-                                <div class="bg-surface-50 flex justify-center rounded p-4">
+                            <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded-sm flex flex-col">
+                                <div class="bg-surface-50 flex justify-center rounded-sm p-4">
                                     <div class="relative mx-auto">
-                                        <img class="rounded w-full" [src]="'https://exhaustive-ui.com/demo/product/' + product.image" [alt]="product.name" style="max-width: 300px" />
-                                        <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product)" class="absolute dark:!bg-surface-900" [style.left.px]="4" [style.top.px]="4" />
+                                        <img class="rounded-sm w-full" [src]="'https://exhaustive-ui.com/demo/product/' + product.image" [alt]="product.name" style="max-width: 300px" />
+                                        <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product)" class="absolute dark:bg-surface-900!" [style.left.px]="4" [style.top.px]="4" />
                                     </div>
                                 </div>
                                 <div class="pt-6">

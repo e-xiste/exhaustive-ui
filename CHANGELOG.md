@@ -84,10 +84,24 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 
 ### Tooling and documentation
 
+- Tailwind CSS v4 is the recommended version: the documentation site and its StackBlitz projects use it, the `@exhaustive-ui/tailwindcss` v4 stylesheet matches the v3 plugin, and `migrate-from-primeflex` produces v4 class names. The v3 plugin is still published.
 - New package: `@exhaustive-ui/mcp`, an MCP server for coding agents. It serves the component API, the guides and the examples from the live documentation site. Its `validate_usage` tool checks templates and names the replacement of every input removed or renamed in v22. Its prompts include `update_to_v22`.
 - The `exhaustive-ui` agent skill (`npx skills add https://exhaustive-ui.com`) describes the v22 conventions and bundles the update guide.
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
+
+## Unreleased
+
+### Tailwind CSS v4
+
+- The documentation site and its StackBlitz projects now use Tailwind CSS v4, through `@tailwindcss/postcss` and the CSS configuration (`@import 'tailwindcss'`, `@theme`, `@custom-variant`) instead of `tailwind.config.js`. Tailwind v4 is the version the docs recommend; the v3 plugin is still published and documented.
+- `@exhaustive-ui/tailwindcss` (v4 stylesheet) now generates the same utilities as the v3 plugin. Checked by compiling all 681 plugin classes with both and comparing the declarations:
+  - `animate-delay-*` produced invalid CSS (`75 ms`, with a space) and had no effect.
+  - The animation utilities accept arbitrary values again: `animate-delay-[123ms]`, `animate-duration-[2s]`, `fade-in-[0.3]`, `zoom-in-[0.9]`, `spin-in-[-45deg]`, `slide-in-from-t-[10px]`.
+  - `slide-in-from-*` and `slide-out-from-*` accept fractional steps (`0.5`), fractions (`1/2`), `px` and `full` again.
+- `@exhaustive-ui/tailwindcss` exports `./v4` and `./v4/*`, so `@import '@exhaustive-ui/tailwindcss/v4/index.css'`, which the `migrate-from-primeng` schematic writes for `tailwindcss-primeui/v4/index.css`, resolves.
+- `migrate-from-primeflex` produces Tailwind v4 class names when the workspace uses Tailwind v4 or does not have Tailwind yet: v4 renamed the shadow and border-radius scales one step down, so `shadow-1` now becomes `shadow-xs` and `border-round-sm` becomes `rounded-sm`. Workspaces on Tailwind v3 keep the v3 names. The new `tailwindVersion` option (3 or 4) overrides the detection.
+- Docs: the Tailwind guide marks v4 as the recommended version and its v3 important-modifier example uses the v3 prefix syntax (`!p-8`). The PrimeFlex guide warns that `pf2tw` produces v3 class names. The agent skill describes the Tailwind setup.
 
 ## 22.0.0-alpha.11 (2026-11-21)
 

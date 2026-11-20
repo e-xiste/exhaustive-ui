@@ -17,7 +17,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputgroup class="md:!w-80">
+            <p-inputgroup class="md:w-80!">
                 <p-inputgroup-addon>
                     <i class="pi pi-shopping-cart"></i>
                 </p-inputgroup-addon>

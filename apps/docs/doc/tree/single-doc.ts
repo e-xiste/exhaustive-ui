@@ -15,7 +15,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
             <p>Single node selection is configured by setting <i>selectionMode</i> as <i>single</i> along with <i>selection</i> properties to manage the selection value binding.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-tree [value]="files()" class="w-full md:w-[30rem]" selectionMode="single" [(selection)]="selectedFile" />
+            <p-tree [value]="files()" class="w-full md:w-120" selectionMode="single" [(selection)]="selectedFile" />
         </div>
         <app-code></app-code>
     `

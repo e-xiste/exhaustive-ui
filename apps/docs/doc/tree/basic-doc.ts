@@ -14,7 +14,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
             <p>Tree component requires an array of <i>TreeNode</i> objects as its <i>value</i>.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+            <p-tree [value]="files()" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

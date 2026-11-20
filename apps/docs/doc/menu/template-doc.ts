@@ -63,7 +63,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                         <span [class]="item.icon"></span>
                         <span class="ms-2">{{ item.label }}</span>
                         <p-badge *ngIf="item.badge" class="ms-auto" [value]="item.badge" />
-                        <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
+                        <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded-sm bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
                     </a>
                 </ng-template>
                 <ng-template #end>
@@ -120,7 +120,7 @@ export class TemplateDoc implements OnInit {
                         label: 'Logout',
                         icon: 'pi pi-sign-out',
                         shortcut: '⌘+Q',
-                        linkClass: '!text-red-500 dark:!text-red-400'
+                        linkClass: 'text-red-500! dark:text-red-400!'
                     }
                 ]
             },

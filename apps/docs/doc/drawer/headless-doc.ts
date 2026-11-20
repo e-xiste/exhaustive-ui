@@ -100,7 +100,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
                                                 <span class="font-medium">Reports</span>
                                                 <i class="pi pi-chevron-down ml-auto"></i>
                                             </a>
-                                            <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                            <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-400 ease-in-out">
                                                 <li>
                                                     <a
                                                         pRipple
@@ -115,7 +115,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
                                                         <span class="font-medium">Revenue</span>
                                                         <i class="pi pi-chevron-down ml-auto"></i>
                                                     </a>
-                                                    <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                                    <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-400 ease-in-out">
                                                         <li>
                                                             <a
                                                                 pRipple

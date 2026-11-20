@@ -13,7 +13,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
             <p>Nodes can be reordered within the same tree and also can be transferred between other trees using drag&drop.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-tree [value]="files()" class="w-full md:w-[30rem]" [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
+            <p-tree [value]="files()" class="w-full md:w-120" [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
         </div>
         <app-code></app-code>
     `,

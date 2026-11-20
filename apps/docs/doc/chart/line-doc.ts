@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A line chart or line graph is a type of chart which displays information as a series of data points called 'markers' connected by straight line segments.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+            <p-chart type="line" [data]="data" [options]="options" class="h-120" />
         </div>
         <app-code></app-code>
     `

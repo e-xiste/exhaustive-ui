@@ -19,7 +19,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
             <p-toast />
             <p-tree
                 [value]="files()"
-                class="w-full md:w-[30rem]"
+                class="w-full md:w-120"
                 selectionMode="single"
                 [(selection)]="selectedFile"
                 (onNodeExpand)="nodeExpand($event)"

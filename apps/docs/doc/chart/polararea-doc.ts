@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>Polar area charts are similar to pie charts, but each segment has the same angle - the radius of the segment differs depending on the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-chart type="polarArea" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+            <p-chart type="polarArea" [data]="data" [options]="options" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

@@ -16,7 +16,7 @@ import { Component } from '@angular/core';
             <p>
                 If you haven't already done so, start by integrating Tailwind into your project. Detailed steps for this process can be found in the Tailwind
                 <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">documentation</a>. After successfully installing Tailwind, proceed with the installation of the ExhaustiveUiTailwind plugin. This single npm package comes
-                with two libraries: the CSS version is compatible with Tailwind v4, while the JS version is designed for Tailwind v3.
+                with two libraries: the CSS version is compatible with Tailwind v4, the recommended version, while the JS version is designed for Tailwind v3.
             </p>
             <app-code [code]="code1" [hideToggleCode]="true" [hideStackBlitz]="true" />
             <h3>Tailwind v4</h3>

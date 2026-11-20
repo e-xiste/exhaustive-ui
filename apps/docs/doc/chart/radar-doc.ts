@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A radar chart is a graphical method of displaying multivariate data in the form of a two-dimensional chart of three or more quantitative variables represented on axes starting from the same point.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-chart type="radar" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+            <p-chart type="radar" [data]="data" [options]="options" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

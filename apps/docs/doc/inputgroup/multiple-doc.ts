@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Multiple add-ons can be placed inside the same group.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputgroup class="w-full md:!w-[30rem]">
+            <p-inputgroup class="w-full md:w-120!">
                 <p-inputgroup-addon>
                     <i class="pi pi-clock"></i>
                 </p-inputgroup-addon>

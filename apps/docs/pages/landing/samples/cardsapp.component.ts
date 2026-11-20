@@ -183,7 +183,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     </div>
                     <div class="p-1 mt-4">
                         <button class="p-4 rounded-3xl w-full bg-emphasis transition-all text-color hover:text-color-emphasis flex items-center gap-2 justify-between cursor-pointer">
-                            <div class="flex items-center [&>*]:-mr-2">
+                            <div class="flex items-center *:-mr-2">
                                 <p-avatar image="/demo/landing/apps/avatar11.jpg" shape="circle" />
                                 <p-avatar image="/demo/landing/apps/avatar10.jpg" shape="circle" />
                                 <p-avatar image="/demo/landing/apps/avatar12.jpg" shape="circle" />
@@ -231,7 +231,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <div *ngIf="files.length > 0" class="px-4 py-0">
                                     <h5 class="m-0 mb-2">Pending</h5>
                                     <div class="flex flex-wrap gap-2 grow overflow-auto max-h-[210px]">
-                                        <div *ngFor="let file of files; let i = index" class="card max-w-[120px] !p-2 m-0 flex flex-col border-1 surface-border items-center gap-2 text-center">
+                                        <div *ngFor="let file of files; let i = index" class="card max-w-[120px] p-2! m-0 flex flex-col border surface-border items-center gap-2 text-center">
                                             <div>
                                                 <img role="presentation" [alt]="file.name" [src]="file.objectURL" width="100" height="50" />
                                             </div>
@@ -239,7 +239,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                             <span class="text-sm text-muted-color">{{ formatSize(file.size) }}</span>
                                             <div class="grow flex flex-col gap-2 justify-end">
                                                 <p-badge value="Pending" severity="warn" />
-                                                <p-button icon="pi pi-times text-sm leading-none" (click)="onRemoveTemplatingFile(file, removeCallback, i)" class="!text-sm !leading-none" label="Cancel" text severity="danger" />
+                                                <p-button icon="pi pi-times text-sm leading-none" (click)="onRemoveTemplatingFile(file, removeCallback, i)" class="text-sm! leading-none!" label="Cancel" text severity="danger" />
                                             </div>
                                         </div>
                                     </div>
@@ -248,7 +248,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <div *ngIf="uploadedFiles.length > 0" class="px-4 py-0">
                                     <h5 class="m-0 mb-2">Completed</h5>
                                     <div class="flex flex-wrap gap-2">
-                                        <div *ngFor="let file of uploadedFiles" :key="file.name + file.type + file.size" class="card max-w-[120px] !p-2 m-0 flex flex-col border-1 surface-border items-center gap-2 text-center">
+                                        <div *ngFor="let file of uploadedFiles" :key="file.name + file.type + file.size" class="card max-w-[120px] p-2! m-0 flex flex-col border surface-border items-center gap-2 text-center">
                                             <div>
                                                 <img role="presentation" [alt]="file.name" :src="file.objectURL" width="100" height="50" />
                                             </div>
@@ -256,7 +256,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                             <span class="text-sm text-muted-color">{{ formatSize(file.size) }}</span>
                                             <div class="grow flex flex-col gap-2 justify-end">
                                                 <p-badge value="Completed" class="mt-3" severity="success" />
-                                                <p-button icon="pi pi-times text-sm leading-none" class="!text-sm !leading-none" label="Cancel" text severity="danger" />
+                                                <p-button icon="pi pi-times text-sm leading-none" class="text-sm! leading-none!" label="Cancel" text severity="danger" />
                                             </div>
                                         </div>
                                     </div>
@@ -326,7 +326,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Brook Simmons</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">brook.sim42&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[0]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                                <p-select [(ngModel)]="memberSelectedTypes[0]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                             <div class="flex items-center gap-2 justify-between">
                                 <p-avatar image="/demo/landing/apps/avatar13.jpg" class="w-9 h-9" shape="circle" />
@@ -334,7 +334,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Dianne Russell</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">di.russ23&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[1]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                                <p-select [(ngModel)]="memberSelectedTypes[1]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                             <div class="flex items-center gap-2 justify-between">
                                 <p-avatar image="/demo/landing/apps/avatar12.jpg" class="w-9 h-9" shape="circle" />
@@ -342,7 +342,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Jacob Jones</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">jac.jon87&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[2]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                                <p-select [(ngModel)]="memberSelectedTypes[2]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                         </div>
                     </div>
@@ -405,7 +405,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         <p-button label="Resend" text />
                     </div>
                     <div class="flex items-center justify-center">
-                        <p-inputotp [(ngModel)]="forgotPasswordOTP" [length]="6" [integerOnly]="true" class="w-full [&>*]:flex-1 [&>*]:min-h-14 [&>*]:text-2xl" />
+                        <p-inputotp [(ngModel)]="forgotPasswordOTP" [length]="6" [integerOnly]="true" class="w-full *:flex-1 *:min-h-14 *:text-2xl" />
                     </div>
                     <button pButton label="Change password" class="w-full"></button>
                 </div>
@@ -433,7 +433,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 flex-wrap [&>*]:flex-1 mt-6">
+                    <div class="flex items-center gap-3 flex-wrap *:flex-1 mt-6">
                         <button pButton label="Undo" outlined class="w-full"></button>
                         <button pButton label="Random" class="w-full"></button>
                     </div>

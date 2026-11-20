@@ -265,7 +265,7 @@ function testStackBlitzProjectStructure(demos) {
     log(`\n  Simulating StackBlitz project for: ${selector}`, 'blue');
 
     // Simulate file structure that would be sent to StackBlitz
-    const expectedFiles = [`src/app/${selector}.ts`, 'src/main.ts', 'src/index.html', 'src/styles.scss', 'src/app/imports.ts', 'src/app/themeswitcher.ts', 'package.json', 'angular.json', 'tsconfig.json', 'tailwind.config.js'];
+    const expectedFiles = [`src/app/${selector}.ts`, 'src/main.ts', 'src/index.html', 'src/styles.scss', 'src/app/imports.ts', 'src/app/themeswitcher.ts', 'package.json', 'angular.json', 'tsconfig.json', 'src/tailwind.css', '.postcssrc.json'];
 
     for (const file of expectedFiles) {
         allPassed &= logTest(`File ${file} would be created`, true);

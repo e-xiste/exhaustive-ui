@@ -27,7 +27,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                     <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
                 </p-iconfield>
                 <p-button severity="secondary" outlined>
-                    <p-overlayBadge severity="danger" badgeSize="small" styleClass="!min-w-0 !w-2.5 !h-2.5">
+                    <p-overlayBadge severity="danger" badgeSize="small" styleClass="min-w-0! w-2.5! h-2.5!">
                         <i class="pi pi-bell"></i>
                     </p-overlayBadge>
                 </p-button>
@@ -49,7 +49,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
             <p-carousel [value]="carouselData" [page]="page" [numVisible]="5" [numScroll]="1" [responsiveOptions]="responsiveOptions" [showIndicators]="false" [showNavigators]="false">
                 <ng-template #item let-item>
                     <div class="p-2 rounded-xl hover:bg-emphasis transition-colors cursor-pointer">
-                        <div class="relative w-full aspect-[195/118.5] rounded-lg overflow-hidden">
+                        <div class="relative w-full aspect-195/118.5 rounded-lg overflow-hidden">
                             <img [src]="item.image" class="w-full h-full object-cover" alt="Carousel Movie Image" />
                             <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
                                 {{ item.point }}
@@ -58,8 +58,8 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                                 <p-progressbar
                                     [value]="item.watchedPercent"
                                     [showValue]="false"
-                                    class="!h-1.5 !bg-surface-950 dark:!bg-surface-50 !rounded-full"
-                                    valueStyleClass="p-progressbar-value !bg-surface-0 dark:!bg-surface-950 !rounded-full"
+                                    class="h-1.5! bg-surface-950! dark:bg-surface-50! rounded-full!"
+                                    valueStyleClass="p-progressbar-value bg-surface-0! dark:bg-surface-950! rounded-full!"
                                 />
                             </div>
                         </div>
@@ -88,7 +88,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-4 gap-y-6">
                 <div *ngFor="let movie of popularMovies" class="cursor-pointer">
-                    <div class="relative aspect-[259/174.5] rounded-lg overflow-hidden">
+                    <div class="relative aspect-259/174.5 rounded-lg overflow-hidden">
                         <img class="w-full h-full object-cover" [src]="movie.image" alt="Popular Movie Cover" />
                         <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
                             {{ movie.point }}

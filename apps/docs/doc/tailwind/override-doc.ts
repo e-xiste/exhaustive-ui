@@ -10,7 +10,10 @@ import { Component } from '@angular/core';
         <app-docsectiontext>
             <p>Tailwind utilities may not be able to override the default styling of components due to css specificity, there are two possible solutions; Import and CSS Layer.</p>
             <h3>Important</h3>
-            <p>Use the <i>!</i> as a prefix to enforce the styling. This is not the recommend approach, and should be used as last resort to avoid adding unnecessary style classes to your bundle.</p>
+            <p>
+                Use the <i>!</i> important modifier to enforce the styling: Tailwind v4 places it at the end of the class name, Tailwind v3 at the start. This is not the recommend approach, and should be used as last resort to avoid adding
+                unnecessary style classes to your bundle.
+            </p>
 
             <h5>Tailwind v4</h5>
             <app-code [code]="code1" [hideToggleCode]="true" [hideStackBlitz]="true" />

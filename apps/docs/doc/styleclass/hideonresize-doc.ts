@@ -17,7 +17,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
         </app-docsectiontext>
         <div class="card">
             <div class="flex flex-wrap justify-center gap-4">
-                <div class="flex flex-col items-center gap-4 w-[25rem]">
+                <div class="flex flex-col items-center gap-4 w-100">
                     <p-button
                         pStyleClass=".window-responsive-box"
                         enterFromClass="hidden"
@@ -37,7 +37,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center gap-4 w-[25rem]">
+                <div class="flex flex-col items-center gap-4 w-100">
                     <p-button
                         pStyleClass=".resizable-container"
                         enterFromClass="hidden"

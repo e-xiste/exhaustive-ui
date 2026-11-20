@@ -58,7 +58,7 @@ export class StyleDoc {
     }
 
     rowClass(product: Product) {
-        return { '!bg-primary !text-primary-contrast': product.category === 'Fitness' };
+        return { 'bg-primary! text-primary-contrast!': product.category === 'Fitness' };
     }
 
     rowStyle(product: Product) {

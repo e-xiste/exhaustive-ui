@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A bar chart is rendered horizontally when <i>indexAxis</i> option is set as <i>y</i>.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+            <p-chart type="bar" [data]="data" [options]="options" class="h-120" />
         </div>
         <app-code></app-code>
     `

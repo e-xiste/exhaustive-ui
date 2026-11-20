@@ -12,7 +12,7 @@ import { StepperModule } from '@exhaustive-ui/core/stepper';
             <p>Use Stepper with a <i>StepList</i> only for custom requirements where a progress indicator is needed.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-stepper [value]="1" class="basis-[50rem]">
+            <p-stepper [value]="1" class="basis-200">
                 <p-step-list>
                     <p-step [value]="1">Design</p-step>
                     <p-step [value]="2">Development</p-step>
