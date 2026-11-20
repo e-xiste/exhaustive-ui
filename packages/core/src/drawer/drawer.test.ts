@@ -1689,3 +1689,31 @@ describe('Drawer mask on a programmatic close', () => {
         expect(mask.parentElement).toBeNull();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Drawer],
+    template: `<p-drawer [visible]="true" [modal]="false" appendTo="self" [style]="{ width: '400px' }">Drawer</p-drawer>`
+})
+class DrawerNoHeaderHostComponent {}
+
+describe('Drawer without a header', () => {
+    it('should keep the close button at the end of the header (optimus-ui#273)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DrawerNoHeaderHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(DrawerNoHeaderHostComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const header = fixture.nativeElement.querySelector('.p-drawer-header') as HTMLElement;
+        const closeButton = fixture.nativeElement.querySelector('.p-drawer-close-button') as HTMLElement;
+        const headerRect = header.getBoundingClientRect();
+        const buttonRect = closeButton.getBoundingClientRect();
+
+        expect(fixture.nativeElement.querySelector('.p-drawer-title')).toBeNull();
+        expect(buttonRect.left - headerRect.left).toBeGreaterThan(headerRect.width / 2);
+    });
+});

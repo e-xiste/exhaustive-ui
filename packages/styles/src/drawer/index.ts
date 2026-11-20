@@ -26,6 +26,10 @@ export const style = /*css*/ `
         padding: dt('drawer.header.padding');
     }
 
+    .p-drawer-close-button {
+        margin-inline-start: auto;
+    }
+
     .p-drawer-footer {
         padding: dt('drawer.footer.padding');
     }
