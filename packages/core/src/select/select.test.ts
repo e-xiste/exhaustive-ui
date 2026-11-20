@@ -5076,6 +5076,24 @@ describe('Select custom loadingIcon', () => {
     });
 });
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Select],
+    template: `
+        <p-select [options]="cities" optionLabel="name" [filter]="true" filterBy="name">
+            <ng-template #filter let-options="options">
+                <input class="custom-filter" (input)="options.filter($event)" />
+            </ng-template>
+        </p-select>
+    `
+})
+class TestSelectCustomFilterComponent {
+    cities = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' }
+    ];
+}
+
 describe('Select low bug fixes', () => {
     let fixture: ComponentFixture<Select>;
     let select: Select;
@@ -5133,5 +5151,22 @@ describe('Select low bug fixes', () => {
         await waitForOverlay();
         focusInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true }));
         expect(parentKeydown).toHaveBeenCalledTimes(2);
+    });
+
+    it('navigates the options with ArrowDown from a custom filter template (optimus-ui#331)', async () => {
+        const hostFixture = TestBed.createComponent(TestSelectCustomFilterComponent);
+        hostFixture.detectChanges();
+        const hostSelect = hostFixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+
+        hostSelect.show();
+        hostFixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await hostFixture.whenStable();
+
+        const input = document.querySelector('.custom-filter') as HTMLInputElement;
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true }));
+        hostFixture.detectChanges();
+
+        expect(hostSelect.focusedOptionIndex()).toBe(0);
     });
 });

@@ -325,7 +325,7 @@ export class SelectItem extends BaseComponent {
                     </span>
                     <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
                     @if (filter()) {
-                        <div [class]="cx('header')" (click)="$event.stopPropagation()" [pBind]="ptm('header')">
+                        <div [class]="cx('header')" (click)="$event.stopPropagation()" (keydown)="onFilterTemplateKeyDown($event)" [pBind]="ptm('header')">
                             @if (filterTemplate() || _filterTemplate()) {
                                 <ng-container *ngTemplateOutlet="filterTemplate() || _filterTemplate(); context: { options: filterOptions() }"></ng-container>
                             } @else {
@@ -1556,6 +1556,13 @@ export class Select extends BaseInput<SelectPassThrough> {
 
             default:
                 break;
+        }
+    }
+
+    onFilterTemplateKeyDown(event: KeyboardEvent) {
+        // a custom filter template has no keydown wiring of its own, so give its input the keyboard navigation of the built-in filter
+        if ((this.filterTemplate() || this._filterTemplate()) && (event.target as HTMLElement)?.tagName === 'INPUT') {
+            this.onFilterKeyDown(event);
         }
     }
 
