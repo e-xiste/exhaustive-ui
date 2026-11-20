@@ -358,7 +358,8 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
             removeClass(this.el.nativeElement, 'p-slider-animate');
         }
 
-        event.preventDefault();
+        // a touch event becomes non-cancelable once the browser scrolls; preventing it only logs an intervention warning
+        if (event.cancelable !== false) event.preventDefault();
     }
 
     onDrag(event: TouchEvent) {
@@ -377,7 +378,7 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
 
         this.setValueFromHandle(event, handleValue);
 
-        event.preventDefault();
+        if (event.cancelable !== false) event.preventDefault();
     }
 
     onDragEnd(event: TouchEvent) {
@@ -395,7 +396,7 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
             addClass(this.el.nativeElement, 'p-slider-animate');
         }
 
-        event.preventDefault();
+        if (event.cancelable !== false) event.preventDefault();
     }
 
     onBarClick(event: Event) {

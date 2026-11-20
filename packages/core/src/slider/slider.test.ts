@@ -1805,3 +1805,31 @@ describe('Slider min/max changes (optimus-ui#584)', () => {
         expect(slider.handleValues()).toEqual([10, 40]);
     });
 });
+
+describe('Slider non-cancelable touch events (optimus-ui#787)', () => {
+    it('should not call preventDefault on a touch event that cannot be cancelled', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [Slider],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(Slider);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const slider = fixture.componentInstance;
+
+        const touchEvent = (cancelable: boolean) => ({ cancelable, changedTouches: [{ clientX: 10, clientY: 10 }], preventDefault: vi.fn() }) as unknown as TouchEvent;
+
+        const events = [touchEvent(false), touchEvent(false), touchEvent(false)];
+        slider.onDragStart(events[0]);
+        slider.onDrag(events[1]);
+        slider.onDragEnd(events[2]);
+        events.forEach((event) => expect(event.preventDefault).not.toHaveBeenCalled());
+
+        const cancelable = [touchEvent(true), touchEvent(true), touchEvent(true)];
+        slider.onDragStart(cancelable[0]);
+        slider.onDrag(cancelable[1]);
+        slider.onDragEnd(cancelable[2]);
+        cancelable.forEach((event) => expect(event.preventDefault).toHaveBeenCalled());
+    });
+});
