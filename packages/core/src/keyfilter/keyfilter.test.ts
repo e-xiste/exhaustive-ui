@@ -787,4 +787,22 @@ describe('KeyFilter regressions', () => {
         expect(keypress('-', 0)).toBe(false);
         expect(keypress('-', 2)).toBe(true);
     });
+
+    it('should validate the whole value against a structured regex on Android (optimus-ui#191)', async () => {
+        await setPattern(/^[a-z]\d*$/);
+        directive.isAndroid = true;
+        directive.lastValue.set('');
+
+        for (const value of ['a', 'a1', 'a12']) {
+            input.value = value;
+            input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: value.slice(-1) }));
+            await fixture.whenStable();
+            expect(input.value).toBe(value);
+        }
+
+        input.value = 'a12b';
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: 'b' }));
+        await fixture.whenStable();
+        expect(input.value).toBe('a12');
+    });
 });

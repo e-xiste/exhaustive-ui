@@ -167,22 +167,13 @@ export class KeyFilter implements Validator {
             let removed = this.findDelta(lastVal, val);
             let pasted = inserted.length > 1 || (!inserted && !removed);
 
-            if (pasted) {
-                if (!this.isValidString(val)) {
-                    this.el.nativeElement.value = lastVal;
-                    this.ngModelChange.emit(lastVal);
-                }
-            } else if (!removed) {
-                if (!this.isValidChar(inserted)) {
-                    this.el.nativeElement.value = lastVal;
-                    this.ngModelChange.emit(lastVal);
-                }
+            // Like onKeyPress, test the whole resulting value: a structured pattern (e.g. /^[a-z]\d*$/) does not match its characters one by one.
+            if ((pasted || !removed) && !this.regex().test(val)) {
+                this.el.nativeElement.value = lastVal;
+                this.ngModelChange.emit(lastVal);
             }
 
-            val = this.el.nativeElement.value;
-            if (this.isValidString(val)) {
-                this.lastValue.set(val);
-            }
+            this.lastValue.set(this.el.nativeElement.value);
         }
     }
 
