@@ -3767,3 +3767,49 @@ describe('Table generated style elements', () => {
         }
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [scrollable]="true" style="--p-datatable-footer-cell-background: rgb(1, 2, 3)">
+            <ng-template #header>
+                <tr>
+                    <th pFrozenColumn>Name</th>
+                    <th>Code</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td pFrozenColumn>{{ row.name }}</td>
+                    <td>{{ row.code }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #footer>
+                <tr>
+                    <td pFrozenColumn id="frozen-footer">Total</td>
+                    <td id="footer">1</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestFrozenFooterComponent {
+    rows = [{ name: 'A', code: 'a' }];
+}
+
+describe('Table frozen footer cells', () => {
+    it('paint the footer cell background (optimus-ui#186)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestFrozenFooterComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TestFrozenFooterComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+
+        const footer = fixture.nativeElement.querySelector('#footer') as HTMLElement;
+        const frozenFooter = fixture.nativeElement.querySelector('#frozen-footer') as HTMLElement;
+        expect(getComputedStyle(footer).backgroundColor).toBe('rgb(1, 2, 3)');
+        expect(getComputedStyle(frozenFooter).backgroundColor).toBe('rgb(1, 2, 3)');
+        fixture.nativeElement.remove();
+    });
+});

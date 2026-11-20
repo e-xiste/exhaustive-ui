@@ -41,6 +41,10 @@ export const style = /*css*/ `
         background: inherit;
     }
 
+    .p-datatable-scrollable .p-datatable-tfoot > tr > td.p-datatable-frozen-column {
+        background: dt('datatable.footer.cell.background');
+    }
+
     .p-datatable-scrollable > .p-datatable-table-container > .p-datatable-table > .p-datatable-thead,
     .p-datatable-scrollable > .p-datatable-table-container > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {
         background: dt('datatable.header.cell.background');
