@@ -3259,4 +3259,20 @@ describe('AutoComplete medium bug fixes', () => {
 
         expect(autocomplete.modelValue()).toEqual(['Alpha', 'Beta']);
     });
+
+    it('names the chip listbox and does not nest the combobox in an option (optimus-ui#348, optimus-ui#625)', () => {
+        fixture.componentRef.setInput('ariaLabel', 'Tags');
+        autocomplete.writeValue(['Alpha']);
+        fixture.detectChanges();
+
+        const listbox = fixture.nativeElement.querySelector('ul[role="listbox"]') as HTMLElement;
+        expect(listbox.getAttribute('aria-label')).toBe('Tags');
+        expect(input().closest('[role="option"]')).toBeNull();
+        expect(listbox.querySelectorAll('[role="option"]').length).toBe(1);
+
+        fixture.componentRef.setInput('ariaLabel', undefined);
+        fixture.componentRef.setInput('ariaLabelledBy', 'tags-label');
+        fixture.detectChanges();
+        expect(listbox.getAttribute('aria-labelledby')).toBe('tags-label');
+    });
 });
