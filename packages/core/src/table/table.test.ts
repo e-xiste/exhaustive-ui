@@ -3162,3 +3162,54 @@ describe('Table sortable header ARIA', () => {
         expect(th.querySelector('p-sorticon svg')!.getAttribute('aria-hidden')).toBe('true');
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [virtualScroll]="true" [virtualScrollItemSize]="20" scrollHeight="400px" rowGroupMode="subheader" groupRowsBy="category">
+            <ng-template #groupheader let-row>
+                <tr class="group-header">
+                    <td>{{ row.category }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr class="data-row" style="height: 20px">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #groupfooter let-row>
+                <tr class="group-footer">
+                    <td>end {{ row.category }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableVirtualScrollGroupHostComponent {
+    rows = [
+        { name: 'A1', category: 'A' },
+        { name: 'A2', category: 'A' },
+        { name: 'B1', category: 'B' }
+    ];
+}
+
+describe('Table row group subheaders with virtual scroll', () => {
+    it('renders group headers and footers (optimus-ui#159, optimus-ui#604)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableVirtualScrollGroupHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableVirtualScrollGroupHostComponent);
+        document.body.appendChild(fixture.nativeElement);
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+
+        const classes = Array.from(fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLElement>)
+            .map((tr) => tr.className)
+            .filter((className) => className);
+        expect(classes).toEqual(['group-header', 'data-row', 'data-row', 'group-footer', 'group-header', 'data-row', 'group-footer']);
+        fixture.nativeElement.remove();
+    });
+});

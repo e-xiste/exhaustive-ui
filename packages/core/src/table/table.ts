@@ -3199,7 +3199,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     template: `
         @if (!dataTable.expandedRowTemplate() && !dataTable._expandedRowTemplate()) {
             @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
-                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && !dataTable.virtualScroll() && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getRowIndex(rowIndex))) {
+                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && rowData && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getGroupRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
@@ -3245,7 +3245,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         "
                     ></ng-container>
                 }
-                @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && !dataTable.virtualScroll() && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getRowIndex(rowIndex))) {
+                @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && rowData && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getGroupRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
@@ -3503,6 +3503,12 @@ export class TableBody extends BaseComponent {
         const index = this.dataTable.paginator() ? <number>this.dataTable.first() + rowIndex : rowIndex;
         const getItemOptions = this.getScrollerOption('getItemOptions');
         return getItemOptions ? getItemOptions(index).index : index;
+    }
+
+    // the group header/footer checks compare a row with its neighbours in value(); with virtual scroll
+    // value() only holds the rendered slice, so the index must stay relative to that slice
+    getGroupRowIndex(rowIndex: number) {
+        return this.dataTable.virtualScroll() ? rowIndex + (this.dataTable.first() || 0) : this.getRowIndex(rowIndex);
     }
 
     readonly dataP = computed(() => {
