@@ -73,7 +73,7 @@ export class DynamicDialogConfig<DataType = any, InputValuesType extends Record<
     dismissableMask?: boolean = false;
     /**
      * Inline style of the component.
-     * @deprecated since v3.0.0. It has no effect anymore: the dialog never read it.
+     * @deprecated since v22.0.0. It has no effect anymore: the dialog never read it.
      * @group Props
      */
     rtl?: boolean = false;
@@ -94,7 +94,7 @@ export class DynamicDialogConfig<DataType = any, InputValuesType extends Record<
     styleClass?: string;
     /**
      * Transition options of the animation.
-     * @deprecated since v3.0.0. It has no effect anymore: the dialog animation is driven by motion options.
+     * @deprecated since v22.0.0. It has no effect anymore: the dialog animation is driven by motion options.
      * @group Props
      */
     transitionOptions?: string;

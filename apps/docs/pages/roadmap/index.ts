@@ -49,25 +49,25 @@ export class RoadmapDemo {
 
         this.events = [
             {
-                title: 'v1',
+                title: 'v22 alpha',
                 shipped: true,
-                features: ['Rebranded from PrimeNG', 'Angular v21 compatible', 'ng add support for seamless installation', 'Schematic to migrate from PrimeNG'],
-                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/8'
+                features: [
+                    'Forked from Optimus UI, rebranded as ExhaustiveUI',
+                    'Angular v22, versions aligned on Angular majors',
+                    'Whole library on the Signals API: signal inputs, model() and signal queries',
+                    'OnPush change detection and built-in control flow',
+                    'ng update migrations for removed and renamed inputs',
+                    'npm packages published with provenance'
+                ],
+                link: 'https://github.com/e-xiste/exhaustive-ui/releases'
             },
             {
-                title: 'v2',
-                shipped: true,
-                features: ['Angular v22 compatible'],
-                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/10'
+                title: 'v22 stable',
+                features: ['Triage and address the inherited open issues', 'Stabilize the API surface before the first stable release', 'Documentation code modernization']
             },
             {
-                title: 'Catchup step',
-                features: ['Triage and address existing 900+ open issues', 'Modernize the library to Angular modern APIs'],
-                link: 'https://github.com/e-xiste/exhaustive-ui/milestone/9'
-            },
-            {
-                title: 'Enhancement step',
-                features: ['Feature requests', 'Libraries code modernization', 'Documentation code modernization']
+                title: 'Next',
+                features: ['Feature requests', 'A matching major for each new Angular major']
             }
         ];
     }

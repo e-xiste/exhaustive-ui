@@ -14,7 +14,7 @@ import { AppVersionCompatibility } from '@/components/doc/app.versioncompatibili
             <app-version-compatibility></app-version-compatibility>
             <p>
                 To move to a new major, update Angular first — the <a href="https://angular.dev/update-guide" target="_blank" rel="noopener noreferrer">Angular update guide</a> covers that step — then update ExhaustiveUI to the matching major by
-                passing the target version. For example, from v1 on Angular v21:
+                passing the target version. For example, once Angular v23 and ExhaustiveUI v23 are out, from v22:
             </p>
             <app-code [code]="code" [hideToggleCode]="true"></app-code>
             <p>Review the release notes of the target version for breaking changes before you start.</p>
@@ -23,7 +23,7 @@ import { AppVersionCompatibility } from '@/components/doc/app.versioncompatibili
 })
 export class MajorVersionsDoc {
     code: Code = {
-        command: `ng update @angular/core@22 @angular/cli@22
-ng update @exhaustive-ui/core@2`
+        command: `ng update @angular/core@23 @angular/cli@23
+ng update @exhaustive-ui/core@23`
     };
 }
