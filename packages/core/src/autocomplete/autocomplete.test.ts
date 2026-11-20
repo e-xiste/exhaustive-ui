@@ -3340,4 +3340,30 @@ describe('AutoComplete low bug fixes', () => {
         expect(button).toBeTruthy();
         expect(button.closest('[aria-hidden="true"]')).toBeNull();
     });
+
+    it('never types the separator into the input, even when it is empty or the value is a duplicate (optimus-ui#267)', () => {
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('typeahead', false);
+        fixture.componentRef.setInput('separator', ',');
+        fixture.detectChanges();
+
+        const comma = () => new KeyboardEvent('keydown', { key: ',', code: 'Comma', bubbles: true, cancelable: true });
+
+        input().value = '';
+        const onEmpty = comma();
+        input().dispatchEvent(onEmpty);
+        expect(onEmpty.defaultPrevented).toBe(true);
+        expect(autocomplete.modelValue() || []).toEqual([]);
+
+        input().value = 'Alpha';
+        input().dispatchEvent(comma());
+        fixture.detectChanges();
+        expect(autocomplete.modelValue()).toEqual(['Alpha']);
+
+        input().value = 'Alpha';
+        const onDuplicate = comma();
+        input().dispatchEvent(onDuplicate);
+        expect(onDuplicate.defaultPrevented).toBe(true);
+        expect(autocomplete.modelValue()).toEqual(['Alpha']);
+    });
 });

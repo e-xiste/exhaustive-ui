@@ -1387,8 +1387,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
                     } else {
                         event.target.value = '';
                     }
-                    event.preventDefault();
                 }
+                event.preventDefault();
             }
         }
     }
