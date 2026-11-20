@@ -3295,3 +3295,26 @@ describe('Listbox medium bug fixes', () => {
         expect(listbox.modelValue()).toEqual(['A']);
     });
 });
+
+describe('Listbox low bug fixes', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Listbox],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('links the filter input to the list with aria-controls, not aria-owns (optimus-ui#347)', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        fixture.componentRef.setInput('options', [{ name: 'Alpha' }, { name: 'Beta' }]);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('filter', true);
+        fixture.detectChanges();
+
+        const filterInput = fixture.nativeElement.querySelector('input[role="searchbox"]') as HTMLInputElement;
+        const list = fixture.nativeElement.querySelector('ul[role="listbox"]') as HTMLElement;
+        expect(filterInput.hasAttribute('aria-owns')).toBe(false);
+        expect(filterInput.getAttribute('aria-controls')).toBe(list.id);
+    });
+});
