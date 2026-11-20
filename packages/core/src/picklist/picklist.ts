@@ -158,7 +158,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
             <div [class]="cx('sourceListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('sourceListContainer')">
                 <p-listbox
                     #sourcelist
-                    [ariaLabel]="sourceAriaLabel()"
+                    [ariaLabel]="sourceAriaLabel() ?? sourceHeader()"
                     [multiple]="true"
                     [options]="sourceOptions()"
                     [ngModel]="selectedItemsSource()"
@@ -321,7 +321,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
             <div [class]="cx('targetListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('targetListContainer')">
                 <p-listbox
                     #targetlist
-                    [ariaLabel]="targetAriaLabel()"
+                    [ariaLabel]="targetAriaLabel() ?? targetHeader()"
                     [multiple]="true"
                     [options]="targetOptions()"
                     [ngModel]="selectedItemsTarget()"

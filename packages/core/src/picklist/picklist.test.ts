@@ -2477,4 +2477,22 @@ describe('PickList regressions', () => {
         expect(pickList.source()).toEqual([beta]);
         expect(pickList.target()).toEqual([alpha]);
     });
+
+    it('names each list with its header when no aria label is given (optimus-ui#275)', async () => {
+        const fixture = TestBed.createComponent(PickList);
+        fixture.componentRef.setInput('source', [{ name: 'Alpha' }]);
+        fixture.componentRef.setInput('target', [{ name: 'Beta' }]);
+        fixture.componentRef.setInput('sourceHeader', 'Available');
+        fixture.componentRef.setInput('targetHeader', 'Selected');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const label = (selector: string) => fixture.nativeElement.querySelector(`${selector} ul[role="listbox"]`).getAttribute('aria-label');
+        expect(label('.p-picklist-source-list-container')).toBe('Available');
+        expect(label('.p-picklist-target-list-container')).toBe('Selected');
+
+        fixture.componentRef.setInput('sourceAriaLabel', 'Source items');
+        fixture.detectChanges();
+        expect(label('.p-picklist-source-list-container')).toBe('Source items');
+    });
 });
