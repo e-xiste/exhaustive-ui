@@ -1352,13 +1352,28 @@ describe('OrderList', () => {
                 });
             }
 
-            const startTime = performance.now();
             component.products = largeData;
+            component.filterBy = 'name';
             fixture.detectChanges();
+            expect(orderList.value()?.length).toBe(1000);
+            expect(fixture.debugElement.queryAll(By.css('.p-listbox-option')).length).toBe(1000);
+
+            // Time only the component-level operations on the large dataset (filter + reorder), not the
+            // initial DOM rendering of 1000 options whose cost is dominated by the browser and the parallel
+            // test load. The 1000 ms budget is still an order of magnitude above the expected cost, so a
+            // quadratic regression is caught while scheduler noise is not.
+            const last = largeData[999];
+            orderList.selection.set([last]);
+
+            const startTime = performance.now();
+            orderList.filterValue.set('product 99');
+            orderList.filter();
+            orderList.moveTop();
             const endTime = performance.now();
 
             expect(endTime - startTime).toBeLessThan(1000);
-            expect(orderList.value()?.length).toBe(1000);
+            expect(orderList.visibleOptions()?.length).toBe(11);
+            expect(orderList.value()?.[0]).toBe(last);
         });
 
         it('should handle malformed data', () => {
@@ -2135,5 +2150,99 @@ describe('OrderList Signals API', () => {
         hostFixture.debugElement.queryAll(By.css('.p-listbox-option'))[1].nativeElement.click();
         hostFixture.detectChanges();
         expect(hostFixture.componentInstance.selected).toEqual([hostFixture.componentInstance.items[1]]);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Regression: the filter input must be wired to the inner Listbox
+// ---------------------------------------------------------------------------
+
+describe('OrderList filter wiring', () => {
+    let fixture: ComponentFixture<OrderList>;
+    let orderList: OrderList;
+    let items: any[];
+
+    const optionEls = () => fixture.debugElement.queryAll(By.css('.p-listbox-option'));
+    const filterInput = () => fixture.debugElement.query(By.css('input.p-listbox-filter, .p-listbox-filter input, input[pInputText]'))?.nativeElement as HTMLInputElement;
+
+    const type = async (text: string) => {
+        const input = filterInput();
+        input.value = text;
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [OrderList],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        items = [
+            { id: '1', name: 'Alpha' },
+            { id: '2', name: 'Beta' },
+            { id: '3', name: 'Gamma' },
+            { id: '4', name: 'Delta' }
+        ];
+        fixture = TestBed.createComponent(OrderList);
+        orderList = fixture.componentInstance;
+        fixture.componentRef.setInput('value', items);
+        fixture.componentRef.setInput('filterBy', 'name');
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
+
+    it('filters the rendered options when typing in the filter input', async () => {
+        expect(filterInput()).toBeTruthy();
+        expect(optionEls().length).toBe(4);
+
+        await type('ta');
+
+        expect(optionEls().map((o) => o.nativeElement.textContent.trim())).toEqual(['Beta', 'Delta']);
+    });
+
+    it('syncs filterValue/visibleOptions and emits onFilterEvent when typing', async () => {
+        const emitted: any[] = [];
+        orderList.onFilterEvent.subscribe((event) => emitted.push(event.value));
+
+        await type('ta');
+
+        expect(orderList.filterValue()).toBe('ta');
+        expect(orderList.visibleOptions()).toEqual([items[1], items[3]]);
+        expect(emitted).toEqual([[items[1], items[3]]]);
+    });
+
+    it('applies filterMatchMode to the rendered options', async () => {
+        fixture.componentRef.setInput('filterMatchMode', 'startsWith');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await type('a');
+
+        expect(optionEls().map((o) => o.nativeElement.textContent.trim())).toEqual(['Alpha']);
+    });
+
+    it('clears the inner Listbox filter on resetFilter', async () => {
+        await type('ta');
+        expect(optionEls().length).toBe(2);
+
+        orderList.resetFilter();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(orderList.filterValue()).toBe('');
+        expect(filterInput().value).toBe('');
+        expect(optionEls().length).toBe(4);
+    });
+
+    it('labels the filter input with ariaFilterLabel', async () => {
+        fixture.componentRef.setInput('ariaFilterLabel', 'Search items');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(filterInput().getAttribute('aria-label')).toBe('Search items');
     });
 });

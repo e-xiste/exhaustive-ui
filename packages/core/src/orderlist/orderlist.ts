@@ -118,7 +118,10 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             [filter]="filterBy()"
             [filterBy]="filterBy()"
             [filterLocale]="filterLocale()"
+            [filterMatchMode]="filterMatchMode()"
             [filterPlaceHolder]="filterPlaceholder()"
+            [ariaFilterLabel]="ariaFilterLabel()"
+            (onFilter)="onFilterKeyup($event.originalEvent)"
             [dragdrop]="dragdrop()"
             (onDrop)="onDrop($event)"
             hostName="orderlist"
@@ -554,7 +557,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         this.onSelectionChange.emit({ originalEvent: e.originalEvent, value: e.value });
     }
 
-    onFilterKeyup(event: KeyboardEvent) {
+    onFilterKeyup(event: Event) {
         this.filterValue.set(((<HTMLInputElement>event.target).value.trim() as any).toLocaleLowerCase(this.filterLocale()));
         this.filter();
 
@@ -575,8 +578,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      */
     public resetFilter() {
         this.filterValue.set('');
-        const filterViewChild = this.filterViewChild();
-        filterViewChild && ((<HTMLInputElement>filterViewChild.nativeElement).value = '');
+        this.listViewChild().resetFilter();
     }
 
     isItemVisible(item: any): boolean | undefined {
