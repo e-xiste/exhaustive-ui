@@ -1,0 +1,88 @@
+name: npm maintenance
+
+# Registry maintenance on the published @exhaustive-ui/* packages, without a local npm login:
+# deprecate / undeprecate versions and manage dist-tags. Runs with the NPM_TOKEN secret.
+
+on:
+    workflow_dispatch:
+        inputs:
+            command:
+                description: Operation to run
+                required: true
+                type: choice
+                options:
+                    - deprecate
+                    - undeprecate
+                    - dist-tag-add
+                    - dist-tag-rm
+                    - info
+            packages:
+                description: Package short names (core locale ...), space separated, or "all"
+                required: true
+                default: all
+            versions:
+                description: Version or semver range (deprecate/undeprecate/dist-tag-add), e.g. "3.0.0-alpha.0 - 3.0.0-alpha.1" or "22.0.0-alpha.0"
+                required: false
+                default: ''
+            argument:
+                description: Deprecation message (deprecate) or dist-tag name (dist-tag-add / dist-tag-rm)
+                required: false
+                default: ''
+
+permissions:
+    contents: read
+
+concurrency:
+    group: npm-maintenance
+    cancel-in-progress: false
+
+jobs:
+    run:
+        runs-on: ubuntu-latest
+        environment: npm
+
+        steps:
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24.x
+
+            - name: Run ${{ inputs.command }}
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  COMMAND: ${{ inputs.command }}
+                  PACKAGES: ${{ inputs.packages }}
+                  VERSIONS: ${{ inputs.versions }}
+                  ARGUMENT: ${{ inputs.argument }}
+              run: |
+                  set -euo pipefail
+                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+                  if [ "$PACKAGES" = "all" ]; then
+                      PACKAGES="core locale mcp motion styled styles tailwindcss themes utils"
+                  fi
+                  for short in $PACKAGES; do
+                      case "$short" in *[!a-z0-9-]*) echo "invalid package name: $short"; exit 1 ;; esac
+                      pkg="@exhaustive-ui/$short"
+                      case "$COMMAND" in
+                          deprecate)
+                              [ -n "$VERSIONS" ] && [ -n "$ARGUMENT" ] || { echo "versions and argument (message) are required"; exit 1; }
+                              npm deprecate "$pkg@$VERSIONS" "$ARGUMENT"
+                              ;;
+                          undeprecate)
+                              [ -n "$VERSIONS" ] || { echo "versions is required"; exit 1; }
+                              npm deprecate "$pkg@$VERSIONS" ""
+                              ;;
+                          dist-tag-add)
+                              [ -n "$VERSIONS" ] && [ -n "$ARGUMENT" ] || { echo "versions (exact version) and argument (tag) are required"; exit 1; }
+                              npm dist-tag add "$pkg@$VERSIONS" "$ARGUMENT"
+                              ;;
+                          dist-tag-rm)
+                              [ -n "$ARGUMENT" ] || { echo "argument (tag) is required"; exit 1; }
+                              npm dist-tag rm "$pkg" "$ARGUMENT"
+                              ;;
+                          info)
+                              ;;
+                      esac
+                      echo "== $pkg"
+                      npm view "$pkg" dist-tags --json --prefer-online
+                      npm view "$pkg" versions --json --prefer-online
+                  done
