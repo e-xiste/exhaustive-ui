@@ -2465,6 +2465,7 @@ describe('DatePicker Optimus UI bug fixes', () => {
         picker.writeValue([null]);
         expect(picker.isYearSelected(2026)).toBe(false);
     });
+
     it('parses day-of-year formats past the second month (optimus-ui#363)', async () => {
         await render();
 
@@ -2475,6 +2476,7 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(date.getDate()).toBe(19);
         expect(() => picker.parseDate('60/2026', 'o/yy')).not.toThrow();
     });
+
     it('renders the weekday header after the view switches from month to date (optimus-ui#31)', async () => {
         fixture.componentRef.setInput('inline', true);
         fixture.componentRef.setInput('view', 'month');
@@ -2487,6 +2489,7 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(weekDays.length).toBe(7);
         expect(weekDays.every((day) => day.length > 0)).toBe(true);
     });
+
     it('rebuilds the day grid when the translation changes firstDayOfWeek (optimus-ui#882)', async () => {
         fixture.componentRef.setInput('inline', true);
         fixture.componentRef.setInput('defaultDate', new Date(2024, 7, 16));
@@ -2498,5 +2501,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
         const firstCell = picker.months()[0].dates![0][0];
         expect(new Date(firstCell.year, firstCell.month, firstCell.day).getDay()).toBe(1);
         expect(el.querySelector('.p-datepicker-weekday')!.textContent!.trim()).toBe(picker.getTranslation('dayNamesMin')[1]);
+    });
+
+    it('marks the control touched when a date is picked inline (optimus-ui#393)', async () => {
+        const touched = vi.fn();
+        picker.registerOnTouched(touched);
+        fixture.componentRef.setInput('inline', true);
+        await render();
+
+        dayCell(15).click();
+
+        expect(touched).toHaveBeenCalled();
     });
 });

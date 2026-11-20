@@ -1886,6 +1886,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 this.onModelChange(stringArrValue);
             }
         }
+
+        if (this.inline()) {
+            // An inline datepicker has no input to blur, so a user change is what marks it touched
+            this.onModelTouched();
+        }
     }
 
     getFirstDayOfMonthIndex(month: number, year: number) {
