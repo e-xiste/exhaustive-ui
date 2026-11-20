@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
-import { SharedModule, SortMeta } from '@exhaustive-ui/core/api';
+import { OverlayService, SharedModule, SortMeta } from '@exhaustive-ui/core/api';
 import { Select } from '@exhaustive-ui/core/select';
 import { CellEditor, ColumnFilter, ColumnFilterFormElement, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
@@ -3003,5 +3003,77 @@ describe('Table boolean column filter', () => {
 
         expect((table._filters()['verified'] as any).value).toBeNull();
         expect(table.filteredValue()).toBeNull();
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <div role="dialog">
+            <p><span class="outside">outside the table</span></p>
+            <p-table [value]="rows">
+                <ng-template #header>
+                    <tr>
+                        <th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr>
+                        <td>{{ row.name }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class TableFilterInDialogHostComponent {
+    rows = [{ name: 'A' }];
+}
+
+describe('Table column filter outside click', () => {
+    let fixture: ComponentFixture<TableFilterInDialogHostComponent>;
+    let columnFilter: ColumnFilter;
+
+    const click = (target: Element) => {
+        target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableFilterInDialogHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TableFilterInDialogHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        columnFilter = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+        columnFilter.toggleMenu(new MouseEvent('click'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(columnFilter.overlay()).toBeTruthy();
+    });
+
+    it('closes the menu on an outside click inside a dialog (optimus-ui#38)', () => {
+        click(fixture.nativeElement.querySelector('.outside'));
+
+        expect(columnFilter.overlayVisible()).toBe(false);
+    });
+
+    it('stays open when a body-appended overlay of the menu is clicked (optimus-ui#135)', () => {
+        // outside of a dialog this time
+        document.querySelectorAll('[role="dialog"]').forEach((dialog) => dialog !== columnFilter.overlay() && dialog.removeAttribute('role'));
+        // a p-select or p-datepicker of the menu appended to body reports its clicks through OverlayService
+        const formElement: HTMLElement = (columnFilter.overlay() as HTMLElement).querySelector('p-columnfilterformelement')!;
+        const overlayService = TestBed.inject(OverlayService);
+        const bodyOverlay = document.createElement('div');
+        bodyOverlay.addEventListener('click', (event) => overlayService.add({ originalEvent: event, target: formElement }));
+        document.body.appendChild(bodyOverlay);
+
+        const option = bodyOverlay.appendChild(document.createElement('ul')).appendChild(document.createElement('li'));
+        click(option);
+
+        expect(columnFilter.overlayVisible()).toBe(true);
+        bodyOverlay.remove();
+        columnFilter.hide();
     });
 });

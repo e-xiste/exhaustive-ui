@@ -6318,10 +6318,10 @@ export class ColumnFilter extends BaseComponent {
             const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : 'document';
 
             this.documentClickListener.set(
-                this.renderer.listen(documentTarget, 'mousedown', (event) => {
-                    const dialogElements = document.querySelectorAll('[role="dialog"]');
-                    const targetIsColumnFilterMenuButton = event.target.closest('[data-pc-name="pccolumnfilterbutton"]');
-                    if (this.overlayVisible() && this.isOutsideClicked(event) && (targetIsColumnFilterMenuButton || dialogElements?.length <= 1)) {
+                // a click, not a mousedown: the overlays of the menu (select, datepicker), even appended to body,
+                // report their clicks through OverlayService before the click reaches the document (selfClick)
+                this.renderer.listen(documentTarget, 'click', (event) => {
+                    if (this.overlayVisible() && !this.selfClick() && this.isOutsideClicked(event)) {
                         this.hide();
                     }
 
