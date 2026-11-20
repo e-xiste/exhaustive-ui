@@ -1534,6 +1534,40 @@ describe('PasswordDirective', () => {
         });
     });
 
+    describe('Strength meter (optimus-ui#954)', () => {
+        const typeValue = async (value: string) => {
+            const inputEl = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            inputEl.value = value;
+            const keyupEvent = new KeyboardEvent('keyup');
+            Object.defineProperty(keyupEvent, 'target', { value: inputEl });
+            directive.onKeyup(keyupEvent);
+            await fixture.whenStable();
+        };
+
+        afterEach(() => directive.onDestroy());
+
+        it('should fill the meter label with the strength class and width, replacing the previous one', async () => {
+            component.weakLabel = 'Faible';
+            component.strongLabel = 'Fort';
+            fixture.detectChanges();
+
+            await typeValue('abc');
+            const label = directive.label()!;
+            expect(label.classList.contains('p-password-meter-weak')).toBe(true);
+            expect(label.style.width).toBe('33.33%');
+            expect(directive.meter()!.style.width).toBe('');
+
+            await typeValue('Abcdef1!xyz');
+            expect(label.classList.contains('p-password-meter-strong')).toBe(true);
+            expect(label.classList.contains('p-password-meter-weak')).toBe(false);
+            expect(label.style.width).toBe('100%');
+
+            await typeValue('');
+            expect(label.classList.contains('p-password-meter-strong')).toBe(false);
+            expect(label.style.width).toBe('');
+        });
+    });
+
     describe('Lifecycle Management', () => {
         it('should clean up on destroy', () => {
             directive.createPanel();

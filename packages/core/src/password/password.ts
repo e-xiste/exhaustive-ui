@@ -267,12 +267,16 @@ export class PasswordDirective extends BaseEditableHolder {
 
     labelSignal = signal('');
 
+    strength = signal<'weak' | 'medium' | 'strong' | null>(null);
+
     @HostListener('keyup', ['$event'])
     onKeyup(e: Event) {
         if (this.feedback()) {
             let value = (e.target as HTMLInputElement).value,
                 label: string | null = null,
                 meterPos: string | null = null;
+
+            let strength: 'weak' | 'medium' | 'strong' | null = null;
 
             if (value.length === 0) {
                 label = this.promptLabel();
@@ -283,17 +287,21 @@ export class PasswordDirective extends BaseEditableHolder {
                 if (score < 30) {
                     label = this.weakLabel();
                     meterPos = '0px -10px';
+                    strength = 'weak';
                 } else if (score >= 30 && score < 80) {
                     label = this.mediumLabel();
                     meterPos = '0px -20px';
+                    strength = 'medium';
                 } else if (score >= 80) {
                     label = this.strongLabel();
                     meterPos = '0px -30px';
+                    strength = 'strong';
                 }
-
-                this.labelSignal.set(label!);
-                this.updateMeter();
             }
+
+            this.labelSignal.set(label!);
+            this.strength.set(strength);
+            this.updateMeter();
 
             const panel = this.panel();
             if (!panel || !hasClass(panel, 'p-connected-overlay-visible')) {
@@ -313,16 +321,21 @@ export class PasswordDirective extends BaseEditableHolder {
     }
 
     updateMeter() {
-        const meter = this.meter();
+        const meterLabel = this.label();
         const info = this.info();
-        if (this.labelSignal() && meter && info) {
-            const label = this.labelSignal();
-            const strengthClass = this.strengthClass(label.toLowerCase());
-            const width = this.getWidth(label.toLowerCase());
+        if (this.labelSignal() && meterLabel && info) {
+            // The strength comes from the score, not from the (possibly translated) label text,
+            // and is drawn on the meter label like the p-password component does.
+            const strength = this.strength();
 
-            this.renderer.addClass(meter, strengthClass);
-            this.renderer.setStyle(meter, 'width', width);
-            info.textContent = label;
+            ['weak', 'medium', 'strong'].forEach((level) => this.renderer.removeClass(meterLabel, this.strengthClass(level)));
+            if (strength) {
+                this.renderer.addClass(meterLabel, this.strengthClass(strength));
+                this.renderer.setStyle(meterLabel, 'width', this.getWidth(strength));
+            } else {
+                this.renderer.removeStyle(meterLabel, 'width');
+            }
+            info.textContent = this.labelSignal();
         }
     }
 
