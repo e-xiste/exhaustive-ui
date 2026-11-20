@@ -5,6 +5,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    effect,
     ElementRef,
     forwardRef,
     HostListener,
@@ -15,6 +16,7 @@ import {
     NgZone,
     numberAttribute,
     signal,
+    untracked,
     ViewEncapsulation,
     viewChild,
     output
@@ -180,6 +182,15 @@ export class Slider extends BaseEditableHolder<SliderPassThrough> {
     constructor() {
         super();
         afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        effect(() => {
+            this.min();
+            this.max();
+            untracked(() => {
+                if (this.range() ? this.values() : this.value() != null) {
+                    this.updateHandleValue();
+                }
+            });
+        });
     }
 
     /**

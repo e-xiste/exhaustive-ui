@@ -1762,3 +1762,46 @@ describe('Slider Signal Query API', () => {
         expect(instance.sliderHandle()).toBeDefined();
     });
 });
+
+describe('Slider min/max changes (optimus-ui#584)', () => {
+    it('should reposition the handle when min or max changes', async () => {
+        await TestBed.configureTestingModule({
+            imports: [Slider, FormsModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(Slider);
+        const slider = fixture.componentInstance;
+        slider.writeValue(50);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(slider.handleValue()).toBe(50);
+
+        fixture.componentRef.setInput('max', 200);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(slider.handleValue()).toBe(25);
+
+        fixture.componentRef.setInput('min', 50);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(slider.handleValue()).toBe(0);
+    });
+
+    it('should reposition range handles when max changes', async () => {
+        await TestBed.configureTestingModule({
+            imports: [Slider, FormsModule],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(Slider);
+        const slider = fixture.componentInstance;
+        fixture.componentRef.setInput('range', true);
+        slider.writeValue([20, 80]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.componentRef.setInput('max', 200);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(slider.handleValues()).toEqual([10, 40]);
+    });
+});
