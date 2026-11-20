@@ -482,6 +482,12 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
         }
     }
 
+    onDestroy() {
+        // a splitter removed in the middle of a resize must not leave its document listeners behind
+        this.unbindMouseListeners();
+        this.unbindTouchListeners();
+    }
+
     unbindMouseListeners() {
         const mouseMoveListener = this.mouseMoveListener();
         if (mouseMoveListener) {

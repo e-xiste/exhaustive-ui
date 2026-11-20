@@ -307,6 +307,17 @@ describe('Splitter', () => {
             expect(splitterInstance.resizeStart).toHaveBeenCalled();
         });
 
+        it('removes its document listeners when destroyed during a resize', () => {
+            const gutter = testFixture.debugElement.query(By.css('.p-splitter-gutter'));
+            const onResize = vi.spyOn(splitterInstance, 'onResize');
+            gutter.nativeElement.dispatchEvent(new MouseEvent('mousedown', { clientX: 100, clientY: 100 }));
+
+            testFixture.destroy();
+            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 150, clientY: 100 }));
+
+            expect(onResize).not.toHaveBeenCalled();
+        });
+
         it('should emit onResizeStart event', () => {
             const gutter = testFixture.debugElement.query(By.css('.p-splitter-gutter'));
             const mouseEvent = new MouseEvent('mousedown');
