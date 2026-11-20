@@ -2081,3 +2081,48 @@ describe('ContextMenuSub', () => {
         expect(instance.menuBlur.emit).toHaveBeenCalledWith(blurEvent);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ContextMenu],
+    template: `
+        <div #zoneA class="zone-a" style="width: 100px; height: 50px">A</div>
+        <div #zoneB class="zone-b" style="width: 100px; height: 50px">B</div>
+        <p-contextmenu #menuA [target]="zoneA" [model]="model" triggerEvent="click" />
+        <p-contextmenu #menuB [target]="zoneB" [model]="model" triggerEvent="click" />
+    `
+})
+class TestMultipleClickContextMenuComponent {
+    model: MenuItem[] = [{ label: 'Action' }];
+
+    menuA = viewChild.required<ContextMenu>('menuA');
+
+    menuB = viewChild.required<ContextMenu>('menuB');
+}
+
+describe('ContextMenu with several click-triggered instances (optimus-ui#359)', () => {
+    it('should close the open menu when another one is opened', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestMultipleClickContextMenuComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestMultipleClickContextMenuComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host = fixture.componentInstance;
+        fixture.nativeElement.querySelector('.zone-a').click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(host.menuA().visible()).toBe(true);
+
+        fixture.nativeElement.querySelector('.zone-b').click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(host.menuB().visible()).toBe(true);
+        expect(host.menuA().visible()).toBe(false);
+    });
+});

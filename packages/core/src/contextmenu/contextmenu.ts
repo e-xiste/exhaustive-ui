@@ -58,6 +58,9 @@ import { ContextMenuStyle } from './style/contextmenustyle';
 const CONTEXTMENU_INSTANCE = new InjectionToken<ContextMenu>('CONTEXTMENU_INSTANCE');
 const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUSUB_INSTANCE');
 
+// show() stops the propagation of the trigger event, so a document listener cannot close the other open menus
+const visibleContextMenus = new Set<ContextMenu>();
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-contextMenuSub, p-contextmenu-sub',
@@ -1131,6 +1134,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
     }
 
     hide() {
+        visibleContextMenus.delete(this);
         this.visible.set(false);
         this.onHide.emit();
 
@@ -1150,6 +1154,9 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
 
         this.pageX.set(event.pageX);
         this.pageY.set(event.pageY);
+
+        visibleContextMenus.forEach((contextMenu) => contextMenu !== this && contextMenu.hide());
+        visibleContextMenus.add(this);
 
         this.onShow.emit();
         this.visible() ? this.position() : this.visible.set(true);
@@ -1356,6 +1363,7 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
     }
 
     onDestroy() {
+        visibleContextMenus.delete(this);
         this.unbindGlobalListeners();
         this.unbindTriggerEventListener();
         this.unbindMatchMediaListener();
