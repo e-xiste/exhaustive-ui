@@ -942,6 +942,9 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
             if (selectedNodes && this.options()) {
                 this.updateTreeBranchState(null, null, selectedNodes);
             }
+        } else {
+            // e.g. a form reset: no partially checked parent can be left behind
+            this.resetPartialSelected();
         }
     }
 
