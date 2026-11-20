@@ -1,5 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, input, NgModule, numberAttribute, signal, TemplateRef, contentChild, contentChildren, output } from '@angular/core';
+import {
+    afterEveryRender,
+    afterNextRender,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    forwardRef,
+    HostListener,
+    inject,
+    input,
+    NgModule,
+    numberAttribute,
+    signal,
+    TemplateRef,
+    contentChild,
+    contentChildren,
+    output
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -34,7 +52,8 @@ export const TOGGLEBUTTON_VALUE_ACCESSOR: any = {
         '[attr.data-pc-name]': "'togglebutton'",
         '[attr.data-p-checked]': 'active()',
         '[attr.data-p-disabled]': '$disabled()',
-        '[attr.data-p]': 'dataP()'
+        '[attr.data-p]': 'dataP()',
+        '(blur)': 'onBlur()'
     },
     template: `<span [class]="cx('content')" [pBind]="ptm('content')" [attr.data-p]="dataP()">
         <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate(); context: { $implicit: checked() }"></ng-container>
@@ -60,6 +79,13 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
     constructor() {
         super();
         afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        // The host element is the focusable button itself, so `autofocus` is applied to it directly
+        // (the pAutoFocus directive cannot be used here: its input has no boolean attribute transform).
+        afterNextRender(() => {
+            if (this.autofocus() && !this.$disabled()) {
+                this.el.nativeElement.focus();
+            }
+        });
     }
 
     @HostListener('keydown', ['$event'])

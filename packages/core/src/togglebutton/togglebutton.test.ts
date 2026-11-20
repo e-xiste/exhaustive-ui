@@ -535,6 +535,17 @@ describe('ToggleButton', () => {
             expect(toggleButtonInstance.checked()).toBeFalsy();
         });
 
+        it('should mark the control as touched on blur', () => {
+            const control = testComponent.toggleForm.get('toggle')!;
+            expect(control.touched).toBe(false);
+
+            formToggleButton.nativeElement.dispatchEvent(new FocusEvent('blur'));
+            testFixture.detectChanges();
+
+            expect(control.touched).toBe(true);
+            expect(control.value).toBe(false);
+        });
+
         it('should emit onChange event in reactive forms', () => {
             const formToggleButtonInstance = formToggleButton.componentInstance;
             vi.spyOn(formToggleButtonInstance.onChange, 'emit').mockImplementation(() => {});
@@ -543,6 +554,41 @@ describe('ToggleButton', () => {
             testFixture.detectChanges();
 
             expect(formToggleButtonInstance.onChange.emit).toHaveBeenCalled();
+        });
+    });
+
+    describe('Autofocus', () => {
+        it('should focus the button on load when autofocus is true', async () => {
+            const focusFixture = TestBed.createComponent(TestBasicToggleButtonComponent);
+            focusFixture.componentInstance.autofocus = true;
+            focusFixture.detectChanges();
+            await focusFixture.whenStable();
+
+            const host = focusFixture.debugElement.query(By.directive(ToggleButton)).nativeElement;
+            expect(document.activeElement).toBe(host);
+            focusFixture.destroy();
+        });
+
+        it('should not focus the button on load when autofocus is false', async () => {
+            const focusFixture = TestBed.createComponent(TestBasicToggleButtonComponent);
+            focusFixture.detectChanges();
+            await focusFixture.whenStable();
+
+            const host = focusFixture.debugElement.query(By.directive(ToggleButton)).nativeElement;
+            expect(document.activeElement).not.toBe(host);
+            focusFixture.destroy();
+        });
+
+        it('should not focus a disabled button on load', async () => {
+            const focusFixture = TestBed.createComponent(TestBasicToggleButtonComponent);
+            focusFixture.componentInstance.autofocus = true;
+            focusFixture.componentInstance.disabled = true;
+            focusFixture.detectChanges();
+            await focusFixture.whenStable();
+
+            const host = focusFixture.debugElement.query(By.directive(ToggleButton)).nativeElement;
+            expect(document.activeElement).not.toBe(host);
+            focusFixture.destroy();
         });
     });
 
