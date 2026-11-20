@@ -3149,6 +3149,31 @@ describe('Table column filter menu button ARIA', () => {
         expect(button.getAttribute('aria-controls')).toBe(columnFilter.overlayId());
         columnFilter.hide();
     });
+
+    it('keeps Tab and Shift+Tab inside the open menu (optimus-ui#785)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableFilterButtonAriaHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableFilterButtonAriaHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const columnFilter: ColumnFilter = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+        columnFilter.toggleMenu(new MouseEvent('click'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const overlay = columnFilter.overlay() as HTMLElement;
+        const focusable = Array.from(overlay.querySelectorAll<HTMLElement>('button, input, [tabindex="0"]')).filter((el) => !el.hasAttribute('disabled'));
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        last.focus();
+        last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+        expect(document.activeElement).toBe(first);
+
+        first.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }));
+        expect(document.activeElement).toBe(last);
+        columnFilter.hide();
+    });
 });
 
 @Component({

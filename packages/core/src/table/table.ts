@@ -5476,6 +5476,8 @@ export class ReorderableRow extends BaseComponent {
                     role="dialog"
                     (click)="onContentClick()"
                     (keydown.escape)="onEscape()"
+                    (keydown.tab)="onOverlayTabKeyDown($event)"
+                    (keydown.shift.tab)="onOverlayTabKeyDown($event)"
                 >
                     <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate(); context: { $implicit: field() }"></ng-container>
                     @if (display() === 'row') {
@@ -6222,6 +6224,25 @@ export class ColumnFilter extends BaseComponent {
     onEscape() {
         this.hide();
         this.icon()?.nativeElement.focus();
+    }
+
+    // the menu is a modal dialog (aria-modal): Tab and Shift+Tab cycle through its own controls
+    onOverlayTabKeyDown(event: KeyboardEvent) {
+        const focusable = DomHandler.getFocusableElements(<HTMLElement>this.overlay());
+
+        if (focusable && focusable.length) {
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            const active = this.document.activeElement;
+
+            if (event.shiftKey && active === first) {
+                last.focus();
+                event.preventDefault();
+            } else if (!event.shiftKey && active === last) {
+                first.focus();
+                event.preventDefault();
+            }
+        }
     }
 
     findNextItem(item: HTMLLIElement): any {
