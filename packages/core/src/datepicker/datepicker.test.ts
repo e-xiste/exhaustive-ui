@@ -2599,4 +2599,55 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(picker.currentMonth()).toBe(4);
         expect(document.activeElement).toBe(dayCell(17));
     });
+
+    it('moves Home/End focus to the first/last day of the current week (optimus-ui#898)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 4, 10));
+        await render();
+        await panelShown();
+
+        keydown(dayCell(13), 'Home', 36);
+        expect(document.activeElement).toBe(dayCell(10));
+
+        keydown(dayCell(13), 'End', 35);
+        expect(document.activeElement).toBe(dayCell(16));
+    });
+
+    it('changes the year with Shift+PageUp/PageDown in the date view (optimus-ui#898)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 4, 10));
+        await render();
+
+        keydown(dayCell(13), 'PageUp', 33, { shiftKey: true });
+        await render();
+        expect(picker.currentYear()).toBe(2025);
+        expect(picker.currentMonth()).toBe(4);
+
+        keydown(dayCell(13), 'PageDown', 34, { shiftKey: true });
+        await render();
+        expect(picker.currentYear()).toBe(2026);
+        expect(picker.currentMonth()).toBe(4);
+    });
+
+    it('changes the year and the decade with PageUp/PageDown in the month and year views (optimus-ui#898)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 4, 10));
+        await render();
+        const cell = document.createElement('span');
+        const event = (which: number) => ({ which, currentTarget: cell, preventDefault: vi.fn() });
+
+        picker.currentView.set('month');
+        picker.onMonthCellKeydown(event(33), 0);
+        expect(picker.currentYear()).toBe(2025);
+        picker.onMonthCellKeydown(event(34), 0);
+        expect(picker.currentYear()).toBe(2026);
+
+        picker.currentView.set('year');
+        picker.onYearCellKeydown(event(33), 2026);
+        expect(picker.currentYear()).toBe(2016);
+        picker.onYearCellKeydown(event(34), 2016);
+        expect(picker.currentYear()).toBe(2026);
+        // let the delayed updateFocus of navBackward/navForward run before the fixture is destroyed
+        await new Promise((resolve) => setTimeout(resolve, 10));
+    });
 });

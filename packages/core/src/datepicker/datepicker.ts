@@ -2378,51 +2378,45 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 break;
             }
 
-            // page up
+            // page up (shift: previous year)
             case 33: {
                 cellContent.tabIndex = '-1';
-                const dateToFocus = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
-                const focusKey = this.formatDateKey(dateToFocus);
-                this.navigateToMonth(true, groupIndex, `span[data-date='${focusKey}']:not(.p-disabled):not(.p-ink)`);
+                const dateToFocus = event.shiftKey ? new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate()) : new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+                const focusKey = `span[data-date='${this.formatDateKey(dateToFocus)}']:not(.p-disabled):not(.p-ink)`;
+                if (event.shiftKey) this.navigateToYear(true, focusKey);
+                else this.navigateToMonth(true, groupIndex, focusKey);
                 event.preventDefault();
                 break;
             }
 
-            // page down
+            // page down (shift: next year)
             case 34: {
                 cellContent.tabIndex = '-1';
-                const dateToFocus = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate());
-                const focusKey = this.formatDateKey(dateToFocus);
-                this.navigateToMonth(false, groupIndex, `span[data-date='${focusKey}']:not(.p-disabled):not(.p-ink)`);
+                const dateToFocus = event.shiftKey ? new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), currentDate.getDate()) : new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate());
+                const focusKey = `span[data-date='${this.formatDateKey(dateToFocus)}']:not(.p-disabled):not(.p-ink)`;
+                if (event.shiftKey) this.navigateToYear(false, focusKey);
+                else this.navigateToMonth(false, groupIndex, focusKey);
                 event.preventDefault();
                 break;
             }
 
-            //home
+            //home: first day of the week row
+            //end: last day of the week row
             case 36:
-                cellContent.tabIndex = '-1';
-                const firstDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                const firstDayDateKey = this.formatDateKey(firstDayDate);
-                const firstDayCell = <any>findSingle(cellContent.offsetParent, `span[data-date='${firstDayDateKey}']:not(.p-disabled):not(.p-ink)`);
-                if (firstDayCell) {
-                    firstDayCell.tabIndex = '0';
-                    firstDayCell.focus();
+            case 35: {
+                const weekDayCells = Array.from<any>(cell.parentElement.children)
+                    .filter((rowCell) => !hasClass(rowCell, 'p-datepicker-weeknumber'))
+                    .map((rowCell) => rowCell.children[0])
+                    .filter((dayCell) => dayCell && !hasClass(dayCell, 'p-disabled'));
+                const focusCell = event.which === 36 ? weekDayCells[0] : weekDayCells[weekDayCells.length - 1];
+                if (focusCell) {
+                    cellContent.tabIndex = '-1';
+                    focusCell.tabIndex = '0';
+                    focusCell.focus();
                 }
                 event.preventDefault();
                 break;
-
-            //end
-            case 35:
-                cellContent.tabIndex = '-1';
-                const lastDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-                const lastDayDateKey = this.formatDateKey(lastDayDate);
-                const lastDayCell = <any>findSingle(cellContent.offsetParent, `span[data-date='${lastDayDateKey}']:not(.p-disabled):not(.p-ink)`);
-                if (lastDayDate) {
-                    lastDayCell.tabIndex = '0';
-                    lastDayCell.focus();
-                }
-                event.preventDefault();
-                break;
+            }
 
             default:
                 //no op
@@ -2485,6 +2479,18 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             case 13:
             case 32: {
                 this.onMonthSelect(event, index);
+                event.preventDefault();
+                break;
+            }
+
+            //page up: previous year
+            //page down: next year
+            case 33:
+            case 34: {
+                cell.tabIndex = '-1';
+                this.navigationState.set({ backward: event.which === 33 });
+                if (event.which === 33) this.navBackward(event);
+                else this.navForward(event);
                 event.preventDefault();
                 break;
             }
@@ -2571,6 +2577,18 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 break;
             }
 
+            //page up: previous decade
+            //page down: next decade
+            case 33:
+            case 34: {
+                cell.tabIndex = '-1';
+                this.navigationState.set({ backward: event.which === 33 });
+                if (event.which === 33) this.navBackward(event);
+                else this.navForward(event);
+                event.preventDefault();
+                break;
+            }
+
             //escape
             case 27: {
                 this.inputfieldViewChild()?.nativeElement.focus();
@@ -2628,6 +2646,18 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }
             }
         }
+    }
+
+    navigateToYear(prev: boolean, focusKey: string) {
+        this.navigationState.set({ backward: prev });
+        this._focusKey.set(focusKey);
+        this.isMonthNavigate.set(true);
+
+        if (prev) this.decrementYear();
+        else this.incrementYear();
+
+        this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
+        this.createMonths(this.currentMonth(), this.currentYear());
     }
 
     updateFocus() {
