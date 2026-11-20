@@ -2245,3 +2245,30 @@ describe('Toast Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Toast],
+    template: `<p-toast position="top-center" [breakpoints]="{ '99999px': { width: '100%', left: '0', right: '0' } }" />`
+})
+class ToastCenterBreakpointHostComponent {}
+
+describe('Toast centered with breakpoints', () => {
+    it('should let a breakpoint left/width place a centered toast inside the viewport (optimus-ui#469)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ToastCenterBreakpointHostComponent],
+            providers: [MessageService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ToastCenterBreakpointHostComponent);
+        await fixture.whenStable();
+
+        const toast = fixture.nativeElement.querySelector('.p-toast') as HTMLElement;
+        expect(toast.classList).toContain('p-toast-top-center');
+
+        const rect = toast.getBoundingClientRect();
+        expect(rect.left).toBe(0);
+        expect(rect.width).toBe(document.documentElement.clientWidth);
+        fixture.destroy();
+    });
+});

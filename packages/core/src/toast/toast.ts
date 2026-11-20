@@ -481,11 +481,23 @@ export class Toast extends BaseComponent<ToastPassThrough> {
                 for (let styleProp in breakpoints[breakpoint]) {
                     breakpointStyle += styleProp + ':' + breakpoints[breakpoint][styleProp] + ' !important;';
                 }
+                // A breakpoint that moves the left edge replaces the translateX(-50%) centering of the centered positions
+                const breakpointKeys = Object.keys(breakpoints[breakpoint]);
+                const centerStyle =
+                    !breakpointKeys.includes('transform') && breakpointKeys.includes('left')
+                        ? `
+                        .p-toast-top-center[${this.id}], .p-toast-bottom-center[${this.id}] {
+                            transform: none !important;
+                        }
+                        .p-toast-center[${this.id}] {
+                            transform: translateY(-50%) !important;
+                        }`
+                        : '';
                 innerHTML += `
                     @media screen and (max-width: ${breakpoint}) {
                         .p-toast[${this.id}] {
                            ${breakpointStyle}
-                        }
+                        }${centerStyle}
                     }
                 `;
             }
