@@ -1855,7 +1855,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focused.set(false);
         this.onBlur.emit({ originalEvent: event });
 
-        if (!this.preventModelTouched()) {
+        if (!this.preventModelTouched() && !this._overlayVisible()) {
             this.onModelTouched();
         }
         this.preventModelTouched.set(false);

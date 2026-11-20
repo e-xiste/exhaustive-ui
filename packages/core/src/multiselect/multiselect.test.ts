@@ -4670,3 +4670,58 @@ describe('MultiSelect medium bug fixes', () => {
         expect(multiSelect.selectedOptions()).toEqual([]);
     });
 });
+
+describe('MultiSelect low bug fixes', () => {
+    let fixture: ComponentFixture<MultiSelect>;
+    let multiSelect: MultiSelect;
+    const cities = [
+        { label: 'Rome', value: 'RM' },
+        { label: 'Milan', value: 'MI', disabled: true },
+        { label: 'Paris', value: 'PRS' }
+    ];
+
+    const waitForOverlay = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [MultiSelect],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(MultiSelect);
+        multiSelect = fixture.componentInstance;
+        fixture.componentRef.setInput('options', cities);
+        fixture.componentRef.setInput('optionLabel', 'label');
+        fixture.componentRef.setInput('optionValue', 'value');
+        fixture.componentRef.setInput('optionDisabled', 'disabled');
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('does not mark the control touched when focus moves into the open overlay (optimus-ui#724)', async () => {
+        const touched = vi.fn();
+        multiSelect.registerOnTouched(touched);
+        fixture.componentRef.setInput('filter', false);
+        multiSelect.show();
+        await waitForOverlay();
+
+        multiSelect.onInputBlur(new FocusEvent('blur'));
+        multiSelect.onInputBlur(new FocusEvent('blur'));
+        expect(touched).not.toHaveBeenCalled();
+
+        multiSelect.hide();
+        fixture.detectChanges();
+        multiSelect.onInputBlur(new FocusEvent('blur'));
+        expect(touched).toHaveBeenCalled();
+    });
+});
