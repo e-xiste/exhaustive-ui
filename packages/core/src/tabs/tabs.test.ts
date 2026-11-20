@@ -1278,3 +1278,47 @@ describe('Tabs Signal Query API', () => {
         expect(tabpanel.content()).toBeDefined();
     });
 });
+
+@Component({
+    selector: 'test-template-holder',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<span class="holder">holder</span>`
+})
+class TestTemplateHolderComponent {}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TabsModule, TestTemplateHolderComponent],
+    template: `
+        <p-tabs value="1">
+            <p-tablist>
+                <p-tab value="1">Tab 1</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="1">
+                    <test-template-holder>
+                        <ng-template #content><span class="nested-content">nested</span></ng-template>
+                    </test-template-holder>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    `
+})
+class TabsNestedContentTemplateHostComponent {}
+
+describe('TabPanel content template', () => {
+    it('should not take the #content template of a nested component as its own', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TabsNestedContentTemplateHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TabsNestedContentTemplateHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const panel = fixture.nativeElement.querySelector('p-tabpanel');
+        expect(panel.querySelector('.holder')).toBeTruthy();
+        expect(panel.querySelector('.nested-content')).toBeNull();
+    });
+});
