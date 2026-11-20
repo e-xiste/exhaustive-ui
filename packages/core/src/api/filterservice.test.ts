@@ -20,4 +20,17 @@ describe('FilterService', () => {
         expect(service.filters.dateAfter(new Date(2026, 10, 20, 23, 0), new Date(2026, 10, 20))).toBe(false);
         expect(service.filters.dateAfter(new Date(2026, 10, 21, 0, 1), new Date(2026, 10, 20))).toBe(true);
     });
+
+    it('startsWith and endsWith accept a non-string filter (optimus-ui#220)', () => {
+        const service = TestBed.inject(FilterService);
+
+        expect(() => service.filters.startsWith(123, 1)).not.toThrow();
+        expect(service.filters.startsWith(123, 1)).toBe(true);
+        expect(service.filters.startsWith(123, 2)).toBe(false);
+        expect(service.filters.endsWith(123, 3)).toBe(true);
+        expect(service.filters.endsWith(123, 1)).toBe(false);
+        expect(service.filters.startsWith('abc', '  ')).toBe(true);
+        expect(service.filters.endsWith('abc', '')).toBe(true);
+    });
+
 });
