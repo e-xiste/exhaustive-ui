@@ -3738,3 +3738,32 @@ describe('Table stateful selection', () => {
         window.sessionStorage.removeItem(stateKey);
     });
 });
+
+describe('Table generated style elements', () => {
+    it('writes the column width and responsive rules as text, not as HTML (optimus-ui#327)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableModule], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(Table);
+        fixture.componentRef.setInput('value', [{ id: 1 }]);
+        fixture.componentRef.setInput('breakpoint', '640px');
+        await fixture.whenStable();
+        const table = fixture.componentInstance;
+        const innerHTMLSetter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
+
+        try {
+            table.columnWidthsState.set('80,90');
+            table.restoreColumnWidths();
+            expect(table.styleElement().textContent).toContain('width: 80px !important');
+            table.updateStyleElement([100, 120], -1, 0, null);
+            expect(table.styleElement().textContent).toContain('width: 120px !important');
+            table.createResponsiveStyle();
+            expect(table.responsiveStyleElement().textContent).toContain('max-width: 640px');
+
+            expect(innerHTMLSetter).not.toHaveBeenCalled();
+        } finally {
+            innerHTMLSetter.mockRestore();
+            table.destroyStyleElement();
+            table.destroyResponsiveStyle();
+        }
+    });
+});

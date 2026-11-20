@@ -2823,7 +2823,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             `;
         });
-        this.renderer.setProperty(this.styleElement(), 'innerHTML', innerHTML);
+        this.renderer.setProperty(this.styleElement(), 'textContent', innerHTML);
     }
 
     onRowDragStart(event: any, index: number) {
@@ -3080,7 +3080,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     `;
                 });
 
-                this.styleElement().innerHTML = innerHTML;
+                this.styleElement().textContent = innerHTML;
             }
         }
     }
@@ -3178,7 +3178,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
     `;
-                this.renderer.setProperty(this.responsiveStyleElement(), 'innerHTML', innerHTML);
+                this.renderer.setProperty(this.responsiveStyleElement(), 'textContent', innerHTML);
                 DomHandler.setAttribute(this.responsiveStyleElement(), 'nonce', this.config?.csp()?.nonce);
             }
         }
