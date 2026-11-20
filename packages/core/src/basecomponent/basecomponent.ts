@@ -9,6 +9,11 @@ import { BaseComponentStyle } from './style/basecomponentstyle';
 
 export const PARENT_INSTANCE = new InjectionToken<BaseComponent>('PARENT_INSTANCE');
 
+/**
+ * Keys of the global PassThrough (`GlobalPassThrough`) that differ from the component name.
+ */
+const GLOBAL_PT_KEYS: Record<string, string> = { DataTable: 'table' };
+
 @Directive({
     standalone: true,
     providers: [BaseComponentStyle, BaseStyle]
@@ -104,7 +109,9 @@ export class BaseComponent<PT = any> implements Lifecycle {
     }
 
     get $defaultPT() {
-        return this._getPT(this.config?.pt(), undefined, (value) => this._getOptionValue(value, this.$hostName || this.$name, this.$params) || resolve(value, this.$params));
+        const name = this.$hostName || this.$name;
+
+        return this._getPT(this.config?.pt(), undefined, (value) => this._getOptionValue(value, GLOBAL_PT_KEYS[name] ?? name, this.$params) || resolve(value, this.$params));
     }
 
     get $style() {
