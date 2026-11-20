@@ -1543,7 +1543,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             }
 
             if (this.showWeek()) {
-                (weekNumbers as any[]).push(this.getWeekNumber(new Date(week[0].year, week[0].month, week[0].day)));
+                // an ISO week is the one of its Thursday, so number the row by the Thursday it contains
+                let weekDay = this.startWeekFromFirstDayOfYear() ? week[0] : week[(11 - +this.getFirstDateOfWeek()) % 7];
+                (weekNumbers as any[]).push(this.getWeekNumber(new Date(weekDay.year, weekDay.month, weekDay.day)));
             }
 
             (dates as any[]).push(week);

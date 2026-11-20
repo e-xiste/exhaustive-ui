@@ -2720,6 +2720,16 @@ describe('DatePicker Optimus UI bug fixes', () => {
         expect(picker.value().getDate()).toBe(10);
     });
 
+    it('numbers a Sunday-first week by the ISO week most of its days belong to (optimus-ui#97)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('showWeek', true);
+        fixture.componentRef.setInput('firstDayOfWeek', 0);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 0, 15));
+        await render();
+
+        expect(picker.months()[0].weekNumbers).toEqual([1, 2, 3, 4, 5]);
+    });
+
     it('parses a value pasted without a preceding keydown (optimus-ui#930)', async () => {
         await render();
         const input = el.querySelector('input')!;
