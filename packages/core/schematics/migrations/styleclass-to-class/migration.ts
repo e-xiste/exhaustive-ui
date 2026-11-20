@@ -99,7 +99,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-select',
     'p-listbox',
     'p-listBox',
-    'p-list-box'
+    'p-list-box',
+    'p-orderlist',
+    'p-orderList',
+    'p-order-list'
 ];
 
 /**

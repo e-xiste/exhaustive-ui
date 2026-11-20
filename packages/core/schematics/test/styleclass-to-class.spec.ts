@@ -1568,4 +1568,31 @@ describe('styleclass-to-class', () => {
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-listbox class="existing my-listbox" [options]="cities"></p-listbox>\n`);
     });
+
+    it('rewrites a static styleClass to class on p-orderlist', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-orderlist [value]="products" styleClass="w-full"></p-orderlist>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-orderlist [value]="products" class="w-full"></p-orderlist>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-orderList and p-order-list', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-orderList [value]="products" [styleClass]="listClass"></p-orderList>\n<p-order-list [dragdrop]="true" [styleClass]="listClass"></p-order-list>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-orderList [value]="products" [class]="listClass"></p-orderList>\n<p-order-list [dragdrop]="true" [class]="listClass"></p-order-list>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-orderlist', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-orderlist class="existing" styleClass="my-orderlist" [value]="products"></p-orderlist>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-orderlist class="existing my-orderlist" [value]="products"></p-orderlist>\n`);
+    });
 });
