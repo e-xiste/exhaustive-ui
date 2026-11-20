@@ -451,6 +451,13 @@ export class Accordion extends BaseComponent<AccordionPassThrough> implements Bl
 
     @HostListener('keydown', ['$event'])
     onKeydown(event) {
+        // Only keys pressed on one of this accordion's own headers move the focus: inputs inside the panels
+        // (and nested accordions) keep their native arrow, Home and End behaviour.
+        const target = event.target as HTMLElement;
+        if (!target?.matches?.('p-accordion-header, p-accordionheader') || target.closest('p-accordion') !== this.el.nativeElement) {
+            return;
+        }
+
         switch (event.code) {
             case 'ArrowDown':
                 this.onTabArrowDownKey(event);

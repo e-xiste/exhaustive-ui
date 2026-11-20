@@ -1021,4 +1021,45 @@ describe('Accordion', () => {
             expect(accordionEl.nativeElement.className).toContain('SETINPUT_ROOT_CLASS');
         });
     });
+
+    describe('Keys pressed inside panel content (#608)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            standalone: true,
+            imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
+            template: `
+                <p-accordion value="0">
+                    <p-accordion-panel value="0">
+                        <p-accordion-header>First</p-accordion-header>
+                        <p-accordion-content><textarea id="notes"></textarea></p-accordion-content>
+                    </p-accordion-panel>
+                    <p-accordion-panel value="1">
+                        <p-accordion-header>Second</p-accordion-header>
+                        <p-accordion-content>Second content</p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            `
+        })
+        class TestAccordionWithInputComponent {}
+
+        it('leaves arrow, Home and End keys to inputs inside a panel but still navigates headers', async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({ imports: [TestAccordionWithInputComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+            const fixture = TestBed.createComponent(TestAccordionWithInputComponent);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const textarea = fixture.nativeElement.querySelector('#notes') as HTMLTextAreaElement;
+            for (const code of ['ArrowDown', 'ArrowUp', 'Home', 'End']) {
+                const event = new KeyboardEvent('keydown', { code, bubbles: true, cancelable: true });
+                textarea.dispatchEvent(event);
+                expect(event.defaultPrevented).toBe(false);
+            }
+
+            const header = fixture.nativeElement.querySelector('p-accordion-header') as HTMLElement;
+            const onHeader = new KeyboardEvent('keydown', { code: 'ArrowDown', bubbles: true, cancelable: true });
+            header.dispatchEvent(onHeader);
+            expect(onHeader.defaultPrevented).toBe(true);
+        });
+    });
 });
