@@ -994,9 +994,12 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
             this.scrollTimeout.set(
                 setTimeout(() => {
+                    const lazyLoadState = this.lazyLoadState();
                     this.onScrollChange(event);
+                    // onScrollChange emits onLazyLoad only when the range goes beyond what was already requested.
+                    const isLazyLoadRequested = this.lazyLoadState().first < lazyLoadState.first || this.lazyLoadState().last > lazyLoadState.last;
 
-                    if (this.d_loading() && this._showLoader() && (!this._lazy() || this._loading() === undefined)) {
+                    if (this.d_loading() && this._showLoader() && (!this._lazy() || this._loading() === undefined || !isLazyLoadRequested)) {
                         this.d_loading.set(false);
                         this.page.set(this.getPageByFirst());
                     }

@@ -4757,3 +4757,44 @@ describe('Scroller with shrinking items', () => {
         expect(scroller.loadedItems()).toEqual(['Item 6666', 'Item 6667']);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items" [itemSize]="50" scrollHeight="200px" [lazy]="true" [loading]="loading()" [showLoader]="true" [delay]="10" (onLazyLoad)="lazyLoads = lazyLoads + 1">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestLazyDelayScrollerComponent {
+    items = Array.from({ length: 1000 }, (_, i) => `Item ${i}`);
+    loading = signal(false);
+    lazyLoads = 0;
+}
+
+describe('Scroller lazy with delay', () => {
+    it('hides the loader when scrolling back into an already loaded range (optimus-ui#877)', async () => {
+        TestBed.configureTestingModule({ imports: [TestLazyDelayScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestLazyDelayScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        // Everything up to item 1000 is already loaded, so the next scroll requests no lazy load.
+        scroller.lazyLoadState.set({ first: 0, last: 1000 });
+        const lazyLoads = fixture.componentInstance.lazyLoads;
+        vi.spyOn(scroller, 'onScrollPositionChange').mockReturnValue({ first: 20, last: 30, isRangeChanged: true, scrollPos: 1000 });
+
+        scroller.onContainerScroll(new Event('scroll'));
+        expect(scroller.d_loading()).toBe(true);
+
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.lazyLoads).toBe(lazyLoads);
+        expect(scroller.d_loading()).toBe(false);
+    });
+});
