@@ -505,6 +505,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     lastValue = signal<Nullable<string>>(undefined);
 
+    blurChangePending = signal<boolean>(false);
+
     pasted = signal<Nullable<{ value: string; selectionStart: number | null; selectionEnd: number | null; data: string }>>(null);
 
     _numeral = computed<RegExp>(() => {
@@ -1494,9 +1496,14 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
             this.value.set(value);
 
             if (!(isBlurUpdateOnMode && this.focused())) {
+                this.blurChangePending.set(false);
                 this.onModelChange(value);
+            } else {
+                this.blurChangePending.set(true);
             }
-        } else if (isBlurUpdateOnMode) {
+        } else if (isBlurUpdateOnMode && !this.focused() && this.blurChangePending()) {
+            // report the change deferred while focused, but not a blur without an edit (it would mark the control dirty)
+            this.blurChangePending.set(false);
             this.onModelChange(value);
         }
     }

@@ -1982,3 +1982,44 @@ describe('InputNumber Optimus UI bug fixes', () => {
         expect(changes).toEqual(values);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputNumber, ReactiveFormsModule],
+    template: `<p-inputnumber [formControl]="control" locale="en-US" />`
+})
+class TestBlurUpdateOnInputNumberComponent {
+    control = new FormControl<number | null>(5, { updateOn: 'blur' });
+}
+
+describe('InputNumber updateOn blur (optimus-ui#428)', () => {
+    it('does not change the control on a blur without an edit', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestBlurUpdateOnInputNumberComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TestBlurUpdateOnInputNumberComponent);
+        await fixture.whenStable();
+        const control = fixture.componentInstance.control;
+        const emitted: any[] = [];
+        control.valueChanges.subscribe((value) => emitted.push(value));
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        input.dispatchEvent(new FocusEvent('focus'));
+        input.dispatchEvent(new FocusEvent('blur'));
+        await fixture.whenStable();
+
+        expect(control.dirty).toBe(false);
+        expect(emitted).toEqual([]);
+
+        input.dispatchEvent(new FocusEvent('focus'));
+        input.setSelectionRange(1, 1);
+        input.dispatchEvent(new KeyboardEvent('keypress', { key: '7', keyCode: 55, charCode: 55, which: 55, cancelable: true, bubbles: true } as KeyboardEventInit));
+        expect(emitted).toEqual([]);
+        input.dispatchEvent(new FocusEvent('blur'));
+        await fixture.whenStable();
+
+        expect(control.dirty).toBe(true);
+        expect(emitted).toEqual([57]);
+    });
+});
