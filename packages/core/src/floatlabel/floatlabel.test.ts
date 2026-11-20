@@ -2,6 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { Select } from '@exhaustive-ui/core/select';
+import Aura from '@exhaustive-ui/themes/aura';
 import { FloatLabel } from './floatlabel';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
@@ -676,3 +679,44 @@ class TestInlineObjectPTComponent {}
     `
 })
 class TestMultipleInstancesComponent {}
+
+@Component({
+    standalone: true,
+    imports: [FloatLabel, Select, InputText],
+    template: `
+        <p-floatlabel id="input">
+            <input pInputText id="i" placeholder="Type" />
+            <label for="i">Input</label>
+        </p-floatlabel>
+        <p-floatlabel id="select">
+            <p-select [options]="options" placeholder="Pick one" inputId="s" />
+            <label for="s">Select</label>
+        </p-floatlabel>
+        <p-floatlabel id="empty">
+            <p-select [options]="options" inputId="e" />
+            <label for="e">Empty</label>
+        </p-floatlabel>
+    `
+})
+class FloatLabelPlaceholderHostComponent {
+    options = ['One', 'Two'];
+}
+
+describe('FloatLabel with a select placeholder (optimus-ui#501)', () => {
+    it('should float the label above a select showing its placeholder, like an input with a placeholder', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [FloatLabelPlaceholderHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(FloatLabelPlaceholderHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        const top = (id: string) => getComputedStyle(host.querySelector(`#${id} label`)!).top;
+        expect(host.querySelector('#select .p-placeholder')).toBeTruthy();
+        expect(top('select')).toBe(top('input'));
+        expect(top('empty')).not.toBe(top('input'));
+    });
+});
