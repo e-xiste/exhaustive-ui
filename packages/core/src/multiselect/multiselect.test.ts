@@ -4737,4 +4737,20 @@ describe('MultiSelect low bug fixes', () => {
         expect(milan.getAttribute('aria-disabled')).toBe('true');
         expect(rome.querySelector('input[type="checkbox"]')!.hasAttribute('disabled')).toBe(false);
     });
+
+    it('disables the toggle-all checkbox when no option is visible (optimus-ui#111)', async () => {
+        fixture.componentRef.setInput('filter', true);
+        multiSelect.show();
+        await waitForOverlay();
+
+        const headerInput = () => document.querySelector('.p-multiselect-overlay .p-multiselect-header input[type="checkbox"]') as HTMLInputElement;
+        expect(headerInput().disabled).toBe(false);
+
+        const filterInput = document.querySelector('.p-multiselect-overlay input[role="searchbox"]') as HTMLInputElement;
+        filterInput.value = 'zzz';
+        multiSelect.onFilterInputChange({ target: filterInput } as any);
+        await waitForOverlay();
+
+        expect(headerInput().disabled).toBe(true);
+    });
 });

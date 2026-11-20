@@ -282,14 +282,14 @@ export class SelectItem extends BaseComponent {
             } @else {
                 @if (!dropdownIconTemplate() && !_dropdownIconTemplate()) {
                     @if (dropdownIcon()) {
-                        <span [class]="cn(cx('dropdownIcon'), dropdownIcon())" [pBind]="ptm('dropdownIcon')"></span>
+                        <span [class]="cn(cx('dropdownIcon'), dropdownIcon())" [pBind]="ptm('dropdownIcon')" aria-hidden="true"></span>
                     }
                     @if (!dropdownIcon()) {
-                        <svg data-p-icon="chevron-down" [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')" />
+                        <svg data-p-icon="chevron-down" [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')" aria-hidden="true" />
                     }
                 }
                 @if (dropdownIconTemplate() || _dropdownIconTemplate()) {
-                    <span [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')">
+                    <span [class]="cx('dropdownIcon')" [pBind]="ptm('dropdownIcon')" aria-hidden="true">
                         <ng-template *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate(); context: { class: cx('dropdownIcon') }"></ng-template>
                     </span>
                 }

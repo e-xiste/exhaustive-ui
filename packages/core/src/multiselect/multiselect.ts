@@ -357,7 +357,7 @@ export class MultiSelectItem extends BaseComponent {
                                         [binary]="true"
                                         (onChange)="onToggleAll($event)"
                                         [variant]="$variant()"
-                                        [disabled]="$disabled()"
+                                        [disabled]="$disabled() || isEmpty()"
                                         [unstyled]="unstyled()"
                                         #headerCheckbox
                                     >

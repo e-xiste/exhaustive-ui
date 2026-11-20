@@ -5075,3 +5075,49 @@ describe('Select custom loadingIcon', () => {
         expect(icon.classList).toContain('pi-refresh');
     });
 });
+
+describe('Select low bug fixes', () => {
+    let fixture: ComponentFixture<Select>;
+    let select: Select;
+    const cities = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' },
+        { name: 'London', code: 'LDN' }
+    ];
+
+    const waitForOverlay = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+        fixture.detectChanges();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Select],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(Select);
+        select = fixture.componentInstance;
+        fixture.componentRef.setInput('options', cities);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('optionValue', 'code');
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('hides the dropdown icon from assistive technologies (optimus-ui#111)', () => {
+        expect(fixture.nativeElement.querySelector('.p-select-dropdown-icon').getAttribute('aria-hidden')).toBe('true');
+
+        fixture.componentRef.setInput('dropdownIcon', 'pi pi-chevron-down');
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.p-select-dropdown-icon').getAttribute('aria-hidden')).toBe('true');
+    });
+});
