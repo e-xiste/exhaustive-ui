@@ -3125,3 +3125,40 @@ describe('Table column filter menu button ARIA', () => {
         columnFilter.hide();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableSortableHeaderAriaHostComponent {
+    rows = [{ name: 'A' }];
+}
+
+describe('Table sortable header ARIA', () => {
+    it('keeps the native th role and hides the decorative sort icon (optimus-ui#392)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableSortableHeaderAriaHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableSortableHeaderAriaHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const th: HTMLElement = fixture.nativeElement.querySelector('th');
+        expect(th.hasAttribute('role')).toBe(false);
+        expect(th.getAttribute('aria-sort')).toBe('none');
+        expect(th.querySelector('p-sorticon svg')!.getAttribute('aria-hidden')).toBe('true');
+    });
+});

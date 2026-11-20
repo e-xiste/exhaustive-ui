@@ -3654,7 +3654,7 @@ export class FrozenColumn extends BaseComponent {
     host: {
         '[class]': "cx('sortableColumn')",
         '[tabindex]': 'isEnabled() ? "0" : null',
-        role: 'columnheader',
+        '[attr.role]': 'role',
         '[attr.aria-sort]': 'sortOrder()'
     },
     providers: [TableStyle]
@@ -3759,13 +3759,13 @@ export class SortableColumn extends BaseComponent {
     template: `
         @if (!(dataTable.sortIconTemplate() || dataTable._sortIconTemplate())) {
             @if (sortOrder() === 0) {
-                <svg data-p-icon="sort-alt" [class]="cx('sortableColumnIcon')" />
+                <svg data-p-icon="sort-alt" [class]="cx('sortableColumnIcon')" aria-hidden="true" />
             }
             @if (sortOrder() === 1) {
-                <svg data-p-icon="sort-amount-up-alt" [class]="cx('sortableColumnIcon')" />
+                <svg data-p-icon="sort-amount-up-alt" [class]="cx('sortableColumnIcon')" aria-hidden="true" />
             }
             @if (sortOrder() === -1) {
-                <svg data-p-icon="sort-amount-down" [class]="cx('sortableColumnIcon')" />
+                <svg data-p-icon="sort-amount-down" [class]="cx('sortableColumnIcon')" aria-hidden="true" />
             }
         }
         @if (dataTable.sortIconTemplate() || dataTable._sortIconTemplate()) {
