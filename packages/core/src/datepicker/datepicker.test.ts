@@ -2465,4 +2465,14 @@ describe('DatePicker Optimus UI bug fixes', () => {
         picker.writeValue([null]);
         expect(picker.isYearSelected(2026)).toBe(false);
     });
+    it('parses day-of-year formats past the second month (optimus-ui#363)', async () => {
+        await render();
+
+        const date = picker.parseDate('200/2026', 'oo/yy');
+
+        expect(date.getFullYear()).toBe(2026);
+        expect(date.getMonth()).toBe(6);
+        expect(date.getDate()).toBe(19);
+        expect(() => picker.parseDate('60/2026', 'o/yy')).not.toThrow();
+    });
 });
