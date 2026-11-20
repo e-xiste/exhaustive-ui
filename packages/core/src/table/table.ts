@@ -6565,7 +6565,9 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
     onModelChange(value: any) {
         (<any>this.filterConstraint()).value = value;
 
-        if (this.type() === 'date' || this.type() === 'boolean' || ((this.type() === 'text' || this.type() === 'numeric') && this.filterOn() === 'input') || !value) {
+        // a menu with an Apply button only filters on Apply (or Enter)
+        const applyOnButton = this.colFilter.display() === 'menu' && this.colFilter.showApplyButton();
+        if (((this.type() === 'date' || this.type() === 'boolean' || !value) && !applyOnButton) || ((this.type() === 'text' || this.type() === 'numeric') && this.filterOn() === 'input')) {
             this.dataTable._filter();
         }
     }

@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { SharedModule, SortMeta } from '@exhaustive-ui/core/api';
 import { Select } from '@exhaustive-ui/core/select';
-import { CellEditor, ColumnFilter, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
+import { CellEditor, ColumnFilter, ColumnFilterFormElement, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
 describe('Table', () => {
     let component: Table;
@@ -2759,5 +2759,57 @@ describe('Table loading body with a row expansion template', () => {
 
         expect(fixture.nativeElement.querySelectorAll('tr.loading-row').length).toBe(1);
         expect(fixture.nativeElement.querySelectorAll('tr.data-row').length).toBe(1);
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th>
+                    <th>Date <p-columnFilter type="date" field="date" display="menu"></p-columnFilter></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableMenuApplyHostComponent {
+    rows = [{ name: 'A', date: new Date(2020, 0, 1) }];
+}
+
+describe('Table menu column filter with an Apply button', () => {
+    it('does not filter while the constraint is edited (optimus-ui#375)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableMenuApplyHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableMenuApplyHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        const filterSpy = vi.spyOn(table, '_filter');
+
+        for (const [index, value] of [
+            [0, ''],
+            [1, new Date(2021, 0, 1)]
+        ] as const) {
+            const columnFilter = fixture.debugElement.queryAll(By.directive(ColumnFilter))[index].componentInstance as ColumnFilter;
+            columnFilter.toggleMenu(new MouseEvent('click'));
+            fixture.detectChanges();
+            await fixture.whenStable();
+            const formElement = fixture.debugElement.query(By.directive(ColumnFilterFormElement)).componentInstance as ColumnFilterFormElement;
+            formElement.onModelChange(value);
+            columnFilter.hide();
+            fixture.detectChanges();
+            await fixture.whenStable();
+        }
+
+        expect(filterSpy).not.toHaveBeenCalled();
     });
 });
