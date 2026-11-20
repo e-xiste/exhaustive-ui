@@ -2274,3 +2274,43 @@ describe('InputMask regressions', () => {
         expect(input.value).toBe('__/09/____');
     });
 });
+
+describe('InputMask Android input (optimus-ui#507)', () => {
+    const typeOnAndroid = async (fixture: ComponentFixture<TestInputMaskRegressionComponent>, input: HTMLInputElement, char: string) => {
+        const caret = input.selectionStart as number;
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229 } as KeyboardEventInit));
+        input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+        input.setSelectionRange(caret + 1, caret + 1);
+        input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: char }));
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    it('should not move the caret when the typed character is rejected by the mask', async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestInputMaskRegressionComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestInputMaskRegressionComponent);
+        fixture.componentInstance.mask = '99-99';
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const inputMask = fixture.debugElement.query(By.directive(InputMask)).componentInstance as InputMask;
+        inputMask.androidChrome = true;
+        const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        input.focus();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        expect(input.value).toBe('__-__');
+        input.setSelectionRange(0, 0);
+
+        await typeOnAndroid(fixture, input, '1');
+        expect(input.value).toBe('1_-__');
+        expect(input.selectionStart).toBe(1);
+
+        await typeOnAndroid(fixture, input, 'a');
+        expect(input.value).toBe('1_-__');
+        expect(input.selectionStart).toBe(1);
+    });
+});

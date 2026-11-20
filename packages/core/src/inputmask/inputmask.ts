@@ -564,7 +564,12 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
             }, 0);
         } else {
             this.checkVal(true);
-            while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
+            if (oldVal != null && this.inputElement.value === oldVal) {
+                // The mask rejected the typed character: put the caret back where it was before the input.
+                pos.begin = Math.max(pos.begin - (curVal.length - oldVal.length), 0);
+            } else {
+                while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
+            }
 
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
@@ -1165,7 +1170,12 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             }, 0);
         } else {
             this.checkVal(true);
-            while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
+            if (oldVal != null && this.inputViewChild()?.nativeElement.value === oldVal) {
+                // The mask rejected the typed character: put the caret back where it was before the input.
+                pos.begin = Math.max(pos.begin - (curVal.length - oldVal.length), 0);
+            } else {
+                while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
+            }
 
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
