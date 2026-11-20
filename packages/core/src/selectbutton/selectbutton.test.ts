@@ -1440,3 +1440,32 @@ describe('SelectButton accessibility (optimus-ui#11)', () => {
         expect(buttons.map((b) => b.nativeElement.getAttribute('aria-label'))).toEqual(['Option 1', 'Option 2']);
     });
 });
+
+describe('SelectButton RTL borders (optimus-ui#285)', () => {
+    it('should give the last button an inline-end border in RTL', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SelectButton],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(SelectButton);
+        fixture.componentRef.setInput('options', [
+            { label: 'One', value: 1 },
+            { label: 'Two', value: 2 },
+            { label: 'Three', value: 3 }
+        ]);
+        (fixture.nativeElement as HTMLElement).setAttribute('dir', 'rtl');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const buttons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('p-togglebutton')) as HTMLElement[];
+        // the test runs without a theme, so give the borders a style for their widths to compute
+        buttons.forEach((button) => (button.style.borderStyle = 'solid'));
+        const first = getComputedStyle(buttons[0]);
+        const last = getComputedStyle(buttons[buttons.length - 1]);
+        // RTL: inline-start is the right side, inline-end the left side
+        expect(first.borderRightWidth).toBe(first.borderTopWidth);
+        expect(last.borderLeftWidth).toBe(last.borderTopWidth);
+        expect(last.borderTopWidth).not.toBe('0px');
+    });
+});

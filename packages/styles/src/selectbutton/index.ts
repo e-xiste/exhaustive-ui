@@ -9,7 +9,8 @@ export const style = /*css*/ `
 
     .p-selectbutton .p-togglebutton {
         border-radius: 0;
-        border-width: 1px 1px 1px 0;
+        border-width: 1px;
+        border-inline-start-width: 0;
     }
 
     .p-selectbutton .p-togglebutton:focus-visible {
