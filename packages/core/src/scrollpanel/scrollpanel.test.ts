@@ -5,7 +5,6 @@ import { By } from '@angular/platform-browser';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import Aura from '@exhaustive-ui/themes/aura';
-import { userEvent } from 'vitest/browser';
 import { ScrollPanel } from './scrollpanel';
 
 @Component({
@@ -1133,13 +1132,23 @@ describe('ScrollPanel nested hover', () => {
         const fixture = TestBed.createComponent(TestNestedScrollPanelComponent);
         await fixture.whenStable();
 
+        // The real pointer is shared by test files running in parallel, so the :hover rule of the theme
+        // is applied to the outer panel through a class instead of an actual hover.
+        const hoverSelectors = Array.from(document.styleSheets)
+            .flatMap((sheet) => Array.from(sheet.cssRules))
+            .flatMap((rule) => ((rule as CSSStyleRule).selectorText ?? '').split(','))
+            .map((selector) => selector.trim())
+            .filter((selector) => selector.startsWith('.p-scrollpanel:hover') && selector.endsWith('.p-scrollpanel-bar'));
+        expect(hoverSelectors.length).toBeGreaterThan(0);
+
         const root = fixture.nativeElement as HTMLElement;
-        await userEvent.hover(root.querySelector('.outer-only') as HTMLElement);
+        root.querySelector('.outer')!.classList.add('simulated-hover');
+        const matchesHover = (bar: Element) => hoverSelectors.some((selector) => bar.matches(selector.replace(':hover', '.simulated-hover')));
 
         const outerBar = root.querySelector('.outer > .p-scrollpanel-bar-y') as HTMLElement;
         const innerBar = root.querySelector('.inner > .p-scrollpanel-bar-y') as HTMLElement;
 
-        expect(getComputedStyle(outerBar).opacity).toBe('1');
-        expect(getComputedStyle(innerBar).opacity).toBe('0');
+        expect(matchesHover(outerBar)).toBe(true);
+        expect(matchesHover(innerBar)).toBe(false);
     });
 });
