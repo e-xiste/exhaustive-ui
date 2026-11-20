@@ -2549,4 +2549,18 @@ describe('DatePicker Optimus UI bug fixes', () => {
         await render();
         expect(label.textContent!.trim()).toBe('p.m.');
     });
+
+    it('includes the visible month and year in the header buttons accessible names (optimus-ui#24, optimus-ui#7)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('defaultDate', new Date(2026, 4, 10));
+        await render();
+
+        const month = el.querySelector('.p-datepicker-select-month')!;
+        const year = el.querySelector('.p-datepicker-select-year')!;
+        expect(month.textContent!.trim()).toBe('May');
+        expect(month.getAttribute('aria-label')).toContain('May');
+        expect(month.getAttribute('aria-label')).toContain(picker.getTranslation('chooseMonth'));
+        expect(year.getAttribute('aria-label')).toContain('2026');
+        expect(year.getAttribute('aria-label')).toContain(picker.getTranslation('chooseYear'));
+    });
 });
