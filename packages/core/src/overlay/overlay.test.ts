@@ -439,6 +439,29 @@ describe('Overlay visibility', () => {
         expect(fixture.nativeElement.querySelector('[data-pc-section="root"]')).toBeFalsy();
     });
 
+    it('should stay open when it is reopened before the pending leave completes', async () => {
+        const hideSpy = vi.fn();
+        overlay.onHide.subscribe(hideSpy);
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        fixture.componentInstance.visible.set(false);
+        await fixture.whenStable();
+
+        // reopened during the last frame of the leave animation, then the leave completes
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        hideSpy.mockClear();
+        overlay.onOverlayAfterLeave({} as any);
+        await fixture.whenStable();
+
+        expect(overlay.visible()).toBe(true);
+        expect(fixture.componentInstance.visible()).toBe(true);
+        expect(overlay.modalVisible()).toBe(true);
+        expect(hideSpy).not.toHaveBeenCalled();
+        expect(fixture.nativeElement.querySelector('[data-pc-section="root"]')).toBeTruthy();
+    });
+
     it('should propagate hide() back to the two-way bound host property', async () => {
         fixture.componentInstance.visible.set(true);
         await fixture.whenStable();

@@ -421,6 +421,11 @@ export class Overlay extends BaseComponent {
     }
 
     onOverlayAfterLeave(event: MotionEvent) {
+        // Reopened before this leave completed: the coming enter takes over, do not close the overlay again
+        if (this.visible()) {
+            return;
+        }
+
         this.hide(this.overlayEl(), true);
         this.container.set(null);
         this.unbindListeners();
