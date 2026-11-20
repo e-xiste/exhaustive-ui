@@ -53,7 +53,7 @@ v22 is the first major of ExhaustiveUI. Templates bind as before (`[name]`, `[(n
 - templates use the built-in `@if` / `@for` control flow;
 - inputs that were deprecated or had no effect are gone: `styleClass` becomes the native `class` attribute on most components, and aliases such as Drawer's `showCloseIcon` (now `closable`) are removed.
 
-`ng update @exhaustive-ui/core` rewrites the templates for you and lists what it left for review. The [update guide](https://exhaustive-ui.com/migration/update#v22) has the details.
+`ng update @exhaustive-ui/core` rewrites the templates for you and lists what it left for review. The [update guide](https://exhaustive-ui.com/migration/update#v22) has the details. Every change is listed in the [changelog](CHANGELOG.md).
 
 ## Migrating from Optimus UI
 
