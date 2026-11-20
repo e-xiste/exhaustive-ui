@@ -668,6 +668,19 @@ describe('Toast', () => {
 
             expect(toastInstance.breakpoints()).toEqual(component.breakpoints);
         });
+
+        it('should match the breakpoint styles before the first message', async () => {
+            const breakpointFixture = TestBed.createComponent(TestBasicToastComponent);
+            breakpointFixture.componentInstance.breakpoints = { '640px': { width: '90vw' } };
+            breakpointFixture.detectChanges();
+            await breakpointFixture.whenStable();
+
+            const toastEl = breakpointFixture.debugElement.query(By.css('p-toast'));
+            const toastInstance = toastEl.componentInstance as Toast;
+
+            expect(toastInstance.styleElement.innerHTML).toContain(`.p-toast[${toastInstance.id}]`);
+            expect(toastEl.nativeElement.hasAttribute(toastInstance.id)).toBe(true);
+        });
     });
 
     describe('Animation and Lifecycle', () => {

@@ -403,6 +403,7 @@ export class Toast extends BaseComponent<ToastPassThrough> {
 
     onAfterViewInit() {
         if (this.breakpoints()) {
+            this.renderer.setAttribute(this.el?.nativeElement, this.id, '');
             this.createStyle();
         }
     }
