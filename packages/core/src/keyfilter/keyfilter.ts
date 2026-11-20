@@ -214,8 +214,12 @@ export class KeyFilter implements Validator {
             return;
         }
 
-        let existingValue = this.el.nativeElement.value || '';
-        let combinedValue = existingValue + cc;
+        // Test the value the key press produces: the character replaces the selection at the caret, not appended at the end.
+        const input = this.el.nativeElement;
+        let existingValue = input.value || '';
+        const selectionStart = typeof input.selectionStart === 'number' ? input.selectionStart : existingValue.length;
+        const selectionEnd = typeof input.selectionEnd === 'number' ? input.selectionEnd : selectionStart;
+        let combinedValue = existingValue.slice(0, selectionStart) + cc + existingValue.slice(selectionEnd);
 
         ok = this.regex().test(combinedValue);
 

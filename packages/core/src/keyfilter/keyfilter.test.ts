@@ -740,3 +740,51 @@ describe('KeyFilter', () => {
         });
     });
 });
+
+describe('KeyFilter regressions', () => {
+    let fixture: ComponentFixture<TestBasicKeyFilterComponent>;
+    let directive: KeyFilter;
+    let input: HTMLInputElement;
+
+    const setPattern = async (pattern: RegExp | KeyFilterPattern) => {
+        fixture.componentInstance.pattern = pattern;
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const keypress = (char: string, caret: number) => {
+        input.focus();
+        input.setSelectionRange(caret, caret);
+        const event = new KeyboardEvent('keypress', { charCode: char.charCodeAt(0), keyCode: char.charCodeAt(0), cancelable: true, bubbles: true });
+        input.dispatchEvent(event);
+        return event.defaultPrevented;
+    };
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [KeyFilterModule, FormsModule],
+            declarations: [TestBasicKeyFilterComponent],
+            providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'browser' }]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestBasicKeyFilterComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const inputDe = fixture.debugElement.query(By.css('input'));
+        directive = inputDe.injector.get(KeyFilter);
+        directive.isAndroid = false;
+        input = inputDe.nativeElement;
+    });
+
+    it('should test the value the key press would produce at the caret position (optimus-ui#157)', async () => {
+        await setPattern(/^\d+[.,]?\d*$/);
+        input.value = '1';
+        expect(keypress('.', 0)).toBe(true);
+        expect(keypress('.', 1)).toBe(false);
+
+        await setPattern('int');
+        input.value = '12';
+        expect(keypress('-', 0)).toBe(false);
+        expect(keypress('-', 2)).toBe(true);
+    });
+});
