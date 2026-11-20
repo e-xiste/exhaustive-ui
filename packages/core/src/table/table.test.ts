@@ -2617,3 +2617,54 @@ describe('Table medium-severity fixes', () => {
         expect(table.first()).toBe(0);
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table #dt [value]="rows" [filters]="filters()">
+            <ng-template #header>
+                <tr>
+                    <th>Name <p-columnFilter field="name" display="menu"></p-columnFilter></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableMenuFilterHostComponent {
+    rows = [{ name: 'Anna' }, { name: 'Bob' }];
+    filters = signal<any>({});
+}
+
+describe('Table menu column filter with programmatic filtering', () => {
+    let fixture: ComponentFixture<TableMenuFilterHostComponent>;
+    let table: Table;
+    let columnFilter: ColumnFilter;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableMenuFilterHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TableMenuFilterHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        columnFilter = fixture.debugElement.query(By.directive(ColumnFilter)).componentInstance;
+    });
+
+    it('keeps menu constraints as an array when Table.filter() is called (optimus-ui#352, optimus-ui#794)', () => {
+        table.filter('An', 'name', 'startsWith');
+
+        expect(Array.isArray(columnFilter.fieldConstraints)).toBe(true);
+        expect(columnFilter.fieldConstraints![0]).toEqual(expect.objectContaining({ value: 'An', matchMode: 'startsWith' }));
+
+        table.filter(null, 'name', 'startsWith');
+
+        expect(Array.isArray(columnFilter.fieldConstraints)).toBe(true);
+        expect(columnFilter.fieldConstraints![0].value).toBeNull();
+    });
+});

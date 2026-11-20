@@ -2131,9 +2131,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         if (this.filterTimeout()) {
             clearTimeout(this.filterTimeout());
         }
-        if (!this.isFilterBlank(value)) {
+        const fieldFilter = this._filters()[field];
+
+        if (Array.isArray(fieldFilter)) {
+            // a menu p-columnFilter owns this field and reads its filter as a list of constraints
+            this._filters()[field] = [{ value: this.isFilterBlank(value) ? null : value, matchMode: matchMode, operator: fieldFilter[0]?.operator ?? FilterOperator.AND }];
+        } else if (!this.isFilterBlank(value)) {
             this._filters()[field] = { value: value, matchMode: matchMode };
-        } else if (this._filters()[field]) {
+        } else if (fieldFilter) {
             delete this._filters()[field];
         }
 
