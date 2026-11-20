@@ -3263,3 +3263,47 @@ describe('Table row group subheaders with virtual scroll', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [resizableColumns]="true" columnResizeMode="expand">
+            <ng-template #header>
+                <tr>
+                    <th colspan="2">Group</th>
+                </tr>
+                <tr>
+                    <th pResizableColumn style="width: 100px">Name</th>
+                    <th pResizableColumn style="width: 200px">Price</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.price }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableGroupedHeaderResizeHostComponent {
+    rows = [{ name: 'A', price: 1 }];
+}
+
+describe('Table column resize with a grouped header', () => {
+    it('measures the column widths on the column header row only (optimus-ui#78)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableGroupedHeaderResizeHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableGroupedHeaderResizeHostComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+
+        const widths: number[] = (table as any)._totalTableWidth();
+
+        expect(widths.length).toBe(2);
+        fixture.nativeElement.remove();
+    });
+});

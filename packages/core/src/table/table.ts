@@ -2668,7 +2668,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     private _totalTableWidth(): number[] {
         let widths = [];
         const tableHead = DomHandler.findSingle(this.el.nativeElement, '[data-pc-section="thead"]');
-        let headers = DomHandler.find(tableHead, 'tr > th');
+        // only the last header row holds one cell per column: the rows above it may group columns (colspan)
+        let headers = DomHandler.find(tableHead, 'tr:last-child > th');
         headers.forEach((header) => (widths as any[]).push(DomHandler.getOuterWidth(header)));
 
         return widths;
