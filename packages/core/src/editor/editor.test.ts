@@ -9,6 +9,7 @@ import { provideExhaustive } from '@exhaustive-ui/core/config';
 import type { EditorBlurEvent, EditorChangeEvent, EditorFocusEvent, EditorInitEvent, EditorSelectionChangeEvent, EditorTextChangeEvent } from '@exhaustive-ui/core/types/editor';
 import { Editor } from './editor';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { style as editorCss } from '@exhaustive-ui/styles/editor';
 // Test Components for different scenarios
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1328,5 +1329,48 @@ describe('Editor Signal Query API', () => {
 
         expect(instance.toolbar()).toBeDefined();
         expect(instance.templates().length).toBeGreaterThan(0);
+    });
+});
+
+describe('Editor list styles with Quill 2 markup (optimus-ui#300, optimus-ui#376)', () => {
+    let styleEl: HTMLStyleElement;
+    let host: HTMLElement;
+
+    beforeEach(() => {
+        styleEl = document.createElement('style');
+        styleEl.textContent = editorCss as string;
+        document.head.appendChild(styleEl);
+        host = document.createElement('div');
+        host.className = 'ql-container';
+        host.innerHTML = `<div class="ql-editor"><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>bullet</li><li data-list="ordered"><span class="ql-ui" contenteditable="false"></span>one</li><li data-list="ordered"><span class="ql-ui" contenteditable="false"></span>two</li><li data-list="unchecked"><span class="ql-ui" contenteditable="false"></span>todo</li></ol></div>`;
+        document.body.appendChild(host);
+    });
+
+    afterEach(() => {
+        styleEl.remove();
+        host.remove();
+    });
+
+    const marker = (li: Element) => {
+        const ownMarker = getComputedStyle(li, '::before').content;
+        const uiMarker = getComputedStyle(li.querySelector('.ql-ui')!, '::before').content;
+        return { ownMarker, uiMarker };
+    };
+
+    it('should render a bullet, not a number, for bullet items', () => {
+        const [bullet] = Array.from(host.querySelectorAll('li'));
+        const { ownMarker, uiMarker } = marker(bullet);
+        expect(ownMarker === 'none' || ownMarker === 'normal').toBe(true);
+        expect(uiMarker).toBe('"\u2022"');
+    });
+
+    it('should number ordered items and mark checklist items with a box, once each', () => {
+        const items = Array.from(host.querySelectorAll('li'));
+        const ordered = marker(items[1]);
+        expect(ordered.ownMarker === 'none' || ordered.ownMarker === 'normal').toBe(true);
+        expect(ordered.uiMarker).toContain('counter(list-0');
+        const unchecked = marker(items[3]);
+        expect(unchecked.ownMarker === 'none' || unchecked.ownMarker === 'normal').toBe(true);
+        expect(unchecked.uiMarker).toBe('"\u2610"');
     });
 });

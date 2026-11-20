@@ -199,6 +199,104 @@ export const style = /*css*/ `
     .ql-editor ol li.ql-indent-9:before {
         content: counter(list-9, decimal) '. ';
     }
+    /* Quill 2 lists: <ol><li data-list="bullet|ordered|checked|unchecked"><span class="ql-ui"> */
+    .ql-editor ol li[data-list]::before {
+        content: none;
+    }
+    .ql-editor ol li[data-list] {
+        counter-increment: none;
+    }
+    .ql-editor li > .ql-ui::before {
+        display: inline-block;
+        white-space: nowrap;
+        width: 1.2rem;
+    }
+    .ql-editor li:not(.ql-direction-rtl) > .ql-ui::before {
+        margin-inline-start: -1.5rem;
+        margin-inline-end: 0.3rem;
+        text-align: right;
+    }
+    .ql-editor li.ql-direction-rtl > .ql-ui::before {
+        margin-inline-start: 0.3rem;
+        margin-inline-end: -1.5rem;
+    }
+    .ql-editor li[data-list='checked'] > .ql-ui,
+    .ql-editor li[data-list='unchecked'] > .ql-ui {
+        color: #777;
+    }
+    .ql-container:not(.ql-disabled) li[data-list='checked'] > .ql-ui,
+    .ql-container:not(.ql-disabled) li[data-list='unchecked'] > .ql-ui {
+        cursor: pointer;
+    }
+    .ql-editor li[data-list='bullet'] > .ql-ui::before {
+        content: '\\2022';
+    }
+    .ql-editor li[data-list='checked'] > .ql-ui::before {
+        content: '\\2611';
+    }
+    .ql-editor li[data-list='unchecked'] > .ql-ui::before {
+        content: '\\2610';
+    }
+    .ql-editor ol li[data-list='ordered'] {
+        counter-increment: list-0;
+    }
+    .ql-editor ol li[data-list='ordered'] > .ql-ui::before {
+        content: counter(list-0, decimal) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-1 {
+        counter-increment: list-1;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-1 > .ql-ui::before {
+        content: counter(list-1, lower-alpha) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-2 {
+        counter-increment: list-2;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-2 > .ql-ui::before {
+        content: counter(list-2, lower-roman) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-3 {
+        counter-increment: list-3;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-3 > .ql-ui::before {
+        content: counter(list-3, decimal) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-4 {
+        counter-increment: list-4;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-4 > .ql-ui::before {
+        content: counter(list-4, lower-alpha) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-5 {
+        counter-increment: list-5;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-5 > .ql-ui::before {
+        content: counter(list-5, lower-roman) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-6 {
+        counter-increment: list-6;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-6 > .ql-ui::before {
+        content: counter(list-6, decimal) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-7 {
+        counter-increment: list-7;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-7 > .ql-ui::before {
+        content: counter(list-7, lower-alpha) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-8 {
+        counter-increment: list-8;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-8 > .ql-ui::before {
+        content: counter(list-8, lower-roman) '. ';
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-9 {
+        counter-increment: list-9;
+    }
+    .ql-editor ol li[data-list='ordered'].ql-indent-9 > .ql-ui::before {
+        content: counter(list-9, decimal) '. ';
+    }
     .ql-editor .ql-video {
         display: block;
         max-width: 100%;
