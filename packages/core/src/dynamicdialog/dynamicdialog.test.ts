@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ErrorHandler, provideZonelessChangeDetection, inject, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Dialog } from '@exhaustive-ui/core/dialog';
@@ -197,6 +197,26 @@ describe('DynamicDialog', () => {
             expect(component.id).toBeTruthy();
         });
 
+        it('should open with a custom content template without failing to load the child component', async () => {
+            const handleError = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError');
+            const loaded = vi.fn();
+            mockDialogRef.onChildComponentLoaded.subscribe(loaded);
+            fixture.destroy();
+            mockConfig.templates = { content: TestDialogContentComponent };
+
+            const templateFixture = TestBed.createComponent(DynamicDialog);
+            templateFixture.componentInstance.childComponentType.set(TestDialogContentComponent);
+            templateFixture.changeDetectorRef.markForCheck();
+            await templateFixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            expect(templateFixture.nativeElement.querySelectorAll('.test-component').length).toBe(1);
+            expect(templateFixture.componentInstance.componentRef()).toBeFalsy();
+            expect(loaded).not.toHaveBeenCalled();
+            expect(handleError).not.toHaveBeenCalled();
+            mockConfig.templates = undefined;
+        });
+
         it('should label the dialog by the generated header title id', async () => {
             mockConfig.showHeader = true;
             fixture.changeDetectorRef.markForCheck();
@@ -235,6 +255,7 @@ describe('DynamicDialog', () => {
         }
 
         it('should set the inputValues on the loaded child component and emit onChildComponentLoaded', async () => {
+            const handleError = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError');
             const loaded = vi.fn();
             mockDialogRef.onChildComponentLoaded.subscribe(loaded);
 

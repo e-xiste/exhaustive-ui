@@ -235,19 +235,24 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
 
     loadChildComponent(componentType: Type<any>) {
         let viewContainerRef = this.insertionPoint()?.viewContainerRef;
-        viewContainerRef?.clear();
+        // a custom content template replaces the child component: there is no insertion point to load it into
+        if (!viewContainerRef) {
+            return;
+        }
 
-        const componentRef = viewContainerRef?.createComponent(componentType);
+        viewContainerRef.clear();
+
+        const componentRef = viewContainerRef.createComponent(componentType);
         this.componentRef.set(componentRef);
 
         const inputValues = this.inputValues();
-        if (inputValues && componentRef) {
+        if (inputValues) {
             Object.entries(inputValues).forEach(([key, value]) => {
                 componentRef.setInput(key, value);
             });
         }
 
-        this.dialogRef.onChildComponentLoaded.next(componentRef!.instance);
+        this.dialogRef.onChildComponentLoaded.next(componentRef.instance);
     }
 
     onDialogHide(event: any) {
