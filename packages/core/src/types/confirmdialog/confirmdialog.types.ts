@@ -1,6 +1,5 @@
 import { TemplateRef } from '@angular/core';
 import type { Confirmation, PassThrough, PassThroughOption } from '@exhaustive-ui/core/api';
-import { DialogPassThrough } from '@exhaustive-ui/core/types/dialog';
 import type { ButtonPassThrough } from '@exhaustive-ui/core/types/button';
 
 /**
@@ -17,9 +16,8 @@ export interface ConfirmDialogPassThroughOptions<I = unknown> {
     host?: PassThroughOption<HTMLElement, I>;
     /**
      * Used to pass attributes to the root's DOM element.
-     * @see {@link DialogPassThrough}
      */
-    root?: DialogPassThrough;
+    root?: PassThroughOption<HTMLDivElement, I>;
     /**
      * Used to pass attributes to the mask's DOM element.
      */

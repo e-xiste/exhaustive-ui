@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import { ConfirmationService, SharedModule } from '@exhaustive-ui/core/api';
 import { Button } from '@exhaustive-ui/core/button';
 import { Dialog } from '@exhaustive-ui/core/dialog';
+import { ConfirmDialogPassThrough } from '@exhaustive-ui/core/types/confirmdialog';
 import { ConfirmDialog } from './confirmdialog';
 
 // Basic ConfirmDialog Component Test
@@ -1903,5 +1904,30 @@ describe('ConfirmDialog p-footer', () => {
         expect(fixture.nativeElement.querySelector('.custom-footer-button')).toBeTruthy();
         expect(fixture.nativeElement.querySelector('.p-confirmdialog-accept-button')).toBeNull();
         expect(fixture.nativeElement.querySelector('.p-confirmdialog-reject-button')).toBeNull();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ConfirmDialog],
+    template: `<p-confirmdialog appendTo="self" [visible]="true" message="Delete?" [pt]="pt" />`
+})
+class ConfirmDialogRootPTHostComponent {
+    pt: ConfirmDialogPassThrough = { root: { class: 'pt-root-class' } };
+}
+
+describe('ConfirmDialog root pass-through', () => {
+    it('should type and apply pt.root as the options of the dialog root element (optimus-ui#91)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ConfirmDialogRootPTHostComponent],
+            providers: [ConfirmationService, provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ConfirmDialogRootPTHostComponent);
+        await fixture.whenStable();
+
+        const root = fixture.nativeElement.querySelector('.p-dialog');
+        expect(root.classList).toContain('pt-root-class');
+        expect(root.hasAttribute('root')).toBe(false);
     });
 });
