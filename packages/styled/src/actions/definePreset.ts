@@ -1,5 +1,5 @@
-import { deepMerge } from '@exhaustive-ui/utils/object';
+import { mergePresets } from '../utils/presetUtils';
 
 export default function definePreset<T extends Record<string, unknown>>(...presets: T[]): T {
-    return deepMerge(...presets) as T;
+    return mergePresets(...presets) as T;
 }
