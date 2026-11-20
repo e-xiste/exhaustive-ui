@@ -1941,4 +1941,14 @@ describe('InputNumber Optimus UI bug fixes', () => {
         expect(input.value).toBe('1,234');
         expect(inputNumber.value()).toBe(1234);
     });
+
+    it('exposes min and max through ARIA only (optimus-ui#326)', async () => {
+        await create({ min: 0, max: 100 }, 5);
+
+        expect(input.getAttribute('role')).toBe('spinbutton');
+        expect(input.getAttribute('aria-valuemin')).toBe('0');
+        expect(input.getAttribute('aria-valuemax')).toBe('100');
+        expect(input.hasAttribute('min')).toBe(false);
+        expect(input.hasAttribute('max')).toBe(false);
+    });
 });
