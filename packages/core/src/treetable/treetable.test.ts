@@ -3198,8 +3198,8 @@ describe('TreeTable', () => {
 
                 expect(templatesTreetable.editingCell()).toBe(editableColumn.el.nativeElement);
                 expect(templatesTreetable.onEditInit.emit).toHaveBeenCalledWith({
-                    field: editableColumn.field,
-                    data: editableColumn.data
+                    field: editableColumn.field(),
+                    data: editableColumn.data()
                 });
             });
 
@@ -3211,8 +3211,8 @@ describe('TreeTable', () => {
                 editableColumn.onKeyDown({ keyCode: 13, shiftKey: false, preventDefault: vi.fn() } as any);
 
                 expect(templatesTreetable.onEditComplete.emit).toHaveBeenCalledWith({
-                    field: editableColumn.field,
-                    data: editableColumn.data
+                    field: editableColumn.field(),
+                    data: editableColumn.data()
                 });
             });
 
@@ -3224,8 +3224,8 @@ describe('TreeTable', () => {
                 editableColumn.onKeyDown({ keyCode: 27, preventDefault: vi.fn() } as any);
 
                 expect(templatesTreetable.onEditCancel.emit).toHaveBeenCalledWith({
-                    field: editableColumn.field,
-                    data: editableColumn.data
+                    field: editableColumn.field(),
+                    data: editableColumn.data()
                 });
             });
         });

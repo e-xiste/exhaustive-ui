@@ -4,7 +4,6 @@ import {
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
     computed,
     Directive,
@@ -15,7 +14,6 @@ import {
     Injectable,
     InjectionToken,
     input,
-    Input,
     linkedSignal,
     model,
     NgModule,
@@ -2953,48 +2951,52 @@ export class TTResizableColumn extends BaseComponent {
 
     hostName = 'TreeTable';
 
-    @Input({ transform: booleanAttribute }) ttResizableColumnDisabled: boolean | undefined;
+    readonly ttResizableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    resizer: HTMLSpanElement | undefined;
+    readonly resizer = signal<HTMLSpanElement | undefined>(undefined);
 
-    resizerMouseDownListener: VoidListener;
+    readonly resizerMouseDownListener = signal<VoidListener>(undefined);
 
-    documentMouseMoveListener: VoidListener;
+    readonly documentMouseMoveListener = signal<VoidListener>(undefined);
 
-    documentMouseUpListener: VoidListener;
+    readonly documentMouseUpListener = signal<VoidListener>(undefined);
 
-    onAfterViewInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.isEnabled()) {
-                addClass(this.el.nativeElement, 'p-resizable-column');
-                this.resizer = this.renderer.createElement('span');
-                !this.$unstyled() && this.renderer.addClass(this.resizer, 'p-column-resizer');
-                (this.resizer as HTMLElement).setAttribute('data-pc-section', 'columnresizer');
-                this.renderer.appendChild(this.el.nativeElement, this.resizer);
+    constructor() {
+        super();
+        afterNextRender(() => {
+            if (isPlatformBrowser(this.platformId)) {
+                if (this.isEnabled()) {
+                    addClass(this.el.nativeElement, 'p-resizable-column');
+                    const resizer: HTMLSpanElement = this.renderer.createElement('span');
+                    this.resizer.set(resizer);
+                    !this.$unstyled() && this.renderer.addClass(resizer, 'p-column-resizer');
+                    resizer.setAttribute('data-pc-section', 'columnresizer');
+                    this.renderer.appendChild(this.el.nativeElement, resizer);
 
-                this.zone.runOutsideAngular(() => {
-                    this.resizerMouseDownListener = this.renderer.listen(this.resizer, 'mousedown', this.onMouseDown.bind(this));
-                });
+                    this.zone.runOutsideAngular(() => {
+                        this.resizerMouseDownListener.set(this.renderer.listen(resizer, 'mousedown', this.onMouseDown.bind(this)));
+                    });
+                }
             }
-        }
+        });
     }
 
     bindDocumentEvents() {
         this.zone.runOutsideAngular(() => {
-            this.documentMouseMoveListener = this.renderer.listen(this.document, 'mousemove', this.onDocumentMouseMove.bind(this));
-            this.documentMouseUpListener = this.renderer.listen(this.document, 'mouseup', this.onDocumentMouseUp.bind(this));
+            this.documentMouseMoveListener.set(this.renderer.listen(this.document, 'mousemove', this.onDocumentMouseMove.bind(this)));
+            this.documentMouseUpListener.set(this.renderer.listen(this.document, 'mouseup', this.onDocumentMouseUp.bind(this)));
         });
     }
 
     unbindDocumentEvents() {
-        if (this.documentMouseMoveListener) {
-            this.documentMouseMoveListener();
-            this.documentMouseMoveListener = null;
+        if (this.documentMouseMoveListener()) {
+            this.documentMouseMoveListener()!();
+            this.documentMouseMoveListener.set(null);
         }
 
-        if (this.documentMouseUpListener) {
-            this.documentMouseUpListener();
-            this.documentMouseUpListener = null;
+        if (this.documentMouseUpListener()) {
+            this.documentMouseUpListener()!();
+            this.documentMouseUpListener.set(null);
         }
     }
 
@@ -3013,13 +3015,13 @@ export class TTResizableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttResizableColumnDisabled !== true;
+        return this.ttResizableColumnDisabled() !== true;
     }
 
     onDestroy() {
-        if (this.resizerMouseDownListener) {
-            this.resizerMouseDownListener();
-            this.resizerMouseDownListener = null;
+        if (this.resizerMouseDownListener()) {
+            this.resizerMouseDownListener()!();
+            this.resizerMouseDownListener.set(null);
         }
 
         this.unbindDocumentEvents();
@@ -3036,56 +3038,59 @@ export class TTReorderableColumn extends BaseComponent {
 
     hostName = 'TreeTable';
 
-    @Input({ transform: booleanAttribute }) ttReorderableColumnDisabled: boolean | undefined;
+    readonly ttReorderableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    dragStartListener: VoidListener;
+    readonly dragStartListener = signal<VoidListener>(undefined);
 
-    dragOverListener: VoidListener;
+    readonly dragOverListener = signal<VoidListener>(undefined);
 
-    dragEnterListener: VoidListener;
+    readonly dragEnterListener = signal<VoidListener>(undefined);
 
-    dragLeaveListener: VoidListener;
+    readonly dragLeaveListener = signal<VoidListener>(undefined);
 
-    mouseDownListener: VoidListener;
+    readonly mouseDownListener = signal<VoidListener>(undefined);
 
-    onAfterViewInit() {
-        if (this.isEnabled()) {
-            this.bindEvents();
-        }
+    constructor() {
+        super();
+        afterNextRender(() => {
+            if (this.isEnabled()) {
+                this.bindEvents();
+            }
+        });
     }
 
     bindEvents() {
         if (isPlatformBrowser(this.platformId)) {
             this.zone.runOutsideAngular(() => {
-                this.mouseDownListener = this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this));
-                this.dragStartListener = this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this));
-                this.dragOverListener = this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragEnter.bind(this));
-                this.dragEnterListener = this.renderer.listen(this.el.nativeElement, 'dragenter', this.onDragEnter.bind(this));
-                this.dragLeaveListener = this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this));
+                this.mouseDownListener.set(this.renderer.listen(this.el.nativeElement, 'mousedown', this.onMouseDown.bind(this)));
+                this.dragStartListener.set(this.renderer.listen(this.el.nativeElement, 'dragstart', this.onDragStart.bind(this)));
+                this.dragOverListener.set(this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragEnter.bind(this)));
+                this.dragEnterListener.set(this.renderer.listen(this.el.nativeElement, 'dragenter', this.onDragEnter.bind(this)));
+                this.dragLeaveListener.set(this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this)));
             });
         }
     }
 
     unbindEvents() {
         if (isPlatformBrowser(this.platformId)) {
-            if (this.mouseDownListener) {
-                this.mouseDownListener();
-                this.mouseDownListener = null;
+            if (this.mouseDownListener()) {
+                this.mouseDownListener()!();
+                this.mouseDownListener.set(null);
             }
 
-            if (this.dragOverListener) {
-                this.dragOverListener();
-                this.dragOverListener = null;
+            if (this.dragOverListener()) {
+                this.dragOverListener()!();
+                this.dragOverListener.set(null);
             }
 
-            if (this.dragEnterListener) {
-                this.dragEnterListener();
-                this.dragEnterListener = null;
+            if (this.dragEnterListener()) {
+                this.dragEnterListener()!();
+                this.dragEnterListener.set(null);
             }
 
-            if (this.dragLeaveListener) {
-                this.dragLeaveListener();
-                this.dragLeaveListener = null;
+            if (this.dragLeaveListener()) {
+                this.dragLeaveListener()!();
+                this.dragLeaveListener.set(null);
             }
         }
     }
@@ -3119,7 +3124,7 @@ export class TTReorderableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttReorderableColumnDisabled !== true;
+        return this.ttReorderableColumnDisabled() !== true;
     }
 
     onDestroy() {
@@ -3540,17 +3545,20 @@ export class TTEditableColumn extends BaseComponent {
     tt = inject(TreeTable);
     zone = inject(NgZone);
 
-    @Input('ttEditableColumn') data: any;
+    readonly data = input<any>(undefined, { alias: 'ttEditableColumn' });
 
-    @Input('ttEditableColumnField') field: any;
+    readonly field = input<any>(undefined, { alias: 'ttEditableColumnField' });
 
-    @Input({ transform: booleanAttribute }) ttEditableColumnDisabled: boolean | undefined;
+    readonly ttEditableColumnDisabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    onAfterViewInit() {
-        if (this.isEnabled()) {
-            !this.$unstyled() && addClass(this.el.nativeElement, 'p-editable-column');
-            this.el?.nativeElement.setAttribute('data-p-editable-column', 'true');
-        }
+    constructor() {
+        super();
+        afterNextRender(() => {
+            if (this.isEnabled()) {
+                !this.$unstyled() && addClass(this.el.nativeElement, 'p-editable-column');
+                this.el?.nativeElement.setAttribute('data-p-editable-column', 'true');
+            }
+        });
     }
 
     @HostListener('click', ['$event'])
@@ -3574,10 +3582,10 @@ export class TTEditableColumn extends BaseComponent {
     }
 
     openCell() {
-        this.tt.updateEditingCell(this.el.nativeElement, this.data, this.field);
+        this.tt.updateEditingCell(this.el.nativeElement, this.data(), this.field());
         !this.$unstyled() && addClass(this.el.nativeElement, 'p-cell-editing');
         this.el?.nativeElement.setAttribute('data-p-cell-editing', 'true');
-        this.tt.onEditInit.emit({ field: this.field, data: this.data });
+        this.tt.onEditInit.emit({ field: this.field(), data: this.data() });
         this.tt.editingCellClick.set(true);
         this.zone.runOutsideAngular(() => {
             setTimeout(() => {
@@ -3606,7 +3614,7 @@ export class TTEditableColumn extends BaseComponent {
                         this.el?.nativeElement.setAttribute('data-p-cell-editing', 'false');
                     }
                     this.closeEditingCell();
-                    this.tt.onEditComplete.emit({ field: this.field, data: this.data });
+                    this.tt.onEditComplete.emit({ field: this.field(), data: this.data() });
                 }
 
                 event.preventDefault();
@@ -3620,7 +3628,7 @@ export class TTEditableColumn extends BaseComponent {
                         this.el?.nativeElement.setAttribute('data-p-cell-editing', 'false');
                     }
                     this.closeEditingCell();
-                    this.tt.onEditCancel.emit({ field: this.field, data: this.data });
+                    this.tt.onEditCancel.emit({ field: this.field(), data: this.data() });
                 }
 
                 event.preventDefault();
@@ -3628,7 +3636,7 @@ export class TTEditableColumn extends BaseComponent {
 
             //tab
             else if (event.keyCode == 9) {
-                this.tt.onEditComplete.emit({ field: this.field, data: this.data });
+                this.tt.onEditComplete.emit({ field: this.field(), data: this.data() });
 
                 if (event.shiftKey) this.moveToPreviousCell(event);
                 else this.moveToNextCell(event);
@@ -3710,7 +3718,7 @@ export class TTEditableColumn extends BaseComponent {
     }
 
     isEnabled() {
-        return this.ttEditableColumnDisabled !== true;
+        return this.ttEditableColumnDisabled() !== true;
     }
 }
 
@@ -3720,10 +3728,10 @@ export class TTEditableColumn extends BaseComponent {
     standalone: false,
     template: `
         @if (tt.editingCell() === editableColumn.el.nativeElement) {
-            <ng-container *ngTemplateOutlet="inputTemplate || _inputTemplate()"></ng-container>
+            <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate()"></ng-container>
         }
         @if (!tt.editingCell() || tt.editingCell() !== editableColumn.el.nativeElement) {
-            <ng-container *ngTemplateOutlet="outputTemplate || _outputTemplate()"></ng-container>
+            <ng-container *ngTemplateOutlet="outputTemplate() || _outputTemplate()"></ng-container>
         }
     `,
     encapsulation: ViewEncapsulation.None,
@@ -3737,32 +3745,29 @@ export class TreeTableCellEditor extends BaseComponent {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('cellEditor'));
-    }
-
     readonly templates = contentChildren(PrimeTemplate);
 
     readonly _inputTemplate = contentChild<TemplateRef<any>>('input');
 
     readonly _outputTemplate = contentChild<TemplateRef<any>>('output');
 
-    inputTemplate: Nullable<TemplateRef<any>>;
+    readonly inputTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'input')
+                .at(-1)?.template
+    );
 
-    outputTemplate: Nullable<TemplateRef<any>>;
+    readonly outputTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'output')
+                .at(-1)?.template
+    );
 
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'input':
-                    this.inputTemplate = item.template;
-                    break;
-
-                case 'output':
-                    this.outputTemplate = item.template;
-                    break;
-            }
-        });
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('cellEditor')));
     }
 }
 
