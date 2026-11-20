@@ -287,6 +287,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                                             [tabindex]="-1"
                                             [variant]="config.inputStyle() === 'filled' || config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                                             [binary]="true"
+                                            [ariaLabel]="getOptionLabel(option)"
                                             [pt]="ptm('pcCheckbox')"
                                             hostName="listbox"
                                             [unstyled]="unstyled()"

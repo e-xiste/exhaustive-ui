@@ -3317,4 +3317,16 @@ describe('Listbox low bug fixes', () => {
         expect(filterInput.hasAttribute('aria-owns')).toBe(false);
         expect(filterInput.getAttribute('aria-controls')).toBe(list.id);
     });
+
+    it('gives each option checkbox an accessible name (optimus-ui#389)', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        fixture.componentRef.setInput('options', [{ name: 'Alpha' }, { name: 'Beta' }]);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('checkbox', true);
+        fixture.detectChanges();
+
+        const inputs = Array.from(fixture.nativeElement.querySelectorAll('li[role="option"] p-checkbox input')) as HTMLInputElement[];
+        expect(inputs.map((input) => input.getAttribute('aria-label'))).toEqual(['Alpha', 'Beta']);
+    });
 });
