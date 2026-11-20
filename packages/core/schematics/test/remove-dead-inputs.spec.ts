@@ -112,6 +112,17 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-password [(ngModel)]="value" [motionOptions]="motion" [toggleMask]="true"></p-password>\n<p-password [feedback]="false"></p-password>\n`);
     });
 
+    it('removes the deprecated showTransitionOptions/hideTransitionOptions from p-datepicker, p-datePicker and p-date-picker while keeping motionOptions', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-datepicker [(ngModel)]="date" showTransitionOptions=".12s cubic-bezier(0, 0, 0.2, 1)" [hideTransitionOptions]="hideTf" [motionOptions]="motion" [showIcon]="true"></p-datepicker>\n<p-datePicker [showTransitionOptions]="showTf" inline></p-datePicker>\n<p-date-picker hideTransitionOptions=".1s linear" [touchUI]="true"></p-date-picker>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('TransitionOptions');
+        expect(html).toBe(`<p-datepicker [(ngModel)]="date" [motionOptions]="motion" [showIcon]="true"></p-datepicker>\n<p-datePicker inline></p-datePicker>\n<p-date-picker [touchUI]="true"></p-date-picker>\n`);
+    });
+
     it('removes the deprecated size from p-overlayBadge while keeping badgeSize', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({

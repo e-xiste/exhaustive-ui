@@ -1,20 +1,24 @@
 import { CommonModule } from '@angular/common';
 import {
+    afterEveryRender,
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    effect,
     ElementRef,
     forwardRef,
     inject,
     InjectionToken,
     input,
-    Input,
+    linkedSignal,
     NgModule,
     NgZone,
     numberAttribute,
+    signal,
     TemplateRef,
-    ViewChild,
+    untracked,
     ViewEncapsulation,
     viewChild,
     contentChild,
@@ -47,7 +51,6 @@ import {
     DatePickerResponsiveOptions,
     DatePickerTypeView,
     DatePickerYearChangeEvent,
-    LocaleSettings,
     Month,
     NavigationState
 } from '@exhaustive-ui/core/types/datepicker';
@@ -69,11 +72,10 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
  */
 @Component({
     selector: 'p-datePicker, p-datepicker, p-date-picker',
-    standalone: true,
     imports: [CommonModule, Button, Ripple, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, TimesIcon, CalendarIcon, AutoFocus, InputText, SharedModule, BindModule, MotionModule],
     hostDirectives: [Bind],
     template: `
-        <ng-template [ngIf]="!inline">
+        <ng-template [ngIf]="!inline()">
             <input
                 #inputfield
                 pInputText
@@ -82,75 +84,75 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                 [attr.size]="inputSize()"
                 type="text"
                 role="combobox"
-                [attr.id]="inputId"
+                [attr.id]="inputId()"
                 [attr.name]="name()"
                 [attr.aria-required]="required()"
                 aria-autocomplete="none"
                 aria-haspopup="dialog"
-                [attr.aria-expanded]="overlayVisible ?? false"
-                [attr.aria-controls]="overlayVisible ? panelId : null"
-                [attr.aria-labelledby]="ariaLabelledBy"
-                [attr.aria-label]="ariaLabel"
-                [value]="inputFieldValue"
+                [attr.aria-expanded]="overlayVisible() ?? false"
+                [attr.aria-controls]="overlayVisible() ? panelId : null"
+                [attr.aria-labelledby]="ariaLabelledBy()"
+                [attr.aria-label]="ariaLabel()"
+                [value]="inputFieldValue()"
                 (focus)="onInputFocus($event)"
                 (keydown)="onInputKeydown($event)"
                 (click)="onInputClick()"
                 (blur)="onInputBlur($event)"
                 [attr.required]="required() ? '' : undefined"
-                [attr.readonly]="readonlyInput ? '' : undefined"
+                [attr.readonly]="readonlyInput() ? '' : undefined"
                 [attr.disabled]="$disabled() ? '' : undefined"
                 (input)="onUserInput($event)"
-                [ngStyle]="inputStyle"
-                [class]="cn(cx('pcInputText'), inputStyleClass)"
-                [attr.placeholder]="placeholder"
-                [attr.tabindex]="tabindex"
-                [attr.inputmode]="touchUI ? 'off' : null"
+                [ngStyle]="inputStyle()"
+                [class]="cn(cx('pcInputText'), inputStyleClass())"
+                [attr.placeholder]="placeholder()"
+                [attr.tabindex]="tabindex()"
+                [attr.inputmode]="touchUI() ? 'off' : null"
                 autocomplete="off"
-                [pAutoFocus]="autofocus"
+                [pAutoFocus]="autofocus()"
                 [variant]="$variant()"
                 [fluid]="hasFluid"
                 [invalid]="invalid()"
                 [pt]="ptm('pcInputText')"
                 [unstyled]="unstyled()"
             />
-            <ng-container *ngIf="showClear && !$disabled() && inputfieldViewChild()?.nativeElement?.value">
-                <svg data-p-icon="times" *ngIf="!clearIconTemplate() && !_clearIconTemplate" [class]="cx('clearIcon')" [pBind]="ptm('inputIcon')" (click)="clear()" />
-                <span *ngIf="clearIconTemplate() || _clearIconTemplate" [class]="cx('clearIcon')" [pBind]="ptm('inputIcon')" (click)="clear()">
-                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
+            <ng-container *ngIf="showClear() && !$disabled() && inputfieldViewChild()?.nativeElement?.value">
+                <svg data-p-icon="times" *ngIf="!clearIconTemplate() && !_clearIconTemplate()" [class]="cx('clearIcon')" [pBind]="ptm('inputIcon')" (click)="clear()" />
+                <span *ngIf="clearIconTemplate() || _clearIconTemplate()" [class]="cx('clearIcon')" [pBind]="ptm('inputIcon')" (click)="clear()">
+                    <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate()"></ng-template>
                 </span>
             </ng-container>
             <button
                 type="button"
                 [attr.aria-label]="iconButtonAriaLabel"
                 aria-haspopup="dialog"
-                [attr.aria-expanded]="overlayVisible ?? false"
-                [attr.aria-controls]="overlayVisible ? panelId : null"
-                *ngIf="showIcon && iconDisplay === 'button'"
+                [attr.aria-expanded]="overlayVisible() ?? false"
+                [attr.aria-controls]="overlayVisible() ? panelId : null"
+                *ngIf="showIcon() && iconDisplay() === 'button'"
                 (click)="onButtonClick($event, inputfield)"
                 [class]="cx('dropdown')"
                 [disabled]="$disabled()"
                 tabindex="0"
                 [pBind]="ptm('dropdown')"
             >
-                <span *ngIf="icon" [ngClass]="icon" [pBind]="ptm('dropdownIcon')"></span>
-                <ng-container *ngIf="!icon">
-                    <svg data-p-icon="calendar" *ngIf="!triggerIconTemplate() && !_triggerIconTemplate" [pBind]="ptm('dropdownIcon')" />
-                    <ng-template *ngTemplateOutlet="triggerIconTemplate() || _triggerIconTemplate"></ng-template>
+                <span *ngIf="icon()" [ngClass]="icon()" [pBind]="ptm('dropdownIcon')"></span>
+                <ng-container *ngIf="!icon()">
+                    <svg data-p-icon="calendar" *ngIf="!triggerIconTemplate() && !_triggerIconTemplate()" [pBind]="ptm('dropdownIcon')" />
+                    <ng-template *ngTemplateOutlet="triggerIconTemplate() || _triggerIconTemplate()"></ng-template>
                 </ng-container>
             </button>
-            <ng-container *ngIf="iconDisplay === 'input' && showIcon">
+            <ng-container *ngIf="iconDisplay() === 'input' && showIcon()">
                 <span [class]="cx('inputIconContainer')" [pBind]="ptm('inputIconContainer')" [attr.data-p]="inputIconDataP">
-                    <svg data-p-icon="calendar" (click)="onButtonClick($event)" *ngIf="!inputIconTemplate() && !_inputIconTemplate" [class]="cx('inputIcon')" [pBind]="ptm('inputIcon')" />
+                    <svg data-p-icon="calendar" (click)="onButtonClick($event)" *ngIf="!inputIconTemplate() && !_inputIconTemplate()" [class]="cx('inputIcon')" [pBind]="ptm('inputIcon')" />
 
-                    <ng-container *ngTemplateOutlet="inputIconTemplate() || _inputIconTemplate; context: { clickCallBack: onButtonClick.bind(this) }"></ng-container>
+                    <ng-container *ngTemplateOutlet="inputIconTemplate() || _inputIconTemplate(); context: { clickCallBack: onButtonClick.bind(this) }"></ng-container>
                 </span>
             </ng-container>
         </ng-template>
         <p-motion
-            *ngIf="inline || overlayVisible || overlay"
-            [visible]="inline || overlayVisible"
+            *ngIf="inline() || overlayVisible() || overlay()"
+            [visible]="inline() || overlayVisible()"
             name="p-anchored-overlay"
-            [appear]="!inline"
+            [appear]="!inline()"
             [options]="computedMotionOptions()"
             (onBeforeEnter)="onOverlayBeforeEnter($event)"
             (onAfterLeave)="onOverlayAfterLeave($event)"
@@ -158,19 +160,19 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
             <div
                 #contentWrapper
                 [attr.id]="panelId"
-                [ngStyle]="panelStyle"
-                [class]="cn(cx('panel'), panelStyleClass)"
+                [ngStyle]="panelStyle()"
+                [class]="cn(cx('panel'), panelStyleClass())"
                 [attr.aria-label]="getTranslation('chooseDate')"
-                [attr.role]="inline ? null : 'dialog'"
-                [attr.aria-modal]="inline ? null : 'true'"
+                [attr.role]="inline() ? null : 'dialog'"
+                [attr.aria-modal]="inline() ? null : 'true'"
                 (click)="onOverlayClick($event)"
                 [pBind]="ptm('panel')"
             >
                 <ng-content select="p-header"></ng-content>
-                <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
-                <ng-container *ngIf="!timeOnly">
+                <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
+                <ng-container *ngIf="!timeOnly()">
                     <div [class]="cx('calendarContainer')" [pBind]="ptm('calendarContainer')">
-                        <div [class]="cx('calendar')" *ngFor="let month of months; let i = index" [pBind]="ptm('calendar')">
+                        <div [class]="cx('calendar')" *ngFor="let month of months(); let i = index" [pBind]="ptm('calendar')">
                             <div [class]="cx('header')" [pBind]="ptm('header')">
                                 <p-button
                                     rounded
@@ -186,15 +188,15 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     [attr.data-pc-group-section]="'navigator'"
                                 >
                                     <ng-template #icon>
-                                        <svg data-p-icon="chevron-left" *ngIf="!previousIconTemplate() && !_previousIconTemplate" />
-                                        <span *ngIf="previousIconTemplate() || _previousIconTemplate">
-                                            <ng-template *ngTemplateOutlet="previousIconTemplate() || _previousIconTemplate"></ng-template>
+                                        <svg data-p-icon="chevron-left" *ngIf="!previousIconTemplate() && !_previousIconTemplate()" />
+                                        <span *ngIf="previousIconTemplate() || _previousIconTemplate()">
+                                            <ng-template *ngTemplateOutlet="previousIconTemplate() || _previousIconTemplate()"></ng-template>
                                         </span>
                                     </ng-template>
                                 </p-button>
                                 <div [class]="cx('title')" [pBind]="ptm('title')">
                                     <button
-                                        *ngIf="currentView === 'date'"
+                                        *ngIf="currentView() === 'date'"
                                         type="button"
                                         (click)="switchToMonthView($event)"
                                         (keydown)="onContainerButtonKeydown($event)"
@@ -208,7 +210,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                         {{ getMonthName(month.month) }}
                                     </button>
                                     <button
-                                        *ngIf="currentView !== 'year'"
+                                        *ngIf="currentView() !== 'year'"
                                         type="button"
                                         (click)="switchToYearView($event)"
                                         (keydown)="onContainerButtonKeydown($event)"
@@ -221,9 +223,9 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     >
                                         {{ getYear(month) }}
                                     </button>
-                                    <span [class]="cx('decade')" *ngIf="currentView === 'year'" [pBind]="ptm('decade')">
-                                        <ng-container *ngIf="!decadeTemplate() && !_decadeTemplate">{{ yearPickerValues()[0] }} - {{ yearPickerValues()[yearPickerValues().length - 1] }}</ng-container>
-                                        <ng-container *ngTemplateOutlet="decadeTemplate() || _decadeTemplate; context: { $implicit: yearPickerValues }"></ng-container>
+                                    <span [class]="cx('decade')" *ngIf="currentView() === 'year'" [pBind]="ptm('decade')">
+                                        <ng-container *ngIf="!decadeTemplate() && !_decadeTemplate()">{{ yearPickerValues()[0] }} - {{ yearPickerValues()[yearPickerValues().length - 1] }}</ng-container>
+                                        <ng-container *ngTemplateOutlet="decadeTemplate() || _decadeTemplate(); context: { $implicit: yearPickerValues }"></ng-container>
                                     </span>
                                 </div>
                                 <p-button
@@ -233,39 +235,39 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                     (keydown)="onContainerButtonKeydown($event)"
                                     [styleClass]="cx('pcNextButton')"
                                     (onClick)="onNextButtonClick($event)"
-                                    [ngStyle]="{ visibility: i === months.length - 1 ? 'visible' : 'hidden' }"
+                                    [ngStyle]="{ visibility: i === months().length - 1 ? 'visible' : 'hidden' }"
                                     [ariaLabel]="nextIconAriaLabel"
                                     [pt]="ptm('pcNextButton')"
                                     [attr.data-pc-group-section]="'navigator'"
                                 >
                                     <ng-template #icon>
-                                        <svg data-p-icon="chevron-right" *ngIf="!nextIconTemplate() && !_nextIconTemplate" />
-                                        <ng-container *ngIf="nextIconTemplate() || _nextIconTemplate">
-                                            <ng-template *ngTemplateOutlet="nextIconTemplate() || _nextIconTemplate"></ng-template>
+                                        <svg data-p-icon="chevron-right" *ngIf="!nextIconTemplate() && !_nextIconTemplate()" />
+                                        <ng-container *ngIf="nextIconTemplate() || _nextIconTemplate()">
+                                            <ng-template *ngTemplateOutlet="nextIconTemplate() || _nextIconTemplate()"></ng-template>
                                         </ng-container>
                                     </ng-template>
                                 </p-button>
                             </div>
-                            <table [class]="cx('dayView')" role="grid" *ngIf="currentView === 'date'" [pBind]="ptm('table')">
+                            <table [class]="cx('dayView')" role="grid" *ngIf="currentView() === 'date'" [pBind]="ptm('table')">
                                 <thead [pBind]="ptm('tableHeader')">
                                     <tr [pBind]="ptm('tableHeaderRow')">
-                                        <th *ngIf="showWeek" [class]="cx('weekHeader')" [pBind]="ptm('weekHeader')">
+                                        <th *ngIf="showWeek()" [class]="cx('weekHeader')" [pBind]="ptm('weekHeader')">
                                             <span [pBind]="ptm('weekHeaderLabel')">{{ getTranslation('weekHeader') }}</span>
                                         </th>
-                                        <th [class]="cx('weekDayCell')" scope="col" *ngFor="let weekDay of weekDays; let begin = first; let end = last" [pBind]="ptm('weekDayCell')">
+                                        <th [class]="cx('weekDayCell')" scope="col" *ngFor="let weekDay of weekDays(); let begin = first; let end = last" [pBind]="ptm('weekDayCell')">
                                             <span [class]="cx('weekDay')" [pBind]="ptm('weekDay')">{{ weekDay }}</span>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody [pBind]="ptm('tableBody')">
                                     <tr *ngFor="let week of month.dates; let j = index" [pBind]="ptm('tableBodyRow')">
-                                        <td *ngIf="showWeek" [class]="cx('weekNumber')" [pBind]="ptm('weekNumber')">
+                                        <td *ngIf="showWeek()" [class]="cx('weekNumber')" [pBind]="ptm('weekNumber')">
                                             <span [class]="cx('weekLabelContainer')" [pBind]="ptm('weekLabelContainer')">
                                                 {{ month.weekNumbers[j] }}
                                             </span>
                                         </td>
                                         <td *ngFor="let date of week" [attr.aria-label]="date.day" [class]="cx('dayCell', { date })" [pBind]="ptm('dayCell')">
-                                            <ng-container *ngIf="date.otherMonth ? showOtherMonths : true">
+                                            <ng-container *ngIf="date.otherMonth ? showOtherMonths() : true">
                                                 <span
                                                     [ngClass]="dayClass(date)"
                                                     (click)="onDateSelect($event, date)"
@@ -275,12 +277,12 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                                     pRipple
                                                     [pBind]="ptm('day')"
                                                 >
-                                                    <ng-container *ngIf="!dateTemplate() && !_dateTemplate && (date.selectable || (!disabledDateTemplate() && !_disabledDateTemplate))">{{ date.day }}</ng-container>
-                                                    <ng-container *ngIf="date.selectable || (!disabledDateTemplate() && !_disabledDateTemplate)">
-                                                        <ng-container *ngTemplateOutlet="dateTemplate() || _dateTemplate; context: { $implicit: date }"></ng-container>
+                                                    <ng-container *ngIf="!dateTemplate() && !_dateTemplate() && (date.selectable || (!disabledDateTemplate() && !_disabledDateTemplate()))">{{ date.day }}</ng-container>
+                                                    <ng-container *ngIf="date.selectable || (!disabledDateTemplate() && !_disabledDateTemplate())">
+                                                        <ng-container *ngTemplateOutlet="dateTemplate() || _dateTemplate(); context: { $implicit: date }"></ng-container>
                                                     </ng-container>
                                                     <ng-container *ngIf="!date.selectable">
-                                                        <ng-container *ngTemplateOutlet="disabledDateTemplate() || _disabledDateTemplate; context: { $implicit: date }"></ng-container>
+                                                        <ng-container *ngTemplateOutlet="disabledDateTemplate() || _disabledDateTemplate(); context: { $implicit: date }"></ng-container>
                                                     </ng-container>
                                                 </span>
                                                 <div *ngIf="isSelected(date)" class="p-hidden-accessible" aria-live="polite">
@@ -293,7 +295,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             </table>
                         </div>
                     </div>
-                    <div [class]="cx('monthView')" *ngIf="currentView === 'month'" [pBind]="ptm('monthView')">
+                    <div [class]="cx('monthView')" *ngIf="currentView() === 'month'" [pBind]="ptm('monthView')">
                         <span *ngFor="let m of monthPickerValues(); let i = index" (click)="onMonthSelect($event, i)" (keydown)="onMonthCellKeydown($event, i)" [class]="cx('month', { month: m, index: i })" pRipple [pBind]="ptm('month')">
                             {{ m }}
                             <div *ngIf="isMonthSelected(i)" class="p-hidden-accessible" aria-live="polite">
@@ -301,7 +303,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             </div>
                         </span>
                     </div>
-                    <div [class]="cx('yearView')" *ngIf="currentView === 'year'" [pBind]="ptm('yearView')">
+                    <div [class]="cx('yearView')" *ngIf="currentView() === 'year'" [pBind]="ptm('yearView')">
                         <span *ngFor="let y of yearPickerValues()" (click)="onYearSelect($event, y)" (keydown)="onYearCellKeydown($event, y)" [class]="cx('year', { year: y })" pRipple [pBind]="ptm('year')">
                             {{ y }}
                             <div *ngIf="isYearSelected(y)" class="p-hidden-accessible" aria-live="polite">
@@ -310,7 +312,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                         </span>
                     </div>
                 </ng-container>
-                <div [class]="cx('timePicker')" *ngIf="(showTime || timeOnly) && currentView === 'date'" [pBind]="ptm('timePicker')">
+                <div [class]="cx('timePicker')" *ngIf="(showTime() || timeOnly()) && currentView() === 'date'" [pBind]="ptm('timePicker')">
                     <div [class]="cx('hourPicker')" [pBind]="ptm('hourPicker')">
                         <p-button
                             rounded
@@ -330,11 +332,11 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate" [pBind]="ptm('pcIncrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate()" [pBind]="ptm('pcIncrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
-                        <span [pBind]="ptm('hour')"><ng-container *ngIf="currentHour < 10">0</ng-container>{{ currentHour }}</span>
+                        <span [pBind]="ptm('hour')"><ng-container *ngIf="currentHour() < 10">0</ng-container>{{ currentHour() }}</span>
                         <p-button
                             rounded
                             variant="text"
@@ -353,13 +355,13 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate" [pBind]="ptm('pcDecrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate()" [pBind]="ptm('pcDecrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
                     </div>
                     <div class="p-datepicker-separator" [pBind]="ptm('separatorContainer')">
-                        <span [pBind]="ptm('separator')">{{ timeSeparator }}</span>
+                        <span [pBind]="ptm('separator')">{{ timeSeparator() }}</span>
                     </div>
                     <div [class]="cx('minutePicker')" [pBind]="ptm('minutePicker')">
                         <p-button
@@ -380,11 +382,11 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate" [pBind]="ptm('pcIncrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate()" [pBind]="ptm('pcIncrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
-                        <span [pBind]="ptm('minute')"><ng-container *ngIf="currentMinute < 10">0</ng-container>{{ currentMinute }}</span>
+                        <span [pBind]="ptm('minute')"><ng-container *ngIf="currentMinute() < 10">0</ng-container>{{ currentMinute() }}</span>
                         <p-button
                             rounded
                             variant="text"
@@ -403,15 +405,15 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate" [pBind]="ptm('pcDecrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate()" [pBind]="ptm('pcDecrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
                     </div>
-                    <div [class]="cx('separator')" *ngIf="showSeconds" [pBind]="ptm('separatorContainer')">
-                        <span [pBind]="ptm('separator')">{{ timeSeparator }}</span>
+                    <div [class]="cx('separator')" *ngIf="showSeconds()" [pBind]="ptm('separatorContainer')">
+                        <span [pBind]="ptm('separator')">{{ timeSeparator() }}</span>
                     </div>
-                    <div [class]="cx('secondPicker')" *ngIf="showSeconds" [pBind]="ptm('secondPicker')">
+                    <div [class]="cx('secondPicker')" *ngIf="showSeconds()" [pBind]="ptm('secondPicker')">
                         <p-button
                             rounded
                             variant="text"
@@ -430,11 +432,11 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate" [pBind]="ptm('pcIncrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate()" [pBind]="ptm('pcIncrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
-                        <span [pBind]="ptm('second')"><ng-container *ngIf="currentSecond < 10">0</ng-container>{{ currentSecond }}</span>
+                        <span [pBind]="ptm('second')"><ng-container *ngIf="currentSecond() < 10">0</ng-container>{{ currentSecond() }}</span>
                         <p-button
                             rounded
                             variant="text"
@@ -453,15 +455,15 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate" [pBind]="ptm('pcDecrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate()" [pBind]="ptm('pcDecrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
                     </div>
-                    <div [class]="cx('separator')" *ngIf="hourFormat == '12'" [pBind]="ptm('separatorContainer')">
-                        <span [pBind]="ptm('separator')">{{ timeSeparator }}</span>
+                    <div [class]="cx('separator')" *ngIf="hourFormat() == '12'" [pBind]="ptm('separatorContainer')">
+                        <span [pBind]="ptm('separator')">{{ timeSeparator() }}</span>
                     </div>
-                    <div [class]="cx('ampmPicker')" *ngIf="hourFormat == '12'" [pBind]="ptm('ampmPicker')">
+                    <div [class]="cx('ampmPicker')" *ngIf="hourFormat() == '12'" [pBind]="ptm('ampmPicker')">
                         <p-button
                             text
                             rounded
@@ -475,11 +477,11 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate" [pBind]="ptm('pcIncrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-up" *ngIf="!incrementIconTemplate() && !_incrementIconTemplate()" [pBind]="ptm('pcIncrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
-                        <span [pBind]="ptm('ampm')">{{ pm ? 'PM' : 'AM' }}</span>
+                        <span [pBind]="ptm('ampm')">{{ pm() ? 'PM' : 'AM' }}</span>
                         <p-button
                             text
                             rounded
@@ -493,15 +495,15 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [attr.data-pc-group-section]="'timepickerbutton'"
                         >
                             <ng-template #icon>
-                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate" [pBind]="ptm('pcDecrementButton')['icon']" />
-                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate"></ng-template>
+                                <svg data-p-icon="chevron-down" *ngIf="!decrementIconTemplate() && !_decrementIconTemplate()" [pBind]="ptm('pcDecrementButton')['icon']" />
+                                <ng-template *ngTemplateOutlet="decrementIconTemplate() || _decrementIconTemplate()"></ng-template>
                             </ng-template>
                         </p-button>
                     </div>
                 </div>
-                <div [class]="cx('buttonbar')" *ngIf="showButtonBar" [pBind]="ptm('buttonbar')">
-                    @if (buttonBarTemplate() || _buttonBarTemplate) {
-                        <ng-container *ngTemplateOutlet="buttonBarTemplate() || _buttonBarTemplate; context: { todayCallback: onTodayButtonClick.bind(this), clearCallback: onClearButtonClick.bind(this) }"></ng-container>
+                <div [class]="cx('buttonbar')" *ngIf="showButtonBar()" [pBind]="ptm('buttonbar')">
+                    @if (buttonBarTemplate() || _buttonBarTemplate()) {
+                        <ng-container *ngTemplateOutlet="buttonBarTemplate() || _buttonBarTemplate(); context: { todayCallback: onTodayButtonClick.bind(this), clearCallback: onClearButtonClick.bind(this) }"></ng-container>
                     } @else {
                         <p-button
                             size="small"
@@ -509,7 +511,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [label]="getTranslation('today')"
                             (keydown)="onContainerButtonKeydown($event)"
                             (onClick)="onTodayButtonClick($event)"
-                            [ngClass]="todayButtonStyleClass"
+                            [ngClass]="todayButtonStyleClass()"
                             severity="secondary"
                             variant="text"
                             size="small"
@@ -522,7 +524,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                             [label]="getTranslation('clear')"
                             (keydown)="onContainerButtonKeydown($event)"
                             (onClick)="onClearButtonClick($event)"
-                            [ngClass]="clearButtonStyleClass"
+                            [ngClass]="clearButtonStyleClass()"
                             severity="secondary"
                             variant="text"
                             size="small"
@@ -532,7 +534,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                     }
                 </div>
                 <ng-content select="p-footer"></ng-content>
-                <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
+                <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate()"></ng-container>
             </div>
         </p-motion>
     `,
@@ -540,7 +542,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': "cn(cx('root'), styleClass)",
+        '[class]': "cx('root')",
         '[style]': "sx('root')"
     }
 })
@@ -554,401 +556,278 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     $pcDatePicker: DatePicker | undefined = inject(DATEPICKER_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
-    @Input() iconDisplay: 'input' | 'button' = 'button';
-    /**
-     * Style class of the component.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    iconDisplay = input<'input' | 'button'>('button');
     /**
      * Inline style of the input field.
      * @group Props
      */
-    @Input() inputStyle: { [klass: string]: any } | null | undefined;
+    inputStyle = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Identifier of the focus input to match a label defined for the component.
      * @group Props
      */
-    @Input() inputId: string | undefined;
+    inputId = input<string | undefined>();
     /**
      * Style class of the input field.
      * @group Props
      */
-    @Input() inputStyleClass: string | undefined;
+    inputStyleClass = input<string | undefined>();
     /**
      * Placeholder text for the input.
      * @group Props
      */
-    @Input() placeholder: string | undefined;
+    placeholder = input<string | undefined>();
     /**
      * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
      * @group Props
      */
-    @Input() ariaLabelledBy: string | undefined;
+    ariaLabelledBy = input<string | undefined>();
     /**
      * Defines a string that labels the input for accessibility.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
+    ariaLabel = input<string | undefined>();
 
     /**
      * Defines a string that labels the icon button for accessibility.
      * @group Props
      */
-    @Input() iconAriaLabel: string | undefined;
+    iconAriaLabel = input<string | undefined>();
     /**
      * Format of the date which can also be defined at locale settings.
      * @group Props
      */
-    @Input()
-    get dateFormat(): string | undefined {
-        return this._dateFormat;
-    }
-    set dateFormat(value: string | undefined) {
-        this._dateFormat = value;
-        if (this.initialized) {
-            this.updateInputfield();
-        }
-    }
+    dateFormat = input<string | undefined>();
     /**
      * Separator for multiple selection mode.
      * @group Props
      */
-    @Input() multipleSeparator: string = ',';
+    multipleSeparator = input<string>(',');
     /**
      * Separator for joining start and end dates on range selection mode.
      * @group Props
      */
-    @Input() rangeSeparator: string = '-';
+    rangeSeparator = input<string>('-');
     /**
      * When enabled, displays the datepicker as inline. Default is false for popup mode.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) inline: boolean = false;
+    inline = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to display dates in other months (non-selectable) at the start or end of the current month. To make these days selectable use the selectOtherMonths option.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showOtherMonths: boolean = true;
+    showOtherMonths = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether days in other months shown before or after the current month are selectable. This only applies if the showOtherMonths option is set to true.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) selectOtherMonths: boolean | undefined;
+    selectOtherMonths = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * When enabled, displays a button with icon next to input.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showIcon: boolean | undefined;
+    showIcon = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Icon of the datepicker button.
      * @group Props
      */
-    @Input() icon: string | undefined;
+    icon = input<string | undefined>();
     /**
      * When specified, prevents entering the date manually with keyboard.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonlyInput: boolean | undefined;
+    readonlyInput = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * The cutoff year for determining the century for a date.
      * @group Props
      */
-    @Input() shortYearCutoff: any = '+10';
+    shortYearCutoff = input<any>('+10');
     /**
      * Specifies 12 or 24 hour format.
      * @group Props
      */
-    @Input()
-    get hourFormat(): string {
-        return this._hourFormat;
-    }
-    set hourFormat(value: string) {
-        this._hourFormat = value;
-        if (this.initialized) {
-            this.updateInputfield();
-        }
-    }
+    hourFormat = input<string>('24');
     /**
      * Whether to display timepicker only.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) timeOnly: boolean | undefined;
+    timeOnly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Hours to change per step.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) stepHour: number = 1;
+    stepHour = input<number, unknown>(1, { transform: numberAttribute });
     /**
      * Minutes to change per step.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) stepMinute: number = 1;
+    stepMinute = input<number, unknown>(1, { transform: numberAttribute });
     /**
      * Seconds to change per step.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) stepSecond: number = 1;
+    stepSecond = input<number, unknown>(1, { transform: numberAttribute });
     /**
      * Whether to show the seconds in time picker.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showSeconds: boolean = false;
+    showSeconds = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * When disabled, datepicker will not be visible with input focus.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showOnFocus: boolean = true;
+    showOnFocus = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * When enabled, datepicker will show week numbers.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showWeek: boolean = false;
+    showWeek = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * When enabled, datepicker will start week numbers from first day of the year.
      * @group Props
      */
-    @Input() startWeekFromFirstDayOfYear: boolean = false;
+    startWeekFromFirstDayOfYear = input<boolean>(false);
     /**
      * When enabled, a clear icon is displayed to clear the value.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showClear: boolean = false;
+    showClear = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Type of the value to write back to ngModel, default is date and alternative is string.
      * @group Props
      */
-    @Input() dataType: string = 'date';
+    dataType = input<string>('date');
     /**
      * Defines the quantity of the selection, valid values are "single", "multiple" and "range".
      * @group Props
      */
-    @Input() selectionMode: 'single' | 'multiple' | 'range' | undefined = 'single';
+    selectionMode = input<'single' | 'multiple' | 'range' | undefined>('single');
     /**
      * Maximum number of selectable dates in multiple mode.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) maxDateCount: number | undefined;
+    maxDateCount = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Whether to display today and clear buttons at the footer
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showButtonBar: boolean | undefined;
+    showButtonBar = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Style class of the today button.
      * @group Props
      */
-    @Input() todayButtonStyleClass: string | undefined;
+    todayButtonStyleClass = input<string | undefined>();
     /**
      * Style class of the clear button.
      * @group Props
      */
-    @Input() clearButtonStyleClass: string | undefined;
+    clearButtonStyleClass = input<string | undefined>();
     /**
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocus: boolean | undefined;
+    autofocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to automatically manage layering.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoZIndex: boolean = true;
+    autoZIndex = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Base zIndex value to use in layering.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) baseZIndex: number = 0;
+    baseZIndex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * Style class of the datetimepicker container element.
      * @group Props
      */
-    @Input() panelStyleClass: string | undefined;
+    panelStyleClass = input<string | undefined>();
     /**
      * Inline style of the datetimepicker container element.
      * @group Props
      */
-    @Input() panelStyle: any;
+    panelStyle = input<any>();
     /**
      * Keep invalid value when input blur.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) keepInvalid: boolean = false;
+    keepInvalid = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to hide the overlay on date selection.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) hideOnDateTimeSelect: boolean = true;
+    hideOnDateTimeSelect = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * When enabled, datepicker overlay is displayed as optimized for touch devices.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) touchUI: boolean | undefined;
+    touchUI = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Separator of time selector.
      * @group Props
      */
-    @Input() timeSeparator: string = ':';
+    timeSeparator = input<string>(':');
     /**
      * When enabled, can only focus on elements inside the datepicker.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) focusTrap: boolean = true;
-    /**
-     * Transition options of the show animation.
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    @Input() showTransitionOptions: string = '.12s cubic-bezier(0, 0, 0.2, 1)';
-    /**
-     * Transition options of the hide animation.
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    @Input() hideTransitionOptions: string = '.1s linear';
+    focusTrap = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Index of the element in tabbing order.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) tabindex: number | undefined;
+    tabindex = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * The minimum selectable date.
      * @group Props
      */
-    @Input() get minDate(): Date | undefined | null {
-        return this._minDate;
-    }
-    set minDate(date: Date | undefined | null) {
-        this._minDate = date;
-
-        if (this.currentMonth != undefined && this.currentMonth != null && this.currentYear) {
-            this.createMonths(this.currentMonth, this.currentYear);
-        }
-    }
+    minDate = input<Date | undefined | null>();
     /**
      * The maximum selectable date.
      * @group Props
      */
-    @Input() get maxDate(): Date | undefined | null {
-        return this._maxDate;
-    }
-    set maxDate(date: Date | undefined | null) {
-        this._maxDate = date;
-
-        if (this.currentMonth != undefined && this.currentMonth != null && this.currentYear) {
-            this.createMonths(this.currentMonth, this.currentYear);
-        }
-    }
+    maxDate = input<Date | undefined | null>();
     /**
      * Array with dates that should be disabled (not selectable).
      * @group Props
      */
-    @Input() get disabledDates(): Date[] {
-        return this._disabledDates;
-    }
-    set disabledDates(disabledDates: Date[]) {
-        this._disabledDates = disabledDates;
-        if (this.currentMonth != undefined && this.currentMonth != null && this.currentYear) {
-            this.createMonths(this.currentMonth, this.currentYear);
-        }
-    }
+    disabledDates = input<Date[]>();
     /**
      * Array with weekday numbers that should be disabled (not selectable).
      * @group Props
      */
-    @Input() get disabledDays(): number[] {
-        return this._disabledDays;
-    }
-    set disabledDays(disabledDays: number[]) {
-        this._disabledDays = disabledDays;
-
-        if (this.currentMonth != undefined && this.currentMonth != null && this.currentYear) {
-            this.createMonths(this.currentMonth, this.currentYear);
-        }
-    }
+    disabledDays = input<number[]>();
     /**
      * Whether to display timepicker.
      * @group Props
      */
-    @Input() get showTime(): boolean {
-        return this._showTime;
-    }
-    set showTime(showTime: boolean) {
-        this._showTime = showTime;
-
-        if (this.currentHour === undefined) {
-            this.initTime(this.value || new Date());
-        }
-        this.updateInputfield();
-    }
+    showTime = input<boolean>();
     /**
      * An array of options for responsive design.
      * @group Props
      */
-    @Input() get responsiveOptions(): DatePickerResponsiveOptions[] {
-        return this._responsiveOptions;
-    }
-    set responsiveOptions(responsiveOptions: DatePickerResponsiveOptions[]) {
-        this._responsiveOptions = responsiveOptions;
-
-        this.destroyResponsiveStyleElement();
-        this.createResponsiveStyle();
-    }
+    responsiveOptions = input<DatePickerResponsiveOptions[]>();
     /**
      * Number of months to display.
      * @group Props
      */
-    @Input() get numberOfMonths(): number {
-        return this._numberOfMonths;
-    }
-    set numberOfMonths(numberOfMonths: number) {
-        this._numberOfMonths = numberOfMonths;
-
-        this.destroyResponsiveStyleElement();
-        this.createResponsiveStyle();
-    }
+    numberOfMonths = input<number>(1);
     /**
      * Defines the first of the week for various date calculations.
      * @group Props
      */
-    @Input() get firstDayOfWeek(): number {
-        return this._firstDayOfWeek;
-    }
-    set firstDayOfWeek(firstDayOfWeek: number) {
-        this._firstDayOfWeek = firstDayOfWeek;
-
-        this.createWeekDays();
-    }
+    firstDayOfWeek = input<number>();
     /**
      * Type of view to display, valid values are "date" for datepicker and "month" for month picker.
      * @group Props
      */
-    @Input() get view(): DatePickerTypeView {
-        return this._view;
-    }
-    set view(view: DatePickerTypeView) {
-        this._view = view;
-        this.currentView = this._view;
-    }
+    view = input<DatePickerTypeView>('date');
     /**
      * Set the date to highlight on first opening if the field is blank.
      * @group Props
      */
-    @Input() get defaultDate(): Date | null {
-        return this._defaultDate;
-    }
-    set defaultDate(defaultDate: Date | null) {
-        this._defaultDate = defaultDate!;
-
-        if (this.initialized) {
-            const date = defaultDate || new Date();
-            this.currentMonth = date.getMonth();
-            this.currentYear = date.getFullYear();
-            this.initTime(date);
-            this.createMonths(this.currentMonth, this.currentYear);
-        }
-    }
+    defaultDate = input<Date | null>();
     /**
      * Target element to attach the overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @defaultValue 'self'
@@ -1040,88 +919,55 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     readonly inputfieldViewChild = viewChild<Nullable<ElementRef>>('inputfield');
 
-    @ViewChild('contentWrapper', { static: false }) set content(content: ElementRef) {
-        this.contentViewChild = content;
-
-        if (this.contentViewChild && this.overlay) {
-            if (this.isMonthNavigate) {
-                Promise.resolve(null).then(() => this.updateFocus());
-                this.isMonthNavigate = false;
-            } else {
-                if (!this.focus && !this.inline) {
-                    this.initFocusableCell();
-                }
-            }
-        }
-    }
+    contentViewChild = viewChild<ElementRef>('contentWrapper');
 
     _componentStyle = inject(DatePickerStyle);
 
-    contentViewChild!: ElementRef;
+    value = signal<any>(undefined);
 
-    value: any;
+    months = signal<Month[]>(undefined!);
 
-    dates: Nullable<Date[]>;
+    weekDays = signal<Nullable<string[]>>(undefined);
 
-    months!: Month[];
+    currentMonth = signal<number>(undefined!);
 
-    weekDays: Nullable<string[]>;
+    currentYear = signal<number>(undefined!);
 
-    currentMonth!: number;
+    currentHour = signal<Nullable<number>>(undefined);
 
-    currentYear!: number;
+    currentMinute = signal<Nullable<number>>(undefined);
 
-    currentHour: Nullable<number>;
+    currentSecond = signal<Nullable<number>>(undefined);
 
-    currentMinute: Nullable<number>;
+    pm = signal<Nullable<boolean>>(undefined);
 
-    currentSecond: Nullable<number>;
-    p;
-    pm: Nullable<boolean>;
+    mask = signal<Nullable<HTMLDivElement>>(undefined);
 
-    mask: Nullable<HTMLDivElement>;
+    maskClickListener = signal<VoidListener>(undefined);
 
-    maskClickListener: VoidListener;
+    overlay = signal<Nullable<HTMLElement>>(undefined);
 
-    overlay: Nullable<HTMLElement>;
+    responsiveStyleElement = signal<HTMLStyleElement | undefined | null>(undefined);
 
-    responsiveStyleElement: HTMLStyleElement | undefined | null;
+    overlayVisible = signal<Nullable<boolean>>(undefined);
 
-    overlayVisible: Nullable<boolean>;
-
-    overlayMinWidth: Nullable<number>;
+    overlayMinWidth = signal<Nullable<number>>(undefined);
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    calendarElement: Nullable<HTMLElement | ElementRef>;
+    timePickerTimer = signal<any>(undefined);
 
-    timePickerTimer: any;
+    documentClickListener = signal<VoidListener>(undefined);
 
-    documentClickListener: VoidListener;
+    animationEndListener = signal<VoidListener>(undefined);
 
-    animationEndListener: VoidListener;
+    ticksTo1970 = signal<Nullable<number>>(undefined);
 
-    ticksTo1970: Nullable<number>;
+    yearOptions = signal<Nullable<number[]>>(undefined);
 
-    yearOptions: Nullable<number[]>;
+    focus = signal<Nullable<boolean>>(undefined);
 
-    focus: Nullable<boolean>;
-
-    isKeydown: Nullable<boolean>;
-
-    _minDate?: Date | null;
-
-    _maxDate?: Date | null;
-
-    _dateFormat: string | undefined;
-
-    _hourFormat: string = '24';
-
-    _showTime!: boolean;
-
-    _yearRange!: string;
-
-    preventDocumentListener: Nullable<boolean>;
+    isKeydown = signal<Nullable<boolean>>(undefined);
 
     dayClass(date) {
         return this._componentStyle.classes.day({ instance: this, date: date });
@@ -1210,227 +1056,299 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
      */
     readonly buttonBarTemplate = contentChild<Nullable<TemplateRef<DatePickerButtonBarTemplateContext>>>('buttonbar', { descendants: false });
 
-    _dateTemplate: TemplateRef<DatePickerDateTemplateContext> | undefined;
+    readonly _dateTemplate = computed<TemplateRef<DatePickerDateTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => !['decade', 'disabledDate', 'header', 'inputicon', 'buttonbar', 'previousicon', 'nexticon', 'triggericon', 'clearicon', 'decrementicon', 'incrementicon', 'footer'].includes(item.getType()))
+                .at(-1)?.template
+    );
 
-    _headerTemplate: TemplateRef<void> | undefined;
+    readonly _headerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
-    _footerTemplate: TemplateRef<void> | undefined;
+    readonly _footerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
 
-    _disabledDateTemplate: TemplateRef<DatePickerDisabledDateTemplateContext> | undefined;
+    readonly _disabledDateTemplate = computed<TemplateRef<DatePickerDisabledDateTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'disabledDate')
+                .at(-1)?.template
+    );
 
-    _decadeTemplate: TemplateRef<DatePickerDecadeTemplateContext> | undefined;
+    readonly _decadeTemplate = computed<TemplateRef<DatePickerDecadeTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'decade')
+                .at(-1)?.template
+    );
 
-    _previousIconTemplate: TemplateRef<void> | undefined;
+    readonly _previousIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'previousicon')
+                .at(-1)?.template
+    );
 
-    _nextIconTemplate: TemplateRef<void> | undefined;
+    readonly _nextIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'nexticon')
+                .at(-1)?.template
+    );
 
-    _triggerIconTemplate: TemplateRef<void> | undefined;
+    readonly _triggerIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'triggericon')
+                .at(-1)?.template
+    );
 
-    _clearIconTemplate: TemplateRef<void> | undefined;
+    readonly _clearIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'clearicon')
+                .at(-1)?.template
+    );
 
-    _decrementIconTemplate: TemplateRef<void> | undefined;
+    readonly _decrementIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'decrementicon')
+                .at(-1)?.template
+    );
 
-    _incrementIconTemplate: TemplateRef<void> | undefined;
+    readonly _incrementIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'incrementicon')
+                .at(-1)?.template
+    );
 
-    _inputIconTemplate: TemplateRef<DatePickerInputIconTemplateContext> | undefined;
+    readonly _inputIconTemplate = computed<TemplateRef<DatePickerInputIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'inputicon')
+                .at(-1)?.template
+    );
 
-    _buttonBarTemplate: TemplateRef<DatePickerButtonBarTemplateContext> | undefined;
+    readonly _buttonBarTemplate = computed<TemplateRef<DatePickerButtonBarTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'buttonbar')
+                .at(-1)?.template
+    );
 
-    _disabledDates!: Array<Date>;
+    scrollHandler = signal<Nullable<ConnectedOverlayScrollHandler>>(undefined);
 
-    _disabledDays!: Array<number>;
+    documentResizeListener = signal<VoidListener>(undefined);
 
-    selectElement: Nullable;
+    navigationState = signal<Nullable<NavigationState>>(null);
 
-    todayElement: Nullable;
+    isMonthNavigate = signal<Nullable<boolean>>(undefined);
 
-    focusElement: Nullable;
+    translationSubscription = signal<Nullable<Subscription>>(undefined);
 
-    scrollHandler: Nullable<ConnectedOverlayScrollHandler>;
+    currentView = linkedSignal<Nullable<string>>(() => this.view());
 
-    documentResizeListener: VoidListener;
+    attributeSelector: Nullable<string> = uuid('pn_id_');
 
-    navigationState: Nullable<NavigationState> = null;
+    panelId: Nullable<string> = this.attributeSelector + '_panel';
 
-    isMonthNavigate: Nullable<boolean>;
+    preventFocus = signal<Nullable<boolean>>(undefined);
 
-    initialized: Nullable<boolean>;
+    _focusKey = signal<Nullable<string>>(null);
 
-    translationSubscription: Nullable<Subscription>;
-
-    _locale!: LocaleSettings;
-
-    _responsiveOptions!: DatePickerResponsiveOptions[];
-
-    currentView: Nullable<string>;
-
-    attributeSelector: Nullable<string>;
-
-    panelId: Nullable<string>;
-
-    _numberOfMonths: number = 1;
-
-    _firstDayOfWeek!: number;
-
-    _view: DatePickerTypeView = 'date';
-
-    preventFocus: Nullable<boolean>;
-
-    _defaultDate!: Date;
-
-    _focusKey: Nullable<string> = null;
-
-    private window: Window;
-
-    get locale() {
-        return this._locale;
-    }
+    private window: Window = this.document.defaultView as Window;
 
     get iconButtonAriaLabel() {
-        return this.iconAriaLabel ? this.iconAriaLabel : this.getTranslation('chooseDate');
+        return this.iconAriaLabel() ? this.iconAriaLabel() : this.getTranslation('chooseDate');
     }
 
     get prevIconAriaLabel() {
-        return this.currentView === 'year' ? this.getTranslation('prevDecade') : this.currentView === 'month' ? this.getTranslation('prevYear') : this.getTranslation('prevMonth');
+        return this.currentView() === 'year' ? this.getTranslation('prevDecade') : this.currentView() === 'month' ? this.getTranslation('prevYear') : this.getTranslation('prevMonth');
     }
 
     get nextIconAriaLabel() {
-        return this.currentView === 'year' ? this.getTranslation('nextDecade') : this.currentView === 'month' ? this.getTranslation('nextYear') : this.getTranslation('nextMonth');
+        return this.currentView() === 'year' ? this.getTranslation('nextDecade') : this.currentView() === 'month' ? this.getTranslation('nextYear') : this.getTranslation('nextMonth');
     }
 
     constructor() {
         super();
-        this.window = this.document.defaultView as Window;
-    }
 
-    onInit() {
-        this.attributeSelector = uuid('pn_id_');
-        this.panelId = this.attributeSelector + '_panel';
-        const date = this.defaultDate || new Date();
-        this.createResponsiveStyle();
-        this.currentMonth = date.getMonth();
-        this.currentYear = date.getFullYear();
-        this.yearOptions = [];
-        this.currentView = this.view;
+        let formatBound = false;
+        effect(() => {
+            this.dateFormat();
+            this.hourFormat();
 
-        if (this.view === 'date') {
-            this.createWeekDays();
-            this.initTime(date);
-            this.createMonths(this.currentMonth, this.currentYear);
-            this.ticksTo1970 = ((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) + Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000;
-        }
-
-        this.translationSubscription = this.config.translationObserver.subscribe(() => {
-            this.createWeekDays();
-            this.cd.markForCheck();
+            if (formatBound) {
+                untracked(() => this.updateInputfield());
+            }
+            formatBound = true;
         });
 
-        this.initialized = true;
-    }
+        let restrictionsBound = false;
+        effect(() => {
+            this.minDate();
+            this.maxDate();
+            this.disabledDates();
+            this.disabledDays();
 
-    onAfterViewInit() {
-        if (this.inline) {
-            this.contentViewChild && this.contentViewChild.nativeElement.setAttribute(this.attributeSelector, '');
-        } else {
-            if (!this.$disabled() && this.overlay) {
-                this.initFocusableCell();
-                if (this.numberOfMonths === 1) {
-                    if (this.contentViewChild && this.contentViewChild.nativeElement) {
-                        this.contentViewChild.nativeElement.style.width = getOuterWidth(this.el?.nativeElement) + 'px';
+            if (restrictionsBound) {
+                untracked(() => {
+                    if (this.currentMonth() != undefined && this.currentMonth() != null && this.currentYear()) {
+                        this.createMonths(this.currentMonth(), this.currentYear());
+                    }
+                });
+            }
+            restrictionsBound = true;
+        });
+
+        let showTimeBound = false;
+        effect(() => {
+            const showTime = this.showTime();
+
+            if (showTimeBound || showTime !== undefined) {
+                untracked(() => {
+                    if (this.currentHour() === undefined) {
+                        this.initTime(this.value() || new Date());
+                    }
+                    this.updateInputfield();
+                });
+            }
+            showTimeBound = true;
+        });
+
+        let responsiveBound = false;
+        effect(() => {
+            this.responsiveOptions();
+            this.numberOfMonths();
+
+            if (responsiveBound) {
+                untracked(() => {
+                    this.destroyResponsiveStyleElement();
+                    this.createResponsiveStyle();
+                });
+            }
+            responsiveBound = true;
+        });
+
+        let firstDayOfWeekBound = false;
+        effect(() => {
+            const firstDayOfWeek = this.firstDayOfWeek();
+
+            if (firstDayOfWeekBound || firstDayOfWeek !== undefined) {
+                untracked(() => this.createWeekDays());
+            }
+            firstDayOfWeekBound = true;
+        });
+
+        let defaultDateBound = false;
+        effect(() => {
+            const defaultDate = this.defaultDate();
+
+            if (defaultDateBound) {
+                untracked(() => {
+                    const date = defaultDate || new Date();
+                    this.currentMonth.set(date.getMonth());
+                    this.currentYear.set(date.getFullYear());
+                    this.initTime(date);
+                    this.createMonths(this.currentMonth(), this.currentYear());
+                });
+            }
+            defaultDateBound = true;
+        });
+
+        effect(() => {
+            const contentViewChild = this.contentViewChild();
+
+            untracked(() => {
+                if (contentViewChild && this.overlay()) {
+                    if (this.isMonthNavigate()) {
+                        Promise.resolve(null).then(() => this.updateFocus());
+                        this.isMonthNavigate.set(false);
+                    } else {
+                        if (!this.focus() && !this.inline()) {
+                            this.initFocusableCell();
+                        }
+                    }
+                }
+            });
+        });
+
+        afterNextRender(() => {
+            if (this.inline()) {
+                this.contentViewChild() && this.contentViewChild()!.nativeElement.setAttribute(this.attributeSelector, '');
+            } else {
+                if (!this.$disabled() && this.overlay()) {
+                    this.initFocusableCell();
+                    if (this.numberOfMonths() === 1) {
+                        if (this.contentViewChild() && this.contentViewChild()!.nativeElement) {
+                            this.contentViewChild()!.nativeElement.style.width = getOuterWidth(this.el?.nativeElement) + 'px';
+                        }
                     }
                 }
             }
-        }
+        });
+
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
     }
 
-    onAfterViewChecked() {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
+    onInit() {
+        const date = this.defaultDate() || new Date();
+        this.createResponsiveStyle();
+        this.currentMonth.set(date.getMonth());
+        this.currentYear.set(date.getFullYear());
+        this.yearOptions.set([]);
+
+        if (this.view() === 'date') {
+            this.createWeekDays();
+            this.initTime(date);
+            this.createMonths(this.currentMonth(), this.currentYear());
+            this.ticksTo1970.set(((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) + Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000);
+        }
+
+        this.translationSubscription.set(
+            this.config.translationObserver.subscribe(() => {
+                this.createWeekDays();
+                this.cd.markForCheck();
+            })
+        );
     }
 
     readonly templates = contentChildren(PrimeTemplate);
-
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'date':
-                    this._dateTemplate = item.template;
-                    break;
-
-                case 'decade':
-                    this._decadeTemplate = item.template;
-                    break;
-
-                case 'disabledDate':
-                    this._disabledDateTemplate = item.template;
-                    break;
-
-                case 'header':
-                    this._headerTemplate = item.template;
-                    break;
-
-                case 'inputicon':
-                    this._inputIconTemplate = item.template;
-                    break;
-
-                case 'buttonbar':
-                    this._buttonBarTemplate = item.template;
-                    break;
-
-                case 'previousicon':
-                    this._previousIconTemplate = item.template;
-                    break;
-
-                case 'nexticon':
-                    this._nextIconTemplate = item.template;
-                    break;
-
-                case 'triggericon':
-                    this._triggerIconTemplate = item.template;
-                    break;
-
-                case 'clearicon':
-                    this._clearIconTemplate = item.template;
-                    break;
-
-                case 'decrementicon':
-                    this._decrementIconTemplate = item.template;
-                    break;
-
-                case 'incrementicon':
-                    this._incrementIconTemplate = item.template;
-                    break;
-
-                case 'footer':
-                    this._footerTemplate = item.template;
-                    break;
-
-                default:
-                    this._dateTemplate = item.template;
-                    break;
-            }
-        });
-    }
 
     getTranslation(option: string) {
         return this.config.getTranslation(option);
     }
 
     populateYearOptions(start: number, end: number) {
-        this.yearOptions = [];
+        const yearOptions: number[] = [];
 
         for (let i = start; i <= end; i++) {
-            this.yearOptions.push(i);
+            yearOptions.push(i);
         }
+
+        this.yearOptions.set(yearOptions);
     }
 
     createWeekDays() {
-        this.weekDays = [];
+        const weekDays: string[] = [];
         let dayIndex = this.getFirstDateOfWeek();
         let dayLabels = this.getTranslation(TranslationKeys.DAY_NAMES_MIN);
         for (let i = 0; i < 7; i++) {
-            this.weekDays.push(dayLabels[dayIndex]);
+            weekDays.push(dayLabels[dayIndex]);
             dayIndex = dayIndex == 6 ? 0 : ++dayIndex;
         }
+        this.weekDays.set(weekDays);
     }
 
     monthPickerValues() {
@@ -1442,19 +1360,19 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         return monthPickerValues;
     }
 
-    yearPickerValues() {
+    yearPickerValues = computed(() => {
         let yearPickerValues: any[] = [];
-        let base = <number>this.currentYear - (<number>this.currentYear % 10);
+        let base = <number>this.currentYear() - (<number>this.currentYear() % 10);
         for (let i = 0; i < 10; i++) {
             yearPickerValues.push(base + i);
         }
 
         return yearPickerValues;
-    }
+    });
 
     createMonths(month: number, year: number) {
-        this.months = this.months = [];
-        for (let i = 0; i < this.numberOfMonths; i++) {
+        const months: Month[] = [];
+        for (let i = 0; i < this.numberOfMonths(); i++) {
             let m = month + i;
             let y = year;
             if (m > 11) {
@@ -1462,13 +1380,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 y = year + Math.floor((month + i) / 12);
             }
 
-            this.months.push(this.createMonth(m, y));
+            months.push(this.createMonth(m, y));
         }
+        this.months.set(months);
     }
 
     getWeekNumber(date: Date) {
         let checkDate = new Date(date.getTime());
-        if (this.startWeekFromFirstDayOfYear) {
+        if (this.startWeekFromFirstDayOfYear()) {
             let firstDayOfWeek: number = +this.getFirstDateOfWeek();
             checkDate.setDate(checkDate.getDate() + 6 + firstDayOfWeek - checkDate.getDay());
         } else {
@@ -1543,7 +1462,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }
             }
 
-            if (this.showWeek) {
+            if (this.showWeek()) {
                 (weekNumbers as any[]).push(this.getWeekNumber(new Date(week[0].year, week[0].month, week[0].day)));
             }
 
@@ -1559,16 +1478,16 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     initTime(date: Date) {
-        this.pm = date.getHours() > 11;
+        this.pm.set(date.getHours() > 11);
 
-        if (this.showTime) {
-            this.currentMinute = date.getMinutes();
-            this.currentSecond = this.showSeconds ? date.getSeconds() : 0;
+        if (this.showTime()) {
+            this.currentMinute.set(date.getMinutes());
+            this.currentSecond.set(this.showSeconds() ? date.getSeconds() : 0);
             this.setCurrentHourPM(date.getHours());
-        } else if (this.timeOnly) {
-            this.currentMinute = 0;
-            this.currentHour = 0;
-            this.currentSecond = 0;
+        } else if (this.timeOnly()) {
+            this.currentMinute.set(0);
+            this.currentHour.set(0);
+            this.currentSecond.set(0);
         }
     }
 
@@ -1578,28 +1497,28 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             return;
         }
 
-        this.isMonthNavigate = true;
+        this.isMonthNavigate.set(true);
 
-        if (this.currentView === 'month') {
+        if (this.currentView() === 'month') {
             this.decrementYear();
             setTimeout(() => {
                 this.updateFocus();
             }, 1);
-        } else if (this.currentView === 'year') {
+        } else if (this.currentView() === 'year') {
             this.decrementDecade();
             setTimeout(() => {
                 this.updateFocus();
             }, 1);
         } else {
-            if (this.currentMonth === 0) {
-                this.currentMonth = 11;
+            if (this.currentMonth() === 0) {
+                this.currentMonth.set(11);
                 this.decrementYear();
             } else {
-                this.currentMonth--;
+                this.currentMonth.update((v) => v - 1);
             }
 
-            this.onMonthChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
-            this.createMonths(this.currentMonth, this.currentYear);
+            this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
+            this.createMonths(this.currentMonth(), this.currentYear());
         }
     }
 
@@ -1609,54 +1528,54 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             return;
         }
 
-        this.isMonthNavigate = true;
+        this.isMonthNavigate.set(true);
 
-        if (this.currentView === 'month') {
+        if (this.currentView() === 'month') {
             this.incrementYear();
             setTimeout(() => {
                 this.updateFocus();
             }, 1);
-        } else if (this.currentView === 'year') {
+        } else if (this.currentView() === 'year') {
             this.incrementDecade();
             setTimeout(() => {
                 this.updateFocus();
             }, 1);
         } else {
-            if (this.currentMonth === 11) {
-                this.currentMonth = 0;
+            if (this.currentMonth() === 11) {
+                this.currentMonth.set(0);
                 this.incrementYear();
             } else {
-                this.currentMonth++;
+                this.currentMonth.update((v) => v + 1);
             }
 
-            this.onMonthChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
-            this.createMonths(this.currentMonth, this.currentYear);
+            this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
+            this.createMonths(this.currentMonth(), this.currentYear());
         }
     }
 
     decrementYear() {
-        this.currentYear--;
-        let _yearOptions = <number[]>this.yearOptions;
+        this.currentYear.update((v) => v - 1);
+        let _yearOptions = <number[]>this.yearOptions();
 
-        if (this.currentYear < _yearOptions[0]) {
+        if (this.currentYear() < _yearOptions[0]) {
             let difference = _yearOptions[_yearOptions.length - 1] - _yearOptions[0];
             this.populateYearOptions(_yearOptions[0] - difference, _yearOptions[_yearOptions.length - 1] - difference);
         }
     }
 
     decrementDecade() {
-        this.currentYear = this.currentYear - 10;
+        this.currentYear.set(this.currentYear() - 10);
     }
 
     incrementDecade() {
-        this.currentYear = this.currentYear + 10;
+        this.currentYear.set(this.currentYear() + 10);
     }
 
     incrementYear() {
-        this.currentYear++;
-        let _yearOptions = <number[]>this.yearOptions;
+        this.currentYear.update((v) => v + 1);
+        let _yearOptions = <number[]>this.yearOptions();
 
-        if (this.currentYear > _yearOptions[_yearOptions.length - 1]) {
+        if (this.currentYear() > _yearOptions[_yearOptions.length - 1]) {
             let difference = _yearOptions[_yearOptions.length - 1] - _yearOptions[0];
             this.populateYearOptions(_yearOptions[0] + difference, _yearOptions[_yearOptions.length - 1] + difference);
         }
@@ -1679,29 +1598,29 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         }
 
         if (this.isMultipleSelection() && this.isSelected(dateMeta)) {
-            this.value = this.value.filter((date: Date, i: number) => {
-                return !this.isDateEquals(date, dateMeta);
-            });
-            if (this.value.length === 0) {
-                this.value = null;
+            this.value.set(
+                this.value().filter((date: Date, i: number) => {
+                    return !this.isDateEquals(date, dateMeta);
+                })
+            );
+            if (this.value().length === 0) {
+                this.value.set(null);
             }
-            this.updateModel(this.value);
+            this.updateModel(this.value());
         } else {
             if (this.shouldSelectDate(dateMeta)) {
                 this.selectDate(dateMeta);
             }
         }
 
-        if (this.hideOnDateTimeSelect && (this.isSingleSelection() || (this.isRangeSelection() && this.value[1]))) {
+        if (this.hideOnDateTimeSelect() && (this.isSingleSelection() || (this.isRangeSelection() && this.value()[1]))) {
             setTimeout(() => {
                 event.preventDefault();
                 this.hideOverlay();
 
-                if (this.mask) {
+                if (this.mask()) {
                     this.disableModality();
                 }
-
-                this.cd.markForCheck();
             }, 150);
         }
 
@@ -1710,53 +1629,53 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     shouldSelectDate(dateMeta: any) {
-        if (this.isMultipleSelection()) return this.maxDateCount != null ? this.maxDateCount > (this.value ? this.value.length : 0) : true;
+        if (this.isMultipleSelection()) return this.maxDateCount() != null ? this.maxDateCount()! > (this.value() ? this.value().length : 0) : true;
         else return true;
     }
 
     onMonthSelect(event: Event, index: number) {
-        if (this.view === 'month') {
-            this.onDateSelect(event, { year: this.currentYear, month: index, day: 1, selectable: true });
+        if (this.view() === 'month') {
+            this.onDateSelect(event, { year: this.currentYear(), month: index, day: 1, selectable: true });
         } else {
-            this.currentMonth = index;
-            this.createMonths(this.currentMonth, this.currentYear);
+            this.currentMonth.set(index);
+            this.createMonths(this.currentMonth(), this.currentYear());
             this.setCurrentView('date');
-            this.onMonthChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
+            this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
         }
     }
 
     onYearSelect(event: Event, year: number) {
-        if (this.view === 'year') {
+        if (this.view() === 'year') {
             this.onDateSelect(event, { year: year, month: 0, day: 1, selectable: true });
         } else {
-            this.currentYear = year;
+            this.currentYear.set(year);
             this.setCurrentView('month');
-            this.onYearChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
+            this.onYearChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
         }
     }
 
     updateInputfield() {
         let formattedValue = '';
 
-        if (this.value) {
+        if (this.value()) {
             if (this.isSingleSelection()) {
-                formattedValue = this.formatDateTime(this.value);
+                formattedValue = this.formatDateTime(this.value());
             } else if (this.isMultipleSelection()) {
-                for (let i = 0; i < this.value.length; i++) {
-                    let dateAsString = this.formatDateTime(this.value[i]);
+                for (let i = 0; i < this.value().length; i++) {
+                    let dateAsString = this.formatDateTime(this.value()[i]);
                     formattedValue += dateAsString;
-                    if (i !== this.value.length - 1) {
-                        formattedValue += this.multipleSeparator + ' ';
+                    if (i !== this.value().length - 1) {
+                        formattedValue += this.multipleSeparator() + ' ';
                     }
                 }
             } else if (this.isRangeSelection()) {
-                if (this.value && this.value.length) {
-                    let startDate = this.value[0];
-                    let endDate = this.value[1];
+                if (this.value() && this.value().length) {
+                    let startDate = this.value()[0];
+                    let endDate = this.value()[1];
 
                     formattedValue = this.formatDateTime(startDate);
                     if (endDate) {
-                        formattedValue += ' ' + this.rangeSeparator + ' ' + this.formatDateTime(endDate);
+                        formattedValue += ' ' + this.rangeSeparator() + ' ' + this.formatDateTime(endDate);
                     }
                 }
             }
@@ -1764,30 +1683,30 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
         this.writeModelValue(formattedValue);
 
-        this.inputFieldValue = formattedValue;
+        this.inputFieldValue.set(formattedValue);
 
         const inputfieldViewChild = this.inputfieldViewChild();
         if (inputfieldViewChild && inputfieldViewChild.nativeElement) {
-            inputfieldViewChild.nativeElement.value = this.inputFieldValue;
+            inputfieldViewChild.nativeElement.value = this.inputFieldValue();
         }
     }
 
-    inputFieldValue: Nullable<string> = null;
+    inputFieldValue = signal<Nullable<string>>(null);
 
     formatDateTime(date: any) {
-        let formattedValue = this.keepInvalid ? date : null;
+        let formattedValue = this.keepInvalid() ? date : null;
         const isDateValid = this.isValidDateForTimeConstraints(date);
 
         if (this.isValidDate(date)) {
-            if (this.timeOnly) {
+            if (this.timeOnly()) {
                 formattedValue = this.formatTime(date);
             } else {
                 formattedValue = this.formatDate(date, this.getDateFormat());
-                if (this.showTime) {
+                if (this.showTime()) {
                     formattedValue += ' ' + this.formatTime(date);
                 }
             }
-        } else if (this.dataType === 'string') {
+        } else if (this.dataType() === 'string') {
             formattedValue = date;
         }
         formattedValue = isDateValid ? formattedValue : '';
@@ -1803,20 +1722,20 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     setCurrentHourPM(hours: number) {
-        if (this.hourFormat == '12') {
-            this.pm = hours > 11;
+        if (this.hourFormat() == '12') {
+            this.pm.set(hours > 11);
             if (hours >= 12) {
-                this.currentHour = hours == 12 ? 12 : hours - 12;
+                this.currentHour.set(hours == 12 ? 12 : hours - 12);
             } else {
-                this.currentHour = hours == 0 ? 12 : hours;
+                this.currentHour.set(hours == 0 ? 12 : hours);
             }
         } else {
-            this.currentHour = hours;
+            this.currentHour.set(hours);
         }
     }
 
     setCurrentView(currentView: DatePickerTypeView) {
-        this.currentView = currentView;
+        this.currentView.set(currentView);
         this.cd.detectChanges();
         this.alignOverlay();
     }
@@ -1824,40 +1743,40 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     selectDate(dateMeta: any) {
         let date = this.formatDateMetaToDate(dateMeta);
 
-        if (this.showTime) {
-            if (this.hourFormat == '12') {
-                if (this.currentHour === 12) date.setHours(this.pm ? 12 : 0);
-                else date.setHours(this.pm ? <number>this.currentHour + 12 : <number>this.currentHour);
+        if (this.showTime()) {
+            if (this.hourFormat() == '12') {
+                if (this.currentHour() === 12) date.setHours(this.pm() ? 12 : 0);
+                else date.setHours(this.pm() ? <number>this.currentHour() + 12 : <number>this.currentHour());
             } else {
-                date.setHours(<number>this.currentHour);
+                date.setHours(<number>this.currentHour());
             }
 
-            date.setMinutes(<number>this.currentMinute);
-            date.setSeconds(<number>this.currentSecond);
+            date.setMinutes(<number>this.currentMinute());
+            date.setSeconds(<number>this.currentSecond());
         }
 
-        if (this.minDate && this.minDate > date) {
-            date = this.minDate;
+        if (this.minDate() && this.minDate()! > date) {
+            date = this.minDate()!;
             this.setCurrentHourPM(date.getHours());
-            this.currentMinute = date.getMinutes();
-            this.currentSecond = date.getSeconds();
+            this.currentMinute.set(date.getMinutes());
+            this.currentSecond.set(date.getSeconds());
         }
 
-        if (this.maxDate && this.maxDate < date) {
-            date = this.maxDate;
+        if (this.maxDate() && this.maxDate()! < date) {
+            date = this.maxDate()!;
             this.setCurrentHourPM(date.getHours());
-            this.currentMinute = date.getMinutes();
-            this.currentSecond = date.getSeconds();
+            this.currentMinute.set(date.getMinutes());
+            this.currentSecond.set(date.getSeconds());
         }
 
         if (this.isSingleSelection()) {
             this.updateModel(date);
         } else if (this.isMultipleSelection()) {
-            this.updateModel(this.value ? [...this.value, date] : [date]);
+            this.updateModel(this.value() ? [...this.value(), date] : [date]);
         } else if (this.isRangeSelection()) {
-            if (this.value && this.value.length) {
-                let startDate = this.value[0];
-                let endDate = this.value[1];
+            if (this.value() && this.value().length) {
+                let startDate = this.value()[0];
+                let endDate = this.value()[1];
 
                 if (!endDate && date.getTime() >= startDate.getTime()) {
                     endDate = date;
@@ -1876,18 +1795,18 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     updateModel(value: any) {
-        this.value = value;
+        this.value.set(value);
 
-        if (this.dataType == 'date') {
-            this.writeModelValue(this.value);
-            this.onModelChange(this.value);
-        } else if (this.dataType == 'string') {
+        if (this.dataType() == 'date') {
+            this.writeModelValue(this.value());
+            this.onModelChange(this.value());
+        } else if (this.dataType() == 'string') {
             if (this.isSingleSelection()) {
-                this.onModelChange(this.formatDateTime(this.value));
+                this.onModelChange(this.formatDateTime(this.value()));
             } else {
                 let stringArrValue: any[] | null = null;
-                if (Array.isArray(this.value)) {
-                    stringArrValue = this.value.map((date: Date) => this.formatDateTime(date));
+                if (Array.isArray(this.value())) {
+                    stringArrValue = this.value().map((date: Date) => this.formatDateTime(date));
                 }
                 this.writeModelValue(stringArrValue);
                 this.onModelChange(stringArrValue);
@@ -1949,12 +1868,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     isSelected(dateMeta: any): boolean | undefined {
-        if (this.value) {
+        if (this.value()) {
             if (this.isSingleSelection()) {
-                return this.isDateEquals(this.value, dateMeta);
+                return this.isDateEquals(this.value(), dateMeta);
             } else if (this.isMultipleSelection()) {
                 let selected = false;
-                for (let date of this.value) {
+                for (let date of this.value()) {
                     selected = this.isDateEquals(date, dateMeta);
                     if (selected) {
                         break;
@@ -1963,40 +1882,40 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
                 return selected;
             } else if (this.isRangeSelection()) {
-                if (this.value[1]) return this.isDateEquals(this.value[0], dateMeta) || this.isDateEquals(this.value[1], dateMeta) || this.isDateBetween(this.value[0], this.value[1], dateMeta);
-                else return this.isDateEquals(this.value[0], dateMeta);
+                if (this.value()[1]) return this.isDateEquals(this.value()[0], dateMeta) || this.isDateEquals(this.value()[1], dateMeta) || this.isDateBetween(this.value()[0], this.value()[1], dateMeta);
+                else return this.isDateEquals(this.value()[0], dateMeta);
             }
         } else {
             return false;
         }
     }
 
-    isComparable() {
-        return this.value != null && typeof this.value !== 'string';
-    }
+    isComparable = computed(() => {
+        return this.value() != null && typeof this.value() !== 'string';
+    });
 
     isMonthSelected(month) {
         if (!this.isComparable()) return false;
 
         if (this.isMultipleSelection()) {
-            return this.value.some((currentValue) => currentValue.getMonth() === month && currentValue.getFullYear() === this.currentYear);
+            return this.value().some((currentValue) => currentValue.getMonth() === month && currentValue.getFullYear() === this.currentYear());
         } else if (this.isRangeSelection()) {
-            if (!this.value[1]) {
-                return this.value[0]?.getFullYear() === this.currentYear && this.value[0]?.getMonth() === month;
+            if (!this.value()[1]) {
+                return this.value()[0]?.getFullYear() === this.currentYear() && this.value()[0]?.getMonth() === month;
             } else {
-                const currentDate = new Date(this.currentYear, month, 1);
-                const startDate = new Date(this.value[0].getFullYear(), this.value[0].getMonth(), 1);
-                const endDate = new Date(this.value[1].getFullYear(), this.value[1].getMonth(), 1);
+                const currentDate = new Date(this.currentYear(), month, 1);
+                const startDate = new Date(this.value()[0].getFullYear(), this.value()[0].getMonth(), 1);
+                const endDate = new Date(this.value()[1].getFullYear(), this.value()[1].getMonth(), 1);
 
                 return currentDate >= startDate && currentDate <= endDate;
             }
         } else {
-            return this.value.getMonth() === month && this.value.getFullYear() === this.currentYear;
+            return this.value().getMonth() === month && this.value().getFullYear() === this.currentYear();
         }
     }
 
     isMonthDisabled(month: number, year?: number) {
-        const yearToCheck = year ?? this.currentYear;
+        const yearToCheck = year ?? this.currentYear();
 
         for (let day = 1; day < this.getDaysCountInMonth(month, yearToCheck) + 1; day++) {
             if (this.isSelectable(day, month, yearToCheck, false)) {
@@ -2014,7 +1933,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     isYearSelected(year: number) {
         if (this.isComparable()) {
-            let value = this.isRangeSelection() ? this.value[0] : this.value;
+            let value = this.isRangeSelection() ? this.value()[0] : this.value();
 
             return !this.isMultipleSelection() ? value.getFullYear() === year : false;
         }
@@ -2037,17 +1956,17 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         return between;
     }
 
-    isSingleSelection(): boolean {
-        return this.selectionMode === 'single';
-    }
+    isSingleSelection = computed<boolean>(() => {
+        return this.selectionMode() === 'single';
+    });
 
-    isRangeSelection(): boolean {
-        return this.selectionMode === 'range';
-    }
+    isRangeSelection = computed<boolean>(() => {
+        return this.selectionMode() === 'range';
+    });
 
-    isMultipleSelection(): boolean {
-        return this.selectionMode === 'multiple';
-    }
+    isMultipleSelection = computed<boolean>(() => {
+        return this.selectionMode() === 'multiple';
+    });
 
     isToday(today: Date, day: number, month: number, year: number): boolean {
         return today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
@@ -2059,43 +1978,43 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         let validDate = true;
         let validDay = true;
 
-        if (otherMonth && !this.selectOtherMonths) {
+        if (otherMonth && !this.selectOtherMonths()) {
             return false;
         }
 
-        if (this.minDate) {
-            if (this.minDate.getFullYear() > year) {
+        if (this.minDate()) {
+            if (this.minDate()!.getFullYear() > year) {
                 validMin = false;
-            } else if (this.minDate.getFullYear() === year && this.currentView != 'year') {
-                if (this.minDate.getMonth() > month) {
+            } else if (this.minDate()!.getFullYear() === year && this.currentView() != 'year') {
+                if (this.minDate()!.getMonth() > month) {
                     validMin = false;
-                } else if (this.minDate.getMonth() === month) {
-                    if (this.minDate.getDate() > day) {
+                } else if (this.minDate()!.getMonth() === month) {
+                    if (this.minDate()!.getDate() > day) {
                         validMin = false;
                     }
                 }
             }
         }
 
-        if (this.maxDate) {
-            if (this.maxDate.getFullYear() < year) {
+        if (this.maxDate()) {
+            if (this.maxDate()!.getFullYear() < year) {
                 validMax = false;
-            } else if (this.maxDate.getFullYear() === year) {
-                if (this.maxDate.getMonth() < month) {
+            } else if (this.maxDate()!.getFullYear() === year) {
+                if (this.maxDate()!.getMonth() < month) {
                     validMax = false;
-                } else if (this.maxDate.getMonth() === month) {
-                    if (this.maxDate.getDate() < day) {
+                } else if (this.maxDate()!.getMonth() === month) {
+                    if (this.maxDate()!.getDate() < day) {
                         validMax = false;
                     }
                 }
             }
         }
 
-        if (this.disabledDates) {
+        if (this.disabledDates()) {
             validDate = !this.isDateDisabled(day, month, year);
         }
 
-        if (this.disabledDays) {
+        if (this.disabledDays()) {
             validDay = !this.isDayDisabled(day, month, year);
         }
 
@@ -2103,8 +2022,8 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     isDateDisabled(day: number, month: number, year: number): boolean {
-        if (this.disabledDates) {
-            for (let disabledDate of this.disabledDates) {
+        if (this.disabledDates()) {
+            for (let disabledDate of this.disabledDates()!) {
                 if (disabledDate.getFullYear() === year && disabledDate.getMonth() === month && disabledDate.getDate() === day) {
                     return true;
                 }
@@ -2115,32 +2034,32 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     isDayDisabled(day: number, month: number, year: number): boolean {
-        if (this.disabledDays) {
+        if (this.disabledDays()) {
             let weekday = new Date(year, month, day);
             let weekdayNumber = weekday.getDay();
-            return this.disabledDays.indexOf(weekdayNumber) !== -1;
+            return this.disabledDays()!.indexOf(weekdayNumber) !== -1;
         }
         return false;
     }
 
     onInputFocus(event: Event) {
-        this.focus = true;
-        if (this.showOnFocus) {
+        this.focus.set(true);
+        if (this.showOnFocus()) {
             this.showOverlay();
         }
         this.onFocus.emit(event);
     }
 
     onInputClick() {
-        if (this.showOnFocus && !this.overlayVisible) {
+        if (this.showOnFocus() && !this.overlayVisible()) {
             this.showOverlay();
         }
     }
 
     onInputBlur(event: Event) {
-        this.focus = false;
+        this.focus.set(false);
         this.onBlur.emit(event);
-        if (!this.keepInvalid) {
+        if (!this.keepInvalid()) {
             this.updateInputfield();
         }
         this.onModelTouched();
@@ -2151,7 +2070,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             return;
         }
 
-        if (!this.overlayVisible) {
+        if (!this.overlayVisible()) {
             inputfield.focus();
             this.showOverlay();
         } else {
@@ -2160,10 +2079,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     clear() {
-        this.value = null;
-        this.inputFieldValue = null;
-        this.writeModelValue(this.value);
-        this.onModelChange(this.value);
+        this.value.set(null);
+        this.inputFieldValue.set(null);
+        this.writeModelValue(this.value());
+        this.onModelChange(this.value());
         this.updateInputfield();
         this.onClear.emit(undefined);
     }
@@ -2180,20 +2099,20 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     getYear(month: any) {
-        return this.currentView === 'month' ? this.currentYear : month.year;
+        return this.currentView() === 'month' ? this.currentYear() : month.year;
     }
 
-    switchViewButtonDisabled() {
-        return this.numberOfMonths > 1 || this.$disabled();
-    }
+    switchViewButtonDisabled = computed(() => {
+        return this.numberOfMonths() > 1 || this.$disabled();
+    });
 
     onPrevButtonClick(event: Event) {
-        this.navigationState = { backward: true, button: true };
+        this.navigationState.set({ backward: true, button: true });
         this.navBackward(event);
     }
 
     onNextButtonClick(event: Event) {
-        this.navigationState = { backward: false, button: true };
+        this.navigationState.set({ backward: false, button: true });
         this.navForward(event);
     }
 
@@ -2201,13 +2120,13 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         switch (event.which) {
             //tab
             case 9:
-                if (!this.inline) {
+                if (!this.inline()) {
                     this.trapFocus(event);
                 }
-                if (this.inline) {
+                if (this.inline()) {
                     const headerElements = findSingle(this.el?.nativeElement, '.p-datepicker-header');
                     const element = event.target;
-                    if (this.timeOnly) {
+                    if (this.timeOnly()) {
                         return;
                     } else {
                         if (element == headerElements?.children[headerElements?.children?.length! - 1]) {
@@ -2220,7 +2139,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             //escape
             case 27:
                 this.inputfieldViewChild()?.nativeElement.focus();
-                this.overlayVisible = false;
+                this.overlayVisible.set(false);
                 event.preventDefault();
                 break;
 
@@ -2231,24 +2150,24 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onInputKeydown(event: any) {
-        this.isKeydown = true;
-        if (event.keyCode === 40 && this.contentViewChild) {
+        this.isKeydown.set(true);
+        if (event.keyCode === 40 && this.contentViewChild()) {
             this.trapFocus(event);
         } else if (event.keyCode === 27) {
-            if (this.overlayVisible) {
+            if (this.overlayVisible()) {
                 this.inputfieldViewChild()?.nativeElement.focus();
-                this.overlayVisible = false;
+                this.overlayVisible.set(false);
                 event.preventDefault();
             }
         } else if (event.keyCode === 13) {
-            if (this.overlayVisible) {
-                this.overlayVisible = false;
+            if (this.overlayVisible()) {
+                this.overlayVisible.set(false);
                 event.preventDefault();
             }
-        } else if (event.keyCode === 9 && this.contentViewChild) {
-            getFocusableElements(this.contentViewChild.nativeElement).forEach((el: any) => (el.tabIndex = '-1'));
-            if (this.overlayVisible) {
-                this.overlayVisible = false;
+        } else if (event.keyCode === 9 && this.contentViewChild()) {
+            getFocusableElements(this.contentViewChild()!.nativeElement).forEach((el: any) => (el.tabIndex = '-1'));
+            if (this.overlayVisible()) {
+                this.overlayVisible.set(false);
             }
         }
     }
@@ -2266,14 +2185,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 if (nextRow) {
                     let focusCell = nextRow.children[cellIndex].children[0];
                     if (hasClass(focusCell, 'p-disabled')) {
-                        this.navigationState = { backward: false };
+                        this.navigationState.set({ backward: false });
                         this.navForward(event);
                     } else {
                         nextRow.children[cellIndex].children[0].tabIndex = '0';
                         nextRow.children[cellIndex].children[0].focus();
                     }
                 } else {
-                    this.navigationState = { backward: false };
+                    this.navigationState.set({ backward: false });
                     this.navForward(event);
                 }
                 event.preventDefault();
@@ -2288,14 +2207,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 if (prevRow) {
                     let focusCell = prevRow.children[cellIndex].children[0];
                     if (hasClass(focusCell, 'p-disabled')) {
-                        this.navigationState = { backward: true };
+                        this.navigationState.set({ backward: true });
                         this.navBackward(event);
                     } else {
                         focusCell.tabIndex = '0';
                         focusCell.focus();
                     }
                 } else {
-                    this.navigationState = { backward: true };
+                    this.navigationState.set({ backward: true });
                     this.navBackward(event);
                 }
                 event.preventDefault();
@@ -2352,14 +2271,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             //escape
             case 27: {
                 this.inputfieldViewChild()?.nativeElement.focus();
-                this.overlayVisible = false;
+                this.overlayVisible.set(false);
                 event.preventDefault();
                 break;
             }
 
             //tab
             case 9: {
-                if (!this.inline) {
+                if (!this.inline()) {
                     this.trapFocus(event);
                 }
                 break;
@@ -2443,7 +2362,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     prevCell.tabIndex = '0';
                     prevCell.focus();
                 } else {
-                    this.navigationState = { backward: true };
+                    this.navigationState.set({ backward: true });
                     this.navBackward(event);
                 }
 
@@ -2459,7 +2378,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     nextCell.tabIndex = '0';
                     nextCell.focus();
                 } else {
-                    this.navigationState = { backward: false };
+                    this.navigationState.set({ backward: false });
                     this.navForward(event);
                 }
 
@@ -2479,14 +2398,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             //escape
             case 27: {
                 this.inputfieldViewChild()?.nativeElement.focus();
-                this.overlayVisible = false;
+                this.overlayVisible.set(false);
                 event.preventDefault();
                 break;
             }
 
             //tab
             case 9: {
-                if (!this.inline) {
+                if (!this.inline()) {
                     this.trapFocus(event);
                 }
                 break;
@@ -2525,7 +2444,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     prevCell.tabIndex = '0';
                     prevCell.focus();
                 } else {
-                    this.navigationState = { backward: true };
+                    this.navigationState.set({ backward: true });
                     this.navBackward(event);
                 }
 
@@ -2541,7 +2460,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     nextCell.tabIndex = '0';
                     nextCell.focus();
                 } else {
-                    this.navigationState = { backward: false };
+                    this.navigationState.set({ backward: false });
                     this.navForward(event);
                 }
 
@@ -2561,7 +2480,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             //escape
             case 27: {
                 this.inputfieldViewChild()?.nativeElement.focus();
-                this.overlayVisible = false;
+                this.overlayVisible.set(false);
                 event.preventDefault();
                 break;
             }
@@ -2580,12 +2499,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     navigateToMonth(prev: boolean, groupIndex: number, focusKey?: string) {
         if (prev) {
-            if (this.numberOfMonths === 1 || groupIndex === 0) {
-                this.navigationState = { backward: true };
-                this._focusKey = focusKey;
+            if (this.numberOfMonths() === 1 || groupIndex === 0) {
+                this.navigationState.set({ backward: true });
+                this._focusKey.set(focusKey);
                 this.navBackward(event);
             } else {
-                let prevMonthContainer = this.contentViewChild.nativeElement.children[groupIndex - 1];
+                let prevMonthContainer = this.contentViewChild()!.nativeElement.children[groupIndex - 1];
                 if (focusKey) {
                     const firstDayCell = <any>findSingle(prevMonthContainer, focusKey);
                     firstDayCell.tabIndex = '0';
@@ -2598,12 +2517,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }
             }
         } else {
-            if (this.numberOfMonths === 1 || groupIndex === this.numberOfMonths - 1) {
-                this.navigationState = { backward: false };
-                this._focusKey = focusKey;
+            if (this.numberOfMonths() === 1 || groupIndex === this.numberOfMonths() - 1) {
+                this.navigationState.set({ backward: false });
+                this._focusKey.set(focusKey);
                 this.navForward(event);
             } else {
-                let nextMonthContainer = this.contentViewChild.nativeElement.children[groupIndex + 1];
+                let nextMonthContainer = this.contentViewChild()!.nativeElement.children[groupIndex + 1];
                 if (focusKey) {
                     const firstDayCell = <any>findSingle(nextMonthContainer, focusKey);
                     firstDayCell.tabIndex = '0';
@@ -2620,34 +2539,34 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     updateFocus() {
         let cell;
 
-        if (this.navigationState) {
-            if (this.navigationState.button) {
+        if (this.navigationState()) {
+            if (this.navigationState()!.button) {
                 this.initFocusableCell();
 
-                if (this.navigationState.backward) (findSingle(this.contentViewChild.nativeElement, '.p-datepicker-prev-button') as any).focus();
-                else (findSingle(this.contentViewChild.nativeElement, '.p-datepicker-next-button') as any).focus();
+                if (this.navigationState()!.backward) (findSingle(this.contentViewChild()!.nativeElement, '.p-datepicker-prev-button') as any).focus();
+                else (findSingle(this.contentViewChild()!.nativeElement, '.p-datepicker-next-button') as any).focus();
             } else {
-                if (this.navigationState.backward) {
+                if (this.navigationState()!.backward) {
                     let cells;
 
-                    if (this.currentView === 'month') {
-                        cells = find(this.contentViewChild.nativeElement, '.p-datepicker-month-view .p-datepicker-month:not(.p-disabled)');
-                    } else if (this.currentView === 'year') {
-                        cells = find(this.contentViewChild.nativeElement, '.p-datepicker-year-view .p-datepicker-year:not(.p-disabled)');
+                    if (this.currentView() === 'month') {
+                        cells = find(this.contentViewChild()!.nativeElement, '.p-datepicker-month-view .p-datepicker-month:not(.p-disabled)');
+                    } else if (this.currentView() === 'year') {
+                        cells = find(this.contentViewChild()!.nativeElement, '.p-datepicker-year-view .p-datepicker-year:not(.p-disabled)');
                     } else {
-                        cells = find(this.contentViewChild.nativeElement, this._focusKey || '.p-datepicker-calendar td span:not(.p-disabled):not(.p-ink)');
+                        cells = find(this.contentViewChild()!.nativeElement, this._focusKey() || '.p-datepicker-calendar td span:not(.p-disabled):not(.p-ink)');
                     }
 
                     if (cells && cells.length > 0) {
                         cell = cells[cells.length - 1];
                     }
                 } else {
-                    if (this.currentView === 'month') {
-                        cell = findSingle(this.contentViewChild.nativeElement, '.p-datepicker-month-view .p-datepicker-month:not(.p-disabled)');
-                    } else if (this.currentView === 'year') {
-                        cell = findSingle(this.contentViewChild.nativeElement, '.p-datepicker-year-view .p-datepicker-year:not(.p-disabled)');
+                    if (this.currentView() === 'month') {
+                        cell = findSingle(this.contentViewChild()!.nativeElement, '.p-datepicker-month-view .p-datepicker-month:not(.p-disabled)');
+                    } else if (this.currentView() === 'year') {
+                        cell = findSingle(this.contentViewChild()!.nativeElement, '.p-datepicker-year-view .p-datepicker-year:not(.p-disabled)');
                     } else {
-                        cell = findSingle(this.contentViewChild.nativeElement, this._focusKey || '.p-datepicker-calendar td span:not(.p-disabled):not(.p-ink)');
+                        cell = findSingle(this.contentViewChild()!.nativeElement, this._focusKey() || '.p-datepicker-calendar td span:not(.p-disabled):not(.p-ink)');
                     }
                 }
 
@@ -2657,18 +2576,18 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }
             }
 
-            this.navigationState = null;
-            this._focusKey = null;
+            this.navigationState.set(null);
+            this._focusKey.set(null);
         } else {
             this.initFocusableCell();
         }
     }
 
     initFocusableCell() {
-        const contentEl = this.contentViewChild?.nativeElement;
+        const contentEl = this.contentViewChild()?.nativeElement;
         let cell!: any;
 
-        if (this.currentView === 'month') {
+        if (this.currentView() === 'month') {
             let cells = find(contentEl, '.p-datepicker-month-view .p-datepicker-month:not(.p-disabled)');
             let selectedCell = <any>findSingle(contentEl, '.p-datepicker-month-view .p-datepicker-month.p-highlight');
             cells.forEach((cell: any) => (cell.tabIndex = -1));
@@ -2678,7 +2597,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 let disabledCells = find(contentEl, '.p-datepicker-month-view .p-datepicker-month.p-disabled[tabindex = "0"]');
                 disabledCells.forEach((cell: any) => (cell.tabIndex = -1));
             }
-        } else if (this.currentView === 'year') {
+        } else if (this.currentView() === 'year') {
             let cells = find(contentEl, '.p-datepicker-year-view .p-datepicker-year:not(.p-disabled)');
             let selectedCell = findSingle(contentEl, '.p-datepicker-year-view .p-datepicker-year.p-highlight');
             cells.forEach((cell: any) => (cell.tabIndex = -1));
@@ -2700,7 +2619,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         if (cell) {
             cell.tabIndex = '0';
 
-            if (!this.preventFocus && (!this.navigationState || !this.navigationState.button)) {
+            if (!this.preventFocus() && (!this.navigationState() || !this.navigationState()!.button)) {
                 setTimeout(() => {
                     if (!this.$disabled()) {
                         cell.focus();
@@ -2708,12 +2627,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }, 1);
             }
 
-            this.preventFocus = false;
+            this.preventFocus.set(false);
         }
     }
 
     trapFocus(event: any) {
-        let focusableElements = <any>getFocusableElements(this.contentViewChild.nativeElement);
+        let focusableElements = <any>getFocusableElements(this.contentViewChild()!.nativeElement);
 
         if (focusableElements && focusableElements.length > 0) {
             if (!focusableElements[0].ownerDocument.activeElement) {
@@ -2723,7 +2642,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
                 if (event.shiftKey) {
                     if (focusedIndex == -1 || focusedIndex === 0) {
-                        if (this.focusTrap) {
+                        if (this.focusTrap()) {
                             focusableElements[focusableElements.length - 1].focus();
                         } else {
                             if (focusedIndex === -1) return this.hideOverlay();
@@ -2734,7 +2653,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                     }
                 } else {
                     if (focusedIndex == -1) {
-                        if (this.timeOnly) {
+                        if (this.timeOnly()) {
                             focusableElements[0].focus();
                         } else {
                             let spanIndex = 0;
@@ -2746,7 +2665,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                             focusableElements[spanIndex].focus();
                         }
                     } else if (focusedIndex === focusableElements.length - 1) {
-                        if (!this.focusTrap && focusedIndex != -1) return this.hideOverlay();
+                        if (!this.focusTrap() && focusedIndex != -1) return this.hideOverlay();
 
                         focusableElements[0].focus();
                     } else {
@@ -2759,21 +2678,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         event.preventDefault();
     }
 
-    onMonthDropdownChange(m: string) {
-        this.currentMonth = parseInt(m);
-        this.onMonthChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
-        this.createMonths(this.currentMonth, this.currentYear);
-    }
-
-    onYearDropdownChange(y: string) {
-        this.currentYear = parseInt(y);
-        this.onYearChange.emit({ month: this.currentMonth + 1, year: this.currentYear });
-        this.createMonths(this.currentMonth, this.currentYear);
-    }
-
     convertTo24Hour(hours: number, pm: boolean) {
         //@ts-ignore
-        if (this.hourFormat == '12') {
+        if (this.hourFormat() == '12') {
             if (hours === 12) {
                 return pm ? 12 : 0;
             } else {
@@ -2786,71 +2693,71 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     constrainTime(hour: number, minute: number, second: number, pm: boolean) {
         let returnTimeTriple: number[] = [hour, minute, second];
         let minHoursExceeds12: boolean = false;
-        let value = this.value;
+        let value = this.value();
         const convertedHour = this.convertTo24Hour(hour, pm);
         const isRange = this.isRangeSelection(),
             isMultiple = this.isMultipleSelection(),
             isMultiValue = isRange || isMultiple;
 
         if (isMultiValue) {
-            if (!this.value) {
-                this.value = [new Date(), new Date()];
+            if (!this.value()) {
+                this.value.set([new Date(), new Date()]);
             }
             if (isRange) {
-                value = this.value[1] || this.value[0];
+                value = this.value()[1] || this.value()[0];
             }
             if (isMultiple) {
-                value = this.value[this.value.length - 1];
+                value = this.value()[this.value().length - 1];
             }
         }
         const valueDateString = value && isDate(value) ? value.toDateString() : null;
-        let isMinDate = this.minDate && valueDateString && this.minDate.toDateString() === valueDateString;
-        let isMaxDate = this.maxDate && valueDateString && this.maxDate.toDateString() === valueDateString;
+        let isMinDate = this.minDate() && valueDateString && this.minDate()!.toDateString() === valueDateString;
+        let isMaxDate = this.maxDate() && valueDateString && this.maxDate()!.toDateString() === valueDateString;
 
         if (isMinDate) {
-            minHoursExceeds12 = this.minDate!.getHours() >= 12;
+            minHoursExceeds12 = this.minDate()!.getHours() >= 12;
         }
 
         switch (
             true // intentional fall through
         ) {
-            case isMinDate && minHoursExceeds12 && this.minDate!.getHours() === 12 && this.minDate!.getHours() > convertedHour:
+            case isMinDate && minHoursExceeds12 && this.minDate()!.getHours() === 12 && this.minDate()!.getHours() > convertedHour:
                 returnTimeTriple[0] = 11;
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() > minute:
-                returnTimeTriple[1] = this.minDate!.getMinutes();
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() === minute && this.minDate!.getSeconds() > second:
-                returnTimeTriple[2] = this.minDate!.getSeconds();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() > minute:
+                returnTimeTriple[1] = this.minDate()!.getMinutes();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() === minute && this.minDate()!.getSeconds() > second:
+                returnTimeTriple[2] = this.minDate()!.getSeconds();
                 break;
-            case isMinDate && !minHoursExceeds12 && this.minDate!.getHours() - 1 === convertedHour && this.minDate!.getHours() > convertedHour:
+            case isMinDate && !minHoursExceeds12 && this.minDate()!.getHours() - 1 === convertedHour && this.minDate()!.getHours() > convertedHour:
                 returnTimeTriple[0] = 11;
-                this.pm = true;
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() > minute:
-                returnTimeTriple[1] = this.minDate!.getMinutes();
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() === minute && this.minDate!.getSeconds() > second:
-                returnTimeTriple[2] = this.minDate!.getSeconds();
+                this.pm.set(true);
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() > minute:
+                returnTimeTriple[1] = this.minDate()!.getMinutes();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() === minute && this.minDate()!.getSeconds() > second:
+                returnTimeTriple[2] = this.minDate()!.getSeconds();
                 break;
 
-            case isMinDate && minHoursExceeds12 && this.minDate!.getHours() > convertedHour && convertedHour !== 12:
-                this.setCurrentHourPM(this.minDate!.getHours());
-                returnTimeTriple[0] = this.currentHour || 0;
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() > minute:
-                returnTimeTriple[1] = this.minDate!.getMinutes();
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() === minute && this.minDate!.getSeconds() > second:
-                returnTimeTriple[2] = this.minDate!.getSeconds();
+            case isMinDate && minHoursExceeds12 && this.minDate()!.getHours() > convertedHour && convertedHour !== 12:
+                this.setCurrentHourPM(this.minDate()!.getHours());
+                returnTimeTriple[0] = this.currentHour() || 0;
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() > minute:
+                returnTimeTriple[1] = this.minDate()!.getMinutes();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() === minute && this.minDate()!.getSeconds() > second:
+                returnTimeTriple[2] = this.minDate()!.getSeconds();
                 break;
-            case isMinDate && this.minDate!.getHours() > convertedHour:
-                returnTimeTriple[0] = this.minDate!.getHours();
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() > minute:
-                returnTimeTriple[1] = this.minDate!.getMinutes();
-            case isMinDate && this.minDate!.getHours() === convertedHour && this.minDate!.getMinutes() === minute && this.minDate!.getSeconds() > second:
-                returnTimeTriple[2] = this.minDate!.getSeconds();
+            case isMinDate && this.minDate()!.getHours() > convertedHour:
+                returnTimeTriple[0] = this.minDate()!.getHours();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() > minute:
+                returnTimeTriple[1] = this.minDate()!.getMinutes();
+            case isMinDate && this.minDate()!.getHours() === convertedHour && this.minDate()!.getMinutes() === minute && this.minDate()!.getSeconds() > second:
+                returnTimeTriple[2] = this.minDate()!.getSeconds();
                 break;
-            case isMaxDate && this.maxDate!.getHours() < convertedHour:
-                returnTimeTriple[0] = this.maxDate!.getHours();
-            case isMaxDate && this.maxDate!.getHours() === convertedHour && this.maxDate!.getMinutes() < minute:
-                returnTimeTriple[1] = this.maxDate!.getMinutes();
-            case isMaxDate && this.maxDate!.getHours() === convertedHour && this.maxDate!.getMinutes() === minute && this.maxDate!.getSeconds() < second:
-                returnTimeTriple[2] = this.maxDate!.getSeconds();
+            case isMaxDate && this.maxDate()!.getHours() < convertedHour:
+                returnTimeTriple[0] = this.maxDate()!.getHours();
+            case isMaxDate && this.maxDate()!.getHours() === convertedHour && this.maxDate()!.getMinutes() < minute:
+                returnTimeTriple[1] = this.maxDate()!.getMinutes();
+            case isMaxDate && this.maxDate()!.getHours() === convertedHour && this.maxDate()!.getMinutes() === minute && this.maxDate()!.getSeconds() < second:
+                returnTimeTriple[2] = this.maxDate()!.getSeconds();
                 break;
         }
 
@@ -2858,30 +2765,33 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     incrementHour(event: any) {
-        const prevHour = this.currentHour ?? 0;
-        let newHour = (this.currentHour ?? 0) + this.stepHour;
-        let newPM = this.pm;
-        if (this.hourFormat == '24') newHour = newHour >= 24 ? newHour - 24 : newHour;
-        else if (this.hourFormat == '12') {
+        const prevHour = this.currentHour() ?? 0;
+        let newHour = (this.currentHour() ?? 0) + this.stepHour();
+        let newPM = this.pm();
+        if (this.hourFormat() == '24') newHour = newHour >= 24 ? newHour - 24 : newHour;
+        else if (this.hourFormat() == '12') {
             // Before the AM/PM break, now after
             if (prevHour < 12 && newHour > 11) {
-                newPM = !this.pm;
+                newPM = !this.pm();
             }
             newHour = newHour >= 13 ? newHour - 12 : newHour;
         }
         this.toggleAMPMIfNotMinDate(newPM!);
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(newHour, this.currentMinute!, this.currentSecond!, newPM!);
+        const [hour, minute, second] = this.constrainTime(newHour, this.currentMinute()!, this.currentSecond()!, newPM!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     toggleAMPMIfNotMinDate(newPM: boolean) {
-        let value = this.value;
+        let value = this.value();
         const valueDateString = value && isDate(value) ? value.toDateString() : null;
-        let isMinDate = this.minDate && valueDateString && this.minDate.toDateString() === valueDateString;
-        if (isMinDate && this.minDate!.getHours() >= 12) {
-            this.pm = true;
+        let isMinDate = this.minDate() && valueDateString && this.minDate()!.toDateString() === valueDateString;
+        if (isMinDate && this.minDate()!.getHours() >= 12) {
+            this.pm.set(true);
         } else {
-            this.pm = newPM;
+            this.pm.set(newPM);
         }
     }
 
@@ -2900,7 +2810,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onTimePickerElementMouseLeave() {
-        if (!this.$disabled() && this.timePickerTimer) {
+        if (!this.$disabled() && this.timePickerTimer()) {
             this.clearTimePickerTimer();
             this.updateTime();
         }
@@ -2910,10 +2820,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         let i = interval || 500;
 
         this.clearTimePickerTimer();
-        this.timePickerTimer = setTimeout(() => {
-            this.repeat(event, 100, type, direction);
-            this.cd.markForCheck();
-        }, i);
+        this.timePickerTimer.set(
+            setTimeout(() => {
+                this.repeat(event, 100, type, direction);
+            }, i)
+        );
 
         switch (type) {
             case 0:
@@ -2936,82 +2847,97 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     clearTimePickerTimer() {
-        if (this.timePickerTimer) {
-            clearTimeout(this.timePickerTimer);
-            this.timePickerTimer = null;
+        if (this.timePickerTimer()) {
+            clearTimeout(this.timePickerTimer());
+            this.timePickerTimer.set(null);
         }
     }
 
     decrementHour(event: any) {
-        let newHour = (this.currentHour ?? 0) - this.stepHour;
-        let newPM = this.pm;
-        if (this.hourFormat == '24') newHour = newHour < 0 ? 24 + newHour : newHour;
-        else if (this.hourFormat == '12') {
+        let newHour = (this.currentHour() ?? 0) - this.stepHour();
+        let newPM = this.pm();
+        if (this.hourFormat() == '24') newHour = newHour < 0 ? 24 + newHour : newHour;
+        else if (this.hourFormat() == '12') {
             // If we were at noon/midnight, then switch
-            if (this.currentHour === 12) {
-                newPM = !this.pm;
+            if (this.currentHour() === 12) {
+                newPM = !this.pm();
             }
             newHour = newHour <= 0 ? 12 + newHour : newHour;
         }
         this.toggleAMPMIfNotMinDate(newPM!);
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(newHour, this.currentMinute!, this.currentSecond!, newPM!);
+        const [hour, minute, second] = this.constrainTime(newHour, this.currentMinute()!, this.currentSecond()!, newPM!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     incrementMinute(event: any) {
-        let newMinute = (this.currentMinute ?? 0) + this.stepMinute;
+        let newMinute = (this.currentMinute() ?? 0) + this.stepMinute();
         newMinute = newMinute > 59 ? newMinute - 60 : newMinute;
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(this.currentHour || 0, newMinute, this.currentSecond!, this.pm!);
+        const [hour, minute, second] = this.constrainTime(this.currentHour() || 0, newMinute, this.currentSecond()!, this.pm()!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     decrementMinute(event: any) {
-        let newMinute = (this.currentMinute ?? 0) - this.stepMinute;
+        let newMinute = (this.currentMinute() ?? 0) - this.stepMinute();
         newMinute = newMinute < 0 ? 60 + newMinute : newMinute;
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(this.currentHour || 0, newMinute, this.currentSecond || 0, this.pm!);
+        const [hour, minute, second] = this.constrainTime(this.currentHour() || 0, newMinute, this.currentSecond() || 0, this.pm()!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     incrementSecond(event: any) {
-        let newSecond = <any>this.currentSecond + this.stepSecond;
+        let newSecond = <any>this.currentSecond() + this.stepSecond();
         newSecond = newSecond > 59 ? newSecond - 60 : newSecond;
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(this.currentHour || 0, this.currentMinute || 0, newSecond, this.pm!);
+        const [hour, minute, second] = this.constrainTime(this.currentHour() || 0, this.currentMinute() || 0, newSecond, this.pm()!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     decrementSecond(event: any) {
-        let newSecond = <any>this.currentSecond - this.stepSecond;
+        let newSecond = <any>this.currentSecond() - this.stepSecond();
         newSecond = newSecond < 0 ? 60 + newSecond : newSecond;
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(this.currentHour || 0, this.currentMinute || 0, newSecond, this.pm!);
+        const [hour, minute, second] = this.constrainTime(this.currentHour() || 0, this.currentMinute() || 0, newSecond, this.pm()!);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         event.preventDefault();
     }
 
     updateTime() {
-        let value = this.value;
+        let value = this.value();
         if (this.isRangeSelection()) {
-            value = this.value[1] || this.value[0];
+            value = this.value()[1] || this.value()[0];
         }
         if (this.isMultipleSelection()) {
-            value = this.value[this.value.length - 1];
+            value = this.value()[this.value().length - 1];
         }
         value = value && isDate(value) ? new Date(value.getTime()) : new Date();
 
-        if (this.hourFormat == '12') {
-            if (this.currentHour === 12) value.setHours(this.pm ? 12 : 0);
-            else value.setHours(this.pm ? <number>this.currentHour + 12 : this.currentHour);
+        if (this.hourFormat() == '12') {
+            if (this.currentHour() === 12) value.setHours(this.pm() ? 12 : 0);
+            else value.setHours(this.pm() ? <number>this.currentHour() + 12 : this.currentHour());
         } else {
-            value.setHours(this.currentHour);
+            value.setHours(this.currentHour());
         }
 
-        value.setMinutes(this.currentMinute);
-        value.setSeconds(this.currentSecond);
+        value.setMinutes(this.currentMinute());
+        value.setSeconds(this.currentSecond());
         if (this.isRangeSelection()) {
-            if (this.value[1]) value = [this.value[0], value];
+            if (this.value()[1]) value = [this.value()[0], value];
             else value = [value, null];
         }
 
         if (this.isMultipleSelection()) {
-            value = [...this.value.slice(0, -1), value];
+            value = [...this.value().slice(0, -1), value];
         }
 
         this.updateModel(value);
@@ -3020,9 +2946,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     toggleAMPM(event: any) {
-        const newPM = !this.pm;
-        this.pm = newPM;
-        [this.currentHour, this.currentMinute, this.currentSecond] = this.constrainTime(this.currentHour || 0, this.currentMinute || 0, this.currentSecond || 0, newPM);
+        const newPM = !this.pm();
+        this.pm.set(newPM);
+        const [hour, minute, second] = this.constrainTime(this.currentHour() || 0, this.currentMinute() || 0, this.currentSecond() || 0, newPM);
+        this.currentHour.set(hour);
+        this.currentMinute.set(minute);
+        this.currentSecond.set(second);
         this.updateTime();
         event.preventDefault();
     }
@@ -3030,10 +2959,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     onUserInput(event: KeyboardEvent | any) {
         // IE 11 Workaround for input placeholder : https://github.com/primefaces/primeng/issues/2026
 
-        if (!this.isKeydown) {
+        if (!this.isKeydown()) {
             return;
         }
-        this.isKeydown = false;
+        this.isKeydown.set(false);
 
         let val = (<HTMLInputElement>event.target).value;
         try {
@@ -3041,12 +2970,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             if (this.isValidSelection(value)) {
                 this.updateModel(value);
                 this.updateUI();
-            } else if (this.keepInvalid) {
+            } else if (this.keepInvalid()) {
                 this.updateModel(value);
             }
         } catch (err) {
             //invalid date
-            let value = this.keepInvalid ? val : null;
+            let value = this.keepInvalid() ? val : null;
             this.updateModel(value);
         }
 
@@ -3074,13 +3003,13 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         if (this.isSingleSelection()) {
             value = this.parseDateTime(text);
         } else if (this.isMultipleSelection()) {
-            let tokens = text.split(this.multipleSeparator);
+            let tokens = text.split(this.multipleSeparator());
             value = [];
             for (let token of tokens) {
                 value.push(this.parseDateTime(token.trim()));
             }
         } else if (this.isRangeSelection()) {
-            let tokens = text.split(' ' + this.rangeSeparator + ' ');
+            let tokens = text.split(' ' + this.rangeSeparator() + ' ');
             value = [];
             for (let i = 0; i < tokens.length; i++) {
                 value[i] = this.parseDateTime(tokens[i].trim());
@@ -3094,13 +3023,13 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         let date: Date;
         let parts: string[] = text.split(' ');
 
-        if (this.timeOnly) {
+        if (this.timeOnly()) {
             date = new Date();
             this.populateTime(date, parts[0], parts[1]);
         } else {
             const dateFormat = this.getDateFormat();
-            if (this.showTime) {
-                let ampm = this.hourFormat == '12' ? parts.pop() : null;
+            if (this.showTime()) {
+                let ampm = this.hourFormat() == '12' ? parts.pop() : null;
                 let timeString = parts.pop();
 
                 date = this.parseDate(parts.join(' '), dateFormat);
@@ -3114,11 +3043,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     populateTime(value: any, timeString: any, ampm: any) {
-        if (this.hourFormat == '12' && !ampm) {
+        if (this.hourFormat() == '12' && !ampm) {
             throw 'Invalid Time';
         }
 
-        this.pm = ampm === 'PM' || ampm === 'pm';
+        this.pm.set(ampm === 'PM' || ampm === 'pm');
         let time = this.parseTime(timeString);
         value.setHours(time.hour);
         value.setMinutes(time.minute);
@@ -3130,58 +3059,56 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     updateUI() {
-        let propValue = this.value;
+        let propValue = this.value();
         if (Array.isArray(propValue)) {
             propValue = propValue.length === 2 ? propValue[1] : propValue[0];
         }
 
-        let val = this.defaultDate && this.isValidDate(this.defaultDate) && !this.value ? this.defaultDate : propValue && this.isValidDate(propValue) ? propValue : new Date();
+        let val = this.defaultDate() && this.isValidDate(this.defaultDate()) && !this.value() ? this.defaultDate() : propValue && this.isValidDate(propValue) ? propValue : new Date();
 
-        this.currentMonth = val.getMonth();
-        this.currentYear = val.getFullYear();
-        this.createMonths(this.currentMonth, this.currentYear);
+        this.currentMonth.set(val.getMonth());
+        this.currentYear.set(val.getFullYear());
+        this.createMonths(this.currentMonth(), this.currentYear());
 
-        if (this.showTime || this.timeOnly) {
+        if (this.showTime() || this.timeOnly()) {
             this.setCurrentHourPM(val.getHours());
-            this.currentMinute = val.getMinutes();
-            this.currentSecond = this.showSeconds ? val.getSeconds() : 0;
+            this.currentMinute.set(val.getMinutes());
+            this.currentSecond.set(this.showSeconds() ? val.getSeconds() : 0);
         }
     }
 
     showOverlay() {
-        if (!this.overlayVisible) {
+        if (!this.overlayVisible()) {
             this.updateUI();
 
-            if (!this.touchUI) {
-                this.preventFocus = true;
+            if (!this.touchUI()) {
+                this.preventFocus.set(true);
             }
 
-            this.overlayMinWidth = this.el.nativeElement.offsetWidth;
-            this.overlayVisible = true;
+            this.overlayMinWidth.set(this.el.nativeElement.offsetWidth);
+            this.overlayVisible.set(true);
         }
     }
 
     hideOverlay() {
         const activeElement = this.document.activeElement;
-        const isFocusInDatepicker = !activeElement || activeElement === this.document.body || this.el.nativeElement.contains(activeElement) || (this.overlay && this.overlay.contains(activeElement));
+        const isFocusInDatepicker = !activeElement || activeElement === this.document.body || this.el.nativeElement.contains(activeElement) || (this.overlay() && this.overlay()!.contains(activeElement));
 
         if (isFocusInDatepicker) {
             this.inputfieldViewChild()?.nativeElement.focus();
         }
 
-        this.overlayVisible = false;
+        this.overlayVisible.set(false);
         this.clearTimePickerTimer();
 
-        if (this.touchUI) {
+        if (this.touchUI()) {
             this.disableModality();
         }
-
-        this.cd.markForCheck();
     }
 
     toggle() {
-        if (!this.inline) {
-            if (!this.overlayVisible) {
+        if (!this.inline()) {
+            if (!this.overlayVisible()) {
                 this.showOverlay();
                 this.inputfieldViewChild()?.nativeElement.focus();
             } else {
@@ -3191,10 +3118,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onOverlayBeforeEnter(event: MotionEvent) {
-        this.overlay = event.element as HTMLElement;
-        this.$attrSelector && this.overlay!.setAttribute(this.$attrSelector, '');
-        const styles = !this.inline ? { position: 'absolute', top: '0', minWidth: `${this.overlayMinWidth}px` } : undefined;
-        addStyle(this.overlay!, styles || {});
+        this.overlay.set(event.element as HTMLElement);
+        this.$attrSelector && this.overlay()!.setAttribute(this.$attrSelector, '');
+        const styles = !this.inline() ? { position: 'absolute', top: '0', minWidth: `${this.overlayMinWidth()}px` } : undefined;
+        addStyle(this.overlay()!, styles || {});
         this.appendOverlay();
         this.alignOverlay();
         this.setZIndex();
@@ -3204,7 +3131,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onOverlayAfterLeave(event: MotionEvent) {
-        if (this.autoZIndex) {
+        if (this.autoZIndex()) {
             ZIndexUtils.clear(event.element as HTMLElement);
         }
         this.restoreOverlayAppend();
@@ -3215,25 +3142,25 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     appendOverlay() {
         if (this.$appendTo() && this.$appendTo() !== 'self') {
-            if (this.$appendTo() === 'body') this.document.body.appendChild(<HTMLElement>this.overlay);
-            else appendChild(this.$appendTo(), this.overlay!);
+            if (this.$appendTo() === 'body') this.document.body.appendChild(<HTMLElement>this.overlay());
+            else appendChild(this.$appendTo(), this.overlay()!);
         }
     }
 
     restoreOverlayAppend() {
-        if (this.overlay && this.$appendTo() !== 'self') {
-            this.el.nativeElement.appendChild(this.overlay!);
+        if (this.overlay() && this.$appendTo() !== 'self') {
+            this.el.nativeElement.appendChild(this.overlay()!);
         }
     }
 
     alignOverlay() {
-        if (this.touchUI) {
-            this.enableModality(this.overlay);
-        } else if (this.overlay) {
+        if (this.touchUI()) {
+            this.enableModality(this.overlay());
+        } else if (this.overlay()) {
             if (this.$appendTo() && this.$appendTo() !== 'self') {
-                absolutePosition(this.overlay, this.inputfieldViewChild()?.nativeElement);
+                absolutePosition(this.overlay()!, this.inputfieldViewChild()?.nativeElement);
             } else {
-                relativePosition(this.overlay, this.inputfieldViewChild()?.nativeElement);
+                relativePosition(this.overlay()!, this.inputfieldViewChild()?.nativeElement);
             }
         }
     }
@@ -3245,42 +3172,44 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     setZIndex() {
-        if (this.autoZIndex) {
-            if (this.touchUI) ZIndexUtils.set('modal', this.overlay, this.baseZIndex || this.config.zIndex.modal);
-            else ZIndexUtils.set('overlay', this.overlay, this.baseZIndex || this.config.zIndex.overlay);
+        if (this.autoZIndex()) {
+            if (this.touchUI()) ZIndexUtils.set('modal', this.overlay(), this.baseZIndex() || this.config.zIndex.modal);
+            else ZIndexUtils.set('overlay', this.overlay(), this.baseZIndex() || this.config.zIndex.overlay);
         }
     }
 
     enableModality(element: any) {
-        if (!this.mask && this.touchUI) {
-            this.mask = this.renderer.createElement('div');
-            this.renderer.setStyle(this.mask, 'zIndex', String(parseInt(element.style.zIndex) - 1));
+        if (!this.mask() && this.touchUI()) {
+            this.mask.set(this.renderer.createElement('div'));
+            this.renderer.setStyle(this.mask(), 'zIndex', String(parseInt(element.style.zIndex) - 1));
             let maskStyleClass = 'p-overlay-mask p-datepicker-mask p-datepicker-mask-scrollblocker p-overlay-mask p-overlay-mask-enter-active';
-            addClass(this.mask!, maskStyleClass);
+            addClass(this.mask()!, maskStyleClass);
 
-            this.maskClickListener = this.renderer.listen(this.mask, 'click', (event: any) => {
-                this.disableModality();
-                this.overlayVisible = false;
-            });
-            this.renderer.appendChild(this.document.body, this.mask);
+            this.maskClickListener.set(
+                this.renderer.listen(this.mask(), 'click', (event: any) => {
+                    this.disableModality();
+                    this.overlayVisible.set(false);
+                })
+            );
+            this.renderer.appendChild(this.document.body, this.mask());
             blockBodyScroll();
         }
     }
 
     disableModality() {
-        if (this.mask) {
-            addClass(this.mask, 'p-overlay-mask-leave');
-            if (!this.animationEndListener) {
-                this.animationEndListener = this.renderer.listen(this.mask, 'animationend', this.destroyMask.bind(this));
+        if (this.mask()) {
+            addClass(this.mask()!, 'p-overlay-mask-leave');
+            if (!this.animationEndListener()) {
+                this.animationEndListener.set(this.renderer.listen(this.mask(), 'animationend', this.destroyMask.bind(this)));
             }
         }
     }
 
     destroyMask() {
-        if (!this.mask) {
+        if (!this.mask()) {
             return;
         }
-        this.renderer.removeChild(this.document.body, this.mask);
+        this.renderer.removeChild(this.document.body, this.mask());
         let bodyChildren = this.document.body.children;
         let hasBlockerMasks!: boolean;
         for (let i = 0; i < bodyChildren.length; i++) {
@@ -3297,29 +3226,29 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
         this.unbindAnimationEndListener();
         this.unbindMaskClickListener();
-        this.mask = null;
+        this.mask.set(null);
     }
 
     unbindMaskClickListener() {
-        if (this.maskClickListener) {
-            this.maskClickListener();
-            this.maskClickListener = null;
+        if (this.maskClickListener()) {
+            this.maskClickListener()!();
+            this.maskClickListener.set(null);
         }
     }
 
     unbindAnimationEndListener() {
-        if (this.animationEndListener && this.mask) {
-            this.animationEndListener();
-            this.animationEndListener = null;
+        if (this.animationEndListener() && this.mask()) {
+            this.animationEndListener()!();
+            this.animationEndListener.set(null);
         }
     }
 
     getDateFormat() {
-        return this.dateFormat || this.getTranslation('dateFormat');
+        return this.dateFormat() || this.getTranslation('dateFormat');
     }
 
     getFirstDateOfWeek() {
-        return this._firstDayOfWeek || this.getTranslation(TranslationKeys.FIRST_DAY_OF_WEEK);
+        return this.firstDayOfWeek() || this.getTranslation(TranslationKeys.FIRST_DAY_OF_WEEK);
     }
 
     // Ported from jquery-ui datepicker formatDate
@@ -3383,7 +3312,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                             formattedDate += date.getTime();
                             break;
                         case '!':
-                            formattedDate += date.getTime() * 10000 + <number>this.ticksTo1970;
+                            formattedDate += date.getTime() * 10000 + <number>this.ticksTo1970();
                             break;
                         case "'":
                             if (lookAhead("'")) {
@@ -3411,11 +3340,11 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         let minutes = date.getMinutes();
         let seconds = date.getSeconds();
 
-        if (this.hourFormat == '12' && hours > 11 && hours != 12) {
+        if (this.hourFormat() == '12' && hours > 11 && hours != 12) {
             hours -= 12;
         }
 
-        if (this.hourFormat == '12') {
+        if (this.hourFormat() == '12') {
             formattedTime += hours === 0 ? 12 : hours < 10 ? '0' + hours : hours;
         } else {
             formattedTime += hours < 10 ? '0' + hours : hours;
@@ -3423,12 +3352,12 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         formattedTime += ':';
         formattedTime += minutes < 10 ? '0' + minutes : minutes;
 
-        if (this.showSeconds) {
+        if (this.showSeconds()) {
             formattedTime += ':';
             formattedTime += seconds < 10 ? '0' + seconds : seconds;
         }
 
-        if (this.hourFormat == '12') {
+        if (this.hourFormat() == '12') {
             formattedTime += date.getHours() > 11 ? ' PM' : ' AM';
         }
 
@@ -3437,7 +3366,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     parseTime(value: any) {
         let tokens: string[] = value.split(':');
-        let validTokenLength = this.showSeconds ? 3 : 2;
+        let validTokenLength = this.showSeconds() ? 3 : 2;
 
         if (tokens.length !== validTokenLength) {
             throw 'Invalid time';
@@ -3445,15 +3374,15 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
         let h = parseInt(tokens[0]);
         let m = parseInt(tokens[1]);
-        let s = this.showSeconds ? parseInt(tokens[2]) : null;
+        let s = this.showSeconds() ? parseInt(tokens[2]) : null;
 
-        if (isNaN(h) || isNaN(m) || h > 23 || m > 59 || (this.hourFormat == '12' && h > 12) || (this.showSeconds && (isNaN(<any>s) || <any>s > 59))) {
+        if (isNaN(h) || isNaN(m) || h > 23 || m > 59 || (this.hourFormat() == '12' && h > 12) || (this.showSeconds() && (isNaN(<any>s) || <any>s > 59))) {
             throw 'Invalid time';
         } else {
-            if (this.hourFormat == '12') {
-                if (h !== 12 && this.pm) {
+            if (this.hourFormat() == '12') {
+                if (h !== 12 && this.pm()) {
                     h += 12;
-                } else if (!this.pm && h === 12) {
+                } else if (!this.pm() && h === 12) {
                     h -= 12;
                 }
             }
@@ -3477,7 +3406,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             dim,
             extra,
             iValue = 0,
-            shortYearCutoff = typeof this.shortYearCutoff !== 'string' ? this.shortYearCutoff : (new Date().getFullYear() % 100) + parseInt(this.shortYearCutoff, 10),
+            shortYearCutoff = typeof this.shortYearCutoff() !== 'string' ? this.shortYearCutoff() : (new Date().getFullYear() % 100) + parseInt(this.shortYearCutoff(), 10),
             year = -1,
             month = -1,
             day = -1,
@@ -3537,7 +3466,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 iValue++;
             };
 
-        if (this.view === 'month') {
+        if (this.view() === 'month') {
             day = 1;
         }
 
@@ -3575,7 +3504,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                         day = date.getDate();
                         break;
                     case '!':
-                        date = new Date((getNumber('!') - <number>this.ticksTo1970) / 10000);
+                        date = new Date((getNumber('!') - <number>this.ticksTo1970()) / 10000);
                         year = date.getFullYear();
                         month = date.getMonth() + 1;
                         day = date.getDate();
@@ -3619,7 +3548,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             } while (true);
         }
 
-        if (this.view === 'year') {
+        if (this.view() === 'year') {
             month = month === -1 ? 1 : month;
             day = day === -1 ? 1 : day;
         }
@@ -3644,10 +3573,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     isValidDateForTimeConstraints(selectedDate: Date) {
-        if (this.keepInvalid) {
+        if (this.keepInvalid()) {
             return true; // If we are keeping invalid dates, we don't need to check for time constraints
         }
-        return (!this.minDate || selectedDate >= this.minDate) && (!this.maxDate || selectedDate <= this.maxDate);
+        return (!this.minDate() || selectedDate >= this.minDate()!) && (!this.maxDate() || selectedDate <= this.maxDate()!);
     }
 
     onTodayButtonClick(event: any) {
@@ -3656,7 +3585,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             day: date.getDate(),
             month: date.getMonth(),
             year: date.getFullYear(),
-            otherMonth: date.getMonth() !== this.currentMonth || date.getFullYear() !== this.currentYear,
+            otherMonth: date.getMonth() !== this.currentMonth() || date.getFullYear() !== this.currentYear(),
             today: true,
             selectable: true
         };
@@ -3674,17 +3603,17 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     createResponsiveStyle() {
-        if (this.numberOfMonths > 1 && this.responsiveOptions) {
-            if (!this.responsiveStyleElement) {
-                this.responsiveStyleElement = this.renderer.createElement('style');
-                (<HTMLStyleElement>this.responsiveStyleElement).type = 'text/css';
-                setAttribute(this.responsiveStyleElement!, 'nonce', this.config?.csp()?.nonce);
-                this.renderer.appendChild(this.document.body, this.responsiveStyleElement);
+        if (this.numberOfMonths() > 1 && this.responsiveOptions()) {
+            if (!this.responsiveStyleElement()) {
+                this.responsiveStyleElement.set(this.renderer.createElement('style'));
+                (<HTMLStyleElement>this.responsiveStyleElement()).type = 'text/css';
+                setAttribute(this.responsiveStyleElement()!, 'nonce', this.config?.csp()?.nonce);
+                this.renderer.appendChild(this.document.body, this.responsiveStyleElement());
             }
 
             let innerHTML = '';
-            if (this.responsiveOptions) {
-                let responsiveOptions = [...this.responsiveOptions].filter((o) => !!(o.breakpoint && o.numMonths)).sort((o1: any, o2: any) => -1 * o1.breakpoint.localeCompare(o2.breakpoint, undefined, { numeric: true }));
+            if (this.responsiveOptions()) {
+                let responsiveOptions = [...this.responsiveOptions()!].filter((o) => !!(o.breakpoint && o.numMonths)).sort((o1: any, o2: any) => -1 * o1.breakpoint.localeCompare(o2.breakpoint, undefined, { numeric: true }));
 
                 for (let i = 0; i < responsiveOptions.length; i++) {
                     let { breakpoint, numMonths } = responsiveOptions[i];
@@ -3694,7 +3623,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                         }
                     `;
 
-                    for (let j: number = <number>numMonths; j < this.numberOfMonths; j++) {
+                    for (let j: number = <number>numMonths; j < this.numberOfMonths(); j++) {
                         styles += `
                             .p-datepicker[${this.attributeSelector}] .p-datepicker-group:nth-child(${j + 1}) {
                                 display: none !important;
@@ -3710,77 +3639,79 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
                 }
             }
 
-            (<HTMLStyleElement>this.responsiveStyleElement).innerHTML = innerHTML;
-            setAttribute(this.responsiveStyleElement!, 'nonce', this.config?.csp()?.nonce);
+            (<HTMLStyleElement>this.responsiveStyleElement()).innerHTML = innerHTML;
+            setAttribute(this.responsiveStyleElement()!, 'nonce', this.config?.csp()?.nonce);
         }
     }
 
     destroyResponsiveStyleElement() {
-        if (this.responsiveStyleElement) {
-            this.responsiveStyleElement.remove();
-            this.responsiveStyleElement = null;
+        if (this.responsiveStyleElement()) {
+            this.responsiveStyleElement()!.remove();
+            this.responsiveStyleElement.set(null);
         }
     }
 
     bindDocumentClickListener() {
-        if (!this.documentClickListener) {
+        if (!this.documentClickListener()) {
             this.zone.runOutsideAngular(() => {
                 const documentTarget: any = this.el ? this.el.nativeElement.ownerDocument : this.document;
 
-                this.documentClickListener = this.renderer.listen(documentTarget, 'mousedown', (event) => {
-                    if (this.isOutsideClicked(event) && this.overlayVisible) {
-                        this.zone.run(() => {
-                            this.hideOverlay();
-                            this.onClickOutside.emit(event);
-
-                            this.cd.markForCheck();
-                        });
-                    }
-                });
+                this.documentClickListener.set(
+                    this.renderer.listen(documentTarget, 'mousedown', (event) => {
+                        if (this.isOutsideClicked(event) && this.overlayVisible()) {
+                            this.zone.run(() => {
+                                this.hideOverlay();
+                                this.onClickOutside.emit(event);
+                            });
+                        }
+                    })
+                );
             });
         }
     }
 
     unbindDocumentClickListener() {
-        if (this.documentClickListener) {
-            this.documentClickListener();
-            this.documentClickListener = null;
+        if (this.documentClickListener()) {
+            this.documentClickListener()!();
+            this.documentClickListener.set(null);
         }
     }
 
     bindDocumentResizeListener() {
-        if (!this.documentResizeListener && !this.touchUI) {
-            this.documentResizeListener = this.renderer.listen(this.window, 'resize', this.onWindowResize.bind(this));
+        if (!this.documentResizeListener() && !this.touchUI()) {
+            this.documentResizeListener.set(this.renderer.listen(this.window, 'resize', this.onWindowResize.bind(this)));
         }
     }
 
     unbindDocumentResizeListener() {
-        if (this.documentResizeListener) {
-            this.documentResizeListener();
-            this.documentResizeListener = null;
+        if (this.documentResizeListener()) {
+            this.documentResizeListener()!();
+            this.documentResizeListener.set(null);
         }
     }
 
     bindScrollListener() {
-        if (!this.scrollHandler) {
-            this.scrollHandler = new ConnectedOverlayScrollHandler(this.el?.nativeElement, () => {
-                if (this.overlayVisible) {
-                    this.hideOverlay();
-                }
-            });
+        if (!this.scrollHandler()) {
+            this.scrollHandler.set(
+                new ConnectedOverlayScrollHandler(this.el?.nativeElement, () => {
+                    if (this.overlayVisible()) {
+                        this.hideOverlay();
+                    }
+                })
+            );
         }
 
-        this.scrollHandler.bindScrollListener();
+        this.scrollHandler()!.bindScrollListener();
     }
 
     unbindScrollListener() {
-        if (this.scrollHandler) {
-            this.scrollHandler.unbindScrollListener();
+        if (this.scrollHandler()) {
+            this.scrollHandler()!.unbindScrollListener();
         }
     }
 
     isOutsideClicked(event: Event) {
-        return !(this.el.nativeElement.isSameNode(event.target) || this.isNavIconClicked(event) || this.el.nativeElement.contains(event.target) || (this.overlay && this.overlay.contains(<Node>event.target)));
+        return !(this.el.nativeElement.isSameNode(event.target) || this.isNavIconClicked(event) || this.el.nativeElement.contains(event.target) || (this.overlay() && this.overlay()!.contains(<Node>event.target)));
     }
 
     isNavIconClicked(event: any) {
@@ -3788,22 +3719,22 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     }
 
     onWindowResize() {
-        if (this.overlayVisible && !isTouchDevice()) {
+        if (this.overlayVisible() && !isTouchDevice()) {
             this.hideOverlay();
         }
     }
 
     onOverlayHide() {
-        this.currentView = this.view;
+        this.currentView.set(this.view());
 
-        if (this.mask) {
+        if (this.mask()) {
             this.destroyMask();
         }
 
         this.unbindDocumentClickListener();
         this.unbindDocumentResizeListener();
         this.unbindScrollListener();
-        this.overlay = null;
+        this.overlay.set(null);
     }
 
     /**
@@ -3813,34 +3744,33 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
      * Writes the value to the control.
      */
     writeControlValue(value: any): void {
-        this.value = value;
-        if (this.value && typeof this.value === 'string') {
+        this.value.set(value);
+        if (this.value() && typeof this.value() === 'string') {
             try {
-                this.value = this.parseValueFromString(this.value);
+                this.value.set(this.parseValueFromString(this.value()));
             } catch {
-                if (this.keepInvalid) {
-                    this.value = value;
+                if (this.keepInvalid()) {
+                    this.value.set(value);
                 }
             }
         }
 
         this.updateInputfield();
         this.updateUI();
-        this.cd.markForCheck();
     }
 
     onDestroy() {
-        if (this.scrollHandler) {
-            this.scrollHandler.destroy();
-            this.scrollHandler = null;
+        if (this.scrollHandler()) {
+            this.scrollHandler()!.destroy();
+            this.scrollHandler.set(null);
         }
 
-        if (this.translationSubscription) {
-            this.translationSubscription.unsubscribe();
+        if (this.translationSubscription()) {
+            this.translationSubscription()!.unsubscribe();
         }
 
-        if (this.overlay && this.autoZIndex) {
-            ZIndexUtils.clear(this.overlay);
+        if (this.overlay() && this.autoZIndex()) {
+            ZIndexUtils.clear(this.overlay());
         }
 
         this.destroyResponsiveStyleElement();

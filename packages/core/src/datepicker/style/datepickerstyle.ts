@@ -23,8 +23,8 @@ const classes = {
             'p-datepicker-fluid': instance.hasFluid,
             'p-inputwrapper-filled': instance.$filled(),
             'p-variant-filled': instance.$variant() === 'filled',
-            'p-inputwrapper-focus': instance.focus || instance.overlayVisible,
-            'p-focus': instance.focus || instance.overlayVisible
+            'p-inputwrapper-focus': instance.focus() || instance.overlayVisible(),
+            'p-focus': instance.focus() || instance.overlayVisible()
         }
     ],
     pcInputText: 'p-datepicker-input',
@@ -35,9 +35,9 @@ const classes = {
         'p-datepicker-panel p-component',
         {
             'p-datepicker-panel p-component': true,
-            'p-datepicker-panel-inline': instance.inline,
+            'p-datepicker-panel-inline': instance.inline(),
             'p-disabled': instance.$disabled(),
-            'p-datepicker-timeonly': instance.timeOnly
+            'p-datepicker-timeonly': instance.timeOnly()
         }
     ],
     calendarContainer: 'p-datepicker-calendar-container',
@@ -66,8 +66,8 @@ const classes = {
         let selectedDayClass = '';
 
         if (instance.isRangeSelection() && instance.isSelected(date) && date.selectable) {
-            const startDate = instance.value[0];
-            const endDate = instance.value[1];
+            const startDate = instance.value()[0];
+            const endDate = instance.value()[1];
 
             const isStart = startDate && date.year === startDate.getFullYear() && date.month === startDate.getMonth() && date.day === startDate.getDate();
             const isEnd = endDate && date.year === endDate.getFullYear() && date.month === endDate.getMonth() && date.day === endDate.getDate();

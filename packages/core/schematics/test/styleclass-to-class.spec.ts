@@ -1450,4 +1450,31 @@ describe('styleclass-to-class', () => {
         expect(infos.join('\n')).toContain('No usages of styleClass on the migrated selectors were found to rewrite.');
         expect(warnings.join('\n')).toBe('');
     });
+
+    it('rewrites a static styleClass to class on p-datepicker', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-datepicker [(ngModel)]="date" styleClass="my-datepicker"></p-datepicker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-datepicker [(ngModel)]="date" class="my-datepicker"></p-datepicker>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-datePicker and p-date-picker', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-datePicker [(ngModel)]="date" [styleClass]="pickerClass"></p-datePicker>\n<p-date-picker inline [styleClass]="pickerClass"></p-date-picker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-datePicker [(ngModel)]="date" [class]="pickerClass"></p-datePicker>\n<p-date-picker inline [class]="pickerClass"></p-date-picker>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-datepicker', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-datepicker class="existing" styleClass="my-datepicker" [showIcon]="true"></p-datepicker>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-datepicker class="existing my-datepicker" [showIcon]="true"></p-datepicker>\n`);
+    });
 });

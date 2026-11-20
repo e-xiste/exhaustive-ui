@@ -91,7 +91,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-mega-menu',
     'p-cascadeSelect',
     'p-cascadeselect',
-    'p-cascade-select'
+    'p-cascade-select',
+    'p-datePicker',
+    'p-datepicker',
+    'p-date-picker'
 ];
 
 /**

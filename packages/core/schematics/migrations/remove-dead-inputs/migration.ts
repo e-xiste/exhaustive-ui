@@ -62,6 +62,8 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * `removeStyleClass` on FileUpload was stored but never read: the file remove buttons are styled through
  * the PassThrough API only.
  * `inputLabel`/`emptyMessage` on CascadeSelect were never read: the hidden input is labelled by `ariaLabel`/`ariaLabelledBy`, and the only consumer of `emptyMessage` was an `emptyMessageText` getter nothing rendered.
+ * The deprecated `showTransitionOptions`/`hideTransitionOptions` on DatePicker were stored but never read:
+ * its overlay animation is driven by `motionOptions`.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -111,7 +113,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-fileUpload', names: ['removeStyleClass'] },
     { selector: 'p-cascadeSelect', names: ['inputLabel', 'emptyMessage'] },
     { selector: 'p-cascadeselect', names: ['inputLabel', 'emptyMessage'] },
-    { selector: 'p-cascade-select', names: ['inputLabel', 'emptyMessage'] }
+    { selector: 'p-cascade-select', names: ['inputLabel', 'emptyMessage'] },
+    { selector: 'p-datePicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-datepicker', names: ['showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-date-picker', names: ['showTransitionOptions', 'hideTransitionOptions'] }
 ];
 
 /**
@@ -167,8 +172,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * and tabindex, forwarded to internal lists that never read them; MegaMenuSub's disabled and
  * queryMatches, never read (MegaMenu handles both itself); Galleria's deprecated
  * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; FileUpload's
- * removeStyleClass, never read (the remove buttons are styled through PassThrough); and CascadeSelect's
- * inputLabel and emptyMessage, never read.
+ * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
+ * inputLabel and emptyMessage, never read; and DatePicker's deprecated
+ * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation).
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.
