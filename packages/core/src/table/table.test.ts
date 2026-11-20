@@ -2677,3 +2677,47 @@ describe('Table menu column filter with programmatic filtering', () => {
         expect(columnFilter.fieldConstraints!.length).toBe(1);
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule, FormsModule],
+    template: `
+        <p-table [value]="products" dataKey="id" editMode="cell" (onEditCancel)="cancelled = $event">
+            <ng-template #body let-product let-rowIndex="rowIndex">
+                <tr>
+                    <td [pEditableColumn]="product" pEditableColumnField="name" [pEditableColumnRowIndex]="rowIndex">
+                        <p-cellEditor>
+                            <ng-template #input><input type="text" [(ngModel)]="product.name" /></ng-template>
+                            <ng-template #output>{{ product.name }}</ng-template>
+                        </p-cellEditor>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TableCellEditCancelHostComponent {
+    products = [{ id: '1', name: 'Original' }];
+    cancelled: any;
+}
+
+describe('Table cell edit cancel', () => {
+    it('restores the original value on Escape (optimus-ui#846)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableCellEditCancelHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableCellEditCancelHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const cell: HTMLElement = fixture.nativeElement.querySelector('td');
+        cell.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.componentInstance.products[0].name = 'Edited';
+        cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+        expect(fixture.componentInstance.products[0].name).toBe('Original');
+        expect(fixture.componentInstance.cancelled.data.name).toBe('Original');
+    });
+});

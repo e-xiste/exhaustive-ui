@@ -1236,6 +1236,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     editingCellRowIndex = signal<number | undefined | null>(undefined);
 
+    /** Value of the edited field when the cell editor opened, restored when the edit is cancelled. */
+    editingCellOriginalValue = signal<any>(undefined);
+
     selfClick = signal<boolean | undefined | null>(undefined);
 
     documentEditListener = signal<any>(undefined);
@@ -4551,6 +4554,7 @@ export class EditableColumn extends BaseComponent {
 
     openCell() {
         this.dataTable.updateEditingCell(this.el.nativeElement, this.data(), this.field(), <number>this.rowIndex());
+        this.dataTable.editingCellOriginalValue.set(ObjectUtils.resolveFieldData(this.data(), this.field()));
         !this.$unstyled() && DomHandler.addClass(this.el.nativeElement, 'p-cell-editing');
         setAttribute(this.el.nativeElement, 'data-p-cell-editing', 'true');
 
@@ -4580,6 +4584,10 @@ export class EditableColumn extends BaseComponent {
     }
 
     closeEditingCell(completed: any, event: Event) {
+        if (!completed && this.dataTable.editingCellData() && this.dataTable.editingCellField()) {
+            this.dataTable.editingCellData()[this.dataTable.editingCellField()] = this.dataTable.editingCellOriginalValue();
+        }
+
         const eventData = {
             field: <string>this.dataTable.editingCellField(),
             data: <any>this.dataTable.editingCellData(),
@@ -4591,12 +4599,6 @@ export class EditableColumn extends BaseComponent {
             this.dataTable.onEditComplete.emit(eventData);
         } else {
             this.dataTable.onEditCancel.emit(eventData);
-
-            this.dataTable._value().forEach((element) => {
-                if (element[this.dataTable.editingCellField()] === this.data()) {
-                    element[this.dataTable.editingCellField()] = this.dataTable.editingCellData();
-                }
-            });
         }
 
         !this.$unstyled() && DomHandler.removeClass(this.dataTable.editingCell(), 'p-cell-editing');
