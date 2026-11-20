@@ -3361,3 +3361,53 @@ describe('Table column reorder next to a frozen column', () => {
         expect(table._columns()!.map((col: any) => col.field)).toEqual(['id', 'price', 'name']);
     });
 });
+
+@Component({
+    standalone: true,
+    imports: [TableModule],
+    template: `
+        <div dir="rtl">
+            <p-table [value]="rows" [reorderableColumns]="true">
+                <ng-template #header>
+                    <tr>
+                        <th pReorderableColumn style="width: 100px">Name</th>
+                        <th pReorderableColumn style="width: 100px">Price</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.price }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class TableRtlReorderHostComponent {
+    rows = [{ name: 'A', price: 1 }];
+}
+
+describe('Table column reorder in RTL', () => {
+    it('drops before a column when hovering its right (start) half (optimus-ui#150)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableRtlReorderHostComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TableRtlReorderHostComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const table: Table = fixture.debugElement.query(By.directive(Table)).componentInstance;
+        const headers = fixture.nativeElement.querySelectorAll('thead th');
+        const dropHeader: HTMLElement = headers[1];
+        const rect = dropHeader.getBoundingClientRect();
+
+        table.draggedColumn.set(headers[0]);
+        table.onColumnDragEnter({ preventDefault: () => {}, pageX: rect.right - 5 + window.scrollX }, dropHeader);
+        expect(table.dropPosition()).toBe(-1);
+
+        table.onColumnDragEnter({ preventDefault: () => {}, pageX: rect.left + 5 + window.scrollX }, dropHeader);
+        expect(table.dropPosition()).toBe(1);
+        table.draggedColumn.set(null);
+        fixture.nativeElement.remove();
+    });
+});

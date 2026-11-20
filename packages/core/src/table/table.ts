@@ -2694,6 +2694,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 let targetLeft = dropHeaderOffset.left - containerOffset.left;
                 let targetTop = containerOffset.top - dropHeaderOffset.top;
                 let columnCenter = dropHeaderOffset.left + dropHeader.offsetWidth / 2;
+                // in RTL the next column is on the left: the left half drops after, the right half before
+                const isRTL = getComputedStyle(this.el?.nativeElement ?? document.documentElement).direction === 'rtl';
 
                 (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.top = dropHeaderOffset.top - containerOffset.top - (<number>this.reorderIconHeight() - 1) + 'px';
                 (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.top = dropHeaderOffset.top - containerOffset.top + dropHeader.offsetHeight + 'px';
@@ -2701,11 +2703,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 if (event.pageX > columnCenter) {
                     (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
                     (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
-                    this.dropPosition.set(1);
+                    this.dropPosition.set(isRTL ? -1 : 1);
                 } else {
                     (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
                     (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
-                    this.dropPosition.set(-1);
+                    this.dropPosition.set(isRTL ? 1 : -1);
                 }
                 (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.display = 'block';
                 (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.display = 'block';
