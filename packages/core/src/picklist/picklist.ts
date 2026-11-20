@@ -32,7 +32,7 @@ import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponen
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { ButtonModule, ButtonProps } from '@exhaustive-ui/core/button';
 import { AngleDoubleDownIcon, AngleDoubleLeftIcon, AngleDoubleRightIcon, AngleDoubleUpIcon, AngleDownIcon, AngleLeftIcon, AngleRightIcon, AngleUpIcon } from '@exhaustive-ui/core/icons';
-import { Listbox, ListboxChangeEvent } from '@exhaustive-ui/core/listbox';
+import { Listbox, ListboxChangeEvent, ListboxDoubleClickEvent } from '@exhaustive-ui/core/listbox';
 import { Ripple } from '@exhaustive-ui/core/ripple';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
 import {
@@ -172,7 +172,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     (onFocus)="onListFocus($event, SOURCE_LIST)"
                     (onBlur)="onListBlur($event, SOURCE_LIST)"
                     (onChange)="onChangeSelection($event, SOURCE_LIST)"
-                    (onDblClick)="onSourceItemDblClick()"
+                    (onDblClick)="onSourceItemDblClick($event)"
                     [disabled]="disabled()"
                     [optionDisabled]="sourceOptionDisabled()"
                     [metaKeySelection]="metaKeySelection()"
@@ -335,7 +335,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     (onFocus)="onListFocus($event, TARGET_LIST)"
                     (onBlur)="onListBlur($event, TARGET_LIST)"
                     (onChange)="onChangeSelection($event, TARGET_LIST)"
-                    (onDblClick)="onTargetItemDblClick()"
+                    (onDblClick)="onTargetItemDblClick($event)"
                     [disabled]="disabled()"
                     [optionDisabled]="targetOptionDisabled()"
                     [metaKeySelection]="metaKeySelection()"
@@ -1176,20 +1176,27 @@ export class PickList extends BaseComponent {
         callback.emit({ originalEvent: e.originalEvent, items: e.value });
     }
 
-    onSourceItemDblClick() {
+    onSourceItemDblClick(event?: ListboxDoubleClickEvent) {
         if (this.disabled()) {
             return;
         }
 
+        // the two clicks of a double click may have toggled the item off again
+        if (event?.option && !this.isSelected(event.option, this.selectedItemsSource())) {
+            this.selectedItemsSource.set([...this.selectedItemsSource(), event.option]);
+        }
         this.moveRight();
         this.triggerChangeDetection();
     }
 
-    onTargetItemDblClick() {
+    onTargetItemDblClick(event?: ListboxDoubleClickEvent) {
         if (this.disabled()) {
             return;
         }
 
+        if (event?.option && !this.isSelected(event.option, this.selectedItemsTarget())) {
+            this.selectedItemsTarget.set([...this.selectedItemsTarget(), event.option]);
+        }
         this.moveLeft();
         this.triggerChangeDetection();
     }

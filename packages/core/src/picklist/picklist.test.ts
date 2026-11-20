@@ -2448,4 +2448,33 @@ describe('PickList regressions', () => {
         expect(pickList.selectedItemsTarget()).toEqual([alpha, beta]);
         expect(pickList.selectedItemsSource()).toEqual([]);
     });
+
+    it('moves the double-clicked item even though the two clicks toggled its selection off (optimus-ui#915)', async () => {
+        const fixture = TestBed.createComponent(PickList);
+        const pickList = fixture.componentInstance;
+        const alpha = { id: 1, name: 'Alpha' };
+        const beta = { id: 2, name: 'Beta' };
+        fixture.componentRef.setInput('source', [alpha]);
+        fixture.componentRef.setInput('target', [beta]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const doubleClick = async (selector: string) => {
+            const option = fixture.nativeElement.querySelector(`${selector} li[role="option"]`) as HTMLElement;
+            for (const type of ['click', 'click', 'dblclick']) {
+                option.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+                fixture.detectChanges();
+            }
+            await fixture.whenStable();
+            fixture.detectChanges();
+        };
+
+        await doubleClick('.p-picklist-source-list-container');
+        expect(pickList.target()).toEqual([beta, alpha]);
+        expect(pickList.source()).toEqual([]);
+
+        await doubleClick('.p-picklist-target-list-container');
+        expect(pickList.source()).toEqual([beta]);
+        expect(pickList.target()).toEqual([alpha]);
+    });
 });
