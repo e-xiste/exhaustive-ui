@@ -1748,6 +1748,26 @@ describe('ConfirmDialog Signal API', () => {
         expect(confirmDialog.confirmation()).toBeNull();
     });
 
+    it('should show a confirmation requested from the accept callback of the previous one', async () => {
+        const secondAccept = vi.fn();
+        confirmationService.confirm({
+            key: 'signals',
+            message: 'First',
+            accept: () => confirmationService.confirm({ key: 'signals', message: 'Second', accept: secondAccept })
+        });
+        await fixture.whenStable();
+
+        confirmDialog.onAccept();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        expect(confirmDialog.visible()).toBe(true);
+        expect(confirmDialog.confirmation()?.message).toBe('Second');
+
+        confirmDialog.onAccept();
+        expect(secondAccept).toHaveBeenCalled();
+    });
+
     it('should resolve the button labels from the confirmation', async () => {
         confirmationService.confirm({ key: 'signals', message: 'Labels', acceptLabel: 'Delete', rejectButtonProps: { label: 'Keep' } });
         await fixture.whenStable();

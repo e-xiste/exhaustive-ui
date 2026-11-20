@@ -464,14 +464,17 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
             confirmation.rejectEvent.next(ConfirmEventType.CANCEL);
         }
 
-        this.hide(ConfirmEventType.CANCEL);
+        this.hide(ConfirmEventType.CANCEL, confirmation);
     }
 
-    hide(type?: ConfirmEventType) {
+    hide(type?: ConfirmEventType, confirmation: Nullable<Confirmation> = this.confirmation()) {
         this.onHide.emit(type);
-        this.visible.set(false);
+        // A callback of the answered confirmation may have requested a new one: keep the dialog open for it.
+        if (this.confirmation() === confirmation) {
+            this.visible.set(false);
+        }
         // Unsubscribe from confirmation events when the dialogue is closed, because events are created when the dialogue is opened.
-        this.unsubscribeConfirmationEvents();
+        this.unsubscribeConfirmationEvents(confirmation);
     }
 
     onDialogHide() {
@@ -501,7 +504,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
         if (confirmation && confirmation.acceptEvent) {
             confirmation.acceptEvent.next(undefined);
         }
-        this.hide(ConfirmEventType.ACCEPT);
+        this.hide(ConfirmEventType.ACCEPT, confirmation);
     }
 
     onReject() {
@@ -510,11 +513,10 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
             confirmation.rejectEvent.next(ConfirmEventType.REJECT);
         }
 
-        this.hide(ConfirmEventType.REJECT);
+        this.hide(ConfirmEventType.REJECT, confirmation);
     }
 
-    unsubscribeConfirmationEvents() {
-        const confirmation = this.confirmation();
+    unsubscribeConfirmationEvents(confirmation: Nullable<Confirmation> = this.confirmation()) {
         if (confirmation) {
             confirmation.acceptEvent?.unsubscribe();
             confirmation.rejectEvent?.unsubscribe();
