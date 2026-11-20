@@ -1894,3 +1894,22 @@ describe('Card Signal Query API', () => {
         expect(instance.footerFacet()).toBeDefined();
     });
 });
+
+describe('Card layout (optimus-ui#28)', () => {
+    it('should keep the base flex column layout on the root element', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [CardModule],
+            declarations: [TestBasicCardComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestBasicCardComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const host = fixture.debugElement.query(By.css('p-card')).nativeElement as HTMLElement;
+        const computed = window.getComputedStyle(host);
+        expect(computed.display).toBe('flex');
+        expect(computed.flexDirection).toBe('column');
+    });
+});

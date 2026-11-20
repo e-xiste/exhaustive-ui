@@ -4,10 +4,6 @@ import { BaseStyle } from '@exhaustive-ui/core/base';
 
 const style = /*css*/ `
     ${card_style}
-
-    .p-card {
-        display: block;
-    }
 `;
 
 const classes = {
