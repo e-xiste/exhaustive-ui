@@ -1566,7 +1566,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         order: order
                     });
                 } else {
-                    this._value().sort((data1, data2) => {
+                    const sortedValue = [...this._value()].sort((data1, data2) => {
                         let value1 = ObjectUtils.resolveFieldData(data1, field);
                         let value2 = ObjectUtils.resolveFieldData(data2, field);
                         let result: any = null;
@@ -1580,7 +1580,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         return order * (result || 0);
                     });
 
-                    this._value.set([...this._value()]);
+                    this._value.set(sortedValue);
                 }
 
                 if (this.hasFilter()) {
@@ -1615,11 +1615,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         multiSortMeta: this._multiSortMeta()
                     });
                 } else {
-                    this._value().sort((data1, data2) => {
-                        return this.multisortField(data1, data2, <SortMeta[]>this._multiSortMeta(), 0);
-                    });
-
-                    this._value.set([...this._value()]);
+                    this._value.set(
+                        [...this._value()].sort((data1, data2) => {
+                            return this.multisortField(data1, data2, <SortMeta[]>this._multiSortMeta(), 0);
+                        })
+                    );
                 }
 
                 if (this.hasFilter()) {

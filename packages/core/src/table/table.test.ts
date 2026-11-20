@@ -2515,4 +2515,21 @@ describe('Table medium-severity fixes', () => {
 
         expect(table.filteredValue()!.map((r: any) => r.name)).toEqual(['Anna']);
     });
+
+    it('sorts a frozen value array without mutating it (optimus-ui#772)', () => {
+        const value = Object.freeze([{ name: 'b' }, { name: 'a' }, { name: 'c' }]);
+        fixture.componentRef.setInput('value', value);
+        fixture.componentRef.setInput('sortField', 'name');
+        fixture.componentRef.setInput('sortOrder', 1);
+
+        expect(() => table.sortSingle()).not.toThrow();
+        expect(table._value().map((r: any) => r.name)).toEqual(['a', 'b', 'c']);
+        expect(value.map((r: any) => r.name)).toEqual(['b', 'a', 'c']);
+
+        fixture.componentRef.setInput('sortMode', 'multiple');
+        fixture.componentRef.setInput('multiSortMeta', [{ field: 'name', order: -1 }]);
+        table._value.set(value as any);
+        expect(() => table.sortMultiple()).not.toThrow();
+        expect(table._value().map((r: any) => r.name)).toEqual(['c', 'b', 'a']);
+    });
 });
