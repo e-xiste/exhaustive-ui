@@ -1771,6 +1771,16 @@ describe('ConfirmDialog Signal API', () => {
         expect(query('.p-dialog')?.contains(document.activeElement)).toBe(false);
     });
 
+    it('should label the close button from the translation or the closeButtonProps of the confirmation', async () => {
+        expect(query('.p-dialog-close-button')?.getAttribute('aria-label')).toBe('Close');
+
+        confirmationService.confirm({ key: 'signals', message: 'Close label', closeButtonProps: { ariaLabel: 'Dismiss' } });
+        await fixture.whenStable();
+
+        expect(query('.p-dialog-close-button')?.getAttribute('aria-label')).toBe('Dismiss');
+        expect(query('.p-dialog-close-button')?.classList).toContain('p-button-text');
+    });
+
     it('should show a confirmation requested from the accept callback of the previous one', async () => {
         const secondAccept = vi.fn();
         confirmationService.confirm({

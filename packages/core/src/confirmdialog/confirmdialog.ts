@@ -23,7 +23,7 @@ import {
 import { Confirmation, ConfirmationService, ConfirmEventType, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
-import { Button } from '@exhaustive-ui/core/button';
+import { Button, ButtonProps } from '@exhaustive-ui/core/button';
 import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Nullable } from '@exhaustive-ui/core/ts-helpers';
 import { ConfirmDialogHeadlessTemplateContext, ConfirmDialogMessageTemplateContext, ConfirmDialogPassThrough } from '@exhaustive-ui/core/types/confirmdialog';
@@ -63,6 +63,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
             [maskStyleClass]="cn(cx('mask'), maskStyleClass())"
             [unstyled]="unstyled()"
             [focusOnShow]="!option('defaultFocus')"
+            [closeButtonProps]="_closeButtonProps()"
             (onShow)="onDialogShow()"
             (onHide)="onDialogHide()"
         >
@@ -407,6 +408,8 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
     confirmation = signal<Nullable<Confirmation>>(undefined);
 
     readonly dialogViewChild = viewChild<Dialog>('dialog');
+
+    _closeButtonProps = computed<ButtonProps>(() => ({ severity: 'secondary', variant: 'text', rounded: true, ...this.confirmation()?.closeButtonProps }));
 
     readonly acceptButtonViewChild = viewChild('acceptButton', { read: ElementRef });
 

@@ -134,7 +134,7 @@ const DIALOG_INSTANCE = new InjectionToken<Dialog>('DIALOG_INSTANCE');
                                             <p-button
                                                 [pt]="ptm('pcCloseButton')"
                                                 [styleClass]="cx('pcCloseButton')"
-                                                [ariaLabel]="closeAriaLabel() || closeLabel"
+                                                [ariaLabel]="closeAriaLabel() || closeButtonProps()?.ariaLabel || closeLabel"
                                                 (onClick)="close($event)"
                                                 (keydown.enter)="close($event)"
                                                 [tabindex]="closeTabindex()"
