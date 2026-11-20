@@ -15,7 +15,7 @@ import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
                 More than one node is selectable by setting <i>selectionMode</i> to <i>multiple</i>. By default in multiple selection mode, metaKey press (e.g. <i>⌘</i>) is necessary to add to existing selections however this can be configured with
                 disabling the <i>metaKeySelection</i> property. Note that in touch enabled devices, TreeSelect always ignores metaKey.
             </p>
-            <p>In multiple selection mode, value binding should be a key-value pair where key is the node key and value is a boolean to indicate selection.</p>
+            <p>In multiple selection mode, value binding should be an array of the selected nodes. Nodes are matched by their <i>key</i>, or by reference when they have no key.</p>
         </app-docsectiontext>
         <app-code [code]="exampleCode" [hideToggleCode]="true"></app-code>
         <div class="card flex justify-center">
@@ -34,9 +34,9 @@ export class MultipleDoc {
     }
 
     exampleCode = {
-        typescript: `{
-    '0-0': true,
-    '0-1-0': true
-}`
+        typescript: `[
+    { key: '0-0', label: 'Work' },
+    { key: '0-1-0', label: 'Invoices.txt' }
+]`
     };
 }
