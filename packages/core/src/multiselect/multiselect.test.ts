@@ -4724,4 +4724,17 @@ describe('MultiSelect low bug fixes', () => {
         multiSelect.onInputBlur(new FocusEvent('blur'));
         expect(touched).toHaveBeenCalled();
     });
+
+    it('disables the checkbox of a disabled option (optimus-ui#439)', async () => {
+        multiSelect.show();
+        await waitForOverlay();
+
+        const options = Array.from(document.querySelectorAll('.p-multiselect-overlay li[role="option"]')) as HTMLElement[];
+        const milan = options.find((li) => li.textContent?.includes('Milan'))!;
+        const rome = options.find((li) => li.textContent?.includes('Rome'))!;
+
+        expect(milan.querySelector('input[type="checkbox"]')!.hasAttribute('disabled')).toBe(true);
+        expect(milan.getAttribute('aria-disabled')).toBe('true');
+        expect(rome.querySelector('input[type="checkbox"]')!.hasAttribute('disabled')).toBe(false);
+    });
 });

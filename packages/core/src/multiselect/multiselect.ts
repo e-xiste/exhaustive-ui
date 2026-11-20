@@ -80,7 +80,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
     selector: 'li[pMultiSelectItem]',
     imports: [CommonModule, Checkbox, FormsModule, SharedModule],
     template: `
-        <p-checkbox [ngModel]="selected()" [ngModelOptions]="{ standalone: true }" [binary]="true" [tabindex]="-1" [variant]="variant()" [ariaLabel]="label()" [pt]="getPTOptions('pcOptionCheckbox')" [unstyled]="unstyled()">
+        <p-checkbox [ngModel]="selected()" [ngModelOptions]="{ standalone: true }" [binary]="true" [disabled]="disabled()" [tabindex]="-1" [variant]="variant()" [ariaLabel]="label()" [pt]="getPTOptions('pcOptionCheckbox')" [unstyled]="unstyled()">
             @if (itemCheckboxIconTemplate()) {
                 <ng-template #icon let-klass="class">
                     <ng-template *ngTemplateOutlet="itemCheckboxIconTemplate(); context: { checked: selected(), class: klass }"></ng-template>
@@ -105,6 +105,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
         '[attr.data-p-focused]': 'focused()',
         '[attr.data-p-highlight]': 'selected()',
         '[attr.data-p-disabled]': 'disabled()',
+        '[attr.aria-disabled]': 'disabled()',
         '[attr.aria-checked]': 'selected()',
         '(click)': 'onOptionClick($event)',
         '(mouseenter)': 'onOptionMouseEnter($event)',
