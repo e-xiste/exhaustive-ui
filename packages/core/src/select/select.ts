@@ -1393,7 +1393,8 @@ export class Select extends BaseInput<SelectPassThrough> {
         this.clicked.set(false);
         this.searchValue.set('');
 
-        if (this.overlayOptions()?.mode === 'modal') {
+        // the overlay is also modal when a responsive breakpoint (input or global config) matches
+        if (this.overlayOptions()?.mode === 'modal' || this.overlayViewChild()?.modal) {
             unblockBodyScroll();
         }
         if (this.filter() && this.resetFilterOnHide()) {

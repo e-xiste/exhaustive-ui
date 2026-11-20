@@ -5036,4 +5036,19 @@ describe('Select medium bug fixes', () => {
             expect(select.modelValue()).toBe('NewDo');
         });
     });
+
+    it('unlocks the body scroll after selecting an option in a responsive modal overlay (optimus-ui#857)', async () => {
+        fixture.componentRef.setInput('overlayOptions', { responsive: { breakpoint: '100000px' } });
+        fixture.detectChanges();
+
+        select.show();
+        await waitForOverlay();
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        select.onOptionSelect(new MouseEvent('click'), cities[1]);
+        await waitForOverlay();
+
+        expect(select.modelValue()).toBe('RM');
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
 });
