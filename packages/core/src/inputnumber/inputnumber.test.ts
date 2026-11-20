@@ -1968,4 +1968,17 @@ describe('InputNumber Optimus UI bug fixes', () => {
         expect(input.value).toBe('123,456.00');
         expect(inputNumber.value()).toBe(123456);
     });
+
+    it('spins a decimal step without floating point artefacts (optimus-ui#383)', async () => {
+        await create({ locale: 'en-US', minFractionDigits: 1, step: 0.1 }, 0);
+        const values: number[] = [];
+
+        for (let i = 0; i < 9; i++) {
+            inputNumber.spin(new Event('mousedown'), 1);
+            values.push(inputNumber.value() as number);
+        }
+
+        expect(values).toEqual([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+        expect(changes).toEqual(values);
+    });
 });

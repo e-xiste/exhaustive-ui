@@ -697,7 +697,16 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
     spin(event: Event, dir: number) {
         let step = (this.step() ?? 1) * dir;
         let currentValue = this.parseValue(this.input().nativeElement.value) || 0;
-        let newValue = this.validateValue((currentValue as number) + step);
+        let sum: number | string = (currentValue as number) + step;
+        if (typeof sum === 'number') {
+            // round the sum to the decimals of its operands: 0.2 + 0.1 must give 0.3, not 0.30000000000000004
+            const decimalsOf = (operand: number) => {
+                const [mantissa, exponent] = String(operand).split('e-');
+                return (mantissa.split('.')[1]?.length ?? 0) + (exponent ? +exponent : 0);
+            };
+            sum = +sum.toFixed(Math.min(Math.max(decimalsOf(currentValue as number), decimalsOf(step)), 100));
+        }
+        let newValue = this.validateValue(sum);
         const max = this.maxlength();
         if (max && max < this.formatValue(newValue).length) {
             return;
