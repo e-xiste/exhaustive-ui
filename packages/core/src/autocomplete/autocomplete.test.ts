@@ -1024,9 +1024,8 @@ describe('AutoComplete', () => {
 
             if (scrollerDebugEl) {
                 const scrollerInstance = scrollerDebugEl.componentInstance;
-                scrollerInstance._lazy = true;
-                scrollerInstance._step = 5;
-                scrollerInstance._items = mockItems;
+                expect(scrollerInstance._lazy()).toBe(true);
+                expect(scrollerInstance._items()?.length).toBeGreaterThan(0);
                 scrollerInstance.calculateOptions();
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 testFixture.changeDetectorRef.markForCheck();
