@@ -4718,4 +4718,24 @@ describe('TreeTable row keyboard', () => {
         expect(down.defaultPrevented).toBe(false);
         expect(document.activeElement).toBe(input);
     });
+
+    it('should let Space and Enter be typed in an input inside a selectable row', async () => {
+        const input = rows()[0].querySelector('input') as HTMLInputElement;
+        input.focus();
+        const space = keydown(input, 'Space');
+        const enter = keydown(input, 'Enter');
+        await render();
+
+        expect(space.defaultPrevented).toBe(false);
+        expect(enter.defaultPrevented).toBe(false);
+        expect(fixture.componentInstance.selection).toBeFalsy();
+    });
+
+    it('should still select a row with Space when the row is focused', async () => {
+        const space = keydown(rows()[1], 'Space');
+        await render();
+
+        expect(space.defaultPrevented).toBe(true);
+        expect(fixture.componentInstance.selection).toBe(fixture.componentInstance.nodes[1]);
+    });
 });

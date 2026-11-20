@@ -3173,6 +3173,10 @@ export class TTSelectableRow extends BaseComponent {
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
+        if (isEditableTarget(event)) {
+            return;
+        }
+
         switch (event.code) {
             case 'Enter':
             case 'Space':
