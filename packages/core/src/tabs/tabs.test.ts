@@ -1387,3 +1387,84 @@ describe('TabList navigators with dynamic tabs', () => {
         await vi.waitFor(() => expect(tablist.isNextButtonEnabled()).toBe(true));
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TabsModule],
+    encapsulation: ViewEncapsulation.None,
+    template: `
+        <div style="width: 200px">
+            <p-tabs [(value)]="value" scrollable>
+                <p-tablist>
+                    @for (tab of tabs(); track tab) {
+                        <p-tab [value]="tab">Dynamic tab {{ tab }}</p-tab>
+                    }
+                </p-tablist>
+            </p-tabs>
+        </div>
+    `,
+    styles: [
+        `
+            .p-tablist {
+                display: flex;
+                position: relative;
+            }
+            .p-tablist-content {
+                overflow-x: auto;
+                flex-grow: 1;
+            }
+            .p-tablist-tab-list {
+                display: flex;
+                position: relative;
+            }
+            .p-tab {
+                flex-shrink: 0;
+                white-space: nowrap;
+                padding: 0 8px;
+            }
+            .p-tablist-active-bar {
+                position: absolute;
+                bottom: 0;
+                height: 2px;
+            }
+        `
+    ]
+})
+class TabsControlledScrollableHostComponent {
+    tabs = signal<string[]>(Array.from({ length: 10 }, (_, i) => `${i}`));
+    value = signal<string>('0');
+}
+
+describe('Scrollable Tabs with a controlled value', () => {
+    let fixture: ComponentFixture<TabsControlledScrollableHostComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TabsControlledScrollableHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        fixture = TestBed.createComponent(TabsControlledScrollableHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    function activeTab(): HTMLElement {
+        return fixture.nativeElement.querySelector('[data-pc-name="tab"][data-p-active="true"]');
+    }
+
+    it('should scroll the active tab into view when the value changes programmatically (optimus-ui#199)', async () => {
+        fixture.componentInstance.value.set('9');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const content = fixture.nativeElement.querySelector('.p-tablist-content') as HTMLElement;
+        await vi.waitFor(() => {
+            const contentRect = content.getBoundingClientRect();
+            const tabRect = activeTab().getBoundingClientRect();
+            expect(tabRect.left).toBeGreaterThanOrEqual(contentRect.left - 1);
+            expect(tabRect.right).toBeLessThanOrEqual(contentRect.right + 1);
+        });
+    });
+});

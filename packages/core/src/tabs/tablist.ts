@@ -134,6 +134,7 @@ export class TabList extends BaseComponent<TabListPassThrough> {
             if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
                     this.updateInkBar();
+                    this.scrollable() && this.scrollActiveTabIntoView();
                 });
             }
         });
@@ -220,6 +221,27 @@ export class TabList extends BaseComponent<TabListPassThrough> {
         const activeTab = findSingle(_content, '[data-pc-name="tab"][data-p-active="true"]');
         _inkbar.style.width = getOuterWidth(activeTab) + 'px';
         _inkbar.style.left = <any>getOffset(activeTab).left - <any>getOffset(_tabs).left + 'px';
+    }
+
+    scrollActiveTabIntoView() {
+        const _content = this.content().nativeElement;
+        const activeTab = findSingle(_content, '[data-pc-name="tab"][data-p-active="true"]') as HTMLElement | null;
+
+        if (!activeTab) {
+            return;
+        }
+
+        // scroll the list only, so the page itself does not move
+        const contentRect = _content.getBoundingClientRect();
+        const tabRect = activeTab.getBoundingClientRect();
+        const start = contentRect.left + (this.prevButton() ? getWidth(this.prevButton()!.nativeElement) : 0);
+        const end = contentRect.right - (this.nextButton() ? getWidth(this.nextButton()!.nativeElement) : 0);
+
+        if (tabRect.left < start) {
+            _content.scrollLeft -= start - tabRect.left;
+        } else if (tabRect.right > end) {
+            _content.scrollLeft += tabRect.right - end;
+        }
     }
 
     getVisibleButtonWidths() {
