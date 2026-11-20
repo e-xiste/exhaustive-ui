@@ -994,7 +994,8 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
         this.hide();
         const processedItem = this.findVisibleItem(this.findFirstFocusedItemIndex());
         const focusedItemInfo = this.focusedItemInfo();
-        this.focusedItemInfo.set({ ...focusedItemInfo, index: this.findFirstFocusedItemIndex(), item: processedItem.item });
+        // no item is focusable when they are all disabled
+        this.focusedItemInfo.set({ ...focusedItemInfo, index: this.findFirstFocusedItemIndex(), item: processedItem?.item });
 
         event.preventDefault();
     }

@@ -1096,6 +1096,24 @@ describe('ContextMenu', () => {
         });
     });
 
+    describe('Escape with only disabled items', () => {
+        it('should hide without throwing when no item can be focused', async () => {
+            component.model = [
+                { label: 'Copy', disabled: true },
+                { label: 'Paste', disabled: true }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            contextMenuInstance.visible.set(true);
+            await fixture.whenStable();
+
+            const escape = new KeyboardEvent('keydown', { code: 'Escape' });
+            expect(() => contextMenuInstance.onEscapeKey(escape)).not.toThrow();
+            expect(contextMenuInstance.visible()).toBe(false);
+            expect(contextMenuInstance.focusedItemInfo().item).toBeUndefined();
+        });
+    });
+
     describe('Positioning Tests', () => {
         it('should position menu correctly', async () => {
             // First show the menu to make rootmenu available
