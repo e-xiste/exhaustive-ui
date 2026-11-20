@@ -3369,7 +3369,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         @if (dataTable.loading()) {
             <ng-container *ngTemplateOutlet="dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate(); context: { $implicit: columns(), frozen: frozen() }"></ng-container>
         }
-        @if (dataTable.isEmpty() && !dataTable.loading()) {
+        @if (dataTable.isEmpty() && !dataTable.loading() && !frozenRows()) {
             <ng-container *ngTemplateOutlet="dataTable.emptyMessageTemplate() || dataTable._emptyMessageTemplate(); context: { $implicit: columns(), frozen: frozen() }"></ng-container>
         }
     `,

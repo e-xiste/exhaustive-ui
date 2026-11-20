@@ -3535,3 +3535,48 @@ describe('Table onFilter event', () => {
         expect(typed.filters).toBeDefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [frozenValue]="frozenRows" [scrollable]="true">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #frozenbody let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td class="empty-message">No results</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestFrozenRowsEmptyComponent {
+    rows: any[] = [];
+    frozenRows = [{ name: 'Pinned' }];
+}
+
+describe('Table frozen rows', () => {
+    it('renders the empty message once when frozen rows are set (optimus-ui#121, optimus-ui#589)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestFrozenRowsEmptyComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TestFrozenRowsEmptyComponent);
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelectorAll('.empty-message').length).toBe(1);
+        expect(fixture.nativeElement.textContent).toContain('Pinned');
+    });
+});
