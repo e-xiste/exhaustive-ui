@@ -1408,6 +1408,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-megamenu class="existing my-megamenu" [model]="items"></p-megamenu>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-cascadeselect', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-cascadeselect [(ngModel)]="city" [options]="countries" styleClass="my-cascadeselect"></p-cascadeselect>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-cascadeselect [(ngModel)]="city" [options]="countries" class="my-cascadeselect"></p-cascadeselect>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-cascadeSelect', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-cascadeSelect [options]="countries" [styleClass]="cascadeClass" [showClear]="true"></p-cascadeSelect>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-cascadeSelect [options]="countries" [class]="cascadeClass" [showClear]="true"></p-cascadeSelect>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-cascade-select', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-cascade-select class="existing" styleClass="my-cascadeselect" [options]="countries"></p-cascade-select>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-cascade-select class="existing my-cascadeselect" [options]="countries"></p-cascade-select>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];

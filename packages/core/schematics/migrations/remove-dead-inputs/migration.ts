@@ -61,6 +61,7 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * element ever received the container class.
  * `removeStyleClass` on FileUpload was stored but never read: the file remove buttons are styled through
  * the PassThrough API only.
+ * `inputLabel`/`emptyMessage` on CascadeSelect were never read: the hidden input is labelled by `ariaLabel`/`ariaLabelledBy`, and the only consumer of `emptyMessage` was an `emptyMessageText` getter nothing rendered.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -107,7 +108,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-megamenu-sub', names: ['disabled', 'queryMatches'] },
     { selector: 'p-galleria', names: ['showTransitionOptions', 'hideTransitionOptions', 'containerClass'] },
     { selector: 'p-fileupload', names: ['removeStyleClass'] },
-    { selector: 'p-fileUpload', names: ['removeStyleClass'] }
+    { selector: 'p-fileUpload', names: ['removeStyleClass'] },
+    { selector: 'p-cascadeSelect', names: ['inputLabel', 'emptyMessage'] },
+    { selector: 'p-cascadeselect', names: ['inputLabel', 'emptyMessage'] },
+    { selector: 'p-cascade-select', names: ['inputLabel', 'emptyMessage'] }
 ];
 
 /**
@@ -127,9 +131,10 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * PanelMenu's `tabindex` is left out too: it is a native attribute and an input on many other components.
  * MegaMenuSub's `disabled` and `queryMatches` are left out too: `disabled` is a live input almost
  * everywhere and MegaMenu itself still exposes `queryMatches`.
+ * CascadeSelect's `emptyMessage` is left out too: Select, Listbox, Table and other components still read it.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
-    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'disabled', 'queryMatches', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex'].includes(name)
+    (name) => !['size', 'transitionOptions', 'inputId', 'ariaCloseLabel', 'plain', 'autoZIndex', 'baseZIndex', 'popup', 'disabled', 'queryMatches', 'mobileActive', 'ariaLabel', 'ariaLabelledBy', 'tabindex', 'emptyMessage'].includes(name)
 );
 
 /**
@@ -161,8 +166,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * ariaLabelledBy, never read (the mobile menu layers with zIndex.menu); PanelMenu's transitionOptions
  * and tabindex, forwarded to internal lists that never read them; MegaMenuSub's disabled and
  * queryMatches, never read (MegaMenu handles both itself); Galleria's deprecated
- * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; and FileUpload's
- * removeStyleClass, never read (the remove buttons are styled through PassThrough).
+ * showTransitionOptions/hideTransitionOptions plus its never-applied containerClass; FileUpload's
+ * removeStyleClass, never read (the remove buttons are styled through PassThrough); and CascadeSelect's
+ * inputLabel and emptyMessage, never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

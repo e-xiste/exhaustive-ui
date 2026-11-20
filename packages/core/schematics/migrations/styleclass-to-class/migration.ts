@@ -88,7 +88,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-panel-menu',
     'p-megaMenu',
     'p-megamenu',
-    'p-mega-menu'
+    'p-mega-menu',
+    'p-cascadeSelect',
+    'p-cascadeselect',
+    'p-cascade-select'
 ];
 
 /**

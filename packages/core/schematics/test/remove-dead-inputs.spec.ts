@@ -353,6 +353,39 @@ describe('remove-dead-inputs', () => {
         expect(html).toBe(`<p-menubar [model]="items" [autoDisplay]="false" ariaLabel="Main"></p-menubar>\n<p-menubarSub [items]="items" [level]="1"></p-menubarSub>\n<p-menubarsub [items]="items" [autoDisplay]="true"></p-menubarsub>\n`);
     });
 
+    it('removes the never-read inputLabel/emptyMessage from every p-cascadeselect selector while keeping the live inputs', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-cascadeselect [(ngModel)]="city" [options]="countries" inputLabel="City" emptyMessage="Nothing" ariaLabel="City"></p-cascadeselect>\n<p-cascadeSelect [options]="countries" [inputLabel]="label" placeholder="Pick"></p-cascadeSelect>\n<p-cascade-select [options]="countries" [emptyMessage]="empty" [showClear]="true"></p-cascade-select>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        const html = result.readContent('/src/app/app.html');
+        expect(html).not.toContain('inputLabel');
+        expect(html).not.toContain('emptyMessage');
+        expect(html).toBe(
+            `<p-cascadeselect [(ngModel)]="city" [options]="countries" ariaLabel="City"></p-cascadeselect>\n<p-cascadeSelect [options]="countries" placeholder="Pick"></p-cascadeSelect>\n<p-cascade-select [options]="countries" [showClear]="true"></p-cascade-select>\n`
+        );
+    });
+
+    it('keeps emptyMessage on components that still read it and does not report its programmatic access', async () => {
+        const runner = createMigrationRunner();
+        const html = `<p-select [options]="items" emptyMessage="Nothing"></p-select>\n<p-listbox [options]="items" [emptyMessage]="empty"></p-listbox>\n`;
+        const ts = `export class Foo {\n    empty(table: { emptyMessage: string }) {\n        return table.emptyMessage;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/app.html': html, '/src/app/foo.ts': ts });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(html);
+        expect(result.readContent('/src/app/foo.ts')).toBe(ts);
+        expect(warnings).toEqual([]);
+    });
+
     it('keeps autoZIndex/baseZIndex and ariaLabel on components that still read them', async () => {
         const runner = createMigrationRunner();
         const content = `<p-menu [model]="items" [autoZIndex]="false" baseZIndex="100" ariaLabel="Menu"></p-menu>\n<p-menu [model]="items" [popup]="true" [ariaLabelledBy]="labelId"></p-menu>\n`;
