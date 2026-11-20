@@ -4,10 +4,13 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    afterEveryRender,
+    computed,
+    effect,
     ElementRef,
     inject,
     InjectionToken,
-    Input,
+    input,
     model,
     NgModule,
     numberAttribute,
@@ -17,8 +20,11 @@ import {
     viewChild,
     contentChild,
     contentChildren,
-    output
+    output,
+    signal,
+    untracked
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { find, findIndexInList, isEmpty, setAttribute, uuid } from '@exhaustive-ui/utils';
 import { FilterService, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -55,7 +61,6 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
  */
 @Component({
     selector: 'p-pickList, p-picklist, p-pick-list',
-    standalone: true,
     imports: [
         CommonModule,
         ButtonModule,
@@ -75,99 +80,100 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
         BindModule
     ],
     template: `
-        <div [ngStyle]="style" [class]="cn(cx('root'), styleClass)" cdkDropListGroup [pBind]="ptm('root')">
-            <div [class]="cx('sourceControls')" *ngIf="showSourceControls" [pBind]="ptm('sourceControls')" [attr.data-pc-group-section]="'controls'">
+        <div [ngStyle]="style()" [class]="cn(cx('root'), styleClass())" cdkDropListGroup [pBind]="ptm('root')">
+            <div [class]="cx('sourceControls')" *ngIf="showSourceControls()" [pBind]="ptm('sourceControls')" [attr.data-pc-group-section]="'controls'">
                 <button
                     type="button"
-                    [attr.aria-label]="moveUpAriaLabel"
+                    [attr.aria-label]="moveUpAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="sourceMoveDisabled()"
-                    (click)="moveUp(sourcelist, source(), selectedItemsSource, onSourceReorder, SOURCE_LIST)"
+                    (click)="moveUp(sourcelist, source(), selectedItemsSource(), onSourceReorder, SOURCE_LIST)"
                     [buttonProps]="getButtonProps('moveup')"
                     [pt]="ptm('pcSourceMoveUpButton')"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate" [pt]="ptm('pcSourceMoveUpButton')['icon']" pButtonIcon />
-                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate()" [pt]="ptm('pcSourceMoveUpButton')['icon']" pButtonIcon />
+                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveTopAriaLabel"
+                    [attr.aria-label]="moveTopAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="sourceMoveDisabled()"
-                    (click)="moveTop(sourcelist, source(), selectedItemsSource, onSourceReorder, SOURCE_LIST)"
+                    (click)="moveTop(sourcelist, source(), selectedItemsSource(), onSourceReorder, SOURCE_LIST)"
                     [buttonProps]="getButtonProps('movetop')"
                     [pt]="ptm('pcSourceMoveTopButton')"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveTopButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || _moveTopIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate()" pButtonIcon [pt]="ptm('pcSourceMoveTopButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || _moveTopIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveDownAriaLabel"
+                    [attr.aria-label]="moveDownAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="sourceMoveDisabled()"
-                    (click)="moveDown(sourcelist, source(), selectedItemsSource, onSourceReorder, SOURCE_LIST)"
+                    (click)="moveDown(sourcelist, source(), selectedItemsSource(), onSourceReorder, SOURCE_LIST)"
                     [buttonProps]="getButtonProps('movedown')"
                     [pt]="ptm('pcSourceMoveDownButton')"
                     [unstyled]="unstyled()"
                     hostName="picklist"
                 >
-                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveDownButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate()" pButtonIcon [pt]="ptm('pcSourceMoveDownButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveBottomAriaLabel"
+                    [attr.aria-label]="moveBottomAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="sourceMoveDisabled()"
-                    (click)="moveBottom(sourcelist, source(), selectedItemsSource, onSourceReorder, SOURCE_LIST)"
+                    (click)="moveBottom(sourcelist, source(), selectedItemsSource(), onSourceReorder, SOURCE_LIST)"
                     [buttonProps]="getButtonProps('movebottom')"
                     [pt]="ptm('pcSourceMoveBottomButton')"
                     [unstyled]="unstyled()"
                     hostName="picklist"
                 >
-                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() || _moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() || _moveBottomIconTemplate()" pButtonIcon [pt]="ptm('pcSourceMoveBottomButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate()"></ng-template>
                 </button>
             </div>
             <div [class]="cx('sourceListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('sourceListContainer')">
                 <p-listbox
                     #sourcelist
-                    [ariaLabel]="sourceAriaLabel"
+                    [ariaLabel]="sourceAriaLabel()"
                     [multiple]="true"
-                    [options]="sourceOptions"
-                    [(ngModel)]="selectedItemsSource"
+                    [options]="sourceOptions()"
+                    [ngModel]="selectedItemsSource()"
+                    (ngModelChange)="selectedItemsSource.set($event)"
                     [ngModelOptions]="{ standalone: true }"
-                    [optionLabel]="dataKey ?? 'name'"
-                    [id]="idSource + '_list'"
-                    [listStyle]="sourceStyle"
-                    [striped]="stripedRows"
-                    [tabindex]="tabindex"
+                    [optionLabel]="dataKey() ?? 'name'"
+                    [id]="idSource() + '_list'"
+                    [listStyle]="sourceStyle()"
+                    [striped]="stripedRows()"
+                    [tabindex]="tabindex()"
                     (onFocus)="onListFocus($event, SOURCE_LIST)"
                     (onBlur)="onListBlur($event, SOURCE_LIST)"
                     (onChange)="onChangeSelection($event, SOURCE_LIST)"
                     (onDblClick)="onSourceItemDblClick()"
-                    [disabled]="disabled"
-                    [optionDisabled]="sourceOptionDisabled"
-                    [metaKeySelection]="metaKeySelection"
-                    [scrollHeight]="scrollHeight"
-                    [autoOptionFocus]="autoOptionFocus"
-                    [filter]="filterBy && showSourceFilter"
-                    [filterBy]="filterBy"
-                    [filterLocale]="filterLocale"
-                    [filterMatchMode]="filterMatchMode"
-                    [filterPlaceHolder]="sourceFilterPlaceholder"
-                    [dragdrop]="dragdrop"
+                    [disabled]="disabled()"
+                    [optionDisabled]="sourceOptionDisabled()"
+                    [metaKeySelection]="metaKeySelection()"
+                    [scrollHeight]="scrollHeight()"
+                    [autoOptionFocus]="autoOptionFocus()"
+                    [filter]="filterBy() && showSourceFilter()"
+                    [filterBy]="filterBy()"
+                    [filterLocale]="filterLocale()"
+                    [filterMatchMode]="filterMatchMode()"
+                    [filterPlaceHolder]="sourceFilterPlaceholder()"
+                    [dragdrop]="dragdrop()"
                     [dropListData]="source()"
                     (onDrop)="onDrop($event, SOURCE_LIST)"
                     (onFilter)="onFilter($event.originalEvent, SOURCE_LIST)"
@@ -176,33 +182,33 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [attr.data-pc-group-section]="'list'"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="sourceHeaderTemplate() || _sourceHeaderTemplate || sourceHeader">
+                    <ng-container *ngIf="sourceHeaderTemplate() || _sourceHeaderTemplate() || sourceHeader()">
                         <ng-template #header>
-                            <div *ngIf="!sourceHeaderTemplate() && !_sourceHeaderTemplate">{{ sourceHeader }}</div>
-                            <ng-template *ngTemplateOutlet="sourceHeaderTemplate() || _sourceHeaderTemplate"></ng-template>
+                            <div *ngIf="!sourceHeaderTemplate() && !_sourceHeaderTemplate()">{{ sourceHeader() }}</div>
+                            <ng-template *ngTemplateOutlet="sourceHeaderTemplate() || _sourceHeaderTemplate()"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="sourceFilterTemplate() || _sourceFilterTemplate">
+                    <ng-container *ngIf="sourceFilterTemplate() || _sourceFilterTemplate()">
                         <ng-template #filter>
-                            <ng-template *ngTemplateOutlet="sourceFilterTemplate() || _sourceFilterTemplate; context: { options: sourceFilterOptions }"></ng-template>
+                            <ng-template *ngTemplateOutlet="sourceFilterTemplate() || _sourceFilterTemplate(); context: { options: sourceFilterOptions() }"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="sourceFilterIconTemplate() || _sourceFilterIconTemplate">
-                        <ng-container *ngTemplateOutlet="sourceFilterIconTemplate() || _sourceFilterIconTemplate"></ng-container>
+                    <ng-container *ngIf="sourceFilterIconTemplate() || _sourceFilterIconTemplate()">
+                        <ng-container *ngTemplateOutlet="sourceFilterIconTemplate() || _sourceFilterIconTemplate()"></ng-container>
                     </ng-container>
-                    <ng-container *ngIf="itemTemplate() || _itemTemplate">
+                    <ng-container *ngIf="itemTemplate() || _itemTemplate()">
                         <ng-template #item let-item let-index="index" let-selected="selected" let-disabled="disabled">
-                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate(); context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate">
+                    <ng-container *ngIf="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate()">
                         <ng-template #empty>
-                            <ng-container *ngTemplateOutlet="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyMessageSourceTemplate() || _emptyMessageSourceTemplate()"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate">
+                    <ng-container *ngIf="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate()">
                         <ng-template #emptyfilter>
-                            <ng-container *ngTemplateOutlet="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyFilterMessageSourceTemplate() || _emptyFilterMessageSourceTemplate()"></ng-container>
                         </ng-template>
                     </ng-container>
                 </p-listbox>
@@ -210,7 +216,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
             <div [class]="cx('transferControls')" [attr.data-pc-group-section]="'controls'" [pBind]="ptm('transferControls')">
                 <button
                     type="button"
-                    [attr.aria-label]="moveToTargetAriaLabel"
+                    [attr.aria-label]="moveToTargetAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
@@ -221,15 +227,15 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveToTargetIconTemplate() && !_moveToTargetIconTemplate">
-                        <svg data-p-icon="angle-right" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
-                        <svg data-p-icon="angle-down" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
+                    <ng-container *ngIf="!moveToTargetIconTemplate() && !_moveToTargetIconTemplate()">
+                        <svg data-p-icon="angle-right" *ngIf="!viewChanged()" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
+                        <svg data-p-icon="angle-down" *ngIf="viewChanged()" pButtonIcon [pt]="ptm('pcMoveToTargetButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveToTargetIconTemplate() || _moveToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveToTargetIconTemplate() || _moveToTargetIconTemplate(); context: { $implicit: viewChanged() }"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveAllToTargetAriaLabel"
+                    [attr.aria-label]="moveAllToTargetAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
@@ -239,15 +245,15 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [pt]="ptm('pcMoveAllToTargetButton')"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveAllToTargetIconTemplate() && !_moveAllToTargetIconTemplate">
-                        <svg data-p-icon="angle-double-right" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
-                        <svg data-p-icon="angle-double-down" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
+                    <ng-container *ngIf="!moveAllToTargetIconTemplate() && !_moveAllToTargetIconTemplate()">
+                        <svg data-p-icon="angle-double-right" *ngIf="!viewChanged()" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
+                        <svg data-p-icon="angle-double-down" *ngIf="viewChanged()" pButtonIcon [pt]="ptm('pcMoveAllToTargetButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveAllToTargetIconTemplate() || _moveAllToTargetIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveAllToTargetIconTemplate() || _moveAllToTargetIconTemplate(); context: { $implicit: viewChanged() }"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveToSourceAriaLabel"
+                    [attr.aria-label]="moveToSourceAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
@@ -258,15 +264,15 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveToSourceIconTemplate() && !_moveToSourceIconTemplate">
-                        <svg data-p-icon="angle-left" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
-                        <svg data-p-icon="angle-up" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
+                    <ng-container *ngIf="!moveToSourceIconTemplate() && !_moveToSourceIconTemplate()">
+                        <svg data-p-icon="angle-left" *ngIf="!viewChanged()" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
+                        <svg data-p-icon="angle-up" *ngIf="viewChanged()" pButtonIcon [pt]="ptm('pcMoveToSourceButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveToSourceIconTemplate() || _moveToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveToSourceIconTemplate() || _moveToSourceIconTemplate(); context: { $implicit: viewChanged() }"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveAllToSourceAriaLabel"
+                    [attr.aria-label]="moveAllToSourceAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
@@ -277,41 +283,42 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="!moveAllToSourceIconTemplate() && !_moveAllToSourceIconTemplate">
-                        <svg data-p-icon="angle-double-left" *ngIf="!viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
-                        <svg data-p-icon="angle-double-up" *ngIf="viewChanged" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
+                    <ng-container *ngIf="!moveAllToSourceIconTemplate() && !_moveAllToSourceIconTemplate()">
+                        <svg data-p-icon="angle-double-left" *ngIf="!viewChanged()" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
+                        <svg data-p-icon="angle-double-up" *ngIf="viewChanged()" pButtonIcon [pt]="ptm('pcMoveAllToSourceButton')['icon']" />
                     </ng-container>
-                    <ng-template *ngTemplateOutlet="moveAllToSourceIconTemplate() || _moveAllToSourceIconTemplate; context: { $implicit: viewChanged }"></ng-template>
+                    <ng-template *ngTemplateOutlet="moveAllToSourceIconTemplate() || _moveAllToSourceIconTemplate(); context: { $implicit: viewChanged() }"></ng-template>
                 </button>
             </div>
             <div [class]="cx('targetListContainer')" [attr.data-pc-group-section]="'listcontainer'" [pBind]="ptm('targetListContainer')">
                 <p-listbox
                     #targetlist
-                    [ariaLabel]="targetAriaLabel"
+                    [ariaLabel]="targetAriaLabel()"
                     [multiple]="true"
-                    [options]="targetOptions"
-                    [(ngModel)]="selectedItemsTarget"
+                    [options]="targetOptions()"
+                    [ngModel]="selectedItemsTarget()"
+                    (ngModelChange)="selectedItemsTarget.set($event)"
                     [ngModelOptions]="{ standalone: true }"
-                    [optionLabel]="dataKey ?? 'name'"
-                    [id]="idTarget + '_list'"
-                    [listStyle]="targetStyle"
-                    [striped]="stripedRows"
-                    [tabindex]="tabindex"
+                    [optionLabel]="dataKey() ?? 'name'"
+                    [id]="idTarget() + '_list'"
+                    [listStyle]="targetStyle()"
+                    [striped]="stripedRows()"
+                    [tabindex]="tabindex()"
                     (onFocus)="onListFocus($event, TARGET_LIST)"
                     (onBlur)="onListBlur($event, TARGET_LIST)"
                     (onChange)="onChangeSelection($event, TARGET_LIST)"
                     (onDblClick)="onTargetItemDblClick()"
-                    [disabled]="disabled"
-                    [optionDisabled]="targetOptionDisabled"
-                    [metaKeySelection]="metaKeySelection"
-                    [scrollHeight]="scrollHeight"
-                    [autoOptionFocus]="autoOptionFocus"
-                    [filter]="filterBy && showTargetFilter"
-                    [filterBy]="filterBy"
-                    [filterLocale]="filterLocale"
-                    [filterMatchMode]="filterMatchMode"
-                    [filterPlaceHolder]="targetFilterPlaceholder"
-                    [dragdrop]="dragdrop"
+                    [disabled]="disabled()"
+                    [optionDisabled]="targetOptionDisabled()"
+                    [metaKeySelection]="metaKeySelection()"
+                    [scrollHeight]="scrollHeight()"
+                    [autoOptionFocus]="autoOptionFocus()"
+                    [filter]="filterBy() && showTargetFilter()"
+                    [filterBy]="filterBy()"
+                    [filterLocale]="filterLocale()"
+                    [filterMatchMode]="filterMatchMode()"
+                    [filterPlaceHolder]="targetFilterPlaceholder()"
+                    [dragdrop]="dragdrop()"
                     [dropListData]="target()"
                     (onDrop)="onDrop($event, TARGET_LIST)"
                     (onFilter)="onFilter($event.originalEvent, TARGET_LIST)"
@@ -320,101 +327,101 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <ng-container *ngIf="targetHeaderTemplate() || _targetHeaderTemplate || targetHeader">
+                    <ng-container *ngIf="targetHeaderTemplate() || _targetHeaderTemplate() || targetHeader()">
                         <ng-template #header>
-                            <div *ngIf="!targetHeaderTemplate() && !_targetHeaderTemplate">{{ targetHeader }}</div>
-                            <ng-template *ngTemplateOutlet="targetHeaderTemplate() || _targetHeaderTemplate"></ng-template>
+                            <div *ngIf="!targetHeaderTemplate() && !_targetHeaderTemplate()">{{ targetHeader() }}</div>
+                            <ng-template *ngTemplateOutlet="targetHeaderTemplate() || _targetHeaderTemplate()"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="targetFilterTemplate() || _targetFilterTemplate">
+                    <ng-container *ngIf="targetFilterTemplate() || _targetFilterTemplate()">
                         <ng-template #filter>
-                            <ng-template *ngTemplateOutlet="targetFilterTemplate() || _targetFilterTemplate; context: { options: targetFilterOptions }"></ng-template>
+                            <ng-template *ngTemplateOutlet="targetFilterTemplate() || _targetFilterTemplate(); context: { options: targetFilterOptions() }"></ng-template>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="targetFilterIconTemplate() || _targetFilterIconTemplate">
-                        <ng-container *ngTemplateOutlet="targetFilterIconTemplate() || _targetFilterIconTemplate"></ng-container>
+                    <ng-container *ngIf="targetFilterIconTemplate() || _targetFilterIconTemplate()">
+                        <ng-container *ngTemplateOutlet="targetFilterIconTemplate() || _targetFilterIconTemplate()"></ng-container>
                     </ng-container>
-                    <ng-container *ngIf="itemTemplate() || _itemTemplate">
+                    <ng-container *ngIf="itemTemplate() || _itemTemplate()">
                         <ng-template #item let-item let-index="index" let-selected="selected" let-disabled="disabled">
-                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate; context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
+                            <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate(); context: { $implicit: item, index: index, selected: selected, disabled: disabled }"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate">
+                    <ng-container *ngIf="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate()">
                         <ng-template #empty>
-                            <ng-container *ngTemplateOutlet="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyMessageTargetTemplate() || _emptyMessageTargetTemplate()"></ng-container>
                         </ng-template>
                     </ng-container>
-                    <ng-container *ngIf="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate">
+                    <ng-container *ngIf="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate()">
                         <ng-template #emptyfilter>
-                            <ng-container *ngTemplateOutlet="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate"></ng-container>
+                            <ng-container *ngTemplateOutlet="emptyFilterMessageTargetTemplate() || _emptyFilterMessageTargetTemplate()"></ng-container>
                         </ng-template>
                     </ng-container>
                 </p-listbox>
             </div>
-            <div [class]="cx('targetControls')" *ngIf="showTargetControls" [attr.data-pc-group-section]="'controls'" [pBind]="ptm('targetControls')">
+            <div [class]="cx('targetControls')" *ngIf="showTargetControls()" [attr.data-pc-group-section]="'controls'" [pBind]="ptm('targetControls')">
                 <button
                     type="button"
-                    [attr.aria-label]="moveUpAriaLabel"
+                    [attr.aria-label]="moveUpAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="targetMoveDisabled()"
-                    (click)="moveUp(targetlist, target(), selectedItemsTarget, onTargetReorder, TARGET_LIST)"
+                    (click)="moveUp(targetlist, target(), selectedItemsTarget(), onTargetReorder, TARGET_LIST)"
                     [buttonProps]="getButtonProps('moveup')"
                     [pt]="ptm('pcTargetMoveUpButton')"
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveUpButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-up" *ngIf="!moveUpIconTemplate() && !_moveUpIconTemplate()" pButtonIcon [pt]="ptm('pcTargetMoveUpButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveUpIconTemplate() || _moveUpIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveTopAriaLabel"
+                    [attr.aria-label]="moveTopAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="targetMoveDisabled()"
-                    (click)="moveTop(targetlist, target(), selectedItemsTarget, onTargetReorder, TARGET_LIST)"
+                    (click)="moveTop(targetlist, target(), selectedItemsTarget(), onTargetReorder, TARGET_LIST)"
                     [buttonProps]="getButtonProps('movetop')"
                     [pt]="ptm('pcTargetMoveTopButton')"
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveTopButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || moveTopIconTemplate()"></ng-template>
+                    <svg data-p-icon="angle-double-up" *ngIf="!moveTopIconTemplate() && !_moveTopIconTemplate()" pButtonIcon [pt]="ptm('pcTargetMoveTopButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveTopIconTemplate() || _moveTopIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveDownAriaLabel"
+                    [attr.aria-label]="moveDownAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="targetMoveDisabled()"
-                    (click)="moveDown(targetlist, target(), selectedItemsTarget, onTargetReorder, TARGET_LIST)"
+                    (click)="moveDown(targetlist, target(), selectedItemsTarget(), onTargetReorder, TARGET_LIST)"
                     [buttonProps]="getButtonProps('movedown')"
                     [pt]="ptm('pcTargetMoveDownButton')"
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveDownButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-down" *ngIf="!moveDownIconTemplate() && !_moveDownIconTemplate()" pButtonIcon [pt]="ptm('pcTargetMoveDownButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveDownIconTemplate() || _moveDownIconTemplate()"></ng-template>
                 </button>
                 <button
                     type="button"
-                    [attr.aria-label]="moveBottomAriaLabel"
+                    [attr.aria-label]="moveBottomAriaLabel()"
                     pButton
                     pRipple
                     severity="secondary"
                     [disabled]="targetMoveDisabled()"
-                    (click)="moveBottom(targetlist, target(), selectedItemsTarget, onTargetReorder, TARGET_LIST)"
+                    (click)="moveBottom(targetlist, target(), selectedItemsTarget(), onTargetReorder, TARGET_LIST)"
                     [buttonProps]="getButtonProps('movebottom')"
                     [pt]="ptm('pcTargetMoveBottomButton')"
                     hostName="picklist"
                     [unstyled]="unstyled()"
                 >
-                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() && !_moveBottomIconTemplate" pButtonIcon [pt]="ptm('pcTargetMoveBottomButton')['icon']" />
-                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate"></ng-template>
+                    <svg data-p-icon="angle-double-down" *ngIf="!moveBottomIconTemplate() && !_moveBottomIconTemplate()" pButtonIcon [pt]="ptm('pcTargetMoveBottomButton')['icon']" />
+                    <ng-template *ngTemplateOutlet="moveBottomIconTemplate() || _moveBottomIconTemplate()"></ng-template>
                 </button>
             </div>
         </div>
@@ -427,14 +434,28 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
 export class PickList extends BaseComponent {
     componentName = 'PickList';
 
-    @Input() hostName: any = '';
+    readonly hostName = input<any>('');
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
     $pcPickList: PickList | undefined = inject(PICKLIST_INSTANCE, { optional: true, skipSelf: true }) ?? undefined;
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptm('host'));
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        // Re-creates the media query listener when the breakpoint moves away from the applied one, as the former setter did.
+        effect(() => {
+            const breakpoint = this.breakpoint();
+            untracked(() => {
+                if (breakpoint !== this.appliedBreakpoint) {
+                    this.appliedBreakpoint = breakpoint;
+                    if (isPlatformBrowser(this.platformId)) {
+                        this.destroyMedia();
+                        this.initMedia();
+                    }
+                }
+            });
+        });
     }
     /**
      * An array of objects for the source list.
@@ -450,277 +471,266 @@ export class PickList extends BaseComponent {
      * Name of the field that uniquely identifies the options.
      * @group Props
      */
-    @Input() dataKey: string | undefined;
+    readonly dataKey = input<string | undefined>();
     /**
      * Text for the source list caption
      * @group Props
      */
-    @Input() sourceHeader: string | undefined;
+    readonly sourceHeader = input<string | undefined>();
     /**
      * Index of the element in tabbing order.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) tabindex: number | undefined = 0;
+    readonly tabindex = input<number | undefined, unknown>(0, { transform: numberAttribute });
     /**
      * Defines a string that labels the move to right button for accessibility.
      * @group Props
      */
-    @Input() rightButtonAriaLabel: string | undefined;
+    readonly rightButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to left button for accessibility.
      * @group Props
      */
-    @Input() leftButtonAriaLabel: string | undefined;
+    readonly leftButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to all right button for accessibility.
      * @group Props
      */
-    @Input() allRightButtonAriaLabel: string | undefined;
+    readonly allRightButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to all left button for accessibility.
      * @group Props
      */
-    @Input() allLeftButtonAriaLabel: string | undefined;
+    readonly allLeftButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to up button for accessibility.
      * @group Props
      */
-    @Input() upButtonAriaLabel: string | undefined;
+    readonly upButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to down button for accessibility.
      * @group Props
      */
-    @Input() downButtonAriaLabel: string | undefined;
+    readonly downButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to top button for accessibility.
      * @group Props
      */
-    @Input() topButtonAriaLabel: string | undefined;
+    readonly topButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the move to bottom button for accessibility.
      * @group Props
      */
-    @Input() bottomButtonAriaLabel: string | undefined;
+    readonly bottomButtonAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the source list.
      * @group Props
      */
-    @Input() sourceAriaLabel: string | undefined;
+    readonly sourceAriaLabel = input<string | undefined>();
     /**
      * Defines a string that labels the target list.
      * @group Props
      */
-    @Input() targetAriaLabel: string | undefined;
+    readonly targetAriaLabel = input<string | undefined>();
     /**
      * Text for the target list caption
      * @group Props
      */
-    @Input() targetHeader: string | undefined;
+    readonly targetHeader = input<string | undefined>();
     /**
      * When enabled orderlist adjusts its controls based on screen size.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) responsive: boolean | undefined;
+    readonly responsive = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * When specified displays an input field to filter the items on keyup and decides which field to search (Accepts multiple fields with a comma).
      * @group Props
      */
-    @Input() filterBy: string | undefined;
+    readonly filterBy = input<string | undefined>();
     /**
      * Locale to use in filtering. The default locale is the host environment's current locale.
      * @group Props
      */
-    @Input() filterLocale: string | undefined;
+    readonly filterLocale = input<string | undefined>();
     /**
      * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity. Use sourceTrackBy or targetTrackBy in case different algorithms are needed per list.
      * @group Props
      */
-    @Input() trackBy: Function = (index: number, item: any) => item;
+    readonly trackBy = input<Function>((index: number, item: any) => item);
     /**
      * Function to optimize the dom operations by delegating to ngForTrackBy in source list, default algorithm checks for object identity.
      * @group Props
      */
-    @Input() sourceTrackBy: Function | undefined;
+    readonly sourceTrackBy = input<Function | undefined>();
     /**
      * Function to optimize the dom operations by delegating to ngForTrackBy in target list, default algorithm checks for object identity.
      * @group Props
      */
-    @Input() targetTrackBy: Function | undefined;
+    readonly targetTrackBy = input<Function | undefined>();
     /**
      * Whether to show filter input for source list when filterBy is enabled.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showSourceFilter: boolean = true;
+    readonly showSourceFilter = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to show filter input for target list when filterBy is enabled.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showTargetFilter: boolean = true;
+    readonly showTargetFilter = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Defines how multiple items can be selected, when true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) metaKeySelection: boolean = false;
+    readonly metaKeySelection = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to enable dragdrop based reordering.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) dragdrop: boolean = false;
+    readonly dragdrop = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Inline style of the component.
      * @group Props
      */
-    @Input() style: { [klass: string]: any } | null | undefined;
+    readonly style = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Style class of the component.
      * @group Props
      */
-    @Input() styleClass: string | undefined;
+    readonly styleClass = input<string | undefined>();
     /**
      * Inline style of the source list element.
      * @group Props
      */
-    @Input() sourceStyle: any;
+    readonly sourceStyle = input<any>();
     /**
      * Inline style of the target list element.
      * @group Props
      */
-    @Input() targetStyle: any;
+    readonly targetStyle = input<any>();
     /**
      * Whether to show buttons of source list.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showSourceControls: boolean = true;
+    readonly showSourceControls = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to show buttons of target list.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showTargetControls: boolean = true;
+    readonly showTargetControls = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Placeholder text on source filter input.
      * @group Props
      */
-    @Input() sourceFilterPlaceholder: string | undefined;
+    readonly sourceFilterPlaceholder = input<string | undefined>();
     /**
      * Placeholder text on target filter input.
      * @group Props
      */
-    @Input() targetFilterPlaceholder: string | undefined;
+    readonly targetFilterPlaceholder = input<string | undefined>();
     /**
      * When present, it specifies that the component should be disabled.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) disabled: boolean;
+    readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     /**
      * Name of the disabled field of a target option or function to determine disabled state.
      * @group Props
      */
-    @Input() sourceOptionDisabled: string | ((item: any) => boolean) | undefined;
+    readonly sourceOptionDisabled = input<string | ((item: any) => boolean) | undefined>();
 
     /**
      * Name of the disabled field of a target option or function to determine disabled state.
      * @group Props
      */
-    @Input() targetOptionDisabled: string | ((item: any) => boolean) | undefined;
+    readonly targetOptionDisabled = input<string | ((item: any) => boolean) | undefined>();
 
     /**
      * Defines a string that labels the filter input of source list.
      * @group Props
      */
-    @Input() ariaSourceFilterLabel: string | undefined;
+    readonly ariaSourceFilterLabel = input<string | undefined>();
     /**
      * Defines a string that labels the filter input of target list.
      * @group Props
      */
-    @Input() ariaTargetFilterLabel: string | undefined;
+    readonly ariaTargetFilterLabel = input<string | undefined>();
     /**
      * Defines how the items are filtered.
      * @group Props
      */
-    @Input() filterMatchMode: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' | string = 'contains';
+    readonly filterMatchMode = input<'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' | string>('contains');
     /**
      * Whether to displays rows with alternating colors.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) stripedRows: boolean | undefined;
+    readonly stripedRows = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Keeps selection on the transfer list.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) keepSelection: boolean = false;
+    readonly keepSelection = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Height of the viewport, a scrollbar is defined if height of list exceeds this value.
      * @group Props
      */
-    @Input() scrollHeight: string = '14rem';
+    readonly scrollHeight = input<string>('14rem');
     /**
      * Whether to focus on the first visible or selected element.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoOptionFocus: boolean = true;
+    readonly autoOptionFocus = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
      * @group Props
      */
-    @Input() buttonProps: ButtonProps = { severity: 'secondary' };
+    readonly buttonProps = input<ButtonProps>({ severity: 'secondary' });
     /**
      * Used to pass all properties of the ButtonProps to the move up button inside the component.
      * @group Props
      */
-    @Input() moveUpButtonProps: ButtonProps;
+    readonly moveUpButtonProps = input<ButtonProps>();
     /**
      * 	Used to pass all properties of the ButtonProps to the move top button inside the component.
      * @group Props
      */
-    @Input() moveTopButtonProps: ButtonProps;
+    readonly moveTopButtonProps = input<ButtonProps>();
     /**
      * 	Used to pass all properties of the ButtonProps to the move down button inside the component.
      * @group Props
      */
-    @Input() moveDownButtonProps: ButtonProps;
+    readonly moveDownButtonProps = input<ButtonProps>();
     /**
      * 	Used to pass all properties of the ButtonProps to the move bottom button inside the component.
      * @group Props
      */
-    @Input() moveBottomButtonProps: ButtonProps;
+    readonly moveBottomButtonProps = input<ButtonProps>();
     /**
      * 	Used to pass all properties of the ButtonProps to the move to target button inside the component.
      * @group Props
      */
-    @Input() moveToTargetProps: ButtonProps;
+    readonly moveToTargetProps = input<ButtonProps>();
     /**
      * 	Used to pass all properties of the ButtonProps to the move all to target button inside the component.
      * @group Props
      */
-    @Input() moveAllToTargetProps: ButtonProps;
+    readonly moveAllToTargetProps = input<ButtonProps>();
     /**
      *  Used to pass all properties of the ButtonProps to the move to source button inside the component.
      * @group Props
      */
-    @Input() moveToSourceProps: ButtonProps;
+    readonly moveToSourceProps = input<ButtonProps>();
     /**
      *  Used to pass all properties of the ButtonProps to the move all to source button inside the component.
      * @group Props
      */
-    @Input() moveAllToSourceProps: ButtonProps;
+    readonly moveAllToSourceProps = input<ButtonProps>();
 
     /**
      * Indicates the width of the screen at which the component should change its behavior.
      * @group Props
      */
-    @Input() get breakpoint(): string {
-        return this._breakpoint;
-    }
-    set breakpoint(value: string) {
-        if (value !== this._breakpoint) {
-            this._breakpoint = value;
-            if (isPlatformBrowser(this.platformId)) {
-                this.destroyMedia();
-                this.initMedia();
-            }
-        }
-    }
+    readonly breakpoint = input<string>('960px');
     /**
      * Callback to invoke when items are moved from target to source.
      * @param {PickListMoveToSourceEvent} event - Custom move to source event.
@@ -803,115 +813,107 @@ export class PickList extends BaseComponent {
     getButtonProps(direction: string) {
         switch (direction) {
             case 'moveup':
-                return { ...this.buttonProps, ...this.moveUpButtonProps };
+                return { ...this.buttonProps(), ...this.moveUpButtonProps() };
             case 'movetop':
-                return { ...this.buttonProps, ...this.moveTopButtonProps };
+                return { ...this.buttonProps(), ...this.moveTopButtonProps() };
             case 'movedown':
-                return { ...this.buttonProps, ...this.moveDownButtonProps };
+                return { ...this.buttonProps(), ...this.moveDownButtonProps() };
             case 'movebottom':
-                return { ...this.buttonProps, ...this.moveBottomButtonProps };
+                return { ...this.buttonProps(), ...this.moveBottomButtonProps() };
             case 'movetotarget':
-                return { ...this.buttonProps, ...this.moveToTargetProps };
+                return { ...this.buttonProps(), ...this.moveToTargetProps() };
             case 'movealltotarget':
-                return { ...this.buttonProps, ...this.moveAllToTargetProps };
+                return { ...this.buttonProps(), ...this.moveAllToTargetProps() };
             case 'movetosource':
-                return { ...this.buttonProps, ...this.moveToSourceProps };
+                return { ...this.buttonProps(), ...this.moveToSourceProps() };
             case 'movealltosource':
-                return { ...this.buttonProps, ...this.moveAllToSourceProps };
+                return { ...this.buttonProps(), ...this.moveAllToSourceProps() };
             default:
-                return this.buttonProps;
+                return this.buttonProps();
         }
     }
 
-    get targetOptions() {
+    /**
+     * Bumped whenever the component reorders or transfers items in place in `source()`/`target()`, so the
+     * option copies handed to the inner listboxes are rebuilt (the former getters returned a fresh copy on every check).
+     */
+    private readonly listsVersion = signal(0);
+
+    targetOptions = computed(() => {
+        this.listsVersion();
         return [...(this.target() || [])];
-    }
+    });
 
-    get sourceOptions() {
+    sourceOptions = computed(() => {
+        this.listsVersion();
         return [...(this.source() || [])];
-    }
+    });
 
-    get moveUpAriaLabel() {
-        return this.upButtonAriaLabel ? this.upButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveUp : undefined;
-    }
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
 
-    get moveTopAriaLabel() {
-        return this.topButtonAriaLabel ? this.topButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveTop : undefined;
-    }
+    moveUpAriaLabel = computed(() => this.upButtonAriaLabel() || this.translation()?.aria?.moveUp);
 
-    get moveDownAriaLabel() {
-        return this.downButtonAriaLabel ? this.downButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveDown : undefined;
-    }
+    moveTopAriaLabel = computed(() => this.topButtonAriaLabel() || this.translation()?.aria?.moveTop);
 
-    get moveBottomAriaLabel() {
-        return this.bottomButtonAriaLabel ? this.bottomButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveDown : undefined;
-    }
+    moveDownAriaLabel = computed(() => this.downButtonAriaLabel() || this.translation()?.aria?.moveDown);
 
-    get moveToTargetAriaLabel() {
-        return this.rightButtonAriaLabel ? this.rightButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveToTarget : undefined;
-    }
+    moveBottomAriaLabel = computed(() => this.bottomButtonAriaLabel() || this.translation()?.aria?.moveDown);
 
-    get moveAllToTargetAriaLabel() {
-        return this.allRightButtonAriaLabel ? this.allRightButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveAllToTarget : undefined;
-    }
+    moveToTargetAriaLabel = computed(() => this.rightButtonAriaLabel() || this.translation()?.aria?.moveToTarget);
 
-    get moveToSourceAriaLabel() {
-        return this.leftButtonAriaLabel ? this.leftButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveToSource : undefined;
-    }
+    moveAllToTargetAriaLabel = computed(() => this.allRightButtonAriaLabel() || this.translation()?.aria?.moveAllToTarget);
 
-    get moveAllToSourceAriaLabel() {
-        return this.allLeftButtonAriaLabel ? this.allLeftButtonAriaLabel : this.config.translation.aria ? this.config.translation.aria.moveAllToSource : undefined;
-    }
+    moveToSourceAriaLabel = computed(() => this.leftButtonAriaLabel() || this.translation()?.aria?.moveToSource);
 
-    get idSource() {
-        return this.id + '_source';
-    }
+    moveAllToSourceAriaLabel = computed(() => this.allLeftButtonAriaLabel() || this.translation()?.aria?.moveAllToSource);
 
-    get idTarget() {
-        return this.id + '_target';
-    }
+    id: string = uuid('pn_id_');
 
-    _breakpoint: string = '960px';
+    idSource = computed(() => this.id + '_source');
+
+    idTarget = computed(() => this.id + '_target');
+
+    private appliedBreakpoint: string = '960px';
 
     public visibleOptionsSource: any[] | undefined | null;
 
     public visibleOptionsTarget: any[] | undefined | null;
 
-    selectedItemsSource: any[] = [];
+    selectedItemsSource = signal<any[]>([]);
 
-    selectedItemsTarget: any[] = [];
-
-    reorderedListElement: any;
-
-    movedUp: Nullable<boolean>;
-
-    movedDown: Nullable<boolean>;
-
-    itemTouched: Nullable<boolean>;
+    selectedItemsTarget = signal<any[]>([]);
 
     styleElement: any;
-
-    id: string = uuid('pn_id_');
 
     filterValueSource: Nullable<string>;
 
     filterValueTarget: Nullable<string>;
 
-    fromListType: Nullable<number>;
+    sourceFilterOptions = computed<PickListFilterOptions | null>(() =>
+        this.filterBy()
+            ? {
+                  filter: (value) => this.filterSource(value),
+                  reset: () => this.resetSourceFilter()
+              }
+            : null
+    );
 
-    sourceFilterOptions: Nullable<PickListFilterOptions>;
-
-    targetFilterOptions: Nullable<PickListFilterOptions>;
+    targetFilterOptions = computed<PickListFilterOptions | null>(() =>
+        this.filterBy()
+            ? {
+                  filter: (value) => this.filterTarget(value),
+                  reset: () => this.resetTargetFilter()
+              }
+            : null
+    );
 
     readonly SOURCE_LIST: number = -1;
 
     readonly TARGET_LIST: number = 1;
 
-    window: Window;
-
     media: MediaQueryList | null | undefined;
 
-    viewChanged: boolean | undefined;
+    viewChanged = signal<boolean | undefined>(undefined);
 
     _componentStyle = inject(PickListStyle);
 
@@ -920,21 +922,9 @@ export class PickList extends BaseComponent {
     filterService = inject(FilterService);
 
     onInit() {
-        if (this.responsive) {
+        if (this.responsive()) {
             this.createStyle();
             this.initMedia();
-        }
-
-        if (this.filterBy) {
-            this.sourceFilterOptions = {
-                filter: (value) => this.filterSource(value),
-                reset: () => this.resetSourceFilter()
-            };
-
-            this.targetFilterOptions = {
-                filter: (value) => this.filterTarget(value),
-                reset: () => this.resetTargetFilter()
-            };
         }
     }
 
@@ -1068,132 +1058,75 @@ export class PickList extends BaseComponent {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _itemTemplate: TemplateRef<PickListItemTemplateContext> | undefined;
+    _itemTemplate = computed<TemplateRef<PickListItemTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter(
+                    (item) =>
+                        ![
+                            'sourceHeader',
+                            'targetHeader',
+                            'sourceFilter',
+                            'targetFilter',
+                            'emptymessagesource',
+                            'emptyfiltermessagesource',
+                            'emptymessagetarget',
+                            'emptyfiltermessagetarget',
+                            'moveupicon',
+                            'movetopicon',
+                            'movedownicon',
+                            'movebottomicon',
+                            'movetotargeticon',
+                            'movealltotargeticon',
+                            'movetosourceicon',
+                            'movealltosourceicon',
+                            'targetfiltericon',
+                            'sourcefiltericon'
+                        ].includes(item.getType())
+                )
+                .at(-1)?.template
+    );
 
-    _sourceHeaderTemplate: TemplateRef<void> | undefined;
+    _sourceHeaderTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('sourceHeader'));
 
-    _targetHeaderTemplate: TemplateRef<void> | undefined;
+    _targetHeaderTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('targetHeader'));
 
-    _sourceFilterTemplate: TemplateRef<PickListFilterTemplateContext> | undefined;
+    _sourceFilterTemplate = computed<TemplateRef<PickListFilterTemplateContext> | undefined>(() => this.findTemplate('sourceFilter'));
 
-    _targetFilterTemplate: TemplateRef<PickListFilterTemplateContext> | undefined;
+    _targetFilterTemplate = computed<TemplateRef<PickListFilterTemplateContext> | undefined>(() => this.findTemplate('targetFilter'));
 
-    _emptyMessageSourceTemplate: TemplateRef<void> | undefined;
+    _emptyMessageSourceTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('emptymessagesource'));
 
-    _emptyFilterMessageSourceTemplate: TemplateRef<void> | undefined;
+    _emptyFilterMessageSourceTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('emptyfiltermessagesource'));
 
-    _emptyMessageTargetTemplate: TemplateRef<void> | undefined;
+    _emptyMessageTargetTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('emptymessagetarget'));
 
-    _emptyFilterMessageTargetTemplate: TemplateRef<void> | undefined;
+    _emptyFilterMessageTargetTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('emptyfiltermessagetarget'));
 
-    _moveUpIconTemplate: TemplateRef<void> | undefined;
+    _moveUpIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('moveupicon'));
 
-    _moveTopIconTemplate: TemplateRef<void> | undefined;
+    _moveTopIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('movetopicon'));
 
-    _moveDownIconTemplate: TemplateRef<void> | undefined;
+    _moveDownIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('movedownicon'));
 
-    _moveBottomIconTemplate: TemplateRef<void> | undefined;
+    _moveBottomIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('movebottomicon'));
 
-    _moveToTargetIconTemplate: TemplateRef<PickListTransferIconTemplateContext> | undefined;
+    _moveToTargetIconTemplate = computed<TemplateRef<PickListTransferIconTemplateContext> | undefined>(() => this.findTemplate('movetotargeticon'));
 
-    _moveAllToTargetIconTemplate: TemplateRef<PickListTransferIconTemplateContext> | undefined;
+    _moveAllToTargetIconTemplate = computed<TemplateRef<PickListTransferIconTemplateContext> | undefined>(() => this.findTemplate('movealltotargeticon'));
 
-    _moveToSourceIconTemplate: TemplateRef<PickListTransferIconTemplateContext> | undefined;
+    _moveToSourceIconTemplate = computed<TemplateRef<PickListTransferIconTemplateContext> | undefined>(() => this.findTemplate('movetosourceicon'));
 
-    _moveAllToSourceIconTemplate: TemplateRef<PickListTransferIconTemplateContext> | undefined;
+    _moveAllToSourceIconTemplate = computed<TemplateRef<PickListTransferIconTemplateContext> | undefined>(() => this.findTemplate('movealltosourceicon'));
 
-    _targetFilterIconTemplate: TemplateRef<void> | undefined;
+    _targetFilterIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('targetfiltericon'));
 
-    _sourceFilterIconTemplate: TemplateRef<void> | undefined;
+    _sourceFilterIconTemplate = computed<TemplateRef<void> | undefined>(() => this.findTemplate('sourcefiltericon'));
 
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'item':
-                    this._itemTemplate = item.template;
-                    break;
-
-                case 'option':
-                    this._itemTemplate = item.template;
-                    break;
-
-                case 'sourceHeader':
-                    this._sourceHeaderTemplate = item.template;
-                    break;
-
-                case 'targetHeader':
-                    this._targetHeaderTemplate = item.template;
-                    break;
-
-                case 'sourceFilter':
-                    this._sourceFilterTemplate = item.template;
-                    break;
-
-                case 'targetFilter':
-                    this._targetFilterTemplate = item.template;
-                    break;
-
-                case 'emptymessagesource':
-                    this._emptyMessageSourceTemplate = item.template;
-                    break;
-
-                case 'emptyfiltermessagesource':
-                    this._emptyFilterMessageSourceTemplate = item.template;
-                    break;
-
-                case 'emptymessagetarget':
-                    this._emptyMessageTargetTemplate = item.template;
-                    break;
-
-                case 'emptyfiltermessagetarget':
-                    this._emptyFilterMessageTargetTemplate = item.template;
-                    break;
-
-                case 'moveupicon':
-                    this._moveUpIconTemplate = item.template;
-                    break;
-
-                case 'movetopicon':
-                    this._moveTopIconTemplate = item.template;
-                    break;
-
-                case 'movedownicon':
-                    this._moveDownIconTemplate = item.template;
-                    break;
-
-                case 'movebottomicon':
-                    this._moveBottomIconTemplate = item.template;
-                    break;
-
-                case 'movetotargeticon':
-                    this._moveToTargetIconTemplate = item.template;
-                    break;
-
-                case 'movealltotargeticon':
-                    this._moveAllToTargetIconTemplate = item.template;
-                    break;
-
-                case 'movetosourceicon':
-                    this._moveToSourceIconTemplate = item.template;
-                    break;
-
-                case 'movealltosourceicon':
-                    this._moveAllToSourceIconTemplate = item.template;
-                    break;
-
-                case 'targetfiltericon':
-                    this._targetFilterIconTemplate = item.template;
-                    break;
-
-                case 'sourcefiltericon':
-                    this._sourceFilterIconTemplate = item.template;
-                    break;
-
-                default:
-                    this._itemTemplate = item.template;
-                    break;
-            }
-        });
+    private findTemplate(type: string) {
+        return this.templates()
+            .filter((item) => item.getType() === type)
+            .at(-1)?.template;
     }
 
     onChangeSelection(e: ListboxChangeEvent, listType: number) {
@@ -1204,7 +1137,7 @@ export class PickList extends BaseComponent {
     }
 
     onSourceItemDblClick() {
-        if (this.disabled) {
+        if (this.disabled()) {
             return;
         }
 
@@ -1213,7 +1146,7 @@ export class PickList extends BaseComponent {
     }
 
     onTargetItemDblClick() {
-        if (this.disabled) {
+        if (this.disabled()) {
             return;
         }
 
@@ -1228,25 +1161,25 @@ export class PickList extends BaseComponent {
     }
 
     filterSource(value: any = '') {
-        this.filterValueSource = value.trim().toLocaleLowerCase(this.filterLocale);
+        this.filterValueSource = value.trim().toLocaleLowerCase(this.filterLocale());
         this.filter(<any[]>this.source(), this.SOURCE_LIST);
         this.onSourceFilter.emit({ query: this.filterValueSource, value: this.visibleOptionsSource });
     }
 
     filterTarget(value: any = '') {
-        this.filterValueTarget = value.trim().toLocaleLowerCase(this.filterLocale);
+        this.filterValueTarget = value.trim().toLocaleLowerCase(this.filterLocale());
         this.filter(<any[]>this.target(), this.TARGET_LIST);
         this.onTargetFilter.emit({ query: this.filterValueTarget, value: this.visibleOptionsTarget });
     }
 
     filter(data: any[], listType: number) {
-        let searchFields = (<string>this.filterBy).split(',');
+        let searchFields = (<string>this.filterBy()).split(',');
 
         if (listType === this.SOURCE_LIST) {
-            this.visibleOptionsSource = this.filterService.filter(data, searchFields, this.filterValueSource, this.filterMatchMode, this.filterLocale);
+            this.visibleOptionsSource = this.filterService.filter(data, searchFields, this.filterValueSource, this.filterMatchMode(), this.filterLocale());
             this.onSourceFilter.emit({ query: this.filterValueSource, value: this.visibleOptionsSource });
         } else if (listType === this.TARGET_LIST) {
-            this.visibleOptionsTarget = this.filterService.filter(data, searchFields, this.filterValueTarget, this.filterMatchMode, this.filterLocale);
+            this.visibleOptionsTarget = this.filterService.filter(data, searchFields, this.filterValueTarget, this.filterMatchMode(), this.filterLocale());
             this.onTargetFilter.emit({ query: this.filterValueTarget, value: this.visibleOptionsTarget });
         }
     }
@@ -1273,19 +1206,12 @@ export class PickList extends BaseComponent {
         }
     }
 
-    onItemTouchEnd() {
-        if (this.disabled) {
-            return;
-        }
-
-        this.itemTouched = true;
-    }
-
     private sortByIndexInList(items: any[], list: any) {
         return items.sort((item1, item2) => findIndexInList(item1, list) - findIndexInList(item2, list));
     }
 
     triggerChangeDetection() {
+        this.listsVersion.update((version) => version + 1);
         this.listViewTargetChild().cd.markForCheck();
         this.listViewSourceChild().cd.markForCheck();
     }
@@ -1307,10 +1233,8 @@ export class PickList extends BaseComponent {
                 }
             }
 
-            if (this.dragdrop && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
+            if (this.dragdrop() && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
 
-            this.movedUp = true;
-            this.reorderedListElement = listElement;
             callback.emit({ items: selectedItems });
             this.triggerChangeDetection();
         }
@@ -1331,7 +1255,7 @@ export class PickList extends BaseComponent {
                 }
             }
 
-            if (this.dragdrop && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
+            if (this.dragdrop() && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
 
             listElement.scrollTop = 0;
             callback.emit({ items: selectedItems });
@@ -1356,10 +1280,8 @@ export class PickList extends BaseComponent {
                 }
             }
 
-            if (this.dragdrop && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
+            if (this.dragdrop() && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
 
-            this.movedDown = true;
-            this.reorderedListElement = listElement;
             callback.emit({ items: selectedItems });
             this.triggerChangeDetection();
         }
@@ -1380,7 +1302,7 @@ export class PickList extends BaseComponent {
                 }
             }
 
-            if (this.dragdrop && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
+            if (this.dragdrop() && ((this.filterValueSource && listType === this.SOURCE_LIST) || (this.filterValueTarget && listType === this.TARGET_LIST))) this.filter(list, listType);
 
             listElement.scrollTop = listElement.scrollHeight;
             callback.emit({ items: selectedItems });
@@ -1389,8 +1311,8 @@ export class PickList extends BaseComponent {
     }
 
     moveRight() {
-        if (this.selectedItemsSource && this.selectedItemsSource.length) {
-            let itemsToMove = [...this.selectedItemsSource];
+        if (this.selectedItemsSource() && this.selectedItemsSource().length) {
+            let itemsToMove = [...this.selectedItemsSource()];
             for (let i = 0; i < itemsToMove.length; i++) {
                 let selectedItem = itemsToMove[i];
                 if (findIndexInList(selectedItem, this.target() || []) == -1) {
@@ -1406,12 +1328,12 @@ export class PickList extends BaseComponent {
                 items: itemsToMove
             });
 
-            if (this.keepSelection) {
-                this.selectedItemsTarget = [...this.selectedItemsTarget, ...itemsToMove];
+            if (this.keepSelection()) {
+                this.selectedItemsTarget.set([...this.selectedItemsTarget(), ...itemsToMove]);
             }
 
             itemsToMove = [];
-            this.selectedItemsSource = [];
+            this.selectedItemsSource.set([]);
 
             if (this.filterValueTarget) {
                 this.filter(<any[]>this.target(), this.TARGET_LIST);
@@ -1436,10 +1358,10 @@ export class PickList extends BaseComponent {
             this.onMoveAllToTarget.emit({
                 items: movedItems
             });
-            if (this.keepSelection) {
-                this.selectedItemsTarget = [...this.selectedItemsTarget, ...this.selectedItemsSource];
+            if (this.keepSelection()) {
+                this.selectedItemsTarget.set([...this.selectedItemsTarget(), ...this.selectedItemsSource()]);
             }
-            this.selectedItemsSource = [];
+            this.selectedItemsSource.set([]);
 
             if (this.filterValueTarget) {
                 this.filter(<any[]>this.target(), this.TARGET_LIST);
@@ -1451,8 +1373,8 @@ export class PickList extends BaseComponent {
     }
 
     moveLeft() {
-        if (this.selectedItemsTarget && this.selectedItemsTarget.length) {
-            let itemsToMove = [...this.selectedItemsTarget];
+        if (this.selectedItemsTarget() && this.selectedItemsTarget().length) {
+            let itemsToMove = [...this.selectedItemsTarget()];
             for (let i = 0; i < itemsToMove.length; i++) {
                 let selectedItem = itemsToMove[i];
                 if (findIndexInList(selectedItem, this.source() || []) == -1) {
@@ -1466,11 +1388,11 @@ export class PickList extends BaseComponent {
             this.onMoveToSource.emit({
                 items: itemsToMove
             });
-            if (this.keepSelection) {
-                this.selectedItemsSource = [...this.selectedItemsSource, itemsToMove];
+            if (this.keepSelection()) {
+                this.selectedItemsSource.set([...this.selectedItemsSource(), itemsToMove]);
             }
             itemsToMove = [];
-            this.selectedItemsTarget = [];
+            this.selectedItemsTarget.set([]);
 
             if (this.filterValueSource) {
                 this.filter(<any[]>this.source(), this.SOURCE_LIST);
@@ -1494,10 +1416,10 @@ export class PickList extends BaseComponent {
             this.onMoveAllToSource.emit({
                 items: movedItems
             });
-            if (this.keepSelection) {
-                this.selectedItemsSource = [...this.selectedItemsSource, ...this.selectedItemsTarget];
+            if (this.keepSelection()) {
+                this.selectedItemsSource.set([...this.selectedItemsSource(), ...this.selectedItemsTarget()]);
             }
-            this.selectedItemsTarget = [];
+            this.selectedItemsTarget.set([]);
 
             if (this.filterValueSource) {
                 this.filter(<any[]>this.source(), this.SOURCE_LIST);
@@ -1527,9 +1449,9 @@ export class PickList extends BaseComponent {
                 let itemsToMove: any[] = [];
 
                 // Check if dragged item is in selected items
-                if (this.selectedItemsTarget && this.selectedItemsTarget.length > 0 && findIndexInList(event.item.data, this.selectedItemsTarget) !== -1) {
+                if (this.selectedItemsTarget() && this.selectedItemsTarget().length > 0 && findIndexInList(event.item.data, this.selectedItemsTarget()) !== -1) {
                     // Move all selected items
-                    itemsToMove = [...this.selectedItemsTarget];
+                    itemsToMove = [...this.selectedItemsTarget()];
                 } else {
                     // Move only the dragged item
                     itemsToMove = [event.item.data];
@@ -1552,10 +1474,10 @@ export class PickList extends BaseComponent {
                 }
 
                 // Clear target selection
-                this.selectedItemsTarget = [];
+                this.selectedItemsTarget.set([]);
 
-                if (this.keepSelection) {
-                    this.selectedItemsSource = [...this.selectedItemsSource, ...itemsToMove];
+                if (this.keepSelection()) {
+                    this.selectedItemsSource.set([...this.selectedItemsSource(), ...itemsToMove]);
                 }
 
                 if (this.visibleOptionsTarget) {
@@ -1585,9 +1507,9 @@ export class PickList extends BaseComponent {
                 let itemsToMove: any[] = [];
 
                 // Check if dragged item is in selected items
-                if (this.selectedItemsSource && this.selectedItemsSource.length > 0 && findIndexInList(event.item.data, this.selectedItemsSource) !== -1) {
+                if (this.selectedItemsSource() && this.selectedItemsSource().length > 0 && findIndexInList(event.item.data, this.selectedItemsSource()) !== -1) {
                     // Move all selected items
-                    itemsToMove = [...this.selectedItemsSource];
+                    itemsToMove = [...this.selectedItemsSource()];
                 } else {
                     // Move only the dragged item
                     itemsToMove = [event.item.data];
@@ -1610,10 +1532,10 @@ export class PickList extends BaseComponent {
                 }
 
                 // Clear source selection
-                this.selectedItemsSource = [];
+                this.selectedItemsSource.set([]);
 
-                if (this.keepSelection) {
-                    this.selectedItemsTarget = [...this.selectedItemsTarget, ...itemsToMove];
+                if (this.keepSelection()) {
+                    this.selectedItemsTarget.set([...this.selectedItemsTarget(), ...itemsToMove]);
                 }
 
                 if (this.visibleOptionsSource) {
@@ -1643,8 +1565,9 @@ export class PickList extends BaseComponent {
         // Reordering modifies arrays in-place and triggerChangeDetection() would override changes
         if (isTransfer) {
             this.triggerChangeDetection();
+        } else {
+            this.listsVersion.update((version) => version + 1);
         }
-        this.cd.markForCheck();
     }
 
     onListFocus(event, listType) {
@@ -1680,9 +1603,9 @@ export class PickList extends BaseComponent {
 
     setSelectionList(listType: number, selectedItems: any[]) {
         if (listType === this.SOURCE_LIST) {
-            this.selectedItemsSource = selectedItems;
+            this.selectedItemsSource.set(selectedItems);
         } else {
-            this.selectedItemsTarget = selectedItems;
+            this.selectedItemsTarget.set(selectedItems);
         }
     }
 
@@ -1729,8 +1652,8 @@ export class PickList extends BaseComponent {
 
     initMedia() {
         if (isPlatformBrowser(this.platformId)) {
-            this.media = this.document.defaultView?.matchMedia(`(max-width: ${this.breakpoint})`) || null;
-            this.viewChanged = this.media?.matches || false;
+            this.media = this.document.defaultView?.matchMedia(`(max-width: ${this.breakpoint()})`) || null;
+            this.viewChanged.set(this.media?.matches || false);
             this.bindMediaChangeListener();
         }
     }
@@ -1742,9 +1665,7 @@ export class PickList extends BaseComponent {
     bindMediaChangeListener() {
         if (this.media && !this.mediaChangeListener) {
             this.mediaChangeListener = this.renderer.listen(this.media, 'change', (event) => {
-                this.viewChanged = event.matches;
-
-                this.cd.markForCheck();
+                this.viewChanged.set(event.matches);
             });
         }
     }
@@ -1766,7 +1687,7 @@ export class PickList extends BaseComponent {
                 this.renderer.appendChild(this.document.head, this.styleElement);
 
                 let innerHTML = `
-                @media screen and (max-width: ${this.breakpoint}) {
+                @media screen and (max-width: ${this.breakpoint()}) {
                     .p-picklist[${this.id}] {
                         flex-direction: column;
                     }
@@ -1782,33 +1703,31 @@ export class PickList extends BaseComponent {
         }
     }
 
-    sourceMoveDisabled() {
-        if (this.disabled || !this.selectedItemsSource.length) {
+    sourceMoveDisabled = computed(() => {
+        if (this.disabled() || !this.selectedItemsSource().length) {
             return true;
         }
-    }
+    });
 
-    targetMoveDisabled() {
-        if (this.disabled || !this.selectedItemsTarget.length) {
+    targetMoveDisabled = computed(() => {
+        if (this.disabled() || !this.selectedItemsTarget().length) {
             return true;
         }
-    }
+    });
 
-    moveRightDisabled() {
-        return this.disabled || isEmpty(this.selectedItemsSource);
-    }
+    moveRightDisabled = computed(() => this.disabled() || isEmpty(this.selectedItemsSource()));
 
-    moveLeftDisabled() {
-        return this.disabled || isEmpty(this.selectedItemsTarget);
-    }
+    moveLeftDisabled = computed(() => this.disabled() || isEmpty(this.selectedItemsTarget()));
 
-    moveAllRightDisabled() {
-        return this.disabled || isEmpty(this.source());
-    }
+    moveAllRightDisabled = computed(() => {
+        this.listsVersion();
+        return this.disabled() || isEmpty(this.source());
+    });
 
-    moveAllLeftDisabled() {
-        return this.disabled || isEmpty(this.target());
-    }
+    moveAllLeftDisabled = computed(() => {
+        this.listsVersion();
+        return this.disabled() || isEmpty(this.target());
+    });
 
     destroyStyle() {
         if (this.styleElement) {
