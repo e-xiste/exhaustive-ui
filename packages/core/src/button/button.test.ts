@@ -1810,3 +1810,25 @@ describe('ButtonDirective Signal Query API', () => {
         expect((instance as any).labelSignal()).toBeDefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Button],
+    template: `<p-button [buttonProps]="{ label: 'Save', icon: 'pi pi-check' }" />`
+})
+class TestButtonPropsIconPositionComponent {}
+
+describe('Button buttonProps icon position', () => {
+    it('applies only the icon position class of iconPos when buttonProps sets the label (found during triage)', async () => {
+        TestBed.configureTestingModule({ imports: [TestButtonPropsIconPositionComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestButtonPropsIconPositionComponent);
+        await fixture.whenStable();
+
+        const icon = fixture.nativeElement.querySelector('.p-button-icon') as HTMLElement;
+
+        expect(icon.classList).toContain('p-button-icon-left');
+        expect(icon.classList).not.toContain('p-button-icon-right');
+        expect(icon.classList).not.toContain('p-button-icon-top');
+        expect(icon.classList).not.toContain('p-button-icon-bottom');
+    });
+});

@@ -26,10 +26,10 @@ const classes = {
         'p-button-icon',
         {
             [`p-button-icon-${instance.iconPos() || instance.buttonProps()?.iconPos}`]: instance.label() || instance.buttonProps()?.label,
-            'p-button-icon-left': ((instance.iconPos() === 'left' || instance.buttonProps()?.iconPos === 'left') && instance.label()) || instance.buttonProps()?.label,
-            'p-button-icon-right': ((instance.iconPos() === 'right' || instance.buttonProps()?.iconPos === 'right') && instance.label()) || instance.buttonProps()?.label,
-            'p-button-icon-top': ((instance.iconPos() === 'top' || instance.buttonProps()?.iconPos === 'top') && instance.label()) || instance.buttonProps()?.label,
-            'p-button-icon-bottom': ((instance.iconPos() === 'bottom' || instance.buttonProps()?.iconPos === 'bottom') && instance.label()) || instance.buttonProps()?.label
+            'p-button-icon-left': (instance.iconPos() === 'left' || instance.buttonProps()?.iconPos === 'left') && (instance.label() || instance.buttonProps()?.label),
+            'p-button-icon-right': (instance.iconPos() === 'right' || instance.buttonProps()?.iconPos === 'right') && (instance.label() || instance.buttonProps()?.label),
+            'p-button-icon-top': (instance.iconPos() === 'top' || instance.buttonProps()?.iconPos === 'top') && (instance.label() || instance.buttonProps()?.label),
+            'p-button-icon-bottom': (instance.iconPos() === 'bottom' || instance.buttonProps()?.iconPos === 'bottom') && (instance.label() || instance.buttonProps()?.label)
         },
         instance.icon(),
         instance.buttonProps()?.icon
