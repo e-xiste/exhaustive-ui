@@ -1426,6 +1426,7 @@ describe('TabList navigators with dynamic tabs', () => {
                 position: absolute;
                 bottom: 0;
                 height: 2px;
+                transition: none;
             }
         `
     ]
@@ -1465,6 +1466,24 @@ describe('Scrollable Tabs with a controlled value', () => {
             const tabRect = activeTab().getBoundingClientRect();
             expect(tabRect.left).toBeGreaterThanOrEqual(contentRect.left - 1);
             expect(tabRect.right).toBeLessThanOrEqual(contentRect.right + 1);
+        });
+    });
+
+    it('should move the active bar under the active tab when the tab collection changes (optimus-ui#697)', async () => {
+        fixture.componentInstance.value.set('3');
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const inkbar = fixture.nativeElement.querySelector('[data-pc-section="activebar"]') as HTMLElement;
+        const offset = () => inkbar.getBoundingClientRect().left - activeTab().getBoundingClientRect().left;
+        const initialOffset = offset();
+        fixture.componentInstance.tabs.set(['2', '3', '4']);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        await vi.waitFor(() => {
+            expect(Math.abs(offset() - initialOffset)).toBeLessThan(1);
         });
     });
 });

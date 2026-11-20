@@ -149,9 +149,13 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     }
 
     onAfterViewInit() {
-        if (this.showNavigators() && isPlatformBrowser(this.platformId)) {
-            this.updateButtonState();
-            this.bindResizeObserver();
+        if (isPlatformBrowser(this.platformId)) {
+            this.bindMutationObserver();
+
+            if (this.showNavigators()) {
+                this.updateButtonState();
+                this.bindResizeObserver();
+            }
         }
     }
 
@@ -174,6 +178,7 @@ export class TabList extends BaseComponent<TabListPassThrough> {
 
     onDestroy() {
         this.unbindResizeObserver();
+        this.unbindMutationObserver();
     }
 
     onScroll(event: Event) {
@@ -254,9 +259,20 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     bindResizeObserver() {
         this.resizeObserver = new ResizeObserver(() => this.updateButtonState());
         this.resizeObserver.observe(this.el.nativeElement);
-        // tabs added or removed later change the scroll width without resizing the host
-        this.mutationObserver = new MutationObserver(() => this.updateButtonState());
+    }
+
+    bindMutationObserver() {
+        // tabs added or removed later move the active tab and change the scroll width without resizing the host
+        this.mutationObserver = new MutationObserver(() => {
+            this.updateInkBar();
+            this.showNavigators() && this.updateButtonState();
+        });
         this.mutationObserver.observe(this.tabs().nativeElement, { childList: true });
+    }
+
+    unbindMutationObserver() {
+        this.mutationObserver?.disconnect();
+        this.mutationObserver = undefined;
     }
 
     unbindResizeObserver() {
@@ -264,8 +280,5 @@ export class TabList extends BaseComponent<TabListPassThrough> {
             this.resizeObserver.unobserve(this.el.nativeElement);
             this.resizeObserver = null!;
         }
-
-        this.mutationObserver?.disconnect();
-        this.mutationObserver = undefined;
     }
 }
