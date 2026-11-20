@@ -884,6 +884,36 @@ describe('TreeSelect', () => {
             expect(treeSelectInstance.filterValue()).toBe('Work');
         });
 
+        it('should restore the filter text on reopen when resetFilterOnHide is false', async () => {
+            testComponent.filter = true;
+            testComponent.resetFilterOnHide = false;
+            testFixture.changeDetectorRef.markForCheck();
+            testFixture.detectChanges();
+
+            const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance as TreeSelect;
+            const render = async () => {
+                testFixture.changeDetectorRef.markForCheck();
+                testFixture.detectChanges();
+                await testFixture.whenStable();
+                // let the overlay enter/leave motion complete
+                await new Promise((resolve) => setTimeout(resolve, 300));
+                testFixture.detectChanges();
+            };
+            const filterInput = () => treeSelectInstance.treeViewChild()?.filterViewChild()?.nativeElement as HTMLInputElement;
+
+            treeSelectInstance.show();
+            await render();
+            filterInput().value = 'Work';
+            filterInput().dispatchEvent(new Event('input'));
+
+            treeSelectInstance.hide();
+            await render();
+            treeSelectInstance.show();
+            await render();
+
+            expect(filterInput().value).toBe('Work');
+        });
+
         it('should emit onShow event', async () => {
             const treeSelectInstance = testFixture.debugElement.query(By.directive(TreeSelect)).componentInstance;
 

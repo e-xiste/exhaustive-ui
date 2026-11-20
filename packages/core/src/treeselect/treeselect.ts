@@ -733,7 +733,12 @@ export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
 
     onOverlayBeforeEnter() {
         if (this.filter()) {
-            isNotEmpty(this.filterValue()) && this.treeViewChild()?._filter(<any>this.filterValue());
+            if (isNotEmpty(this.filterValue())) {
+                // the tree filter input is re-created on each opening: restore the text kept when resetFilterOnHide is false
+                const filterInput = this.treeViewChild()?.filterViewChild()?.nativeElement;
+                filterInput && (filterInput.value = this.filterValue());
+                this.treeViewChild()?._filter(<any>this.filterValue());
+            }
             this.filterInputAutoFocus() && this.filterViewChild()?.nativeElement.focus();
         } else {
             let focusableElements = <any>getFocusableElements(this.panelEl()?.nativeElement!);
