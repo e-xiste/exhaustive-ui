@@ -71,12 +71,12 @@
         "vitest": "^4.1.11"
     },
     "peerDependencies": {
-        "@angular/cdk": "catalog:angular22",
-        "@angular/common": "catalog:angular22",
-        "@angular/core": "catalog:angular22",
-        "@angular/forms": "catalog:angular22",
-        "@angular/platform-browser": "catalog:angular22",
-        "@angular/router": "catalog:angular22",
+        "@angular/cdk": "^22.0.0",
+        "@angular/common": "^22.0.0",
+        "@angular/core": "^22.0.0",
+        "@angular/forms": "^22.0.0",
+        "@angular/platform-browser": "^22.0.0",
+        "@angular/router": "^22.0.0",
         "chart.js": "^4.0.0",
         "rxjs": "^6.0.0 || ^7.8.1"
     },
