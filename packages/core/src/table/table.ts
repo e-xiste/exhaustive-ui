@@ -2783,6 +2783,17 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
 
+    onColumnDragEnd() {
+        // a drop outside a header fires no drop event: clear the drag state here
+        if (this.draggedColumn()) {
+            (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.display = 'none';
+            (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.display = 'none';
+            this.draggedColumn().draggable = false;
+            this.draggedColumn.set(null);
+            this.dropPosition.set(null);
+        }
+    }
+
     resizeTableCells(newColumnWidth: number, nextColumnWidth: number | null) {
         let colIndex = DomHandler.index(this.resizeColumnElement());
         let width = this.columnResizeMode() === 'expand' ? <number[]>this._initialColWidths() : this._totalTableWidth();
@@ -4422,6 +4433,8 @@ export class ReorderableColumn extends BaseComponent {
 
     dragLeaveListener = signal<VoidListener>(undefined);
 
+    dragEndListener = signal<VoidListener>(undefined);
+
     mouseDownListener = signal<VoidListener>(undefined);
 
     _componentStyle = inject(TableStyle);
@@ -4447,6 +4460,8 @@ export class ReorderableColumn extends BaseComponent {
                 this.dragEnterListener.set(this.renderer.listen(this.el.nativeElement, 'dragenter', this.onDragEnter.bind(this)));
 
                 this.dragLeaveListener.set(this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this)));
+
+                this.dragEndListener.set(this.renderer.listen(this.el.nativeElement, 'dragend', this.onDragEnd.bind(this)));
             });
         }
     }
@@ -4476,6 +4491,11 @@ export class ReorderableColumn extends BaseComponent {
             this.dragLeaveListener()!();
             this.dragLeaveListener.set(null);
         }
+
+        if (this.dragEndListener()) {
+            this.dragEndListener()!();
+            this.dragEndListener.set(null);
+        }
     }
 
     onMouseDown(event: any) {
@@ -4497,6 +4517,10 @@ export class ReorderableColumn extends BaseComponent {
 
     onDragLeave(event: any) {
         this.dataTable.onColumnDragLeave(event);
+    }
+
+    onDragEnd() {
+        this.dataTable.onColumnDragEnd();
     }
 
     @HostListener('drop', ['$event'])

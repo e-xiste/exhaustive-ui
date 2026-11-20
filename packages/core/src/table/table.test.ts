@@ -3619,4 +3619,21 @@ describe('Table ReorderableColumn', () => {
         expect(fixture.nativeElement.querySelector('#enabled').classList).toContain('p-datatable-reorderable-column');
         expect(fixture.nativeElement.querySelector('#disabled').classList).not.toContain('p-datatable-reorderable-column');
     });
+
+    it('hides the reorder indicators when the column is dropped outside a header (optimus-ui#377)', () => {
+        const table = fixture.debugElement.query(By.directive(Table)).componentInstance as Table;
+        const header = fixture.nativeElement.querySelector('#enabled') as HTMLElement;
+        const target = fixture.nativeElement.querySelector('#disabled') as HTMLElement;
+        const dataTransfer = new DataTransfer();
+
+        header.dispatchEvent(new DragEvent('dragstart', { bubbles: true, dataTransfer }));
+        table.onColumnDragEnter(new DragEvent('dragenter', { dataTransfer }), target);
+        expect(table.reorderIndicatorUpViewChild()!.nativeElement.style.display).toBe('block');
+
+        header.dispatchEvent(new DragEvent('dragend', { bubbles: true, dataTransfer }));
+
+        expect(table.reorderIndicatorUpViewChild()!.nativeElement.style.display).toBe('none');
+        expect(table.reorderIndicatorDownViewChild()!.nativeElement.style.display).toBe('none');
+        expect(table.draggedColumn()).toBeNull();
+    });
 });
