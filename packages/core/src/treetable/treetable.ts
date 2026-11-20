@@ -3069,6 +3069,11 @@ export class TTReorderableColumn extends BaseComponent {
                 this.mouseDownListener.set(null);
             }
 
+            if (this.dragStartListener()) {
+                this.dragStartListener()!();
+                this.dragStartListener.set(null);
+            }
+
             if (this.dragOverListener()) {
                 this.dragOverListener()!();
                 this.dragOverListener.set(null);

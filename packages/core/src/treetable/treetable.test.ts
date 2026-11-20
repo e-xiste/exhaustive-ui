@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { SharedModule, TreeNode } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { of } from 'rxjs';
-import { TreeTable, TreeTableModule, TreeTableToggler, TTEditableColumn, TTScrollableView } from './treetable';
+import { TreeTable, TreeTableModule, TreeTableToggler, TTEditableColumn, TTReorderableColumn, TTScrollableView } from './treetable';
 
 describe('TreeTable', () => {
     let component: TestBasicTreeTableComponent;
@@ -4737,5 +4737,51 @@ describe('TreeTable row keyboard', () => {
 
         expect(space.defaultPrevented).toBe(true);
         expect(fixture.componentInstance.selection).toBe(fixture.componentInstance.nodes[1]);
+    });
+});
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" [reorderableColumns]="true">
+            <ng-template #header>
+                <tr>
+                    <th ttReorderableColumn>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td>{{ rowData.name }}</td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableReorderableColumnHostComponent {
+    nodes: TreeNode[] = [{ key: '0', data: { name: 'Root' } }];
+}
+
+describe('TreeTable low bug fixes', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TreeTableReorderableColumnHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    it('removes the dragstart listener of ttReorderableColumn on destroy (optimus-ui#474)', async () => {
+        const fixture = TestBed.createComponent(TreeTableReorderableColumnHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const column = fixture.debugElement.query(By.directive(TTReorderableColumn)).injector.get(TTReorderableColumn);
+        const unlisten = vi.fn(column.dragStartListener()!);
+        column.dragStartListener.set(unlisten);
+
+        fixture.destroy();
+        expect(unlisten).toHaveBeenCalled();
     });
 });
