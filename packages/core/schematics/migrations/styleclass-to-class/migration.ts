@@ -106,7 +106,10 @@ export const MIGRATED_SELECTORS: readonly string[] = [
     'p-table',
     'p-autocomplete',
     'p-autoComplete',
-    'p-auto-complete'
+    'p-auto-complete',
+    'p-multiSelect',
+    'p-multiselect',
+    'p-multi-select'
 ];
 
 /**

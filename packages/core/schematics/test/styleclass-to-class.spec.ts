@@ -1651,4 +1651,33 @@ describe('styleclass-to-class', () => {
         const result = await runner.runSchematic('styleclass-to-class', {}, tree);
         expect(result.readContent('/src/app/app.html')).toBe(`<p-autocomplete inputStyleClass="in" class="flex-1 w-full" panelStyleClass="panel" multiple></p-autocomplete>\n`);
     });
+
+    it('rewrites a static styleClass to class on p-multiselect, p-multiSelect and p-multi-select', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-multiselect [options]="cities" styleClass="w-full"></p-multiselect>\n<p-multiSelect [options]="cities" styleClass="w-56"></p-multiSelect>\n<p-multi-select [options]="cities" styleClass="w-80"></p-multi-select>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-multiselect [options]="cities" class="w-full"></p-multiselect>\n<p-multiSelect [options]="cities" class="w-56"></p-multiSelect>\n<p-multi-select [options]="cities" class="w-80"></p-multi-select>\n`
+        );
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-multiselect', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-multiselect [options]="cities" optionLabel="name" [styleClass]="multiSelectClass"></p-multiselect>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-multiselect [options]="cities" optionLabel="name" [class]="multiSelectClass"></p-multiselect>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-multiselect', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-multiselect class="existing" styleClass="w-full" [options]="cities"></p-multiselect>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-multiselect class="existing w-full" [options]="cities"></p-multiselect>\n`);
+    });
 });

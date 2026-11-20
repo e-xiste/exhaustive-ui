@@ -1,20 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {
+    afterEveryRender,
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
-    effect,
     ElementRef,
     forwardRef,
     inject,
     InjectionToken,
     input,
-    Input,
+    linkedSignal,
     NgModule,
-    NgZone,
     numberAttribute,
-    Signal,
     signal,
     TemplateRef,
     ViewEncapsulation,
@@ -23,10 +22,11 @@ import {
     contentChildren,
     output
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { deepEquals, equals, findLastIndex, findSingle, focus, getFirstFocusableElement, getFocusableElements, getLastFocusableElement, isArray, isNotEmpty, isPrintableCharacter, resolveFieldData, uuid } from '@exhaustive-ui/utils';
-import { FilterService, Footer, OverlayOptions, OverlayService, PrimeTemplate, ScrollerOptions, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
+import { FilterService, Footer, OverlayOptions, PrimeTemplate, ScrollerOptions, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { AutoFocus } from '@exhaustive-ui/core/autofocus';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
@@ -76,37 +76,36 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'li[pMultiSelectItem]',
-    standalone: true,
     imports: [CommonModule, Checkbox, FormsModule, SharedModule],
     template: `
-        <p-checkbox [ngModel]="selected" [ngModelOptions]="{ standalone: true }" [binary]="true" [tabindex]="-1" [variant]="variant" [ariaLabel]="label" [pt]="getPTOptions('pcOptionCheckbox')" [unstyled]="unstyled()">
-            @if (itemCheckboxIconTemplate) {
+        <p-checkbox [ngModel]="selected()" [ngModelOptions]="{ standalone: true }" [binary]="true" [tabindex]="-1" [variant]="variant()" [ariaLabel]="label()" [pt]="getPTOptions('pcOptionCheckbox')" [unstyled]="unstyled()">
+            @if (itemCheckboxIconTemplate()) {
                 <ng-template #icon let-klass="class">
-                    <ng-template *ngTemplateOutlet="itemCheckboxIconTemplate; context: { checked: selected, class: klass }"></ng-template>
+                    <ng-template *ngTemplateOutlet="itemCheckboxIconTemplate(); context: { checked: selected(), class: klass }"></ng-template>
                 </ng-template>
             }
         </p-checkbox>
-        @if (!template) {
-            <span>{{ label ?? 'empty' }}</span>
+        @if (!template()) {
+            <span>{{ label() ?? 'empty' }}</span>
         }
-        <ng-container *ngTemplateOutlet="template; context: { $implicit: option }"></ng-container>
+        <ng-container *ngTemplateOutlet="template(); context: { $implicit: option() }"></ng-container>
     `,
     encapsulation: ViewEncapsulation.None,
     providers: [MultiSelectStyle],
     host: {
-        '[style.height.px]': 'itemSize',
-        '[attr.aria-label]': 'label',
+        '[style.height.px]': 'itemSize()',
+        '[attr.aria-label]': 'label()',
         role: 'option',
-        '[attr.aria-setsize]': 'ariaSetSize',
-        '[attr.aria-posinset]': 'ariaPosInset',
-        '[attr.aria-selected]': 'selected',
-        '[attr.data-p-selected]': 'selected',
-        '[attr.data-p-focused]': 'focused',
-        '[attr.data-p-highlight]': 'selected',
-        '[attr.data-p-disabled]': 'disabled',
-        '[attr.aria-checked]': 'selected',
+        '[attr.aria-setsize]': 'ariaSetSize()',
+        '[attr.aria-posinset]': 'ariaPosInset()',
+        '[attr.aria-selected]': 'selected()',
+        '[attr.data-p-selected]': 'selected()',
+        '[attr.data-p-focused]': 'focused()',
+        '[attr.data-p-highlight]': 'selected()',
+        '[attr.data-p-disabled]': 'disabled()',
+        '[attr.aria-checked]': 'selected()',
         '(click)': 'onOptionClick($event)',
         '(mouseenter)': 'onOptionMouseEnter($event)',
         '[class]': "cx('option')"
@@ -120,38 +119,36 @@ export class MultiSelectItem extends BaseComponent {
     getPTOptions(key) {
         return this.ptm(key, {
             context: {
-                selected: this.selected,
-                focused: this.focused,
-                disabled: this.disabled
+                selected: this.selected(),
+                focused: this.focused(),
+                disabled: this.disabled()
             }
         });
     }
 
-    @Input() option: any;
+    option = input<any>();
 
-    @Input({ transform: booleanAttribute }) selected: boolean | undefined;
+    selected = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input() label: string | undefined;
+    label = input<string | undefined>();
 
-    @Input({ transform: booleanAttribute }) disabled: boolean | undefined;
+    disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input({ transform: numberAttribute }) itemSize: number | undefined;
+    itemSize = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
 
-    @Input({ transform: booleanAttribute }) focused: boolean | undefined;
+    focused = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
-    @Input() ariaPosInset: string | undefined;
+    ariaPosInset = input<string | undefined>();
 
-    @Input() ariaSetSize: string | undefined;
+    ariaSetSize = input<string | undefined>();
 
-    @Input() variant: 'outlined' | 'filled';
+    variant = input<'outlined' | 'filled' | undefined>();
 
-    @Input() template: TemplateRef<MultiSelectItemTemplateContext> | undefined;
+    template = input<TemplateRef<MultiSelectItemTemplateContext> | undefined>();
 
-    @Input() checkIconTemplate: TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined;
+    itemCheckboxIconTemplate = input<TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined>();
 
-    @Input() itemCheckboxIconTemplate: TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined;
-
-    @Input({ transform: booleanAttribute }) highlightOnSelect: boolean | undefined;
+    highlightOnSelect = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     readonly onClick = output<any>();
 
@@ -162,8 +159,8 @@ export class MultiSelectItem extends BaseComponent {
     onOptionClick(event: Event) {
         this.onClick.emit({
             originalEvent: event,
-            option: this.option,
-            selected: this.selected
+            option: this.option(),
+            selected: this.selected()
         });
         event.stopPropagation();
         event.preventDefault();
@@ -172,8 +169,8 @@ export class MultiSelectItem extends BaseComponent {
     onOptionMouseEnter(event: Event) {
         this.onMouseEnter.emit({
             originalEvent: event,
-            option: this.option,
-            selected: this.selected
+            option: this.option(),
+            selected: this.selected()
         });
     }
 }
@@ -184,32 +181,31 @@ export class MultiSelectItem extends BaseComponent {
  */
 @Component({
     selector: 'p-multiSelect, p-multiselect, p-multi-select',
-    standalone: true,
     imports: [CommonModule, MultiSelectItem, Overlay, SharedModule, Tooltip, Scroller, AutoFocus, CheckIcon, SearchIcon, TimesIcon, ChevronDownIcon, IconField, InputIcon, InputText, Chip, Checkbox, FormsModule, BindModule],
     hostDirectives: [Bind],
     template: `
         <div class="p-hidden-accessible" [attr.data-p-hidden-accessible]="true" [pBind]="ptm('hiddenInputContainer')">
             <input
                 #focusInput
-                [pTooltip]="tooltip"
+                [pTooltip]="tooltip()"
                 [pTooltipUnstyled]="unstyled()"
-                [tooltipPosition]="tooltipPosition"
-                [positionStyle]="tooltipPositionStyle"
-                [tooltipStyleClass]="tooltipStyleClass"
+                [tooltipPosition]="tooltipPosition()"
+                [positionStyle]="tooltipPositionStyle()"
+                [tooltipStyleClass]="tooltipStyleClass()"
                 [attr.aria-disabled]="$disabled()"
-                [attr.id]="inputId"
+                [attr.id]="inputId()"
                 role="combobox"
-                [attr.aria-label]="ariaLabel"
-                [attr.aria-labelledby]="ariaLabelledBy"
+                [attr.aria-label]="ariaLabel()"
+                [attr.aria-labelledby]="ariaLabelledBy()"
                 [attr.aria-haspopup]="'listbox'"
-                [attr.aria-expanded]="overlayVisible ?? false"
-                [attr.aria-controls]="overlayVisible ? id + '_list' : null"
-                [attr.tabindex]="!$disabled() ? tabindex : -1"
-                [attr.aria-activedescendant]="focused ? focusedOptionId : undefined"
+                [attr.aria-expanded]="_overlayVisible() ?? false"
+                [attr.aria-controls]="_overlayVisible() ? _id() + '_list' : null"
+                [attr.tabindex]="!$disabled() ? tabindex() : -1"
+                [attr.aria-activedescendant]="focused() ? focusedOptionId() : undefined"
                 (focus)="onInputFocus($event)"
                 (blur)="onInputBlur($event)"
                 (keydown)="onKeyDown($event)"
-                [pAutoFocus]="autofocus"
+                [pAutoFocus]="autofocus()"
                 [attr.value]="modelValue()"
                 [attr.name]="name()"
                 [attr.required]="required() ? '' : undefined"
@@ -220,34 +216,34 @@ export class MultiSelectItem extends BaseComponent {
         <div
             [pBind]="ptm('labelContainer')"
             [class]="cx('labelContainer')"
-            [pTooltip]="tooltip"
+            [pTooltip]="tooltip()"
             [pTooltipUnstyled]="unstyled()"
             (mouseleave)="labelContainerMouseLeave()"
-            [tooltipDisabled]="_disableTooltip"
-            [tooltipPosition]="tooltipPosition"
-            [positionStyle]="tooltipPositionStyle"
-            [tooltipStyleClass]="tooltipStyleClass"
+            [tooltipDisabled]="_disableTooltip()"
+            [tooltipPosition]="tooltipPosition()"
+            [positionStyle]="tooltipPositionStyle()"
+            [tooltipStyleClass]="tooltipStyleClass()"
         >
-            <div [pBind]="ptm('label')" [class]="cx('label')" [attr.data-p]="labelDataP">
-                <ng-container *ngIf="!selectedItemsTemplate() && !_selectedItemsTemplate">
-                    <ng-container *ngIf="display === 'comma'">{{ label() || 'empty' }}</ng-container>
-                    <ng-container *ngIf="display === 'chip'">
-                        @if (chipSelectedItems() && chipSelectedItems().length === maxSelectedLabels) {
+            <div [pBind]="ptm('label')" [class]="cx('label')" [attr.data-p]="labelDataP()">
+                <ng-container *ngIf="!selectedItemsTemplate() && !_selectedItemsTemplate()">
+                    <ng-container *ngIf="display() === 'comma'">{{ label() || 'empty' }}</ng-container>
+                    <ng-container *ngIf="display() === 'chip'">
+                        @if (chipSelectedItems() && chipSelectedItems().length === maxSelectedLabels()) {
                             {{ getSelectedItemsLabel() }}
                         } @else {
                             <div #token *ngFor="let item of chipSelectedItems(); let i = index" [pBind]="ptm('chipItem')" [class]="cx('chipItem')">
-                                <p-chip [pt]="ptm('pcChip')" [unstyled]="unstyled()" [class]="cx('pcChip')" [label]="getLabelByValue(item)" [removable]="!$disabled() && !readonly" (onRemove)="removeOption(item, $event)" [removeIcon]="chipIcon">
-                                    <ng-container *ngIf="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate">
+                                <p-chip [pt]="ptm('pcChip')" [unstyled]="unstyled()" [class]="cx('pcChip')" [label]="getLabelByValue(item)" [removable]="!$disabled() && !readonly()" (onRemove)="removeOption(item, $event)" [removeIcon]="chipIcon()">
+                                    <ng-container *ngIf="chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()">
                                         <ng-template #removeicon>
-                                            <ng-container *ngIf="!$disabled() && !readonly">
+                                            <ng-container *ngIf="!$disabled() && !readonly()">
                                                 <span
                                                     [class]="cx('chipIcon')"
-                                                    *ngIf="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate"
+                                                    *ngIf="chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()"
                                                     (click)="removeOption(item, $event)"
                                                     [attr.aria-hidden]="true"
                                                     [pBind]="ptm('chipIcon')"
                                                 >
-                                                    <ng-container *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate || removeTokenIconTemplate() || _removeTokenIconTemplate; context: { class: 'p-multiselect-chip-icon' }"></ng-container>
+                                                    <ng-container *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate(); context: { class: 'p-multiselect-chip-icon' }"></ng-container>
                                                 </span>
                                             </ng-container>
                                         </ng-template>
@@ -258,43 +254,43 @@ export class MultiSelectItem extends BaseComponent {
                         <ng-container *ngIf="!modelValue() || modelValue().length === 0">{{ placeholder() || 'empty' }}</ng-container>
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="selectedItemsTemplate() || _selectedItemsTemplate">
-                    <ng-container *ngTemplateOutlet="selectedItemsTemplate() || _selectedItemsTemplate; context: { $implicit: selectedOptions, removeChip: removeOption.bind(this) }"></ng-container>
+                <ng-container *ngIf="selectedItemsTemplate() || _selectedItemsTemplate()">
+                    <ng-container *ngTemplateOutlet="selectedItemsTemplate() || _selectedItemsTemplate(); context: { $implicit: selectedOptions(), removeChip: removeOption.bind(this) }"></ng-container>
                     <ng-container *ngIf="!modelValue() || modelValue().length === 0">{{ placeholder() || 'empty' }}</ng-container>
                 </ng-container>
             </div>
         </div>
-        <ng-container *ngIf="isVisibleClearIcon">
-            <svg data-p-icon="times" *ngIf="!clearIconTemplate() && !_clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true" />
-            <span *ngIf="clearIconTemplate() || _clearIconTemplate" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true">
-                <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate"></ng-template>
+        <ng-container *ngIf="isVisibleClearIcon()">
+            <svg data-p-icon="times" *ngIf="!clearIconTemplate() && !_clearIconTemplate()" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true" />
+            <span *ngIf="clearIconTemplate() || _clearIconTemplate()" [pBind]="ptm('clearIcon')" [class]="cx('clearIcon')" (click)="clear($event)" [attr.aria-hidden]="true">
+                <ng-template *ngTemplateOutlet="clearIconTemplate() || _clearIconTemplate()"></ng-template>
             </span>
         </ng-container>
         <div [pBind]="ptm('dropdown')" [class]="cx('dropdown')">
-            <ng-container *ngIf="loading; else elseBlock">
-                <ng-container *ngIf="loadingIconTemplate() || _loadingIconTemplate">
-                    <ng-container *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate"></ng-container>
+            <ng-container *ngIf="loading(); else elseBlock">
+                <ng-container *ngIf="loadingIconTemplate() || _loadingIconTemplate()">
+                    <ng-container *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate()"></ng-container>
                 </ng-container>
-                <ng-container *ngIf="!loadingIconTemplate() && !_loadingIconTemplate">
-                    <span *ngIf="loadingIcon" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon)" [attr.aria-hidden]="true"></span>
-                    <span *ngIf="!loadingIcon" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [attr.aria-hidden]="true"></span>
+                <ng-container *ngIf="!loadingIconTemplate() && !_loadingIconTemplate()">
+                    <span *ngIf="loadingIcon()" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi-spin ' + loadingIcon())" [attr.aria-hidden]="true"></span>
+                    <span *ngIf="!loadingIcon()" [pBind]="ptm('loadingIcon')" [class]="cn(cx('loadingIcon'), 'pi pi-spinner pi-spin')" [attr.aria-hidden]="true"></span>
                 </ng-container>
             </ng-container>
             <ng-template #elseBlock>
-                <ng-container *ngIf="!dropdownIconTemplate() && !_dropdownIconTemplate">
-                    <span *ngIf="dropdownIcon" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [ngClass]="dropdownIcon" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP"></span>
-                    <svg data-p-icon="chevron-down" *ngIf="!dropdownIcon" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP" />
+                <ng-container *ngIf="!dropdownIconTemplate() && !_dropdownIconTemplate()">
+                    <span *ngIf="dropdownIcon()" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [ngClass]="dropdownIcon()" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP()"></span>
+                    <svg data-p-icon="chevron-down" *ngIf="!dropdownIcon()" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true" [attr.data-p]="dropdownIconDataP()" />
                 </ng-container>
-                <span *ngIf="dropdownIconTemplate() || _dropdownIconTemplate" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true">
-                    <ng-template *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate; context: { dataP: dropdownIconDataP }"></ng-template>
+                <span *ngIf="dropdownIconTemplate() || _dropdownIconTemplate()" [pBind]="ptm('dropdownIcon')" [class]="cx('dropdownIcon')" [attr.aria-hidden]="true">
+                    <ng-template *ngTemplateOutlet="dropdownIconTemplate() || _dropdownIconTemplate(); context: { dataP: dropdownIconDataP() }"></ng-template>
                 </span>
             </ng-template>
         </div>
         <p-overlay
             #overlay
             [hostAttrSelector]="$attrSelector"
-            [(visible)]="overlayVisible"
-            [options]="overlayOptions"
+            [(visible)]="_overlayVisible"
+            [options]="overlayOptions()"
             [target]="'@parent'"
             [appendTo]="$appendTo()"
             [unstyled]="unstyled()"
@@ -305,7 +301,7 @@ export class MultiSelectItem extends BaseComponent {
             (onHide)="onOverlayHide($event)"
         >
             <ng-template #content>
-                <div [pBind]="ptm('overlay')" [attr.data-p]="overlayDataP" [attr.id]="id + '_list'" [class]="cn(cx('overlay'), panelStyleClass)" [ngStyle]="panelStyle">
+                <div [pBind]="ptm('overlay')" [attr.data-p]="overlayDataP()" [attr.id]="_id() + '_list'" [class]="cn(cx('overlay'), panelStyleClass())" [ngStyle]="panelStyle()">
                     <span
                         #firstHiddenFocusableEl
                         role="presentation"
@@ -317,31 +313,31 @@ export class MultiSelectItem extends BaseComponent {
                         [pBind]="ptm('firstHiddenFocusableEl')"
                     >
                     </span>
-                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate"></ng-container>
-                    <div [pBind]="ptm('header')" [class]="cx('header')" *ngIf="showHeader">
+                    <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate()"></ng-container>
+                    <div [pBind]="ptm('header')" [class]="cx('header')" *ngIf="showHeader()">
                         <ng-content select="p-header"></ng-content>
-                        <ng-container *ngIf="filterTemplate() || _filterTemplate; else builtInFilterElement">
-                            <ng-container *ngTemplateOutlet="filterTemplate() || _filterTemplate; context: { options: filterOptions }"></ng-container>
+                        <ng-container *ngIf="filterTemplate() || _filterTemplate(); else builtInFilterElement">
+                            <ng-container *ngTemplateOutlet="filterTemplate() || _filterTemplate(); context: { options: filterOptions() }"></ng-container>
                         </ng-container>
                         <ng-template #builtInFilterElement>
                             <p-checkbox
                                 [pt]="getHeaderCheckboxPTOptions('pcHeaderCheckbox')"
                                 [ngModel]="allSelected()"
                                 [ngModelOptions]="{ standalone: true }"
-                                [ariaLabel]="toggleAllAriaLabel"
+                                [ariaLabel]="toggleAllAriaLabel()"
                                 [binary]="true"
                                 (onChange)="onToggleAll($event)"
-                                *ngIf="showToggleAll && !selectionLimit"
+                                *ngIf="showToggleAll() && !selectionLimit()"
                                 [variant]="$variant()"
                                 [disabled]="$disabled()"
                                 [unstyled]="unstyled()"
                                 #headerCheckbox
                             >
                                 <ng-template #icon let-klass="class">
-                                    <svg data-p-icon="check" *ngIf="!headerCheckboxIconTemplate() && !_headerCheckboxIconTemplate && allSelected()" [class]="klass" [pBind]="getHeaderCheckboxPTOptions('pcHeaderCheckbox.icon')" />
+                                    <svg data-p-icon="check" *ngIf="!headerCheckboxIconTemplate() && !_headerCheckboxIconTemplate() && allSelected()" [class]="klass" [pBind]="getHeaderCheckboxPTOptions('pcHeaderCheckbox.icon')" />
                                     <ng-template
                                         *ngTemplateOutlet="
-                                            headerCheckboxIconTemplate() || _headerCheckboxIconTemplate;
+                                            headerCheckboxIconTemplate() || _headerCheckboxIconTemplate();
                                             context: {
                                                 checked: allSelected(),
                                                 partialSelected: partialSelected(),
@@ -352,17 +348,17 @@ export class MultiSelectItem extends BaseComponent {
                                 </ng-template>
                             </p-checkbox>
 
-                            <p-iconfield *ngIf="filter" [pt]="ptm('pcFilterContainer')" [class]="cx('pcFilterContainer')" [unstyled]="unstyled()">
+                            <p-iconfield *ngIf="filter()" [pt]="ptm('pcFilterContainer')" [class]="cx('pcFilterContainer')" [unstyled]="unstyled()">
                                 <input
                                     #filterInput
                                     pInputText
                                     [pt]="ptm('pcFilter')"
                                     [variant]="$variant()"
                                     type="text"
-                                    [attr.autocomplete]="autocomplete"
+                                    [attr.autocomplete]="autocomplete()"
                                     role="searchbox"
-                                    [attr.aria-owns]="id + '_list'"
-                                    [attr.aria-activedescendant]="focusedOptionId"
+                                    [attr.aria-owns]="_id() + '_list'"
+                                    [attr.aria-activedescendant]="focusedOptionId()"
                                     [value]="_filterValue() || ''"
                                     (input)="onFilterInputChange($event)"
                                     (keydown)="onFilterKeyDown($event)"
@@ -370,100 +366,104 @@ export class MultiSelectItem extends BaseComponent {
                                     (blur)="onFilterBlur($event)"
                                     [class]="cx('pcFilter')"
                                     [attr.disabled]="$disabled() ? '' : undefined"
-                                    [attr.placeholder]="filterPlaceHolder"
-                                    [attr.aria-label]="ariaFilterLabel"
+                                    [attr.placeholder]="filterPlaceHolder()"
+                                    [attr.aria-label]="ariaFilterLabel()"
                                     [unstyled]="unstyled()"
                                 />
                                 <p-inputicon [pt]="ptm('pcFilterIconContainer')" [unstyled]="unstyled()">
-                                    <svg data-p-icon="search" *ngIf="!filterIconTemplate() && !_filterIconTemplate" [pBind]="ptm('filterIcon')" />
-                                    <span *ngIf="filterIconTemplate() || _filterIconTemplate" [pBind]="ptm('filterIcon')" class="p-multiselect-filter-icon">
-                                        <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate"></ng-template>
+                                    <svg data-p-icon="search" *ngIf="!filterIconTemplate() && !_filterIconTemplate()" [pBind]="ptm('filterIcon')" />
+                                    <span *ngIf="filterIconTemplate() || _filterIconTemplate()" [pBind]="ptm('filterIcon')" class="p-multiselect-filter-icon">
+                                        <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate()"></ng-template>
                                     </span>
                                 </p-inputicon>
                             </p-iconfield>
                         </ng-template>
                     </div>
-                    <div [pBind]="ptm('listContainer')" [class]="cx('listContainer')" [style.max-height]="virtualScroll ? 'auto' : scrollHeight || 'auto'">
+                    <div [pBind]="ptm('listContainer')" [class]="cx('listContainer')" [style.max-height]="virtualScroll() ? 'auto' : scrollHeight() || 'auto'">
                         <p-scroller
-                            *ngIf="virtualScroll"
+                            *ngIf="virtualScroll()"
                             #scroller
                             [items]="visibleOptions()"
-                            [style]="{ height: scrollHeight }"
-                            [itemSize]="virtualScrollItemSize"
+                            [style]="{ height: scrollHeight() }"
+                            [itemSize]="virtualScrollItemSize()"
                             [autoSize]="true"
                             [tabindex]="-1"
-                            [lazy]="lazy"
+                            [lazy]="lazy()"
                             (onLazyLoad)="onLazyLoad.emit($event)"
-                            [options]="virtualScrollOptions"
+                            [options]="virtualScrollOptions()"
                         >
                             <ng-template #content let-items let-scrollerOptions="options">
                                 <ng-container *ngTemplateOutlet="buildInItems; context: { $implicit: items, options: scrollerOptions }"></ng-container>
                             </ng-template>
-                            <ng-container *ngIf="loaderTemplate() || _loaderTemplate">
+                            <ng-container *ngIf="loaderTemplate() || _loaderTemplate()">
                                 <ng-template #loader let-scrollerOptions="options">
-                                    <ng-container *ngTemplateOutlet="loaderTemplate() || _loaderTemplate; context: { options: scrollerOptions }"></ng-container>
+                                    <ng-container *ngTemplateOutlet="loaderTemplate() || _loaderTemplate(); context: { options: scrollerOptions }"></ng-container>
                                 </ng-template>
                             </ng-container>
                         </p-scroller>
-                        <ng-container *ngIf="!virtualScroll">
+                        <ng-container *ngIf="!virtualScroll()">
                             <ng-container *ngTemplateOutlet="buildInItems; context: { $implicit: visibleOptions(), options: {} }"></ng-container>
                         </ng-container>
 
                         <ng-template #buildInItems let-items let-scrollerOptions="options">
-                            <ul #items [pBind]="ptm('list')" [class]="cn(cx('list'), scrollerOptions.contentStyleClass)" [style]="scrollerOptions.contentStyle" role="listbox" aria-multiselectable="true" [attr.aria-label]="listLabel">
+                            <ul #items [pBind]="ptm('list')" [class]="cn(cx('list'), scrollerOptions.contentStyleClass)" [style]="scrollerOptions.contentStyle" role="listbox" aria-multiselectable="true" [attr.aria-label]="listLabel()">
                                 <ng-template ngFor let-option [ngForOf]="items" let-i="index">
                                     <ng-container *ngIf="isOptionGroup(option)">
-                                        <li [pBind]="ptm('optionGroup')" [attr.id]="id + '_' + getOptionIndex(i, scrollerOptions)" [class]="cx('optionGroup')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                            <span *ngIf="!groupTemplate() && option.optionGroup">{{ getOptionGroupLabel(option.optionGroup) }}</span>
-                                            <ng-container *ngIf="option.optionGroup && groupTemplate()" [ngTemplateOutlet]="groupTemplate()" [ngTemplateOutletContext]="{ $implicit: option.optionGroup }"></ng-container>
+                                        <li [pBind]="ptm('optionGroup')" [attr.id]="_id() + '_' + getOptionIndex(i, scrollerOptions)" [class]="cx('optionGroup')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
+                                            <span *ngIf="!groupTemplate() && !_groupTemplate() && option.optionGroup">{{ getOptionGroupLabel(option.optionGroup) }}</span>
+                                            <ng-container
+                                                *ngIf="option.optionGroup && (groupTemplate() || _groupTemplate())"
+                                                [ngTemplateOutlet]="groupTemplate() || _groupTemplate()"
+                                                [ngTemplateOutletContext]="{ $implicit: option.optionGroup }"
+                                            ></ng-container>
                                         </li>
                                     </ng-container>
                                     <ng-container *ngIf="!isOptionGroup(option)">
                                         <li
                                             pMultiSelectItem
                                             pRipple
-                                            [pBind]="getPTOptions(option, getItemOptions, i, 'option')"
-                                            [id]="id + '_' + getOptionIndex(i, scrollerOptions)"
+                                            [pBind]="getPTOptions(option, scrollerOptions, i, 'option')"
+                                            [id]="_id() + '_' + getOptionIndex(i, scrollerOptions)"
                                             [option]="option"
                                             [selected]="isSelected(option)"
                                             [label]="getOptionLabel(option)"
                                             [disabled]="isOptionDisabled(option)"
-                                            [template]="itemTemplate() || _itemTemplate"
-                                            [itemCheckboxIconTemplate]="itemCheckboxIconTemplate() || _itemCheckboxIconTemplate"
+                                            [template]="itemTemplate() || _itemTemplate()"
+                                            [itemCheckboxIconTemplate]="itemCheckboxIconTemplate() || _itemCheckboxIconTemplate()"
                                             [itemSize]="scrollerOptions.itemSize"
                                             [focused]="focusedOptionIndex() === getOptionIndex(i, scrollerOptions)"
                                             [ariaPosInset]="getAriaPosInset(getOptionIndex(i, scrollerOptions))"
-                                            [ariaSetSize]="ariaSetSize"
+                                            [ariaSetSize]="ariaSetSize()"
                                             [variant]="$variant()"
-                                            [highlightOnSelect]="highlightOnSelect"
+                                            [highlightOnSelect]="highlightOnSelect()"
                                             (onClick)="onOptionSelect($event, false, getOptionIndex(i, scrollerOptions))"
                                             (onMouseEnter)="onOptionMouseEnter($event, getOptionIndex(i, scrollerOptions))"
-                                            [pt]="pt"
+                                            [pt]="pt()"
                                             [unstyled]="unstyled()"
                                         ></li>
                                     </ng-container>
                                 </ng-template>
 
                                 <li *ngIf="hasFilter() && isEmpty()" [pBind]="ptm('emptyMessage')" [class]="cx('emptyMessage')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                    @if (!emptyFilterTemplate() && !_emptyFilterTemplate && !emptyTemplate() && !_emptyTemplate) {
-                                        {{ emptyFilterMessageLabel }}
+                                    @if (!emptyFilterTemplate() && !_emptyFilterTemplate() && !emptyTemplate() && !_emptyTemplate()) {
+                                        {{ emptyFilterMessageLabel() }}
                                     } @else {
-                                        <ng-container *ngTemplateOutlet="emptyFilterTemplate() || _emptyFilterTemplate || emptyTemplate() || _emptyFilterTemplate"></ng-container>
+                                        <ng-container *ngTemplateOutlet="emptyFilterTemplate() || _emptyFilterTemplate() || emptyTemplate() || _emptyTemplate()"></ng-container>
                                     }
                                 </li>
                                 <li *ngIf="!hasFilter() && isEmpty()" [pBind]="ptm('emptyMessage')" [class]="cx('emptyMessage')" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }" role="option">
-                                    @if (!emptyTemplate() && !_emptyTemplate) {
-                                        {{ emptyMessageLabel }}
+                                    @if (!emptyTemplate() && !_emptyTemplate()) {
+                                        {{ emptyMessageLabel() }}
                                     } @else {
-                                        <ng-container *ngTemplateOutlet="emptyTemplate() || _emptyTemplate"></ng-container>
+                                        <ng-container *ngTemplateOutlet="emptyTemplate() || _emptyTemplate()"></ng-container>
                                     }
                                 </li>
                             </ul>
                         </ng-template>
                     </div>
-                    <div *ngIf="footerFacet() || footerTemplate() || _footerTemplate">
+                    <div *ngIf="footerFacet() || footerTemplate() || _footerTemplate()">
                         <ng-content select="p-footer"></ng-content>
-                        <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate"></ng-container>
+                        <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate()"></ng-container>
                     </div>
 
                     <span
@@ -484,17 +484,15 @@ export class MultiSelectItem extends BaseComponent {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[attr.id]': 'id',
-        '[attr.data-p]': 'containerDataP',
+        '[attr.id]': '_id()',
+        '[attr.data-p]': 'containerDataP()',
         '(click)': 'onContainerClick($event)',
-        '[class]': "cn(cx('root'), styleClass)",
+        '[class]': "cx('root')",
         '[style]': "sx('root')"
     }
 })
 export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
-    private zone = inject(NgZone);
     filterService = inject(FilterService);
-    overlayService = inject(OverlayService);
 
     componentName = 'MultiSelect';
 
@@ -502,337 +500,294 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * Unique identifier of the component
      * @group Props
      */
-    @Input() id: string | undefined;
+    id = input<string | undefined>();
     /**
      * Defines a string that labels the input for accessibility.
      * @group Props
      */
-    @Input() ariaLabel: string | undefined;
-    /**
-     * Style class of the element.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    ariaLabel = input<string | undefined>();
     /**
      * Inline style of the overlay panel.
      * @group Props
      */
-    @Input() panelStyle: any;
+    panelStyle = input<any>();
     /**
      * Style class of the overlay panel element.
      * @group Props
      */
-    @Input() panelStyleClass: string | undefined;
+    panelStyleClass = input<string | undefined>();
     /**
      * Identifier of the focus input to match a label defined for the component.
      * @group Props
      */
-    @Input() inputId: string | undefined;
+    inputId = input<string | undefined>();
     /**
      * When present, it specifies that the component cannot be edited.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) readonly: boolean | undefined;
+    readonly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to display options as grouped when nested options are provided.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) group: boolean | undefined;
+    group = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * When specified, displays an input field to filter the items on keyup.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) filter: boolean = true;
+    filter = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Defines placeholder of the filter input.
      * @group Props
      */
-    @Input() filterPlaceHolder: string | undefined;
+    filterPlaceHolder = input<string | undefined>();
     /**
      * Locale to use in filtering. The default locale is the host environment's current locale.
      * @group Props
      */
-    @Input() filterLocale: string | undefined;
+    filterLocale = input<string | undefined>();
     /**
      * Specifies the visibility of the options panel.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) overlayVisible: boolean | undefined = false;
+    overlayVisible = input<boolean | undefined, unknown>(false, { transform: booleanAttribute });
     /**
      * Index of the element in tabbing order.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) tabindex: number | undefined = 0;
+    tabindex = input<number | undefined, unknown>(0, { transform: numberAttribute });
     /**
      * A property to uniquely identify a value in options.
      * @group Props
      */
-    @Input() dataKey: string | undefined;
+    dataKey = input<string | undefined>();
     /**
      * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
      * @group Props
      */
-    @Input() ariaLabelledBy: string | undefined;
+    ariaLabelledBy = input<string | undefined>();
     /**
      * Whether to show labels of selected item labels or use default label.
      * @group Props
      * @defaultValue true
      */
-    @Input() set displaySelectedLabel(val: boolean) {
-        this._displaySelectedLabel = val;
-    }
-    get displaySelectedLabel(): boolean {
-        return this._displaySelectedLabel;
-    }
+    displaySelectedLabel = input<boolean>(true);
     /**
      * Decides how many selected item labels to show at most.
      * @group Props
      * @defaultValue 3
      */
-    @Input() set maxSelectedLabels(val: number | null | undefined) {
-        this._maxSelectedLabels = val;
-    }
-    get maxSelectedLabels(): number | null | undefined {
-        return this._maxSelectedLabels;
-    }
+    maxSelectedLabels = input<number | null | undefined>(3);
     /**
      * Maximum number of selectable items.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) selectionLimit: number | undefined;
+    selectionLimit = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Label to display after exceeding max selected labels e.g. ({0} items selected), defaults "ellipsis" keyword to indicate a text-overflow.
      * @group Props
      */
-    @Input() selectedItemsLabel: string | undefined;
+    selectedItemsLabel = input<string | undefined>();
     /**
      * Whether to show the checkbox at header to toggle all items at once.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showToggleAll: boolean = true;
+    showToggleAll = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Text to display when filtering does not return any results.
      * @group Props
      */
-    @Input() emptyFilterMessage: string = '';
+    emptyFilterMessage = input<string>('');
     /**
      * Text to display when there is no data. Defaults to global value in i18n translation configuration.
      * @group Props
      */
-    @Input() emptyMessage: string = '';
+    emptyMessage = input<string>('');
     /**
      * Clears the filter value when hiding the dropdown.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) resetFilterOnHide: boolean = false;
+    resetFilterOnHide = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Icon class of the dropdown icon.
      * @group Props
      */
-    @Input() dropdownIcon: string | undefined;
+    dropdownIcon = input<string | undefined>();
     /**
      * Icon class of the chip icon.
      * @group Props
      */
-    @Input() chipIcon: string | undefined;
+    chipIcon = input<string | undefined>();
     /**
      * Name of the label field of an option.
      * @group Props
      */
-    @Input() optionLabel: string | undefined;
+    optionLabel = input<string | undefined>();
     /**
      * Name of the value field of an option.
      * @group Props
      */
-    @Input() optionValue: string | undefined;
+    optionValue = input<string | undefined>();
     /**
      * Name of the disabled field of an option.
      * @group Props
      */
-    @Input() optionDisabled: string | undefined;
+    optionDisabled = input<string | undefined>();
     /**
      * Name of the label field of an option group.
      * @group Props
      */
-    @Input() optionGroupLabel: string | undefined = 'label';
+    optionGroupLabel = input<string | undefined>('label');
     /**
      * Name of the options field of an option group.
      * @group Props
      */
-    @Input() optionGroupChildren: string = 'items';
+    optionGroupChildren = input<string>('items');
     /**
      * Whether to show the header.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showHeader: boolean = true;
+    showHeader = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * When filtering is enabled, filterBy decides which field or fields (comma separated) to search against.
      * @group Props
      */
-    @Input() filterBy: string | undefined;
+    filterBy = input<string | undefined>();
     /**
      * Height of the viewport in pixels, a scrollbar is defined if height of list exceeds this value.
      * @group Props
      */
-    @Input() scrollHeight: string = '200px';
+    scrollHeight = input<string>('200px');
     /**
      * Defines if data is loaded and interacted with in lazy manner.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) lazy: boolean = false;
+    lazy = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether the data should be loaded on demand during scroll.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) virtualScroll: boolean | undefined;
+    virtualScroll = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether the multiselect is in loading state.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) loading: boolean | undefined = false;
+    loading = input<boolean | undefined, unknown>(false, { transform: booleanAttribute });
     /**
      * Height of an item in the list for VirtualScrolling.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) virtualScrollItemSize: number | undefined;
+    virtualScrollItemSize = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Icon to display in loading state.
      * @group Props
      */
-    @Input() loadingIcon: string | undefined;
+    loadingIcon = input<string | undefined>();
     /**
      * Whether to use the scroller feature. The properties of scroller component can be used like an object in it.
      * @group Props
      */
-    @Input() virtualScrollOptions: ScrollerOptions | undefined;
+    virtualScrollOptions = input<ScrollerOptions | undefined>();
     /**
      * Whether to use overlay API feature. The properties of overlay API can be used like an object in it.
      * @group Props
      */
-    @Input() overlayOptions: OverlayOptions | undefined;
+    overlayOptions = input<OverlayOptions | undefined>();
     /**
      * Defines a string that labels the filter input.
      * @group Props
      */
-    @Input() ariaFilterLabel: string | undefined;
+    ariaFilterLabel = input<string | undefined>();
     /**
      * Defines how the items are filtered.
      * @group Props
      */
-    @Input() filterMatchMode: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' = 'contains';
+    filterMatchMode = input<'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte'>('contains');
     /**
      * Advisory information to display in a tooltip on hover.
      * @group Props
      */
-    @Input() tooltip: string = '';
+    tooltip = input<string>('');
     /**
      * Position of the tooltip.
      * @group Props
      */
-    @Input() tooltipPosition: 'top' | 'left' | 'right' | 'bottom' = 'right';
+    tooltipPosition = input<'top' | 'left' | 'right' | 'bottom'>('right');
     /**
      * Type of CSS position.
      * @group Props
      */
-    @Input() tooltipPositionStyle: string = 'absolute';
+    tooltipPositionStyle = input<string>('absolute');
     /**
      * Style class of the tooltip.
      * @group Props
      */
-    @Input() tooltipStyleClass: string | undefined;
+    tooltipStyleClass = input<string | undefined>();
     /**
      * Applies focus to the filter element when the overlay is shown.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocusFilter: boolean = false;
+    autofocusFilter = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Defines how the selected items are displayed.
      * @group Props
      */
-    @Input() display: string | 'comma' | 'chip' = 'comma';
+    display = input<string | 'comma' | 'chip'>('comma');
     /**
      * Defines the autocomplete is active.
      * @group Props
      */
-    @Input() autocomplete: string = 'off';
+    autocomplete = input<string>('off');
     /**
      * When enabled, a clear icon is displayed to clear the value.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showClear: boolean = false;
+    showClear = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autofocus: boolean | undefined;
+    autofocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Label to display when there are no selections.
      * @group Props
      */
-    @Input() set placeholder(val: string | undefined) {
-        this._placeholder.set(val);
-    }
-    get placeholder(): Signal<string | undefined> {
-        return this._placeholder.asReadonly();
-    }
+    placeholder = input<string | undefined>();
     /**
      * An array of objects to display as the available options.
      * @group Props
      */
-    @Input() get options(): any[] | undefined {
-        return this._options();
-    }
-    set options(val: any[] | undefined) {
-        if (!deepEquals(this._options(), val)) {
-            this._options.set(val || []);
-        }
-    }
+    options = input<any[] | undefined>();
     /**
      * When specified, filter displays with this value.
      * @group Props
      */
-    @Input() get filterValue(): string | undefined | null {
-        return this._filterValue();
-    }
-    set filterValue(val: string | undefined | null) {
-        this._filterValue.set(val);
-    }
+    filterValue = input<string | undefined | null>(null);
     /**
      * Whether all data is selected.
      * @group Props
      */
-    @Input() get selectAll(): boolean | undefined | null {
-        return this._selectAll;
-    }
-    set selectAll(value: boolean | undefined | null) {
-        this._selectAll = value;
-    }
+    selectAll = input<boolean | undefined | null>(null);
     /**
      * Indicates whether to focus on options when hovering over them, defaults to optionLabel.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) focusOnHover: boolean = true;
-    /**
-     * Fields used when filtering the options, defaults to optionLabel.
-     * @group Props
-     */
-    @Input() filterFields: any[] | undefined;
+    focusOnHover = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Determines if the option will be selected on focus.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) selectOnFocus: boolean = false;
+    selectOnFocus = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to focus on the first visible or selected element when the overlay panel is shown.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) autoOptionFocus: boolean = false;
+    autoOptionFocus = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether the selected option will be add highlight class.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) highlightOnSelect: boolean = true;
+    highlightOnSelect = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Specifies the size of the component.
      * @defaultValue undefined
@@ -950,23 +905,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    searchValue: Nullable<string>;
+    searchValue = signal<Nullable<string>>(undefined);
 
-    searchTimeout: any;
+    searchTimeout = signal<any>(undefined);
 
-    _selectAll: boolean | undefined | null = null;
+    _disableTooltip = signal<boolean>(false);
 
-    _placeholder = signal<string | undefined>(undefined);
-
-    _disableTooltip = false;
-
-    value: any[];
-
-    public _filteredOptions: any[] | undefined | null;
-
-    public focus: boolean | undefined;
-
-    public filtered: boolean | undefined;
+    value = signal<any[] | undefined>(undefined);
 
     /**
      * Custom item template.
@@ -1072,39 +1017,145 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    _itemTemplate: TemplateRef<MultiSelectItemTemplateContext> | undefined;
+    readonly _itemTemplate = computed<TemplateRef<MultiSelectItemTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter(
+                    (item) =>
+                        ![
+                            'group',
+                            'selectedItems',
+                            'selecteditems',
+                            'header',
+                            'filter',
+                            'emptyfilter',
+                            'empty',
+                            'footer',
+                            'loader',
+                            'headercheckboxicon',
+                            'loadingicon',
+                            'filtericon',
+                            'removetokenicon',
+                            'clearicon',
+                            'dropdownicon',
+                            'itemcheckboxicon',
+                            'chipicon'
+                        ].includes(item.getType())
+                )
+                .at(-1)?.template
+    );
 
-    _groupTemplate: TemplateRef<MultiSelectGroupTemplateContext> | undefined;
+    readonly _groupTemplate = computed<TemplateRef<MultiSelectGroupTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'group')
+                .at(-1)?.template
+    );
 
-    _loaderTemplate: TemplateRef<MultiSelectLoaderTemplateContext> | undefined;
+    readonly _loaderTemplate = computed<TemplateRef<MultiSelectLoaderTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'loader')
+                .at(-1)?.template
+    );
 
-    _headerTemplate: TemplateRef<void> | undefined;
+    readonly _headerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
-    _filterTemplate: TemplateRef<MultiSelectFilterTemplateContext> | undefined;
+    readonly _filterTemplate = computed<TemplateRef<MultiSelectFilterTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'filter')
+                .at(-1)?.template
+    );
 
-    _footerTemplate: TemplateRef<void> | undefined;
+    readonly _footerTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
 
-    _emptyFilterTemplate: TemplateRef<void> | undefined;
+    readonly _emptyFilterTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'emptyfilter')
+                .at(-1)?.template
+    );
 
-    _emptyTemplate: TemplateRef<void> | undefined;
+    readonly _emptyTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'empty')
+                .at(-1)?.template
+    );
 
-    _selectedItemsTemplate: TemplateRef<MultiSelectSelectedItemsTemplateContext> | undefined;
+    readonly _selectedItemsTemplate = computed<TemplateRef<MultiSelectSelectedItemsTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => ['selectedItems', 'selecteditems'].includes(item.getType()))
+                .at(-1)?.template
+    );
 
-    _loadingIconTemplate: TemplateRef<void> | undefined;
+    readonly _loadingIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'loadingicon')
+                .at(-1)?.template
+    );
 
-    _filterIconTemplate: TemplateRef<void> | undefined;
+    readonly _filterIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'filtericon')
+                .at(-1)?.template
+    );
 
-    _removeTokenIconTemplate: TemplateRef<MultiSelectChipIconTemplateContext> | undefined;
+    readonly _removeTokenIconTemplate = computed<TemplateRef<MultiSelectChipIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'removetokenicon')
+                .at(-1)?.template
+    );
 
-    _chipIconTemplate: TemplateRef<MultiSelectChipIconTemplateContext> | undefined;
+    readonly _chipIconTemplate = computed<TemplateRef<MultiSelectChipIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'chipicon')
+                .at(-1)?.template
+    );
 
-    _clearIconTemplate: TemplateRef<void> | undefined;
+    readonly _clearIconTemplate = computed<TemplateRef<void> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'clearicon')
+                .at(-1)?.template
+    );
 
-    _dropdownIconTemplate: TemplateRef<MultiSelectDropdownIconTemplateContext> | undefined;
+    readonly _dropdownIconTemplate = computed<TemplateRef<MultiSelectDropdownIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'dropdownicon')
+                .at(-1)?.template
+    );
 
-    _itemCheckboxIconTemplate: TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined;
+    readonly _itemCheckboxIconTemplate = computed<TemplateRef<MultiSelectItemCheckboxIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'itemcheckboxicon')
+                .at(-1)?.template
+    );
 
-    _headerCheckboxIconTemplate: TemplateRef<MultiSelectHeaderCheckboxIconTemplateContext> | undefined;
+    readonly _headerCheckboxIconTemplate = computed<TemplateRef<MultiSelectHeaderCheckboxIconTemplateContext> | undefined>(
+        () =>
+            this.templates()
+                .filter((item) => item.getType() === 'headercheckboxicon')
+                .at(-1)?.template
+    );
 
     $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
 
@@ -1114,140 +1165,65 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
-    get hasFluid() {
-        return this.fluid() ?? !!this.pcFluid;
-    }
+    hasFluid = computed(() => this.fluid() ?? !!this.pcFluid);
 
-    onAfterContentInit() {
-        this.templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'item':
-                    this._itemTemplate = item.template;
-                    break;
+    filterOptions = computed<MultiSelectFilterOptions | undefined>(() =>
+        this.filterBy()
+            ? {
+                  filter: (value) => this.onFilterInputChange(value),
+                  reset: () => this.resetFilter()
+              }
+            : undefined
+    );
 
-                case 'group':
-                    this._groupTemplate = item.template;
-                    break;
+    preventModelTouched = signal<boolean | undefined>(undefined);
 
-                case 'selectedItems':
-                case 'selecteditems':
-                    this._selectedItemsTemplate = item.template;
-                    break;
+    focused = signal<boolean>(false);
 
-                case 'header':
-                    this._headerTemplate = item.template;
-                    break;
-
-                case 'filter':
-                    this._filterTemplate = item.template;
-                    break;
-
-                case 'emptyfilter':
-                    this._emptyFilterTemplate = item.template;
-                    break;
-
-                case 'empty':
-                    this._emptyTemplate = item.template;
-                    break;
-
-                case 'footer':
-                    this._footerTemplate = item.template;
-                    break;
-
-                case 'loader':
-                    this._loaderTemplate = item.template;
-                    break;
-
-                case 'headercheckboxicon':
-                    this._headerCheckboxIconTemplate = item.template;
-                    break;
-
-                case 'loadingicon':
-                    this._loadingIconTemplate = item.template;
-                    break;
-
-                case 'filtericon':
-                    this._filterIconTemplate = item.template;
-                    break;
-
-                case 'removetokenicon':
-                    this._removeTokenIconTemplate = item.template;
-                    break;
-
-                case 'clearicon':
-                    this._clearIconTemplate = item.template;
-                    break;
-
-                case 'dropdownicon':
-                    this._dropdownIconTemplate = item.template;
-                    break;
-
-                case 'itemcheckboxicon':
-                    this._itemCheckboxIconTemplate = item.template;
-                    break;
-
-                case 'chipicon':
-                    this._chipIconTemplate = item.template;
-                    break;
-
-                default:
-                    this._itemTemplate = item.template;
-                    break;
-            }
-        });
-    }
-
-    public headerCheckboxFocus: boolean | undefined;
-
-    filterOptions: MultiSelectFilterOptions | undefined;
-
-    preventModelTouched: boolean | undefined;
-
-    focused: boolean = false;
-
-    itemsWrapper: any;
-
-    _displaySelectedLabel: boolean = true;
-
-    _maxSelectedLabels: number | null | undefined = 3;
+    itemsWrapper = signal<any>(undefined);
 
     modelValue = signal<any>(null);
 
-    _filterValue = signal<any>(null);
+    _filterValue = linkedSignal<any>(() => this.filterValue());
 
-    _options = signal<any[]>([]);
+    _options = computed<any[]>(() => this.options() || [], { equal: deepEquals });
+
+    _overlayVisible = linkedSignal<boolean | undefined>(() => this.overlayVisible());
 
     startRangeIndex = signal<number>(-1);
 
     focusedOptionIndex = signal<number>(-1);
 
-    selectedOptions: any;
+    selectedOptions = linkedSignal<{ modelValue: any; options: any[]; optionValue: string | undefined; optionLabel: string | undefined }, any>({
+        source: () => ({ modelValue: this.modelValue(), options: this.getAllVisibleAndNonVisibleOptions(), optionValue: this.optionValue(), optionLabel: this.optionLabel() }),
+        computation: ({ modelValue, options, optionValue, optionLabel }, previous) => {
+            if (options && isNotEmpty(options)) {
+                if (optionValue && optionLabel && modelValue) {
+                    return options.filter((option) => modelValue.includes(option[optionLabel]) || modelValue.includes(option[optionValue]));
+                }
+                return modelValue;
+            }
+            return previous?.value;
+        }
+    });
 
-    clickInProgress: boolean = false;
+    clickInProgress = signal<boolean>(false);
 
-    get emptyMessageLabel(): string {
-        return this.emptyMessage || this.config.getTranslation(TranslationKeys.EMPTY_MESSAGE);
-    }
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
 
-    get emptyFilterMessageLabel(): string {
-        return this.emptyFilterMessage || this.config.getTranslation(TranslationKeys.EMPTY_FILTER_MESSAGE);
-    }
+    _id = computed(() => this.id() || uuid('pn_id_'));
 
-    get isVisibleClearIcon(): boolean | undefined {
-        return this.modelValue() != null && this.modelValue() !== '' && isNotEmpty(this.modelValue()) && this.showClear && !this.$disabled() && !this.readonly && this.$filled();
-    }
+    emptyMessageLabel = computed<string>(() => this.emptyMessage() || this.translation()[TranslationKeys.EMPTY_MESSAGE]);
 
-    get toggleAllAriaLabel() {
-        return this.config.translation.aria ? this.config.translation.aria[this.allSelected() ? 'selectAll' : 'unselectAll'] : undefined;
-    }
+    emptyFilterMessageLabel = computed<string>(() => this.emptyFilterMessage() || this.translation()[TranslationKeys.EMPTY_FILTER_MESSAGE]);
 
-    get listLabel(): string {
-        return this.config.getTranslation(TranslationKeys.ARIA)['listLabel'];
-    }
+    isVisibleClearIcon = computed<boolean | undefined>(() => this.modelValue() != null && this.modelValue() !== '' && isNotEmpty(this.modelValue()) && this.showClear() && !this.$disabled() && !this.readonly() && this.$filled());
 
-    private getAllVisibleAndNonVisibleOptions() {
-        return this.group ? this.flatOptions(this.options) : this.options || [];
-    }
+    toggleAllAriaLabel = computed(() => (this.translation().aria ? this.translation().aria[this.allSelected() ? 'selectAll' : 'unselectAll'] : undefined));
+
+    listLabel = computed<string>(() => this.translation()[TranslationKeys.ARIA]['listLabel']);
+
+    private getAllVisibleAndNonVisibleOptions = computed(() => (this.group() ? this.flatOptions(this._options()) : this._options() || []));
 
     visibleOptions = computed(() => {
         const options = this.getAllVisibleAndNonVisibleOptions();
@@ -1257,13 +1233,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             let filteredOptions;
 
             if (isArrayOfObjects) {
-                filteredOptions = this.filterService.filter(options, this.searchFields(), this._filterValue(), this.filterMatchMode, this.filterLocale);
+                filteredOptions = this.filterService.filter(options, this.searchFields(), this._filterValue(), this.filterMatchMode(), this.filterLocale());
             } else {
                 filteredOptions = options.filter((option) => option.toString().toLocaleLowerCase().includes(this._filterValue().toLocaleLowerCase()));
             }
 
-            if (this.group) {
-                const optionGroups = this.options || [];
+            if (this.group()) {
+                const optionGroups = this._options() || [];
                 const filtered: any[] = [];
 
                 optionGroups.forEach((group) => {
@@ -1273,7 +1249,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                     if (filteredItems.length > 0)
                         filtered.push({
                             ...group,
-                            [typeof this.optionGroupChildren === 'string' ? this.optionGroupChildren : 'items']: [...filteredItems]
+                            [typeof this.optionGroupChildren() === 'string' ? this.optionGroupChildren() : 'items']: [...filteredItems]
                         });
                 });
 
@@ -1289,8 +1265,8 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         let label;
         const modelValue = this.modelValue();
 
-        if (modelValue && modelValue?.length && this.displaySelectedLabel) {
-            if (isNotEmpty(this.maxSelectedLabels) && modelValue?.length > (this.maxSelectedLabels || 0)) {
+        if (modelValue && modelValue?.length && this.displaySelectedLabel()) {
+            if (isNotEmpty(this.maxSelectedLabels()) && modelValue?.length > (this.maxSelectedLabels() || 0)) {
                 return this.getSelectedItemsLabel();
             } else {
                 label = '';
@@ -1310,59 +1286,26 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     });
 
     chipSelectedItems = computed(() => {
-        return isNotEmpty(this.maxSelectedLabels) && this.modelValue() && this.modelValue()?.length > (this.maxSelectedLabels || 0) ? this.modelValue()?.slice(0, this.maxSelectedLabels) : this.modelValue();
+        return isNotEmpty(this.maxSelectedLabels()) && this.modelValue() && this.modelValue()?.length > (this.maxSelectedLabels() || 0) ? this.modelValue()?.slice(0, this.maxSelectedLabels()) : this.modelValue();
     });
 
     constructor() {
         super();
-        effect(() => {
-            const modelValue = this.modelValue();
-
-            const allVisibleAndNonVisibleOptions = this.getAllVisibleAndNonVisibleOptions();
-            if (allVisibleAndNonVisibleOptions && isNotEmpty(allVisibleAndNonVisibleOptions)) {
-                if (this.optionValue && this.optionLabel && modelValue) {
-                    this.selectedOptions = allVisibleAndNonVisibleOptions.filter((option) => modelValue.includes(option[this.optionLabel!]) || modelValue.includes(option[this.optionValue!]));
-                } else {
-                    this.selectedOptions = modelValue;
-                }
-                this.cd.markForCheck();
+        afterNextRender(() => {
+            if (this._overlayVisible()) {
+                this.show();
             }
+        });
+        afterEveryRender(() => {
+            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
         });
     }
 
     onInit() {
-        this.id = this.id || uuid('pn_id_');
         this.autoUpdateModel();
-
-        if (this.filterBy) {
-            this.filterOptions = {
-                filter: (value) => this.onFilterInputChange(value),
-                reset: () => this.resetFilter()
-            };
-        }
     }
 
-    maxSelectionLimitReached() {
-        return this.selectionLimit && this.modelValue() && this.modelValue().length === this.selectionLimit;
-    }
-
-    onAfterViewInit() {
-        if (this.overlayVisible) {
-            this.show();
-        }
-    }
-
-    onAfterViewChecked() {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-        if (this.filtered) {
-            this.zone.runOutsideAngular(() => {
-                setTimeout(() => {
-                    this.overlayViewChild().alignOverlay();
-                }, 1);
-            });
-            this.filtered = false;
-        }
-    }
+    maxSelectionLimitReached = computed(() => this.selectionLimit() && this.modelValue() && this.modelValue().length === this.selectionLimit());
 
     flatOptions(options) {
         return (options || []).reduce((result, option, index) => {
@@ -1377,7 +1320,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     autoUpdateModel() {
-        if (this.selectOnFocus && this.autoOptionFocus && !this.hasSelectedOption()) {
+        if (this.selectOnFocus() && this.autoOptionFocus() && !this.hasSelectedOption()) {
             this.focusedOptionIndex.set(this.findFirstFocusedOptionIndex());
             const value = this.getOptionValue(this.visibleOptions()[this.focusedOptionIndex()]);
             this.onOptionSelect({ originalEvent: null, option: [value] });
@@ -1389,7 +1332,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * @group Method
      */
     public updateModel(value, event?) {
-        this.value = value;
+        this.value.set(value);
         this.onModelChange(value);
         this.writeValue(value);
     }
@@ -1427,9 +1370,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         });
     }
 
-    findSelectedOptionIndex() {
-        return this.hasSelectedOption() ? this.visibleOptions().findIndex((option) => this.isValidSelectedOption(option)) : -1;
-    }
+    findSelectedOptionIndex = computed(() => (this.hasSelectedOption() ? this.visibleOptions().findIndex((option) => this.isValidSelectedOption(option)) : -1));
 
     onOptionSelectRange(event, start = -1, end = -1) {
         start === -1 && (start = this.findNearestSelectedOptionIndex(end, true));
@@ -1447,9 +1388,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
     }
 
-    searchFields() {
-        return (this.filterBy || this.optionLabel || 'label').split(',');
-    }
+    searchFields = computed(() => (this.filterBy() || this.optionLabel() || 'label').split(','));
 
     findNearestSelectedOptionIndex(index, firstCheckUp = false) {
         let matchedOptionIndex = -1;
@@ -1473,19 +1412,15 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         return matchedOptionIndex > -1 ? matchedOptionIndex : -1;
     }
 
-    findFirstFocusedOptionIndex() {
+    findFirstFocusedOptionIndex = computed(() => {
         const selectedIndex = this.findFirstSelectedOptionIndex();
 
         return selectedIndex < 0 ? this.findFirstOptionIndex() : selectedIndex;
-    }
+    });
 
-    findFirstOptionIndex() {
-        return this.visibleOptions().findIndex((option) => this.isValidOption(option));
-    }
+    findFirstOptionIndex = computed(() => this.visibleOptions().findIndex((option) => this.isValidOption(option)));
 
-    findFirstSelectedOptionIndex() {
-        return this.hasSelectedOption() ? this.visibleOptions().findIndex((option) => this.isValidSelectedOption(option)) : -1;
-    }
+    findFirstSelectedOptionIndex = computed(() => (this.hasSelectedOption() ? this.visibleOptions().findIndex((option) => this.isValidSelectedOption(option)) : -1));
 
     findNextSelectedOptionIndex(index) {
         const matchedOptionIndex =
@@ -1498,20 +1433,16 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         return matchedOptionIndex > -1 ? matchedOptionIndex + index + 1 : -1;
     }
 
-    equalityKey() {
-        return this.optionValue ? null : this.dataKey;
-    }
+    equalityKey = computed(() => (this.optionValue() ? null : this.dataKey()));
 
-    hasSelectedOption() {
-        return isNotEmpty(this.modelValue());
-    }
+    hasSelectedOption = computed(() => isNotEmpty(this.modelValue()));
 
     isValidSelectedOption(option) {
         return this.isValidOption(option) && this.isSelected(option);
     }
 
     isOptionGroup(option) {
-        return option && (this.group || this.optionGroupLabel) && option.optionGroup && option.group;
+        return option && (this.group() || this.optionGroupLabel()) && option.optionGroup && option.group;
     }
 
     isValidOption(option) {
@@ -1522,7 +1453,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         if (this.maxSelectionLimitReached() && !this.isSelected(option)) {
             return true;
         }
-        return this.optionDisabled ? resolveFieldData(option, this.optionDisabled) : option && option.disabled !== undefined ? option.disabled : false;
+        return this.optionDisabled() ? resolveFieldData(option, this.optionDisabled()) : option && option.disabled !== undefined ? option.disabled : false;
     }
 
     isSelected(option) {
@@ -1531,20 +1462,18 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     isOptionMatched(option) {
-        return this.isValidOption(option) && this.getOptionLabel(option).toString().toLocaleLowerCase(this.filterLocale).startsWith(this.searchValue?.toLocaleLowerCase(this.filterLocale));
+        return this.isValidOption(option) && this.getOptionLabel(option).toString().toLocaleLowerCase(this.filterLocale()).startsWith(this.searchValue()?.toLocaleLowerCase(this.filterLocale()));
     }
 
-    isEmpty() {
-        return !this._options() || (this.visibleOptions() && this.visibleOptions().length === 0);
-    }
+    isEmpty = computed(() => !this._options() || (this.visibleOptions() && this.visibleOptions().length === 0));
 
     getOptionIndex(index, scrollerOptions) {
-        return this.virtualScrollerDisabled ? index : scrollerOptions && scrollerOptions.getItemOptions(index)['index'];
+        return this.virtualScrollerDisabled() ? index : scrollerOptions && scrollerOptions.getItemOptions(index)['index'];
     }
 
     getAriaPosInset(index) {
         return (
-            (this.optionGroupLabel
+            (this.optionGroupLabel()
                 ? index -
                   this.visibleOptions()
                       .slice(0, index)
@@ -1553,41 +1482,39 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         );
     }
 
-    get ariaSetSize() {
-        return this.visibleOptions().filter((option) => !this.isOptionGroup(option)).length;
-    }
+    ariaSetSize = computed(() => this.visibleOptions().filter((option) => !this.isOptionGroup(option)).length);
 
     getLabelByValue(value) {
-        const options = this.group ? this.flatOptions(this._options()) : this._options() || [];
+        const options = this.group() ? this.flatOptions(this._options()) : this._options() || [];
         const matchedOption = options.find((option) => !this.isOptionGroup(option) && equals(this.getOptionValue(option), value, this.equalityKey() || ''));
         return matchedOption ? this.getOptionLabel(matchedOption) : null;
     }
 
-    getSelectedItemsLabel() {
+    getSelectedItemsLabel = computed(() => {
         let pattern = /{(.*?)}/;
-        let message = this.selectedItemsLabel ? this.selectedItemsLabel : this.config.getTranslation(TranslationKeys.SELECTION_MESSAGE);
+        let message = this.selectedItemsLabel() ? this.selectedItemsLabel() : this.translation()[TranslationKeys.SELECTION_MESSAGE];
 
         if (pattern.test(message)) {
             return message.replace(message.match(pattern)[0], this.modelValue().length + '');
         }
 
         return message;
-    }
+    });
 
     getOptionLabel(option: any) {
-        return this.optionLabel ? resolveFieldData(option, this.optionLabel) : option && option.label != undefined ? option.label : option;
+        return this.optionLabel() ? resolveFieldData(option, this.optionLabel()) : option && option.label != undefined ? option.label : option;
     }
 
     getOptionValue(option: any) {
-        return this.optionValue ? resolveFieldData(option, this.optionValue) : !this.optionLabel && option && option.value !== undefined ? option.value : option;
+        return this.optionValue() ? resolveFieldData(option, this.optionValue()) : !this.optionLabel() && option && option.value !== undefined ? option.value : option;
     }
 
     getOptionGroupLabel(optionGroup: any) {
-        return this.optionGroupLabel ? resolveFieldData(optionGroup, this.optionGroupLabel) : optionGroup && optionGroup.label != undefined ? optionGroup.label : optionGroup;
+        return this.optionGroupLabel() ? resolveFieldData(optionGroup, this.optionGroupLabel()) : optionGroup && optionGroup.label != undefined ? optionGroup.label : optionGroup;
     }
 
     getOptionGroupChildren(optionGroup: any) {
-        return optionGroup ? (this.optionGroupChildren ? resolveFieldData(optionGroup, this.optionGroupChildren) : optionGroup.items) : [];
+        return optionGroup ? (this.optionGroupChildren() ? resolveFieldData(optionGroup, this.optionGroupChildren()) : optionGroup.items) : [];
     }
 
     onKeyDown(event: KeyboardEvent) {
@@ -1654,7 +1581,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 }
 
                 if (!metaKey && isPrintableCharacter(event.key)) {
-                    !this.overlayVisible && this.show();
+                    !this._overlayVisible() && this.show();
                     this.searchOptions(event, event.key);
                     event.preventDefault();
                 }
@@ -1716,7 +1643,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
 
         this.changeFocusedOptionIndex(event, optionIndex);
-        !this.overlayVisible && this.show();
+        !this._overlayVisible() && this.show();
         event.preventDefault();
         event.stopPropagation();
     }
@@ -1727,7 +1654,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 this.onOptionSelect(event, this.visibleOptions()[this.focusedOptionIndex()]);
             }
 
-            this.overlayVisible && this.hide();
+            this._overlayVisible() && this.hide();
             event.preventDefault();
         } else {
             const optionIndex = this.focusedOptionIndex() !== -1 ? this.findPrevOptionIndex(this.focusedOptionIndex()) : this.findLastFocusedOptionIndex();
@@ -1738,7 +1665,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this.changeFocusedOptionIndex(event, optionIndex);
 
-            !this.overlayVisible && this.show();
+            !this._overlayVisible() && this.show();
             event.preventDefault();
         }
         event.stopPropagation();
@@ -1762,7 +1689,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this.changeFocusedOptionIndex(event, optionIndex);
 
-            !this.overlayVisible && this.show();
+            !this._overlayVisible() && this.show();
         }
 
         event.preventDefault();
@@ -1785,7 +1712,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this.changeFocusedOptionIndex(event, optionIndex);
 
-            !this.overlayVisible && this.show();
+            !this._overlayVisible() && this.show();
         }
 
         event.preventDefault();
@@ -1802,7 +1729,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onEnterKey(event) {
-        if (!this.overlayVisible) {
+        if (!this._overlayVisible()) {
             this.onArrowDownKey(event);
         } else {
             if (this.focusedOptionIndex() !== -1) {
@@ -1818,7 +1745,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onEscapeKey(event: KeyboardEvent) {
-        if (this.overlayVisible) {
+        if (this._overlayVisible()) {
             this.hide(true);
             event.stopPropagation();
             event.preventDefault();
@@ -1827,12 +1754,12 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onTabKey(event: KeyboardEvent, pressedInInputText = false) {
         if (!pressedInInputText) {
-            if (this.overlayVisible && this.hasFocusableElements()) {
+            if (this._overlayVisible() && this.hasFocusableElements()) {
                 focus(event.shiftKey ? this.lastHiddenFocusableElementOnOverlay()?.nativeElement : this.firstHiddenFocusableElementOnOverlay()?.nativeElement);
 
                 event.preventDefault();
             } else {
-                this.overlayVisible && this.hide(this.filter);
+                this._overlayVisible() && this.hide(this.filter());
             }
         }
     }
@@ -1843,27 +1770,26 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     onContainerClick(event: any) {
         const focusInputViewChild = this.focusInputViewChild();
-        if (this.$disabled() || this.loading || this.readonly || event.target?.isSameNode?.(focusInputViewChild.nativeElement)) {
+        if (this.$disabled() || this.loading() || this.readonly() || event.target?.isSameNode?.(focusInputViewChild.nativeElement)) {
             return;
         }
 
         const overlayViewChild = this.overlayViewChild();
         if (!overlayViewChild.el.nativeElement.contains(event.target)) {
-            if (this.clickInProgress) {
+            if (this.clickInProgress()) {
                 return;
             }
 
-            this.clickInProgress = true;
+            this.clickInProgress.set(true);
 
             setTimeout(() => {
-                this.clickInProgress = false;
+                this.clickInProgress.set(false);
             }, 150);
 
-            this.overlayVisible ? this.hide(true) : this.show(true);
+            this._overlayVisible() ? this.hide(true) : this.show(true);
         }
         focusInputViewChild.nativeElement.focus({ preventScroll: true });
         this.onClick.emit(event);
-        this.cd.detectChanges();
     }
 
     onFirstHiddenFocus(event) {
@@ -1874,21 +1800,21 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onInputFocus(event: Event) {
-        this.focused = true;
-        const focusedOptionIndex = this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : this.overlayVisible && this.autoOptionFocus ? this.findFirstFocusedOptionIndex() : -1;
+        this.focused.set(true);
+        const focusedOptionIndex = this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : this._overlayVisible() && this.autoOptionFocus() ? this.findFirstFocusedOptionIndex() : -1;
         this.focusedOptionIndex.set(focusedOptionIndex);
-        this.overlayVisible && this.scrollInView(this.focusedOptionIndex());
+        this._overlayVisible() && this.scrollInView(this.focusedOptionIndex());
         this.onFocus.emit({ originalEvent: event });
     }
 
     onInputBlur(event: Event) {
-        this.focused = false;
+        this.focused.set(false);
         this.onBlur.emit({ originalEvent: event });
 
-        if (!this.preventModelTouched) {
+        if (!this.preventModelTouched()) {
             this.onModelTouched();
         }
-        this.preventModelTouched = false;
+        this.preventModelTouched.set(false);
     }
 
     onFilterInputChange(event: Event) {
@@ -1897,7 +1823,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focusedOptionIndex.set(-1);
         this.onFilter.emit({ originalEvent: event, filter: this._filterValue() });
 
-        !this.virtualScrollerDisabled && this.scroller()?.scrollToIndex(0);
+        !this.virtualScrollerDisabled() && this.scroller()?.scrollToIndex(0);
         setTimeout(() => {
             this.overlayViewChild().alignOverlay();
         });
@@ -1911,7 +1837,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onOptionMouseEnter(event, index) {
-        if (this.focusOnHover) {
+        if (this.focusOnHover()) {
             this.changeFocusedOptionIndex(event, index);
         }
     }
@@ -1921,11 +1847,11 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onToggleAll(event) {
-        if (this.$disabled() || this.readonly) {
+        if (this.$disabled() || this.readonly()) {
             return;
         }
 
-        if (this.selectAll != null) {
+        if (this.selectAll() != null) {
             this.onSelectAllChange.emit({
                 originalEvent: event,
                 checked: !this.allSelected()
@@ -1933,14 +1859,14 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         } else {
             // pre-selected disabled options should always be selected.
             const selectedDisabledOptions = this.getAllVisibleAndNonVisibleOptions().filter(
-                (option) => this.isSelected(option) && (this.optionDisabled ? resolveFieldData(option, this.optionDisabled) : option && option.disabled !== undefined ? option.disabled : false)
+                (option) => this.isSelected(option) && (this.optionDisabled() ? resolveFieldData(option, this.optionDisabled()) : option && option.disabled !== undefined ? option.disabled : false)
             );
 
             const visibleOptions = this.allSelected()
                 ? this.visibleOptions().filter((option) => !this.isValidOption(option) && this.isSelected(option))
                 : this.visibleOptions().filter((option) => this.isSelected(option) || this.isValidOption(option));
 
-            const selectedOptionsBeforeSearch = this.filter && !this.allSelected() ? this.getAllVisibleAndNonVisibleOptions().filter((option) => this.isSelected(option) && this.isValidOption(option)) : [];
+            const selectedOptionsBeforeSearch = this.filter() && !this.allSelected() ? this.getAllVisibleAndNonVisibleOptions().filter((option) => this.isSelected(option) && this.isValidOption(option)) : [];
 
             const optionValues = [...selectedOptionsBeforeSearch, ...selectedDisabledOptions, ...visibleOptions].map((option) => this.getOptionValue(option));
             const value = [...new Set(optionValues)];
@@ -1957,13 +1883,11 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
 
         if (this.partialSelected()) {
-            this.selectedOptions = [];
-            this.cd.markForCheck();
+            this.selectedOptions.set([]);
         }
 
-        this.onChange.emit({ originalEvent: event, value: this.value });
+        this.onChange.emit({ originalEvent: event, value: this.value() });
         DomHandler.focus(this.headerCheckboxViewChild()?.inputViewChild()?.nativeElement);
-        this.headerCheckboxFocus = true;
 
         event.originalEvent.preventDefault();
         event.originalEvent.stopPropagation();
@@ -1976,52 +1900,42 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
     }
 
-    get virtualScrollerDisabled() {
-        return !this.virtualScroll;
-    }
+    virtualScrollerDisabled = computed(() => !this.virtualScroll());
 
     scrollInView(index = -1) {
-        const id = index !== -1 ? `${this.id}_${index}` : this.focusedOptionId;
+        const id = index !== -1 ? `${this._id()}_${index}` : this.focusedOptionId();
         const itemsViewChild = this.itemsViewChild();
         if (itemsViewChild && itemsViewChild.nativeElement) {
             const element = findSingle(itemsViewChild.nativeElement, `li[id="${id}"]`);
             if (element) {
                 element.scrollIntoView && element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-            } else if (!this.virtualScrollerDisabled) {
+            } else if (!this.virtualScrollerDisabled()) {
                 setTimeout(() => {
-                    this.virtualScroll && this.scroller()?.scrollToIndex(index !== -1 ? index : this.focusedOptionIndex());
+                    this.virtualScroll() && this.scroller()?.scrollToIndex(index !== -1 ? index : this.focusedOptionIndex());
                 }, 0);
             }
         }
     }
 
-    get focusedOptionId() {
-        return this.focusedOptionIndex() !== -1 ? `${this.id}_${this.focusedOptionIndex()}` : null;
-    }
+    focusedOptionId = computed(() => (this.focusedOptionIndex() !== -1 ? `${this._id()}_${this.focusedOptionIndex()}` : null));
 
-    allSelected() {
-        return this.selectAll !== null ? this.selectAll : isNotEmpty(this.visibleOptions()) && this.visibleOptions().every((option) => this.isOptionGroup(option) || this.isOptionDisabled(option) || this.isSelected(option));
-    }
+    allSelected = computed(() => (this.selectAll() !== null ? this.selectAll() : isNotEmpty(this.visibleOptions()) && this.visibleOptions().every((option) => this.isOptionGroup(option) || this.isOptionDisabled(option) || this.isSelected(option))));
 
-    partialSelected() {
-        return this.selectedOptions && this.selectedOptions.length > 0 && this.selectedOptions.length < (this.options?.length || 0);
-    }
+    partialSelected = computed(() => this.selectedOptions() && this.selectedOptions().length > 0 && this.selectedOptions().length < (this._options()?.length || 0));
 
     /**
      * Displays the panel.
      * @group Method
      */
     public show(isFocus?) {
-        this.overlayVisible = true;
+        this._overlayVisible.set(true);
 
-        const focusedOptionIndex = this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : this.autoOptionFocus ? this.findFirstFocusedOptionIndex() : this.findSelectedOptionIndex();
+        const focusedOptionIndex = this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : this.autoOptionFocus() ? this.findFirstFocusedOptionIndex() : this.findSelectedOptionIndex();
         this.focusedOptionIndex.set(focusedOptionIndex);
 
         if (isFocus) {
             focus(this.focusInputViewChild().nativeElement);
         }
-
-        this.cd.markForCheck();
     }
 
     /**
@@ -2029,32 +1943,31 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * @group Method
      */
     public hide(isFocus?) {
-        this.overlayVisible = false;
+        this._overlayVisible.set(false);
         this.focusedOptionIndex.set(-1);
 
-        if (this.filter && this.resetFilterOnHide) {
+        if (this.filter() && this.resetFilterOnHide()) {
             this.resetFilter();
         }
-        if (this.overlayOptions?.mode === 'modal') {
+        if (this.overlayOptions()?.mode === 'modal') {
             unblockBodyScroll();
         }
 
         isFocus && focus(this.focusInputViewChild().nativeElement);
-        this.cd.markForCheck();
     }
 
     onOverlayBeforeEnter(event: any) {
-        this.itemsWrapper = <any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, this.virtualScroll ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]');
-        this.virtualScroll && this.scroller()?.setContentEl(this.itemsViewChild()?.nativeElement);
+        this.itemsWrapper.set(<any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, this.virtualScroll() ? '[data-pc-name="virtualscroller"]' : '[data-pc-section="listcontainer"]'));
+        this.virtualScroll() && this.scroller()?.setContentEl(this.itemsViewChild()?.nativeElement);
 
-        if (this.options && this.options.length) {
-            if (this.virtualScroll) {
+        if (this._options() && this._options().length) {
+            if (this.virtualScroll()) {
                 const selectedIndex = this.modelValue() ? this.focusedOptionIndex() : -1;
                 if (selectedIndex !== -1) {
                     this.scroller()?.scrollToIndex(selectedIndex);
                 }
             } else {
-                let selectedListItem = findSingle(this.itemsWrapper, '[data-pc-section="option"][data-p-selected="true"]');
+                let selectedListItem = findSingle(this.itemsWrapper(), '[data-pc-section="option"][data-p-selected="true"]');
 
                 if (selectedListItem) {
                     selectedListItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -2064,9 +1977,9 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
         const filterInputChild = this.filterInputChild();
         if (filterInputChild && filterInputChild.nativeElement) {
-            this.preventModelTouched = true;
+            this.preventModelTouched.set(true);
 
-            if (this.autofocusFilter) {
+            if (this.autofocusFilter()) {
                 filterInputChild.nativeElement.focus();
             }
         }
@@ -2075,7 +1988,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onOverlayAfterLeave(event: any) {
-        this.itemsWrapper = null;
+        this.itemsWrapper.set(null);
         this.onModelTouched();
         this.onPanelHide.emit(event);
     }
@@ -2087,14 +2000,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
 
         this._filterValue.set(null);
-        this._filteredOptions = null;
     }
 
     onOverlayHide(event: any) {
         // Called when overlay completes its hide animation
         // Don't call hide() again to avoid recursive calls
         this.focusedOptionIndex.set(-1);
-        if (this.filter && this.resetFilterOnHide) {
+        if (this.filter() && this.resetFilterOnHide()) {
             this.resetFilter();
         }
     }
@@ -2106,17 +2018,17 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     clear(event: Event) {
-        this.value = [];
+        this.value.set([]);
         this.updateModel(null, event);
-        this.selectedOptions = [];
+        this.selectedOptions.set([]);
         this.onClear.emit();
-        this._disableTooltip = true;
+        this._disableTooltip.set(true);
 
         event.stopPropagation();
     }
 
     labelContainerMouseLeave() {
-        if (this._disableTooltip) this._disableTooltip = false;
+        if (this._disableTooltip()) this._disableTooltip.set(false);
     }
 
     removeOption(optionValue, event) {
@@ -2152,22 +2064,18 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         return matchedOptionIndex > -1 ? matchedOptionIndex : index;
     }
 
-    findLastSelectedOptionIndex() {
-        return this.hasSelectedOption() ? findLastIndex(this.visibleOptions(), (option) => this.isValidSelectedOption(option)) : -1;
-    }
+    findLastSelectedOptionIndex = computed(() => (this.hasSelectedOption() ? findLastIndex(this.visibleOptions(), (option) => this.isValidSelectedOption(option)) : -1));
 
-    findLastFocusedOptionIndex() {
+    findLastFocusedOptionIndex = computed(() => {
         const selectedIndex = this.findLastSelectedOptionIndex();
 
         return selectedIndex < 0 ? this.findLastOptionIndex() : selectedIndex;
-    }
+    });
 
-    findLastOptionIndex() {
-        return findLastIndex(this.visibleOptions(), (option) => this.isValidOption(option));
-    }
+    findLastOptionIndex = computed(() => findLastIndex(this.visibleOptions(), (option) => this.isValidOption(option)));
 
     searchOptions(event, char) {
-        this.searchValue = (this.searchValue || '') + char;
+        this.searchValue.set((this.searchValue() || '') + char);
 
         let optionIndex = -1;
         let matched = false;
@@ -2198,14 +2106,16 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             this.changeFocusedOptionIndex(event, optionIndex);
         }
 
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
+        if (this.searchTimeout()) {
+            clearTimeout(this.searchTimeout());
         }
 
-        this.searchTimeout = setTimeout(() => {
-            this.searchValue = '';
-            this.searchTimeout = null;
-        }, 500);
+        this.searchTimeout.set(
+            setTimeout(() => {
+                this.searchValue.set('');
+                this.searchTimeout.set(null);
+            }, 500)
+        );
 
         return matched;
     }
@@ -2214,43 +2124,43 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         return getFocusableElements(this.overlayViewChild().overlayViewChild()?.nativeElement, ':not([data-p-hidden-focusable="true"])').length > 0;
     }
 
-    hasFilter() {
-        return this._filterValue() && this._filterValue().trim().length > 0;
-    }
+    hasFilter = computed(() => this._filterValue() && this._filterValue().trim().length > 0);
 
-    get containerDataP() {
+    containerDataP = computed(() => {
         return this.cn({
             invalid: this.invalid(),
             disabled: this.$disabled(),
-            focus: this.focused,
-            fluid: this.hasFluid,
+            focus: this.focused(),
+            fluid: this.hasFluid(),
             filled: this.$variant() === 'filled',
             [this.size() as string]: this.size()
         });
-    }
+    });
 
-    get labelDataP() {
+    labelDataP = computed(() => {
+        const value = this.value();
+        const maxSelectedLabels = this.maxSelectedLabels();
         return this.cn({
-            placeholder: this.label === this.placeholder,
-            clearable: this.showClear,
-            disabled: this.disabled,
+            placeholder: this.label() === this.placeholder(),
+            clearable: this.showClear(),
+            disabled: this.$disabled(),
             [this.size() as string]: this.size(),
-            'has-chip': this.display === 'chip' && this.value && this.value.length && (this.maxSelectedLabels ? this.value.length <= this.maxSelectedLabels : true),
-            empty: !this.placeholder && !this.$filled
+            'has-chip': this.display() === 'chip' && value && value.length && (maxSelectedLabels ? value.length <= maxSelectedLabels : true),
+            empty: !this.placeholder() && !this.$filled()
         });
-    }
+    });
 
-    get dropdownIconDataP() {
+    dropdownIconDataP = computed(() => {
         return this.cn({
             [this.size() as string]: this.size()
         });
-    }
+    });
 
-    get overlayDataP() {
+    overlayDataP = computed(() => {
         return this.cn({
-            ['overlay-' + this.appendTo]: 'overlay-' + this.appendTo
+            ['overlay-' + this.$appendTo()]: 'overlay-' + this.$appendTo()
         });
-    }
+    });
 
     /**
      * @override
@@ -2259,9 +2169,8 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * Writes the value to the control.
      */
     writeControlValue(value: any, setModelValue: (value: any) => void): void {
-        this.value = value;
+        this.value.set(value);
         setModelValue(value);
-        this.cd.markForCheck();
     }
 
     getHeaderCheckboxPTOptions(key: string) {

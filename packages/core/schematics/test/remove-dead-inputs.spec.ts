@@ -845,4 +845,32 @@ describe('remove-dead-inputs', () => {
             `<p-autoComplete [suggestions]="items" (completeMethod)="search($event)"></p-autoComplete>\n<p-autocomplete [motionOptions]="motion"></p-autocomplete>\n<p-auto-complete dropdown></p-auto-complete>\n<p-dialog [autoZIndex]="false" [baseZIndex]="10"></p-dialog>\n`
         );
     });
+
+    it('removes filterFields from p-multiselect, p-multiSelect and p-multi-select while keeping it on p-select and p-listbox', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-multiselect [options]="cities" [filterFields]="['name']" filterBy="name"></p-multiselect>\n<p-multiSelect [filterFields]="fields" [filter]="true"></p-multiSelect>\n<p-multi-select [filterFields]="fields"></p-multi-select>\n<p-select [filterFields]="fields"></p-select>\n<p-listbox [filterFields]="fields"></p-listbox>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            `<p-multiselect [options]="cities" filterBy="name"></p-multiselect>\n<p-multiSelect [filter]="true"></p-multiSelect>\n<p-multi-select></p-multi-select>\n<p-select [filterFields]="fields"></p-select>\n<p-listbox [filterFields]="fields"></p-listbox>\n`
+        );
+    });
+
+    it('does not report a programmatic filterFields access as a leftover', async () => {
+        const runner = createMigrationRunner();
+        const content = `export class Foo {\n    read(select: { filterFields: string[] }) {\n        return select.filterFields;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': content });
+
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(content);
+        expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
+    });
 });
