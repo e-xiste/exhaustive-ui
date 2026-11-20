@@ -5342,53 +5342,61 @@ export class ReorderableRow extends BaseComponent {
     standalone: false,
     template: `
         <div [class]="cx('filter')">
-            <p-columnFilterFormElement
-                *ngIf="display() === 'row'"
-                class="p-fluid"
-                [type]="type()"
-                [field]="field()"
-                [ariaLabel]="ariaLabel()"
-                [filterConstraint]="dataTable._filters()[field()]"
-                [filterTemplate]="filterTemplate() || _filterTemplate()"
-                [placeholder]="placeholder()"
-                [minFractionDigits]="minFractionDigits()"
-                [maxFractionDigits]="maxFractionDigits()"
-                [prefix]="prefix()"
-                [suffix]="suffix()"
-                [locale]="locale()"
-                [localeMatcher]="localeMatcher()"
-                [currency]="currency()"
-                [currencyDisplay]="currencyDisplay()"
-                [useGrouping]="useGrouping()"
-                [showButtons]="showButtons()"
-                [filterOn]="filterOn()"
-                [pt]="pt()"
-                [unstyled]="unstyled()"
-            ></p-columnFilterFormElement>
-            <p-button
-                *ngIf="showMenuButton()"
-                [styleClass]="cx('pcColumnFilterButton')"
-                [pt]="ptm('pcColumnFilterButton')"
-                [attr.aria-haspopup]="true"
-                [ariaLabel]="filterMenuButtonAriaLabel"
-                [attr.aria-controls]="overlayVisible() ? overlayId() : null"
-                [attr.aria-expanded]="overlayVisible() ?? false"
-                (click)="toggleMenu($event)"
-                (keydown)="onToggleButtonKeyDown($event)"
-                [buttonProps]="filterButtonProps()?.filter"
-                #menuButton
-                [unstyled]="unstyled()"
-            >
-                <ng-template #icon>
-                    <ng-container>
-                        <svg data-p-icon="filter" *ngIf="!filterIconTemplate() && !_filterIconTemplate() && !hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
-                        <svg data-p-icon="filter-fill" *ngIf="!filterIconTemplate() && !_filterIconTemplate() && hasFilter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
-                        <span *ngIf="filterIconTemplate() || _filterIconTemplate()" [pBind]="ptm('pcColumnFilterButton')['icon']" [attr.data-pc-section]="'columnfilterbuttonicon'">
-                            <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate(); context: { hasFilter: hasFilter }"></ng-template>
-                        </span>
-                    </ng-container>
-                </ng-template>
-            </p-button>
+            @if (display() === 'row') {
+                <p-columnFilterFormElement
+                    class="p-fluid"
+                    [type]="type()"
+                    [field]="field()"
+                    [ariaLabel]="ariaLabel()"
+                    [filterConstraint]="dataTable._filters()[field()]"
+                    [filterTemplate]="filterTemplate() || _filterTemplate()"
+                    [placeholder]="placeholder()"
+                    [minFractionDigits]="minFractionDigits()"
+                    [maxFractionDigits]="maxFractionDigits()"
+                    [prefix]="prefix()"
+                    [suffix]="suffix()"
+                    [locale]="locale()"
+                    [localeMatcher]="localeMatcher()"
+                    [currency]="currency()"
+                    [currencyDisplay]="currencyDisplay()"
+                    [useGrouping]="useGrouping()"
+                    [showButtons]="showButtons()"
+                    [filterOn]="filterOn()"
+                    [pt]="pt()"
+                    [unstyled]="unstyled()"
+                ></p-columnFilterFormElement>
+            }
+            @if (showMenuButton()) {
+                <p-button
+                    [styleClass]="cx('pcColumnFilterButton')"
+                    [pt]="ptm('pcColumnFilterButton')"
+                    [attr.aria-haspopup]="true"
+                    [ariaLabel]="filterMenuButtonAriaLabel"
+                    [attr.aria-controls]="overlayVisible() ? overlayId() : null"
+                    [attr.aria-expanded]="overlayVisible() ?? false"
+                    (click)="toggleMenu($event)"
+                    (keydown)="onToggleButtonKeyDown($event)"
+                    [buttonProps]="filterButtonProps()?.filter"
+                    #menuButton
+                    [unstyled]="unstyled()"
+                >
+                    <ng-template #icon>
+                        <ng-container>
+                            @if (!filterIconTemplate() && !_filterIconTemplate() && !hasFilter) {
+                                <svg data-p-icon="filter" [pBind]="ptm('pcColumnFilterButton')['icon']" />
+                            }
+                            @if (!filterIconTemplate() && !_filterIconTemplate() && hasFilter) {
+                                <svg data-p-icon="filter-fill" [pBind]="ptm('pcColumnFilterButton')['icon']" />
+                            }
+                            @if (filterIconTemplate() || _filterIconTemplate()) {
+                                <span [pBind]="ptm('pcColumnFilterButton')['icon']" [attr.data-pc-section]="'columnfilterbuttonicon'">
+                                    <ng-template *ngTemplateOutlet="filterIconTemplate() || _filterIconTemplate(); context: { hasFilter: hasFilter }"></ng-template>
+                                </span>
+                            }
+                        </ng-container>
+                    </ng-template>
+                </p-button>
+            }
             @if (renderOverlay()) {
                 <div
                     [pMotion]="showMenu() && overlayVisible()"
@@ -5406,88 +5414,98 @@ export class ReorderableRow extends BaseComponent {
                     (keydown.escape)="onEscape()"
                 >
                     <ng-container *ngTemplateOutlet="headerTemplate() || _headerTemplate(); context: { $implicit: field() }"></ng-container>
-                    <ul *ngIf="display() === 'row'; else menu" [class]="cx('filterConstraintList')" [pBind]="ptm('filterConstraintList')">
-                        <li
-                            *ngFor="let matchMode of matchModes(); let i = index"
-                            (click)="onRowMatchModeChange(matchMode.value)"
-                            (keydown)="onRowMatchModeKeyDown($event)"
-                            (keydown.enter)="onRowMatchModeChange(matchMode.value)"
-                            [class]="cx('filterConstraint')"
-                            [pBind]="ptm('filterConstraint', ptmFilterConstraintOptions(matchMode))"
-                            [class.p-datatable-filter-constraint-selected]="isRowMatchModeSelected(matchMode.value)"
-                            [attr.tabindex]="i === 0 ? '0' : null"
-                        >
-                            {{ matchMode.label }}
-                        </li>
-                        <li [class]="cx('filterConstraintSeparator')" [pBind]="ptm('filterConstraintSeparator', { context: { index: i } })"></li>
-                        <li [class]="cx('filterConstraint')" [pBind]="ptm('emtpyFilterLabel')" (click)="onRowClearItemClick()" (keydown)="onRowMatchModeKeyDown($event)" (keydown.enter)="onRowClearItemClick()">
-                            {{ noFilterLabel }}
-                        </li>
-                    </ul>
-                    <ng-template #menu>
-                        <div [class]="cx('filterOperator')" [pBind]="ptm('filterOperator')" *ngIf="isShowOperator()">
-                            <p-select
-                                [options]="operatorOptions()"
-                                [pt]="ptm('pcFilterOperatorDropdown')"
-                                [ngModel]="_operator()"
-                                [ngModelOptions]="{ standalone: true }"
-                                (ngModelChange)="onOperatorChange($event)"
-                                [class]="cx('pcFilterOperatorDropdown')"
-                                [unstyled]="unstyled()"
-                            ></p-select>
-                        </div>
-                        <div [class]="cx('filterRuleList')" [pBind]="ptm('filterRuleList')">
-                            <div *ngFor="let fieldConstraint of fieldConstraints; let i = index" [ngClass]="cx('filterRule')" [pBind]="ptm('filterRule')">
+                    @if (display() === 'row') {
+                        <ul [class]="cx('filterConstraintList')" [pBind]="ptm('filterConstraintList')">
+                            @for (matchMode of matchModes(); track matchMode; let i = $index) {
+                                <li
+                                    (click)="onRowMatchModeChange(matchMode.value)"
+                                    (keydown)="onRowMatchModeKeyDown($event)"
+                                    (keydown.enter)="onRowMatchModeChange(matchMode.value)"
+                                    [class]="cx('filterConstraint')"
+                                    [pBind]="ptm('filterConstraint', ptmFilterConstraintOptions(matchMode))"
+                                    [class.p-datatable-filter-constraint-selected]="isRowMatchModeSelected(matchMode.value)"
+                                    [attr.tabindex]="i === 0 ? '0' : null"
+                                >
+                                    {{ matchMode.label }}
+                                </li>
+                            }
+                            <li [class]="cx('filterConstraintSeparator')" [pBind]="ptm('filterConstraintSeparator', { context: { index: i } })"></li>
+                            <li [class]="cx('filterConstraint')" [pBind]="ptm('emtpyFilterLabel')" (click)="onRowClearItemClick()" (keydown)="onRowMatchModeKeyDown($event)" (keydown.enter)="onRowClearItemClick()">
+                                {{ noFilterLabel }}
+                            </li>
+                        </ul>
+                    } @else {
+                        @if (isShowOperator()) {
+                            <div [class]="cx('filterOperator')" [pBind]="ptm('filterOperator')">
                                 <p-select
-                                    *ngIf="showMatchModes() && matchModes()"
-                                    [options]="matchModes()"
-                                    [ngModel]="fieldConstraint.matchMode"
+                                    [options]="operatorOptions()"
+                                    [pt]="ptm('pcFilterOperatorDropdown')"
+                                    [ngModel]="_operator()"
                                     [ngModelOptions]="{ standalone: true }"
-                                    (ngModelChange)="onMenuMatchModeChange($event, fieldConstraint)"
-                                    [class]="cx('pcFilterConstraintDropdown')"
-                                    [pt]="ptm('pcFilterConstraintDropdown')"
+                                    (ngModelChange)="onOperatorChange($event)"
+                                    [class]="cx('pcFilterOperatorDropdown')"
                                     [unstyled]="unstyled()"
                                 ></p-select>
-                                <p-columnFilterFormElement
-                                    [type]="type()"
-                                    [field]="field()"
-                                    [filterConstraint]="fieldConstraint"
-                                    [filterTemplate]="filterTemplate() || _filterTemplate()"
-                                    [placeholder]="placeholder()"
-                                    [minFractionDigits]="minFractionDigits()"
-                                    [maxFractionDigits]="maxFractionDigits()"
-                                    [prefix]="prefix()"
-                                    [suffix]="suffix()"
-                                    [locale]="locale()"
-                                    [localeMatcher]="localeMatcher()"
-                                    [currency]="currency()"
-                                    [currencyDisplay]="currencyDisplay()"
-                                    [useGrouping]="useGrouping()"
-                                    [filterOn]="filterOn()"
-                                    [pt]="pt()"
-                                    [unstyled]="unstyled()"
-                                ></p-columnFilterFormElement>
-                                <div>
-                                    <p-button
-                                        *ngIf="showRemoveIcon"
-                                        [styleClass]="cx('pcFilterRemoveRuleButton')"
-                                        [pt]="ptm('pcFilterRemoveRuleButton')"
-                                        [text]="true"
-                                        severity="danger"
-                                        size="small"
-                                        (onClick)="removeConstraint(fieldConstraint)"
-                                        [ariaLabel]="removeRuleButtonLabel"
-                                        [label]="removeRuleButtonLabel"
-                                        [buttonProps]="filterButtonProps()?.popover?.removeRule"
-                                        [unstyled]="unstyled()"
-                                    >
-                                        <ng-template #icon>
-                                            <svg data-p-icon="trash" *ngIf="!removeRuleIconTemplate() && !_removeRuleIconTemplate()" [pBind]="ptm('pcFilterRemoveRuleButton')['icon']" />
-                                            <ng-template *ngTemplateOutlet="removeRuleIconTemplate() || _removeRuleIconTemplate()"></ng-template>
-                                        </ng-template>
-                                    </p-button>
-                                </div>
                             </div>
+                        }
+                        <div [class]="cx('filterRuleList')" [pBind]="ptm('filterRuleList')">
+                            @for (fieldConstraint of fieldConstraints; track fieldConstraint; let i = $index) {
+                                <div [ngClass]="cx('filterRule')" [pBind]="ptm('filterRule')">
+                                    @if (showMatchModes() && matchModes()) {
+                                        <p-select
+                                            [options]="matchModes()"
+                                            [ngModel]="fieldConstraint.matchMode"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            (ngModelChange)="onMenuMatchModeChange($event, fieldConstraint)"
+                                            [class]="cx('pcFilterConstraintDropdown')"
+                                            [pt]="ptm('pcFilterConstraintDropdown')"
+                                            [unstyled]="unstyled()"
+                                        ></p-select>
+                                    }
+                                    <p-columnFilterFormElement
+                                        [type]="type()"
+                                        [field]="field()"
+                                        [filterConstraint]="fieldConstraint"
+                                        [filterTemplate]="filterTemplate() || _filterTemplate()"
+                                        [placeholder]="placeholder()"
+                                        [minFractionDigits]="minFractionDigits()"
+                                        [maxFractionDigits]="maxFractionDigits()"
+                                        [prefix]="prefix()"
+                                        [suffix]="suffix()"
+                                        [locale]="locale()"
+                                        [localeMatcher]="localeMatcher()"
+                                        [currency]="currency()"
+                                        [currencyDisplay]="currencyDisplay()"
+                                        [useGrouping]="useGrouping()"
+                                        [filterOn]="filterOn()"
+                                        [pt]="pt()"
+                                        [unstyled]="unstyled()"
+                                    ></p-columnFilterFormElement>
+                                    <div>
+                                        @if (showRemoveIcon) {
+                                            <p-button
+                                                [styleClass]="cx('pcFilterRemoveRuleButton')"
+                                                [pt]="ptm('pcFilterRemoveRuleButton')"
+                                                [text]="true"
+                                                severity="danger"
+                                                size="small"
+                                                (onClick)="removeConstraint(fieldConstraint)"
+                                                [ariaLabel]="removeRuleButtonLabel"
+                                                [label]="removeRuleButtonLabel"
+                                                [buttonProps]="filterButtonProps()?.popover?.removeRule"
+                                                [unstyled]="unstyled()"
+                                            >
+                                                <ng-template #icon>
+                                                    @if (!removeRuleIconTemplate() && !_removeRuleIconTemplate()) {
+                                                        <svg data-p-icon="trash" [pBind]="ptm('pcFilterRemoveRuleButton')['icon']" />
+                                                    }
+                                                    <ng-template *ngTemplateOutlet="removeRuleIconTemplate() || _removeRuleIconTemplate()"></ng-template>
+                                                </ng-template>
+                                            </p-button>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
                         @if (isShowAddConstraint) {
                             <p-button
@@ -5503,35 +5521,39 @@ export class ReorderableRow extends BaseComponent {
                                 [unstyled]="unstyled()"
                             >
                                 <ng-template #icon>
-                                    <svg data-p-icon="plus" *ngIf="!addRuleIconTemplate() && !_addRuleIconTemplate()" [pBind]="ptm('pcAddRuleButtonLabel')['icon']" />
+                                    @if (!addRuleIconTemplate() && !_addRuleIconTemplate()) {
+                                        <svg data-p-icon="plus" [pBind]="ptm('pcAddRuleButtonLabel')['icon']" />
+                                    }
                                     <ng-template *ngTemplateOutlet="addRuleIconTemplate() || _addRuleIconTemplate()"></ng-template>
                                 </ng-template>
                             </p-button>
                         }
                         <div [class]="cx('filterButtonbar')" [pBind]="ptm('filterButtonBar')">
-                            <p-button
-                                #clearBtn
-                                *ngIf="showClearButton()"
-                                [outlined]="true"
-                                (onClick)="clearFilter()"
-                                [attr.aria-label]="clearButtonLabel"
-                                [label]="clearButtonLabel"
-                                [buttonProps]="filterButtonProps()?.popover?.clear"
-                                [pt]="ptm('pcFilterClearButton')"
-                                [unstyled]="unstyled()"
-                            />
-                            <p-button
-                                *ngIf="showApplyButton()"
-                                (onClick)="applyFilter()"
-                                size="small"
-                                [label]="applyButtonLabel"
-                                [attr.aria-label]="applyButtonLabel"
-                                [buttonProps]="filterButtonProps()?.popover?.apply"
-                                [pt]="ptm('pcFilterApplyButton')"
-                                [unstyled]="unstyled()"
-                            />
+                            @if (showClearButton()) {
+                                <p-button
+                                    #clearBtn
+                                    [outlined]="true"
+                                    (onClick)="clearFilter()"
+                                    [attr.aria-label]="clearButtonLabel"
+                                    [label]="clearButtonLabel"
+                                    [buttonProps]="filterButtonProps()?.popover?.clear"
+                                    [pt]="ptm('pcFilterClearButton')"
+                                    [unstyled]="unstyled()"
+                                />
+                            }
+                            @if (showApplyButton()) {
+                                <p-button
+                                    (onClick)="applyFilter()"
+                                    size="small"
+                                    [label]="applyButtonLabel"
+                                    [attr.aria-label]="applyButtonLabel"
+                                    [buttonProps]="filterButtonProps()?.popover?.apply"
+                                    [pt]="ptm('pcFilterApplyButton')"
+                                    [unstyled]="unstyled()"
+                                />
+                            }
                         </div>
-                    </ng-template>
+                    }
                     <ng-container *ngTemplateOutlet="footerTemplate() || _footerTemplate(); context: { $implicit: field() }"></ng-container>
                 </div>
             }
