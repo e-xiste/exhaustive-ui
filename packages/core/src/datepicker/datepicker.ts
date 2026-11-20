@@ -550,7 +550,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                                             <ng-template *ngTemplateOutlet="incrementIconTemplate() || _incrementIconTemplate()"></ng-template>
                                         </ng-template>
                                     </p-button>
-                                    <span [pBind]="ptm('ampm')">{{ pm() ? 'PM' : 'AM' }}</span>
+                                    <span [pBind]="ptm('ampm')">{{ getTranslation(pm() ? 'pm' : 'am') }}</span>
                                     <p-button
                                         text
                                         rounded

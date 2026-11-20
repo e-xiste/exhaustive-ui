@@ -2532,4 +2532,21 @@ describe('DatePicker Optimus UI bug fixes', () => {
         buttons.forEach((button) => expect(button.getAttribute('aria-label')).toBeTruthy());
         expect(buttons[0].getAttribute('aria-label')).toBe(picker.getTranslation('nextHour'));
     });
+
+    it('shows the localized am/pm label in the time picker (optimus-ui#437, optimus-ui#565)', async () => {
+        picker.config.setTranslation({ am: 'a.m.', pm: 'p.m.' });
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('showTime', true);
+        fixture.componentRef.setInput('hourFormat', '12');
+        await render();
+
+        picker.pm.set(false);
+        await render();
+        const label = el.querySelector('.p-datepicker-ampm-picker > span')!;
+        expect(label.textContent!.trim()).toBe('a.m.');
+
+        picker.pm.set(true);
+        await render();
+        expect(label.textContent!.trim()).toBe('p.m.');
+    });
 });
