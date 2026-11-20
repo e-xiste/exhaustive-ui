@@ -63,8 +63,6 @@ export class FocusTrap extends BaseComponent {
             return createElement('span', {
                 class: 'p-hidden-accessible p-hidden-focusable',
                 tabindex,
-                role: 'presentation',
-                'aria-hidden': true,
                 'data-p-hidden-accessible': true,
                 'data-p-hidden-focusable': true,
                 onFocus: onFocus?.bind(this)

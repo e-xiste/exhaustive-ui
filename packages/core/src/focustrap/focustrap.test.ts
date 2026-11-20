@@ -199,14 +199,16 @@ describe('FocusTrap', () => {
             const lastHidden = element.querySelector('[data-pc-section="lastfocusableelement"]') as HTMLElement;
 
             expect(firstHidden.getAttribute('tabindex')).toBe('0');
-            expect(firstHidden.getAttribute('role')).toBe('presentation');
-            expect(firstHidden.getAttribute('aria-hidden')).toBe('true');
+            // focusable sentinels must not be aria-hidden (axe aria-hidden-focus) nor presentational (presentation-role-conflict)
+            expect(firstHidden.hasAttribute('aria-hidden')).toBe(false);
+            expect(firstHidden.hasAttribute('role')).toBe(false);
             expect(firstHidden.getAttribute('data-p-hidden-accessible')).toBe('true');
             expect(firstHidden.getAttribute('data-p-hidden-focusable')).toBe('true');
 
             expect(lastHidden.getAttribute('tabindex')).toBe('0');
-            expect(lastHidden.getAttribute('role')).toBe('presentation');
-            expect(lastHidden.getAttribute('aria-hidden')).toBe('true');
+            // focusable sentinels must not be aria-hidden (axe aria-hidden-focus) nor presentational (presentation-role-conflict)
+            expect(lastHidden.hasAttribute('aria-hidden')).toBe(false);
+            expect(lastHidden.hasAttribute('role')).toBe(false);
             expect(lastHidden.getAttribute('data-p-hidden-accessible')).toBe('true');
             expect(lastHidden.getAttribute('data-p-hidden-focusable')).toBe('true');
         });
