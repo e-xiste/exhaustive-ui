@@ -74,6 +74,7 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * are left out of the leftover scan: TreeTable still exposes `rowNode`, and the others are DOM/common names).
  * `visible`/`itemSize` on SelectItem were stored but never read (and never bound by Select): the option
  * height comes from the scroller options and every rendered option is visible.
+ * `frozenColumns`/`frozenWidth` on Table were stored but never read: frozen columns are declared with the `pFrozenColumn` directive.
  */
 const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -132,7 +133,8 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-confirmdialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-confirm-dialog', names: ['closeAriaLabel', 'acceptAriaLabel', 'rejectAriaLabel', 'rtl', 'transitionOptions', 'focusTrap', 'defaultFocus'] },
     { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] },
-    { selector: 'p-selectItem', names: ['visible', 'itemSize'] }
+    { selector: 'p-selectItem', names: ['visible', 'itemSize'] },
+    { selector: 'p-table', names: ['frozenColumns', 'frozenWidth'] }
 ];
 
 /**
@@ -157,6 +159,7 @@ const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * `closeAriaLabel` and `focusTrap`, and ConfirmPopup still reads `defaultFocus`.
  * SelectItem's `visible` and `itemSize` are left out as well: Dialog, Overlay and many others still expose
  * `visible`, and Scroller still exposes `itemSize`.
+ * Table's `frozenColumns`/`frozenWidth` are left out too: TreeTable still exposes working inputs of the same names.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
     (name) =>
@@ -184,7 +187,9 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
             'firstChild',
             'lastChild',
             'visible',
-            'itemSize'
+            'itemSize',
+            'frozenColumns',
+            'frozenWidth'
         ].includes(name)
 );
 

@@ -1,11 +1,14 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
+    afterEveryRender,
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     computed,
     Directive,
+    effect,
     ElementRef,
     HostListener,
     inject,
@@ -13,12 +16,15 @@ import {
     InjectionToken,
     input,
     Input,
+    linkedSignal,
+    model,
     NgModule,
     NgZone,
     numberAttribute,
     signal,
     SimpleChanges,
     TemplateRef,
+    untracked,
     ViewEncapsulation,
     viewChild,
     contentChildren,
@@ -126,102 +132,102 @@ export class TableService {
     selector: 'p-table',
     standalone: false,
     template: `
-        @if (loading && showLoader) {
+        @if (loading() && showLoader()) {
             <div [class]="cx('mask')" [pBind]="ptm('mask')" animate.enter="p-overlay-mask-enter-active" animate.leave="p-overlay-mask-leave-active">
-                @if (loadingIcon) {
-                    <i [class]="cn(cx('loadingIcon'), loadingIcon)" [pBind]="ptm('loadingIcon')"></i>
+                @if (loadingIcon()) {
+                    <i [class]="cn(cx('loadingIcon'), loadingIcon())" [pBind]="ptm('loadingIcon')"></i>
                 }
-                @if (!loadingIcon) {
-                    @if (!loadingIconTemplate && !_loadingIconTemplate()) {
+                @if (!loadingIcon()) {
+                    @if (!loadingIconTemplate() && !_loadingIconTemplate()) {
                         <svg data-p-icon="spinner" [spin]="true" [class]="cx('loadingIcon')" [pBind]="ptm('loadingIcon')" />
                     }
-                    @if (loadingIconTemplate || _loadingIconTemplate()) {
+                    @if (loadingIconTemplate() || _loadingIconTemplate()) {
                         <span [class]="cx('loadingIcon')" [pBind]="ptm('loadingIcon')">
-                            <ng-template *ngTemplateOutlet="loadingIconTemplate || _loadingIconTemplate()"></ng-template>
+                            <ng-template *ngTemplateOutlet="loadingIconTemplate() || _loadingIconTemplate()"></ng-template>
                         </span>
                     }
                 }
             </div>
         }
-        @if (captionTemplate || _captionTemplate()) {
+        @if (captionTemplate() || _captionTemplate()) {
             <div [class]="cx('header')" [pBind]="ptm('header')">
-                <ng-container *ngTemplateOutlet="captionTemplate || _captionTemplate()"></ng-container>
+                <ng-container *ngTemplateOutlet="captionTemplate() || _captionTemplate()"></ng-container>
             </div>
         }
-        @if (paginator && (paginatorPosition === 'top' || paginatorPosition == 'both')) {
+        @if (paginator() && (paginatorPosition() === 'top' || paginatorPosition() == 'both')) {
             <p-paginator
-                [rows]="rows"
-                [first]="first"
-                [totalRecords]="totalRecords"
-                [pageLinkSize]="pageLinks"
-                [alwaysShow]="alwaysShowPaginator"
+                [rows]="rows()"
+                [first]="first()"
+                [totalRecords]="_totalRecords()"
+                [pageLinkSize]="pageLinks()"
+                [alwaysShow]="alwaysShowPaginator()"
                 (onPageChange)="onPageChange($event)"
-                [rowsPerPageOptions]="rowsPerPageOptions"
-                [templateLeft]="paginatorLeftTemplate || _paginatorLeftTemplate()"
-                [templateRight]="paginatorRightTemplate || _paginatorRightTemplate()"
-                [appendTo]="paginatorDropdownAppendTo"
-                [dropdownScrollHeight]="paginatorDropdownScrollHeight"
-                [currentPageReportTemplate]="currentPageReportTemplate"
-                [showFirstLastIcon]="showFirstLastIcon"
-                [dropdownItemTemplate]="paginatorDropdownItemTemplate || _paginatorDropdownItemTemplate()"
-                [showCurrentPageReport]="showCurrentPageReport"
-                [showJumpToPageDropdown]="showJumpToPageDropdown"
-                [showJumpToPageInput]="showJumpToPageInput"
-                [showPageLinks]="showPageLinks"
-                [class]="cx('pcPaginator') + ' ' + paginatorStyleClass && paginatorStyleClass"
-                [locale]="paginatorLocale"
+                [rowsPerPageOptions]="rowsPerPageOptions()"
+                [templateLeft]="paginatorLeftTemplate() || _paginatorLeftTemplate()"
+                [templateRight]="paginatorRightTemplate() || _paginatorRightTemplate()"
+                [appendTo]="paginatorDropdownAppendTo()"
+                [dropdownScrollHeight]="paginatorDropdownScrollHeight()"
+                [currentPageReportTemplate]="currentPageReportTemplate()"
+                [showFirstLastIcon]="showFirstLastIcon()"
+                [dropdownItemTemplate]="paginatorDropdownItemTemplate() || _paginatorDropdownItemTemplate()"
+                [showCurrentPageReport]="showCurrentPageReport()"
+                [showJumpToPageDropdown]="showJumpToPageDropdown()"
+                [showJumpToPageInput]="showJumpToPageInput()"
+                [showPageLinks]="showPageLinks()"
+                [class]="cx('pcPaginator') + ' ' + paginatorStyleClass() && paginatorStyleClass()"
+                [locale]="paginatorLocale()"
                 [pt]="ptm('pcPaginator')"
                 [unstyled]="unstyled()"
             >
-                @if (paginatorDropdownIconTemplate || _paginatorDropdownIconTemplate()) {
+                @if (paginatorDropdownIconTemplate() || _paginatorDropdownIconTemplate()) {
                     <ng-template pTemplate="dropdownicon">
-                        <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate || _paginatorDropdownIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate() || _paginatorDropdownIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorFirstPageLinkIconTemplate || _paginatorFirstPageLinkIconTemplate()) {
+                @if (paginatorFirstPageLinkIconTemplate() || _paginatorFirstPageLinkIconTemplate()) {
                     <ng-template pTemplate="firstpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate || _paginatorFirstPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate() || _paginatorFirstPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorPreviousPageLinkIconTemplate || _paginatorPreviousPageLinkIconTemplate()) {
+                @if (paginatorPreviousPageLinkIconTemplate() || _paginatorPreviousPageLinkIconTemplate()) {
                     <ng-template pTemplate="previouspagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorPreviousPageLinkIconTemplate || _paginatorPreviousPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorPreviousPageLinkIconTemplate() || _paginatorPreviousPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorLastPageLinkIconTemplate || _paginatorLastPageLinkIconTemplate()) {
+                @if (paginatorLastPageLinkIconTemplate() || _paginatorLastPageLinkIconTemplate()) {
                     <ng-template pTemplate="lastpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorLastPageLinkIconTemplate || _paginatorLastPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorLastPageLinkIconTemplate() || _paginatorLastPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorNextPageLinkIconTemplate || _paginatorNextPageLinkIconTemplate()) {
+                @if (paginatorNextPageLinkIconTemplate() || _paginatorNextPageLinkIconTemplate()) {
                     <ng-template pTemplate="nextpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorNextPageLinkIconTemplate || _paginatorNextPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorNextPageLinkIconTemplate() || _paginatorNextPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
             </p-paginator>
         }
 
-        <div #wrapper [class]="cx('tableContainer')" [ngStyle]="sx('tableContainer')" [pBind]="ptm('tableContainer')" [attr.data-p]="dataP">
-            @if (virtualScroll) {
+        <div #wrapper [class]="cx('tableContainer')" [ngStyle]="sx('tableContainer')" [pBind]="ptm('tableContainer')" [attr.data-p]="dataP()">
+            @if (virtualScroll()) {
                 <p-scroller
                     #scroller
-                    [items]="processedData"
-                    [columns]="columns"
+                    [items]="processedData()"
+                    [columns]="_columns()"
                     [style]="{
-                        height: scrollHeight !== 'flex' ? scrollHeight : undefined
+                        height: scrollHeight() !== 'flex' ? scrollHeight() : undefined
                     }"
-                    [scrollHeight]="scrollHeight !== 'flex' ? undefined : '100%'"
-                    [itemSize]="virtualScrollItemSize"
-                    [step]="rows"
-                    [delay]="lazy ? virtualScrollDelay : 0"
+                    [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
+                    [itemSize]="virtualScrollItemSize()"
+                    [step]="rows()"
+                    [delay]="lazy() ? virtualScrollDelay() : 0"
                     [inline]="true"
                     [autoSize]="true"
-                    [lazy]="lazy"
+                    [lazy]="lazy()"
                     (onLazyLoad)="onLazyItemLoad($event)"
                     [loaderDisabled]="true"
                     [showSpacer]="false"
-                    [showLoader]="loadingBodyTemplate || _loadingBodyTemplate()"
-                    [options]="virtualScrollOptions"
+                    [showLoader]="loadingBodyTemplate() || _loadingBodyTemplate()"
+                    [options]="virtualScrollOptions()"
                     [pt]="ptm('virtualScroller')"
                 >
                     <ng-template #content let-items let-scrollerOptions="options">
@@ -237,43 +243,43 @@ export class TableService {
                     </ng-template>
                 </p-scroller>
             }
-            @if (!virtualScroll) {
+            @if (!virtualScroll()) {
                 <ng-container
                     *ngTemplateOutlet="
                         buildInTable;
                         context: {
-                            $implicit: processedData,
-                            options: { columns }
+                            $implicit: processedData(),
+                            options: { columns: _columns() }
                         }
                     "
                 ></ng-container>
             }
 
             <ng-template #buildInTable let-items let-scrollerOptions="options">
-                <table #table role="table" [class]="cn(cx('table'), tableStyleClass)" [pBind]="ptm('table')" [style]="tableStyle" [attr.id]="id + '-table'">
-                    <ng-container *ngTemplateOutlet="colGroupTemplate || _colGroupTemplate(); context: { $implicit: scrollerOptions.columns }"></ng-container>
+                <table #table role="table" [class]="cn(cx('table'), tableStyleClass())" [pBind]="ptm('table')" [style]="tableStyle()" [attr.id]="id + '-table'">
+                    <ng-container *ngTemplateOutlet="colGroupTemplate() || _colGroupTemplate(); context: { $implicit: scrollerOptions.columns }"></ng-container>
                     <thead role="rowgroup" #thead [class]="cx('thead')" [ngStyle]="sx('thead')" [pBind]="ptm('thead')">
                         <ng-container
                             *ngTemplateOutlet="
-                                headerGroupedTemplate || headerTemplate || _headerTemplate();
+                                headerGroupedTemplate() || headerTemplate() || _headerTemplate();
                                 context: {
                                     $implicit: scrollerOptions.columns
                                 }
                             "
                         ></ng-container>
                     </thead>
-                    @if (frozenValue || frozenBodyTemplate || _frozenBodyTemplate()) {
+                    @if (frozenValue() || frozenBodyTemplate() || _frozenBodyTemplate()) {
                         <tbody
                             role="rowgroup"
                             [class]="cx('tbody')"
                             [pBind]="ptm('tbody')"
-                            [value]="frozenValue"
+                            [value]="frozenValue()"
                             [frozenRows]="true"
                             [pTableBody]="scrollerOptions.columns"
-                            [pTableBodyTemplate]="frozenBodyTemplate || _frozenBodyTemplate()"
+                            [pTableBodyTemplate]="frozenBodyTemplate() || _frozenBodyTemplate()"
                             [unstyled]="unstyled()"
                             [frozen]="true"
-                            [attr.data-p-virtualscroll]="virtualScroll"
+                            [attr.data-p-virtualscroll]="virtualScroll()"
                         ></tbody>
                     }
                     <tbody
@@ -283,10 +289,10 @@ export class TableService {
                         [style]="scrollerOptions.contentStyle"
                         [value]="dataToRender(scrollerOptions.rows)"
                         [pTableBody]="scrollerOptions.columns"
-                        [pTableBodyTemplate]="bodyTemplate || _bodyTemplate()"
+                        [pTableBodyTemplate]="bodyTemplate() || _bodyTemplate()"
                         [scrollerOptions]="scrollerOptions"
                         [unstyled]="unstyled()"
-                        [attr.data-p-virtualscroll]="virtualScroll"
+                        [attr.data-p-virtualscroll]="virtualScroll()"
                     ></tbody>
                     @if (scrollerOptions.spacerStyle) {
                         <tbody
@@ -296,11 +302,11 @@ export class TableService {
                             [pBind]="ptm('virtualScrollerSpacer')"
                         ></tbody>
                     }
-                    @if (footerGroupedTemplate || footerTemplate || _footerTemplate() || _footerGroupedTemplate()) {
+                    @if (footerGroupedTemplate() || footerTemplate() || _footerTemplate() || _footerGroupedTemplate()) {
                         <tfoot role="rowgroup" #tfoot [ngClass]="cx('footer')" [ngStyle]="sx('tfoot')" [pBind]="ptm('tfoot')">
                             <ng-container
                                 *ngTemplateOutlet="
-                                    footerGroupedTemplate || footerTemplate || _footerTemplate() || _footerGroupedTemplate();
+                                    footerGroupedTemplate() || footerTemplate() || _footerTemplate() || _footerGroupedTemplate();
                                     context: {
                                         $implicit: scrollerOptions.columns
                                     }
@@ -312,82 +318,82 @@ export class TableService {
             </ng-template>
         </div>
 
-        @if (paginator && (paginatorPosition === 'bottom' || paginatorPosition == 'both')) {
+        @if (paginator() && (paginatorPosition() === 'bottom' || paginatorPosition() == 'both')) {
             <p-paginator
-                [rows]="rows"
-                [first]="first"
-                [totalRecords]="totalRecords"
-                [pageLinkSize]="pageLinks"
-                [alwaysShow]="alwaysShowPaginator"
+                [rows]="rows()"
+                [first]="first()"
+                [totalRecords]="_totalRecords()"
+                [pageLinkSize]="pageLinks()"
+                [alwaysShow]="alwaysShowPaginator()"
                 (onPageChange)="onPageChange($event)"
-                [rowsPerPageOptions]="rowsPerPageOptions"
-                [templateLeft]="paginatorLeftTemplate || _paginatorLeftTemplate()"
-                [templateRight]="paginatorRightTemplate || _paginatorRightTemplate()"
-                [appendTo]="paginatorDropdownAppendTo"
-                [dropdownScrollHeight]="paginatorDropdownScrollHeight"
-                [currentPageReportTemplate]="currentPageReportTemplate"
-                [showFirstLastIcon]="showFirstLastIcon"
-                [dropdownItemTemplate]="paginatorDropdownItemTemplate || _paginatorDropdownItemTemplate()"
-                [showCurrentPageReport]="showCurrentPageReport"
-                [showJumpToPageDropdown]="showJumpToPageDropdown"
-                [showJumpToPageInput]="showJumpToPageInput"
-                [showPageLinks]="showPageLinks"
-                [class]="cx('pcPaginator') + ' ' + paginatorStyleClass && paginatorStyleClass"
-                [locale]="paginatorLocale"
+                [rowsPerPageOptions]="rowsPerPageOptions()"
+                [templateLeft]="paginatorLeftTemplate() || _paginatorLeftTemplate()"
+                [templateRight]="paginatorRightTemplate() || _paginatorRightTemplate()"
+                [appendTo]="paginatorDropdownAppendTo()"
+                [dropdownScrollHeight]="paginatorDropdownScrollHeight()"
+                [currentPageReportTemplate]="currentPageReportTemplate()"
+                [showFirstLastIcon]="showFirstLastIcon()"
+                [dropdownItemTemplate]="paginatorDropdownItemTemplate() || _paginatorDropdownItemTemplate()"
+                [showCurrentPageReport]="showCurrentPageReport()"
+                [showJumpToPageDropdown]="showJumpToPageDropdown()"
+                [showJumpToPageInput]="showJumpToPageInput()"
+                [showPageLinks]="showPageLinks()"
+                [class]="cx('pcPaginator') + ' ' + paginatorStyleClass() && paginatorStyleClass()"
+                [locale]="paginatorLocale()"
                 [pt]="ptm('pcPaginator')"
                 [unstyled]="unstyled()"
             >
-                @if (paginatorDropdownIconTemplate || _paginatorDropdownIconTemplate()) {
+                @if (paginatorDropdownIconTemplate() || _paginatorDropdownIconTemplate()) {
                     <ng-template pTemplate="dropdownicon">
-                        <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate || _paginatorDropdownIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate() || _paginatorDropdownIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorFirstPageLinkIconTemplate || _paginatorFirstPageLinkIconTemplate()) {
+                @if (paginatorFirstPageLinkIconTemplate() || _paginatorFirstPageLinkIconTemplate()) {
                     <ng-template pTemplate="firstpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate || _paginatorFirstPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate() || _paginatorFirstPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorPreviousPageLinkIconTemplate || _paginatorPreviousPageLinkIconTemplate()) {
+                @if (paginatorPreviousPageLinkIconTemplate() || _paginatorPreviousPageLinkIconTemplate()) {
                     <ng-template pTemplate="previouspagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorPreviousPageLinkIconTemplate || _paginatorPreviousPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorPreviousPageLinkIconTemplate() || _paginatorPreviousPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorLastPageLinkIconTemplate || _paginatorLastPageLinkIconTemplate()) {
+                @if (paginatorLastPageLinkIconTemplate() || _paginatorLastPageLinkIconTemplate()) {
                     <ng-template pTemplate="lastpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorLastPageLinkIconTemplate || _paginatorLastPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorLastPageLinkIconTemplate() || _paginatorLastPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
-                @if (paginatorNextPageLinkIconTemplate || _paginatorNextPageLinkIconTemplate()) {
+                @if (paginatorNextPageLinkIconTemplate() || _paginatorNextPageLinkIconTemplate()) {
                     <ng-template pTemplate="nextpagelinkicon">
-                        <ng-container *ngTemplateOutlet="paginatorNextPageLinkIconTemplate || _paginatorNextPageLinkIconTemplate()"></ng-container>
+                        <ng-container *ngTemplateOutlet="paginatorNextPageLinkIconTemplate() || _paginatorNextPageLinkIconTemplate()"></ng-container>
                     </ng-template>
                 }
             </p-paginator>
         }
 
-        @if (summaryTemplate || _summaryTemplate()) {
+        @if (summaryTemplate() || _summaryTemplate()) {
             <div [ngClass]="cx('footer')" [pBind]="ptm('footer')">
-                <ng-container *ngTemplateOutlet="summaryTemplate || _summaryTemplate()"></ng-container>
+                <ng-container *ngTemplateOutlet="summaryTemplate() || _summaryTemplate()"></ng-container>
             </div>
         }
 
-        @if (resizableColumns) {
+        @if (resizableColumns()) {
             <div #resizeHelper [ngClass]="cx('columnResizeIndicator')" [pBind]="ptm('columnResizeIndicator')" [style.display]="'none'"></div>
         }
-        @if (reorderableColumns) {
+        @if (reorderableColumns()) {
             <span #reorderIndicatorUp [ngClass]="cx('rowReorderIndicatorUp')" [pBind]="ptm('rowReorderIndicatorUp')" [style.display]="'none'">
-                @if (!reorderIndicatorUpIconTemplate && !_reorderIndicatorUpIconTemplate()) {
+                @if (!reorderIndicatorUpIconTemplate() && !_reorderIndicatorUpIconTemplate()) {
                     <svg data-p-icon="arrow-down" [pBind]="ptm('rowReorderIndicatorUp')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="reorderIndicatorUpIconTemplate || _reorderIndicatorUpIconTemplate()"></ng-template>
+                <ng-template *ngTemplateOutlet="reorderIndicatorUpIconTemplate() || _reorderIndicatorUpIconTemplate()"></ng-template>
             </span>
         }
-        @if (reorderableColumns) {
+        @if (reorderableColumns()) {
             <span #reorderIndicatorDown [ngClass]="cx('rowReorderIndicatorDown')" [pBind]="ptm('rowReorderIndicatorDown')" [style.display]="'none'">
-                @if (!reorderIndicatorDownIconTemplate && !_reorderIndicatorDownIconTemplate()) {
+                @if (!reorderIndicatorDownIconTemplate() && !_reorderIndicatorDownIconTemplate()) {
                     <svg data-p-icon="arrow-up" [pBind]="ptm('rowReorderIndicatorDown')['icon']" />
                 }
-                <ng-template *ngTemplateOutlet="reorderIndicatorDownIconTemplate || _reorderIndicatorDownIconTemplate()"></ng-template>
+                <ng-template *ngTemplateOutlet="reorderIndicatorDownIconTemplate() || _reorderIndicatorDownIconTemplate()"></ng-template>
             </span>
         }
     `,
@@ -395,500 +401,431 @@ export class TableService {
     changeDetection: ChangeDetectionStrategy.Eager,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[class]': "cn(cx('root'), styleClass)",
-        '[style.height]': 'virtualScrollViewportHeight',
-        '[attr.data-p]': 'dataP'
+        '[class]': "cx('root')",
+        '[style.height]': 'virtualScrollViewportHeight()',
+        '[attr.data-p]': 'dataP()'
     },
     hostDirectives: [Bind]
 })
 export class Table<RowData = any> extends BaseComponent<TablePassThrough> implements BlockableUI {
     componentName = 'DataTable';
     /**
-     * An array of objects to represent dynamic columns that are frozen.
-     * @group Props
-     */
-    @Input() frozenColumns: any[] | undefined;
-    /**
      * An array of objects to display as frozen.
      * @group Props
      */
-    @Input() frozenValue: any[] | undefined;
-    /**
-     * Style class of the component.
-     * @deprecated since v20.0.0, use `class` instead.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
+    readonly frozenValue = input<any[] | undefined>();
     /**
      * Inline style of the table.
      * @group Props
      */
-    @Input() tableStyle: { [klass: string]: any } | null | undefined;
+    readonly tableStyle = input<{ [klass: string]: any } | null | undefined>();
     /**
      * Style class of the table.
      * @group Props
      */
-    @Input() tableStyleClass: string | undefined;
+    readonly tableStyleClass = input<string | undefined>();
     /**
      * When specified as true, enables the pagination.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) paginator: boolean | undefined;
+    readonly paginator = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Number of page links to display in paginator.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) pageLinks: number = 5;
+    readonly pageLinks = input<number, unknown>(5, { transform: numberAttribute });
     /**
      * Array of integer/object values to display inside rows per page dropdown of paginator
      * @group Props
      */
-    @Input() rowsPerPageOptions: any[] | undefined;
+    readonly rowsPerPageOptions = input<any[] | undefined>();
     /**
      * Whether to show it even there is only one page.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) alwaysShowPaginator: boolean = true;
+    readonly alwaysShowPaginator = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Position of the paginator, options are "top", "bottom" or "both".
      * @group Props
      */
-    @Input() paginatorPosition: 'top' | 'bottom' | 'both' = 'bottom';
+    readonly paginatorPosition = input<'top' | 'bottom' | 'both'>('bottom');
     /**
      * Custom style class for paginator
      * @group Props
      */
-    @Input() paginatorStyleClass: string | undefined;
+    readonly paginatorStyleClass = input<string | undefined>();
     /**
      * Target element to attach the paginator dropdown overlay, valid values are "body" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]="mydiv" for a div element having #mydiv as variable name).
      * @group Props
      */
-    @Input() paginatorDropdownAppendTo: HTMLElement | ElementRef | TemplateRef<any> | string | null | undefined | any;
+    readonly paginatorDropdownAppendTo = input<HTMLElement | ElementRef | TemplateRef<any> | string | null | undefined | any>();
     /**
      * Paginator dropdown height of the viewport in pixels, a scrollbar is defined if height of list exceeds this value.
      * @group Props
      */
-    @Input() paginatorDropdownScrollHeight: string = '200px';
+    readonly paginatorDropdownScrollHeight = input<string>('200px');
     /**
      * Template of the current page report element. Available placeholders are {currentPage},{totalPages},{rows},{first},{last} and {totalRecords}
      * @group Props
      */
-    @Input() currentPageReportTemplate: string = '{currentPage} of {totalPages}';
+    readonly currentPageReportTemplate = input<string>('{currentPage} of {totalPages}');
     /**
      * Whether to display current page report.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showCurrentPageReport: boolean | undefined;
+    readonly showCurrentPageReport = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to display a dropdown to navigate to any page.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showJumpToPageDropdown: boolean | undefined;
+    readonly showJumpToPageDropdown = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to display a input to navigate to any page.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showJumpToPageInput: boolean | undefined;
+    readonly showJumpToPageInput = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * When enabled, icons are displayed on paginator to go first and last page.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showFirstLastIcon: boolean = true;
+    readonly showFirstLastIcon = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Whether to show page links.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showPageLinks: boolean = true;
+    readonly showPageLinks = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Sort order to use when an unsorted column gets sorted by user interaction.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) defaultSortOrder: number = 1;
+    readonly defaultSortOrder = input<number, unknown>(1, { transform: numberAttribute });
     /**
      * Defines whether sorting works on single column or on multiple columns.
      * @group Props
      */
-    @Input() sortMode: 'single' | 'multiple' = 'single';
+    readonly sortMode = input<'single' | 'multiple'>('single');
     /**
      * When true, resets paginator to first page after sorting. Available only when sortMode is set to single.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) resetPageOnSort: boolean = true;
+    readonly resetPageOnSort = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Specifies the selection mode, valid values are "single" and "multiple".
      * @group Props
      */
-    @Input() selectionMode: 'single' | 'multiple' | undefined | null;
+    readonly selectionMode = input<'single' | 'multiple' | undefined | null>();
     /**
      * When enabled with paginator and checkbox selection mode, the select all checkbox in the header will select all rows on the current page.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) selectionPageOnly: boolean | undefined;
+    readonly selectionPageOnly = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
-     * Selected row with a context menu.
+     * Selected row with a context menu, supports one or two-way binding.
+     * Emits `contextMenuSelectionChange` with the row data on context menu selection change.
      * @group Props
      */
-    @Input() contextMenuSelection: any;
-    /**
-     * Callback to invoke on context menu selection change.
-     * @param {*} object - row data.
-     * @group Emits
-     */
-    readonly contextMenuSelectionChange = output<any>();
+    readonly contextMenuSelection = model<any>();
     /**
      *  Defines the behavior of context menu selection, in "separate" mode context menu updates contextMenuSelection property whereas in joint mode selection property is used instead so that when row selection is enabled, both row selection and context menu selection use the same property.
      * @group Props
      */
-    @Input() contextMenuSelectionMode: string = 'separate';
+    readonly contextMenuSelectionMode = input<string>('separate');
     /**
      * A property to uniquely identify a record in data.
      * @group Props
      */
-    @Input() dataKey: string | undefined;
+    readonly dataKey = input<string | undefined>();
     /**
      * Defines whether metaKey should be considered for the selection. On touch enabled devices, metaKeySelection is turned off automatically.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) metaKeySelection: boolean | undefined = false;
+    readonly metaKeySelection = input<boolean | undefined, unknown>(false, { transform: booleanAttribute });
     /**
      * Defines if the row is selectable.
      * @group Props
      */
-    @Input() rowSelectable: (row: { data: any; index: number }) => boolean | undefined;
+    readonly rowSelectable = input<(row: { data: any; index: number }) => boolean | undefined>();
     /**
      * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
      * @group Props
      */
-    @Input() rowTrackBy: Function = (index: number, item: any) => item;
+    readonly rowTrackBy = input<Function>((index: number, item: any) => item);
     /**
      * Defines if data is loaded and interacted with in lazy manner.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) lazy: boolean = false;
+    readonly lazy = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
      * Whether to call lazy loading on initialization.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) lazyLoadOnInit: boolean = true;
+    readonly lazyLoadOnInit = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Algorithm to define if a row is selected, valid values are "equals" that compares by reference and "deepEquals" that compares all fields.
      * @group Props
      */
-    @Input() compareSelectionBy: 'equals' | 'deepEquals' = 'deepEquals';
+    readonly compareSelectionBy = input<'equals' | 'deepEquals'>('deepEquals');
     /**
      * Character to use as the csv separator.
      * @group Props
      */
-    @Input() csvSeparator: string = ',';
+    readonly csvSeparator = input<string>(',');
     /**
      * Name of the exported file.
      * @group Props
      */
-    @Input() exportFilename: string = 'download';
+    readonly exportFilename = input<string>('download');
     /**
      * An array of FilterMetadata objects to provide external filters.
      * @group Props
      */
-    @Input() filters: { [s: string]: FilterMetadata | FilterMetadata[] } = {};
+    readonly filters = input<{ [s: string]: FilterMetadata | FilterMetadata[] }>({});
     /**
      * An array of fields as string to use in global filtering.
      * @group Props
      */
-    @Input() globalFilterFields: string[] | undefined;
+    readonly globalFilterFields = input<string[] | undefined>();
     /**
      * Delay in milliseconds before filtering the data.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) filterDelay: number = 300;
+    readonly filterDelay = input<number, unknown>(300, { transform: numberAttribute });
     /**
      * Locale to use in filtering. The default locale is the host environment's current locale.
      * @group Props
      */
-    @Input() filterLocale: string | undefined;
+    readonly filterLocale = input<string | undefined>();
     /**
      * Map instance to keep the expanded rows where key of the map is the data key of the row.
      * @group Props
      */
-    @Input() expandedRowKeys: { [s: string]: boolean } = {};
+    readonly expandedRowKeys = input<{ [s: string]: boolean }>({});
     /**
      * Map instance to keep the rows being edited where key of the map is the data key of the row.
      * @group Props
      */
-    @Input() editingRowKeys: { [s: string]: boolean } = {};
+    readonly editingRowKeys = input<{ [s: string]: boolean }>({});
     /**
      * Whether multiple rows can be expanded at any time. Valid values are "multiple" and "single".
      * @group Props
      */
-    @Input() rowExpandMode: 'multiple' | 'single' = 'multiple';
+    readonly rowExpandMode = input<'multiple' | 'single'>('multiple');
     /**
      * Enables scrollable tables.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) scrollable: boolean | undefined;
+    readonly scrollable = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Type of the row grouping, valid values are "subheader" and "rowspan".
      * @group Props
      */
-    @Input() rowGroupMode: 'subheader' | 'rowspan' | undefined;
+    readonly rowGroupMode = input<'subheader' | 'rowspan' | undefined>();
     /**
      * Height of the scroll viewport in fixed pixels or the "flex" keyword for a dynamic size.
      * @group Props
      */
-    @Input() scrollHeight: string | undefined;
+    readonly scrollHeight = input<string | undefined>();
 
-    get virtualScrollViewportHeight(): string | null {
-        const height = this.scrollHeight;
-        return this.virtualScroll && height != null && height !== 'flex' ? height : null;
-    }
+    readonly virtualScrollViewportHeight = computed<string | null>(() => {
+        const height = this.scrollHeight();
+        return this.virtualScroll() && height != null && height !== 'flex' ? height : null;
+    });
     /**
      * Whether the data should be loaded on demand during scroll.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) virtualScroll: boolean | undefined;
+    readonly virtualScroll = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Height of a row to use in calculations of virtual scrolling.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) virtualScrollItemSize: number | undefined;
+    readonly virtualScrollItemSize = input<number | undefined, unknown>(undefined, { transform: numberAttribute });
     /**
      * Whether to use the scroller feature. The properties of scroller component can be used like an object in it.
      * @group Props
      */
-    @Input() virtualScrollOptions: ScrollerOptions | undefined;
+    readonly virtualScrollOptions = input<ScrollerOptions | undefined>();
     /**
      * Threshold in milliseconds to delay lazy loading during scrolling.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) virtualScrollDelay: number = 250;
-    /**
-     * Width of the frozen columns container.
-     * @group Props
-     */
-    @Input() frozenWidth: string | undefined;
+    readonly virtualScrollDelay = input<number, unknown>(250, { transform: numberAttribute });
     /**
      * Local ng-template varilable of a ContextMenu.
      * @group Props
      */
-    @Input() contextMenu: any;
+    readonly contextMenu = input<any>();
     /**
      * When enabled, columns can be resized using drag and drop.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) resizableColumns: boolean | undefined;
+    readonly resizableColumns = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Defines whether the overall table width should change on column resize, valid values are "fit" and "expand".
      * @group Props
      */
-    @Input() columnResizeMode: string = 'fit';
+    readonly columnResizeMode = input<string>('fit');
     /**
      * When enabled, columns can be reordered using drag and drop.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) reorderableColumns: boolean | undefined;
+    readonly reorderableColumns = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Displays a loader to indicate data load is in progress.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) loading: boolean | undefined;
+    readonly loading = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * The icon to show while indicating data load is in progress.
      * @group Props
      */
-    @Input() loadingIcon: string | undefined;
+    readonly loadingIcon = input<string | undefined>();
     /**
      * Whether to show the loading mask when loading property is true.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showLoader: boolean = true;
+    readonly showLoader = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Adds hover effect to rows without the need for selectionMode. Note that tr elements that can be hovered need to have "p-selectable-row" class for rowHover to work.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) rowHover: boolean | undefined;
+    readonly rowHover = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to use the default sorting or a custom one using sortFunction.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) customSort: boolean | undefined;
+    readonly customSort = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to use the initial sort badge or not.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showInitialSortBadge: boolean = true;
+    readonly showInitialSortBadge = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Export function.
      * @group Props
      */
-    @Input() exportFunction: Function | undefined;
+    readonly exportFunction = input<Function | undefined>();
     /**
      * Custom export header of the column to be exported as CSV.
      * @group Props
      */
-    @Input() exportHeader: string | undefined;
+    readonly exportHeader = input<string | undefined>();
     /**
      * Unique identifier of a stateful table to use in state storage.
      * @group Props
      */
-    @Input() stateKey: string | undefined;
+    readonly stateKey = input<string | undefined>();
     /**
      * Defines where a stateful table keeps its state, valid values are "session" for sessionStorage and "local" for localStorage.
      * @group Props
      */
-    @Input() stateStorage: 'session' | 'local' = 'session';
+    readonly stateStorage = input<'session' | 'local'>('session');
     /**
      * Defines the editing mode, valid values are "cell" and "row".
      * @group Props
      */
-    @Input() editMode: 'cell' | 'row' = 'cell';
+    readonly editMode = input<'cell' | 'row'>('cell');
     /**
      * Field name to use in row grouping.
      * @group Props
      */
-    @Input() groupRowsBy: any;
+    readonly groupRowsBy = input<any>();
     /**
      * Defines the size of the table.
      * @group Props
      */
-    @Input() size: 'small' | 'large' | undefined;
+    readonly size = input<'small' | 'large' | undefined>();
     /**
      * Whether to show grid lines between cells.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) showGridlines: boolean | undefined;
+    readonly showGridlines = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether to display rows with alternating colors.
      * @group Props
      */
-    @Input({ transform: booleanAttribute }) stripedRows: boolean | undefined;
+    readonly stripedRows = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Order to sort when default row grouping is enabled.
      * @group Props
      */
-    @Input({ transform: numberAttribute }) groupRowsByOrder: number = 1;
+    readonly groupRowsByOrder = input<number, unknown>(1, { transform: numberAttribute });
     /**
      * Defines the responsive mode, valid options are "stack" and "scroll".
      * @deprecated since v20.0.0, always defaults to scroll, stack mode needs custom implementation
      * @group Props
      */
-    @Input() responsiveLayout: string = 'scroll';
+    readonly responsiveLayout = input<string>('scroll');
     /**
      * The breakpoint to define the maximum width boundary when using stack responsive layout.
      * @group Props
      */
-    @Input() breakpoint: string = '960px';
+    readonly breakpoint = input<string>('960px');
     /**
      * Locale to be used in paginator formatting.
      * @group Props
      */
-    @Input() paginatorLocale: string | undefined;
+    readonly paginatorLocale = input<string | undefined>();
     /**
      * An array of objects to display.
      * @group Props
      */
-    @Input() get value(): RowData[] {
-        return this._value;
-    }
-    set value(val: RowData[]) {
-        this._value = val;
-    }
+    readonly value = input<RowData[]>([]);
     /**
      * An array of objects to represent dynamic columns.
      * @group Props
      */
-    @Input() get columns(): any[] | undefined {
-        return this._columns;
-    }
-    set columns(cols: any[] | undefined) {
-        this._columns = cols;
-    }
+    readonly columns = input<any[] | undefined>();
     /**
-     * Index of the first row to be displayed.
+     * Index of the first row to be displayed, supports one or two-way binding.
+     * Emits `firstChange` with the first element on pagination.
      * @group Props
      */
-    @Input() get first(): number | null | undefined {
-        return this._first;
-    }
-    set first(val: number | null | undefined) {
-        this._first = val;
-    }
+    readonly first = model<number | null | undefined>(0);
     /**
-     * Number of rows to display per page.
+     * Number of rows to display per page, supports one or two-way binding.
+     * Emits `rowsChange` with the row count on rows change.
      * @group Props
      */
-    @Input() get rows(): number | undefined {
-        return this._rows;
-    }
-    set rows(val: number | undefined) {
-        this._rows = val;
-    }
+    readonly rows = model<number | undefined>();
     /**
      * Number of total records, defaults to length of value when not defined.
      * @group Props
      */
-    @Input() totalRecords: number = 0;
+    readonly totalRecords = input<number>(0);
 
     /**
      * Name of the field to sort data by default.
      * @group Props
      */
-    @Input() get sortField(): string | undefined | null {
-        return this._sortField;
-    }
-    set sortField(val: string | undefined | null) {
-        this._sortField = val;
-    }
+    readonly sortField = input<string | undefined | null>();
     /**
      * Order to sort when default sorting is enabled.
      * @group Props
      */
-    @Input() get sortOrder(): number {
-        return this._sortOrder;
-    }
-    set sortOrder(val: number) {
-        this._sortOrder = val;
-    }
+    readonly sortOrder = input<number>(1);
     /**
      * An array of SortMeta objects to sort the data by default in multiple sort mode.
      * @group Props
      */
-    @Input() get multiSortMeta(): SortMeta[] | undefined | null {
-        return this._multiSortMeta;
-    }
-    set multiSortMeta(val: SortMeta[] | undefined | null) {
-        this._multiSortMeta = val;
-    }
+    readonly multiSortMeta = input<SortMeta[] | undefined | null>();
     /**
-     * Selected row in single mode or an array of values in multiple mode.
+     * Selected row in single mode or an array of values in multiple mode, supports one or two-way binding.
+     * Emits `selectionChange` with the selected data on selection change.
      * @group Props
      */
-    @Input() get selection(): any {
-        return this._selection;
-    }
-    set selection(val: any) {
-        this._selection = val;
-    }
+    readonly selection = model<any>();
     /**
      * Whether all data is selected.
      * @group Props
      */
-    @Input() get selectAll(): boolean | null {
-        return this._selection;
-    }
-    set selectAll(val: boolean | null) {
-        this._selection = val;
-    }
+    readonly selectAll = input<boolean | null>(null);
     /**
      * Emits when the all of the items selected or unselected.
      * @param {TableSelectAllChangeEvent} event - custom  all selection change event.
      * @group Emits
      */
     readonly selectAllChange = output<TableSelectAllChangeEvent>();
-    /**
-     * Callback to invoke on selection changed.
-     * @param {any | null} value - selected data.
-     * @group Emits
-     */
-    readonly selectionChange = output<any | null>();
     /**
      * Callback to invoke when a row is selected.
      * @param {TableRowSelectEvent} event - custom select event.
@@ -997,18 +934,6 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      */
     readonly sortFunction = output<any>();
     /**
-     * Callback to invoke on pagination.
-     * @param {number} number - first element.
-     * @group Emits
-     */
-    readonly firstChange = output<number | undefined>();
-    /**
-     * Callback to invoke on rows change.
-     * @param {number} number - Row count.
-     * @group Emits
-     */
-    readonly rowsChange = output<number | undefined>();
-    /**
      * Callback to invoke table state is saved.
      * @param {TableState} object - table state.
      * @group Emits
@@ -1035,182 +960,332 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     readonly _templates = contentChildren(PrimeTemplate);
 
-    _value: RowData[] = [];
+    _value = linkedSignal<RowData[]>(() => this.value());
 
-    _columns: any[] | undefined;
+    _columns = linkedSignal<any[] | undefined>(() => this.columns());
 
-    _totalRecords: number = 0;
+    _totalRecords = linkedSignal<number>(() => {
+        const totalRecords = this.totalRecords();
+        const value = this.value();
 
-    _first: number | null | undefined = 0;
+        if (this.lazy()) {
+            return totalRecords;
+        }
 
-    _rows: number | undefined;
+        return totalRecords === 0 && value ? value.length : (totalRecords ?? 0);
+    });
 
-    filteredValue: any[] | undefined | null;
+    _filters = linkedSignal<{ [s: string]: FilterMetadata | FilterMetadata[] }>(() => this.filters());
+
+    _expandedRowKeys = linkedSignal<{ [s: string]: boolean }>(() => this.expandedRowKeys());
+
+    filteredValue = signal<any[] | undefined | null>(undefined);
 
     // @todo will be refactored later
     readonly _headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
-    headerTemplate: Nullable<TemplateRef<any>>;
+    readonly headerTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'header')
+                .at(-1)?.template
+    );
 
-    headerGroupedTemplate: Nullable<TemplateRef<any>>;
+    readonly headerGroupedTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'headergrouped')
+                .at(-1)?.template
+    );
 
     readonly _bodyTemplate = contentChild<TemplateRef<any>>('body', { descendants: false });
-    bodyTemplate: Nullable<TemplateRef<any>>;
+    readonly bodyTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'body')
+                .at(-1)?.template
+    );
 
     readonly _loadingBodyTemplate = contentChild<TemplateRef<any>>('loadingbody', { descendants: false });
-    loadingBodyTemplate: Nullable<TemplateRef<any>>;
+    readonly loadingBodyTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'loadingbody')
+                .at(-1)?.template
+    );
 
     readonly _captionTemplate = contentChild<TemplateRef<any>>('caption', { descendants: false });
-    captionTemplate: Nullable<TemplateRef<any>>;
+    readonly captionTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'caption')
+                .at(-1)?.template
+    );
 
     readonly _footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
-    footerTemplate: Nullable<TemplateRef<any>>;
+    readonly footerTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'footer')
+                .at(-1)?.template
+    );
 
     readonly _footerGroupedTemplate = contentChild<TemplateRef<any>>('footergrouped', { descendants: false });
-    footerGroupedTemplate: Nullable<TemplateRef<any>>;
+    readonly footerGroupedTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'footergrouped')
+                .at(-1)?.template
+    );
 
     readonly _summaryTemplate = contentChild<TemplateRef<any>>('summary', { descendants: false });
-    summaryTemplate: Nullable<TemplateRef<any>>;
+    readonly summaryTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'summary')
+                .at(-1)?.template
+    );
 
     readonly _colGroupTemplate = contentChild<TemplateRef<any>>('colgroup', { descendants: false });
-    colGroupTemplate: Nullable<TemplateRef<any>>;
+    readonly colGroupTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'colgroup')
+                .at(-1)?.template
+    );
 
     readonly _expandedRowTemplate = contentChild<TemplateRef<any>>('expandedrow', { descendants: false });
-    expandedRowTemplate: Nullable<TemplateRef<any>>;
+    readonly expandedRowTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'expandedrow')
+                .at(-1)?.template
+    );
 
     readonly _groupHeaderTemplate = contentChild<TemplateRef<any>>('groupheader', { descendants: false });
-    groupHeaderTemplate: Nullable<TemplateRef<any>>;
+    readonly groupHeaderTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'groupheader')
+                .at(-1)?.template
+    );
 
     readonly _groupFooterTemplate = contentChild<TemplateRef<any>>('groupfooter', { descendants: false });
-    groupFooterTemplate: Nullable<TemplateRef<any>>;
+    readonly groupFooterTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'groupfooter')
+                .at(-1)?.template
+    );
 
     readonly _frozenExpandedRowTemplate = contentChild<TemplateRef<any>>('frozenexpandedrow', { descendants: false });
-    frozenExpandedRowTemplate: Nullable<TemplateRef<any>>;
+    readonly frozenExpandedRowTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'frozenexpandedrow')
+                .at(-1)?.template
+    );
 
     readonly _frozenBodyTemplate = contentChild<TemplateRef<any>>('frozenbody', { descendants: false });
-    frozenBodyTemplate: Nullable<TemplateRef<any>>;
+    readonly frozenBodyTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'frozenbody')
+                .at(-1)?.template
+    );
 
     readonly _emptyMessageTemplate = contentChild<TemplateRef<any>>('emptymessage', { descendants: false });
-    emptyMessageTemplate: Nullable<TemplateRef<any>>;
+    readonly emptyMessageTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'emptymessage')
+                .at(-1)?.template
+    );
 
     readonly _paginatorLeftTemplate = contentChild<TemplateRef<any>>('paginatorleft', { descendants: false });
-    paginatorLeftTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorLeftTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatorleft')
+                .at(-1)?.template
+    );
 
     readonly _paginatorRightTemplate = contentChild<TemplateRef<any>>('paginatorright', { descendants: false });
-    paginatorRightTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorRightTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatorright')
+                .at(-1)?.template
+    );
 
     readonly _paginatorDropdownItemTemplate = contentChild<TemplateRef<any>>('paginatordropdownitem', { descendants: false });
-    paginatorDropdownItemTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorDropdownItemTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatordropdownitem')
+                .at(-1)?.template
+    );
 
     readonly _loadingIconTemplate = contentChild<TemplateRef<any>>('loadingicon', { descendants: false });
-    loadingIconTemplate: Nullable<TemplateRef<any>>;
+    readonly loadingIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'loadingicon')
+                .at(-1)?.template
+    );
 
     readonly _reorderIndicatorUpIconTemplate = contentChild<TemplateRef<any>>('reorderindicatorupicon', { descendants: false });
-    reorderIndicatorUpIconTemplate: Nullable<TemplateRef<any>>;
+    readonly reorderIndicatorUpIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'reorderindicatorupicon')
+                .at(-1)?.template
+    );
 
     readonly _reorderIndicatorDownIconTemplate = contentChild<TemplateRef<any>>('reorderindicatordownicon', { descendants: false });
-    reorderIndicatorDownIconTemplate: Nullable<TemplateRef<any>>;
+    readonly reorderIndicatorDownIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'reorderindicatordownicon')
+                .at(-1)?.template
+    );
 
     readonly _sortIconTemplate = contentChild<TemplateRef<any>>('sorticon', { descendants: false });
-    sortIconTemplate: Nullable<TemplateRef<any>>;
+    readonly sortIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'sorticon')
+                .at(-1)?.template
+    );
 
     readonly _checkboxIconTemplate = contentChild<TemplateRef<any>>('checkboxicon', { descendants: false });
-    checkboxIconTemplate: Nullable<TemplateRef<any>>;
+    readonly checkboxIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'checkboxicon')
+                .at(-1)?.template
+    );
 
     readonly _headerCheckboxIconTemplate = contentChild<TemplateRef<any>>('headercheckboxicon', { descendants: false });
-    headerCheckboxIconTemplate: Nullable<TemplateRef<any>>;
+    readonly headerCheckboxIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'headercheckboxicon')
+                .at(-1)?.template
+    );
 
     readonly _paginatorDropdownIconTemplate = contentChild<TemplateRef<any>>('paginatordropdownicon', { descendants: false });
-    paginatorDropdownIconTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorDropdownIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatordropdownicon')
+                .at(-1)?.template
+    );
 
     readonly _paginatorFirstPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorfirstpagelinkicon', { descendants: false });
-    paginatorFirstPageLinkIconTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorFirstPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatorfirstpagelinkicon')
+                .at(-1)?.template
+    );
 
     readonly _paginatorLastPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorlastpagelinkicon', { descendants: false });
-    paginatorLastPageLinkIconTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorLastPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatorlastpagelinkicon')
+                .at(-1)?.template
+    );
 
     readonly _paginatorPreviousPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorpreviouspagelinkicon', { descendants: false });
-    paginatorPreviousPageLinkIconTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorPreviousPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatorpreviouspagelinkicon')
+                .at(-1)?.template
+    );
 
     readonly _paginatorNextPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatornextpagelinkicon', { descendants: false });
-    paginatorNextPageLinkIconTemplate: Nullable<TemplateRef<any>>;
+    readonly paginatorNextPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
+        () =>
+            this._templates()
+                .filter((item) => item.getType() === 'paginatornextpagelinkicon')
+                .at(-1)?.template
+    );
 
-    selectionKeys: any = {};
+    selectionKeys = signal<any>({});
 
-    lastResizerHelperX: number | undefined;
+    lastResizerHelperX = signal<number | undefined>(undefined);
 
-    reorderIconWidth: number | undefined;
+    reorderIconWidth = signal<number | undefined>(undefined);
 
-    reorderIconHeight: number | undefined;
+    reorderIconHeight = signal<number | undefined>(undefined);
 
-    draggedColumn: any;
+    draggedColumn = signal<any>(undefined);
 
-    draggedRowIndex: number | undefined | null;
+    draggedRowIndex = signal<number | undefined | null>(undefined);
 
-    droppedRowIndex: number | undefined | null;
+    droppedRowIndex = signal<number | undefined | null>(undefined);
 
-    rowDragging: boolean | undefined | null;
+    rowDragging = signal<boolean | undefined | null>(undefined);
 
-    dropPosition: number | undefined | null;
+    dropPosition = signal<number | undefined | null>(undefined);
 
-    editingCell: Element | undefined | null;
+    editingCell = signal<Element | undefined | null>(undefined);
 
-    editingCellData: any;
+    editingCellData = signal<any>(undefined);
 
-    editingCellField: any;
+    editingCellField = signal<any>(undefined);
 
-    editingCellRowIndex: number | undefined | null;
+    editingCellRowIndex = signal<number | undefined | null>(undefined);
 
-    selfClick: boolean | undefined | null;
+    selfClick = signal<boolean | undefined | null>(undefined);
 
-    documentEditListener: any;
+    documentEditListener = signal<any>(undefined);
 
-    _multiSortMeta: SortMeta[] | undefined | null;
+    _multiSortMeta = linkedSignal<SortMeta[] | undefined | null>(() => this.multiSortMeta());
 
-    _sortField: string | undefined | null;
+    _sortField = linkedSignal<string | undefined | null>(() => this.sortField());
 
-    _sortOrder: number = 1;
+    _sortOrder = linkedSignal<number>(() => this.sortOrder());
 
-    preventSelectionSetterPropagation: boolean | undefined;
+    preventSelectionSetterPropagation = signal<boolean | undefined>(undefined);
 
-    _selection: any;
+    anchorRowIndex = signal<number | undefined | null>(undefined);
 
-    _selectAll: boolean | null = null;
+    rangeRowIndex = signal<number | undefined>(undefined);
 
-    anchorRowIndex: number | undefined | null;
+    filterTimeout = signal<any>(undefined);
 
-    rangeRowIndex: number | undefined;
+    initialized = signal<boolean | undefined | null>(undefined);
 
-    filterTimeout: any;
+    rowTouched = signal<boolean | undefined>(undefined);
 
-    initialized: boolean | undefined | null;
+    restoringSort = signal<boolean | undefined>(undefined);
 
-    rowTouched: boolean | undefined;
+    restoringFilter = signal<boolean | undefined>(undefined);
 
-    restoringSort: boolean | undefined;
+    stateRestored = signal<boolean | undefined>(undefined);
 
-    restoringFilter: boolean | undefined;
+    columnOrderStateRestored = signal<boolean | undefined>(undefined);
 
-    stateRestored: boolean | undefined;
+    columnWidthsState = signal<string | undefined>(undefined);
 
-    columnOrderStateRestored: boolean | undefined;
+    tableWidthState = signal<string | undefined>(undefined);
 
-    columnWidthsState: string | undefined;
+    overlaySubscription = signal<Subscription | undefined>(undefined);
 
-    tableWidthState: string | undefined;
+    resizeColumnElement = signal<HTMLElement | undefined>(undefined);
 
-    overlaySubscription: Subscription | undefined;
-
-    resizeColumnElement: HTMLElement;
-
-    columnResizing: boolean = false;
+    columnResizing = signal<boolean>(false);
 
     rowGroupHeaderStyleObject: any = {};
 
     id: string = UniqueComponentId();
 
-    styleElement: any;
+    styleElement = signal<any>(undefined);
 
-    responsiveStyleElement: any;
+    responsiveStyleElement = signal<any>(undefined);
 
     overlayService = inject(OverlayService);
 
@@ -1224,322 +1299,183 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     bindDirectiveInstance = inject(Bind, { self: true });
 
-    onAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-    }
-
-    onInit() {
-        if (this.lazy && this.lazyLoadOnInit) {
-            if (!this.virtualScroll) {
-                this.onLazyLoad.emit(this.createLazyLoadMetadata());
+    constructor() {
+        super();
+        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        afterNextRender(() => {
+            if (isPlatformBrowser(this.platformId)) {
+                if (this.isStateful() && this.resizableColumns()) {
+                    this.restoreColumnWidths();
+                }
             }
 
-            if (this.restoringFilter) {
-                this.restoringFilter = false;
-            }
-        }
+            this.initialized.set(true);
+        });
+        effect(() => {
+            const value = this.value();
 
-        if (this.responsiveLayout === 'stack') {
-            this.createResponsiveStyle();
-        }
+            untracked(() => {
+                if (this.isStateful() && !this.stateRestored() && isPlatformBrowser(this.platformId)) {
+                    this.restoreState();
+                }
 
-        this.initialized = true;
-    }
+                if (!this.lazy()) {
+                    if (this.sortMode() == 'single' && (this._sortField() || this.groupRowsBy())) this.sortSingle();
+                    else if (this.sortMode() == 'multiple' && (this._multiSortMeta() || this.groupRowsBy())) this.sortMultiple();
+                    else if (this.hasFilter())
+                        //sort already filters
+                        this._filter();
+                }
 
-    onAfterContentInit() {
-        this._templates().forEach((item) => {
-            switch (item.getType()) {
-                case 'caption':
-                    this.captionTemplate = item.template;
-                    break;
+                this.tableService.onValueChange(value);
+            });
+        });
+        effect(() => {
+            const columns = this.columns();
 
-                case 'header':
-                    this.headerTemplate = item.template;
-                    break;
+            untracked(() => {
+                if (!this.isStateful()) {
+                    this.tableService.onColumnsChange(columns as any[]);
+                }
 
-                case 'headergrouped':
-                    this.headerGroupedTemplate = item.template;
-                    break;
+                if (this._columns() && this.isStateful() && this.reorderableColumns() && !this.columnOrderStateRestored()) {
+                    this.restoreColumnOrder();
 
-                case 'body':
-                    this.bodyTemplate = item.template;
-                    break;
+                    this.tableService.onColumnsChange(this._columns() as any[]);
+                }
+            });
+        });
+        effect(() => {
+            this.sortField();
+            this.groupRowsBy();
+            this.sortOrder();
+            this.groupRowsByOrder();
 
-                case 'loadingbody':
-                    this.loadingBodyTemplate = item.template;
-                    break;
+            untracked(() => {
+                //avoid triggering lazy load prior to lazy initialization at onInit
+                if (!this.lazy() || this.initialized()) {
+                    if (this.sortMode() === 'single') {
+                        this.sortSingle();
+                    }
+                }
+            });
+        });
+        effect(() => {
+            this.multiSortMeta();
 
-                case 'footer':
-                    this.footerTemplate = item.template;
-                    break;
+            untracked(() => {
+                if (this.sortMode() === 'multiple' && (this.initialized() || (!this.lazy() && !this.virtualScroll()))) {
+                    this.sortMultiple();
+                }
+            });
+        });
+        effect(() => {
+            this.selection();
 
-                case 'footergrouped':
-                    this.footerGroupedTemplate = item.template;
-                    break;
+            untracked(() => {
+                if (!this.preventSelectionSetterPropagation()) {
+                    this.updateSelectionKeys();
+                    this.tableService.onSelectionChange();
+                }
+                this.preventSelectionSetterPropagation.set(false);
+            });
+        });
+        let selectAllInitialized = false;
+        effect(() => {
+            const selectAll = this.selectAll();
 
-                case 'summary':
-                    this.summaryTemplate = item.template;
-                    break;
+            untracked(() => {
+                if (!selectAllInitialized) {
+                    selectAllInitialized = true;
 
-                case 'colgroup':
-                    this.colGroupTemplate = item.template;
-                    break;
+                    if (selectAll === null) {
+                        return;
+                    }
+                }
 
-                case 'expandedrow':
-                    this.expandedRowTemplate = item.template;
-                    break;
+                if (!this.preventSelectionSetterPropagation()) {
+                    this.updateSelectionKeys();
+                    this.tableService.onSelectionChange();
 
-                case 'groupheader':
-                    this.groupHeaderTemplate = item.template;
-                    break;
-
-                case 'groupfooter':
-                    this.groupFooterTemplate = item.template;
-                    break;
-
-                case 'frozenbody':
-                    this.frozenBodyTemplate = item.template;
-                    break;
-
-                case 'frozenexpandedrow':
-                    this.frozenExpandedRowTemplate = item.template;
-                    break;
-
-                case 'emptymessage':
-                    this.emptyMessageTemplate = item.template;
-                    break;
-
-                case 'paginatorleft':
-                    this.paginatorLeftTemplate = item.template;
-                    break;
-
-                case 'paginatorright':
-                    this.paginatorRightTemplate = item.template;
-                    break;
-
-                case 'paginatordropdownicon':
-                    this.paginatorDropdownIconTemplate = item.template;
-                    break;
-
-                case 'paginatordropdownitem':
-                    this.paginatorDropdownItemTemplate = item.template;
-                    break;
-
-                case 'paginatorfirstpagelinkicon':
-                    this.paginatorFirstPageLinkIconTemplate = item.template;
-                    break;
-
-                case 'paginatorlastpagelinkicon':
-                    this.paginatorLastPageLinkIconTemplate = item.template;
-                    break;
-
-                case 'paginatorpreviouspagelinkicon':
-                    this.paginatorPreviousPageLinkIconTemplate = item.template;
-                    break;
-
-                case 'paginatornextpagelinkicon':
-                    this.paginatorNextPageLinkIconTemplate = item.template;
-                    break;
-
-                case 'loadingicon':
-                    this.loadingIconTemplate = item.template;
-                    break;
-
-                case 'reorderindicatorupicon':
-                    this.reorderIndicatorUpIconTemplate = item.template;
-                    break;
-
-                case 'reorderindicatordownicon':
-                    this.reorderIndicatorDownIconTemplate = item.template;
-                    break;
-
-                case 'sorticon':
-                    this.sortIconTemplate = item.template;
-                    break;
-
-                case 'checkboxicon':
-                    this.checkboxIconTemplate = item.template;
-                    break;
-
-                case 'headercheckboxicon':
-                    this.headerCheckboxIconTemplate = item.template;
-                    break;
-            }
+                    if (this.isStateful()) {
+                        this.saveState();
+                    }
+                }
+                this.preventSelectionSetterPropagation.set(false);
+            });
         });
     }
 
-    onAfterViewInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.isStateful() && this.resizableColumns) {
-                this.restoreColumnWidths();
+    onInit() {
+        if (this.isStateful() && !this.stateRestored() && isPlatformBrowser(this.platformId)) {
+            this.restoreState();
+        }
+
+        if (this.lazy() && this.lazyLoadOnInit()) {
+            if (!this.virtualScroll()) {
+                this.onLazyLoad.emit(this.createLazyLoadMetadata());
             }
+
+            if (this.restoringFilter()) {
+                this.restoringFilter.set(false);
+            }
+        }
+
+        if (this.responsiveLayout() === 'stack') {
+            this.createResponsiveStyle();
         }
     }
 
-    onChanges(simpleChange: SimpleChanges) {
-        if (simpleChange.totalRecords && simpleChange.totalRecords.firstChange) {
-            this._totalRecords = simpleChange.totalRecords.currentValue;
-        }
+    readonly processedData = computed(() => this.filteredValue() || this._value() || []);
 
-        if (simpleChange.value) {
-            if (this.isStateful() && !this.stateRestored && isPlatformBrowser(this.platformId)) {
-                this.restoreState();
-            }
-
-            this._value = simpleChange.value.currentValue;
-
-            if (!this.lazy) {
-                this.totalRecords = this._totalRecords === 0 && this._value ? this._value.length : (this._totalRecords ?? 0);
-
-                if (this.sortMode == 'single' && (this.sortField || this.groupRowsBy)) this.sortSingle();
-                else if (this.sortMode == 'multiple' && (this.multiSortMeta || this.groupRowsBy)) this.sortMultiple();
-                else if (this.hasFilter())
-                    //sort already filters
-                    this._filter();
-            }
-
-            this.tableService.onValueChange(simpleChange.value.currentValue);
-        }
-
-        if (simpleChange.columns) {
-            if (!this.isStateful()) {
-                this._columns = simpleChange.columns.currentValue;
-                this.tableService.onColumnsChange(simpleChange.columns.currentValue);
-            }
-
-            if (this._columns && this.isStateful() && this.reorderableColumns && !this.columnOrderStateRestored) {
-                this.restoreColumnOrder();
-
-                this.tableService.onColumnsChange(this._columns);
-            }
-        }
-
-        if (simpleChange.sortField) {
-            this._sortField = simpleChange.sortField.currentValue;
-
-            //avoid triggering lazy load prior to lazy initialization at onInit
-            if (!this.lazy || this.initialized) {
-                if (this.sortMode === 'single') {
-                    this.sortSingle();
-                }
-            }
-        }
-
-        if (simpleChange.groupRowsBy) {
-            //avoid triggering lazy load prior to lazy initialization at onInit
-            if (!this.lazy || this.initialized) {
-                if (this.sortMode === 'single') {
-                    this.sortSingle();
-                }
-            }
-        }
-
-        if (simpleChange.sortOrder) {
-            this._sortOrder = simpleChange.sortOrder.currentValue;
-
-            //avoid triggering lazy load prior to lazy initialization at onInit
-            if (!this.lazy || this.initialized) {
-                if (this.sortMode === 'single') {
-                    this.sortSingle();
-                }
-            }
-        }
-
-        if (simpleChange.groupRowsByOrder) {
-            //avoid triggering lazy load prior to lazy initialization at onInit
-            if (!this.lazy || this.initialized) {
-                if (this.sortMode === 'single') {
-                    this.sortSingle();
-                }
-            }
-        }
-
-        if (simpleChange.multiSortMeta) {
-            this._multiSortMeta = simpleChange.multiSortMeta.currentValue;
-            if (this.sortMode === 'multiple' && (this.initialized || (!this.lazy && !this.virtualScroll))) {
-                this.sortMultiple();
-            }
-        }
-
-        if (simpleChange.selection) {
-            this._selection = simpleChange.selection.currentValue;
-
-            if (!this.preventSelectionSetterPropagation) {
-                this.updateSelectionKeys();
-                this.tableService.onSelectionChange();
-            }
-            this.preventSelectionSetterPropagation = false;
-        }
-
-        if (simpleChange.selectAll) {
-            this._selectAll = simpleChange.selectAll.currentValue;
-
-            if (!this.preventSelectionSetterPropagation) {
-                this.updateSelectionKeys();
-                this.tableService.onSelectionChange();
-
-                if (this.isStateful()) {
-                    this.saveState();
-                }
-            }
-            this.preventSelectionSetterPropagation = false;
-        }
-    }
-
-    get processedData() {
-        return this.filteredValue || this.value || [];
-    }
-
-    private _initialColWidths: number[];
+    private _initialColWidths = signal<number[] | undefined>(undefined);
 
     dataToRender(data: any) {
-        const _data = data || this.processedData;
+        const _data = data || this.processedData();
 
-        if (_data && this.paginator) {
-            const first = this.lazy ? 0 : this.first;
-            return _data.slice(first, <number>first + <number>this.rows);
+        if (_data && this.paginator()) {
+            const first = this.lazy() ? 0 : this.first();
+            return _data.slice(first, <number>first + <number>this.rows());
         }
 
         return _data;
     }
 
     updateSelectionKeys() {
-        if (this.dataKey && this._selection) {
-            this.selectionKeys = {};
-            if (Array.isArray(this._selection)) {
-                for (let data of this._selection) {
-                    this.selectionKeys[String(ObjectUtils.resolveFieldData(data, this.dataKey))] = 1;
+        if (this.dataKey() && this.selection()) {
+            this.selectionKeys.set({});
+            if (Array.isArray(this.selection())) {
+                for (let data of this.selection()) {
+                    this.selectionKeys()[String(ObjectUtils.resolveFieldData(data, this.dataKey()))] = 1;
                 }
             } else {
-                this.selectionKeys[String(ObjectUtils.resolveFieldData(this._selection, this.dataKey))] = 1;
+                this.selectionKeys()[String(ObjectUtils.resolveFieldData(this.selection(), this.dataKey()))] = 1;
             }
         }
     }
 
     onPageChange(event: TablePageEvent) {
-        this.first = event.first;
-        this.rows = event.rows;
+        this.first.set(event.first);
+        this.rows.set(event.rows);
 
         this.onPage.emit({
-            first: this.first,
-            rows: <number>this.rows
+            first: <number>this.first(),
+            rows: <number>this.rows()
         });
 
-        if (this.lazy) {
+        if (this.lazy()) {
             this.onLazyLoad.emit(this.createLazyLoadMetadata());
         }
 
-        this.firstChange.emit(this.first);
-        this.rowsChange.emit(this.rows);
-        this.tableService.onValueChange(this.value);
+        this.tableService.onValueChange(this._value());
 
         if (this.isStateful()) {
             this.saveState();
         }
 
-        this.anchorRowIndex = null;
+        this.anchorRowIndex.set(null);
 
-        if (this.scrollable) {
+        if (this.scrollable()) {
             this.resetScrollTop();
         }
     }
@@ -1547,39 +1483,37 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     sort(event: any) {
         let originalEvent = event.originalEvent;
 
-        if (this.sortMode === 'single') {
-            this._sortOrder = this.sortField === event.field ? this.sortOrder * -1 : this.defaultSortOrder;
-            this._sortField = event.field;
+        if (this.sortMode() === 'single') {
+            this._sortOrder.set(this._sortField() === event.field ? this._sortOrder() * -1 : this.defaultSortOrder());
+            this._sortField.set(event.field);
 
-            if (this.resetPageOnSort) {
-                this._first = 0;
-                this.firstChange.emit(this._first);
+            if (this.resetPageOnSort()) {
+                this.first.set(0);
 
-                if (this.scrollable) {
+                if (this.scrollable()) {
                     this.resetScrollTop();
                 }
             }
 
             this.sortSingle();
         }
-        if (this.sortMode === 'multiple') {
+        if (this.sortMode() === 'multiple') {
             let metaKey = (<KeyboardEvent>originalEvent).metaKey || (<KeyboardEvent>originalEvent).ctrlKey;
             let sortMeta = this.getSortMeta(<string>event.field);
 
             if (sortMeta) {
                 if (!metaKey) {
-                    this._multiSortMeta = [
+                    this._multiSortMeta.set([
                         {
                             field: <string>event.field,
                             order: sortMeta.order * -1
                         }
-                    ];
+                    ]);
 
-                    if (this.resetPageOnSort) {
-                        this._first = 0;
-                        this.firstChange.emit(this._first);
+                    if (this.resetPageOnSort()) {
+                        this.first.set(0);
 
-                        if (this.scrollable) {
+                        if (this.scrollable()) {
                             this.resetScrollTop();
                         }
                     }
@@ -1587,17 +1521,16 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     sortMeta.order = sortMeta.order * -1;
                 }
             } else {
-                if (!metaKey || !this.multiSortMeta) {
-                    this._multiSortMeta = [];
+                if (!metaKey || !this._multiSortMeta()) {
+                    this._multiSortMeta.set([]);
 
-                    if (this.resetPageOnSort) {
-                        this._first = 0;
-                        this.firstChange.emit(this._first);
+                    if (this.resetPageOnSort()) {
+                        this.first.set(0);
                     }
                 }
-                (<SortMeta[]>this._multiSortMeta).push({
+                (<SortMeta[]>this._multiSortMeta()).push({
                     field: <string>event.field,
-                    order: this.defaultSortOrder
+                    order: this.defaultSortOrder()
                 });
             }
 
@@ -1608,35 +1541,35 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.saveState();
         }
 
-        this.anchorRowIndex = null;
+        this.anchorRowIndex.set(null);
     }
 
     sortSingle() {
-        let field = this.sortField || this.groupRowsBy;
-        let order = this.sortField ? this.sortOrder : this.groupRowsByOrder;
-        if (this.groupRowsBy && this.sortField && this.groupRowsBy !== this.sortField) {
-            this._multiSortMeta = [this.getGroupRowsMeta(), { field: this.sortField, order: this.sortOrder }];
+        let field = this._sortField() || this.groupRowsBy();
+        let order = this._sortField() ? this._sortOrder() : this.groupRowsByOrder();
+        if (this.groupRowsBy() && this._sortField() && this.groupRowsBy() !== this._sortField()) {
+            this._multiSortMeta.set([this.getGroupRowsMeta(), { field: this._sortField(), order: this._sortOrder() }]);
             this.sortMultiple();
             return;
         }
 
         if (field && order) {
-            if (this.restoringSort) {
-                this.restoringSort = false;
+            if (this.restoringSort()) {
+                this.restoringSort.set(false);
             }
 
-            if (this.lazy) {
+            if (this.lazy()) {
                 this.onLazyLoad.emit(this.createLazyLoadMetadata());
-            } else if (this.value) {
-                if (this.customSort) {
+            } else if (this._value()) {
+                if (this.customSort()) {
                     this.sortFunction.emit({
-                        data: this.value,
-                        mode: this.sortMode,
+                        data: this._value(),
+                        mode: this.sortMode(),
                         field: field,
                         order: order
                     });
                 } else {
-                    this.value.sort((data1, data2) => {
+                    this._value().sort((data1, data2) => {
                         let value1 = ObjectUtils.resolveFieldData(data1, field);
                         let value2 = ObjectUtils.resolveFieldData(data2, field);
                         let result: any = null;
@@ -1650,7 +1583,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         return order * (result || 0);
                     });
 
-                    this._value = [...this.value];
+                    this._value.set([...this._value()]);
                 }
 
                 if (this.hasFilter()) {
@@ -1669,26 +1602,27 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     sortMultiple() {
-        if (this.groupRowsBy) {
-            if (!this._multiSortMeta || !this._multiSortMeta.length) this._multiSortMeta = [this.getGroupRowsMeta()];
-            else if (this._multiSortMeta[0].field !== this.groupRowsBy) this._multiSortMeta = [this.getGroupRowsMeta(), ...this._multiSortMeta];
+        if (this.groupRowsBy()) {
+            const multiSortMeta = this._multiSortMeta();
+            if (!multiSortMeta || !multiSortMeta.length) this._multiSortMeta.set([this.getGroupRowsMeta()]);
+            else if (multiSortMeta[0].field !== this.groupRowsBy()) this._multiSortMeta.set([this.getGroupRowsMeta(), ...multiSortMeta]);
         }
-        if (this.multiSortMeta && this.multiSortMeta.length > 0) {
-            if (this.lazy) {
+        if (this._multiSortMeta() && this._multiSortMeta()!.length > 0) {
+            if (this.lazy()) {
                 this.onLazyLoad.emit(this.createLazyLoadMetadata());
-            } else if (this.value) {
-                if (this.customSort) {
+            } else if (this._value()) {
+                if (this.customSort()) {
                     this.sortFunction.emit({
-                        data: this.value,
-                        mode: this.sortMode,
-                        multiSortMeta: this.multiSortMeta
+                        data: this._value(),
+                        mode: this.sortMode(),
+                        multiSortMeta: this._multiSortMeta()
                     });
                 } else {
-                    this.value.sort((data1, data2) => {
-                        return this.multisortField(data1, data2, <SortMeta[]>this.multiSortMeta, 0);
+                    this._value().sort((data1, data2) => {
+                        return this.multisortField(data1, data2, <SortMeta[]>this._multiSortMeta(), 0);
                     });
 
-                    this._value = [...this.value];
+                    this._value.set([...this._value()]);
                 }
 
                 if (this.hasFilter()) {
@@ -1697,30 +1631,31 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             }
 
             this.onSort.emit({
-                multisortmeta: <SortMeta[]>this.multiSortMeta
+                multisortmeta: <SortMeta[]>this._multiSortMeta()
             });
-            this.tableService.onSort(this.multiSortMeta);
+            this.tableService.onSort(<SortMeta[]>this._multiSortMeta());
         }
     }
 
     multisortField(data1: any, data2: any, multiSortMeta: SortMeta[], index: number): any {
         const value1 = ObjectUtils.resolveFieldData(data1, multiSortMeta[index].field);
         const value2 = ObjectUtils.resolveFieldData(data2, multiSortMeta[index].field);
-        if (ObjectUtils.compare(value1, value2, this.filterLocale) === 0) {
+        if (ObjectUtils.compare(value1, value2, this.filterLocale()) === 0) {
             return multiSortMeta.length - 1 > index ? this.multisortField(data1, data2, multiSortMeta, index + 1) : 0;
         }
         return this.compareValuesOnSort(value1, value2, multiSortMeta[index].order);
     }
 
     compareValuesOnSort(value1: any, value2: any, order: any) {
-        return ObjectUtils.sort(value1, value2, order, this.filterLocale, this.sortOrder);
+        return ObjectUtils.sort(value1, value2, order, this.filterLocale(), this._sortOrder());
     }
 
     getSortMeta(field: string) {
-        if (this.multiSortMeta && this.multiSortMeta.length) {
-            for (let i = 0; i < this.multiSortMeta.length; i++) {
-                if (this.multiSortMeta[i].field === field) {
-                    return this.multiSortMeta[i];
+        const multiSortMeta = this._multiSortMeta();
+        if (multiSortMeta && multiSortMeta.length) {
+            for (let i = 0; i < multiSortMeta.length; i++) {
+                if (multiSortMeta[i].field === field) {
+                    return multiSortMeta[i];
                 }
             }
         }
@@ -1729,13 +1664,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     isSorted(field: string) {
-        if (this.sortMode === 'single') {
-            return this.sortField && this.sortField === field;
-        } else if (this.sortMode === 'multiple') {
+        if (this.sortMode() === 'single') {
+            return this._sortField() && this._sortField() === field;
+        } else if (this.sortMode() === 'multiple') {
             let sorted = false;
-            if (this.multiSortMeta) {
-                for (let i = 0; i < this.multiSortMeta.length; i++) {
-                    if (this.multiSortMeta[i].field == field) {
+            const multiSortMeta = this._multiSortMeta();
+            if (multiSortMeta) {
+                for (let i = 0; i < multiSortMeta.length; i++) {
+                    if (multiSortMeta[i].field == field) {
                         sorted = true;
                         break;
                     }
@@ -1753,18 +1689,18 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             return;
         }
 
-        if (this.selectionMode) {
+        if (this.selectionMode()) {
             let rowData = event.rowData;
             let rowIndex = event.rowIndex;
 
-            this.preventSelectionSetterPropagation = true;
-            if (this.isMultipleSelectionMode() && event.originalEvent.shiftKey && this.anchorRowIndex != null) {
+            this.preventSelectionSetterPropagation.set(true);
+            if (this.isMultipleSelectionMode() && event.originalEvent.shiftKey && this.anchorRowIndex() != null) {
                 DomHandler.clearSelection();
-                if (this.rangeRowIndex != null) {
+                if (this.rangeRowIndex() != null) {
                     this.clearSelectionRange(event.originalEvent);
                 }
 
-                this.rangeRowIndex = rowIndex;
+                this.rangeRowIndex.set(rowIndex);
                 this.selectRange(event.originalEvent, rowIndex);
             } else {
                 let selected = this.isSelected(rowData);
@@ -1773,25 +1709,23 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     return;
                 }
 
-                let metaSelection = this.rowTouched ? false : this.metaKeySelection;
-                let dataKeyValue = this.dataKey ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey)) : null;
-                this.anchorRowIndex = rowIndex;
-                this.rangeRowIndex = rowIndex;
+                let metaSelection = this.rowTouched() ? false : this.metaKeySelection();
+                let dataKeyValue = this.dataKey() ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey())) : null;
+                this.anchorRowIndex.set(rowIndex);
+                this.rangeRowIndex.set(rowIndex);
 
                 if (metaSelection) {
                     let metaKey = event.originalEvent.metaKey || event.originalEvent.ctrlKey;
 
                     if (selected && metaKey) {
                         if (this.isSingleSelectionMode()) {
-                            this._selection = null;
-                            this.selectionKeys = {};
-                            this.selectionChange.emit(null);
+                            this.selection.set(null);
+                            this.selectionKeys.set({});
                         } else {
                             let selectionIndex = this.findIndexInSelection(rowData);
-                            this._selection = this.selection.filter((val: any, i: number) => i != selectionIndex);
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set(this.selection().filter((val: any, i: number) => i != selectionIndex));
                             if (dataKeyValue) {
-                                delete this.selectionKeys[dataKeyValue];
+                                delete this.selectionKeys()[dataKeyValue];
                             }
                         }
 
@@ -1802,24 +1736,23 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         });
                     } else {
                         if (this.isSingleSelectionMode()) {
-                            this._selection = rowData;
-                            this.selectionChange.emit(rowData);
+                            this.selection.set(rowData);
                             if (dataKeyValue) {
-                                this.selectionKeys = {};
-                                this.selectionKeys[dataKeyValue] = 1;
+                                this.selectionKeys.set({});
+                                this.selectionKeys()[dataKeyValue] = 1;
                             }
                         } else if (this.isMultipleSelectionMode()) {
+                            let selection;
                             if (metaKey) {
-                                this._selection = this.selection || [];
+                                selection = this.selection() || [];
                             } else {
-                                this._selection = [];
-                                this.selectionKeys = {};
+                                selection = [];
+                                this.selectionKeys.set({});
                             }
 
-                            this._selection = [...this.selection, rowData];
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set([...selection, rowData]);
                             if (dataKeyValue) {
-                                this.selectionKeys[dataKeyValue] = 1;
+                                this.selectionKeys()[dataKeyValue] = 1;
                             }
                         }
 
@@ -1831,11 +1764,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         });
                     }
                 } else {
-                    if (this.selectionMode === 'single') {
+                    if (this.selectionMode() === 'single') {
                         if (selected) {
-                            this._selection = null;
-                            this.selectionKeys = {};
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set(null);
+                            this.selectionKeys.set({});
                             this.onRowUnselect.emit({
                                 originalEvent: event.originalEvent,
                                 data: rowData,
@@ -1843,8 +1775,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                                 index: rowIndex
                             });
                         } else {
-                            this._selection = rowData;
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set(rowData);
                             this.onRowSelect.emit({
                                 originalEvent: event.originalEvent,
                                 data: rowData,
@@ -1852,15 +1783,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                                 index: rowIndex
                             });
                             if (dataKeyValue) {
-                                this.selectionKeys = {};
-                                this.selectionKeys[dataKeyValue] = 1;
+                                this.selectionKeys.set({});
+                                this.selectionKeys()[dataKeyValue] = 1;
                             }
                         }
-                    } else if (this.selectionMode === 'multiple') {
+                    } else if (this.selectionMode() === 'multiple') {
                         if (selected) {
                             let selectionIndex = this.findIndexInSelection(rowData);
-                            this._selection = this.selection.filter((val: any, i: number) => i != selectionIndex);
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set(this.selection().filter((val: any, i: number) => i != selectionIndex));
                             this.onRowUnselect.emit({
                                 originalEvent: event.originalEvent,
                                 data: rowData,
@@ -1868,11 +1798,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                                 index: rowIndex
                             });
                             if (dataKeyValue) {
-                                delete this.selectionKeys[dataKeyValue];
+                                delete this.selectionKeys()[dataKeyValue];
                             }
                         } else {
-                            this._selection = this.selection ? [...this.selection, rowData] : [rowData];
-                            this.selectionChange.emit(this.selection);
+                            this.selection.set(this.selection() ? [...this.selection(), rowData] : [rowData]);
                             this.onRowSelect.emit({
                                 originalEvent: event.originalEvent,
                                 data: rowData,
@@ -1880,7 +1809,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                                 index: rowIndex
                             });
                             if (dataKeyValue) {
-                                this.selectionKeys[dataKeyValue] = 1;
+                                this.selectionKeys()[dataKeyValue] = 1;
                             }
                         }
                     }
@@ -1894,30 +1823,28 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             }
         }
 
-        this.rowTouched = false;
+        this.rowTouched.set(false);
     }
 
     handleRowTouchEnd(event: Event) {
-        this.rowTouched = true;
+        this.rowTouched.set(true);
     }
 
     handleRowRightClick(event: any) {
-        if (this.contextMenu) {
+        if (this.contextMenu()) {
             const rowData = event.rowData;
             const rowIndex = event.rowIndex;
 
             const showContextMenu = () => {
-                this.contextMenu.show(event.originalEvent);
-                this.contextMenu.hideCallback.set(() => {
-                    this.contextMenuSelection = null;
-                    this.contextMenuSelectionChange.emit(null);
+                this.contextMenu().show(event.originalEvent);
+                this.contextMenu().hideCallback.set(() => {
+                    this.contextMenuSelection.set(null);
                     this.tableService.onContextMenu(null);
                 });
             };
 
-            if (this.contextMenuSelectionMode === 'separate') {
-                this.contextMenuSelection = rowData;
-                this.contextMenuSelectionChange.emit(rowData);
+            if (this.contextMenuSelectionMode() === 'separate') {
+                this.contextMenuSelection.set(rowData);
                 this.tableService.onContextMenu(rowData);
                 showContextMenu();
                 this.onContextMenuSelect.emit({
@@ -1925,10 +1852,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     data: rowData,
                     index: event.rowIndex
                 });
-            } else if (this.contextMenuSelectionMode === 'joint') {
-                this.preventSelectionSetterPropagation = true;
+            } else if (this.contextMenuSelectionMode() === 'joint') {
+                this.preventSelectionSetterPropagation.set(true);
                 let selected = this.isSelected(rowData);
-                let dataKeyValue = this.dataKey ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey)) : null;
+                let dataKeyValue = this.dataKey() ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey())) : null;
 
                 if (!selected) {
                     if (!this.isRowSelectable(rowData, rowIndex)) {
@@ -1936,26 +1863,23 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     }
 
                     if (this.isSingleSelectionMode()) {
-                        this.selection = rowData;
-                        this.selectionChange.emit(rowData);
+                        this.selection.set(rowData);
 
                         if (dataKeyValue) {
-                            this.selectionKeys = {};
-                            this.selectionKeys[dataKeyValue] = 1;
+                            this.selectionKeys.set({});
+                            this.selectionKeys()[dataKeyValue] = 1;
                         }
                     } else if (this.isMultipleSelectionMode()) {
-                        this._selection = this.selection ? [...this.selection, rowData] : [rowData];
-                        this.selectionChange.emit(this.selection);
+                        this.selection.set(this.selection() ? [...this.selection(), rowData] : [rowData]);
 
                         if (dataKeyValue) {
-                            this.selectionKeys[dataKeyValue] = 1;
+                            this.selectionKeys()[dataKeyValue] = 1;
                         }
                     }
                 }
 
                 // Also update contextMenuSelection in joint mode
-                this.contextMenuSelection = rowData;
-                this.contextMenuSelectionChange.emit(rowData);
+                this.contextMenuSelection.set(rowData);
                 this.tableService.onContextMenu(rowData);
 
                 this.tableService.onSelectionChange();
@@ -1972,39 +1896,40 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     selectRange(event: MouseEvent | KeyboardEvent, rowIndex: number, isMetaKeySelection?: boolean | undefined) {
         let rangeStart, rangeEnd;
 
-        if (<number>this.anchorRowIndex > rowIndex) {
+        if (<number>this.anchorRowIndex() > rowIndex) {
             rangeStart = rowIndex;
-            rangeEnd = this.anchorRowIndex;
-        } else if (<number>this.anchorRowIndex < rowIndex) {
-            rangeStart = this.anchorRowIndex;
+            rangeEnd = this.anchorRowIndex();
+        } else if (<number>this.anchorRowIndex() < rowIndex) {
+            rangeStart = this.anchorRowIndex();
             rangeEnd = rowIndex;
         } else {
             rangeStart = rowIndex;
             rangeEnd = rowIndex;
         }
 
-        if (this.lazy && this.paginator) {
-            (rangeStart as number) -= <number>this.first;
-            (rangeEnd as number) -= <number>this.first;
+        if (this.lazy() && this.paginator()) {
+            (rangeStart as number) -= <number>this.first();
+            (rangeEnd as number) -= <number>this.first();
         }
 
         let rangeRowsData: RowData[] = [];
+        let selection = this.selection();
         for (let i = <number>rangeStart; i <= <number>rangeEnd; i++) {
-            let rangeRowData = this.filteredValue ? this.filteredValue[i] : this.value[i];
+            let rangeRowData = this.filteredValue() ? this.filteredValue()![i] : this._value()[i];
             if (!this.isSelected(rangeRowData) && !isMetaKeySelection) {
                 if (!this.isRowSelectable(rangeRowData, rowIndex)) {
                     continue;
                 }
 
                 rangeRowsData.push(rangeRowData);
-                this._selection = [...this.selection, rangeRowData];
-                let dataKeyValue = this.dataKey ? String(ObjectUtils.resolveFieldData(rangeRowData, this.dataKey)) : null;
+                selection = [...selection, rangeRowData];
+                let dataKeyValue = this.dataKey() ? String(ObjectUtils.resolveFieldData(rangeRowData, this.dataKey())) : null;
                 if (dataKeyValue) {
-                    this.selectionKeys[dataKeyValue] = 1;
+                    this.selectionKeys()[dataKeyValue] = 1;
                 }
             }
         }
-        this.selectionChange.emit(this.selection);
+        this.selection.set(selection);
         this.onRowSelect.emit({
             originalEvent: event,
             data: rangeRowsData,
@@ -2014,27 +1939,28 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     clearSelectionRange(event: MouseEvent | KeyboardEvent) {
         let rangeStart, rangeEnd;
-        let rangeRowIndex = <number>this.rangeRowIndex;
-        let anchorRowIndex = <number>this.anchorRowIndex;
+        let rangeRowIndex = <number>this.rangeRowIndex();
+        let anchorRowIndex = <number>this.anchorRowIndex();
 
         if (rangeRowIndex > anchorRowIndex) {
-            rangeStart = this.anchorRowIndex;
-            rangeEnd = this.rangeRowIndex;
+            rangeStart = this.anchorRowIndex();
+            rangeEnd = this.rangeRowIndex();
         } else if (rangeRowIndex < anchorRowIndex) {
-            rangeStart = this.rangeRowIndex;
-            rangeEnd = this.anchorRowIndex;
+            rangeStart = this.rangeRowIndex();
+            rangeEnd = this.anchorRowIndex();
         } else {
-            rangeStart = this.rangeRowIndex;
-            rangeEnd = this.rangeRowIndex;
+            rangeStart = this.rangeRowIndex();
+            rangeEnd = this.rangeRowIndex();
         }
 
+        let selection = this.selection();
         for (let i = <number>rangeStart; i <= <number>rangeEnd; i++) {
-            let rangeRowData = this.value[i];
-            let selectionIndex = this.findIndexInSelection(rangeRowData);
-            this._selection = this.selection.filter((val: any, i: number) => i != selectionIndex);
-            let dataKeyValue = this.dataKey ? String(ObjectUtils.resolveFieldData(rangeRowData, this.dataKey)) : null;
+            let rangeRowData = this._value()[i];
+            let selectionIndex = selection && selection.length ? selection.findIndex((val: any) => this.equals(rangeRowData, val)) : -1;
+            selection = selection.filter((val: any, i: number) => i != selectionIndex);
+            let dataKeyValue = this.dataKey() ? String(ObjectUtils.resolveFieldData(rangeRowData, this.dataKey())) : null;
             if (dataKeyValue) {
-                delete this.selectionKeys[dataKeyValue];
+                delete this.selectionKeys()[dataKeyValue];
             }
             this.onRowUnselect.emit({
                 originalEvent: event,
@@ -2042,15 +1968,16 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 type: 'row'
             });
         }
+        this.selection.set(selection);
     }
 
     isSelected(rowData: any) {
-        if (rowData && this.selection) {
-            if (this.dataKey) {
-                return this.selectionKeys[ObjectUtils.resolveFieldData(rowData, this.dataKey)] !== undefined;
+        if (rowData && this.selection()) {
+            if (this.dataKey()) {
+                return this.selectionKeys()[ObjectUtils.resolveFieldData(rowData, this.dataKey())] !== undefined;
             } else {
-                if (Array.isArray(this.selection)) return this.findIndexInSelection(rowData) > -1;
-                else return this.equals(rowData, this.selection);
+                if (Array.isArray(this.selection())) return this.findIndexInSelection(rowData) > -1;
+                else return this.equals(rowData, this.selection());
             }
         }
 
@@ -2059,9 +1986,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     findIndexInSelection(rowData: any) {
         let index: number = -1;
-        if (this.selection && this.selection.length) {
-            for (let i = 0; i < this.selection.length; i++) {
-                if (this.equals(rowData, this.selection[i])) {
+        if (this.selection() && this.selection().length) {
+            for (let i = 0; i < this.selection().length; i++) {
+                if (this.equals(rowData, this.selection()[i])) {
                     index = i;
                     break;
                 }
@@ -2072,7 +1999,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     isRowSelectable(data: any, index: number) {
-        if (this.rowSelectable && !this.rowSelectable({ data, index })) {
+        if (this.rowSelectable() && !this.rowSelectable()!({ data, index })) {
             return false;
         }
 
@@ -2080,15 +2007,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     toggleRowWithRadio(event: any, rowData: any) {
-        this.preventSelectionSetterPropagation = true;
+        this.preventSelectionSetterPropagation.set(true);
 
-        if (this.selection != rowData) {
+        if (this.selection() != rowData) {
             if (!this.isRowSelectable(rowData, event.rowIndex)) {
                 return;
             }
 
-            this._selection = rowData;
-            this.selectionChange.emit(this.selection);
+            this.selection.set(rowData);
             this.onRowSelect.emit({
                 originalEvent: event.originalEvent,
                 index: event.rowIndex,
@@ -2096,13 +2022,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 type: 'radiobutton'
             });
 
-            if (this.dataKey) {
-                this.selectionKeys = {};
-                this.selectionKeys[String(ObjectUtils.resolveFieldData(rowData, this.dataKey))] = 1;
+            if (this.dataKey()) {
+                this.selectionKeys.set({});
+                this.selectionKeys()[String(ObjectUtils.resolveFieldData(rowData, this.dataKey()))] = 1;
             }
         } else {
-            this._selection = null;
-            this.selectionChange.emit(this.selection);
+            this.selection.set(null);
             this.onRowUnselect.emit({
                 originalEvent: event.originalEvent,
                 index: event.rowIndex,
@@ -2119,15 +2044,13 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     toggleRowWithCheckbox(event: { originalEvent: Event; rowIndex: number }, rowData: any) {
-        this.selection = this.selection || [];
         let selected = this.isSelected(rowData);
-        let dataKeyValue = this.dataKey ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey)) : null;
-        this.preventSelectionSetterPropagation = true;
+        let dataKeyValue = this.dataKey() ? String(ObjectUtils.resolveFieldData(rowData, this.dataKey())) : null;
+        this.preventSelectionSetterPropagation.set(true);
 
         if (selected) {
             let selectionIndex = this.findIndexInSelection(rowData);
-            this._selection = this.selection.filter((val: any, i: number) => i != selectionIndex);
-            this.selectionChange.emit(this.selection);
+            this.selection.set(this.selection().filter((val: any, i: number) => i != selectionIndex));
             this.onRowUnselect.emit({
                 originalEvent: event.originalEvent,
                 index: event.rowIndex,
@@ -2135,15 +2058,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 type: 'checkbox'
             });
             if (dataKeyValue) {
-                delete this.selectionKeys[dataKeyValue];
+                delete this.selectionKeys()[dataKeyValue];
             }
         } else {
             if (!this.isRowSelectable(rowData, event.rowIndex)) {
                 return;
             }
 
-            this._selection = this.selection ? [...this.selection, rowData] : [rowData];
-            this.selectionChange.emit(this.selection);
+            this.selection.set(this.selection() ? [...this.selection(), rowData] : [rowData]);
             this.onRowSelect.emit({
                 originalEvent: event.originalEvent,
                 index: event.rowIndex,
@@ -2151,7 +2073,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 type: 'checkbox'
             });
             if (dataKeyValue) {
-                this.selectionKeys[dataKeyValue] = 1;
+                this.selectionKeys()[dataKeyValue] = 1;
             }
         }
 
@@ -2163,21 +2085,20 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     toggleRowsWithCheckbox({ originalEvent }: CheckboxChangeEvent, check: boolean) {
-        if (this._selectAll !== null) {
+        if (this.selectAll() !== null) {
             this.selectAllChange.emit({ originalEvent: originalEvent!, checked: check });
         } else {
-            const data = this.selectionPageOnly ? this.dataToRender(this.processedData) : this.processedData;
-            let selection = this.selectionPageOnly && this._selection ? this._selection.filter((s: any) => !data.some((d: any) => this.equals(s, d))) : [];
+            const data = this.selectionPageOnly() ? this.dataToRender(this.processedData()) : this.processedData();
+            let selection = this.selectionPageOnly() && this.selection() ? this.selection().filter((s: any) => !data.some((d: any) => this.equals(s, d))) : [];
 
             if (check) {
-                selection = this.frozenValue ? [...selection, ...this.frozenValue, ...data] : [...selection, ...data];
-                selection = this.rowSelectable ? selection.filter((data: any, index: number) => this.rowSelectable({ data, index })) : selection;
+                selection = this.frozenValue() ? [...selection, ...this.frozenValue()!, ...data] : [...selection, ...data];
+                selection = this.rowSelectable() ? selection.filter((data: any, index: number) => this.rowSelectable()!({ data, index })) : selection;
             }
 
-            this._selection = selection;
-            this.preventSelectionSetterPropagation = true;
+            this.selection.set(selection);
+            this.preventSelectionSetterPropagation.set(true);
             this.updateSelectionKeys();
-            this.selectionChange.emit(this._selection);
             this.tableService.onSelectionChange();
             this.onHeaderCheckboxToggle.emit({
                 originalEvent: originalEvent!,
@@ -2191,26 +2112,28 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     equals(data1: any, data2: any) {
-        return this.compareSelectionBy === 'equals' ? data1 === data2 : ObjectUtils.equals(data1, data2, this.dataKey);
+        return this.compareSelectionBy() === 'equals' ? data1 === data2 : ObjectUtils.equals(data1, data2, this.dataKey());
     }
 
     /* Legacy Filtering for custom elements */
     filter(value: any, field: string, matchMode: string) {
-        if (this.filterTimeout) {
-            clearTimeout(this.filterTimeout);
+        if (this.filterTimeout()) {
+            clearTimeout(this.filterTimeout());
         }
         if (!this.isFilterBlank(value)) {
-            this.filters[field] = { value: value, matchMode: matchMode };
-        } else if (this.filters[field]) {
-            delete this.filters[field];
+            this._filters()[field] = { value: value, matchMode: matchMode };
+        } else if (this._filters()[field]) {
+            delete this._filters()[field];
         }
 
-        this.filterTimeout = setTimeout(() => {
-            this._filter();
-            this.filterTimeout = null;
-        }, this.filterDelay);
+        this.filterTimeout.set(
+            setTimeout(() => {
+                this._filter();
+                this.filterTimeout.set(null);
+            }, this.filterDelay())
+        );
 
-        this.anchorRowIndex = null;
+        this.anchorRowIndex.set(null);
     }
 
     filterGlobal(value: any, matchMode: string) {
@@ -2226,52 +2149,51 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     _filter() {
-        if (!this.restoringFilter) {
-            this.first = 0;
-            this.firstChange.emit(this.first);
+        if (!this.restoringFilter()) {
+            this.first.set(0);
         }
 
-        if (this.lazy) {
+        if (this.lazy()) {
             this.onLazyLoad.emit(this.createLazyLoadMetadata());
         } else {
-            if (!this.value) {
+            if (!this._value()) {
                 return;
             }
             if (!this.hasFilter()) {
-                this.filteredValue = null;
-                if (this.paginator) {
-                    this.totalRecords = this._totalRecords === 0 && this.value ? this.value.length : this._totalRecords;
+                this.filteredValue.set(null);
+                if (this.paginator()) {
+                    this._totalRecords.set(this.totalRecords() === 0 && this._value() ? this._value().length : this.totalRecords());
                 }
             } else {
                 let globalFilterFieldsArray;
-                if (this.filters['global']) {
-                    if (!this.columns && !this.globalFilterFields) throw new Error('Global filtering requires dynamic columns or globalFilterFields to be defined.');
-                    else globalFilterFieldsArray = this.globalFilterFields || this.columns;
+                if (this._filters()['global']) {
+                    if (!this._columns() && !this.globalFilterFields()) throw new Error('Global filtering requires dynamic columns or globalFilterFields to be defined.');
+                    else globalFilterFieldsArray = this.globalFilterFields() || this._columns();
                 }
 
-                this.filteredValue = [];
+                let filteredValue: any[] | null = [];
 
-                for (let i = 0; i < this.value.length; i++) {
+                for (let i = 0; i < this._value().length; i++) {
                     let localMatch = true;
                     let globalMatch = false;
                     let localFiltered = false;
 
-                    for (let prop in this.filters) {
-                        if (this.filters.hasOwnProperty(prop) && prop !== 'global') {
+                    for (let prop in this._filters()) {
+                        if (this._filters().hasOwnProperty(prop) && prop !== 'global') {
                             localFiltered = true;
                             let filterField = prop;
-                            let filterMeta = this.filters[filterField];
+                            let filterMeta = this._filters()[filterField];
 
                             if (Array.isArray(filterMeta)) {
                                 for (let meta of filterMeta) {
-                                    localMatch = this.executeLocalFilter(filterField, this.value[i], meta);
+                                    localMatch = this.executeLocalFilter(filterField, this._value()[i], meta);
 
                                     if ((meta.operator === FilterOperator.OR && localMatch) || (meta.operator === FilterOperator.AND && !localMatch)) {
                                         break;
                                     }
                                 }
                             } else {
-                                localMatch = this.executeLocalFilter(filterField, this.value[i], <any>filterMeta);
+                                localMatch = this.executeLocalFilter(filterField, this._value()[i], <any>filterMeta);
                             }
 
                             if (!localMatch) {
@@ -2280,10 +2202,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         }
                     }
 
-                    if (this.filters['global'] && !globalMatch && globalFilterFieldsArray) {
+                    if (this._filters()['global'] && !globalMatch && globalFilterFieldsArray) {
                         for (let j = 0; j < globalFilterFieldsArray.length; j++) {
                             let globalFilterField = globalFilterFieldsArray[j].field || globalFilterFieldsArray[j];
-                            globalMatch = (<any>this.filterService).filters[(<any>this.filters['global']).matchMode](ObjectUtils.resolveFieldData(this.value[i], globalFilterField), (<FilterMetadata>this.filters['global']).value, this.filterLocale);
+                            globalMatch = (<any>this.filterService).filters[(<any>this._filters()['global']).matchMode](
+                                ObjectUtils.resolveFieldData(this._value()[i], globalFilterField),
+                                (<FilterMetadata>this._filters()['global']).value,
+                                this.filterLocale()
+                            );
 
                             if (globalMatch) {
                                 break;
@@ -2292,45 +2218,45 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     }
 
                     let matches: boolean;
-                    if (this.filters['global']) {
+                    if (this._filters()['global']) {
                         matches = localFiltered ? localFiltered && localMatch && globalMatch : globalMatch;
                     } else {
                         matches = localFiltered && localMatch;
                     }
 
                     if (matches) {
-                        this.filteredValue.push(this.value[i]);
+                        filteredValue.push(this._value()[i]);
                     }
                 }
 
-                if (this.filteredValue.length === this.value.length) {
-                    this.filteredValue = null;
+                if (filteredValue.length === this._value().length) {
+                    filteredValue = null;
                 }
 
-                if (this.paginator) {
-                    this.totalRecords = this.filteredValue ? this.filteredValue.length : this._totalRecords === 0 && this.value ? this.value.length : (this._totalRecords ?? 0);
+                this.filteredValue.set(filteredValue);
+
+                if (this.paginator()) {
+                    this._totalRecords.set(filteredValue ? filteredValue.length : this.totalRecords() === 0 && this._value() ? this._value().length : (this.totalRecords() ?? 0));
                 }
             }
         }
 
         this.onFilter.emit({
-            filters: <{ [s: string]: FilterMetadata | undefined }>this.filters,
-            filteredValue: this.filteredValue || this.value
+            filters: <{ [s: string]: FilterMetadata | undefined }>this._filters(),
+            filteredValue: this.filteredValue() || this._value()
         });
 
-        this.tableService.onValueChange(this.value);
+        this.tableService.onValueChange(this._value());
 
-        if (this.isStateful() && !this.restoringFilter) {
+        if (this.isStateful() && !this.restoringFilter()) {
             this.saveState();
         }
 
-        if (this.restoringFilter) {
-            this.restoringFilter = false;
+        if (this.restoringFilter()) {
+            this.restoringFilter.set(false);
         }
 
-        this.cd.markForCheck();
-
-        if (this.scrollable) {
+        if (this.scrollable()) {
             this.resetScrollTop();
         }
     }
@@ -2341,13 +2267,13 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         let dataFieldValue = ObjectUtils.resolveFieldData(rowData, field);
         let filterConstraint = (<any>this.filterService).filters[filterMatchMode];
 
-        return filterConstraint(dataFieldValue, filterValue, this.filterLocale);
+        return filterConstraint(dataFieldValue, filterValue, this.filterLocale());
     }
 
     hasFilter() {
         let empty = true;
-        for (let prop in this.filters) {
-            if (this.filters.hasOwnProperty(prop)) {
+        for (let prop in this._filters()) {
+            if (this._filters().hasOwnProperty(prop)) {
                 empty = false;
                 break;
             }
@@ -2358,39 +2284,38 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     createLazyLoadMetadata(): any {
         return {
-            first: this.first,
-            rows: this.rows,
-            sortField: this.sortField,
-            sortOrder: this.sortOrder,
-            filters: this.filters,
-            globalFilter: this.filters && this.filters['global'] ? (<FilterMetadata>this.filters['global']).value : null,
-            multiSortMeta: this.multiSortMeta,
+            first: this.first(),
+            rows: this.rows(),
+            sortField: this._sortField(),
+            sortOrder: this._sortOrder(),
+            filters: this._filters(),
+            globalFilter: this._filters() && this._filters()['global'] ? (<FilterMetadata>this._filters()['global']).value : null,
+            multiSortMeta: this._multiSortMeta(),
             forceUpdate: () => this.cd.detectChanges()
         };
     }
 
     public clear() {
-        this._sortField = null;
-        this._sortOrder = this.defaultSortOrder;
-        this._multiSortMeta = null;
+        this._sortField.set(null);
+        this._sortOrder.set(this.defaultSortOrder());
+        this._multiSortMeta.set(null);
         this.tableService.onSort(null);
 
         this.clearFilterValues();
 
-        this.filteredValue = null;
+        this.filteredValue.set(null);
 
-        this.first = 0;
-        this.firstChange.emit(this.first);
+        this.first.set(0);
 
-        if (this.lazy) {
+        if (this.lazy()) {
             this.onLazyLoad.emit(this.createLazyLoadMetadata());
         } else {
-            this.totalRecords = this._totalRecords === 0 && this._value ? this._value.length : (this._totalRecords ?? 0);
+            this._totalRecords.set(this.totalRecords() === 0 && this._value() ? this._value().length : (this.totalRecords() ?? 0));
         }
     }
 
     clearFilterValues() {
-        for (const [, filterMetadata] of Object.entries(this.filters)) {
+        for (const [, filterMetadata] of Object.entries(this._filters())) {
             if (Array.isArray(filterMetadata)) {
                 for (let filter of filterMetadata) {
                     filter.value = null;
@@ -2406,7 +2331,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     getExportHeader(column: any) {
-        return column[<string>this.exportHeader] || column.header || column.field;
+        return column[<string>this.exportHeader()] || column.header || column.field;
     }
     /**
      * Data export method.
@@ -2416,24 +2341,24 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     public exportCSV(options?: ExportCSVOptions) {
         let data;
         let csv = '';
-        let columns = this.columns;
+        let columns = this._columns();
 
         if (options && options.selectionOnly) {
-            data = this.selection || [];
+            data = this.selection() || [];
         } else if (options && options.allValues) {
-            data = this.value || [];
+            data = this._value() || [];
         } else {
-            data = this.filteredValue || this.value;
+            data = this.filteredValue() || this._value();
 
-            if (this.frozenValue) {
-                data = data ? [...this.frozenValue, ...data] : this.frozenValue;
+            if (this.frozenValue()) {
+                data = data ? [...this.frozenValue()!, ...data] : this.frozenValue();
             }
         }
 
         const exportableColumns: any[] = (<any[]>columns).filter((column) => column.exportable !== false && column.field);
 
         //headers
-        csv += exportableColumns.map((column) => '"' + this.getExportHeader(column) + '"').join(this.csvSeparator);
+        csv += exportableColumns.map((column) => '"' + this.getExportHeader(column) + '"').join(this.csvSeparator());
 
         //body
         const body = data
@@ -2443,8 +2368,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         let cellData = ObjectUtils.resolveFieldData(record, column.field);
 
                         if (cellData != null) {
-                            if (this.exportFunction) {
-                                cellData = this.exportFunction({
+                            if (this.exportFunction()) {
+                                cellData = this.exportFunction()!({
                                     data: cellData,
                                     field: column.field
                                 });
@@ -2453,7 +2378,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
                         return '"' + cellData + '"';
                     })
-                    .join(this.csvSeparator)
+                    .join(this.csvSeparator())
             )
             .join('\n');
 
@@ -2470,7 +2395,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         this.renderer.appendChild(this.document.body, link);
         if (link.download !== undefined) {
             link.setAttribute('href', URL.createObjectURL(blob));
-            link.setAttribute('download', this.exportFilename + '.csv');
+            link.setAttribute('download', this.exportFilename() + '.csv');
             link.click();
         } else {
             csv = 'data:text/csv;charset=utf-8,' + csv;
@@ -2491,7 +2416,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @group Method
      */
     public resetScrollTop() {
-        if (this.virtualScroll) this.scrollToVirtualIndex(0);
+        if (this.virtualScroll()) this.scrollToVirtualIndex(0);
         else this.scrollTo({ top: 0 });
     }
     /**
@@ -2510,7 +2435,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      */
     public scrollTo(options: any) {
         const wrapperViewChild = this.wrapperViewChild();
-        if (this.virtualScroll) {
+        if (this.virtualScroll()) {
             this.scroller()?.scrollTo(options);
         } else {
             if (wrapperViewChild.nativeElement.scrollTo) {
@@ -2523,89 +2448,90 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     updateEditingCell(cell: any, data: any, field: string, index: number) {
-        this.editingCell = cell;
-        this.editingCellData = data;
-        this.editingCellField = field;
-        this.editingCellRowIndex = index;
+        this.editingCell.set(cell);
+        this.editingCellData.set(data);
+        this.editingCellField.set(field);
+        this.editingCellRowIndex.set(index);
         this.bindDocumentEditListener();
     }
 
     isEditingCellValid() {
-        return this.editingCell && DomHandler.find(this.editingCell, '.ng-invalid.ng-dirty').length === 0;
+        return this.editingCell() && DomHandler.find(this.editingCell(), '.ng-invalid.ng-dirty').length === 0;
     }
 
     bindDocumentEditListener() {
-        if (!this.documentEditListener) {
-            this.documentEditListener = this.renderer.listen(this.document, 'click', (event) => {
-                if (this.editingCell && !this.selfClick && this.isEditingCellValid()) {
-                    !this.$unstyled() && DomHandler.removeClass(this.editingCell, 'p-cell-editing');
-                    setAttribute(this.editingCell as HTMLElement, 'data-p-cell-editing', 'false');
-                    this.editingCell = null;
-                    this.onEditComplete.emit({
-                        field: this.editingCellField,
-                        data: this.editingCellData,
-                        originalEvent: event,
-                        index: <number>this.editingCellRowIndex
-                    });
-                    this.editingCellField = null;
-                    this.editingCellData = null;
-                    this.editingCellRowIndex = null;
-                    this.unbindDocumentEditListener();
-                    this.cd.markForCheck();
+        if (!this.documentEditListener()) {
+            this.documentEditListener.set(
+                this.renderer.listen(this.document, 'click', (event) => {
+                    if (this.editingCell() && !this.selfClick() && this.isEditingCellValid()) {
+                        !this.$unstyled() && DomHandler.removeClass(this.editingCell(), 'p-cell-editing');
+                        setAttribute(this.editingCell() as HTMLElement, 'data-p-cell-editing', 'false');
+                        this.editingCell.set(null);
+                        this.onEditComplete.emit({
+                            field: this.editingCellField(),
+                            data: this.editingCellData(),
+                            originalEvent: event,
+                            index: <number>this.editingCellRowIndex()
+                        });
+                        this.editingCellField.set(null);
+                        this.editingCellData.set(null);
+                        this.editingCellRowIndex.set(null);
+                        this.unbindDocumentEditListener();
 
-                    if (this.overlaySubscription) {
-                        this.overlaySubscription.unsubscribe();
+                        if (this.overlaySubscription()) {
+                            this.overlaySubscription()!.unsubscribe();
+                        }
                     }
-                }
 
-                this.selfClick = false;
-            });
+                    this.selfClick.set(false);
+                })
+            );
         }
     }
 
     unbindDocumentEditListener() {
-        if (this.documentEditListener) {
-            this.documentEditListener();
-            this.documentEditListener = null;
+        if (this.documentEditListener()) {
+            this.documentEditListener()();
+            this.documentEditListener.set(null);
         }
     }
 
     initRowEdit(rowData: any) {
-        let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey));
-        this.editingRowKeys[dataKeyValue] = true;
+        let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey()));
+        this.editingRowKeys()[dataKeyValue] = true;
     }
 
     saveRowEdit(rowData: any, rowElement: HTMLTableRowElement) {
         if (DomHandler.find(rowElement, '.ng-invalid.ng-dirty').length === 0) {
-            let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey));
-            delete this.editingRowKeys[dataKeyValue];
+            let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey()));
+            delete this.editingRowKeys()[dataKeyValue];
         }
     }
 
     cancelRowEdit(rowData: any) {
-        let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey));
-        delete this.editingRowKeys[dataKeyValue];
+        let dataKeyValue = String(ObjectUtils.resolveFieldData(rowData, this.dataKey()));
+        delete this.editingRowKeys()[dataKeyValue];
     }
 
     toggleRow(rowData: any, event?: Event) {
-        if (!this.dataKey && !this.groupRowsBy) {
+        if (!this.dataKey() && !this.groupRowsBy()) {
             throw new Error('dataKey or groupRowsBy must be defined to use row expansion');
         }
 
-        let dataKeyValue = this.groupRowsBy ? String(ObjectUtils.resolveFieldData(rowData, this.groupRowsBy)) : String(ObjectUtils.resolveFieldData(rowData, this.dataKey));
+        let dataKeyValue = this.groupRowsBy() ? String(ObjectUtils.resolveFieldData(rowData, this.groupRowsBy())) : String(ObjectUtils.resolveFieldData(rowData, this.dataKey()));
 
-        if (this.expandedRowKeys[dataKeyValue] != null) {
-            delete this.expandedRowKeys[dataKeyValue];
+        if (this._expandedRowKeys()[dataKeyValue] != null) {
+            delete this._expandedRowKeys()[dataKeyValue];
             this.onRowCollapse.emit({
                 originalEvent: <Event>event,
                 data: rowData
             });
         } else {
-            if (this.rowExpandMode === 'single') {
-                this.expandedRowKeys = {};
+            if (this.rowExpandMode() === 'single') {
+                this._expandedRowKeys.set({});
             }
 
-            this.expandedRowKeys[dataKeyValue] = true;
+            this._expandedRowKeys()[dataKeyValue] = true;
             this.onRowExpand.emit({
                 originalEvent: <Event>event,
                 data: rowData
@@ -2622,29 +2548,29 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     isRowExpanded(rowData: any): boolean {
-        return this.groupRowsBy ? this.expandedRowKeys[String(ObjectUtils.resolveFieldData(rowData, this.groupRowsBy))] === true : this.expandedRowKeys[String(ObjectUtils.resolveFieldData(rowData, this.dataKey))] === true;
+        return this.groupRowsBy() ? this._expandedRowKeys()[String(ObjectUtils.resolveFieldData(rowData, this.groupRowsBy()))] === true : this._expandedRowKeys()[String(ObjectUtils.resolveFieldData(rowData, this.dataKey()))] === true;
     }
 
     isRowEditing(rowData: any): boolean {
-        return this.editingRowKeys[String(ObjectUtils.resolveFieldData(rowData, this.dataKey))] === true;
+        return this.editingRowKeys()[String(ObjectUtils.resolveFieldData(rowData, this.dataKey()))] === true;
     }
 
     isSingleSelectionMode() {
-        return this.selectionMode === 'single';
+        return this.selectionMode() === 'single';
     }
 
     isMultipleSelectionMode() {
-        return this.selectionMode === 'multiple';
+        return this.selectionMode() === 'multiple';
     }
 
     onColumnResizeBegin(event: any) {
         let containerLeft = DomHandler.getOffset(this.el?.nativeElement).left;
-        this.resizeColumnElement = event.target.closest('th');
-        this.columnResizing = true;
+        this.resizeColumnElement.set(event.target.closest('th'));
+        this.columnResizing.set(true);
         if (event.type == 'touchstart') {
-            this.lastResizerHelperX = event.changedTouches[0].clientX - containerLeft + this.el?.nativeElement.scrollLeft;
+            this.lastResizerHelperX.set(event.changedTouches[0].clientX - containerLeft + this.el?.nativeElement.scrollLeft);
         } else {
-            this.lastResizerHelperX = event.pageX - containerLeft + this.el?.nativeElement.scrollLeft;
+            this.lastResizerHelperX.set(event.pageX - containerLeft + this.el?.nativeElement.scrollLeft);
         }
         this.onColumnResize(event);
         event.preventDefault();
@@ -2666,23 +2592,24 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     onColumnResizeEnd() {
         const isRTL = getComputedStyle(this.el?.nativeElement ?? document.documentElement).direction === 'rtl';
         const resizeHelperViewChild = this.resizeHelperViewChild();
-        const rawDelta = resizeHelperViewChild?.nativeElement.offsetLeft - <number>this.lastResizerHelperX;
+        const rawDelta = resizeHelperViewChild?.nativeElement.offsetLeft - <number>this.lastResizerHelperX();
         const delta = isRTL ? -rawDelta : rawDelta;
-        const columnWidth = this.resizeColumnElement.offsetWidth;
+        const resizeColumnElement = <HTMLElement>this.resizeColumnElement();
+        const columnWidth = resizeColumnElement.offsetWidth;
         const newColumnWidth = columnWidth + delta;
-        const elementMinWidth = this.resizeColumnElement.style.minWidth.replace(/[^\d.]/g, '');
+        const elementMinWidth = resizeColumnElement.style.minWidth.replace(/[^\d.]/g, '');
         const minWidth = elementMinWidth ? parseFloat(elementMinWidth) : 15;
 
         if (newColumnWidth >= minWidth) {
-            if (this.columnResizeMode === 'fit') {
-                const nextColumn = this.resizeColumnElement.nextElementSibling as HTMLElement;
+            if (this.columnResizeMode() === 'fit') {
+                const nextColumn = resizeColumnElement.nextElementSibling as HTMLElement;
                 const nextColumnWidth = nextColumn.offsetWidth - delta;
 
                 if (newColumnWidth > 15 && nextColumnWidth > 15) {
                     this.resizeTableCells(newColumnWidth, nextColumnWidth);
                 }
-            } else if (this.columnResizeMode === 'expand') {
-                this._initialColWidths = this._totalTableWidth();
+            } else if (this.columnResizeMode() === 'expand') {
+                this._initialColWidths.set(this._totalTableWidth());
                 const tableWidth = this.tableViewChild()?.nativeElement.offsetWidth + delta;
 
                 this.setResizeTableWidth(tableWidth + 'px');
@@ -2690,7 +2617,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             }
 
             this.onColResize.emit({
-                element: this.resizeColumnElement,
+                element: resizeColumnElement,
                 delta: delta
             });
 
@@ -2713,36 +2640,36 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     onColumnDragStart(event: any, columnElement: any) {
-        this.reorderIconWidth = DomHandler.getHiddenElementOuterWidth(this.reorderIndicatorUpViewChild()?.nativeElement);
-        this.reorderIconHeight = DomHandler.getHiddenElementOuterHeight(this.reorderIndicatorDownViewChild()?.nativeElement);
-        this.draggedColumn = columnElement;
+        this.reorderIconWidth.set(DomHandler.getHiddenElementOuterWidth(this.reorderIndicatorUpViewChild()?.nativeElement));
+        this.reorderIconHeight.set(DomHandler.getHiddenElementOuterHeight(this.reorderIndicatorDownViewChild()?.nativeElement));
+        this.draggedColumn.set(columnElement);
         event.dataTransfer.setData('text', 'b'); // For firefox
     }
 
     onColumnDragEnter(event: any, dropHeader: any) {
-        if (this.reorderableColumns && this.draggedColumn && dropHeader) {
+        if (this.reorderableColumns() && this.draggedColumn() && dropHeader) {
             event.preventDefault();
             let containerOffset = DomHandler.getOffset(this.el?.nativeElement);
             let dropHeaderOffset = DomHandler.getOffset(dropHeader);
 
-            if (this.draggedColumn != dropHeader) {
-                let dragIndex = DomHandler.indexWithinGroup(this.draggedColumn, 'preorderablecolumn');
+            if (this.draggedColumn() != dropHeader) {
+                let dragIndex = DomHandler.indexWithinGroup(this.draggedColumn(), 'preorderablecolumn');
                 let dropIndex = DomHandler.indexWithinGroup(dropHeader, 'preorderablecolumn');
                 let targetLeft = dropHeaderOffset.left - containerOffset.left;
                 let targetTop = containerOffset.top - dropHeaderOffset.top;
                 let columnCenter = dropHeaderOffset.left + dropHeader.offsetWidth / 2;
 
-                (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.top = dropHeaderOffset.top - containerOffset.top - (<number>this.reorderIconHeight - 1) + 'px';
+                (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.top = dropHeaderOffset.top - containerOffset.top - (<number>this.reorderIconHeight() - 1) + 'px';
                 (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.top = dropHeaderOffset.top - containerOffset.top + dropHeader.offsetHeight + 'px';
 
                 if (event.pageX > columnCenter) {
-                    (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth / 2) + 'px';
-                    (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth / 2) + 'px';
-                    this.dropPosition = 1;
+                    (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
+                    (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft + dropHeader.offsetWidth - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
+                    this.dropPosition.set(1);
                 } else {
-                    (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth / 2) + 'px';
-                    (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth / 2) + 'px';
-                    this.dropPosition = -1;
+                    (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
+                    (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.left = targetLeft - Math.ceil(<number>this.reorderIconWidth() / 2) + 'px';
+                    this.dropPosition.set(-1);
                 }
                 (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.display = 'block';
                 (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.display = 'block';
@@ -2753,36 +2680,36 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     onColumnDragLeave(event: Event) {
-        if (this.reorderableColumns && this.draggedColumn) {
+        if (this.reorderableColumns() && this.draggedColumn()) {
             event.preventDefault();
         }
     }
 
     onColumnDrop(event: Event, dropColumn: any) {
         event.preventDefault();
-        if (this.draggedColumn) {
-            let dragIndex = DomHandler.indexWithinGroup(this.draggedColumn, 'preorderablecolumn');
+        if (this.draggedColumn()) {
+            let dragIndex = DomHandler.indexWithinGroup(this.draggedColumn(), 'preorderablecolumn');
             let dropIndex = DomHandler.indexWithinGroup(dropColumn, 'preorderablecolumn');
             let allowDrop = dragIndex != dropIndex;
-            if (allowDrop && ((dropIndex - dragIndex == 1 && this.dropPosition === -1) || (dragIndex - dropIndex == 1 && this.dropPosition === 1))) {
+            if (allowDrop && ((dropIndex - dragIndex == 1 && this.dropPosition() === -1) || (dragIndex - dropIndex == 1 && this.dropPosition() === 1))) {
                 allowDrop = false;
             }
 
-            if (allowDrop && dropIndex < dragIndex && this.dropPosition === 1) {
+            if (allowDrop && dropIndex < dragIndex && this.dropPosition() === 1) {
                 dropIndex = dropIndex + 1;
             }
 
-            if (allowDrop && dropIndex > dragIndex && this.dropPosition === -1) {
+            if (allowDrop && dropIndex > dragIndex && this.dropPosition() === -1) {
                 dropIndex = dropIndex - 1;
             }
 
             if (allowDrop) {
-                ObjectUtils.reorderArray(<any[]>this.columns, dragIndex, dropIndex);
+                ObjectUtils.reorderArray(<any[]>this._columns(), dragIndex, dropIndex);
 
                 this.onColReorder.emit({
                     dragIndex: dragIndex,
                     dropIndex: dropIndex,
-                    columns: this.columns
+                    columns: this._columns()
                 });
 
                 if (this.isStateful()) {
@@ -2794,23 +2721,23 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             }
 
-            if (this.resizableColumns && this.resizeColumnElement) {
-                let width = this.columnResizeMode === 'expand' ? this._initialColWidths : this._totalTableWidth();
+            if (this.resizableColumns() && this.resizeColumnElement()) {
+                let width = this.columnResizeMode() === 'expand' ? <number[]>this._initialColWidths() : this._totalTableWidth();
                 ObjectUtils.reorderArray(width, dragIndex + 1, dropIndex + 1);
                 this.updateStyleElement(width, dragIndex, 0, 0);
             }
 
             (<ElementRef>this.reorderIndicatorUpViewChild()).nativeElement.style.display = 'none';
             (<ElementRef>this.reorderIndicatorDownViewChild()).nativeElement.style.display = 'none';
-            this.draggedColumn.draggable = false;
-            this.draggedColumn = null;
-            this.dropPosition = null;
+            this.draggedColumn().draggable = false;
+            this.draggedColumn.set(null);
+            this.dropPosition.set(null);
         }
     }
 
     resizeTableCells(newColumnWidth: number, nextColumnWidth: number | null) {
-        let colIndex = DomHandler.index(this.resizeColumnElement);
-        let width = this.columnResizeMode === 'expand' ? this._initialColWidths : this._totalTableWidth();
+        let colIndex = DomHandler.index(this.resizeColumnElement());
+        let width = this.columnResizeMode() === 'expand' ? <number[]>this._initialColWidths() : this._totalTableWidth();
         this.updateStyleElement(width, colIndex, newColumnWidth, nextColumnWidth);
     }
 
@@ -2830,17 +2757,17 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             `;
         });
-        this.renderer.setProperty(this.styleElement, 'innerHTML', innerHTML);
+        this.renderer.setProperty(this.styleElement(), 'innerHTML', innerHTML);
     }
 
     onRowDragStart(event: any, index: number) {
-        this.rowDragging = true;
-        this.draggedRowIndex = index;
+        this.rowDragging.set(true);
+        this.draggedRowIndex.set(index);
         event.dataTransfer.setData('text', 'b'); // For firefox
     }
 
     onRowDragOver(event: MouseEvent, index: number, rowElement: any) {
-        if (this.rowDragging && this.draggedRowIndex !== index) {
+        if (this.rowDragging() && this.draggedRowIndex() !== index) {
             let rowY = DomHandler.getOffset(rowElement).top;
             let pageY = event.pageY;
             let rowMidY = rowY + DomHandler.getOuterHeight(rowElement) / 2;
@@ -2849,14 +2776,14 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             if (pageY < rowMidY) {
                 DomHandler.removeClass(rowElement, 'p-datatable-dragpoint-bottom');
 
-                this.droppedRowIndex = index;
+                this.droppedRowIndex.set(index);
                 if (prevRowElement && !this.$unstyled()) DomHandler.addClass(prevRowElement, 'p-datatable-dragpoint-bottom');
                 else !this.$unstyled() && DomHandler.addClass(rowElement, 'p-datatable-dragpoint-top');
             } else {
                 if (prevRowElement && !this.$unstyled()) DomHandler.removeClass(prevRowElement, 'p-datatable-dragpoint-bottom');
                 else !this.$unstyled() && DomHandler.addClass(rowElement, 'p-datatable-dragpoint-top');
 
-                this.droppedRowIndex = index + 1;
+                this.droppedRowIndex.set(index + 1);
                 !this.$unstyled() && DomHandler.addClass(rowElement, 'p-datatable-dragpoint-bottom');
             }
         }
@@ -2873,23 +2800,24 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     onRowDragEnd(event: Event) {
-        this.rowDragging = false;
-        this.draggedRowIndex = null;
-        this.droppedRowIndex = null;
+        this.rowDragging.set(false);
+        this.draggedRowIndex.set(null);
+        this.droppedRowIndex.set(null);
     }
 
     onRowDrop(event: Event, rowElement: any) {
-        if (this.droppedRowIndex != null) {
-            let dropIndex = <number>this.draggedRowIndex > this.droppedRowIndex ? this.droppedRowIndex : this.droppedRowIndex === 0 ? 0 : this.droppedRowIndex - 1;
-            ObjectUtils.reorderArray(this.value, <number>this.draggedRowIndex, dropIndex);
+        if (this.droppedRowIndex() != null) {
+            const droppedRowIndex = <number>this.droppedRowIndex();
+            let dropIndex = <number>this.draggedRowIndex() > droppedRowIndex ? droppedRowIndex : droppedRowIndex === 0 ? 0 : droppedRowIndex - 1;
+            ObjectUtils.reorderArray(this._value(), <number>this.draggedRowIndex(), dropIndex);
 
-            if (this.virtualScroll) {
+            if (this.virtualScroll()) {
                 // TODO: Check
-                this._value = [...this._value];
+                this._value.set([...this._value()]);
             }
 
             this.onRowReorder.emit({
-                dragIndex: <number>this.draggedRowIndex,
+                dragIndex: <number>this.draggedRowIndex(),
                 dropIndex: dropIndex
             });
         }
@@ -2898,10 +2826,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         this.onRowDragEnd(event);
     }
 
-    isEmpty() {
-        let data = this.filteredValue || this.value;
+    readonly isEmpty = computed(() => {
+        let data = this.filteredValue() || this._value();
         return data == null || data.length == 0;
-    }
+    });
 
     getBlockableElement(): HTMLElement {
         return this.el.nativeElement.children[0];
@@ -2909,7 +2837,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     getStorage() {
         if (isPlatformBrowser(this.platformId)) {
-            switch (this.stateStorage) {
+            switch (this.stateStorage()) {
                 case 'local':
                     return window.localStorage;
 
@@ -2917,7 +2845,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     return window.sessionStorage;
 
                 default:
-                    throw new Error(this.stateStorage + ' is not a valid value for the state storage, supported values are "local" and "session".');
+                    throw new Error(this.stateStorage() + ' is not a valid value for the state storage, supported values are "local" and "session".');
             }
         } else {
             throw new Error('Browser storage is not available in the server side.');
@@ -2925,62 +2853,62 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     isStateful() {
-        return this.stateKey != null;
+        return this.stateKey() != null;
     }
 
     saveState() {
         const storage = this.getStorage();
         let state: TableState = {};
 
-        if (this.paginator) {
-            state.first = <number>this.first;
-            state.rows = this.rows;
+        if (this.paginator()) {
+            state.first = <number>this.first();
+            state.rows = this.rows();
         }
 
-        if (this.sortField) {
-            state.sortField = this.sortField;
-            state.sortOrder = this.sortOrder;
+        if (this._sortField()) {
+            state.sortField = <string>this._sortField();
+            state.sortOrder = this._sortOrder();
         }
 
-        if (this.multiSortMeta) {
-            state.multiSortMeta = this.multiSortMeta;
+        if (this._multiSortMeta()) {
+            state.multiSortMeta = <SortMeta[]>this._multiSortMeta();
         }
 
         if (this.hasFilter()) {
-            state.filters = this.filters;
+            state.filters = this._filters();
         }
 
-        if (this.resizableColumns) {
+        if (this.resizableColumns()) {
             this.saveColumnWidths(state);
         }
 
-        if (this.reorderableColumns) {
+        if (this.reorderableColumns()) {
             this.saveColumnOrder(state);
         }
 
-        if (this.selection) {
-            state.selection = this.selection;
+        if (this.selection()) {
+            state.selection = this.selection();
         }
 
-        if (Object.keys(this.expandedRowKeys).length) {
-            state.expandedRowKeys = this.expandedRowKeys;
+        if (Object.keys(this._expandedRowKeys()).length) {
+            state.expandedRowKeys = this._expandedRowKeys();
         }
 
-        storage.setItem(<string>this.stateKey, JSON.stringify(state));
+        storage.setItem(<string>this.stateKey(), JSON.stringify(state));
         this.onStateSave.emit(state);
     }
 
     clearState() {
         const storage = this.getStorage();
 
-        if (this.stateKey) {
-            storage.removeItem(this.stateKey);
+        if (this.stateKey()) {
+            storage.removeItem(<string>this.stateKey());
         }
     }
 
     restoreState() {
         const storage = this.getStorage();
-        const stateString = storage.getItem(<string>this.stateKey);
+        const stateString = storage.getItem(<string>this.stateKey());
         const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/;
         const reviver = function (key: any, value: any) {
             if (typeof value === 'string' && dateFormat.test(value)) {
@@ -2993,52 +2921,46 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         if (stateString) {
             let state: TableState = JSON.parse(stateString, reviver);
 
-            if (this.paginator) {
-                if (this.first !== undefined) {
-                    this.first = state.first;
-                    this.firstChange.emit(this.first);
+            if (this.paginator()) {
+                if (this.first() !== undefined) {
+                    this.first.set(state.first);
                 }
 
-                if (this.rows !== undefined) {
-                    this.rows = state.rows;
-                    this.rowsChange.emit(this.rows);
+                if (this.rows() !== undefined) {
+                    this.rows.set(state.rows);
                 }
             }
 
             if (state.sortField) {
-                this.restoringSort = true;
-                this._sortField = state.sortField;
-                this._sortOrder = <number>state.sortOrder;
+                this.restoringSort.set(true);
+                this._sortField.set(state.sortField);
+                this._sortOrder.set(<number>state.sortOrder);
             }
 
             if (state.multiSortMeta) {
-                this.restoringSort = true;
-                this._multiSortMeta = state.multiSortMeta;
+                this.restoringSort.set(true);
+                this._multiSortMeta.set(state.multiSortMeta);
             }
 
             if (state.filters) {
-                this.restoringFilter = true;
-                this.filters = state.filters;
+                this.restoringFilter.set(true);
+                this._filters.set(state.filters);
             }
 
-            if (this.resizableColumns) {
-                this.columnWidthsState = state.columnWidths;
-                this.tableWidthState = state.tableWidth;
+            if (this.resizableColumns()) {
+                this.columnWidthsState.set(state.columnWidths);
+                this.tableWidthState.set(state.tableWidth);
             }
-
-            // if (this.reorderableColumns) {
-            //     this.restoreColumnOrder();
-            // }
 
             if (state.expandedRowKeys) {
-                this.expandedRowKeys = state.expandedRowKeys;
+                this._expandedRowKeys.set(state.expandedRowKeys);
             }
 
             if (state.selection) {
-                Promise.resolve(null).then(() => this.selectionChange.emit(state.selection));
+                Promise.resolve(null).then(() => this.selection.set(state.selection));
             }
 
-            this.stateRestored = true;
+            this.stateRestored.set(true);
 
             this.onStateRestore.emit(state);
         }
@@ -3058,7 +2980,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         state.columnWidths = widths.join(',');
 
         const tableViewChild = this.tableViewChild();
-        if (this.columnResizeMode === 'expand' && tableViewChild) {
+        if (this.columnResizeMode() === 'expand' && tableViewChild) {
             state.tableWidth = DomHandler.getOuterWidth(tableViewChild.nativeElement);
         }
     }
@@ -3069,11 +2991,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     restoreColumnWidths() {
-        if (this.columnWidthsState) {
-            let widths = this.columnWidthsState.split(',');
+        if (this.columnWidthsState()) {
+            let widths = (<string>this.columnWidthsState()).split(',');
 
-            if (this.columnResizeMode === 'expand' && this.tableWidthState) {
-                this.setResizeTableWidth(this.tableWidthState + 'px');
+            if (this.columnResizeMode() === 'expand' && this.tableWidthState()) {
+                this.setResizeTableWidth(this.tableWidthState() + 'px');
             }
 
             if (ObjectUtils.isNotEmpty(widths)) {
@@ -3092,15 +3014,15 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                     `;
                 });
 
-                this.styleElement.innerHTML = innerHTML;
+                this.styleElement().innerHTML = innerHTML;
             }
         }
     }
 
     saveColumnOrder(state: any) {
-        if (this.columns) {
+        if (this._columns()) {
             let columnOrder: string[] = [];
-            this.columns.map((column) => {
+            this._columns()!.map((column) => {
                 columnOrder.push(column.field || column.key);
             });
 
@@ -3110,7 +3032,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     restoreColumnOrder() {
         const storage = this.getStorage();
-        const stateString = storage.getItem(<string>this.stateKey);
+        const stateString = storage.getItem(<string>this.stateKey());
         if (stateString) {
             let state: TableState = JSON.parse(stateString);
             let columnOrder = state.columnOrder;
@@ -3124,15 +3046,15 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                         reorderedColumns.push(col);
                     }
                 });
-                this.columnOrderStateRestored = true;
-                this.columns = reorderedColumns;
+                this.columnOrderStateRestored.set(true);
+                this._columns.set(reorderedColumns);
             }
         }
     }
 
     findColumnByKey(key: any) {
-        if (this.columns) {
-            for (let col of this.columns) {
+        if (this._columns()) {
+            for (let col of this._columns()!) {
                 if (col.key === key || col.field === key) return col;
                 else continue;
             }
@@ -3142,27 +3064,27 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     createStyleElement() {
-        this.styleElement = this.renderer.createElement('style');
-        this.styleElement.type = 'text/css';
-        DomHandler.setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
-        this.renderer.appendChild(this.document.head, this.styleElement);
-        DomHandler.setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
+        this.styleElement.set(this.renderer.createElement('style'));
+        this.styleElement().type = 'text/css';
+        DomHandler.setAttribute(this.styleElement(), 'nonce', this.config?.csp()?.nonce);
+        this.renderer.appendChild(this.document.head, this.styleElement());
+        DomHandler.setAttribute(this.styleElement(), 'nonce', this.config?.csp()?.nonce);
     }
 
     getGroupRowsMeta() {
-        return { field: this.groupRowsBy, order: this.groupRowsByOrder };
+        return { field: this.groupRowsBy(), order: this.groupRowsByOrder() };
     }
 
     createResponsiveStyle() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.responsiveStyleElement) {
-                this.responsiveStyleElement = this.renderer.createElement('style');
-                this.responsiveStyleElement.type = 'text/css';
-                DomHandler.setAttribute(this.responsiveStyleElement, 'nonce', this.config?.csp()?.nonce);
-                this.renderer.appendChild(this.document.head, this.responsiveStyleElement);
+            if (!this.responsiveStyleElement()) {
+                this.responsiveStyleElement.set(this.renderer.createElement('style'));
+                this.responsiveStyleElement().type = 'text/css';
+                DomHandler.setAttribute(this.responsiveStyleElement(), 'nonce', this.config?.csp()?.nonce);
+                this.renderer.appendChild(this.document.head, this.responsiveStyleElement());
 
                 let innerHTML = `
-    @media screen and (max-width: ${this.breakpoint}) {
+    @media screen and (max-width: ${this.breakpoint()}) {
         #${this.id}-table > .p-datatable-thead > tr > th,
         #${this.id}-table > .p-datatable-tfoot > tr > td {
             display: none !important;
@@ -3190,113 +3112,109 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
     `;
-                this.renderer.setProperty(this.responsiveStyleElement, 'innerHTML', innerHTML);
-                DomHandler.setAttribute(this.responsiveStyleElement, 'nonce', this.config?.csp()?.nonce);
+                this.renderer.setProperty(this.responsiveStyleElement(), 'innerHTML', innerHTML);
+                DomHandler.setAttribute(this.responsiveStyleElement(), 'nonce', this.config?.csp()?.nonce);
             }
         }
     }
 
     destroyResponsiveStyle() {
-        if (this.responsiveStyleElement) {
-            this.renderer.removeChild(this.document.head, this.responsiveStyleElement);
-            this.responsiveStyleElement = null;
+        if (this.responsiveStyleElement()) {
+            this.renderer.removeChild(this.document.head, this.responsiveStyleElement());
+            this.responsiveStyleElement.set(null);
         }
     }
 
     destroyStyleElement() {
-        if (this.styleElement) {
-            this.renderer.removeChild(this.document.head, this.styleElement);
-            this.styleElement = null;
+        if (this.styleElement()) {
+            this.renderer.removeChild(this.document.head, this.styleElement());
+            this.styleElement.set(null);
         }
-    }
-
-    ngAfterViewChecked(): void {
-        this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
     }
 
     onDestroy() {
         this.unbindDocumentEditListener();
-        this.editingCell = null;
-        this.initialized = null;
+        this.editingCell.set(null);
+        this.initialized.set(null);
 
         this.destroyStyleElement();
         this.destroyResponsiveStyle();
     }
 
-    get dataP() {
+    readonly dataP = computed(() => {
         return this.cn({
-            scrollable: this.scrollable,
-            'flex-scrollable': this.scrollable && this.scrollHeight === 'flex',
-            [this.size as string]: this.size,
-            loading: this.loading,
+            scrollable: this.scrollable(),
+            'flex-scrollable': this.scrollable() && this.scrollHeight() === 'flex',
+            [this.size() as string]: this.size(),
+            loading: this.loading(),
             empty: this.isEmpty()
         });
-    }
+    });
 }
 
 @Component({
     selector: '[pTableBody]',
     standalone: false,
     template: `
-        @if (!dataTable.expandedRowTemplate && !dataTable._expandedRowTemplate()) {
-            @for (rowData of value; track dataTable.rowTrackBy(rowIndex, rowData); let rowIndex = $index) {
-                @if ((dataTable.groupHeaderTemplate || dataTable._groupHeaderTemplate()) && !dataTable.virtualScroll && dataTable.rowGroupMode === 'subheader' && shouldRenderRowGroupHeader(value, rowData, getRowIndex(rowIndex))) {
+        @if (!dataTable.expandedRowTemplate() && !dataTable._expandedRowTemplate()) {
+            @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
+                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && !dataTable.virtualScroll() && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
-                                dataTable.groupHeaderTemplate || dataTable._groupHeaderTemplate();
+                                dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate();
                                 context: {
                                     $implicit: rowData,
                                     rowIndex: getRowIndex(rowIndex),
-                                    columns: columns,
-                                    editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                    frozen: frozen
+                                    columns: columns(),
+                                    editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                    frozen: frozen()
                                 }
                             "
                         ></ng-container>
                     </ng-container>
                 }
-                @if (dataTable.rowGroupMode !== 'rowspan') {
+                @if (dataTable.rowGroupMode() !== 'rowspan') {
                     <ng-container
                         *ngTemplateOutlet="
-                            rowData ? template : dataTable.loadingBodyTemplate || dataTable._loadingBodyTemplate();
+                            rowData ? template() : dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),
-                                columns: columns,
-                                editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                frozen: frozen
+                                columns: columns(),
+                                editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                frozen: frozen()
                             }
                         "
                     ></ng-container>
                 }
-                @if (dataTable.rowGroupMode === 'rowspan') {
+                @if (dataTable.rowGroupMode() === 'rowspan') {
                     <ng-container
                         *ngTemplateOutlet="
-                            rowData ? template : dataTable.loadingBodyTemplate || dataTable._loadingBodyTemplate();
+                            rowData ? template() : dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),
-                                columns: columns,
-                                editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                frozen: frozen,
-                                rowgroup: shouldRenderRowspan(value, rowData, rowIndex),
-                                rowspan: calculateRowGroupSize(value, rowData, rowIndex)
+                                columns: columns(),
+                                editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                frozen: frozen(),
+                                rowgroup: shouldRenderRowspan(value(), rowData, rowIndex),
+                                rowspan: calculateRowGroupSize(value(), rowData, rowIndex)
                             }
                         "
                     ></ng-container>
                 }
-                @if ((dataTable.groupFooterTemplate || dataTable._groupFooterTemplate()) && !dataTable.virtualScroll && dataTable.rowGroupMode === 'subheader' && shouldRenderRowGroupFooter(value, rowData, getRowIndex(rowIndex))) {
+                @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && !dataTable.virtualScroll() && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
-                                dataTable.groupFooterTemplate || dataTable._groupFooterTemplate();
+                                dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate();
                                 context: {
                                     $implicit: rowData,
                                     rowIndex: getRowIndex(rowIndex),
-                                    columns: columns,
-                                    editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                    frozen: frozen
+                                    columns: columns(),
+                                    editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                    frozen: frozen()
                                 }
                             "
                         ></ng-container>
@@ -3304,35 +3222,35 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             }
         }
-        @if ((dataTable.expandedRowTemplate || dataTable._expandedRowTemplate()) && !(frozen && (dataTable.frozenExpandedRowTemplate || dataTable._frozenExpandedRowTemplate()))) {
-            @for (rowData of value; track dataTable.rowTrackBy(rowIndex, rowData); let rowIndex = $index) {
-                @if (!(dataTable.groupHeaderTemplate && dataTable._groupHeaderTemplate())) {
+        @if ((dataTable.expandedRowTemplate() || dataTable._expandedRowTemplate()) && !(frozen() && (dataTable.frozenExpandedRowTemplate() || dataTable._frozenExpandedRowTemplate()))) {
+            @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
+                @if (!(dataTable.groupHeaderTemplate() && dataTable._groupHeaderTemplate())) {
                     <ng-container
                         *ngTemplateOutlet="
-                            template;
+                            template();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),
-                                columns: columns,
+                                columns: columns(),
                                 expanded: dataTable.isRowExpanded(rowData),
-                                editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                frozen: frozen
+                                editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                frozen: frozen()
                             }
                         "
                     ></ng-container>
                 }
-                @if ((dataTable.groupHeaderTemplate || dataTable._groupHeaderTemplate()) && dataTable.rowGroupMode === 'subheader' && shouldRenderRowGroupHeader(value, rowData, getRowIndex(rowIndex))) {
+                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
-                                dataTable.groupHeaderTemplate || dataTable._groupHeaderTemplate();
+                                dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate();
                                 context: {
                                     $implicit: rowData,
                                     rowIndex: getRowIndex(rowIndex),
-                                    columns: columns,
+                                    columns: columns(),
                                     expanded: dataTable.isRowExpanded(rowData),
-                                    editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                    frozen: frozen
+                                    editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                    frozen: frozen()
                                 }
                             "
                         ></ng-container>
@@ -3341,27 +3259,27 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 @if (dataTable.isRowExpanded(rowData)) {
                     <ng-container
                         *ngTemplateOutlet="
-                            dataTable.expandedRowTemplate || dataTable._expandedRowTemplate();
+                            dataTable.expandedRowTemplate() || dataTable._expandedRowTemplate();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),
-                                columns: columns,
-                                frozen: frozen
+                                columns: columns(),
+                                frozen: frozen()
                             }
                         "
                     ></ng-container>
-                    @if ((dataTable.groupFooterTemplate || dataTable._groupFooterTemplate()) && dataTable.rowGroupMode === 'subheader' && shouldRenderRowGroupFooter(value, rowData, getRowIndex(rowIndex))) {
+                    @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getRowIndex(rowIndex))) {
                         <ng-container role="row">
                             <ng-container
                                 *ngTemplateOutlet="
-                                    dataTable.groupFooterTemplate || dataTable._groupFooterTemplate();
+                                    dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate();
                                     context: {
                                         $implicit: rowData,
                                         rowIndex: getRowIndex(rowIndex),
-                                        columns: columns,
+                                        columns: columns(),
                                         expanded: dataTable.isRowExpanded(rowData),
-                                        editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                                        frozen: frozen
+                                        editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                                        frozen: frozen()
                                     }
                                 "
                             ></ng-container>
@@ -3370,47 +3288,47 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 }
             }
         }
-        @if ((dataTable.frozenExpandedRowTemplate || dataTable._frozenExpandedRowTemplate()) && frozen) {
-            @for (rowData of value; track dataTable.rowTrackBy(rowIndex, rowData); let rowIndex = $index) {
+        @if ((dataTable.frozenExpandedRowTemplate() || dataTable._frozenExpandedRowTemplate()) && frozen()) {
+            @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
                 <ng-container
                     *ngTemplateOutlet="
-                        template;
+                        template();
                         context: {
                             $implicit: rowData,
                             rowIndex: getRowIndex(rowIndex),
-                            columns: columns,
+                            columns: columns(),
                             expanded: dataTable.isRowExpanded(rowData),
-                            editing: dataTable.editMode === 'row' && dataTable.isRowEditing(rowData),
-                            frozen: frozen
+                            editing: dataTable.editMode() === 'row' && dataTable.isRowEditing(rowData),
+                            frozen: frozen()
                         }
                     "
                 ></ng-container>
                 @if (dataTable.isRowExpanded(rowData)) {
                     <ng-container
                         *ngTemplateOutlet="
-                            dataTable.frozenExpandedRowTemplate || dataTable._frozenExpandedRowTemplate();
+                            dataTable.frozenExpandedRowTemplate() || dataTable._frozenExpandedRowTemplate();
                             context: {
                                 $implicit: rowData,
                                 rowIndex: getRowIndex(rowIndex),
-                                columns: columns,
-                                frozen: frozen
+                                columns: columns(),
+                                frozen: frozen()
                             }
                         "
                     ></ng-container>
                 }
             }
         }
-        @if (dataTable.loading) {
-            <ng-container *ngTemplateOutlet="dataTable.loadingBodyTemplate || dataTable._loadingBodyTemplate(); context: { $implicit: columns, frozen: frozen }"></ng-container>
+        @if (dataTable.loading()) {
+            <ng-container *ngTemplateOutlet="dataTable.loadingBodyTemplate() || dataTable._loadingBodyTemplate(); context: { $implicit: columns(), frozen: frozen() }"></ng-container>
         }
-        @if (dataTable.isEmpty() && !dataTable.loading) {
-            <ng-container *ngTemplateOutlet="dataTable.emptyMessageTemplate || dataTable._emptyMessageTemplate(); context: { $implicit: columns, frozen: frozen }"></ng-container>
+        @if (dataTable.isEmpty() && !dataTable.loading()) {
+            <ng-container *ngTemplateOutlet="dataTable.emptyMessageTemplate() || dataTable._emptyMessageTemplate(); context: { $implicit: columns(), frozen: frozen() }"></ng-container>
         }
     `,
     changeDetection: ChangeDetectionStrategy.Eager,
     encapsulation: ViewEncapsulation.None,
     host: {
-        '[attr.data-p]': 'dataP'
+        '[attr.data-p]': 'dataP()'
     }
 })
 export class TableBody extends BaseComponent {
@@ -3419,58 +3337,55 @@ export class TableBody extends BaseComponent {
 
     hostName = 'Table';
 
-    @Input('pTableBody') columns: any[] | undefined;
+    readonly columns = input<any[] | undefined>(undefined, { alias: 'pTableBody' });
 
-    @Input('pTableBodyTemplate') template: Nullable<TemplateRef<any>>;
+    readonly template = input<Nullable<TemplateRef<any>>>(undefined, { alias: 'pTableBodyTemplate' });
 
-    @Input() get value(): any[] | undefined {
-        return this._value;
-    }
-    set value(val: any[] | undefined) {
-        this._value = val;
-        if (this.frozenRows) {
-            this.updateFrozenRowStickyPosition();
+    readonly value = input<any[] | undefined>();
+
+    readonly frozen = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
+
+    readonly frozenRows = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
+
+    readonly scrollerOptions = input<any>();
+
+    subscription: Subscription = this.dataTable.tableService.valueSource$.subscribe(() => {
+        if (this.dataTable.virtualScroll()) {
+            this.cd.detectChanges();
         }
-
-        if (this.dataTable.scrollable && this.dataTable.rowGroupMode === 'subheader') {
-            this.updateFrozenRowGroupHeaderStickyPosition();
-        }
-    }
-
-    @Input({ transform: booleanAttribute }) frozen: boolean | undefined;
-
-    @Input({ transform: booleanAttribute }) frozenRows: boolean | undefined;
-
-    @Input() scrollerOptions: any;
-
-    subscription: Subscription;
-
-    _value: any[] | undefined;
-
-    onAfterViewInit() {
-        if (this.frozenRows) {
-            this.updateFrozenRowStickyPosition();
-        }
-
-        if (this.dataTable.scrollable && this.dataTable.rowGroupMode === 'subheader') {
-            this.updateFrozenRowGroupHeaderStickyPosition();
-        }
-    }
+    });
 
     constructor() {
         super();
-        this.subscription = this.dataTable.tableService.valueSource$.subscribe(() => {
-            if (this.dataTable.virtualScroll) {
-                this.cd.detectChanges();
+        afterNextRender(() => {
+            if (this.frozenRows()) {
+                this.updateFrozenRowStickyPosition();
             }
+
+            if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
+                this.updateFrozenRowGroupHeaderStickyPosition();
+            }
+        });
+        effect(() => {
+            this.value();
+
+            untracked(() => {
+                if (this.frozenRows()) {
+                    this.updateFrozenRowStickyPosition();
+                }
+
+                if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
+                    this.updateFrozenRowGroupHeaderStickyPosition();
+                }
+            });
         });
     }
 
     shouldRenderRowGroupHeader(value: any, rowData: any, i: number) {
-        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy || '');
-        let prevRowData = value[i - (this.dataTable?._first || 0) - 1];
+        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy() || '');
+        let prevRowData = value[i - (this.dataTable?.first() || 0) - 1];
         if (prevRowData) {
-            let previousRowFieldData = ObjectUtils.resolveFieldData(prevRowData, this.dataTable?.groupRowsBy || '');
+            let previousRowFieldData = ObjectUtils.resolveFieldData(prevRowData, this.dataTable?.groupRowsBy() || '');
             return currentRowFieldData !== previousRowFieldData;
         } else {
             return true;
@@ -3478,10 +3393,10 @@ export class TableBody extends BaseComponent {
     }
 
     shouldRenderRowGroupFooter(value: any, rowData: any, i: number) {
-        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy || '');
-        let nextRowData = value[i - (this.dataTable?._first || 0) + 1];
+        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy() || '');
+        let nextRowData = value[i - (this.dataTable?.first() || 0) + 1];
         if (nextRowData) {
-            let nextRowFieldData = ObjectUtils.resolveFieldData(nextRowData, this.dataTable?.groupRowsBy || '');
+            let nextRowFieldData = ObjectUtils.resolveFieldData(nextRowData, this.dataTable?.groupRowsBy() || '');
             return currentRowFieldData !== nextRowFieldData;
         } else {
             return true;
@@ -3489,10 +3404,10 @@ export class TableBody extends BaseComponent {
     }
 
     shouldRenderRowspan(value: any, rowData: any, i: number) {
-        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy!);
+        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy()!);
         let prevRowData = value[i - 1];
         if (prevRowData) {
-            let previousRowFieldData = ObjectUtils.resolveFieldData(prevRowData, this.dataTable?.groupRowsBy || '');
+            let previousRowFieldData = ObjectUtils.resolveFieldData(prevRowData, this.dataTable?.groupRowsBy() || '');
             return currentRowFieldData !== previousRowFieldData;
         } else {
             return true;
@@ -3500,7 +3415,7 @@ export class TableBody extends BaseComponent {
     }
 
     calculateRowGroupSize(value: any, rowData: any, index: number) {
-        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy!);
+        let currentRowFieldData = ObjectUtils.resolveFieldData(rowData, this.dataTable?.groupRowsBy()!);
         let nextRowFieldData = currentRowFieldData;
         let groupRowSpan = 0;
 
@@ -3508,7 +3423,7 @@ export class TableBody extends BaseComponent {
             groupRowSpan++;
             let nextRowData = value[++index];
             if (nextRowData) {
-                nextRowFieldData = ObjectUtils.resolveFieldData(nextRowData, this.dataTable?.groupRowsBy || '');
+                nextRowFieldData = ObjectUtils.resolveFieldData(nextRowData, this.dataTable?.groupRowsBy() || '');
             } else {
                 break;
             }
@@ -3535,8 +3450,8 @@ export class TableBody extends BaseComponent {
     }
 
     getScrollerOption(option: any, options?: any) {
-        if (this.dataTable.virtualScroll) {
-            options = options || this.scrollerOptions;
+        if (this.dataTable.virtualScroll()) {
+            options = options || this.scrollerOptions();
             return options ? options[option] : null;
         }
 
@@ -3544,17 +3459,17 @@ export class TableBody extends BaseComponent {
     }
 
     getRowIndex(rowIndex: number) {
-        const index = this.dataTable.paginator ? <number>this.dataTable.first + rowIndex : rowIndex;
+        const index = this.dataTable.paginator() ? <number>this.dataTable.first() + rowIndex : rowIndex;
         const getItemOptions = this.getScrollerOption('getItemOptions');
         return getItemOptions ? getItemOptions(index).index : index;
     }
 
-    get dataP() {
+    readonly dataP = computed(() => {
         return this.cn({
-            hoverable: this.dataTable.rowHover || this.dataTable.selectionMode,
-            frozen: this.frozen
+            hoverable: this.dataTable.rowHover() || this.dataTable.selectionMode(),
+            frozen: this.frozen()
         });
-    }
+    });
 }
 
 @Directive({
@@ -3732,10 +3647,10 @@ export class SortableColumn extends BaseComponent {
         let sorted = false;
         let sortOrder = 0;
 
-        if (this.dataTable.sortMode === 'single') {
+        if (this.dataTable.sortMode() === 'single') {
             sorted = this.dataTable.isSorted(<string>this.field) as boolean;
-            sortOrder = this.dataTable.sortOrder;
-        } else if (this.dataTable.sortMode === 'multiple') {
+            sortOrder = this.dataTable._sortOrder();
+        } else if (this.dataTable.sortMode() === 'multiple') {
             const sortMeta = this.dataTable.getSortMeta(<string>this.field);
             sorted = !!sortMeta;
             sortOrder = sortMeta ? sortMeta.order : 0;
@@ -3789,7 +3704,7 @@ export class SortableColumn extends BaseComponent {
     selector: 'p-sortIcon',
     standalone: false,
     template: `
-        @if (!(dataTable.sortIconTemplate || dataTable._sortIconTemplate())) {
+        @if (!(dataTable.sortIconTemplate() || dataTable._sortIconTemplate())) {
             @if (sortOrder === 0) {
                 <svg data-p-icon="sort-alt" [class]="cx('sortableColumnIcon')" />
             }
@@ -3800,9 +3715,9 @@ export class SortableColumn extends BaseComponent {
                 <svg data-p-icon="sort-amount-down" [class]="cx('sortableColumnIcon')" />
             }
         }
-        @if (dataTable.sortIconTemplate || dataTable._sortIconTemplate()) {
+        @if (dataTable.sortIconTemplate() || dataTable._sortIconTemplate()) {
             <span [class]="cx('sortableColumnIcon')">
-                <ng-template *ngTemplateOutlet="dataTable.sortIconTemplate || dataTable._sortIconTemplate(); context: { $implicit: sortOrder }"></ng-template>
+                <ng-template *ngTemplateOutlet="dataTable.sortIconTemplate() || dataTable._sortIconTemplate(); context: { $implicit: sortOrder }"></ng-template>
             </span>
         }
         @if (isMultiSorted()) {
@@ -3841,9 +3756,9 @@ export class SortIcon extends BaseComponent {
     }
 
     updateSortState() {
-        if (this.dataTable.sortMode === 'single') {
-            this.sortOrder = this.dataTable.isSorted(<string>this.field) ? this.dataTable.sortOrder : 0;
-        } else if (this.dataTable.sortMode === 'multiple') {
+        if (this.dataTable.sortMode() === 'single') {
+            this.sortOrder = this.dataTable.isSorted(<string>this.field) ? this.dataTable._sortOrder() : 0;
+        } else if (this.dataTable.sortMode() === 'multiple') {
             let sortMeta = this.dataTable.getSortMeta(<string>this.field);
             this.sortOrder = sortMeta ? sortMeta.order : 0;
         }
@@ -3852,10 +3767,10 @@ export class SortIcon extends BaseComponent {
     }
 
     getMultiSortMetaIndex() {
-        let multiSortMeta = this.dataTable._multiSortMeta;
+        let multiSortMeta = this.dataTable._multiSortMeta();
         let index = -1;
 
-        if (multiSortMeta && this.dataTable.sortMode === 'multiple' && this.dataTable.showInitialSortBadge && multiSortMeta.length > 1) {
+        if (multiSortMeta && this.dataTable.sortMode() === 'multiple' && this.dataTable.showInitialSortBadge() && multiSortMeta.length > 1) {
             for (let i = 0; i < multiSortMeta.length; i++) {
                 let meta = multiSortMeta[i];
                 if (meta.field === this.field || meta.field === this.field) {
@@ -3871,11 +3786,11 @@ export class SortIcon extends BaseComponent {
     getBadgeValue() {
         let index = this.getMultiSortMetaIndex();
 
-        return (this.dataTable?.groupRowsBy || '') && index > -1 ? index : index + 1;
+        return (this.dataTable?.groupRowsBy() || '') && index > -1 ? index : index + 1;
     }
 
     isMultiSorted() {
-        return this.dataTable.sortMode === 'multiple' && this.getMultiSortMetaIndex() > -1;
+        return this.dataTable.sortMode() === 'multiple' && this.getMultiSortMetaIndex() > -1;
     }
 
     onDestroy() {
@@ -3921,8 +3836,8 @@ export class SelectableRow extends BaseComponent {
     }
 
     setRowTabIndex() {
-        if (this.dataTable.selectionMode === 'single' || this.dataTable.selectionMode === 'multiple') {
-            return !this.dataTable.selection ? 0 : this.dataTable.anchorRowIndex === this.index ? 0 : -1;
+        if (this.dataTable.selectionMode() === 'single' || this.dataTable.selectionMode() === 'multiple') {
+            return !this.dataTable.selection() ? 0 : this.dataTable.anchorRowIndex() === this.index ? 0 : -1;
         }
     }
 
@@ -3978,9 +3893,9 @@ export class SelectableRow extends BaseComponent {
                 break;
 
             default:
-                if (event.code === 'KeyA' && (event.metaKey || event.ctrlKey) && this.dataTable.selectionMode === 'multiple') {
-                    const data = this.dataTable.dataToRender(this.dataTable.processedData);
-                    this.dataTable.selection = [...data];
+                if (event.code === 'KeyA' && (event.metaKey || event.ctrlKey) && this.dataTable.selectionMode() === 'multiple') {
+                    const data = this.dataTable.dataToRender(this.dataTable.processedData());
+                    this.dataTable.selection.set([...data]);
                     this.dataTable.selectRange(event, data.length - 1, true);
 
                     event.preventDefault();
@@ -4036,11 +3951,11 @@ export class SelectableRow extends BaseComponent {
         lastRow && this.focusRowChange(this.el.nativeElement, lastRow);
 
         if (event.ctrlKey && event.shiftKey) {
-            const data = this.dataTable.dataToRender(this.dataTable.rows);
+            const data = this.dataTable.dataToRender(this.dataTable.rows());
             const lastSelectableRowIndex = DomHandler.getAttribute(lastRow, 'index');
 
-            this.dataTable.anchorRowIndex = lastSelectableRowIndex;
-            this.dataTable.selection = data.slice(this.index || 0, data.length);
+            this.dataTable.anchorRowIndex.set(lastSelectableRowIndex);
+            this.dataTable.selection.set(data.slice(this.index || 0, data.length));
             this.dataTable.selectRange(event, this.index || 0);
         }
         event.preventDefault();
@@ -4052,11 +3967,11 @@ export class SelectableRow extends BaseComponent {
         firstRow && this.focusRowChange(this.el.nativeElement, firstRow);
 
         if (event.ctrlKey && event.shiftKey) {
-            const data = this.dataTable.dataToRender(this.dataTable.rows);
+            const data = this.dataTable.dataToRender(this.dataTable.rows());
             const firstSelectableRowIndex = DomHandler.getAttribute(firstRow, 'index');
 
-            this.dataTable.anchorRowIndex = this.dataTable.anchorRowIndex || firstSelectableRowIndex || 0;
-            this.dataTable.selection = data.slice(0, (this.index || 0) + 1);
+            this.dataTable.anchorRowIndex.set(this.dataTable.anchorRowIndex() || firstSelectableRowIndex || 0);
+            this.dataTable.selection.set(data.slice(0, (this.index || 0) + 1));
             this.dataTable.selectRange(event, this.index || 0);
         }
         event.preventDefault();
@@ -4069,22 +3984,22 @@ export class SelectableRow extends BaseComponent {
         } else {
             this.onEnterKey(event);
 
-            if (event.shiftKey && this.dataTable.selection !== null) {
-                const data = this.dataTable.dataToRender(this.dataTable.rows);
+            if (event.shiftKey && this.dataTable.selection() !== null) {
+                const data = this.dataTable.dataToRender(this.dataTable.rows());
                 let index;
 
-                if (ObjectUtils.isNotEmpty(this.dataTable.selection) && this.dataTable.selection.length > 0) {
+                if (ObjectUtils.isNotEmpty(this.dataTable.selection()) && this.dataTable.selection().length > 0) {
                     let firstSelectedRowIndex, lastSelectedRowIndex;
-                    firstSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection[0], data);
-                    lastSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection[this.dataTable.selection.length - 1], data);
+                    firstSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection()[0], data);
+                    lastSelectedRowIndex = ObjectUtils.findIndexInList(this.dataTable.selection()[this.dataTable.selection().length - 1], data);
 
                     index = (this.index || 0) <= firstSelectedRowIndex ? lastSelectedRowIndex : firstSelectedRowIndex;
                 } else {
-                    index = ObjectUtils.findIndexInList(this.dataTable.selection, data);
+                    index = ObjectUtils.findIndexInList(this.dataTable.selection(), data);
                 }
 
-                this.dataTable.anchorRowIndex = index || 0;
-                this.dataTable.selection = index !== this.index ? data.slice(Math.min(index || 0, this.index || 0), Math.max(index || 0, this.index || 0) + 1) : [this.data];
+                this.dataTable.anchorRowIndex.set(index || 0);
+                this.dataTable.selection.set(index !== this.index ? data.slice(Math.min(index || 0, this.index || 0), Math.max(index || 0, this.index || 0) + 1) : [this.data]);
                 this.dataTable.selectRange(event, this.index || 0);
             }
 
@@ -4554,10 +4469,10 @@ export class EditableColumn extends BaseComponent {
     @HostListener('click', ['$event'])
     onClick(event: MouseEvent) {
         if (this.isEnabled()) {
-            this.dataTable.selfClick = true;
+            this.dataTable.selfClick.set(true);
 
-            if (this.dataTable.editingCell) {
-                if (this.dataTable.editingCell !== this.el.nativeElement) {
+            if (this.dataTable.editingCell()) {
+                if (this.dataTable.editingCell() !== this.el.nativeElement) {
                     if (!this.dataTable.isEditingCellValid()) {
                         return;
                     }
@@ -4594,19 +4509,19 @@ export class EditableColumn extends BaseComponent {
 
         this.overlayEventListener = (e: any) => {
             if (this.el && this.el.nativeElement.contains(e.target)) {
-                this.dataTable.selfClick = true;
+                this.dataTable.selfClick.set(true);
             }
         };
 
-        this.dataTable.overlaySubscription = this.dataTable.overlayService.clickObservable.subscribe(this.overlayEventListener);
+        this.dataTable.overlaySubscription.set(this.dataTable.overlayService.clickObservable.subscribe(this.overlayEventListener));
     }
 
     closeEditingCell(completed: any, event: Event) {
         const eventData = {
-            field: <string>this.dataTable.editingCellField,
-            data: <any>this.dataTable.editingCellData,
+            field: <string>this.dataTable.editingCellField(),
+            data: <any>this.dataTable.editingCellData(),
             originalEvent: <Event>event,
-            index: <number>this.dataTable.editingCellRowIndex
+            index: <number>this.dataTable.editingCellRowIndex()
         };
 
         if (completed) {
@@ -4614,22 +4529,22 @@ export class EditableColumn extends BaseComponent {
         } else {
             this.dataTable.onEditCancel.emit(eventData);
 
-            this.dataTable.value.forEach((element) => {
-                if (element[this.dataTable.editingCellField] === this.data) {
-                    element[this.dataTable.editingCellField] = this.dataTable.editingCellData;
+            this.dataTable._value().forEach((element) => {
+                if (element[this.dataTable.editingCellField()] === this.data) {
+                    element[this.dataTable.editingCellField()] = this.dataTable.editingCellData();
                 }
             });
         }
 
-        !this.$unstyled() && DomHandler.removeClass(this.dataTable.editingCell, 'p-cell-editing');
+        !this.$unstyled() && DomHandler.removeClass(this.dataTable.editingCell(), 'p-cell-editing');
         setAttribute(this.el.nativeElement, 'data-p-cell-editing', 'false');
-        this.dataTable.editingCell = null;
-        this.dataTable.editingCellData = null;
-        this.dataTable.editingCellField = null;
+        this.dataTable.editingCell.set(null);
+        this.dataTable.editingCellData.set(null);
+        this.dataTable.editingCellField.set(null);
         this.dataTable.unbindDocumentEditListener();
 
-        if (this.dataTable.overlaySubscription) {
-            this.dataTable.overlaySubscription.unsubscribe();
+        if (this.dataTable.overlaySubscription()) {
+            this.dataTable.overlaySubscription()!.unsubscribe();
         }
     }
 
@@ -4859,8 +4774,8 @@ export class EditableColumn extends BaseComponent {
     }
 
     onDestroy() {
-        if (this.dataTable.overlaySubscription) {
-            this.dataTable.overlaySubscription.unsubscribe();
+        if (this.dataTable.overlaySubscription()) {
+            this.dataTable.overlaySubscription()!.unsubscribe();
         }
     }
 }
@@ -4979,8 +4894,8 @@ export class CellEditor extends BaseComponent {
 
     get editing(): boolean {
         return !!(
-            (this.dataTable.editingCell && this.editableColumn && this.dataTable.editingCell === this.editableColumn.el.nativeElement) ||
-            (this.editableRow && this.dataTable.editMode === 'row' && this.dataTable.isRowEditing(this.editableRow.data))
+            (this.dataTable.editingCell() && this.editableColumn && this.dataTable.editingCell() === this.editableColumn.el.nativeElement) ||
+            (this.editableRow && this.dataTable.editMode() === 'row' && this.dataTable.isRowEditing(this.editableRow.data))
         );
     }
 }
@@ -5075,7 +4990,7 @@ export class TableRadioButton extends BaseComponent {
             [ariaLabel]="ariaLabel"
             [unstyled]="unstyled()"
         >
-            @if (dataTable.checkboxIconTemplate || dataTable._checkboxIconTemplate(); as template) {
+            @if (dataTable.checkboxIconTemplate() || dataTable._checkboxIconTemplate(); as template) {
                 <ng-template pTemplate="icon">
                     <ng-template *ngTemplateOutlet="template; context: { $implicit: checked }" />
                 </ng-template>
@@ -5152,7 +5067,7 @@ export class TableCheckbox extends BaseComponent {
             [ariaLabel]="ariaLabel"
             [unstyled]="unstyled()"
         >
-            @if (dataTable.headerCheckboxIconTemplate || dataTable._headerCheckboxIconTemplate(); as template) {
+            @if (dataTable.headerCheckboxIconTemplate() || dataTable._headerCheckboxIconTemplate(); as template) {
                 <ng-template pTemplate="icon">
                     <ng-template *ngTemplateOutlet="template; context: { $implicit: checked }" />
                 </ng-template>
@@ -5205,7 +5120,7 @@ export class TableHeaderCheckbox extends BaseComponent {
 
     onClick(event: CheckboxChangeEvent) {
         if (!this.disabled()) {
-            if (this.dataTable.value && this.dataTable.value.length > 0) {
+            if (this.dataTable._value() && this.dataTable._value().length > 0) {
                 this.dataTable.toggleRowsWithCheckbox(event, this.checked || false);
             }
         }
@@ -5214,7 +5129,7 @@ export class TableHeaderCheckbox extends BaseComponent {
     }
 
     isDisabled() {
-        return this.disabled() || !this.dataTable.value || !this.dataTable.value.length;
+        return this.disabled() || !this.dataTable._value() || !this.dataTable._value().length;
     }
 
     onDestroy() {
@@ -5230,14 +5145,14 @@ export class TableHeaderCheckbox extends BaseComponent {
     updateCheckedState() {
         this.cd.markForCheck();
 
-        if (this.dataTable._selectAll !== null) {
-            return this.dataTable._selectAll;
+        if (this.dataTable.selectAll() !== null) {
+            return this.dataTable.selectAll();
         } else {
-            const data = this.dataTable.selectionPageOnly ? this.dataTable.dataToRender(this.dataTable.processedData) : this.dataTable.processedData;
-            const val = this.dataTable.frozenValue ? [...this.dataTable.frozenValue, ...data] : data;
-            const selectableVal = this.dataTable.rowSelectable ? val.filter((data: any, index: number) => this.dataTable.rowSelectable({ data, index })) : val;
+            const data = this.dataTable.selectionPageOnly() ? this.dataTable.dataToRender(this.dataTable.processedData()) : this.dataTable.processedData();
+            const val = this.dataTable.frozenValue() ? [...this.dataTable.frozenValue()!, ...data] : data;
+            const selectableVal = this.dataTable.rowSelectable() ? val.filter((data: any, index: number) => this.dataTable.rowSelectable()!({ data, index })) : val;
 
-            return ObjectUtils.isNotEmpty(selectableVal) && ObjectUtils.isNotEmpty(this.dataTable.selection) && selectableVal.every((v: any) => this.dataTable.selection.some((s: any) => this.dataTable.equals(v, s)));
+            return ObjectUtils.isNotEmpty(selectableVal) && ObjectUtils.isNotEmpty(this.dataTable.selection()) && selectableVal.every((v: any) => this.dataTable.selection().some((s: any) => this.dataTable.equals(v, s)));
         }
     }
 }
@@ -5392,7 +5307,7 @@ export class ReorderableRow extends BaseComponent {
 
     @HostListener('drop', ['$event'])
     onDrop(event: DragEvent) {
-        if (this.isEnabled() && this.dataTable.rowDragging) {
+        if (this.isEnabled() && this.dataTable.rowDragging()) {
             this.dataTable.onRowDrop(event, this.el.nativeElement);
         }
 
@@ -5419,7 +5334,7 @@ export class ReorderableRow extends BaseComponent {
                 [type]="type"
                 [field]="field"
                 [ariaLabel]="ariaLabel"
-                [filterConstraint]="dataTable.filters[field]"
+                [filterConstraint]="dataTable._filters()[field]"
                 [filterTemplate]="filterTemplate() || _filterTemplate"
                 [placeholder]="placeholder"
                 [minFractionDigits]="minFractionDigits"
@@ -5901,7 +5816,7 @@ export class ColumnFilter extends BaseComponent {
     overlayId: any;
 
     get fieldConstraints(): FilterMetadata[] | undefined | null {
-        return this.dataTable.filters ? <FilterMetadata[]>this.dataTable.filters[<string>this.field] : null;
+        return this.dataTable._filters() ? <FilterMetadata[]>this.dataTable._filters()[<string>this.field] : null;
     }
 
     get showRemoveIcon(): boolean {
@@ -5966,7 +5881,7 @@ export class ColumnFilter extends BaseComponent {
 
     onInit() {
         this.overlayId = UniqueComponentId();
-        if (!this.dataTable.filters[<string>this.field]) {
+        if (!this.dataTable._filters()[<string>this.field]) {
             this.initFieldFilterConstraint();
         }
 
@@ -6043,7 +5958,7 @@ export class ColumnFilter extends BaseComponent {
 
     initFieldFilterConstraint() {
         let defaultMatchMode = this.getDefaultMatchMode();
-        this.dataTable.filters[<string>this.field] =
+        this.dataTable._filters()[<string>this.field] =
             this.display == 'row'
                 ? { value: null, matchMode: defaultMatchMode }
                 : [
@@ -6064,7 +5979,7 @@ export class ColumnFilter extends BaseComponent {
     }
 
     onRowMatchModeChange(matchMode: string) {
-        const fieldFilter = <FilterMetadata>this.dataTable.filters[<string>this.field];
+        const fieldFilter = <FilterMetadata>this.dataTable._filters()[<string>this.field];
         fieldFilter.matchMode = matchMode;
 
         if (fieldFilter.value) {
@@ -6108,11 +6023,11 @@ export class ColumnFilter extends BaseComponent {
     }
 
     isRowMatchModeSelected(matchMode: string) {
-        return (<FilterMetadata>this.dataTable.filters[<string>this.field]).matchMode === matchMode;
+        return (<FilterMetadata>this.dataTable._filters()[<string>this.field]).matchMode === matchMode;
     }
 
     addConstraint() {
-        (<FilterMetadata[]>this.dataTable.filters[<string>this.field]).push({
+        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).push({
             value: null,
             matchMode: this.getDefaultMatchMode(),
             operator: this.getDefaultOperator()
@@ -6121,7 +6036,7 @@ export class ColumnFilter extends BaseComponent {
     }
 
     removeConstraint(filterMeta: FilterMetadata) {
-        this.dataTable.filters[<string>this.field] = (<FilterMetadata[]>this.dataTable.filters[<string>this.field]).filter((meta) => meta !== filterMeta);
+        this.dataTable._filters()[<string>this.field] = (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).filter((meta) => meta !== filterMeta);
         if (!this.showApplyButton) {
             this.dataTable._filter();
         }
@@ -6129,7 +6044,7 @@ export class ColumnFilter extends BaseComponent {
     }
 
     onOperatorChange(value: any) {
-        (<FilterMetadata[]>this.dataTable.filters[<string>this.field]).forEach((filterMeta) => {
+        (<FilterMetadata[]>this.dataTable._filters()[<string>this.field]).forEach((filterMeta) => {
             filterMeta.operator = value;
             this.operator = value;
         });
@@ -6259,15 +6174,15 @@ export class ColumnFilter extends BaseComponent {
     }
 
     getDefaultOperator(): string | undefined {
-        return this.dataTable.filters ? (<FilterMetadata[]>this.dataTable.filters[<string>(<string>this.field)])[0].operator : this.operator;
+        return this.dataTable._filters() ? (<FilterMetadata[]>this.dataTable._filters()[<string>(<string>this.field)])[0].operator : this.operator;
     }
 
     hasRowFilter() {
-        return this.dataTable.filters[<string>this.field] && !this.dataTable.isFilterBlank((<FilterMetadata>this.dataTable.filters[<string>this.field]).value);
+        return this.dataTable._filters()[<string>this.field] && !this.dataTable.isFilterBlank((<FilterMetadata>this.dataTable._filters()[<string>this.field]).value);
     }
 
     get hasFilter(): boolean {
-        let fieldFilter = this.dataTable.filters[<string>this.field];
+        let fieldFilter = this.dataTable._filters()[<string>this.field];
         if (fieldFilter) {
             if (Array.isArray(fieldFilter)) return !this.dataTable.isFilterBlank((<FilterMetadata[]>fieldFilter)[0].value);
             else return !this.dataTable.isFilterBlank(fieldFilter.value);

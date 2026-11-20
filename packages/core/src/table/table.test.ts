@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal, SimpleChange } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -435,7 +435,7 @@ describe('Table', () => {
 
         it('should have correct dataKey', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.dataKey).toBe('id');
+            expect(tableInstance.dataKey()).toBe('id');
         });
     });
 
@@ -452,7 +452,7 @@ describe('Table', () => {
 
         it('should enable multiple selection', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.selectionMode).toBe('multiple');
+            expect(tableInstance.selectionMode()).toBe('multiple');
         });
 
         it('should render checkboxes for selection', () => {
@@ -479,7 +479,7 @@ describe('Table', () => {
 
         it('should enable multiple sort mode', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.sortMode).toBe('multiple');
+            expect(tableInstance.sortMode()).toBe('multiple');
         });
 
         it('should render sort icons', () => {
@@ -512,8 +512,8 @@ describe('Table', () => {
 
                 const tableInstance: Table = groupedFixture.debugElement.query(By.css('p-table')).componentInstance;
 
-                expect(tableInstance.multiSortMeta).toEqual([{ field: 'category', order: 1 }]);
-                expect(tableInstance.value.map((product: any) => product.category)).toEqual(['Accessories', 'Accessories', 'Electronics']);
+                expect(tableInstance._multiSortMeta()).toEqual([{ field: 'category', order: 1 }]);
+                expect(tableInstance._value()!.map((product: any) => product.category)).toEqual(['Accessories', 'Accessories', 'Electronics']);
             });
 
             it('should keep the grouped field first when multiSortMeta is emptied later', async () => {
@@ -525,7 +525,7 @@ describe('Table', () => {
 
                 const tableInstance: Table = groupedFixture.debugElement.query(By.css('p-table')).componentInstance;
 
-                expect(tableInstance.multiSortMeta).toEqual([{ field: 'category', order: 1 }]);
+                expect(tableInstance._multiSortMeta()).toEqual([{ field: 'category', order: 1 }]);
             });
         });
     });
@@ -543,7 +543,7 @@ describe('Table', () => {
 
         it('should have global filter fields configured', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.globalFilterFields).toEqual(['name', 'category']);
+            expect(tableInstance.globalFilterFields()).toEqual(['name', 'category']);
         });
 
         it('should render column filters', () => {
@@ -565,12 +565,12 @@ describe('Table', () => {
 
         it('should enable virtual scrolling', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.virtualScroll).toBe(true);
+            expect(tableInstance.virtualScroll()).toBe(true);
         });
 
         it('should have correct virtual scroll item size', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.virtualScrollItemSize).toBe(46);
+            expect(tableInstance.virtualScrollItemSize()).toBe(46);
         });
 
         it('should handle large datasets efficiently', () => {
@@ -640,12 +640,12 @@ describe('Table', () => {
 
         it('should enable lazy loading', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.lazy).toBe(true);
+            expect(tableInstance.lazy()).toBe(true);
         });
 
         it('should have correct total records', () => {
             const tableInstance = testFixture.debugElement.query(By.css('p-table')).componentInstance;
-            expect(tableInstance.totalRecords).toBe(1000);
+            expect(tableInstance._totalRecords()).toBe(1000);
         });
 
         it('should emit lazy load event through a real trigger (onPageChange), not a manual .emit() call', () => {
@@ -710,7 +710,7 @@ describe('Table', () => {
             await new Promise((resolve) => setTimeout(resolve, 350));
             await ecommerceFixture.whenStable();
 
-            const inStockProducts = tableInstance.filteredValue || tableInstance.value;
+            const inStockProducts = tableInstance.filteredValue() || tableInstance._value();
             const inStock = inStockProducts.filter((product: any) => product.inventoryStatus === 'INSTOCK');
             expect(inStock.length).toBe(3);
         });
@@ -721,8 +721,8 @@ describe('Table', () => {
             tableInstance.sort({ field: 'price', order: 1 });
             await ecommerceFixture.whenStable();
 
-            expect(tableInstance.sortField).toBe('price');
-            expect(tableInstance.sortOrder).toBe(1);
+            expect(tableInstance._sortField()).toBe('price');
+            expect(tableInstance._sortOrder()).toBe(1);
         });
 
         it('should support price range filtering for budget constraints', async () => {
@@ -732,7 +732,7 @@ describe('Table', () => {
             await new Promise((resolve) => setTimeout(resolve, 350));
             await ecommerceFixture.whenStable();
 
-            const filteredData = tableInstance.filteredValue || tableInstance.value;
+            const filteredData = tableInstance.filteredValue() || tableInstance._value();
             const affordableProducts = filteredData.filter((product: any) => product.price < 100);
             expect(affordableProducts.length).toBe(1); // Only the mouse under $100
         });
@@ -774,7 +774,7 @@ describe('Table', () => {
             it('should maintain state across user interactions', () => {
                 const tableInstance = ecommerceFixture.debugElement.query(By.css('p-table')).componentInstance;
                 expect(tableInstance).toBeTruthy();
-                expect(tableInstance.value).toBeDefined();
+                expect(tableInstance._value()).toBeDefined();
             });
 
             it('should support row expansion for master-detail views', () => {
@@ -784,7 +784,7 @@ describe('Table', () => {
             it('should handle column reordering and resizing', () => {
                 const tableInstance = ecommerceFixture.debugElement.query(By.css('p-table')).componentInstance;
                 expect(tableInstance).toBeTruthy();
-                expect(tableInstance.value).toBeDefined();
+                expect(tableInstance._value()).toBeDefined();
             });
 
             it('should provide advanced sorting capabilities', () => {
@@ -825,66 +825,69 @@ describe('Table', () => {
 
         describe('Selection outputs', () => {
             it('emits selectionChange and onRowSelect via handleRowClick (select)', () => {
-                outputComponent.selectionMode = 'single';
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('selectionMode', 'single');
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rowData = { id: '1', name: 'Row 1' };
-                outputComponent.value = [rowData, { id: '2', name: 'Row 2' }];
-                vi.spyOn(outputComponent.selectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', [rowData, { id: '2', name: 'Row 2' }]);
+                const selectionChangeSpy = vi.fn();
+                outputComponent.selection.subscribe(selectionChangeSpy);
                 vi.spyOn(outputComponent.onRowSelect, 'emit');
 
                 outputComponent.handleRowClick({ originalEvent: clickEvent(), rowData, rowIndex: 0 });
 
-                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(selectionChangeSpy).toHaveBeenCalledWith(rowData);
                 expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'row', index: 0 }));
             });
 
             it('emits selectionChange and onRowUnselect via handleRowClick (unselect an already-selected row)', () => {
-                outputComponent.selectionMode = 'single';
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('selectionMode', 'single');
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rowData = { id: '1', name: 'Row 1' };
-                outputComponent.value = [rowData];
-                outputComponent.selection = rowData;
-                outputComponent.ngOnChanges({ selection: new SimpleChange(null, rowData, false) });
-                vi.spyOn(outputComponent.selectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', [rowData]);
+                outputComponent.selection.set(rowData);
+                outputFixture.detectChanges();
+                const selectionChangeSpy = vi.fn();
+                outputComponent.selection.subscribe(selectionChangeSpy);
                 vi.spyOn(outputComponent.onRowUnselect, 'emit');
 
                 outputComponent.handleRowClick({ originalEvent: clickEvent(), rowData, rowIndex: 0 });
 
-                expect(outputComponent.selectionChange.emit).toHaveBeenCalled();
+                expect(selectionChangeSpy).toHaveBeenCalled();
                 expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'row' }));
             });
 
             it('emits selectionChange and onRowSelect via selectRange (shift-click multi-select)', () => {
-                outputComponent.selectionMode = 'multiple';
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('selectionMode', 'multiple');
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rows = [
                     { id: '1', name: 'Row 1' },
                     { id: '2', name: 'Row 2' },
                     { id: '3', name: 'Row 3' }
                 ];
-                outputComponent.value = rows;
-                outputComponent.selection = [];
-                outputComponent.anchorRowIndex = 0;
-                vi.spyOn(outputComponent.selectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', rows);
+                outputComponent.selection.set([]);
+                outputComponent.anchorRowIndex.set(0);
+                const selectionChangeSpy = vi.fn();
+                outputComponent.selection.subscribe(selectionChangeSpy);
                 vi.spyOn(outputComponent.onRowSelect, 'emit');
 
                 outputComponent.selectRange(clickEvent() as any, 2);
 
-                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rows);
+                expect(selectionChangeSpy).toHaveBeenCalledWith(rows);
                 expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rows, type: 'row' }));
             });
 
             it('emits onRowUnselect via clearSelectionRange', () => {
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rows = [
                     { id: '1', name: 'Row 1' },
                     { id: '2', name: 'Row 2' }
                 ];
-                outputComponent.value = rows;
-                outputComponent.selection = [...rows];
-                outputComponent.selectionKeys = { '1': 1, '2': 1 };
-                outputComponent.anchorRowIndex = 0;
-                outputComponent.rangeRowIndex = 1;
+                outputFixture.componentRef.setInput('value', rows);
+                outputComponent.selection.set([...rows]);
+                outputComponent.selectionKeys.set({ '1': 1, '2': 1 });
+                outputComponent.anchorRowIndex.set(0);
+                outputComponent.rangeRowIndex.set(1);
                 vi.spyOn(outputComponent.onRowUnselect, 'emit');
 
                 outputComponent.clearSelectionRange(clickEvent() as any);
@@ -893,33 +896,26 @@ describe('Table', () => {
             });
 
             it('emits selectionChange and onRowSelect/onRowUnselect via toggleRowWithRadio', () => {
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rowData = { id: '1', name: 'Row 1' };
-                outputComponent.value = [rowData];
-                vi.spyOn(outputComponent.selectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', [rowData]);
+                const selectionChangeSpy = vi.fn();
+                outputComponent.selection.subscribe(selectionChangeSpy);
                 vi.spyOn(outputComponent.onRowSelect, 'emit');
                 vi.spyOn(outputComponent.onRowUnselect, 'emit');
 
                 outputComponent.toggleRowWithRadio({ originalEvent: clickEvent(), rowIndex: 0 }, rowData);
-                expect(outputComponent.selectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(selectionChangeSpy).toHaveBeenCalledWith(rowData);
                 expect(outputComponent.onRowSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'radiobutton' }));
 
                 outputComponent.toggleRowWithRadio({ originalEvent: clickEvent(), rowIndex: 0 }, rowData);
                 expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'radiobutton' }));
             });
 
-            // NOTE: the `selectAll` @Input's getter/setter (table.ts ~875-880) reads/writes
-            // `_selection` instead of `_selectAll` -- a copy/paste bug that only doesn't break
-            // real usage because Table.onChanges() (~1503-1504) separately reads the raw
-            // SimpleChanges value and assigns `_selectAll` correctly. We drive that real
-            // ngOnChanges/onChanges path here (as a template `[selectAll]` binding would)
-            // rather than assigning `.selectAll` directly, since the direct setter is the buggy
-            // path. See final report for details -- this was left as-is per instructions to not
-            // silently work around a source bug.
             it('emits selectAllChange via toggleRowsWithCheckbox when selectAll is bound (not null)', () => {
-                outputComponent.value = [{ id: '1' }, { id: '2' }];
-                outputComponent.dataKey = 'id';
-                outputComponent.ngOnChanges({ selectAll: new SimpleChange(null, false, false) });
+                outputFixture.componentRef.setInput('value', [{ id: '1' }, { id: '2' }]);
+                outputFixture.componentRef.setInput('dataKey', 'id');
+                outputFixture.componentRef.setInput('selectAll', false);
                 vi.spyOn(outputComponent.selectAllChange, 'emit');
 
                 const originalEvent = new Event('change');
@@ -929,56 +925,60 @@ describe('Table', () => {
             });
 
             it('emits onHeaderCheckboxToggle and selectionChange via toggleRowsWithCheckbox (selectAll not bound)', () => {
-                outputComponent.value = [{ id: '1' }, { id: '2' }];
-                outputComponent.dataKey = 'id';
-                vi.spyOn(outputComponent.selectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', [{ id: '1' }, { id: '2' }]);
+                outputFixture.componentRef.setInput('dataKey', 'id');
+                const selectionChangeSpy = vi.fn();
+                outputComponent.selection.subscribe(selectionChangeSpy);
                 vi.spyOn(outputComponent.onHeaderCheckboxToggle, 'emit');
 
                 const originalEvent = new Event('change');
                 outputComponent.toggleRowsWithCheckbox({ originalEvent } as any, true);
 
-                expect(outputComponent.selectionChange.emit).toHaveBeenCalled();
+                expect(selectionChangeSpy).toHaveBeenCalled();
                 expect(outputComponent.onHeaderCheckboxToggle.emit).toHaveBeenCalledWith({ originalEvent, checked: true });
             });
         });
 
         describe('Context menu outputs', () => {
             it('emits contextMenuSelectionChange and onContextMenuSelect via handleRowRightClick', () => {
-                outputComponent.contextMenu = { show: vi.fn(), hideCallback: signal(undefined) };
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('contextMenu', { show: vi.fn(), hideCallback: signal(undefined) });
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rowData = { id: '1', name: 'Row 1' };
-                outputComponent.value = [rowData];
-                vi.spyOn(outputComponent.contextMenuSelectionChange, 'emit');
+                outputFixture.componentRef.setInput('value', [rowData]);
+                const contextMenuSelectionChangeSpy = vi.fn();
+                outputComponent.contextMenuSelection.subscribe(contextMenuSelectionChangeSpy);
                 vi.spyOn(outputComponent.onContextMenuSelect, 'emit');
 
                 const originalEvent = clickEvent();
                 outputComponent.handleRowRightClick({ originalEvent, rowData, rowIndex: 0 });
 
-                expect(outputComponent.contextMenuSelectionChange.emit).toHaveBeenCalledWith(rowData);
+                expect(contextMenuSelectionChangeSpy).toHaveBeenCalledWith(rowData);
                 expect(outputComponent.onContextMenuSelect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, index: 0 }));
             });
         });
 
         describe('Paging outputs', () => {
             it('emits onPage, firstChange and rowsChange via onPageChange', () => {
-                outputComponent.value = [{ id: '1' }];
+                outputFixture.componentRef.setInput('value', [{ id: '1' }]);
                 vi.spyOn(outputComponent.onPage, 'emit');
-                vi.spyOn(outputComponent.firstChange, 'emit');
-                vi.spyOn(outputComponent.rowsChange, 'emit');
+                const firstChangeSpy = vi.fn();
+                outputComponent.first.subscribe(firstChangeSpy);
+                const rowsChangeSpy = vi.fn();
+                outputComponent.rows.subscribe(rowsChangeSpy);
 
                 outputComponent.onPageChange({ first: 10, rows: 5 });
 
                 expect(outputComponent.onPage.emit).toHaveBeenCalledWith({ first: 10, rows: 5 });
-                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(10);
-                expect(outputComponent.rowsChange.emit).toHaveBeenCalledWith(5);
+                expect(firstChangeSpy).toHaveBeenCalledWith(10);
+                expect(rowsChangeSpy).toHaveBeenCalledWith(5);
             });
         });
 
         describe('Sorting outputs', () => {
             it('emits onSort via sortSingle', () => {
-                outputComponent.value = [{ name: 'b' }, { name: 'a' }];
-                outputComponent.sortField = 'name';
-                outputComponent.sortOrder = 1;
+                outputFixture.componentRef.setInput('value', [{ name: 'b' }, { name: 'a' }]);
+                outputFixture.componentRef.setInput('sortField', 'name');
+                outputFixture.componentRef.setInput('sortOrder', 1);
                 vi.spyOn(outputComponent.onSort, 'emit');
 
                 outputComponent.sortSingle();
@@ -987,42 +987,44 @@ describe('Table', () => {
             });
 
             it('emits sortFunction and onSort via sortMultiple when customSort is enabled', () => {
-                outputComponent.value = [{ name: 'b' }, { name: 'a' }];
-                outputComponent.sortMode = 'multiple';
-                outputComponent.multiSortMeta = [{ field: 'name', order: 1 }];
-                outputComponent.customSort = true;
+                outputFixture.componentRef.setInput('value', [{ name: 'b' }, { name: 'a' }]);
+                outputFixture.componentRef.setInput('sortMode', 'multiple');
+                outputFixture.componentRef.setInput('multiSortMeta', [{ field: 'name', order: 1 }]);
+                outputFixture.componentRef.setInput('customSort', true);
                 vi.spyOn(outputComponent.sortFunction, 'emit');
                 vi.spyOn(outputComponent.onSort, 'emit');
 
                 outputComponent.sortMultiple();
 
                 expect(outputComponent.sortFunction.emit).toHaveBeenCalledWith({
-                    data: outputComponent.value,
+                    data: outputComponent._value(),
                     mode: 'multiple',
-                    multiSortMeta: outputComponent.multiSortMeta
+                    multiSortMeta: outputComponent._multiSortMeta()
                 });
-                expect(outputComponent.onSort.emit).toHaveBeenCalledWith({ multisortmeta: outputComponent.multiSortMeta });
+                expect(outputComponent.onSort.emit).toHaveBeenCalledWith({ multisortmeta: outputComponent._multiSortMeta() });
             });
         });
 
         describe('Filtering outputs', () => {
             it('emits onFilter and firstChange via _filter', () => {
-                outputComponent.value = [{ name: 'a' }, { name: 'b' }];
-                outputComponent.filters = { name: { value: 'a', matchMode: 'equals' } };
+                outputFixture.componentRef.setInput('value', [{ name: 'a' }, { name: 'b' }]);
+                outputFixture.componentRef.setInput('filters', { name: { value: 'a', matchMode: 'equals' } });
+                outputComponent.first.set(10);
                 vi.spyOn(outputComponent.onFilter, 'emit');
-                vi.spyOn(outputComponent.firstChange, 'emit');
+                const firstChangeSpy = vi.fn();
+                outputComponent.first.subscribe(firstChangeSpy);
 
                 outputComponent._filter();
 
-                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(0);
-                expect(outputComponent.onFilter.emit).toHaveBeenCalledWith(expect.objectContaining({ filters: outputComponent.filters }));
+                expect(firstChangeSpy).toHaveBeenCalledWith(0);
+                expect(outputComponent.onFilter.emit).toHaveBeenCalledWith(expect.objectContaining({ filters: outputComponent._filters() }));
             });
         });
 
         describe('Row expand/collapse outputs', () => {
             it('emits onRowExpand via toggleRow on a collapsed row', () => {
-                outputComponent.dataKey = 'id';
-                outputComponent.expandedRowKeys = {};
+                outputFixture.componentRef.setInput('dataKey', 'id');
+                outputFixture.componentRef.setInput('expandedRowKeys', {});
                 const rowData = { id: '1', name: 'Row 1' };
                 vi.spyOn(outputComponent.onRowExpand, 'emit');
 
@@ -1032,9 +1034,9 @@ describe('Table', () => {
             });
 
             it('emits onRowCollapse via toggleRow on an already-expanded row', () => {
-                outputComponent.dataKey = 'id';
+                outputFixture.componentRef.setInput('dataKey', 'id');
                 const rowData = { id: '1', name: 'Row 1' };
-                outputComponent.expandedRowKeys = { '1': true };
+                outputFixture.componentRef.setInput('expandedRowKeys', { '1': true });
                 vi.spyOn(outputComponent.onRowCollapse, 'emit');
 
                 outputComponent.toggleRow(rowData);
@@ -1045,7 +1047,7 @@ describe('Table', () => {
 
         describe('Column resize/reorder outputs', () => {
             it('emits onColResize via onColumnResizeEnd', async () => {
-                outputComponent.resizableColumns = true;
+                outputFixture.componentRef.setInput('resizableColumns', true);
                 outputFixture.changeDetectorRef.markForCheck();
                 await outputFixture.whenStable();
                 outputFixture.detectChanges();
@@ -1057,8 +1059,8 @@ describe('Table', () => {
                 row.appendChild(th1);
                 row.appendChild(th2);
 
-                outputComponent.resizeColumnElement = th1 as any;
-                outputComponent.lastResizerHelperX = 0;
+                outputComponent.resizeColumnElement.set(th1 as any);
+                outputComponent.lastResizerHelperX.set(0);
                 vi.spyOn(outputComponent.onColResize, 'emit');
 
                 outputComponent.onColumnResizeEnd();
@@ -1067,7 +1069,7 @@ describe('Table', () => {
             });
 
             it('emits onColReorder via onColumnDrop', async () => {
-                outputComponent.reorderableColumns = true;
+                outputFixture.componentRef.setInput('reorderableColumns', true);
                 outputFixture.changeDetectorRef.markForCheck();
                 await outputFixture.whenStable();
                 outputFixture.detectChanges();
@@ -1080,7 +1082,7 @@ describe('Table', () => {
                 row.appendChild(col1);
                 row.appendChild(col2);
 
-                outputComponent.columns = [{ field: 'name' }, { field: 'price' }];
+                outputFixture.componentRef.setInput('columns', [{ field: 'name' }, { field: 'price' }]);
                 outputComponent.onColumnDragStart({ dataTransfer: { setData: vi.fn() } } as any, col1);
                 vi.spyOn(outputComponent.onColReorder, 'emit');
 
@@ -1092,9 +1094,9 @@ describe('Table', () => {
 
         describe('Row reorder output', () => {
             it('emits onRowReorder via onRowDrop', () => {
-                outputComponent.value = [{ id: '1' }, { id: '2' }, { id: '3' }];
-                outputComponent.draggedRowIndex = 0;
-                outputComponent.droppedRowIndex = 2;
+                outputFixture.componentRef.setInput('value', [{ id: '1' }, { id: '2' }, { id: '3' }]);
+                outputComponent.draggedRowIndex.set(0);
+                outputComponent.droppedRowIndex.set(2);
                 vi.spyOn(outputComponent.onRowReorder, 'emit');
 
                 outputComponent.onRowDrop(new Event('drop'), document.createElement('tr'));
@@ -1105,8 +1107,8 @@ describe('Table', () => {
 
         describe('State outputs', () => {
             it('emits onStateSave via saveState', () => {
-                outputComponent.stateKey = 'output-events-test-state-save';
-                outputComponent.value = [{ id: '1' }];
+                outputFixture.componentRef.setInput('stateKey', 'output-events-test-state-save');
+                outputFixture.componentRef.setInput('value', [{ id: '1' }]);
                 vi.spyOn(outputComponent.onStateSave, 'emit');
 
                 outputComponent.saveState();
@@ -1116,20 +1118,22 @@ describe('Table', () => {
 
             it('emits onStateRestore, firstChange and rowsChange via restoreState', () => {
                 const stateKey = 'output-events-test-state-restore';
-                outputComponent.stateKey = stateKey;
-                outputComponent.paginator = true;
-                outputComponent.first = 0;
-                outputComponent.rows = 10;
+                outputFixture.componentRef.setInput('stateKey', stateKey);
+                outputFixture.componentRef.setInput('paginator', true);
+                outputComponent.first.set(0);
+                outputComponent.rows.set(10);
                 window.sessionStorage.setItem(stateKey, JSON.stringify({ first: 20, rows: 50 }));
 
                 vi.spyOn(outputComponent.onStateRestore, 'emit');
-                vi.spyOn(outputComponent.firstChange, 'emit');
-                vi.spyOn(outputComponent.rowsChange, 'emit');
+                const firstChangeSpy = vi.fn();
+                outputComponent.first.subscribe(firstChangeSpy);
+                const rowsChangeSpy = vi.fn();
+                outputComponent.rows.subscribe(rowsChangeSpy);
 
                 outputComponent.restoreState();
 
-                expect(outputComponent.firstChange.emit).toHaveBeenCalledWith(20);
-                expect(outputComponent.rowsChange.emit).toHaveBeenCalledWith(50);
+                expect(firstChangeSpy).toHaveBeenCalledWith(20);
+                expect(rowsChangeSpy).toHaveBeenCalledWith(50);
                 expect(outputComponent.onStateRestore.emit).toHaveBeenCalledWith(expect.objectContaining({ first: 20, rows: 50 }));
 
                 window.sessionStorage.removeItem(stateKey);
@@ -1140,7 +1144,7 @@ describe('Table', () => {
             it('emits onLazyLoad on init when lazy is true (real lifecycle trigger)', () => {
                 const freshFixture = TestBed.createComponent(Table);
                 const freshComponent = freshFixture.componentInstance;
-                freshComponent.lazy = true;
+                freshFixture.componentRef.setInput('lazy', true);
                 vi.spyOn(freshComponent.onLazyLoad, 'emit');
 
                 freshFixture.detectChanges(); // triggers ngOnInit -> onInit()

@@ -427,6 +427,31 @@ describe('remove-dead-inputs', () => {
         );
     });
 
+    it('removes the never-read frozenColumns/frozenWidth from p-table while keeping them on p-treeTable', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-table [value]="products" [frozenColumns]="frozenCols" frozenWidth="200px" [scrollable]="true"></p-table>\n<p-treeTable [value]="files" [frozenColumns]="frozenCols" frozenWidth="200px"></p-treeTable>\n`
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-table [value]="products" [scrollable]="true"></p-table>\n<p-treeTable [value]="files" [frozenColumns]="frozenCols" frozenWidth="200px"></p-treeTable>\n`);
+    });
+
+    it('does not report programmatic frozenColumns/frozenWidth access, which TreeTable still reads', async () => {
+        const runner = createMigrationRunner();
+        const ts = `export class Foo {\n    width(tt: { frozenColumns: any[]; frozenWidth: string }) {\n        return tt.frozenWidth + tt.frozenColumns.length;\n    }\n}\n`;
+        const tree = createAppTree({ '/src/app/foo.ts': ts });
+        const warnings: string[] = [];
+        runner.logger.subscribe((entry) => {
+            if (entry.level === 'warn') {
+                warnings.push(entry.message);
+            }
+        });
+
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/foo.ts')).toBe(ts);
+        expect(warnings).toEqual([]);
+    });
+
     it('keeps emptyMessage on components that still read it and does not report its programmatic access', async () => {
         const runner = createMigrationRunner();
         const html = `<p-select [options]="items" emptyMessage="Nothing"></p-select>\n<p-listbox [options]="items" [emptyMessage]="empty"></p-listbox>\n`;

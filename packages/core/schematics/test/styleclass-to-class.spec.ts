@@ -1435,6 +1435,33 @@ describe('styleclass-to-class', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-cascade-select class="existing my-cascadeselect" [options]="countries"></p-cascade-select>\n`);
     });
 
+    it('rewrites a static styleClass to class on p-table', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-table [value]="products" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '50rem' }"></p-table>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-table [value]="products" class="p-datatable-sm" [tableStyle]="{ 'min-width': '50rem' }"></p-table>\n`);
+    });
+
+    it('rewrites a bound [styleClass] to [class] on p-table', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-table [value]="products" [styleClass]="tableClass" [paginator]="true"></p-table>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-table [value]="products" [class]="tableClass" [paginator]="true"></p-table>\n`);
+    });
+
+    it('merges styleClass into an existing static class on p-table and leaves p-treeTable alone', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': `<p-table class="existing" styleClass="my-table" [value]="products"></p-table>\n<p-treeTable styleClass="my-tree" [value]="files"></p-treeTable>\n`
+        });
+        const result = await runner.runSchematic('styleclass-to-class', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(`<p-table class="existing my-table" [value]="products"></p-table>\n<p-treeTable styleClass="my-tree" [value]="files"></p-treeTable>\n`);
+    });
+
     it('reports nothing on a workspace with no usage of styleClass on the migrated selectors', async () => {
         const runner = createMigrationRunner();
         const infos: string[] = [];
