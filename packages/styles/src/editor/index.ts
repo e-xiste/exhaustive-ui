@@ -959,48 +959,64 @@ export const style = /*css*/ `
         border-start-start-radius: dt('editor.toolbar.border.radius');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow {
+    .p-editor .p-editor-toolbar.ql-snow,
+    .p-editor .p-editor-toolbar .ql-snow {
         border: 1px solid dt('editor.toolbar.border.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-stroke {
+    /* modules.toolbar pointing at an element of the header template: Quill styles that child, not .p-editor-toolbar */
+    .p-editor .p-editor-toolbar .ql-toolbar.ql-snow {
+        border-radius: inherit;
+    }
+
+    .p-editor .p-editor-toolbar.ql-snow .ql-stroke,
+    .p-editor .p-editor-toolbar .ql-snow .ql-stroke {
         stroke: dt('editor.toolbar.item.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-fill {
+    .p-editor .p-editor-toolbar.ql-snow .ql-fill,
+    .p-editor .p-editor-toolbar .ql-snow .ql-fill {
         fill: dt('editor.toolbar.item.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker .ql-picker-label {
         border: 0 none;
         color: dt('editor.toolbar.item.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker .ql-picker-label:hover {
         color: dt('editor.toolbar.item.hover.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-stroke {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-stroke,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker .ql-picker-label:hover .ql-stroke {
         stroke: dt('editor.toolbar.item.hover.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-fill {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-fill,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker .ql-picker-label:hover .ql-fill {
         fill: dt('editor.toolbar.item.hover.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded .ql-picker-label {
         color: dt('editor.toolbar.item.active.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke {
         stroke: dt('editor.toolbar.item.active.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-fill {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-fill,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-fill {
         fill: dt('editor.toolbar.item.active.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded .ql-picker-options {
         background: dt('editor.overlay.background');
         border: 1px solid dt('editor.overlay.border.color');
         box-shadow: dt('editor.overlay.shadow');
@@ -1008,17 +1024,20 @@ export const style = /*css*/ `
         padding: dt('editor.overlay.padding');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item {
         color: dt('editor.overlay.option.color');
         border-radius: dt('editor.overlay.option.border.radius');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-color-picker) .ql-picker-options .ql-picker-item:hover {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-color-picker) .ql-picker-options .ql-picker-item:hover,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded:not(.ql-color-picker) .ql-picker-options .ql-picker-item:hover {
         background: dt('editor.overlay.option.focus.background');
         color: dt('editor.overlay.option.focus.color');
     }
 
-    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-color-picker, .ql-icon-picker) .ql-picker-item {
+    .p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-color-picker, .ql-icon-picker) .ql-picker-item,
+    .p-editor .p-editor-toolbar .ql-snow .ql-picker.ql-expanded:not(.ql-color-picker, .ql-icon-picker) .ql-picker-item {
         padding: dt('editor.overlay.option.padding');
     }
 

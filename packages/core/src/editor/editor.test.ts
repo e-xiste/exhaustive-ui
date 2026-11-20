@@ -1397,3 +1397,34 @@ describe('Editor color picker hover (optimus-ui#834)', () => {
         host.remove();
     });
 });
+
+describe('Editor toolbar tokens with a custom toolbar element (optimus-ui#99)', () => {
+    let styleEl: HTMLStyleElement;
+    let host: HTMLElement;
+
+    beforeEach(() => {
+        styleEl = document.createElement('style');
+        styleEl.textContent = editorCssWithTokens;
+        document.head.appendChild(styleEl);
+        host = document.createElement('div');
+        host.className = 'p-editor';
+        host.style.setProperty('--t-editor-toolbar-item-color', 'rgb(1, 2, 3)');
+        host.style.setProperty('--t-editor-toolbar-border-color', 'rgb(4, 5, 6)');
+        host.style.setProperty('--t-editor-toolbar-border-radius', '7px');
+        // modules.toolbar = '#custom-toolbar': Quill puts ql-toolbar/ql-snow on the child, not on .p-editor-toolbar
+        host.innerHTML = `<div class="p-editor-toolbar"><div id="custom-toolbar" class="ql-toolbar ql-snow"><span class="ql-formats"><button class="ql-bold"><svg><line class="ql-stroke"></line><rect class="ql-fill"></rect></svg></button></span></div></div>`;
+        document.body.appendChild(host);
+    });
+
+    afterEach(() => {
+        styleEl.remove();
+        host.remove();
+    });
+
+    it('should apply the toolbar item color and border tokens', () => {
+        expect(getComputedStyle(host.querySelector('.ql-stroke')!).stroke).toBe('rgb(1, 2, 3)');
+        expect(getComputedStyle(host.querySelector('.ql-fill')!).fill).toBe('rgb(1, 2, 3)');
+        expect(getComputedStyle(host.querySelector('#custom-toolbar')!).borderTopColor).toBe('rgb(4, 5, 6)');
+        expect(getComputedStyle(host.querySelector('#custom-toolbar')!).borderStartStartRadius).toBe('7px');
+    });
+});
