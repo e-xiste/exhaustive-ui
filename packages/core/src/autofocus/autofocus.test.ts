@@ -951,4 +951,33 @@ describe('AutoFocus', () => {
             expect(directive.focused()).toBe(true);
         });
     });
+
+    describe('autofocus attribute (#251, #240)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            standalone: true,
+            imports: [AutoFocus],
+            template: `
+                <input id="unset" [pAutoFocus]="unset" />
+                <input id="off" [pAutoFocus]="false" />
+                <input id="on" [pAutoFocus]="true" />
+                <input id="bare" pAutoFocus />
+            `
+        })
+        class TestAutofocusAttributeComponent {
+            unset: boolean | undefined = undefined;
+        }
+
+        it('renders the native autofocus attribute only when autofocus is on', async () => {
+            await TestBed.configureTestingModule({ imports: [TestAutofocusAttributeComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+            const fixture = TestBed.createComponent(TestAutofocusAttributeComponent);
+            fixture.detectChanges();
+            const attr = (id: string) => fixture.nativeElement.querySelector('#' + id).getAttribute('autofocus');
+
+            expect(attr('unset')).toBeNull();
+            expect(attr('off')).toBeNull();
+            expect(attr('on')).toBe('true');
+            expect(attr('bare')).toBe('true');
+        });
+    });
 });

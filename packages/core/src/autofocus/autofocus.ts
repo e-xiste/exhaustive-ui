@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { afterEveryRender, Directive, ElementRef, inject, input, NgModule, signal } from '@angular/core';
+import { afterEveryRender, booleanAttribute, Directive, ElementRef, inject, input, NgModule, signal } from '@angular/core';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { DomHandler } from '@exhaustive-ui/core/dom';
 
@@ -11,7 +11,7 @@ import { DomHandler } from '@exhaustive-ui/core/dom';
     selector: '[pAutoFocus]',
     host: {
         // This sets the `attr.autofocus` which is different than the Input `autofocus` attribute.
-        '[attr.autofocus]': 'autofocus() === false ? null : true'
+        '[attr.autofocus]': 'autofocus() ? true : null'
     }
 })
 export class AutoFocus extends BaseComponent {
@@ -19,7 +19,7 @@ export class AutoFocus extends BaseComponent {
      * When present, it specifies that the component should automatically get focus on load.
      * @group Props
      */
-    autofocus = input<boolean>(false, { alias: 'pAutoFocus' });
+    autofocus = input<boolean, unknown>(false, { alias: 'pAutoFocus', transform: booleanAttribute });
 
     focused = signal(false);
 
