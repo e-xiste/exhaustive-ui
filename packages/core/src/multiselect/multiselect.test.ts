@@ -4803,10 +4803,11 @@ describe('MultiSelect low bug fixes', () => {
 
         multiSelect.show();
         await waitForOverlay();
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        fixture.detectChanges();
 
-        const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
-        expect(viewport.scrollTop).toBeGreaterThan(0);
-    });
+        // the scroller initializes and scrolls over a few ticks, slower on a loaded machine
+        await vi.waitFor(() => {
+            fixture.detectChanges();
+            const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
+            expect(viewport.scrollTop).toBeGreaterThan(0);
+        });
 });
