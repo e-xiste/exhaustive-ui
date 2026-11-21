@@ -4722,6 +4722,24 @@ describe('Scroller scrollToIndex', () => {
         scroller.scrollToIndex(20);
         expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 1000, behavior: 'auto' });
     });
+
+    it('reaches the index when the new spacer size is not rendered yet', async () => {
+        TestBed.configureTestingModule({ imports: [TestScrollToIndexScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestScrollToIndexScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(el.scrollHeight).toBe(1000 * 50);
+        // as right after an init: the spacer grew but the next render has not applied it yet
+        scroller.spacerStyle.set({ height: 2000 * 50 + 'px' });
+        scroller.scrollToIndex(1500);
+        await fixture.whenStable();
+
+        expect(el.scrollTop).toBe(1500 * 50);
+    });
 });
 
 @Component({
@@ -5144,5 +5162,157 @@ describe('Select lazy virtual scroll starting empty', () => {
         expect(labels).toContain('Item 0');
         expect(el.getBoundingClientRect().height).toBeGreaterThan(32 * 3);
         fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MultiSelect, Select],
+    template: `
+        @if (kind === 'multiselect') {
+            <p-multiselect [options]="items()" [filter]="true" [showToggleAll]="true" [virtualScroll]="true" [virtualScrollItemSize]="43" optionLabel="label" appendTo="self" />
+        } @else {
+            <p-select [options]="items()" [filter]="true" [virtualScroll]="true" [virtualScrollItemSize]="38" [lazy]="true" optionLabel="label" (onFilter)="search($event.filter)" appendTo="self" />
+        }
+    `
+})
+class TestVirtualFilterClearComponent {
+    kind: 'multiselect' | 'select' = 'multiselect';
+    all = Array.from({ length: 1000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+    items = signal(this.all);
+
+    // the results of a search come from a server
+    search(query: string) {
+        setTimeout(() => this.items.set(query ? this.all.filter((item) => item.label.includes(query)) : this.all), 20);
+    }
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `<p-scroller [items]="items" [itemSize]="50" scrollHeight="200px" [autoSize]="true" />`
+})
+class TestDestroyedAutoSizeScrollerComponent {
+    items = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller destroyed before its init tick', () => {
+    it('does not run the pending init on the destroyed view', async () => {
+        TestBed.configureTestingModule({ imports: [TestDestroyedAutoSizeScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestDestroyedAutoSizeScrollerComponent);
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        const setSpacerSize = vi.spyOn(scroller, 'setSpacerSize');
+        await fixture.whenStable();
+        // the init tick is pending: afterNextRender would throw NG0205 with the destroyed injector
+        scroller.init();
+        fixture.destroy();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+
+        expect(setSpacerSize).not.toHaveBeenCalled();
+    });
+});
+
+describe('Virtual scroll after clearing the filter', () => {
+    for (const kind of ['multiselect', 'select'] as const) {
+        it(`shows the whole list again in ${kind} (${kind === 'multiselect' ? 'optimus-ui#182' : 'optimus-ui#659'})`, async () => {
+            TestBed.configureTestingModule({ imports: [TestVirtualFilterClearComponent], providers: [provideZonelessChangeDetection()] });
+            const fixture = TestBed.createComponent(TestVirtualFilterClearComponent);
+            fixture.componentInstance.kind = kind;
+            await fixture.whenStable();
+            (fixture.nativeElement.querySelector(kind === 'multiselect' ? '.p-multiselect' : '.p-select') as HTMLElement).click();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            await fixture.whenStable();
+
+            const filterInput = fixture.nativeElement.querySelector(`.p-${kind}-filter`) as HTMLInputElement;
+            const type = async (value: string) => {
+                filterInput.value = value;
+                filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+                await fixture.whenStable();
+                await new Promise((resolve) => setTimeout(resolve, 150));
+                await fixture.whenStable();
+            };
+            const viewport = () => fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            const options = () => Array.from(viewport().querySelectorAll('li[role="option"]')) as HTMLElement[];
+            const fullHeight = Math.round(viewport().getBoundingClientRect().height);
+            expect(fullHeight).toBeGreaterThan(100);
+
+            for (const value of ['a', '', 'Item 999', '']) {
+                await type(value);
+            }
+
+            expect(Math.round(viewport().getBoundingClientRect().height)).toBe(fullHeight);
+            expect(options().length).toBeGreaterThan(3);
+            expect(options()[0].getBoundingClientRect().top).toBeGreaterThanOrEqual(viewport().getBoundingClientRect().top - 1);
+            expect(options()[0].getBoundingClientRect().bottom).toBeLessThanOrEqual(viewport().getBoundingClientRect().bottom);
+            fixture.destroy();
+        });
+    }
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <!-- the viewport has its height before the scroller measures it, as in Tree and Listbox -->
+        <p-scroller [items]="items" [itemSize]="50" [style]="{ height: '200px' }">
+            <ng-template #content let-items let-options="options">
+                <ul [class]="options.contentStyleClass" [style]="options.contentStyle" style="margin: 0; padding: 0">
+                    @for (item of items; track item) {
+                        <li style="height: 50px">{{ item }}</li>
+                    }
+                </ul>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestSpacerScrollerComponent {
+    items = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller spacer', () => {
+    it('ends at the last item without an extra viewport height (optimus-ui#1755)', async () => {
+        TestBed.configureTestingModule({ imports: [TestSpacerScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestSpacerScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(el.scrollHeight).toBe(100 * 50);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="50" scrollHeight="200px" [lazy]="true">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item ?? 'loading' }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestLazyPlaceholderScrollerComponent {
+    // the items not loaded yet are undefined
+    items = signal<any[]>(Array.from({ length: 100 }));
+}
+
+describe('Scroller lazy placeholders', () => {
+    it('renders the undefined items not loaded yet without duplicate track keys', async () => {
+        const warn = vi.spyOn(console, 'warn');
+        TestBed.configureTestingModule({ imports: [TestLazyPlaceholderScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestLazyPlaceholderScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+        fixture.componentInstance.items.update((items) => items.map((item, i) => (i < 3 ? 'Item ' + i : item)));
+        await fixture.whenStable();
+
+        const texts = Array.from(fixture.nativeElement.querySelectorAll('.p-virtualscroller-content > div')).map((div: any) => div.textContent.trim());
+        expect(texts.slice(0, 4)).toEqual(['Item 0', 'Item 1', 'Item 2', 'loading']);
+        expect(warn.mock.calls.some((call) => String(call[0]).includes('NG0955'))).toBe(false);
+        warn.mockRestore();
     });
 });

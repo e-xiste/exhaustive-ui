@@ -57,7 +57,7 @@ const SCROLLER_INSTANCE = new InjectionToken<Scroller>('SCROLLER_INSTANCE');
                     <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate(); context: { $implicit: loadedItems(), options: getContentOptions() }"></ng-container>
                 } @else {
                     <div #content [class]="cn(cx('content'), contentStyleClass())" [style]="contentStyle()" [pBind]="ptm('content')">
-                        @for (item of loadedItems(); track _trackBy() ? _trackBy()($index, item) : item; let index = $index) {
+                        @for (item of loadedItems(); track _trackBy() ? _trackBy()($index, item) : trackItem($index, item); let index = $index) {
                             <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate(); context: { $implicit: item, options: getOptions(index) }"></ng-container>
                         }
                     </div>
@@ -516,8 +516,14 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         });
     }
 
+    private destroyed = false;
+
     onDestroy() {
         this.unbindResizeListener();
+        // a pending init would run on a destroyed view (afterNextRender throws NG0205 with a destroyed injector)
+        this.destroyed = true;
+        clearTimeout(this.resizeTimeout());
+        clearTimeout(this.scrollTimeout());
 
         this.contentEl.set(null);
         this.initialized.set(false);
@@ -546,6 +552,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
             // wait for the next tick
             setTimeout(() => {
+                if (this.destroyed) return;
+
                 this.setSpacerSize();
                 this.setSize();
                 this.calculateOptions();
@@ -616,6 +624,17 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.horizontal() ? scrollTo(calculateCoord(index, itemSize, contentPos.left), scrollTop) : scrollTo(scrollLeft, calculateCoord(index, itemSize, contentPos.top));
                 isScrollChanged = this.lastScrollPos() !== (this.horizontal() ? scrollLeft : scrollTop);
                 isRangeChanged = newFirst !== first;
+
+                // Called right after the scroller is initialized (a Select opening on its selected option), the new spacer
+                // size is not rendered yet and the browser stops the scroll at the end of the current content: scroll
+                // again once it is.
+                const element = this.elementViewChild()?.nativeElement;
+                const spacerSize = parseFloat(this.spacerStyle()?.[this.horizontal() ? 'width' : 'height']);
+                if (element && !this.destroyed && this._showSpacer() && spacerSize > (this.horizontal() ? element.scrollWidth : element.scrollHeight)) {
+                    afterNextRender(() => !this.destroyed && this.scrollTo(this.horizontal() ? { left: calculateCoord(index, itemSize, contentPos.left), behavior } : { top: calculateCoord(index, itemSize, contentPos.top), behavior }), {
+                        injector: this.injector
+                    });
+                }
             }
 
             this.isRangeChanged.set(isRangeChanged);
@@ -741,13 +760,25 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         if (this._lazy()) {
             Promise.resolve().then(() => {
                 const step = this._step();
-                // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
-                // the first one: request every page up to it, the scroll handlers only request the pages after it.
-                const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
-                this.lazyLoadState.set({
-                    first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
-                    last: Math.min(step ? step * pages : this.last(), (<any[]>this._items()).length)
-                });
+                const itemsLength = (<any[]>this._items()).length;
+
+                if (step && !this.both() && first > 0) {
+                    // Initialized again away from the top (the items grew, the viewport was resized): request the pages
+                    // around the current position as a scroll does, not the first page.
+                    const currentPage = this.getPageByFirst(first);
+                    this.lazyLoadState.set({
+                        first: Math.max(0, Math.min((currentPage - 1) * step, itemsLength - step)),
+                        last: Math.min((currentPage + 1) * step, itemsLength)
+                    });
+                } else {
+                    // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
+                    // the first one: request every page up to it, the scroll handlers only request the pages after it.
+                    const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
+                    this.lazyLoadState.set({
+                        first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
+                        last: Math.min(step ? step * pages : this.last(), itemsLength)
+                    });
+                }
 
                 this.handleEvents('onLazyLoad', this.lazyLoadState());
             });
@@ -802,9 +833,11 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         if (contentEl) {
             const style = getComputedStyle(contentEl);
             const left = parseFloat(style.paddingLeft) + Math.max(parseFloat(style.left) || 0, 0);
-            const right = parseFloat(style.paddingRight) + Math.max(parseFloat(style.right) || 0, 0);
             const top = parseFloat(style.paddingTop) + Math.max(parseFloat(style.top) || 0, 0);
-            const bottom = parseFloat(style.paddingBottom) + Math.max(parseFloat(style.bottom) || 0, 0);
+            // The content is positioned from its top left corner: its computed right and bottom are not offsets but the
+            // space it leaves in the viewport (the whole viewport while it is still empty), so only the padding counts.
+            const right = parseFloat(style.paddingRight);
+            const bottom = parseFloat(style.paddingBottom);
 
             return { left, right, top, bottom, x: left + right, y: top + bottom };
         }
@@ -1110,6 +1143,13 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
             orientation: this._orientation(),
             scrollableElement: this.elementViewChild()?.nativeElement
         };
+    }
+
+    /**
+     * The items of a lazy list that are not loaded yet are all undefined: track them by position.
+     */
+    trackItem(index: number, item: any) {
+        return item === undefined ? 'p-virtualscroller-pending-' + ((this.both() ? this.first().rows : this.first()) + index) : item;
     }
 
     getOptions(renderedIndex: number) {
