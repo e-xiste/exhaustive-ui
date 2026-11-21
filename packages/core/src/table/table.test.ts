@@ -4485,4 +4485,37 @@ describe('optimus-ui issues (part 1)', () => {
             await wait(300);
         });
     });
+
+    describe('column reorder in a scrolled table (optimus-ui#231)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows" [scrollable]="true" scrollHeight="200px" [reorderableColumns]="true">
+                    <ng-template #header><tr><th pReorderableColumn>Id</th><th pReorderableColumn>Name</th></tr></ng-template>
+                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class ScrolledReorderComponent {
+            rows = rowsOf(50);
+        }
+
+        it('does not scroll the rows while a column is dragged', async () => {
+            fixture = await render(ScrolledReorderComponent);
+            const container = fixture.nativeElement.querySelector('.p-datatable-table-container') as HTMLElement;
+            await scrollTo(fixture, container, 600);
+            const header = fixture.nativeElement.querySelector('thead th') as HTMLElement;
+
+            header.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            header.dispatchEvent(new DragEvent('dragstart', { bubbles: true, dataTransfer: new DataTransfer() }));
+            // the browser scrolls the container when the dragged pointer comes near its edge
+            await scrollTo(fixture, container, 550);
+            expect(container.scrollTop).toBe(600);
+
+            header.dispatchEvent(new DragEvent('dragend', { bubbles: true }));
+            await scrollTo(fixture, container, 300);
+            expect(container.scrollTop).toBe(300);
+        });
+    });
 });

@@ -2697,6 +2697,33 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         this.reorderIconHeight.set(DomHandler.getHiddenElementOuterHeight(this.reorderIndicatorDownViewChild()?.nativeElement));
         this.draggedColumn.set(columnElement);
         event.dataTransfer.setData('text', 'b'); // For firefox
+        this.bindColumnDragScrollLock();
+    }
+
+    private columnDragScrollListener: VoidListener;
+
+    // the browser scrolls a container when a dragged pointer comes near its edge, and the sticky header is at the top
+    // edge of the rows: keep the rows still while a column is dragged, a column moves sideways only
+    bindColumnDragScrollLock() {
+        const container = this.virtualScroll() ? this.scroller()?.getElementRef()?.nativeElement : this.wrapperViewChild()?.nativeElement;
+
+        if (container && !this.columnDragScrollListener) {
+            const scrollTop = container.scrollTop;
+            this.columnDragScrollListener = this.renderer.listen(container, 'scroll', () => {
+                if (!this.draggedColumn()) {
+                    this.unbindColumnDragScrollLock();
+                } else if (container.scrollTop !== scrollTop) {
+                    container.scrollTop = scrollTop;
+                }
+            });
+        }
+    }
+
+    unbindColumnDragScrollLock() {
+        if (this.columnDragScrollListener) {
+            this.columnDragScrollListener();
+            this.columnDragScrollListener = null;
+        }
     }
 
     onColumnDragEnter(event: any, dropHeader: any) {
@@ -2798,6 +2825,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.draggedColumn.set(null);
             this.dropPosition.set(null);
         }
+
+        this.unbindColumnDragScrollLock();
     }
 
     // keyboard alternative to the drag and drop: move the column one place towards the given direction
@@ -2842,6 +2871,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.draggedColumn.set(null);
             this.dropPosition.set(null);
         }
+
+        this.unbindColumnDragScrollLock();
     }
 
     resizeTableCells(newColumnWidth: number, nextColumnWidth: number | null) {
@@ -3285,6 +3316,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         this.editingCell.set(null);
         this.initialized.set(null);
         this.containerResizeObserver?.disconnect();
+        this.unbindColumnDragScrollLock();
 
         this.destroyStyleElement();
         this.destroyResponsiveStyle();
