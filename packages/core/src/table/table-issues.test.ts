@@ -656,3 +656,62 @@ describe('Table scrollable footer (optimus-ui#679)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" responsiveLayout="stack" [breakpoint]="breakpoint" [showGridlines]="true">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td><span class="p-datatable-column-title">Name</span>{{ row.name }}</td>
+                    <td><span class="p-datatable-column-title">Code</span>{{ row.code }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class StackComponent {
+    rows = makeRows(2);
+    breakpoint = '100000px';
+}
+
+describe('Table responsive stack layout (optimus-ui#814)', () => {
+    it('stacks the cells below the breakpoint', async () => {
+        const fixture = await mount(StackComponent);
+        const el = fixture.nativeElement as HTMLElement;
+        const cells = Array.from(el.querySelectorAll('tbody td')) as HTMLElement[];
+
+        expect(getComputedStyle(el.querySelector('thead th') as HTMLElement).display).toBe('none');
+        expect(getComputedStyle(cells[0]).display).toBe('flex');
+        expect(cells[0].getBoundingClientRect().top).toBeLessThan(cells[1].getBoundingClientRect().top);
+        expect(getComputedStyle(cells[0].querySelector('.p-datatable-column-title') as HTMLElement).display).toBe('block');
+        // gridlines: the last cell of a stacked row only keeps its bottom border
+        expect(getComputedStyle(cells[1]).borderTopWidth).toBe('0px');
+        expect(getComputedStyle(cells[1]).borderLeftWidth).toBe('0px');
+        expect(getComputedStyle(cells[1]).borderRightWidth).toBe('0px');
+        fixture.nativeElement.remove();
+    });
+
+    it('keeps the table layout and hides the column titles above the breakpoint', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [StackComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(StackComponent);
+        fixture.componentInstance.breakpoint = '10px';
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const el = fixture.nativeElement as HTMLElement;
+        const cells = Array.from(el.querySelectorAll('tbody td')) as HTMLElement[];
+
+        expect(getComputedStyle(el.querySelector('thead th') as HTMLElement).display).toBe('table-cell');
+        expect(getComputedStyle(cells[0]).display).toBe('table-cell');
+        expect(getComputedStyle(cells[0].querySelector('.p-datatable-column-title') as HTMLElement).display).toBe('none');
+        fixture.nativeElement.remove();
+    });
+});

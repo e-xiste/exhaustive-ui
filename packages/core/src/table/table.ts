@@ -3213,6 +3213,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 this.renderer.appendChild(this.document.head, this.responsiveStyleElement());
 
                 let innerHTML = `
+    #${this.id}-table > .p-datatable-tbody > tr > td > .p-datatable-column-title {
+        display: none;
+    }
+
     @media screen and (max-width: ${this.breakpoint()}) {
         #${this.id}-table > .p-datatable-thead > tr > th,
         #${this.id}-table > .p-datatable-tfoot > tr > td {
@@ -3230,7 +3234,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             border: 0 none;
         }
 
-        #${this.id}.p-datatable-gridlines > .p-datatable-table-container > .p-datatable-table > .p-datatable-tbody > tr > td:last-child {
+        .p-datatable-gridlines #${this.id}-table > .p-datatable-tbody > tr > td:last-child {
             border-top: 0;
             border-right: 0;
             border-left: 0;
