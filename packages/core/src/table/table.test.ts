@@ -4219,9 +4219,21 @@ describe('optimus-ui issues (part 1)', () => {
             imports: [TableModule],
             template: `
                 <p-table [value]="rows" [frozenValue]="frozen" [scrollable]="true" scrollHeight="300px" [virtualScroll]="true" [virtualScrollItemSize]="40">
-                    <ng-template #header><tr><th>Id</th></tr></ng-template>
-                    <ng-template #frozenbody let-row><tr style="height: 40px" class="frozen-row"><td>{{ row.id }}</td></tr></ng-template>
-                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td></tr></ng-template>
+                    <ng-template #header>
+                        <tr>
+                            <th>Id</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #frozenbody let-row>
+                        <tr style="height: 40px" class="frozen-row">
+                            <td>{{ row.id }}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row>
+                        <tr style="height: 40px">
+                            <td>{{ row.id }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4250,7 +4262,11 @@ describe('optimus-ui issues (part 1)', () => {
                 <div style="width: 300px">
                     <p-table [value]="rows" [scrollable]="true">
                         <ng-template #header>
-                            <tr><th pFrozenColumn style="min-width: 150px">Code</th><th style="min-width: 200px">Action</th><th style="min-width: 300px">Other</th></tr>
+                            <tr>
+                                <th pFrozenColumn style="min-width: 150px">Code</th>
+                                <th style="min-width: 200px">Action</th>
+                                <th style="min-width: 300px">Other</th>
+                            </tr>
                         </ng-template>
                         <ng-template #body let-row>
                             <tr>
@@ -4288,8 +4304,18 @@ describe('optimus-ui issues (part 1)', () => {
             imports: [TableModule],
             template: `
                 <p-table [value]="rows" [scrollable]="true" scrollHeight="300px" [virtualScroll]="virtualScroll" [virtualScrollItemSize]="40" sortField="id" [sortOrder]="1">
-                    <ng-template #header><tr><th pSortableColumn="id">Id</th><th>Name</th></tr></ng-template>
-                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                    <ng-template #header>
+                        <tr>
+                            <th pSortableColumn="id">Id</th>
+                            <th>Name</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row>
+                        <tr style="height: 40px">
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.name }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4318,8 +4344,18 @@ describe('optimus-ui issues (part 1)', () => {
             template: `
                 <div style="height: 150.6px">
                     <p-table [value]="rows" [resizableColumns]="true" [scrollable]="true" scrollHeight="flex">
-                        <ng-template #header><tr><th pResizableColumn>Id</th><th pResizableColumn>Name</th></tr></ng-template>
-                        <ng-template #body let-row><tr><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                        <ng-template #header>
+                            <tr>
+                                <th pResizableColumn>Id</th>
+                                <th pResizableColumn>Name</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template #body let-row>
+                            <tr>
+                                <td>{{ row.id }}</td>
+                                <td>{{ row.name }}</td>
+                            </tr>
+                        </ng-template>
                     </p-table>
                 </div>
             `
@@ -4350,8 +4386,16 @@ describe('optimus-ui issues (part 1)', () => {
             imports: [TableModule],
             template: `
                 <p-table [value]="rows" [globalFilterFields]="['name']" [scrollable]="true" [scrollHeight]="height()" [virtualScroll]="true" [virtualScrollItemSize]="40">
-                    <ng-template #header><tr><th>Name</th></tr></ng-template>
-                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.name }}</td></tr></ng-template>
+                    <ng-template #header>
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row>
+                        <tr style="height: 40px">
+                            <td>{{ row.name }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4383,10 +4427,20 @@ describe('optimus-ui issues (part 1)', () => {
             template: `
                 <p-table [value]="rows" rowGroupMode="subheader" groupRowsBy="cat" [scrollable]="true" scrollHeight="300px">
                     <ng-template #header>
-                        <tr><th><div [style.height.px]="headerHeight()">Id</div></th></tr>
+                        <tr>
+                            <th><div [style.height.px]="headerHeight()">Id</div></th>
+                        </tr>
                     </ng-template>
-                    <ng-template #groupheader let-row><tr pRowGroupHeader><td>{{ row.cat }}</td></tr></ng-template>
-                    <ng-template #body let-row><tr><td>{{ row.id }}</td></tr></ng-template>
+                    <ng-template #groupheader let-row>
+                        <tr pRowGroupHeader>
+                            <td>{{ row.cat }}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row>
+                        <tr>
+                            <td>{{ row.id }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4416,8 +4470,16 @@ describe('optimus-ui issues (part 1)', () => {
             template: `
                 <div [style.height.px]="height()" style="display: flex; flex-direction: column">
                     <p-table [value]="rows" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="40">
-                        <ng-template #header><tr><th>Id</th></tr></ng-template>
-                        <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td></tr></ng-template>
+                        <ng-template #header>
+                            <tr>
+                                <th>Id</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template #body let-row>
+                            <tr style="height: 40px">
+                                <td>{{ row.id }}</td>
+                            </tr>
+                        </ng-template>
                     </p-table>
                 </div>
             `
@@ -4446,9 +4508,15 @@ describe('optimus-ui issues (part 1)', () => {
                 <div [style.height.px]="spacer()"></div>
                 <p-table [value]="rows">
                     <ng-template #header>
-                        <tr><th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th></tr>
+                        <tr>
+                            <th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th>
+                        </tr>
                     </ng-template>
-                    <ng-template #body let-row><tr><td>{{ row.name }}</td></tr></ng-template>
+                    <ng-template #body let-row>
+                        <tr>
+                            <td>{{ row.name }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4492,8 +4560,18 @@ describe('optimus-ui issues (part 1)', () => {
             imports: [TableModule],
             template: `
                 <p-table [value]="rows" [scrollable]="true" scrollHeight="200px" [reorderableColumns]="true">
-                    <ng-template #header><tr><th pReorderableColumn>Id</th><th pReorderableColumn>Name</th></tr></ng-template>
-                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                    <ng-template #header>
+                        <tr>
+                            <th pReorderableColumn>Id</th>
+                            <th pReorderableColumn>Name</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row>
+                        <tr style="height: 40px">
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.name }}</td>
+                        </tr>
+                    </ng-template>
                 </p-table>
             `
         })
@@ -4516,6 +4594,162 @@ describe('optimus-ui issues (part 1)', () => {
             header.dispatchEvent(new DragEvent('dragend', { bubbles: true }));
             await scrollTo(fixture, container, 300);
             expect(container.scrollTop).toBe(300);
+        });
+    });
+
+    describe('regressions', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div [style]="layout">
+                    @if (header) {
+                        <div style="height: 50px; flex: 0 0 auto">header</div>
+                    }
+                    <div [style]="inner">
+                        <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="33">
+                            <ng-template #header>
+                                <tr>
+                                    <th>Id</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-row>
+                                <tr style="height: 33px">
+                                    <td>{{ row.id }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            `
+        })
+        class FlexVirtualScrollComponent {
+            rows = signal(rowsOf(1000));
+            layout = 'display: flex; flex-direction: column; height: 400px';
+            inner = 'flex: 1 1 0%; min-height: 0';
+            header = true;
+        }
+
+        it('renders a flex virtual scroll table in a flex column or a block of fixed height (optimus-ui#79, optimus-ui#193)', async () => {
+            for (const [layout, inner, header] of [
+                ['display: flex; flex-direction: column; height: 400px', 'flex: 1 1 0%; min-height: 0', true],
+                ['height: 400px', 'height: 100%', false]
+            ] as const) {
+                fixture = await render(FlexVirtualScrollComponent, (instance) => {
+                    instance.layout = layout;
+                    instance.inner = inner;
+                    instance.header = header;
+                });
+                const height = header ? 350 : 400;
+                expect((fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).offsetHeight).toBe(height);
+                expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(height / 33);
+                fixture.destroy();
+                fixture.nativeElement.remove();
+            }
+        });
+
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows()" [lazy]="lazy" [rows]="5" [totalRecords]="200" (onLazyLoad)="events.push($event)" [scrollable]="true" scrollHeight="320px" [virtualScroll]="true" [virtualScrollItemSize]="54">
+                    <ng-template #header>
+                        <tr>
+                            <th>Id</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-row let-index="rowIndex">
+                        <tr style="height: 54px">
+                            <td class="index">{{ index }}</td>
+                            <td class="id">{{ row?.id }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            `
+        })
+        class VirtualScrollIndexComponent {
+            rows = signal<any[]>([]);
+            lazy = false;
+            events: any[] = [];
+        }
+
+        it('renders rows set after the first render and gives them their index (optimus-ui#288, optimus-ui#168)', async () => {
+            fixture = await render(VirtualScrollIndexComponent);
+            fixture.componentInstance.rows.set(rowsOf(200));
+            await settle(fixture);
+            expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(6);
+
+            await scrollTo(fixture, fixture.nativeElement.querySelector('.p-virtualscroller'), 54 * 100);
+            const cells = Array.from(fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLElement>).map((row) => [row.querySelector('.index')!.textContent, row.querySelector('.id')!.textContent]);
+            expect(cells.length).toBeGreaterThan(0);
+            cells.forEach(([index, id]) => expect(index).toBe(id));
+            expect(cells.map(([index]) => Number(index))).toContain(100);
+        });
+
+        it('requests the scrolled range in lazy mode (optimus-ui#168)', async () => {
+            fixture = await render(VirtualScrollIndexComponent, (instance) => {
+                instance.lazy = true;
+                instance.rows.set(rowsOf(200));
+            });
+            await scrollTo(fixture, fixture.nativeElement.querySelector('.p-virtualscroller'), 54 * 100);
+            await wait(fixture.debugElement.query(By.directive(Table)).componentInstance.virtualScrollDelay() + 50);
+            await settle(fixture);
+
+            const last = fixture.componentInstance.events.at(-1);
+            expect(last.first).toBeLessThanOrEqual(100);
+            expect(last.last).toBeGreaterThan(105);
+            const indexes = Array.from(fixture.nativeElement.querySelectorAll('.index') as NodeListOf<HTMLElement>).map((cell) => Number(cell.textContent));
+            expect(indexes).toContain(100);
+        });
+
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div style="width: 400px">
+                    <p-table [value]="rows" [scrollable]="true" scrollHeight="300px" [virtualScroll]="true" [virtualScrollItemSize]="40">
+                        <ng-template #header>
+                            <tr>
+                                <th pFrozenColumn style="min-width: 100px">A</th>
+                                <th pFrozenColumn style="min-width: 100px">B</th>
+                                <th pFrozenColumn style="min-width: 100px">C</th>
+                                <th style="min-width: 600px">D</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template #body let-row>
+                            <tr style="height: 40px">
+                                <td pFrozenColumn style="min-width: 100px">{{ row.id }}</td>
+                                <td pFrozenColumn style="min-width: 100px">{{ row.code }}</td>
+                                <td pFrozenColumn style="min-width: 100px">{{ row.name }}</td>
+                                <td style="min-width: 600px">x</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            `
+        })
+        class FrozenColumnsVirtualScrollComponent {
+            rows = rowsOf(1000);
+        }
+
+        it('freezes several columns and positions them in newly rendered rows right away (optimus-ui#272, optimus-ui#342)', async () => {
+            fixture = await render(FrozenColumnsVirtualScrollComponent);
+            const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            await scrollTo(fixture, scroller, 0, 300);
+            scroller.scrollTop = 40 * 600;
+            scroller.dispatchEvent(new Event('scroll'));
+            fixture.detectChanges();
+            await fixture.whenStable();
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+
+            const left = scroller.getBoundingClientRect().left;
+            const row = Array.from(fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLElement>).find((tr) => Number(tr.children[0].textContent) >= 590)!;
+            expect(row).toBeTruthy();
+            expect(
+                Array.from(row.children)
+                    .slice(0, 3)
+                    .map((cell) => Math.round(cell.getBoundingClientRect().left - left))
+            ).toEqual([0, 100, 200]);
         });
     });
 });
