@@ -458,6 +458,15 @@ describe('Message', () => {
             const defaultCloseIcon = fixture.debugElement.query(By.css('button svg[data-p-icon="times"]'));
             expect(defaultCloseIcon).toBeTruthy();
         });
+
+        it('should draw the default close icon, not an empty svg', () => {
+            component.closable = true;
+            component.closeIcon = undefined as any;
+            fixture.detectChanges();
+
+            // the svg only gets its path when the TimesIcon component matches it
+            expect(fixture.nativeElement.querySelector('button svg[data-p-icon="times"] path')).toBeTruthy();
+        });
     });
 
     describe('Template Content Projection - #content approach', () => {
