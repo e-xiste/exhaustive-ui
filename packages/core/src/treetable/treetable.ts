@@ -2158,7 +2158,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 let isValueChanged = false;
 
                 for (let node of this.value()!) {
-                    let copyNode = { ...node };
+                    let copyNode = this.copyFilteredNode(node);
                     let localMatch = true;
                     let globalMatch = false;
                     let paramsWithoutNode;
@@ -2185,7 +2185,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                     }
 
                     if (this._filters()['global'] && !globalMatch && globalFilterFieldsArray) {
-                        let copyNodeForGlobal = { ...copyNode };
+                        let copyNodeForGlobal = this.copyFilteredNode(copyNode);
                         let filterField = undefined;
                         let filterValue = this._filters()['global']!.value;
                         let filterConstraint = (<any>this.filterService).filters[(<any>this._filters())['global'].matchMode];
@@ -2245,6 +2245,24 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
         }
     }
 
+    /**
+     * Filtering renders shallow copies of the nodes; this maps each copy back to the node of value().
+     */
+    private filteredNodeSources = new WeakMap<TreeTableNode, TreeTableNode>();
+
+    private copyFilteredNode(node: TreeTableNode): TreeTableNode {
+        const copy = { ...node };
+        this.filteredNodeSources.set(copy, this.getSourceNode(node));
+        return copy;
+    }
+
+    /**
+     * Returns the node of value() a filtered copy was made from, or the node itself when it is not a copy.
+     */
+    getSourceNode(node: TreeTableNode): TreeTableNode {
+        return this.filteredNodeSources.get(node) ?? node;
+    }
+
     findFilteredNodes(node: TreeTableNode, paramsWithoutNode: any) {
         if (node) {
             let matched = false;
@@ -2252,7 +2270,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 let childNodes = [...node.children];
                 node.children = [];
                 for (let childNode of childNodes) {
-                    let copyChildNode = { ...childNode };
+                    let copyChildNode = this.copyFilteredNode(childNode);
                     if (this.isFilterMatched(copyChildNode, paramsWithoutNode)) {
                         matched = true;
                         node.children.push(copyChildNode);
@@ -4006,6 +4024,7 @@ export class TTRow extends BaseComponent {
     expand(event: Event) {
         this.tt.toggleRowIndex.set(getIndex(this.el.nativeElement));
         this.rowNode().node['expanded'] = true;
+        this.tt.getSourceNode(this.rowNode().node)['expanded'] = true;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
@@ -4013,17 +4032,18 @@ export class TTRow extends BaseComponent {
 
         this.tt.onNodeExpand.emit({
             originalEvent: event,
-            node: this.rowNode().node
+            node: this.tt.getSourceNode(this.rowNode().node)
         });
     }
 
     collapse(event: Event) {
         this.rowNode().node['expanded'] = false;
+        this.tt.getSourceNode(this.rowNode().node)['expanded'] = false;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
 
-        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.rowNode().node });
+        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.tt.getSourceNode(this.rowNode().node) });
     }
 
     focusRowChange(firstFocusableRow, currentFocusedRow, lastVisibleDescendant?) {
@@ -4122,16 +4142,20 @@ export class TreeTableToggler extends BaseComponent {
 
     onClick(event: Event) {
         this.rowNode().node.expanded = !this.rowNode().node.expanded;
+        // while filtered the row shows a copy: keep the node of value() in sync and hand it to the handlers,
+        // so children loaded in onNodeExpand survive the next filtering
+        const node = this.tt.getSourceNode(this.rowNode().node);
+        node.expanded = this.rowNode().node.expanded;
 
         if (this.rowNode().node.expanded) {
             this.tt.onNodeExpand.emit({
                 originalEvent: event,
-                node: this.rowNode().node
+                node
             });
         } else {
             this.tt.onNodeCollapse.emit({
                 originalEvent: event,
-                node: this.rowNode().node
+                node
             });
         }
 

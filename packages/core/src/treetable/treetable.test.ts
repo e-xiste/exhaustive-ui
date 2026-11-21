@@ -5044,3 +5044,266 @@ describe('TreeTable cell editor with an overlay component', () => {
         });
     }
 });
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <div style="width: 600px">
+            <p-treetable [value]="nodes" [columns]="cols" [frozenColumns]="frozenCols" [scrollable]="true" scrollHeight="150px" frozenWidth="200px">
+                <ng-template #colgroup let-columns>
+                    <colgroup>
+                        @for (col of columns; track $index) {
+                            <col style="width: 100px" />
+                        }
+                    </colgroup>
+                </ng-template>
+                <ng-template #header let-columns>
+                    <tr>
+                        @for (col of columns; track $index) {
+                            <th>{{ col.header }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode" [style.height.px]="rowData.tall ? 80 : 30">
+                        @for (col of columns; track $index) {
+                            <td>{{ rowData[col.field] }}</td>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #frozenbody let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode" style="height: 30px">
+                        @for (col of columns; track $index) {
+                            <td class="frozen-cell">{{ rowData[col.field] }}</td>
+                        }
+                    </tr>
+                </ng-template>
+            </p-treetable>
+        </div>
+    `
+})
+class TreeTableMultipleFrozenHostComponent {
+    frozenCols = [
+        { field: 'name', header: 'Name' },
+        { field: 'code', header: 'Code' }
+    ];
+    cols = [
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' },
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' },
+        { field: 'size', header: 'Size' }
+    ];
+    nodes: TreeNode[] = Array.from({ length: 20 }, (_, i) => ({ key: `${i}`, data: { name: `Node ${i}`, code: `C${i}`, size: `${i}kb`, type: 'File', tall: i === 1 } }));
+}
+
+describe('TreeTable multiple frozen columns', () => {
+    let fixture: ComponentFixture<TreeTableMultipleFrozenHostComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableMultipleFrozenHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        fixture = TestBed.createComponent(TreeTableMultipleFrozenHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        fixture.detectChanges();
+    });
+
+    it('renders every frozen column inside the frozen view (optimus-ui#250)', () => {
+        const frozenView = fixture.nativeElement.querySelector('.p-treetable-frozen-view') as HTMLElement;
+        const view = frozenView.getBoundingClientRect();
+        const headers = Array.from(frozenView.querySelectorAll('th')) as HTMLElement[];
+        expect(headers.map((th) => th.textContent!.trim())).toEqual(['Name', 'Code']);
+        const firstRowCells = Array.from(frozenView.querySelectorAll('tbody tr:first-child td')) as HTMLElement[];
+        expect(firstRowCells.map((td) => td.textContent!.trim())).toEqual(['Node 0', 'C0']);
+        for (const cell of [...headers, ...firstRowCells]) {
+            const rect = cell.getBoundingClientRect();
+            expect(rect.width).toBeGreaterThan(0);
+            expect(rect.left).toBeGreaterThanOrEqual(view.left - 0.5);
+            expect(rect.right).toBeLessThanOrEqual(view.right + 0.5);
+        }
+    });
+
+    it('scrolls the frozen rows with the body (optimus-ui#942)', async () => {
+        const body = fixture.nativeElement.querySelector('.p-treetable-unfrozen-view .p-treetable-scrollable-body') as HTMLElement;
+        const frozenBody = fixture.nativeElement.querySelector('.p-treetable-frozen-view .p-treetable-scrollable-body') as HTMLElement;
+        body.scrollTop = 120;
+        body.dispatchEvent(new Event('scroll'));
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        expect(frozenBody.scrollTop).toBe(body.scrollTop);
+    });
+});
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <div style="width: 600px; height: 250px; display: flex; flex-direction: column">
+            <p-treetable [value]="nodes" [columns]="cols" [frozenColumns]="frozenCols" [scrollable]="true" [scrollHeight]="scrollHeight" frozenWidth="100px" [virtualScroll]="true" [virtualScrollItemSize]="30">
+                <ng-template #colgroup let-columns>
+                    <colgroup>
+                        @for (col of columns; track $index) {
+                            <col style="width: 100px" />
+                        }
+                    </colgroup>
+                </ng-template>
+                <ng-template #header let-columns>
+                    <tr style="height: 30px">
+                        @for (col of columns; track $index) {
+                            <th>{{ col.header }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode" style="height: 30px">
+                        @for (col of columns; track $index) {
+                            <td>{{ rowData[col.field] }}</td>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #frozenbody let-rowNode let-rowData="rowData">
+                    <tr [ttRow]="rowNode" style="height: 30px">
+                        <td class="frozen-cell">{{ rowData.name }}</td>
+                    </tr>
+                </ng-template>
+            </p-treetable>
+        </div>
+    `
+})
+class TreeTableVirtualFrozenHostComponent {
+    scrollHeight = '150px';
+    frozenCols = [{ field: 'name', header: 'Name' }];
+    cols = Array.from({ length: 6 }, (_, i) => ({ field: i % 2 ? 'size' : 'type', header: `Col ${i}` }));
+    nodes: TreeNode[] = Array.from({ length: 200 }, (_, i) => ({ key: `${i}`, data: { name: `Node ${i}`, size: `${i}kb`, type: `Type ${i}` } }));
+}
+
+describe('TreeTable virtual scroll with frozen columns', () => {
+    for (const scrollHeight of ['150px', 'flex']) {
+        it(`scrolls the frozen rows with the body, scrollHeight ${scrollHeight} (optimus-ui#942)`, async () => {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                imports: [TreeTableVirtualFrozenHostComponent],
+                providers: [provideZonelessChangeDetection()]
+            });
+            const fixture = TestBed.createComponent(TreeTableVirtualFrozenHostComponent);
+            fixture.componentInstance.scrollHeight = scrollHeight;
+            const settle = async () => {
+                for (let i = 0; i < 3; i++) {
+                    fixture.detectChanges();
+                    await new Promise((resolve) => setTimeout(resolve, 40));
+                    await fixture.whenStable();
+                }
+            };
+            await settle();
+
+            const root: HTMLElement = fixture.nativeElement;
+            const body = root.querySelector('.p-treetable-unfrozen-view .p-virtualscroller') as HTMLElement;
+            const frozenBody = root.querySelector('.p-treetable-frozen-view .p-virtualscroller') as HTMLElement;
+            expect(body.clientHeight).toBeLessThan(body.scrollHeight);
+
+            body.scrollTop = 900;
+            body.dispatchEvent(new Event('scroll'));
+            await settle();
+
+            expect(frozenBody.scrollTop).toBe(body.scrollTop);
+            // the first visible frozen row belongs to the same node as the first visible body row
+            const top = body.getBoundingClientRect().top + 1;
+            const left = (el: HTMLElement) => el.getBoundingClientRect().left + 5;
+            const bodyCell = document.elementFromPoint(left(body), top + 5)!.closest('tr')!;
+            const frozenCell = document.elementFromPoint(left(frozenBody), top + 5)!.closest('tr')!;
+            const index = (tr: Element) => Array.from(tr.parentElement!.children).indexOf(tr);
+            expect(index(frozenCell)).toBe(index(bodyCell));
+        });
+    }
+});
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable #tt [value]="nodes" [columns]="cols" [globalFilterFields]="['name']" [filterDelay]="0" (onNodeExpand)="onNodeExpand($event)">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td>
+                        <p-treetable-toggler [rowNode]="rowNode" /><span class="name">{{ rowData.name }}</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableFilteredExpandHostComponent {
+    readonly tt = viewChild.required<TreeTable>('tt');
+    cols = [{ field: 'name', header: 'Name' }];
+    nodes: TreeNode[] = [
+        { key: 'a', data: { name: 'Alpha' }, children: [{ key: 'a-0', data: { name: 'Alpha child' } }] },
+        { key: 'b', data: { name: 'Beta' }, leaf: false },
+        { key: 'c', data: { name: 'Gamma' }, children: [{ key: 'c-0', data: { name: 'Gamma child' } }] }
+    ];
+
+    onNodeExpand(event: any) {
+        const node = event.node;
+        if (!node.children) {
+            // lazily loaded children, then a new value reference as in the lazy loading demo
+            node.children = [{ key: `${node.key}-0`, data: { name: `${node.data.name} child` } }];
+            this.nodes = [...this.nodes];
+        }
+    }
+}
+
+describe('TreeTable expand while filtered', () => {
+    let fixture: ComponentFixture<TreeTableFilteredExpandHostComponent>;
+    const names = () => (Array.from(fixture.nativeElement.querySelectorAll('.name')) as HTMLElement[]).map((n) => n.textContent!.trim());
+    const toggle = async (name: string) => {
+        const row = (Array.from(fixture.nativeElement.querySelectorAll('tr')) as HTMLElement[]).find((tr) => tr.querySelector('.name')?.textContent!.trim() === name)!;
+        (row.querySelector('button') as HTMLButtonElement).click();
+        await settle();
+    };
+    const settle = async () => {
+        for (let i = 0; i < 2; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 10));
+            await fixture.whenStable();
+        }
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableFilteredExpandHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        fixture = TestBed.createComponent(TreeTableFilteredExpandHostComponent);
+        await settle();
+    });
+
+    it('expands a node of the filtered rows (optimus-ui#402)', async () => {
+        await toggle('Alpha');
+        expect(names()).toEqual(['Alpha', 'Alpha child', 'Beta', 'Gamma']);
+
+        fixture.componentInstance.tt().filterGlobal('Gamma', 'contains');
+        await settle();
+        expect(names()).toEqual(['Gamma']);
+        await toggle('Gamma');
+
+        expect(names()).toContain('Gamma child');
+    });
+
+    it('shows lazily loaded children of a node expanded in the filtered rows (optimus-ui#402)', async () => {
+        fixture.componentInstance.tt().filterGlobal('Beta', 'contains');
+        await settle();
+        expect(names()).toEqual(['Beta']);
+
+        await toggle('Beta');
+
+        expect(names()).toEqual(['Beta', 'Beta child']);
+    });
+});
