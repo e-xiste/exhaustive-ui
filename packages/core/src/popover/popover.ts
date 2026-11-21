@@ -1,24 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    afterEveryRender,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    input,
-    NgModule,
-    NgZone,
-    numberAttribute,
-    signal,
-    TemplateRef,
-    ViewEncapsulation,
-    ViewRef,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, NgModule, NgZone, numberAttribute, signal, TemplateRef, ViewEncapsulation, ViewRef, contentChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { $dt } from '@exhaustive-ui/styled';
 import { absolutePosition, addClass, appendChild, findSingle, getOffset, isIOS, isTouchDevice, removeClass } from '@exhaustive-ui/utils';
@@ -78,7 +59,7 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
 
     /**

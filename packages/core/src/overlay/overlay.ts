@@ -1,24 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    afterEveryRender,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    input,
-    linkedSignal,
-    model,
-    NgModule,
-    NgZone,
-    signal,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, linkedSignal, model, NgModule, NgZone, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { absolutePosition, addClass, appendChild, focus, getOuterWidth, getTargetElement, isTouchDevice, relativePosition, removeClass } from '@exhaustive-ui/utils';
 import { OverlayModeType, OverlayOnBeforeHideEvent, OverlayOnBeforeShowEvent, OverlayOnHideEvent, OverlayOnShowEvent, OverlayOptions, OverlayService, PrimeTemplate, ResponsiveOverlayOptions, SharedModule } from '@exhaustive-ui/core/api';
@@ -346,9 +327,7 @@ export class Overlay extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptm('host'));
-        });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
 
     show(overlay?: HTMLElement, isFocus: boolean = false) {
