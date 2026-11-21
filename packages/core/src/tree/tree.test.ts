@@ -3654,4 +3654,30 @@ describe('Tree drag and drop drop points', () => {
         expect(drops[0].dropNode.label).toBe('B');
         expect((fixture.componentInstance.value() as TreeNode[]).map((n) => n.label)).toEqual(['A', 'C', 'B']);
     });
+
+    it('tells where the node was dropped relative to the drop node (optimus-ui#851)', async () => {
+        const drops: any[] = [];
+        fixture.componentInstance.onNodeDrop.subscribe((e) => drops.push(e));
+        const dropOn = async (dragged: string, label: string, ratio: number) => {
+            drag('dragstart', content(dragged));
+            await settle();
+            const target = content(label);
+            const rect = target.getBoundingClientRect();
+            const point = { clientX: rect.left + 10, clientY: rect.top + rect.height * ratio };
+            drag('dragover', target, point);
+            drag('drop', target, point);
+            await settle();
+        };
+
+        await dropOn('A', 'C', 0.9);
+        expect(drops[0].dropNode.label).toBe('C');
+        expect(drops[0].dropPosition).toBe('after');
+        expect((fixture.componentInstance.value() as TreeNode[]).map((n) => n.label)).toEqual(['B', 'C', 'A']);
+
+        await dropOn('B', 'C', 0.5);
+        expect(drops[1].dropPosition).toBe('inside');
+
+        await dropOn('A', 'C', 0.05);
+        expect(drops[2].dropPosition).toBe('before');
+    });
 });

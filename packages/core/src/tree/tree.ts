@@ -415,6 +415,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
             const dragNode = this.tree.dragNode();
             const position = this.dropPosition();
             const isValidDrop = position !== 0 || (position === 0 && this.isNodeDroppable());
+            const dropPosition = position < 0 ? 'before' : position > 0 ? 'after' : 'inside';
 
             if (isValidDrop) {
                 if (this.tree.validateDrop()) {
@@ -422,6 +423,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
                         originalEvent: event,
                         dragNode: dragNode,
                         dropNode: this.node(),
+                        dropPosition,
                         index: this.index(),
                         accept: () => {
                             this.insertNodeOnDrop();
@@ -433,6 +435,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
                         originalEvent: event,
                         dragNode: dragNode,
                         dropNode: this.node(),
+                        dropPosition,
                         index: this.index()
                     });
                 }
