@@ -5257,3 +5257,53 @@ describe('Select - writeValue from a consumer effect (optimus-ui#480)', () => {
         ref.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select],
+    template: `
+        <fieldset [disabled]="fieldsetDisabled()">
+            <p-select [options]="options" optionLabel="name" />
+        </fieldset>
+    `
+})
+class TestSelectInFieldsetComponent {
+    options = [{ name: 'Option 1' }, { name: 'Option 2' }];
+    fieldsetDisabled = signal(true);
+}
+
+describe('Select - inside a disabled fieldset (optimus-ui#366)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestSelectInFieldsetComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('is disabled while its fieldset is disabled and follows the fieldset state', async () => {
+        const fixture = TestBed.createComponent(TestSelectInFieldsetComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const combobox = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+
+        expect(select.$disabled()).toBe(true);
+        expect(combobox.getAttribute('aria-disabled')).toBe('true');
+        expect(combobox.getAttribute('tabindex')).toBe('-1');
+
+        select.onContainerClick(new MouseEvent('click'));
+        fixture.detectChanges();
+        expect(select.overlayVisible()).toBeFalsy();
+
+        fixture.componentInstance.fieldsetDisabled.set(false);
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(select.$disabled()).toBe(false);
+        expect(combobox.getAttribute('aria-disabled')).toBe('false');
+        expect(combobox.getAttribute('tabindex')).toBe('0');
+    });
+});

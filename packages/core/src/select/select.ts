@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
     afterEveryRender,
     afterNextRender,
@@ -1021,6 +1021,15 @@ export class Select extends BaseInput<SelectPassThrough> {
 
     emptyFilterMessageLabel = computed<string>(() => this.emptyFilterMessage() || this.translation()[TranslationKeys.EMPTY_FILTER_MESSAGE]);
 
+    /**
+     * Whether an ancestor `<fieldset disabled>` disables the component, as it does native form controls.
+     */
+    private fieldsetDisabled = signal<boolean>(false);
+
+    private fieldsetObserver: MutationObserver | undefined;
+
+    $disabled = computed(() => this.disabled() || this._disabled() || this.fieldsetDisabled());
+
     isVisibleClearIcon = computed<boolean | undefined>(() => this.modelValue() != null && this.hasSelectedOption() && this.showClear() && !this.$disabled());
 
     listLabel = computed<string>(() => this.translation()[TranslationKeys.ARIA]['listLabel']);
@@ -1151,6 +1160,37 @@ export class Select extends BaseInput<SelectPassThrough> {
 
     onInit() {
         this.autoUpdateModel();
+    }
+
+    onAfterViewInit() {
+        this.bindFieldsetObserver();
+    }
+
+    onDestroy() {
+        this.fieldsetObserver?.disconnect();
+        this.fieldsetObserver = undefined;
+    }
+
+    private bindFieldsetObserver() {
+        if (!isPlatformBrowser(this.platformId) || typeof MutationObserver === 'undefined') {
+            return;
+        }
+
+        const host = this.el.nativeElement as HTMLElement;
+        const fieldsets: HTMLFieldSetElement[] = [];
+        let fieldset = host.parentElement?.closest('fieldset');
+        while (fieldset) {
+            fieldsets.push(fieldset);
+            fieldset = fieldset.parentElement?.closest('fieldset');
+        }
+
+        if (fieldsets.length) {
+            // A control inside the first <legend> of a disabled fieldset stays enabled, like native controls.
+            const update = () => this.fieldsetDisabled.set(fieldsets.some((f) => f.disabled && !f.querySelector(':scope > legend')?.contains(host)));
+            this.fieldsetObserver = new MutationObserver(update);
+            fieldsets.forEach((f) => this.fieldsetObserver!.observe(f, { attributes: true, attributeFilter: ['disabled'] }));
+            update();
+        }
     }
 
     flatOptions(options) {
