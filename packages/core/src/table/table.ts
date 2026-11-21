@@ -1250,6 +1250,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     _sortOrder = linkedSignal<number>(() => this.sortOrder());
 
+    /** Field and order of the last single sort, to ignore a sortField/sortOrder binding that only mirrors it. */
+    private lastSingleSort: SortMeta | null = null;
+
     preventSelectionSetterPropagation = signal<boolean | undefined>(undefined);
 
     anchorRowIndex = signal<number | undefined | null>(undefined);
@@ -1369,14 +1372,18 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             });
         });
         effect(() => {
-            this.sortField();
+            const sortField = this.sortField();
             this.groupRowsBy();
-            this.sortOrder();
+            const sortOrder = this.sortOrder();
             this.groupRowsByOrder();
 
             untracked(() => {
+                // a consumer writing back the sort it received in onLazyLoad must not load the data again
+                const mirrorsLastSort = this.lazy() && this.lastSingleSort?.field === sortField && this.lastSingleSort?.order === sortOrder;
+                if (!mirrorsLastSort) this.lastSingleSort = null;
+
                 //avoid triggering lazy load prior to lazy initialization at onInit
-                if (!this.lazy() || this.initialized()) {
+                if ((!this.lazy() || this.initialized()) && !mirrorsLastSort) {
                     if (this.sortMode() === 'single') {
                         this.sortSingle();
                     }
@@ -1625,6 +1632,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 field: field,
                 order: order
             };
+            this.lastSingleSort = sortMeta;
 
             this.onSort.emit(sortMeta);
             this.tableService.onSort(sortMeta);
@@ -3245,6 +3253,10 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 this.renderer.appendChild(this.document.head, this.responsiveStyleElement());
 
                 let innerHTML = `
+    #${this.id}-table > .p-datatable-tbody > tr > td > .p-datatable-column-title {
+        display: none;
+    }
+
     @media screen and (max-width: ${this.breakpoint()}) {
         #${this.id}-table > .p-datatable-thead > tr > th,
         #${this.id}-table > .p-datatable-tfoot > tr > td {
@@ -3262,7 +3274,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             border: 0 none;
         }
 
-        #${this.id}.p-datatable-gridlines > .p-datatable-table-container > .p-datatable-table > .p-datatable-tbody > tr > td:last-child {
+        .p-datatable-gridlines #${this.id}-table > .p-datatable-tbody > tr > td:last-child {
             border-top: 0;
             border-right: 0;
             border-left: 0;
@@ -3405,7 +3417,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
         @if ((dataTable.expandedRowTemplate() || dataTable._expandedRowTemplate()) && !(frozen() && (dataTable.frozenExpandedRowTemplate() || dataTable._frozenExpandedRowTemplate()))) {
             @for (rowData of value(); track dataTable.rowTrackBy()(rowIndex, rowData); let rowIndex = $index) {
-                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getRowIndex(rowIndex))) {
+                @if ((dataTable.groupHeaderTemplate() || dataTable._groupHeaderTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupHeader(value(), rowData, getGroupRowIndex(rowIndex))) {
                     <ng-container role="row">
                         <ng-container
                             *ngTemplateOutlet="
@@ -3449,7 +3461,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                             }
                         "
                     ></ng-container>
-                    @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getRowIndex(rowIndex))) {
+                    @if ((dataTable.groupFooterTemplate() || dataTable._groupFooterTemplate()) && dataTable.rowGroupMode() === 'subheader' && shouldRenderRowGroupFooter(value(), rowData, getGroupRowIndex(rowIndex))) {
                         <ng-container role="row">
                             <ng-container
                                 *ngTemplateOutlet="
@@ -3776,21 +3788,31 @@ export class FrozenColumn extends BaseComponent {
             const startSide = isRTL ? 'right' : 'left';
             const endSide = isRTL ? 'left' : 'right';
 
+            const spannedOffset = this.getSpannedRowsOffset();
+
             if (this.alignFrozen() === 'right') {
                 let end = 0;
-                let sibling = this.el.nativeElement.nextElementSibling;
-                while (sibling) {
-                    end += this.getFrozenWidth(sibling);
-                    sibling = sibling.nextElementSibling;
+                if (spannedOffset) {
+                    end = spannedOffset.end;
+                } else {
+                    let sibling = this.el.nativeElement.nextElementSibling;
+                    while (sibling) {
+                        end += this.getFrozenWidth(sibling);
+                        sibling = sibling.nextElementSibling;
+                    }
                 }
                 this.el.nativeElement.style[endSide] = end + 'px';
                 this.el.nativeElement.style[startSide] = '';
             } else {
                 let start = 0;
-                let sibling = this.el.nativeElement.previousElementSibling;
-                while (sibling) {
-                    start += this.getFrozenWidth(sibling);
-                    sibling = sibling.previousElementSibling;
+                if (spannedOffset) {
+                    start = spannedOffset.start;
+                } else {
+                    let sibling = this.el.nativeElement.previousElementSibling;
+                    while (sibling) {
+                        start += this.getFrozenWidth(sibling);
+                        sibling = sibling.previousElementSibling;
+                    }
                 }
                 this.el.nativeElement.style[startSide] = start + 'px';
                 this.el.nativeElement.style[endSide] = '';
@@ -3805,6 +3827,54 @@ export class FrozenColumn extends BaseComponent {
                 }
             }
         }
+    }
+
+    /**
+     * In a header or footer of several rows, the frozen cells before or after this one can be in a previous row and span down
+     * to this one (rowspan): place the cells on the column grid of the section to find them. Null when no cell spans rows.
+     */
+    private getSpannedRowsOffset(): { start: number; end: number } | null {
+        const cell = this.el.nativeElement as HTMLTableCellElement;
+        const section = cell.parentElement?.parentElement as HTMLTableSectionElement | null | undefined;
+
+        if (!section || (section.tagName !== 'THEAD' && section.tagName !== 'TFOOT')) {
+            return null;
+        }
+
+        const rows = Array.from(section.rows);
+        if (!rows.some((row) => Array.from(row.cells).some((c) => c.rowSpan !== 1))) {
+            return null;
+        }
+
+        const placed: { cell: HTMLTableCellElement; row: number; col: number; rowSpan: number; colSpan: number }[] = [];
+        const taken: boolean[][] = [];
+        rows.forEach((row, rowIndex) => {
+            let col = 0;
+            for (const c of Array.from(row.cells)) {
+                while (taken[rowIndex]?.[col]) col++;
+                const rowSpan = c.rowSpan === 0 ? rows.length - rowIndex : c.rowSpan;
+                const colSpan = c.colSpan || 1;
+                placed.push({ cell: c, row: rowIndex, col, rowSpan, colSpan });
+                for (let i = 0; i < rowSpan; i++) for (let j = 0; j < colSpan; j++) (taken[rowIndex + i] ??= [])[col + j] = true;
+                col += colSpan;
+            }
+        });
+
+        const self = placed.find((p) => p.cell === cell);
+        if (!self) {
+            return null;
+        }
+
+        let start = 0;
+        let end = 0;
+        for (const p of placed) {
+            if (p.cell !== cell && p.row <= self.row && self.row < p.row + p.rowSpan) {
+                if (p.col + p.colSpan <= self.col) start += this.getFrozenWidth(p.cell);
+                else if (p.col >= self.col + self.colSpan) end += this.getFrozenWidth(p.cell);
+            }
+        }
+
+        return { start, end };
     }
 
     // only the frozen (sticky) cells stay between a frozen cell and the edge: the others scroll away
@@ -4775,7 +4845,8 @@ export class EditableColumn extends BaseComponent {
                     return;
                 }
 
-                if (this.el.nativeElement) {
+                // only the cell being edited follows its new data: a row reused for other data (e.g. after filtering) is not edited
+                if (this.el.nativeElement && this.dataTable.editingCell() === this.el.nativeElement) {
                     this.dataTable.updateEditingCell(this.el.nativeElement, data, field, <number>rowIndex);
                 }
             });
@@ -6863,6 +6934,7 @@ export class ColumnFilter extends BaseComponent {
                         [value]="filterConstraint()?.value"
                         (input)="onModelChange($event.target.value)"
                         (keydown.enter)="onTextInputEnterKeyDown($event)"
+                        (blur)="onInputBlur()"
                         [attr.placeholder]="placeholder()"
                         [unstyled]="unstyled()"
                     />
@@ -6873,6 +6945,7 @@ export class ColumnFilter extends BaseComponent {
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"
                         (onKeyDown)="onNumericInputKeyDown($event)"
+                        (onBlur)="onInputBlur()"
                         [showButtons]="showButtons()"
                         [minFractionDigits]="minFractionDigits()"
                         [maxFractionDigits]="maxFractionDigits()"
@@ -6975,26 +7048,45 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
         this.dataTable._filter();
     };
 
+    /** A value typed in the input and not applied yet: leaving the input applies it, like Enter. */
+    private pendingValue = false;
+
     onModelChange(value: any) {
         (<any>this.filterConstraint()).value = value;
 
         // a menu with an Apply button only filters on Apply (or Enter)
-        const applyOnButton = this.colFilter.display() === 'menu' && this.colFilter.showApplyButton();
+        const applyOnButton = this.isAppliedOnButton();
         if (((this.type() === 'date' || this.type() === 'boolean' || !value) && !applyOnButton) || ((this.type() === 'text' || this.type() === 'numeric') && this.filterOn() === 'input')) {
+            this.pendingValue = false;
             this.dataTable._filter();
+        } else {
+            this.pendingValue = true;
         }
     }
 
     onTextInputEnterKeyDown(event: KeyboardEvent) {
+        this.pendingValue = false;
         this.dataTable._filter();
         event.preventDefault();
     }
 
     onNumericInputKeyDown(event: KeyboardEvent) {
         if (event.key === 'Enter') {
+            this.pendingValue = false;
             this.dataTable._filter();
             event.preventDefault();
         }
+    }
+
+    onInputBlur() {
+        if (this.pendingValue && !this.isAppliedOnButton()) {
+            this.pendingValue = false;
+            this.dataTable._filter();
+        }
+    }
+
+    private isAppliedOnButton() {
+        return this.colFilter.display() === 'menu' && this.colFilter.showApplyButton();
     }
 }
 

@@ -441,75 +441,76 @@ export const style = /*css*/ `
         height: dt('datatable.loading.icon.size');
     }
 
-    .p-datatable-gridlines .p-datatable-header {
+    /* the gridlines rules do not reach the sections of a table without gridlines nested in a cell (e.g. in an expanded row) */
+    .p-datatable-gridlines .p-datatable-header:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) {
         border-width: 1px 1px 0 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-footer {
+    .p-datatable-gridlines .p-datatable-footer:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) {
         border-width: 0 1px 1px 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-paginator-top {
+    .p-datatable-gridlines .p-datatable-paginator-top:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) {
         border-width: 1px 1px 0 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-paginator-bottom {
+    .p-datatable-gridlines .p-datatable-paginator-bottom:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) {
         border-width: 0 1px 1px 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-thead > tr > th {
+    .p-datatable-gridlines .p-datatable-thead:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > th {
         border-width: 1px 0 1px 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-thead > tr > th:last-child {
+    .p-datatable-gridlines .p-datatable-thead:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > th:last-child {
         border-width: 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tbody > tr > td {
+    .p-datatable-gridlines .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td {
         border-width: 1px 0 0 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tbody > tr > td:last-child {
+    .p-datatable-gridlines .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td:last-child {
         border-width: 1px 1px 0 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td {
+    .p-datatable-gridlines .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr:last-child > td {
         border-width: 1px 0 1px 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td:last-child {
+    .p-datatable-gridlines .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr:last-child > td:last-child {
         border-width: 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tfoot > tr > td {
+    .p-datatable-gridlines .p-datatable-tfoot:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td {
         border-width: 1px 0 1px 1px;
     }
 
-    .p-datatable-gridlines .p-datatable-tfoot > tr > td:last-child {
+    .p-datatable-gridlines .p-datatable-tfoot:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td:last-child {
         border-width: 1px 1px 1px 1px;
     }
 
-    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td {
+    .p-datatable.p-datatable-gridlines .p-datatable-thead:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) + .p-datatable-tfoot > tr > td {
         border-width: 0 0 1px 1px;
     }
 
-    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td:last-child {
+    .p-datatable.p-datatable-gridlines .p-datatable-thead:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) + .p-datatable-tfoot > tr > td:last-child {
         border-width: 0 1px 1px 1px;
     }
 
-    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td {
+    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td {
         border-width: 0 0 1px 1px;
     }
 
-    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td:last-child {
+    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr > td:last-child {
         border-width: 0 1px 1px 1px;
     }
 
-    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td {
+    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr:last-child > td {
         border-width: 0 0 0 1px;
     }
 
-    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td:last-child {
+    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody:where(:not(.p-datatable-gridlines .p-datatable:not(.p-datatable-gridlines) *)) > tr:last-child > td:last-child {
         border-width: 0 1px 0 1px;
     }
 
