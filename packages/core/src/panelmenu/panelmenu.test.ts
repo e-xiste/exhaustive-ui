@@ -1808,3 +1808,64 @@ describe('PanelMenu global PassThrough on sub items', () => {
         items.forEach((item: HTMLElement) => expect(item.classList.contains('GLOBAL_ITEM')).toBe(true));
     });
 });
+
+describe('PanelMenu pointer focus with a custom item template (optimus-ui#52)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [PanelMenu],
+        template: `
+            <p-panelmenu [model]="model">
+                <ng-template #item let-item>
+                    <a class="custom-link">{{ item.label }}</a>
+                </ng-template>
+            </p-panelmenu>
+        `
+    })
+    class PointerFocusHost {
+        model: MenuItem[] = [{ label: 'Mail', expanded: true, items: [{ label: 'Compose' }, { label: 'Inbox' }, { label: 'Sent' }] }];
+    }
+
+    async function setup() {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PointerFocusHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PointerFocusHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return fixture;
+    }
+
+    it('focuses the pressed item, not the first one, when the list receives focus from a mouse press', async () => {
+        const fixture = await setup();
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        const rootList = fixture.nativeElement.querySelector('[data-pc-section="rootlist"]') as HTMLElement;
+        const items = fixture.nativeElement.querySelectorAll('li[role="treeitem"]');
+        const inbox = items[1].querySelector('.custom-link') as HTMLElement;
+
+        header.focus();
+        // the custom anchor has no href, so a press moves focus to the closest focusable ancestor: the list
+        inbox.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        rootList.focus();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(items[0].getAttribute('data-p-focused')).not.toBe('true');
+        expect(items[1].getAttribute('data-p-focused')).toBe('true');
+        fixture.nativeElement.remove();
+    });
+
+    it('still focuses the first item when the list is focused from the keyboard', async () => {
+        const fixture = await setup();
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        header.focus();
+        header.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowDown', key: 'ArrowDown', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const items = fixture.nativeElement.querySelectorAll('li[role="treeitem"]');
+        expect(items[0].getAttribute('data-p-focused')).toBe('true');
+        fixture.nativeElement.remove();
+    });
+});
