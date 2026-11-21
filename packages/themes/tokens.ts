@@ -202,6 +202,12 @@ export default {
                 description: 'Active hover background of header'
             },
             {
+                name: 'accordion.header.focusBackground',
+                token: 'accordion.header.focus.background',
+                variable: '--p-accordion-header-focus-background',
+                description: 'Focus background of header'
+            },
+            {
                 name: 'accordion.header.focusRing.width',
                 token: 'accordion.header.focus.ring.width',
                 variable: '--p-accordion-header-focus-ring-width',
