@@ -100,6 +100,10 @@ Fixes for 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-or
 - Select: a Select inside a disabled `<fieldset>` is disabled, except inside the fieldset's first `<legend>`, as for native controls (#366).
 - PickList: moving items sets `source` and `target` to new arrays and emits `sourceChange`/`targetChange`, so `[(source)]`/`[(target)]` bindings follow (#260).
 
+### New translation keys
+
+- `aria.columnMoved` and `aria.rowMoved` (default `Column moved to position {position} of {total}` and `Row moved to position {position} of {total}`), translated in the 62 languages of `@exhaustive-ui/locale`. Table announces them in a polite live region after a column or a row is moved with the keyboard. A custom `aria` translation without these keys falls back to the English text.
+
 ### Fixes
 
 - Table: columns and rows can be reordered with the keyboard (Ctrl/Cmd + arrows) and rows with a touch on the handle; the caption names the table through `aria-labelledby`; frozen columns share one resize listener and one ResizeObserver, repositioned once per frame, instead of one per cell (#13, #960, #100, #387, #426, #784).
@@ -108,6 +112,7 @@ Fixes for 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-or
 - Forms: `writeValue` called from an effect no longer makes the effect track the component's internal signals (#480).
 - Styles: components inside a `ViewEncapsulation.ShadowDom` host get their styles, which are copied into the shadow root and kept in step (#802).
 - SSR: host and root PassThrough attributes (`data-pc-*`, `pt.root`, `pt.host`) are rendered on the server (#2083).
+- PassThrough: the global `panelmenu` and `cascadeselect` options reach the items of PanelMenu sub lists and the options of CascadeSelect, as was done for MegaMenu (#32). TieredMenu was checked and already applied them; its test now opens a submenu.
 
 ## 22.0.0-alpha.12 (2026-11-21)
 

@@ -181,7 +181,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 </tbody>
             </table>
         </div>
-        <p>On macOS, <i>command</i> can be used instead of <i>control</i>. Rows can also be reordered with a touch or a pen on the reorder handle.</p>
+        <p>
+            On macOS, <i>command</i> can be used instead of <i>control</i>. Rows can also be reordered with a touch or a pen on the reorder handle. After a move with the keyboard, a polite live region announces the new position, using the
+            <i>aria.columnMoved</i> and <i>aria.rowMoved</i> properties of the <a href="/configuration" class="">locale</a> API, where <i>{{ '{' }}position{{ '}' }}</i> and <i>{{ '{' }}total{{ '}' }}</i> are replaced by the numbers.
+        </p>
     </app-docsectiontext>`
 })
 export class AccessibilityDoc {}
