@@ -90,6 +90,19 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
+## Unreleased
+
+### Fixes
+
+- Badge: `pBadge` on a component whose template starts with a comment, such as `p-avatar`, no longer throws a `HierarchyRequestError` that left the avatar empty; the badge is attached to the component host.
+- Menubar: an item command that navigates away no longer makes the destroyed menubar emit `onBlur` (NG0953).
+
+### Documentation site
+
+- The PrimeNG announcement moved from the banner above the home page to the home footer.
+- The Sparked template is no longer showcased: the Templates page, its menu entry, the home page section and the footer links are removed.
+- Every component page was opened in a browser with its demos clicked through; besides the two fixes above, this fixed the markdown links of Textarea, Drag and Drop, Focus Trap and ClassNames, the Textarea theming tab, and the missing home page screenshots on small screens.
+
 ## 22.0.0-rc.1 (2026-11-21)
 
 First release candidate of 22.0.0. It fixes 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs set aside in 22.0.0-alpha.10. Each one has a regression test; the issue numbers are Optimus UI's. #593 (Popover in a Dialog with `appendTo`) was already fixed and now has tests. #731 (one table for screen readers in a scrollable TreeTable) needs a redesign of the scrollable TreeTable and stays open.
