@@ -22,7 +22,7 @@ import {
     output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { calculateScrollbarWidth, findLastIndex, findSingle, focus, getViewport, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, nestedPosition, resolve, uuid } from '@exhaustive-ui/utils';
+import { findLastIndex, findSingle, focus, getViewport, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, nestedPosition, resolve, uuid } from '@exhaustive-ui/utils';
 import { MenuItem, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -575,7 +575,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             if (processedItem.level === 0) {
                 // a dropdown of the bar opens below its item: shift it left when it runs out of the viewport
                 sublist.style.left = '';
-                const overflow = sublist.getBoundingClientRect().right - (getViewport().width - calculateScrollbarWidth());
+                const overflow = sublist.getBoundingClientRect().right - getViewport().width;
 
                 overflow > 0 && (sublist.style.left = sublist.offsetLeft - overflow + 'px');
             } else {

@@ -25,7 +25,6 @@ import { RouterModule } from '@angular/router';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import {
     appendChild,
-    calculateScrollbarWidth,
     findLastIndex,
     findSingle,
     focus,
@@ -408,7 +407,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> {
 
         sublist.style.top = overflowBottom > 0 ? -1 * Math.min(overflowBottom, Math.max(parentItemTop, 0)) + 'px' : '0px';
 
-        if (parseInt(containerOffset.left, 10) + itemOuterWidth + sublistWidth > viewport.width - calculateScrollbarWidth()) {
+        if (parseInt(containerOffset.left, 10) + itemOuterWidth + sublistWidth > viewport.width) {
             sublist.style.left = -1 * sublistWidth + 'px';
         } else {
             sublist.style.left = itemOuterWidth + 'px';
