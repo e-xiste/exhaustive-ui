@@ -512,14 +512,10 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         afterEveryRender(() => {
             if (!this.initialized()) {
                 this.viewInit();
-            } else if (this.pendingScrollToIndex) {
-                // a scroll requested before the viewport could be laid out was clamped by the browser:
-                // apply it again once the spacer has been rendered at its full size
-                const element = this.elementViewChild()?.nativeElement;
-                if (element && (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth)) {
-                    const { index, behavior } = this.pendingScrollToIndex;
-                    this.scrollToIndex(index, behavior);
-                }
+            } else if (this.pendingScrollToIndex && this.isSpacerRendered()) {
+                // a scroll requested before the spacer had its full size was clamped by the browser: apply it again
+                const { index, behavior } = this.pendingScrollToIndex;
+                this.scrollToIndex(index, behavior);
             }
         });
     }
@@ -529,6 +525,7 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
         this.contentEl.set(null);
         this.initialized.set(false);
+        this.pendingScrollToIndex = null;
     }
 
     viewInit() {
@@ -544,7 +541,6 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.defaultContentWidth.set(getWidth(this.contentEl()));
                 this.defaultContentHeight.set(getHeight(this.contentEl()));
                 this.initialized.set(true);
-
             }
         }
     }
@@ -598,11 +594,24 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
     private pendingScrollToIndex: { index: number | number[]; behavior: ScrollBehavior } | null = null;
 
+    /**
+     * Whether the viewport is laid out and its spacer rendered at the size it was given, so that any position can be scrolled to.
+     */
+    private isSpacerRendered(): boolean {
+        const element = this.elementViewChild()?.nativeElement;
+        if (!this.initialized() || !element) {
+            return false;
+        }
+        const { height, width } = this.spacerStyle() || {};
+        return (!height || element.scrollHeight >= parseFloat(height)) && (!width || element.scrollWidth >= parseFloat(width));
+    }
+
     scrollToIndex(index: number | number[], behavior: ScrollBehavior = 'auto') {
         const valid = this.both() ? (index as number[]).every((i) => i > -1) : (index as number) > -1;
 
         if (valid) {
-            this.pendingScrollToIndex = this.initialized() ? null : { index, behavior };
+            // before the spacer is rendered at its full size the browser clamps the scroll: retry after the next renders
+            this.pendingScrollToIndex = this.isSpacerRendered() ? null : { index, behavior };
             const first = this.first();
             const { scrollTop = 0, scrollLeft = 0 } = this.elementViewChild()?.nativeElement;
             const { numToleratedItems } = this.calculateNumItems();
