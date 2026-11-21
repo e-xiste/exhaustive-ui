@@ -20,6 +20,15 @@ ${datatable_style}
     z-index: 1;
 }
 
+/* the scroller host element sits between the table container and the scroller root */
+.p-datatable-scrollable > .p-datatable-table-container > p-scroller > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {
+    background: dt('datatable.header.cell.background');
+}
+
+.p-datatable-scrollable > .p-datatable-table-container > p-scroller > .p-virtualscroller > .p-datatable-table > .p-datatable-tfoot {
+    background: dt('datatable.footer.cell.background');
+}
+
 .p-datatable-mask.p-overlay-mask {
     position: absolute;
     display: flex;

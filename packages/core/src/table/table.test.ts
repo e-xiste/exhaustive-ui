@@ -4241,4 +4241,33 @@ describe('optimus-ui issues (part 1)', () => {
             expect(Math.round(frozenRow.getBoundingClientRect().top)).toBe(Math.round(thead.getBoundingClientRect().bottom));
         });
     });
+
+    describe('sorted header with virtual scroll (optimus-ui#281)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows" [scrollable]="true" scrollHeight="300px" [virtualScroll]="virtualScroll" [virtualScrollItemSize]="40" sortField="id" [sortOrder]="1">
+                    <ng-template #header><tr><th pSortableColumn="id">Id</th><th>Name</th></tr></ng-template>
+                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class SortedVirtualScrollComponent {
+            rows = rowsOf(200);
+            virtualScroll = true;
+        }
+
+        it('gives the header the same opaque background as without virtual scroll', async () => {
+            fixture = await render(SortedVirtualScrollComponent, (instance) => (instance.virtualScroll = false));
+            const expected = getComputedStyle(fixture.nativeElement.querySelector('thead')).backgroundColor;
+            fixture.destroy();
+            fixture.nativeElement.remove();
+
+            fixture = await render(SortedVirtualScrollComponent);
+            const thead = fixture.nativeElement.querySelector('thead') as HTMLElement;
+            expect(expected).not.toBe('rgba(0, 0, 0, 0)');
+            expect(getComputedStyle(thead).backgroundColor).toBe(expected);
+        });
+    });
 });
