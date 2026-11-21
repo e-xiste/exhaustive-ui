@@ -761,3 +761,28 @@ describe('DialogService injector hierarchy', () => {
         featureInjector.destroy();
     });
 });
+
+describe('DynamicDialog style binding', () => {
+    it('should pass the same style object to the Dialog across change detection cycles (optimus-ui#896)', async () => {
+        TestBed.resetTestingModule();
+        const config = new DynamicDialogConfig();
+        config.style = { color: 'red' };
+        config.width = '300px';
+        TestBed.configureTestingModule({
+            imports: [DynamicDialog],
+            providers: [{ provide: DynamicDialogConfig, useValue: config }, { provide: DynamicDialogRef, useValue: new DynamicDialogRef() }, provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(DynamicDialog);
+        fixture.detectChanges();
+        const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
+        const first = dialog.style();
+        expect(first).toEqual({ color: 'red', width: '300px' });
+
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+
+        expect(dialog.style()).toBe(first);
+    });
+});
