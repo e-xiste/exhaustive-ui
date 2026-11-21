@@ -191,7 +191,9 @@
       "unselectRow": "Ред није одабран",
       "zoomImage": "Зумирај слику",
       "zoomIn": "Увећај",
-      "zoomOut": "Смањи"
+      "zoomOut": "Смањи",
+      "columnMoved": "Kolona premeštena na poziciju {position} od {total}",
+      "rowMoved": "Red premešten na poziciju {position} od {total}"
     }
   }
 }

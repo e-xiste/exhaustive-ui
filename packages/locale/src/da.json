@@ -191,7 +191,9 @@
       "unselectRow": "Række fjernet",
       "zoomImage": "Zoom ind på billede",
       "zoomIn": "Zoom ind",
-      "zoomOut": "Zoom ud"
+      "zoomOut": "Zoom ud",
+      "columnMoved": "Kolonne flyttet til position {position} af {total}",
+      "rowMoved": "Række flyttet til position {position} af {total}"
     }
   }
 }

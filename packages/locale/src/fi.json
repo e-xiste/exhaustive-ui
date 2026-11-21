@@ -191,7 +191,9 @@
       "unselectRow": "Rivin valinta poistettu",
       "zoomImage": "Zoomaa kuvaa",
       "zoomIn": "Zoomaa lähemmäs",
-      "zoomOut": "Zoomaa kauemmas"
+      "zoomOut": "Zoomaa kauemmas",
+      "columnMoved": "Sarake siirretty kohtaan {position}/{total}",
+      "rowMoved": "Rivi siirretty kohtaan {position}/{total}"
     }
   }
 }

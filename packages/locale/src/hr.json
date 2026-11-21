@@ -191,7 +191,9 @@
       "unselectRow": "Poništi odabir retka",
       "zoomImage": "Povećaj sliku",
       "zoomIn": "Povećaj",
-      "zoomOut": "Smanji"
+      "zoomOut": "Smanji",
+      "columnMoved": "Stupac premješten na poziciju {position} od {total}",
+      "rowMoved": "Redak premješten na poziciju {position} od {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "未選択行",
       "zoomImage": "画像を拡大",
       "zoomIn": "拡大",
-      "zoomOut": "縮小"
+      "zoomOut": "縮小",
+      "columnMoved": "列を {total} 中 {position} 番目に移動しました",
+      "rowMoved": "行を {total} 中 {position} 番目に移動しました"
     }
   }
 }

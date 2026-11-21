@@ -191,7 +191,9 @@
       "unselectRow": "Rij gedeselecteerd",
       "zoomImage": "Zoom afbeeling",
       "zoomIn": "Zoom in",
-      "zoomOut": "Zoom uit"
+      "zoomOut": "Zoom uit",
+      "columnMoved": "Kolom verplaatst naar positie {position} van {total}",
+      "rowMoved": "Rij verplaatst naar positie {position} van {total}"
     }
   }
 }

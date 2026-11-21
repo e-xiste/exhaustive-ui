@@ -191,7 +191,9 @@
       "unselectRow": "Pilihan Baris Dibatalkan",
       "zoomImage": "Zoom Imej",
       "zoomIn": "Zoom Masuk",
-      "zoomOut": "Zoom Keluar"
+      "zoomOut": "Zoom Keluar",
+      "columnMoved": "Lajur dialihkan ke kedudukan {position} daripada {total}",
+      "rowMoved": "Baris dialihkan ke kedudukan {position} daripada {total}"
     }
   }
 }

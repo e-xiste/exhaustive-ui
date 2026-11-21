@@ -191,7 +191,9 @@
       "unselectRow": "Рядок не вибрано",
       "zoomImage": "Збільшити зображення",
       "zoomIn": "Збільшити",
-      "zoomOut": "Зменшити"
+      "zoomOut": "Зменшити",
+      "columnMoved": "Стовпець переміщено на позицію {position} з {total}",
+      "rowMoved": "Рядок переміщено на позицію {position} з {total}"
     }
   }
 }

@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { OverlayService, SharedModule, SortMeta } from '@exhaustive-ui/core/api';
 import { TableFilterEvent } from '@exhaustive-ui/core/types/table';
+import { Exhaustive } from '@exhaustive-ui/core/config';
 import { Select } from '@exhaustive-ui/core/select';
 import { CellEditor, ColumnFilter, ColumnFilterFormElement, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
@@ -3926,6 +3927,30 @@ describe('Table keyboard reorder (optimus-ui#13)', () => {
         press(handle, 'ArrowUp');
         await fixture.whenStable();
         expect(firstCells()).toEqual(['a1', 'a2', 'a3']);
+    });
+
+    const announcement = () => fixture.nativeElement.querySelector('[data-pc-section="reorderannouncement"]') as HTMLElement;
+
+    it('announces the new position of a column moved with the keyboard', async () => {
+        const region = announcement();
+        expect(region.getAttribute('aria-live')).toBe('polite');
+        expect(region.getAttribute('aria-atomic')).toBe('true');
+        expect(region.textContent!.trim()).toBe('');
+
+        press(fixture.nativeElement.querySelectorAll('thead th')[1], 'ArrowRight');
+        await new Promise((resolve) => setTimeout(resolve));
+        await fixture.whenStable();
+
+        expect(announcement().textContent!.trim()).toBe('Column moved to position 3 of 4');
+    });
+
+    it('announces the new position of a row moved with the keyboard, in the configured language', async () => {
+        TestBed.inject(Exhaustive).setTranslation({ aria: { rowMoved: 'Ligne déplacée en position {position} sur {total}' } });
+
+        press(fixture.nativeElement.querySelector('[preorderablerowhandle]'), 'ArrowDown');
+        await fixture.whenStable();
+
+        expect(announcement().textContent!.trim()).toBe('Ligne déplacée en position 2 sur 3');
     });
 });
 

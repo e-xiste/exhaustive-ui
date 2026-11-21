@@ -191,7 +191,9 @@
       "unselectRow": "عدم اختيار الصف",
       "zoomImage": "تكبير الصورة",
       "zoomIn": "تكبير",
-      "zoomOut": "تصغير"
+      "zoomOut": "تصغير",
+      "columnMoved": "تم نقل العمود إلى الموضع {position} من {total}",
+      "rowMoved": "تم نقل الصف إلى الموضع {position} من {total}"
     }
   }
 }

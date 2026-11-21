@@ -191,7 +191,9 @@
       "unselectRow": "Deseleziona riga",
       "zoomImage": "Zoom Immagine",
       "zoomIn": "Ingrandisci",
-      "zoomOut": "Riduci"
+      "zoomOut": "Riduci",
+      "columnMoved": "Colonna spostata in posizione {position} di {total}",
+      "rowMoved": "Riga spostata in posizione {position} di {total}"
     }
   }
 }

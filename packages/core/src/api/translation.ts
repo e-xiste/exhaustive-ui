@@ -137,4 +137,6 @@ export interface Aria {
     browseFiles?: string;
     maximizeLabel?: string;
     minimizeLabel?: string;
+    columnMoved?: string;
+    rowMoved?: string;
 }

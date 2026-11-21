@@ -191,7 +191,9 @@
       "unselectRow": "Μη επιλεγμένη σειρά",
       "zoomImage": "Ζουμ εικόνας",
       "zoomIn": "Μεγέθυνση",
-      "zoomOut": "Σμίκρυνση"
+      "zoomOut": "Σμίκρυνση",
+      "columnMoved": "Η στήλη μετακινήθηκε στη θέση {position} από {total}",
+      "rowMoved": "Η γραμμή μετακινήθηκε στη θέση {position} από {total}"
     }
   }
 }

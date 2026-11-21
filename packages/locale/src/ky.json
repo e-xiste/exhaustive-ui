@@ -191,7 +191,9 @@
       "unselectRow": "Катар тандоодон чыгарылды",
       "zoomImage": "Сүрөттү чоңойтуу",
       "zoomIn": "Чоңойтуу",
-      "zoomOut": "Кичирейтүү"
+      "zoomOut": "Кичирейтүү",
+      "columnMoved": "Мамыча {total} ичинен {position} орунга жылдырылды",
+      "rowMoved": "Сап {total} ичинен {position} орунга жылдырылды"
     }
   }
 }

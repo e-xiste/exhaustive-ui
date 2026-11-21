@@ -191,7 +191,9 @@
       "unselectRow": "ستر کو انتخاب سے ہٹایؑں",
       "zoomImage": "تصویر کا سازؑ",
       "zoomIn": "بڑا کریں",
-      "zoomOut": "چھوٹا کریں"
+      "zoomOut": "چھوٹا کریں",
+      "columnMoved": "کالم کو {total} میں سے مقام {position} پر منتقل کر دیا گیا",
+      "rowMoved": "قطار کو {total} میں سے مقام {position} پر منتقل کر دیا گیا"
     }
   }
 }

@@ -377,6 +377,7 @@ export class TableService {
         @if (resizableColumns()) {
             <div #resizeHelper [ngClass]="cx('columnResizeIndicator')" [pBind]="ptm('columnResizeIndicator')" [style.display]="'none'"></div>
         }
+        <span class="p-hidden-accessible" aria-live="polite" aria-atomic="true" [attr.data-pc-section]="'reorderannouncement'">{{ reorderAnnouncement() }}</span>
         @if (reorderableColumns()) {
             <span #reorderIndicatorUp [ngClass]="cx('rowReorderIndicatorUp')" [pBind]="ptm('rowReorderIndicatorUp')" [style.display]="'none'">
                 @if (!reorderIndicatorUpIconTemplate() && !_reorderIndicatorUpIconTemplate()) {
@@ -2800,9 +2801,27 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.draggedColumn.set(columnElement);
             this.dropPosition.set(forward ? 1 : -1);
             this.onColumnDrop(event, dropColumn);
-            // re-rendering the header can move the focused cell: keep the focus on it
-            setTimeout(() => columnElement.isConnected && columnElement.focus());
+            // re-rendering the header can move the focused cell: keep the focus on it and announce its new place
+            setTimeout(() => {
+                if (columnElement.isConnected) {
+                    columnElement.focus();
+                    const cells = Array.from<Element>(columnElement.parentElement?.children ?? []);
+                    this.announceReorder('columnMoved', cells.indexOf(columnElement) + 1, cells.length);
+                }
+            });
         }
+    }
+
+    /**
+     * Text of the live region that tells screen readers where a column or a row moved with the keyboard.
+     * @group Interface
+     */
+    readonly reorderAnnouncement = signal<string>('');
+
+    announceReorder(key: 'columnMoved' | 'rowMoved', position: number, total: number) {
+        const fallback = key === 'columnMoved' ? 'Column moved to position {position} of {total}' : 'Row moved to position {position} of {total}';
+        const template = this.config.translation?.aria?.[key] ?? fallback;
+        this.reorderAnnouncement.set(template.replace('{position}', String(position)).replace('{total}', String(total)));
     }
 
     onColumnDragEnd() {
@@ -2924,6 +2943,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 dragIndex: index,
                 dropIndex: dropIndex
             });
+            this.announceReorder('rowMoved', dropIndex + 1, value.length);
         }
     }
 

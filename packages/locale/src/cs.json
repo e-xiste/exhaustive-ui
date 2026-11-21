@@ -191,7 +191,9 @@
       "unselectRow": "Zrušit výběr řádku",
       "zoomImage": "Přiblížit obrázek",
       "zoomIn": "Přiblížit",
-      "zoomOut": "Oddálit"
+      "zoomOut": "Oddálit",
+      "columnMoved": "Sloupec přesunut na pozici {position} z {total}",
+      "rowMoved": "Řádek přesunut na pozici {position} z {total}"
     }
   }
 }

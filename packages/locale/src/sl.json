@@ -191,7 +191,9 @@
       "unselectRow": "Vrstica ni izbrana",
       "zoomImage": "Povečava slike",
       "zoomIn": "Povečaj",
-      "zoomOut": "Zmanjšaj"
+      "zoomOut": "Zmanjšaj",
+      "columnMoved": "Stolpec premaknjen na mesto {position} od {total}",
+      "rowMoved": "Vrstica premaknjena na mesto {position} od {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "មិនបានជ្រើសរើសជួរដេក",
       "zoomImage": "ពង្រីករូបភាព",
       "zoomIn": "ពង្រីក",
-      "zoomOut": "ពង្រួម"
+      "zoomOut": "ពង្រួម",
+      "columnMoved": "បានផ្លាស់ទីជួរឈរទៅទីតាំង {position} នៃ {total}",
+      "rowMoved": "បានផ្លាស់ទីជួរដេកទៅទីតាំង {position} នៃ {total}"
     }
   }
 }

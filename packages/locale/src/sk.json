@@ -191,7 +191,9 @@
       "unselectRow": "Zrušiť výber riadku",
       "zoomImage": "Priblížiť obrázok",
       "zoomIn": "Priblížiť",
-      "zoomOut": "Oddialiť"
+      "zoomOut": "Oddialiť",
+      "columnMoved": "Stĺpec presunutý na pozíciu {position} z {total}",
+      "rowMoved": "Riadok presunutý na pozíciu {position} z {total}"
     }
   }
 }

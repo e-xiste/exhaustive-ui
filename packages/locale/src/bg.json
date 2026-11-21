@@ -191,7 +191,9 @@
       "unselectRow": "Редът не е избран",
       "zoomImage": "Увеличете изображението",
       "zoomIn": "Увеличавам",
-      "zoomOut": "Отдалечавам"
+      "zoomOut": "Отдалечавам",
+      "columnMoved": "Колоната е преместена на позиция {position} от {total}",
+      "rowMoved": "Редът е преместен на позиция {position} от {total}"
     }
   }
 }

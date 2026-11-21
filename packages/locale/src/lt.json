@@ -191,7 +191,9 @@
       "unselectRow": "Eilutė nepasirinkta",
       "zoomImage": "Priartinti paveikslą",
       "zoomIn": "Priartinti",
-      "zoomOut": "Atitolinti"
+      "zoomOut": "Atitolinti",
+      "columnMoved": "Stulpelis perkeltas į {position} poziciją iš {total}",
+      "rowMoved": "Eilutė perkelta į {position} poziciją iš {total}"
     }
   }
 }

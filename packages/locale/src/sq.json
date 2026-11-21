@@ -131,7 +131,9 @@
          "unselectRow": "Rreshti u çzgjodh",
          "zoomImage": "Zmadho imazhin",
          "zoomIn": "Zmadho",
-         "zoomOut": "Zvogëlo"
+         "zoomOut": "Zvogëlo",
+         "columnMoved": "Kolona u zhvendos në pozicionin {position} nga {total}",
+         "rowMoved": "Rreshti u zhvendos në pozicionin {position} nga {total}"
       }
    }
 }

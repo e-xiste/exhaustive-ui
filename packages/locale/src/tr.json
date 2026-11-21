@@ -191,7 +191,9 @@
       "unselectRow": "Satır Seçilmedi",
       "zoomImage": "Görüntüyü Yakınlaştır",
       "zoomIn": "Yakınlaştır",
-      "zoomOut": "Uzaklaştır"
+      "zoomOut": "Uzaklaştır",
+      "columnMoved": "Sütun {total} içinde {position}. konuma taşındı",
+      "rowMoved": "Satır {total} içinde {position}. konuma taşındı"
     }
   }
 }

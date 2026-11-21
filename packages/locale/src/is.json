@@ -191,7 +191,9 @@
       "unselectRow": "Afvelja röð",
       "zoomImage": "Þysja mynd",
       "zoomIn": "þysja að",
-      "zoomOut": "þysja frá"
+      "zoomOut": "þysja frá",
+      "columnMoved": "Dálkur færður í stöðu {position} af {total}",
+      "rowMoved": "Röð færð í stöðu {position} af {total}"
     }
   }
 }

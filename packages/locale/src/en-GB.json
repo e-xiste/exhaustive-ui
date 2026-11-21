@@ -191,7 +191,9 @@
       "unselectRow": "Row Unselected",
       "zoomImage": "Zoom Image",
       "zoomIn": "Zoom In",
-      "zoomOut": "Zoom Out"
+      "zoomOut": "Zoom Out",
+      "columnMoved": "Column moved to position {position} of {total}",
+      "rowMoved": "Row moved to position {position} of {total}"
     }
   }
 }

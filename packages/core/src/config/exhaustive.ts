@@ -162,7 +162,9 @@ export class Exhaustive extends ThemeProvider {
             removeLabel: 'Remove',
             browseFiles: 'Browse Files',
             maximizeLabel: 'Maximize',
-            minimizeLabel: 'Minimize'
+            minimizeLabel: 'Minimize',
+            columnMoved: 'Column moved to position {position} of {total}',
+            rowMoved: 'Row moved to position {position} of {total}'
         }
     };
 

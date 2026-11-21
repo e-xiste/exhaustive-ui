@@ -191,7 +191,9 @@
       "unselectRow": "Zeile abgewählt",
       "zoomImage": "Bild vergrössern",
       "zoomIn": "Vergrössern",
-      "zoomOut": "Verkleinern"
+      "zoomOut": "Verkleinern",
+      "columnMoved": "Spalte an Position {position} von {total} verschoben",
+      "rowMoved": "Zeile an Position {position} von {total} verschoben"
     }
   }
 }

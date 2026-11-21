@@ -191,7 +191,9 @@
       "unselectRow": "Anile Seleksyon Ranje a",
       "zoomImage": "Zoume Imaj",
       "zoomIn": "Zoume Anndan",
-      "zoomOut": "Zoume Deyò"
+      "zoomOut": "Zoume Deyò",
+      "columnMoved": "Kolòn deplase nan pozisyon {position} sou {total}",
+      "rowMoved": "Ranje deplase nan pozisyon {position} sou {total}"
     }
   }
 }

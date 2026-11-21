@@ -191,7 +191,9 @@
       "unselectRow": "שורה לא נבחרה",
       "zoomImage": "הגדל תמונה",
       "zoomIn": "הגדל",
-      "zoomOut": "הקטן"
+      "zoomOut": "הקטן",
+      "columnMoved": "העמודה הועברה למיקום {position} מתוך {total}",
+      "rowMoved": "השורה הועברה למיקום {position} מתוך {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "Noņemt rindas atlasi",
       "zoomImage": "Attēla tālummaiņa",
       "zoomIn": "Pietuvināt",
-      "zoomOut": "Attālināt"
+      "zoomOut": "Attālināt",
+      "columnMoved": "Kolonna pārvietota uz pozīciju {position} no {total}",
+      "rowMoved": "Rinda pārvietota uz pozīciju {position} no {total}"
     }
   }
 }

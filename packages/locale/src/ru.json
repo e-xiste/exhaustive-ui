@@ -191,7 +191,9 @@
       "unselectRow": "Отменить выбор строки",
       "zoomImage": "Увеличить изображение",
       "zoomIn": "Увеличить",
-      "zoomOut": "Уменьшить"
+      "zoomOut": "Уменьшить",
+      "columnMoved": "Столбец перемещён на позицию {position} из {total}",
+      "rowMoved": "Строка перемещена на позицию {position} из {total}"
     }
   }
 }

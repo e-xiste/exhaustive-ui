@@ -191,7 +191,9 @@
       "unselectRow": "पंक्ति चुनी नहीं गई",
       "zoomImage": "छवि को ज़ूम करें",
       "zoomIn": "ज़ूम इन",
-      "zoomOut": "ज़ूम आउट"
+      "zoomOut": "ज़ूम आउट",
+      "columnMoved": "कॉलम को {total} में से स्थान {position} पर ले जाया गया",
+      "rowMoved": "पंक्ति को {total} में से स्थान {position} पर ले जाया गया"
     }
   }
 }

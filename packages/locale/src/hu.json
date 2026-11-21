@@ -191,7 +191,9 @@
       "unselectRow": "Sor nincs kijelölve",
       "zoomImage": "Kép nagyítása",
       "zoomIn": "Nagyítás",
-      "zoomOut": "Kicsinyítés"
+      "zoomOut": "Kicsinyítés",
+      "columnMoved": "Oszlop áthelyezve: {position}. pozíció / {total}",
+      "rowMoved": "Sor áthelyezve: {position}. pozíció / {total}"
     }
   }
 }

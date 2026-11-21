@@ -191,7 +191,9 @@
       "unselectRow": "Rad ikke valgt",
       "zoomImage": "Forstørr bilde",
       "zoomIn": "Forstørr",
-      "zoomOut": "Forminsk"
+      "zoomOut": "Forminsk",
+      "columnMoved": "Kolonne flyttet til posisjon {position} av {total}",
+      "rowMoved": "Rad flyttet til posisjon {position} av {total}"
     }
   }
 }

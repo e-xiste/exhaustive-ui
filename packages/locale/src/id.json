@@ -191,7 +191,9 @@
       "unselectRow": "Baris Tidak Dipilih",
       "zoomImage": "Perbesar Gambar",
       "zoomIn": "Perbesar",
-      "zoomOut": "Perkecil"
+      "zoomOut": "Perkecil",
+      "columnMoved": "Kolom dipindahkan ke posisi {position} dari {total}",
+      "rowMoved": "Baris dipindahkan ke posisi {position} dari {total}"
     }
   }
 }

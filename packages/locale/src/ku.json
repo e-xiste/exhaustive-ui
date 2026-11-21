@@ -191,7 +191,9 @@
       "unselectRow": "بڕی نهێنان",
       "zoomImage": "بەرزکردنی وێنە",
       "zoomIn": "بزرێنە",
-      "zoomOut": "بچووکەوە"
+      "zoomOut": "بچووکەوە",
+      "columnMoved": "Stûn bo cihê {position} ji {total} hate guhastin",
+      "rowMoved": "Rêz bo cihê {position} ji {total} hate guhastin"
     }
   }
 }

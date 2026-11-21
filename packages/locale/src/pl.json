@@ -191,7 +191,9 @@
       "unselectRow": "Wiersz odznaczony",
       "zoomImage": "Powiększ obraz",
       "zoomIn": "Przybliż",
-      "zoomOut": "Oddal"
+      "zoomOut": "Oddal",
+      "columnMoved": "Kolumna przeniesiona na pozycję {position} z {total}",
+      "rowMoved": "Wiersz przeniesiony na pozycję {position} z {total}"
     }
   }
 }

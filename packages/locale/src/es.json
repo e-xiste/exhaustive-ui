@@ -191,7 +191,9 @@
       "unselectRow": "Desmarcar fila",
       "zoomImage": "Ampliar imagen",
       "zoomIn": "Ampliar",
-      "zoomOut": "Reducir"
+      "zoomOut": "Reducir",
+      "columnMoved": "Columna movida a la posición {position} de {total}",
+      "rowMoved": "Fila movida a la posición {position} de {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "အတန်းမရွေးထားပါ",
       "zoomImage": "ပုံချဲ့ရန်",
       "zoomIn": "ချဲ့ရန်",
-      "zoomOut": "ချုံ့ရန်"
+      "zoomOut": "ချုံ့ရန်",
+      "columnMoved": "ကော်လံကို {total} အနက် နေရာ {position} သို့ ရွှေ့ပြီးပါပြီ",
+      "rowMoved": "အတန်းကို {total} အနက် နေရာ {position} သို့ ရွှေ့ပြီးပါပြီ"
     }
   }
 }

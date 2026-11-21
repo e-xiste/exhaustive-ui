@@ -191,7 +191,9 @@
       "unselectRow": "Linha Desmarcada",
       "zoomImage": "Ampliar Imagem",
       "zoomIn": "Ampliar",
-      "zoomOut": "Reduzir"
+      "zoomOut": "Reduzir",
+      "columnMoved": "Coluna movida para a posição {position} de {total}",
+      "rowMoved": "Linha movida para a posição {position} de {total}"
     }
   }
 }

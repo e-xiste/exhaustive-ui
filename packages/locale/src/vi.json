@@ -191,7 +191,9 @@
       "unselectRow": "Đã bỏ chọn hàng",
       "zoomImage": "Phóng to hình ảnh",
       "zoomIn": "Phóng to",
-      "zoomOut": "Thu nhỏ"
+      "zoomOut": "Thu nhỏ",
+      "columnMoved": "Đã chuyển cột đến vị trí {position} trên {total}",
+      "rowMoved": "Đã chuyển hàng đến vị trí {position} trên {total}"
     }
   }
 }

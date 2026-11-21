@@ -191,7 +191,9 @@
       "unselectRow": "Жол таңдалынбады",
       "zoomImage": "Суретті үлкейту",
       "zoomIn": "Үлкейту",
-      "zoomOut": "Кішірейту"
+      "zoomOut": "Кішірейту",
+      "columnMoved": "Баған {total} ішінен {position} орынға жылжытылды",
+      "rowMoved": "Жол {total} ішінен {position} орынға жылжытылды"
     }
   }
 }

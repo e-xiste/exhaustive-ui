@@ -191,7 +191,9 @@
       "unselectRow": "แถวถูกยกเลิกเลือก",
       "zoomImage": "ซูมภาพ",
       "zoomIn": "ซูมเข้า",
-      "zoomOut": "ซูมออก"
+      "zoomOut": "ซูมออก",
+      "columnMoved": "ย้ายคอลัมน์ไปยังตำแหน่ง {position} จาก {total}",
+      "rowMoved": "ย้ายแถวไปยังตำแหน่ง {position} จาก {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "Qatorni tanlovdan chiqarish",
       "zoomImage": "Rasmni kattalashtirish",
       "zoomIn": "Kattalashtirish",
-      "zoomOut": "Kichiklashtirish"
+      "zoomOut": "Kichiklashtirish",
+      "columnMoved": "Ustun {total} tadan {position}-oʻringa koʻchirildi",
+      "rowMoved": "Qator {total} tadan {position}-oʻringa koʻchirildi"
     }
   }
 }

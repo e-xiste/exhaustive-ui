@@ -191,7 +191,9 @@
       "unselectRow": "Rad avmarkerad",
       "zoomImage": "Zooma bild",
       "zoomIn": "Zooma in",
-      "zoomOut": "Zooma ut"
+      "zoomOut": "Zooma ut",
+      "columnMoved": "Kolumnen flyttades till position {position} av {total}",
+      "rowMoved": "Raden flyttades till position {position} av {total}"
     }
   }
 }

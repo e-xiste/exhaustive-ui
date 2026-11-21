@@ -191,7 +191,9 @@
       "unselectRow": "Rând neselectat",
       "zoomImage": "Măriți imaginea",
       "zoomIn": "Măriți",
-      "zoomOut": "Micșorați"
+      "zoomOut": "Micșorați",
+      "columnMoved": "Coloana a fost mutată pe poziția {position} din {total}",
+      "rowMoved": "Rândul a fost mutat pe poziția {position} din {total}"
     }
   }
 }

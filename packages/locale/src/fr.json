@@ -191,7 +191,9 @@
       "unselectRow": "Ligne désélectionnée",
       "zoomImage": "Zoomer l'image",
       "zoomIn": "Zoomer",
-      "zoomOut": "Dézoomer"
+      "zoomOut": "Dézoomer",
+      "columnMoved": "Colonne déplacée en position {position} sur {total}",
+      "rowMoved": "Ligne déplacée en position {position} sur {total}"
     }
   }
 }

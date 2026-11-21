@@ -191,7 +191,9 @@
       "unselectRow": "ڕیز هەڵنەبژێردراوە",
       "zoomImage": "نزیکردنەوەی وێنە",
       "zoomIn": "هێنانە پێشەوە",
-      "zoomOut": "دوور خستنەوە"
+      "zoomOut": "دوور خستنەوە",
+      "columnMoved": "ستوون گوازرایەوە بۆ شوێنی {position} لە {total}",
+      "rowMoved": "ڕیز گوازرایەوە بۆ شوێنی {position} لە {total}"
     }
   }
 }

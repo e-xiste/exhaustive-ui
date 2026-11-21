@@ -191,7 +191,9 @@
       "unselectRow": "ردیف لغو انتخاب شد",
       "zoomImage": "بزرگنمایی تصویر",
       "zoomIn": "بزرگنمایی",
-      "zoomOut": "کوچک نمایی"
+      "zoomOut": "کوچک نمایی",
+      "columnMoved": "ستون به موقعیت {position} از {total} منتقل شد",
+      "rowMoved": "سطر به موقعیت {position} از {total} منتقل شد"
     }
   }
 }

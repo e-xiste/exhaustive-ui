@@ -191,7 +191,9 @@
       "unselectRow": "Rida tühistatud",
       "zoomImage": "Suumi pilti",
       "zoomIn": "Suumi sisse",
-      "zoomOut": "Suumi välja"
+      "zoomOut": "Suumi välja",
+      "columnMoved": "Veerg teisaldati positsioonile {position}/{total}",
+      "rowMoved": "Rida teisaldati positsioonile {position}/{total}"
     }
   }
 }

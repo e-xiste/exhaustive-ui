@@ -191,7 +191,9 @@
       "unselectRow": "取消選取行",
       "zoomImage": "放大圖片",
       "zoomIn": "放大",
-      "zoomOut": "縮小"
+      "zoomOut": "縮小",
+      "columnMoved": "欄已移至第 {position} 欄，共 {total} 欄",
+      "rowMoved": "列已移至第 {position} 列，共 {total} 列"
     }
   }
 }

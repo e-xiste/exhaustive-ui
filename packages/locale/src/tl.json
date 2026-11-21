@@ -191,7 +191,9 @@
       "unselectRow": "Tinanggal ang Pagpili sa Hanay",
       "zoomImage": "I-zoom ang Imahe",
       "zoomIn": "I-zoom In",
-      "zoomOut": "I-zoom Out"
+      "zoomOut": "I-zoom Out",
+      "columnMoved": "Inilipat ang column sa posisyon {position} ng {total}",
+      "rowMoved": "Inilipat ang hilera sa posisyon {position} ng {total}"
     }
   }
 }

@@ -191,7 +191,9 @@
       "unselectRow": "সারি অনির্বাচিত",
       "zoomImage": "ছবি বড় করুন",
       "zoomIn": "বড় করুন",
-      "zoomOut": "ছোট করুন"
+      "zoomOut": "ছোট করুন",
+      "columnMoved": "কলাম {total}-এর মধ্যে {position} নম্বর অবস্থানে সরানো হয়েছে",
+      "rowMoved": "সারি {total}-এর মধ্যে {position} নম্বর অবস্থানে সরানো হয়েছে"
     }
   }
 }
