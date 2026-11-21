@@ -6828,6 +6828,7 @@ export class ColumnFilter extends BaseComponent {
                         [value]="filterConstraint()?.value"
                         (input)="onModelChange($event.target.value)"
                         (keydown.enter)="onTextInputEnterKeyDown($event)"
+                        (blur)="onInputBlur()"
                         [attr.placeholder]="placeholder()"
                         [unstyled]="unstyled()"
                     />
@@ -6838,6 +6839,7 @@ export class ColumnFilter extends BaseComponent {
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModelChange($event)"
                         (onKeyDown)="onNumericInputKeyDown($event)"
+                        (onBlur)="onInputBlur()"
                         [showButtons]="showButtons()"
                         [minFractionDigits]="minFractionDigits()"
                         [maxFractionDigits]="maxFractionDigits()"
@@ -6940,26 +6942,45 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
         this.dataTable._filter();
     };
 
+    /** A value typed in the input and not applied yet: leaving the input applies it, like Enter. */
+    private pendingValue = false;
+
     onModelChange(value: any) {
         (<any>this.filterConstraint()).value = value;
 
         // a menu with an Apply button only filters on Apply (or Enter)
-        const applyOnButton = this.colFilter.display() === 'menu' && this.colFilter.showApplyButton();
+        const applyOnButton = this.isAppliedOnButton();
         if (((this.type() === 'date' || this.type() === 'boolean' || !value) && !applyOnButton) || ((this.type() === 'text' || this.type() === 'numeric') && this.filterOn() === 'input')) {
+            this.pendingValue = false;
             this.dataTable._filter();
+        } else {
+            this.pendingValue = true;
         }
     }
 
     onTextInputEnterKeyDown(event: KeyboardEvent) {
+        this.pendingValue = false;
         this.dataTable._filter();
         event.preventDefault();
     }
 
     onNumericInputKeyDown(event: KeyboardEvent) {
         if (event.key === 'Enter') {
+            this.pendingValue = false;
             this.dataTable._filter();
             event.preventDefault();
         }
+    }
+
+    onInputBlur() {
+        if (this.pendingValue && !this.isAppliedOnButton()) {
+            this.pendingValue = false;
+            this.dataTable._filter();
+        }
+    }
+
+    private isAppliedOnButton() {
+        return this.colFilter.display() === 'menu' && this.colFilter.showApplyButton();
     }
 }
 

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, sig
 import { FormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { TableLazyLoadEvent } from '@exhaustive-ui/core/types/table';
 import { Table, TableModule } from './table';
 
@@ -768,6 +769,172 @@ describe('Table frozen columns in a multi-row header (optimus-ui#711)', () => {
         container.scrollLeft = 200;
         await new Promise((resolve) => requestAnimationFrame(resolve));
         expect(Math.round(other.getBoundingClientRect().left - container.getBoundingClientRect().left)).toBe(name.offsetWidth);
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule, FormsModule, InputTextModule],
+    template: `
+        <p-table [value]="rows" dataKey="id" editMode="row" [editingRowKeys]="editing">
+            <ng-template #body let-row>
+                <tr [pEditableRow]="row">
+                    <td>
+                        <p-cellEditor>
+                            <ng-template #input><input pInputText class="row-input" [(ngModel)]="row.name" /></ng-template>
+                            <ng-template #output>{{ row.name }}</ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <p-cellEditor>
+                            <ng-template #input><input pInputText class="row-input" [(ngModel)]="row.code" /></ng-template>
+                            <ng-template #output>{{ row.code }}</ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <p-cellEditor>
+                            <ng-template #input><input pInputText class="row-input" [(ngModel)]="row.id" /></ng-template>
+                            <ng-template #output>{{ row.id }}</ng-template>
+                        </p-cellEditor>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class WholeTableEditingComponent {
+    rows = makeRows(600);
+    editing: Record<string, boolean> = Object.fromEntries(this.rows.map((row) => [row.id, true]));
+}
+
+describe('Table whole table editing with pInputText cells (optimus-ui#493)', () => {
+    it('renders hundreds of editing rows without a stack overflow', async () => {
+        const errors: unknown[] = [];
+        const onError = (event: ErrorEvent) => errors.push(event.error);
+        window.addEventListener('error', onError);
+        const consoleError = vi.spyOn(console, 'error');
+        try {
+            const fixture = await mount(WholeTableEditingComponent);
+            await tick(50);
+            expect(fixture.nativeElement.querySelectorAll('input.row-input').length).toBe(1800);
+            expect(errors).toEqual([]);
+            expect(consoleError.mock.calls.filter((args) => String(args[0]).includes('RangeError') || args.some((a) => a instanceof RangeError))).toEqual([]);
+            fixture.nativeElement.remove();
+        } finally {
+            window.removeEventListener('error', onError);
+            consoleError.mockRestore();
+        }
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table #dt [value]="rows">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                    <th>Verified</th>
+                </tr>
+                <tr>
+                    <th><p-columnFilter type="text" field="name" [showMenu]="false" /></th>
+                    <th><p-columnFilter type="boolean" field="verified" /></th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr class="data-row">
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.verified }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class BooleanFilterComponent {
+    @ViewChild('dt') table!: Table;
+    rows = makeRows(6).map((row, i) => ({ ...row, verified: i % 2 === 0 }));
+}
+
+describe('Table boolean column filter (optimus-ui#684)', () => {
+    // since v18 the binary checkbox gives true and false, the "any" state is the clear button next to it
+    it('filters on true and false, and back to any with the clear button', async () => {
+        const fixture = await mount(BooleanFilterComponent);
+        const el = fixture.nativeElement as HTMLElement;
+        const box = () => el.querySelector('p-columnfilter:nth-of-type(1) input[type="checkbox"], th:nth-child(2) input[type="checkbox"]') as HTMLInputElement;
+        const rows = () => el.querySelectorAll('.data-row').length;
+        const click = async () => {
+            box().click();
+            await fixture.whenStable();
+            await tick(10);
+            await fixture.whenStable();
+        };
+
+        expect(rows()).toBe(6);
+        await click();
+        expect(rows()).toBe(3);
+        expect((fixture.componentInstance.table._filters() as any).verified.value).toBe(true);
+        await click();
+        expect(rows()).toBe(3);
+        expect((fixture.componentInstance.table._filters() as any).verified.value).toBe(false);
+        (el.querySelector('th:nth-child(2) p-button button') as HTMLButtonElement).click();
+        await fixture.whenStable();
+        await tick(10);
+        await fixture.whenStable();
+        expect(rows()).toBe(6);
+        expect((fixture.componentInstance.table._filters() as any).verified.value).toBe(null);
+        // the checkbox shows the indeterminate (minus) icon again
+        expect(box().closest('p-checkbox')!.querySelector('[data-p-icon="minus"]')).toBeTruthy();
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('Table text column filter applied when leaving the input (optimus-ui#862)', () => {
+    const type = async (fixture: ComponentFixture<any>, input: HTMLInputElement, value: string) => {
+        input.focus();
+        input.value = value;
+        input.dispatchEvent(new Event('input'));
+        await fixture.whenStable();
+    };
+
+    it('filters the rows when the typed value is left with a click outside', async () => {
+        const fixture = await mount(BooleanFilterComponent);
+        const el = fixture.nativeElement as HTMLElement;
+        const input = el.querySelector('th input[type="text"]') as HTMLInputElement;
+
+        await type(fixture, input, 'Name 3');
+        expect(el.querySelectorAll('.data-row').length).toBe(6);
+        input.blur();
+        await fixture.whenStable();
+        await tick(10);
+        await fixture.whenStable();
+
+        expect(el.querySelectorAll('.data-row').length).toBe(1);
+        fixture.nativeElement.remove();
+    });
+
+    it('does not load a lazy table again when the value applied with Enter is left', async () => {
+        const fixture = await mount(LazyTableComponent);
+        await tick(10);
+        await fixture.whenStable();
+        fixture.componentInstance.events = [];
+        const input = fixture.nativeElement.querySelector('p-columnfilter input') as HTMLInputElement;
+
+        await type(fixture, input, 'Name 1');
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
+        await fixture.whenStable();
+        input.blur();
+        await fixture.whenStable();
+        await tick(20);
+        expect(fixture.componentInstance.events.length).toBe(1);
+
+        // focusing and leaving without a change does not load either
+        input.focus();
+        input.blur();
+        await fixture.whenStable();
+        await tick(20);
+        expect(fixture.componentInstance.events.length).toBe(1);
         fixture.nativeElement.remove();
     });
 });
