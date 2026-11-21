@@ -5149,6 +5149,28 @@ describe('Select lazy virtual scroll starting empty', () => {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MultiSelect, Select],
+    template: `
+        @if (kind === 'multiselect') {
+            <p-multiselect [options]="items()" [filter]="true" [showToggleAll]="true" [virtualScroll]="true" [virtualScrollItemSize]="43" optionLabel="label" appendTo="self" />
+        } @else {
+            <p-select [options]="items()" [filter]="true" [virtualScroll]="true" [virtualScrollItemSize]="38" [lazy]="true" optionLabel="label" (onFilter)="search($event.filter)" appendTo="self" />
+        }
+    `
+})
+class TestVirtualFilterClearComponent {
+    kind: 'multiselect' | 'select' = 'multiselect';
+    all = Array.from({ length: 1000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+    items = signal(this.all);
+
+    // the results of a search come from a server
+    search(query: string) {
+        setTimeout(() => this.items.set(query ? this.all.filter((item) => item.label.includes(query)) : this.all), 20);
+    }
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [Scroller],
     template: `<p-scroller [items]="items" [itemSize]="50" scrollHeight="200px" [autoSize]="true" />`
 })
@@ -5170,6 +5192,44 @@ describe('Scroller destroyed before its init tick', () => {
 
         expect(setSpacerSize).not.toHaveBeenCalled();
     });
+});
+
+describe('Virtual scroll after clearing the filter', () => {
+    for (const kind of ['multiselect', 'select'] as const) {
+        it(`shows the whole list again in ${kind} (${kind === 'multiselect' ? 'optimus-ui#182' : 'optimus-ui#659'})`, async () => {
+            TestBed.configureTestingModule({ imports: [TestVirtualFilterClearComponent], providers: [provideZonelessChangeDetection()] });
+            const fixture = TestBed.createComponent(TestVirtualFilterClearComponent);
+            fixture.componentInstance.kind = kind;
+            await fixture.whenStable();
+            (fixture.nativeElement.querySelector(kind === 'multiselect' ? '.p-multiselect' : '.p-select') as HTMLElement).click();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            await fixture.whenStable();
+
+            const filterInput = fixture.nativeElement.querySelector(`.p-${kind}-filter`) as HTMLInputElement;
+            const type = async (value: string) => {
+                filterInput.value = value;
+                filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+                await fixture.whenStable();
+                await new Promise((resolve) => setTimeout(resolve, 150));
+                await fixture.whenStable();
+            };
+            const viewport = () => fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            const options = () => Array.from(viewport().querySelectorAll('li[role="option"]')) as HTMLElement[];
+            const fullHeight = Math.round(viewport().getBoundingClientRect().height);
+            expect(fullHeight).toBeGreaterThan(100);
+
+            for (const value of ['a', '', 'Item 999', '']) {
+                await type(value);
+            }
+
+            expect(Math.round(viewport().getBoundingClientRect().height)).toBe(fullHeight);
+            expect(options().length).toBeGreaterThan(3);
+            expect(options()[0].getBoundingClientRect().top).toBeGreaterThanOrEqual(viewport().getBoundingClientRect().top - 1);
+            expect(options()[0].getBoundingClientRect().bottom).toBeLessThanOrEqual(viewport().getBoundingClientRect().bottom);
+            fixture.destroy();
+        });
+    }
 });
 
 @Component({
