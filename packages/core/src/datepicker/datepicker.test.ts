@@ -2957,6 +2957,17 @@ describe('DatePicker time announcement', () => {
     });
 });
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `
+        <div style="position: absolute; top: 20px; left: 40px; width: 200px; height: 40px; overflow: hidden">
+            <p-datepicker appendTo="body" />
+        </div>
+    `
+})
+class TestAppendToBodyDatePickerComponent {}
+
 describe('DatePicker inherited issue reproductions', () => {
     let fixture: ComponentFixture<DatePicker>;
     let picker: DatePicker;
@@ -3015,4 +3026,30 @@ describe('DatePicker inherited issue reproductions', () => {
         expect(document.activeElement).toBe(check());
     });
 
+    it('keeps the panel appended to body aligned when switching to the year view (optimus-ui#30)', async () => {
+        const host = TestBed.createComponent(TestAppendToBodyDatePickerComponent);
+        document.body.appendChild(host.nativeElement);
+        await host.whenStable();
+        const input = host.nativeElement.querySelector('input') as HTMLInputElement;
+        input.click();
+        input.focus();
+        await host.whenStable();
+        const panel = () => document.body.querySelector('.p-datepicker-panel') as HTMLElement;
+        await vi.waitFor(() => expect(panel()?.getBoundingClientRect().height).toBeGreaterThan(100));
+        // let the enter transition finish
+        await wait(300);
+        const before = panel().getBoundingClientRect();
+        expect(before.left).toBe(input.getBoundingClientRect().left);
+
+        for (const selector of ['.p-datepicker-select-year', '.p-datepicker-year', '.p-datepicker-month']) {
+            (panel().querySelector(selector) as HTMLElement).click();
+            await host.whenStable();
+            await wait(300);
+            const after = panel().getBoundingClientRect();
+            // the month and year views must not stretch the panel to the viewport edge
+            expect([after.left, after.width]).toEqual([before.left, before.width]);
+        }
+        host.destroy();
+        host.nativeElement.remove();
+    });
 });
