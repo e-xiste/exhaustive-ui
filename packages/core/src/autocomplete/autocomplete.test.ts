@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
 import { Scroller } from '@exhaustive-ui/core/scroller';
 import { AutoCompleteCompleteEvent, AutoCompleteDropdownClickEvent, AutoCompleteSelectEvent, AutoCompleteUnselectEvent } from '@exhaustive-ui/core/types/autocomplete';
 import { BehaviorSubject } from 'rxjs';
@@ -3449,5 +3450,109 @@ describe('AutoComplete r22 regressions', () => {
         } finally {
             style.remove();
         }
+    });
+});
+
+@Component({
+    selector: 'test-autocomplete-wrapper',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [AutoComplete, FormsModule],
+    providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TestAutoCompleteWrapperComponent), multi: true }],
+    template: `<p-autocomplete [ngModel]="value()" (ngModelChange)="onChange($event)" [suggestions]="suggestions" [multiple]="multiple" [inputId]="inputId" (completeMethod)="suggestions = ['Alpha', 'Beta']" />`
+})
+class TestAutoCompleteWrapperComponent {
+    value = signal<any>(undefined);
+    multiple = false;
+    inputId = 'wrapped';
+    suggestions: string[] = [];
+    onChange: (value: any) => void = () => {};
+    writeValue(value: any) {
+        this.value.set(value);
+    }
+    registerOnChange(fn: any) {
+        this.onChange = fn;
+    }
+    registerOnTouched() {}
+}
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [FloatLabel, ReactiveFormsModule, TestAutoCompleteWrapperComponent],
+    template: `
+        <p-floatlabel>
+            <test-autocomplete-wrapper [formControl]="control" />
+            <label for="wrapped">Label</label>
+        </p-floatlabel>
+    `
+})
+class TestAutoCompleteWrapperFloatLabelComponent {
+    control = new FormControl<any>(null);
+}
+
+describe('AutoComplete inside a ControlValueAccessor wrapper with FloatLabel', () => {
+    const floated =
+        '.p-floatlabel:has(input:focus), .p-floatlabel:has(input.p-filled), .p-floatlabel:has(.p-inputwrapper-focus), .p-floatlabel:has(.p-inputwrapper-filled), .p-floatlabel:has(input[placeholder]), .p-floatlabel:has(.p-inputwrapper .p-placeholder)';
+
+    for (const initial of [null, undefined, '', []]) {
+        it(`keeps the label in place for an empty value ${JSON.stringify(initial)} and floats it once filled (optimus-ui#369)`, async () => {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({
+                imports: [TestAutoCompleteWrapperFloatLabelComponent],
+                providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+            }).compileComponents();
+            const fixture = TestBed.createComponent(TestAutoCompleteWrapperFloatLabelComponent);
+            fixture.componentInstance.control.setValue(initial as any);
+            const settle = async () => {
+                for (let i = 0; i < 3; i++) {
+                    fixture.detectChanges();
+                    await new Promise((resolve) => setTimeout(resolve, 10));
+                    await fixture.whenStable();
+                }
+            };
+            await settle();
+            const floatLabel = fixture.nativeElement.querySelector('p-floatlabel') as HTMLElement;
+            expect(floatLabel.matches(floated)).toBe(false);
+
+            fixture.componentInstance.control.setValue('Alpha');
+            await settle();
+            expect(floatLabel.matches(floated)).toBe(true);
+
+            fixture.componentInstance.control.reset();
+            await settle();
+            expect(floatLabel.matches(floated)).toBe(false);
+        });
+    }
+});
+
+describe('AutoComplete virtual keyboards', () => {
+    let fixture: ComponentFixture<AutoComplete>;
+    let autocomplete: AutoComplete;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoComplete],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(AutoComplete);
+        autocomplete = fixture.componentInstance;
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('typeahead', false);
+        fixture.detectChanges();
+    });
+
+    it('adds the typed value on an Enter key event without a code, as Android keyboards send it (optimus-ui#454)', () => {
+        const input = fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+        input.value = 'Alpha';
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', code: '', keyCode: 13, bubbles: true, cancelable: true });
+        input.dispatchEvent(enter);
+        fixture.detectChanges();
+
+        expect(autocomplete.modelValue()).toEqual(['Alpha']);
+        expect(input.value).toBe('');
+        // the default action of Enter on a mobile keyboard moves the focus to the next field
+        expect(enter.defaultPrevented).toBe(true);
     });
 });

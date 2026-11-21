@@ -1313,7 +1313,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         // Emit keydown event for external handling
         this.onInputKeydown.emit(event);
 
-        switch (event.code) {
+        // Android virtual keyboards send an empty code: fall back to the key, whose names match for the keys handled here
+        switch (event.code || event.key) {
             case 'ArrowDown':
                 this.onArrowDownKey(event);
                 break;
