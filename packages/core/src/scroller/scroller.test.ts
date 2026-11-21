@@ -5146,3 +5146,36 @@ describe('Select lazy virtual scroll starting empty', () => {
         fixture.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <!-- the viewport has its height before the scroller measures it, as in Tree and Listbox -->
+        <p-scroller [items]="items" [itemSize]="50" [style]="{ height: '200px' }">
+            <ng-template #content let-items let-options="options">
+                <ul [class]="options.contentStyleClass" [style]="options.contentStyle" style="margin: 0; padding: 0">
+                    @for (item of items; track item) {
+                        <li style="height: 50px">{{ item }}</li>
+                    }
+                </ul>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestSpacerScrollerComponent {
+    items = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller spacer', () => {
+    it('ends at the last item without an extra viewport height (optimus-ui#1755)', async () => {
+        TestBed.configureTestingModule({ imports: [TestSpacerScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestSpacerScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(el.scrollHeight).toBe(100 * 50);
+    });
+});

@@ -802,9 +802,11 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         if (contentEl) {
             const style = getComputedStyle(contentEl);
             const left = parseFloat(style.paddingLeft) + Math.max(parseFloat(style.left) || 0, 0);
-            const right = parseFloat(style.paddingRight) + Math.max(parseFloat(style.right) || 0, 0);
             const top = parseFloat(style.paddingTop) + Math.max(parseFloat(style.top) || 0, 0);
-            const bottom = parseFloat(style.paddingBottom) + Math.max(parseFloat(style.bottom) || 0, 0);
+            // The content is positioned from its top left corner: its computed right and bottom are not offsets but the
+            // space it leaves in the viewport (the whole viewport while it is still empty), so only the padding counts.
+            const right = parseFloat(style.paddingRight);
+            const bottom = parseFloat(style.paddingBottom);
 
             return { left, right, top, bottom, x: left + right, y: top + bottom };
         }

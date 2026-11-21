@@ -3778,4 +3778,29 @@ describe('Tree virtual scroll layout with a theme', () => {
         const viewport = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
         expect(viewport.getBoundingClientRect().height).toBe(250);
     });
+
+    it('ends the virtual scroll at the last node without a gap (optimus-ui#1755)', async () => {
+        fixture.componentRef.setInput(
+            'value',
+            Array.from({ length: 150 }, (_, i) => ({ key: `${i}`, label: `Node ${i}` }))
+        );
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('scrollHeight', '250px');
+        await settle();
+
+        const viewport = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        // the spacer used to get one more viewport height (250px) than the nodes
+        expect(viewport.scrollHeight).toBeLessThan(150 * 35 + 50);
+
+        for (let i = 0; i < 2; i++) {
+            viewport.scrollTop = viewport.scrollHeight;
+            viewport.dispatchEvent(new Event('scroll'));
+            await settle();
+        }
+
+        const last = (Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node')) as HTMLElement[]).at(-1)!;
+        expect(last.textContent?.trim()).toBe('Node 149');
+        expect(last.getBoundingClientRect().bottom).toBeGreaterThanOrEqual(viewport.getBoundingClientRect().bottom - 2);
+    });
 });
