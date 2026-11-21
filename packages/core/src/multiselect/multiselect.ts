@@ -1827,7 +1827,8 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         }
 
         const overlayViewChild = this.overlayViewChild();
-        if (!overlayViewChild.el.nativeElement.contains(event.target)) {
+        const clickInOverlay = overlayViewChild.el.nativeElement.contains(event.target);
+        if (!clickInOverlay) {
             if (this.clickInProgress()) {
                 return;
             }
@@ -1840,9 +1841,14 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
             this._overlayVisible() ? this.hide(true) : this.show(true);
         }
+        // a click in the list (an option, a group label) leaves the list where the user scrolled it
+        this.preventOptionScroll = clickInOverlay;
         focusInputViewChild.nativeElement.focus({ preventScroll: true });
+        this.preventOptionScroll = false;
         this.onClick.emit(event);
     }
+
+    private preventOptionScroll = false;
 
     onFirstHiddenFocus(event) {
         const focusInputViewChild = this.focusInputViewChild();
@@ -1855,7 +1861,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         this.focused.set(true);
         const focusedOptionIndex = this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : this._overlayVisible() && this.autoOptionFocus() ? this.findFirstFocusedOptionIndex() : -1;
         this.focusedOptionIndex.set(focusedOptionIndex);
-        this._overlayVisible() && this.scrollInView(this.focusedOptionIndex());
+        this._overlayVisible() && !this.preventOptionScroll && this.scrollInView(this.focusedOptionIndex());
         this.onFocus.emit({ originalEvent: event });
     }
 

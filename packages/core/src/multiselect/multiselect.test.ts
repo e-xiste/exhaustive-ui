@@ -4905,6 +4905,29 @@ describe('MultiSelect - themed', () => {
         expect(visible.some((option) => option.textContent!.trim() === `Item ${selected}`)).toBe(true);
     });
 
+    it('keeps the list where it is when a group label is clicked (optimus-ui#842)', async () => {
+        const multiSelect = multiSelects[1];
+        multiSelect.show();
+        await settle(fixture, 300);
+        const list = overlay().querySelector('.p-multiselect-list-container') as HTMLElement;
+        (Array.from(overlay().querySelectorAll('li[role="option"]')).find((option) => option.textContent!.trim() === 'A2') as HTMLElement).click();
+        await settle(fixture);
+        expect(fixture.componentInstance.groupedValue).toEqual(['A2']);
+
+        list.scrollTop = list.scrollHeight;
+        await settle(fixture);
+        const scrollTop = list.scrollTop;
+        expect(scrollTop).toBeGreaterThan(0);
+
+        // a mouse press on the group label takes the focus away from the combobox, the click gives it back
+        (document.activeElement as HTMLElement).blur();
+        (Array.from(overlay().querySelectorAll('.p-multiselect-option-group')).find((group) => group.textContent!.trim() === 'E') as HTMLElement).click();
+        await settle(fixture, 100);
+
+        expect(list.scrollTop).toBe(scrollTop);
+        expect(fixture.componentInstance.groupedValue).toEqual(['A2']);
+    });
+
     it('aligns the toggle all checkbox with the option checkboxes (optimus-ui#1252)', async () => {
         multiSelects[2].show();
         await settle(fixture, 300);
