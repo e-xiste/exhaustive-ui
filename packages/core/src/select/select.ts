@@ -1301,6 +1301,12 @@ export class Select extends BaseInput<SelectPassThrough> {
 
     isSelectedOptionEmpty = computed(() => isEmpty(this.selectedOption()));
 
+    /**
+     * An option whose value is null or undefined is a valid selection: its label is shown, so the
+     * select is filled (a float label must not cover it) even though the model value is empty.
+     */
+    override $filled = computed(() => isNotEmpty(this.modelValue()) || !this.isSelectedOptionEmpty());
+
     isOptionDisabled(option: any) {
         return this.optionDisabled() ? resolveFieldData(option, this.optionDisabled()) : option && option.disabled !== undefined ? option.disabled : false;
     }

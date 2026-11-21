@@ -5413,6 +5413,13 @@ describe('Select - themed layout', () => {
         }
     });
 
+    it('floats the label above a selected option whose value is null (optimus-ui#156)', () => {
+        expect(host.querySelector('#null-option .p-select-label')!.textContent!.trim()).toBe('None');
+        expect(host.querySelector('#null-option p-select')!.classList).toContain('p-inputwrapper-filled');
+        expect(labelTop('null-option')).toBe(labelTop('string-value'));
+        expect(labelTop('empty')).not.toBe(labelTop('string-value'));
+    });
+
     it('floats the label above a value picked with a string optionValue and lowers it when cleared (optimus-ui#489, optimus-ui#510)', async () => {
         const floated = labelTop('string-value');
         expect(host.querySelector('#string-value p-select')!.classList).toContain('p-inputwrapper-filled');
