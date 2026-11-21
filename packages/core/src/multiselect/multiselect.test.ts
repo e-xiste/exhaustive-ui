@@ -4,7 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Base } from '@exhaustive-ui/core/base';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { MultiSelect, MultiSelectItem, MultiSelectModule } from './multiselect';
@@ -4810,4 +4814,108 @@ describe('MultiSelect low bug fixes', () => {
             const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
             expect(viewport.scrollTop).toBeGreaterThan(0);
         });
+    });
+});
+
+// Tests that load a theme preset change the global Theme state and add <style> tags to the document,
+// which every test file shares: the describe blocks below reset them after each test.
+const resetTheme = () => {
+    Theme._theme = undefined;
+    Theme._tokens = {};
+    Theme.clearLoadedStyleNames();
+    Base.clearLoadedStyleNames();
+    document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+};
+
+const settle = async (fixture: ComponentFixture<any>, ms = 50) => {
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    await fixture.whenStable();
+    fixture.detectChanges();
+};
+
+const groupedOptions = ['A', 'B', 'C', 'D', 'E'].map((group) => ({ label: group, items: Array.from({ length: 10 }, (_, i) => ({ label: `${group}${i}`, value: `${group}${i}` })) }));
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MultiSelect, FormsModule, FloatLabel],
+    template: `
+        <p-multiselect id="virtual" [options]="many" [(ngModel)]="virtualValue" [virtualScroll]="true" [virtualScrollItemSize]="43" scrollHeight="200px" />
+        <p-multiselect id="grouped" [options]="groups" [(ngModel)]="groupedValue" [group]="true" scrollHeight="150px" />
+        <p-multiselect id="header" [options]="few" [filter]="true" [showToggleAll]="true" />
+        <p-floatlabel id="float" variant="on">
+            <p-multiselect [options]="few" placeholder="Pick" inputId="float-input" />
+            <label for="float-input">Label</label>
+        </p-floatlabel>
+    `
+})
+class TestMultiSelectThemedComponent {
+    many = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
+    few = this.many.slice(0, 5);
+    groups = groupedOptions;
+    virtualValue: number[] = [];
+    groupedValue: string[] = [];
+}
+
+describe('MultiSelect - themed', () => {
+    let fixture: ComponentFixture<TestMultiSelectThemedComponent>;
+    let multiSelects: MultiSelect[];
+    const overlay = () => document.querySelector('.p-multiselect-overlay') as HTMLElement;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestMultiSelectThemedComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestMultiSelectThemedComponent);
+        await settle(fixture, 300);
+        multiSelects = fixture.debugElement.queryAll(By.directive(MultiSelect)).map((debugElement) => debugElement.componentInstance);
+    });
+
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('shows the options of the virtual list when it is opened again after a selection (optimus-ui#192)', async () => {
+        const multiSelect = multiSelects[0];
+        multiSelect.show();
+        await settle(fixture, 300);
+        const scroller = () => overlay().querySelector('.p-virtualscroller') as HTMLElement;
+        scroller().scrollTop = 2000;
+        scroller().dispatchEvent(new Event('scroll'));
+        await settle(fixture, 100);
+        (overlay().querySelectorAll('li[role="option"]')[3] as HTMLElement).click();
+        await settle(fixture);
+        const selected = fixture.componentInstance.virtualValue[0];
+        multiSelect.hide();
+        await settle(fixture, 300);
+
+        multiSelect.show();
+        await settle(fixture, 300);
+        const viewport = scroller().getBoundingClientRect();
+        const visible = Array.from(overlay().querySelectorAll('li[role="option"]')).filter((option) => {
+            const box = option.getBoundingClientRect();
+            return box.bottom > viewport.top + 1 && box.top < viewport.bottom - 1;
+        });
+        expect(viewport.height).toBeGreaterThan(150);
+        expect(visible.length).toBeGreaterThanOrEqual(4);
+        expect(visible.some((option) => option.textContent!.trim() === `Item ${selected}`)).toBe(true);
+    });
+
+    it('aligns the toggle all checkbox with the option checkboxes (optimus-ui#1252)', async () => {
+        multiSelects[2].show();
+        await settle(fixture, 300);
+        const header = overlay().querySelector('.p-multiselect-header .p-checkbox')!.getBoundingClientRect();
+        const option = overlay().querySelector('li[role="option"] .p-checkbox')!.getBoundingClientRect();
+        expect(header.left).toBe(option.left);
+    });
+
+    it('floats the label above a multiselect showing its placeholder (optimus-ui#209)', () => {
+        const host = fixture.nativeElement as HTMLElement;
+        expect(host.querySelector('#float .p-placeholder')).toBeTruthy();
+        expect(getComputedStyle(host.querySelector('#float label')!).top).toBe('0px');
+    });
 });
