@@ -92,9 +92,59 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 
 ## Unreleased
 
+The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that could not be confirmed by reading the code, and the 50 remaining low-severity ones, were each turned into a test in a real browser. About 85 were still present and are fixed below; about 100 already worked and most keep their test as a regression test. The others are feature requests, need a browser or a screen reader the tests cannot drive (Firefox, Edge, iOS, NVDA, VoiceOver), or need a redesign: virtual lists taller than the browser's maximum element height (#176, #336), row heights of a TreeTable with frozen columns (#933, #731), the overlay width with virtual scroll (#158), Signal Forms showing invalid before interaction (#162, #202) and ToggleSwitch sizes (#86). The issue numbers are Optimus UI's.
+
+### Features
+
+- InputMask: a backslash escapes a mask character, e.g. `+\9 999` (#911).
+- Password: `mediumRegex` and `strongRegex` on the `pPassword` directive (#953).
+- Tree: `onNodeDrop` reports `dropPosition` (`'before' | 'inside' | 'after'`) (#851).
+- Accordion: `accordion.header.focus.background` token, used by the Material preset (#237).
+
+### Fixes
+
+- Table:
+  - virtual scroll: frozen rows stay sticky (#432), the header keeps its background (#281), a runtime scroll height is kept (#365), rows render in a container sized after the first render (#269), one group header per group with expandable row groups (#783);
+  - frozen columns: body cells paint above the scrolled content (#232), cells after a frozen cell spanning several header rows are placed correctly (#711);
+  - sticky row group headers follow the header height (#208); rows stay still while a column is dragged (#231); the column resize indicator stays within a table of fractional height (#95);
+  - filters: the menu overlay is placed again when a rule is added or removed (#210), a typed text or number filter applies on blur (#862), a reused row no longer opens the editor of the edited cell (#537);
+  - a lazy table no longer reloads when the app writes the sort it received back into `sortField`/`sortOrder` (#712);
+  - stack layout hides the column titles above the breakpoint (#814); gridlines rules no longer leak into tables nested in a cell (#951).
+- TreeTable: expanding or collapsing reuses the rendered rows (#539), nodes stay expanded across filtering and the expand events receive the original node (#250, #402, #942), a cell keeps editing while its overlay component is used (#194), a column resize finishes in a scrollable table without colgroup (#94).
+- Tree and TreeSelect: a screen reader activating a treeitem selects it (#115), a custom-height drop point stays open while hovered (#77), parent checkboxes refresh in virtual scroll (#55, #923), the selection is written once per checkbox click (#836), selected nodes stay serializable in form values (#238, #674).
+- Scroller (every virtual list):
+  - the spacer ends at the last item instead of one viewport below (#1755);
+  - the auto size is measured again after the new range renders and keeps the scroll position (#647, #182, #659), and shrinks to a list shorter than the viewport (#444, #656);
+  - a lazy list requests every page up to the current one on the first request (#682) and the current pages when initialized again while scrolled (#686);
+  - `scrollToIndex` reaches its index when called before the spacer or the viewport is laid out (#22);
+  - items not loaded yet no longer log NG0955; a destroyed scroller no longer throws NG0205.
+- Select, MultiSelect, Listbox: PageUp/PageDown move the focus by a page (#721, and the keys were swapped in Listbox); a selected option with a `null` value fills the Select (#156); MultiSelect option checkboxes leave the focus order (#382) and a group label click keeps the list scroll (#842); a Listbox flex list stays inside the listbox with a header (#72).
+- CascadeSelect: a sublist opens on the left when it would leave the viewport (#328).
+- AutoComplete: hovering an option no longer scrolls the list (#320); keys from virtual keyboards that send no code work (#369, #454).
+- Angular Signal Forms: `[formField]` compiles with strict templates on every form component (#155); Slider marks the field touched on blur (#175).
+- DatePicker: the panel keeps its width in the month and year views (#30), adjacent-month days of a range are highlighted (#379), the touchUI panel is centered (#427), the inline calendar keeps a tabbable day (#845), and destroying it with the touchUI panel open releases the body scroll lock.
+- InputNumber: de-AT and other locales with a distinct currency group separator parse correctly (#15); deleting inside a value longer than `maxlength` keeps the caret (#356).
+- InputMask restores the caret synchronously after an Android input (#370); InputOtp replaces the character of a filled box (#833); Textarea has no gap under it in an ifta or float label (#213).
+- Dialog focuses the `autofocus` field on show (#455) and a modal destroyed while open releases the body scroll lock; DynamicDialog creates dialogs in the DialogService environment injector (#631, #759) and keeps a stable style object (#896); Image releases the scroll lock the same way.
+- Overlay follows a fixed target when the page scrolls (#50); Popover keeps its arrow on the target when shifted (#122); Tooltip is placed against the inner element of p-button, p-scrolltop and similar hosts (#700).
+- Motion drops a stale enter or leave (#571) and tolerates missing computed styles under jsdom (#479).
+- BlockUI keeps its mask inside its target in a Dialog (#385).
+- Toast draws its severity and close icons (#190) and Message its close icon, which were never imported.
+- RadioButton renders without `ngModel` or a form control (#274).
+- TieredMenu positions submenus against their parent item (#335, #421), computes `aria-setsize`/`aria-posinset` once per list (#504) and runs the item command when the menuitem element itself is clicked (#249).
+- PanelMenu: the pressed item gets focus (#52), no browser list spacing (#59), ripple on links (#540), tooltips anchored to the item row (#827).
+- ContextMenu opens at the pointer in a positioned or transformed container (#809) and at the touch point after a long press (#932), including on iPadOS (`isIOS` detects it).
+- Tabs: the next scroll page starts with the tab the next button cut (#124). Stepper: inactive panels have no height with a theme preset loaded. Accordion: wide content scrolls instead of overflowing (#146). Panel restores the `tabindex` of its content when expanding (#612). OrderList move buttons work after a drag and drop (#5).
+- Badge: a `[size]` on the component pBadge sits on no longer reaches the badge (#715). Carousel removes its responsive style element on destroy. Editor shows a value written while detached (#815). `DomHandler.getParents` crosses shadow roots (#172). Lara DataView radius matches its header and footer (#261).
+
 ### Documentation site
 
 - `/templates`, the removed Templates page, now redirects permanently to the home page.
+- Import sections show standalone imports (#353).
+
+### Tests
+
+- The unit test files share one browser document: a setup file now resets the theme state, the DOM, the body scroll lock and the window scroll after each file, so the full suite passes reliably.
 
 ## 22.0.0-rc.2 (2026-11-21)
 
