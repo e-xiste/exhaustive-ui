@@ -4072,3 +4072,79 @@ describe('Table frozen column listeners (optimus-ui#387, optimus-ui#426, optimus
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" (onRowReorder)="rowReorder = $event">
+            <ng-template #body let-row let-index="rowIndex">
+                <tr [pReorderableRow]="index">
+                    <td style="height: 40px"><span pReorderableRowHandle class="handle">=</span></td>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestTouchRowReorderComponent {
+    rows = [{ name: 'a1' }, { name: 'a2' }, { name: 'a3' }];
+    rowReorder: any;
+}
+
+describe('Table touch row reorder (optimus-ui#960)', () => {
+    let fixture: ComponentFixture<TestTouchRowReorderComponent>;
+
+    const names = () => Array.from(fixture.nativeElement.querySelectorAll('tbody tr')).map((tr: any) => tr.children[1].textContent.trim());
+    const pointer = (target: EventTarget, type: string, x: number, y: number, pointerType = 'touch') => target.dispatchEvent(new PointerEvent(type, { pointerType, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestTouchRowReorderComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TestTouchRowReorderComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+    });
+
+    afterEach(() => fixture.nativeElement.remove());
+
+    it('does not let the browser scroll when a touch starts on the handle', () => {
+        expect((fixture.nativeElement.querySelector('.handle') as HTMLElement).style.touchAction).toBe('none');
+    });
+
+    it('moves a row dragged by its handle with a touch pointer', async () => {
+        const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+        const handle = rows[0].querySelector('.handle') as HTMLElement;
+        const handleRect = handle.getBoundingClientRect();
+        const lastRect = (rows[2] as HTMLElement).getBoundingClientRect();
+        const x = handleRect.left + handleRect.width / 2;
+
+        pointer(handle, 'pointerdown', x, handleRect.top + handleRect.height / 2);
+        pointer(document, 'pointermove', x, lastRect.top + lastRect.height / 2);
+        pointer(document, 'pointermove', x, lastRect.bottom - 2);
+        expect(rows[2].classList).toContain('p-datatable-dragpoint-bottom');
+        pointer(document, 'pointerup', x, lastRect.bottom - 2);
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.rowReorder).toEqual({ dragIndex: 0, dropIndex: 2 });
+        expect(names()).toEqual(['a2', 'a3', 'a1']);
+        expect(rows[2].classList).not.toContain('p-datatable-dragpoint-bottom');
+    });
+
+    it('cancels the move on pointercancel and ignores the mouse, which uses the HTML5 drag', async () => {
+        const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+        const handle = rows[0].querySelector('.handle') as HTMLElement;
+        const lastRect = (rows[2] as HTMLElement).getBoundingClientRect();
+
+        pointer(handle, 'pointerdown', 5, 5);
+        pointer(document, 'pointermove', 5, lastRect.bottom - 2);
+        pointer(document, 'pointercancel', 5, lastRect.bottom - 2);
+        pointer(handle, 'pointerdown', 5, 5, 'mouse');
+        pointer(document, 'pointermove', 5, lastRect.bottom - 2, 'mouse');
+        pointer(document, 'pointerup', 5, lastRect.bottom - 2, 'mouse');
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.rowReorder).toBeUndefined();
+        expect(names()).toEqual(['a1', 'a2', 'a3']);
+    });
+});

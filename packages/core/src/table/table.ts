@@ -5374,7 +5374,8 @@ export class TableHeaderCheckbox extends BaseComponent {
     host: {
         '[class]': "cx('reorderableRowHandle')",
         '[attr.tabindex]': 'row?.isEnabled() ? "0" : null',
-        '[attr.aria-keyshortcuts]': 'row?.isEnabled() ? "Control+ArrowUp Control+ArrowDown Meta+ArrowUp Meta+ArrowDown" : null'
+        '[attr.aria-keyshortcuts]': 'row?.isEnabled() ? "Control+ArrowUp Control+ArrowDown Meta+ArrowUp Meta+ArrowDown" : null',
+        '[style.touch-action]': 'row?.isEnabled() ? "none" : null'
     },
     providers: [TableStyle],
     hostDirectives: [Bind]
@@ -5408,6 +5409,9 @@ export class ReorderableRowHandle extends BaseComponent {
     }
 }
 
+// the reorderable row directives by row element, to find the row under a touch pointer
+const reorderableRowElements = new WeakMap<HTMLElement, ReorderableRow>();
+
 @Directive({
     selector: '[pReorderableRow]',
     standalone: false,
@@ -5437,8 +5441,15 @@ export class ReorderableRow extends BaseComponent {
 
     dropListener = signal<VoidListener>(undefined);
 
+    pointerDownListener = signal<VoidListener>(undefined);
+
+    private documentPointerListeners: (() => void)[] = [];
+
+    private pointerDropRow: HTMLElement | null = null;
+
     constructor() {
         super();
+        reorderableRowElements.set(this.el.nativeElement, this);
         afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRow')));
         afterNextRender(() => {
             if (this.isEnabled()) {
@@ -5459,6 +5470,8 @@ export class ReorderableRow extends BaseComponent {
             this.dragOverListener.set(this.renderer.listen(this.el.nativeElement, 'dragover', this.onDragOver.bind(this)));
 
             this.dragLeaveListener.set(this.renderer.listen(this.el.nativeElement, 'dragleave', this.onDragLeave.bind(this)));
+
+            this.pointerDownListener.set(this.renderer.listen(this.el.nativeElement, 'pointerdown', this.onPointerDown.bind(this)));
         });
     }
 
@@ -5487,6 +5500,66 @@ export class ReorderableRow extends BaseComponent {
             this.dragLeaveListener()!();
             this.dragLeaveListener.set(null);
         }
+
+        if (this.pointerDownListener()) {
+            this.pointerDownListener()!();
+            this.pointerDownListener.set(null);
+        }
+
+        this.unbindDocumentPointerListeners();
+    }
+
+    // a touch or a pen on the handle does not start an HTML5 drag on mobile browsers: follow the pointer instead
+    onPointerDown(event: PointerEvent) {
+        if (event.pointerType === 'mouse' || !this.isHandleElement(event.target as HTMLElement)) {
+            return;
+        }
+
+        event.preventDefault();
+        this.unbindDocumentPointerListeners();
+        this.dataTable.rowDragging.set(true);
+        this.dataTable.draggedRowIndex.set(<number>this.index());
+        this.pointerDropRow = null;
+        this.documentPointerListeners = [
+            this.renderer.listen(this.document, 'pointermove', this.onPointerMove.bind(this)),
+            this.renderer.listen(this.document, 'pointerup', this.onPointerUp.bind(this)),
+            this.renderer.listen(this.document, 'pointercancel', this.onPointerUp.bind(this))
+        ];
+    }
+
+    onPointerMove(event: PointerEvent) {
+        const rowElement = this.document.elementFromPoint(event.clientX, event.clientY)?.closest('tr') as HTMLElement | null;
+        const row = rowElement ? reorderableRowElements.get(rowElement) : undefined;
+
+        if (row && row.dataTable === this.dataTable && row.isEnabled()) {
+            if (this.pointerDropRow && this.pointerDropRow !== rowElement) {
+                this.dataTable.onRowDragLeave(event, this.pointerDropRow);
+            }
+
+            this.pointerDropRow = rowElement;
+            this.dataTable.onRowDragOver(event, <number>row.index(), rowElement);
+        }
+
+        event.preventDefault();
+    }
+
+    onPointerUp(event: PointerEvent) {
+        this.unbindDocumentPointerListeners();
+
+        if (event.type === 'pointerup' && this.pointerDropRow) {
+            const rowElement = this.pointerDropRow;
+            this.zone.run(() => this.dataTable.onRowDrop(event, rowElement));
+        } else {
+            this.pointerDropRow && this.dataTable.onRowDragLeave(event, this.pointerDropRow);
+            this.dataTable.onRowDragEnd(event);
+        }
+
+        this.pointerDropRow = null;
+    }
+
+    unbindDocumentPointerListeners() {
+        this.documentPointerListeners.forEach((unlisten) => unlisten());
+        this.documentPointerListeners = [];
     }
 
     onMouseDown(event: Event) {
