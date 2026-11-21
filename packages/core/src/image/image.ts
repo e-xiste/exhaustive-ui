@@ -565,6 +565,14 @@ export class Image extends BaseComponent<ImagePassThrough> {
             this.closePreview();
         }
     }
+
+    onDestroy() {
+        // destroyed while the preview is open: the leave animation never runs, so release the body here
+        if (this.renderMask()) {
+            ZIndexUtils.clear(this.wrapper());
+            unblockBodyScroll();
+        }
+    }
 }
 
 @NgModule({

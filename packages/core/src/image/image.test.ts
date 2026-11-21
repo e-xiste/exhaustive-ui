@@ -1257,3 +1257,25 @@ describe('Image Signal Query API', () => {
         expect(instance.closeButton()).toBeUndefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [Image],
+    template: `<p-image src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Image" [preview]="true"></p-image>`
+})
+class ImageDestroyHostComponent {}
+
+describe('Image destroyed while the preview is open', () => {
+    it('releases the body scroll lock', async () => {
+        TestBed.configureTestingModule({ imports: [ImageDestroyHostComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(ImageDestroyHostComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
+        await fixture.whenStable();
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        fixture.destroy();
+
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
+});
