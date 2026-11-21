@@ -4936,6 +4936,28 @@ describe('MultiSelect - themed', () => {
         expect(header.left).toBe(option.left);
     });
 
+    it('gives the option checkboxes no focusable element and lets their clicks reach the option (optimus-ui#382)', async () => {
+        const multiSelect = multiSelects[2];
+        multiSelect.show();
+        await settle(fixture, 300);
+        const option = overlay().querySelector('li[role="option"]') as HTMLElement;
+        const checkbox = option.querySelector('.p-checkbox') as HTMLElement;
+        const input = checkbox.querySelector('input') as HTMLInputElement;
+
+        input.focus();
+        expect(document.activeElement).not.toBe(input);
+
+        const box = checkbox.getBoundingClientRect();
+        const target = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2) as HTMLElement;
+        expect(option.contains(target)).toBe(true);
+        expect(checkbox.contains(target)).toBe(false);
+
+        target.click();
+        await settle(fixture);
+        expect(multiSelect.modelValue()).toEqual([0]);
+        expect(option.getAttribute('aria-selected')).toBe('true');
+    });
+
     it('floats the label above a multiselect showing its placeholder (optimus-ui#209)', () => {
         const host = fixture.nativeElement as HTMLElement;
         expect(host.querySelector('#float .p-placeholder')).toBeTruthy();
