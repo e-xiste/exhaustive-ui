@@ -4437,4 +4437,52 @@ describe('optimus-ui issues (part 1)', () => {
             expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(7);
         });
     });
+
+    describe('menu filter overlay near the bottom of the viewport (optimus-ui#210)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div [style.height.px]="spacer()"></div>
+                <p-table [value]="rows">
+                    <ng-template #header>
+                        <tr><th>Name <p-columnFilter type="text" field="name" display="menu"></p-columnFilter></th></tr>
+                    </ng-template>
+                    <ng-template #body let-row><tr><td>{{ row.name }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class FilterNearBottomComponent {
+            rows = rowsOf(1);
+            spacer = signal(0);
+        }
+
+        it('stays in the viewport when a rule is added', async () => {
+            fixture = await render(FilterNearBottomComponent);
+            const button = () => fixture!.nativeElement.querySelector('.p-datatable-column-filter-button') as HTMLElement;
+            const overlay = () => document.querySelector('.p-datatable-filter-overlay') as HTMLElement;
+            button().click();
+            await settle(fixture);
+            const overlayHeight = overlay().offsetHeight;
+            button().click();
+            await settle(fixture);
+            await wait(300);
+
+            // the overlay with one rule just fits under the button
+            fixture.componentInstance.spacer.set(window.innerHeight - button().offsetHeight - overlayHeight - 20);
+            await settle(fixture);
+            button().click();
+            await settle(fixture);
+            expect(overlay().getBoundingClientRect().top).toBeGreaterThanOrEqual(button().getBoundingClientRect().bottom - 1);
+
+            (document.querySelector('.p-datatable-filter-add-rule-button') as HTMLElement).click();
+            await settle(fixture);
+
+            expect(document.querySelectorAll('.p-datatable-filter-rule').length).toBe(2);
+            expect(overlay().getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight);
+            button().click();
+            await settle(fixture);
+            await wait(300);
+        });
+    });
 });

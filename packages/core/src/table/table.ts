@@ -6466,6 +6466,7 @@ export class ColumnFilter extends BaseComponent {
             operator: this.getDefaultOperator()
         });
         DomHandler.focus(this.clearButtonViewChild()?.nativeElement);
+        this.realignOverlayAfterRender();
     }
 
     removeConstraint(filterMeta: FilterMetadata) {
@@ -6474,6 +6475,22 @@ export class ColumnFilter extends BaseComponent {
             this.dataTable._filter();
         }
         DomHandler.focus(this.clearButtonViewChild()?.nativeElement);
+        this.realignOverlayAfterRender();
+    }
+
+    // the overlay is positioned when it opens: a rule added or removed changes its height, so place it again for the
+    // new height, above the button when it no longer fits below
+    realignOverlayAfterRender() {
+        afterNextRender(
+            () => {
+                const overlay = this.overlay();
+                const buttonEl = <HTMLButtonElement>findSingle(this.el.nativeElement, '[data-pc-name="pccolumnfilterbutton"]');
+                if (overlay?.isConnected && buttonEl && overlay.parentElement === this.document.body) {
+                    absolutePosition(overlay, buttonEl);
+                }
+            },
+            { injector: this.injector }
+        );
     }
 
     onOperatorChange(value: any) {
