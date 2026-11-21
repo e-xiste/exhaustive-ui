@@ -2374,3 +2374,26 @@ describe('Dialog opened from a Drawer', () => {
         fixture.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [Dialog],
+    template: `<p-dialog [(visible)]="visible" [modal]="true" header="Modal">Content</p-dialog>`
+})
+class ModalDialogDestroyHostComponent {
+    visible = true;
+}
+
+describe('Dialog destroyed while open', () => {
+    it('releases the body scroll lock', async () => {
+        TestBed.configureTestingModule({ imports: [ModalDialogDestroyHostComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(ModalDialogDestroyHostComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+
+        fixture.destroy();
+
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
+});
