@@ -268,7 +268,7 @@ export class TableService {
                     @if (frozenValue() || frozenBodyTemplate() || _frozenBodyTemplate()) {
                         <tbody
                             role="rowgroup"
-                            [class]="cx('tbody')"
+                            [class]="cx('tbody', { frozen: true })"
                             [pBind]="ptm('tbody')"
                             [value]="frozenValue()"
                             [frozenRows]="true"

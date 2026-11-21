@@ -180,10 +180,11 @@ const classes = {
     filterButtonbar: 'p-datatable-filter-buttonbar',
     pcFilterClearButton: 'p-datatable-filter-clear-button',
     pcFilterApplyButton: 'p-datatable-filter-apply-button',
-    tbody: ({ instance }) => ({
+    tbody: ({ instance, frozen }) => ({
         'p-datatable-tbody': true,
         'p-datatable-frozen-tbody': instance.frozenValue() || instance.frozenBodyTemplate(),
-        'p-virtualscroller-content': instance.virtualScroll()
+        // the frozen rows stay out of the scrolled content: the scroller makes its content static and translates it
+        'p-virtualscroller-content': instance.virtualScroll() && !frozen
     }),
     rowGroupHeader: 'p-datatable-row-group-header',
     rowToggleButton: 'p-datatable-row-toggle-button',

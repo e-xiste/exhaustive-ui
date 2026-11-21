@@ -6,7 +6,8 @@ import { By } from '@angular/platform-browser';
 
 import { OverlayService, SharedModule, SortMeta } from '@exhaustive-ui/core/api';
 import { TableFilterEvent } from '@exhaustive-ui/core/types/table';
-import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 import { Select } from '@exhaustive-ui/core/select';
 import { CellEditor, ColumnFilter, ColumnFilterFormElement, EditableColumn, Table, TableModule, TableRadioButton, TableService } from './table';
 
@@ -4171,5 +4172,73 @@ describe('Table touch row reorder (optimus-ui#960)', () => {
 
         expect(fixture.componentInstance.rowReorder).toBeUndefined();
         expect(names()).toEqual(['a1', 'a2', 'a3']);
+    });
+});
+
+describe('optimus-ui issues (part 1)', () => {
+    const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    const rowsOf = (count: number) => Array.from({ length: count }, (_, i) => ({ id: i, name: 'n' + i, code: 'c' + i, cat: i < 3 ? 'A' : 'B' }));
+
+    const settle = async (fixture: ComponentFixture<any>, times = 3) => {
+        for (let i = 0; i < times; i++) {
+            fixture.detectChanges();
+            await fixture.whenStable();
+            await nextFrame();
+        }
+    };
+
+    const render = async <T>(type: new (...args: any[]) => T, init?: (instance: T) => void): Promise<ComponentFixture<T>> => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [type], providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })] }).compileComponents();
+        const fixture = TestBed.createComponent(type);
+        init?.(fixture.componentInstance);
+        document.body.appendChild(fixture.nativeElement);
+        await settle(fixture);
+        return fixture;
+    };
+
+    const scrollTo = async (fixture: ComponentFixture<any>, element: HTMLElement, top: number, left = element.scrollLeft) => {
+        element.scrollTop = top;
+        element.scrollLeft = left;
+        element.dispatchEvent(new Event('scroll'));
+        await settle(fixture);
+    };
+
+    let fixture: ComponentFixture<any> | undefined;
+
+    afterEach(() => {
+        fixture?.destroy();
+        fixture?.nativeElement.remove();
+        fixture = undefined;
+    });
+
+    describe('frozen rows with virtual scroll (optimus-ui#432)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows" [frozenValue]="frozen" [scrollable]="true" scrollHeight="300px" [virtualScroll]="true" [virtualScrollItemSize]="40">
+                    <ng-template #header><tr><th>Id</th></tr></ng-template>
+                    <ng-template #frozenbody let-row><tr style="height: 40px" class="frozen-row"><td>{{ row.id }}</td></tr></ng-template>
+                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class FrozenRowsVirtualScrollComponent {
+            rows = rowsOf(500);
+            frozen = rowsOf(1);
+        }
+
+        it('keeps the frozen rows under the header when the rows are scrolled', async () => {
+            fixture = await render(FrozenRowsVirtualScrollComponent);
+            const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            await scrollTo(fixture, scroller, 4000);
+
+            const thead = fixture.nativeElement.querySelector('thead') as HTMLElement;
+            const frozenRow = fixture.nativeElement.querySelector('.frozen-row') as HTMLElement;
+            expect(frozenRow.parentElement!.classList).not.toContain('p-virtualscroller-content');
+            expect(Math.round(frozenRow.getBoundingClientRect().top)).toBe(Math.round(thead.getBoundingClientRect().bottom));
+        });
     });
 });
