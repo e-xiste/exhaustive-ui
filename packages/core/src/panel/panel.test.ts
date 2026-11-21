@@ -6,6 +6,8 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
 import { MinusIcon, PlusIcon } from '@exhaustive-ui/core/icons';
 import { PanelAfterToggleEvent, PanelBeforeToggleEvent } from '@exhaustive-ui/core/types/panel';
 import { MotionOptions } from '@exhaustive-ui/motion';
+import { FormsModule } from '@angular/forms';
+import { Select } from '@exhaustive-ui/core/select';
 import { Panel } from './panel';
 
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -829,15 +831,12 @@ describe('Panel', () => {
 
             expect(focusableDiv.getAttribute('tabindex')).toBe('-1');
 
-            // When expanded back, component removes the tabindex to restore normal tab order
+            // When expanded back, the tabindex the element had is restored: removing it
+            // would take a div (or a Select combobox) out of the tab order (optimus-ui#612)
             panel.collapsed.set(false);
             panel.updateTabIndex();
 
-            // After expanding, tabindex should be removed (null)
-            // This is correct behavior - the component removes tabindex attributes
-            // to restore the natural tab order when panel is expanded
-            const finalTabindex = focusableDiv.getAttribute('tabindex');
-            expect(finalTabindex).toBeNull();
+            expect(focusableDiv.getAttribute('tabindex')).toBe('0');
         });
     });
 
@@ -1606,6 +1605,62 @@ describe('Panel collapsed on creation with a focusable field (optimus-ui#266)', 
         input.focus();
         expect(document.activeElement).not.toBe(input);
         expect(input.checkVisibility()).toBe(false);
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('Panel keeps the tab order of its content (optimus-ui#612)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Panel, Select, FormsModule],
+        template: `
+            <p-panel header="Filters" [toggleable]="true" [(collapsed)]="collapsed">
+                <p-select [options]="cities" [(ngModel)]="city" placeholder="City" />
+                <div class="custom" tabindex="3">custom</div>
+            </p-panel>
+        `
+    })
+    class SelectInPanelHost {
+        collapsed = true;
+        city: string | undefined;
+        cities = ['Paris', 'Rome'];
+    }
+
+    it('lets Tab reach a Select after an initially collapsed panel is expanded', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [SelectInPanelHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(SelectInPanelHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const toggle = () => (fixture.nativeElement.querySelector('.p-panel-header button') as HTMLButtonElement).click();
+        const combobox = () => fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+        const custom = () => fixture.nativeElement.querySelector('.custom') as HTMLElement;
+
+        toggle();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(combobox().getAttribute('tabindex')).toBe('0');
+        expect(custom().getAttribute('tabindex')).toBe('3');
+
+        toggle();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(combobox().getAttribute('tabindex')).toBe('-1');
+
+        toggle();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(combobox().getAttribute('tabindex')).toBe('0');
+        expect(custom().getAttribute('tabindex')).toBe('3');
+        combobox().focus();
+        expect(document.activeElement).toBe(combobox());
+        fixture.destroy();
         fixture.nativeElement.remove();
     });
 });

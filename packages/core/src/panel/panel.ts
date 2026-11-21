@@ -307,13 +307,22 @@ export class Panel extends BaseComponent<PanelPassThrough> implements BlockableU
         return this.el.nativeElement;
     }
 
+    /** Tabindex attributes the content had before collapsing, restored on expand. */
+    private savedTabIndexes = new WeakMap<Element, string | null>();
+
     updateTabIndex() {
         const focusableElements = this.contentWrapperViewChild().nativeElement.querySelectorAll('input, button, select, a, textarea, [tabindex]');
         focusableElements.forEach((element: HTMLElement) => {
             if (this.collapsed()) {
+                if (!this.savedTabIndexes.has(element)) {
+                    this.savedTabIndexes.set(element, element.getAttribute('tabindex'));
+                }
                 element.setAttribute('tabindex', '-1');
-            } else {
-                element.removeAttribute('tabindex');
+            } else if (this.savedTabIndexes.has(element)) {
+                const tabIndex = this.savedTabIndexes.get(element);
+                this.savedTabIndexes.delete(element);
+                if (tabIndex === null) element.removeAttribute('tabindex');
+                else element.setAttribute('tabindex', tabIndex as string);
             }
         });
     }
