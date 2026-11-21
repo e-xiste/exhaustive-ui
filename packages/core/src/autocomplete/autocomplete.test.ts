@@ -3556,3 +3556,115 @@ describe('AutoComplete virtual keyboards', () => {
         expect(enter.defaultPrevented).toBe(true);
     });
 });
+
+describe('AutoComplete virtual scroll overlay', () => {
+    let fixture: ComponentFixture<AutoComplete>;
+    let autocomplete: AutoComplete;
+    const all = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+    const settle = async () => {
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+    const input = () => fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+    const type = async (value: string) => {
+        input().value = value;
+        input().dispatchEvent(new Event('input', { bubbles: true }));
+        await settle();
+    };
+    const overlayState = () => {
+        const scroller = document.querySelector('.p-autocomplete-overlay .p-virtualscroller') as HTMLElement | null;
+        return {
+            visible: !!autocomplete.overlayVisible(),
+            inDom: document.querySelectorAll('.p-autocomplete-overlay').length,
+            height: scroller ? scroller.getBoundingClientRect().height : 0,
+            options: document.querySelectorAll('.p-autocomplete-overlay li[role="option"]').length
+        };
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoComplete],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(AutoComplete);
+        autocomplete = fixture.componentInstance;
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 32);
+        fixture.componentRef.setInput('delay', 0);
+        autocomplete.completeMethod.subscribe((event: any) =>
+            fixture.componentRef.setInput(
+                'suggestions',
+                all.filter((item) => item.includes(event.query))
+            )
+        );
+        await settle();
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-autocomplete-overlay').forEach((el) => el.remove());
+    });
+
+    it('shows the suggestions again after the input was cleared (optimus-ui#730)', async () => {
+        await type('Item');
+        expect(overlayState().visible).toBe(true);
+        expect(overlayState().options).toBeGreaterThan(0);
+
+        await type('Ite');
+        await type('');
+        expect(overlayState().visible).toBe(false);
+
+        await type('I');
+        const state = overlayState();
+        expect(state.visible).toBe(true);
+        expect(state.height).toBeGreaterThan(0);
+        expect(state.options).toBeGreaterThan(0);
+    });
+
+    it('renders the panel with its height every time it opens in multiple mode (optimus-ui#468)', async () => {
+        fixture.componentRef.setInput('multiple', true);
+        await settle();
+
+        for (let i = 0; i < 4; i++) {
+            await type('Item');
+            const state = overlayState();
+            expect(state.visible).toBe(true);
+            expect(state.inDom).toBe(1);
+            expect(state.height).toBeGreaterThan(100);
+            expect(state.options).toBeGreaterThan(5);
+
+            autocomplete.hide();
+            await settle();
+            expect(overlayState().visible).toBe(false);
+        }
+    });
+
+    it('adds only the clicked option when the typed text matches another one with multiple and forceSelection (optimus-ui#819)', async () => {
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('forceSelection', true);
+        fixture.componentRef.setInput('virtualScroll', false);
+        autocomplete.completeMethod.subscribe((event: any) =>
+            fixture.componentRef.setInput(
+                'suggestions',
+                ['flower', 'flower2', 'tree'].filter((item) => item.startsWith(event.query))
+            )
+        );
+        await settle();
+
+        input().focus();
+        await type('flower');
+        const option = (Array.from(document.querySelectorAll('.p-autocomplete-overlay li[role="option"]')) as HTMLElement[]).find((o) => o.textContent!.trim() === 'flower2')!;
+
+        // what the browser does on a mouse click on the option: the input loses the focus and commits its text first
+        option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+        input().dispatchEvent(new Event('change', { bubbles: true }));
+        input().dispatchEvent(new FocusEvent('blur'));
+        option.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        await settle();
+
+        expect(autocomplete.modelValue()).toEqual(['flower2']);
+    });
+});
