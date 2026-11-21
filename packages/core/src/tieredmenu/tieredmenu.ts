@@ -25,7 +25,26 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
-import { absolutePosition, addStyle, appendChild, findLastIndex, findSingle, focus, getOuterWidth, isEmpty, isNotEmpty, isPrintableCharacter, isTouchDevice, nestedPosition, relativePosition, resolve, uuid } from '@exhaustive-ui/utils';
+import {
+    absolutePosition,
+    addStyle,
+    appendChild,
+    findLastIndex,
+    findSingle,
+    focus,
+    getHiddenElementOuterHeight,
+    getHiddenElementOuterWidth,
+    getOffset,
+    getOuterWidth,
+    getViewport,
+    isEmpty,
+    isNotEmpty,
+    isPrintableCharacter,
+    isTouchDevice,
+    relativePosition,
+    resolve,
+    uuid
+} from '@exhaustive-ui/utils';
 import { MenuItem, OverlayService, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -311,10 +330,38 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
     }
 
     positionSubmenu(sublist) {
-        if (isPlatformBrowser(this.tieredMenu.platformId)) {
-            if (sublist) {
-                nestedPosition(sublist, this.level());
+        if (isPlatformBrowser(this.tieredMenu.platformId) && sublist && !this.root()) {
+            // the sublist is wrapped in its p-tieredmenusub host, so the item it belongs to is the closest li above that host
+            // (nestedPosition expects the li as direct parent and measured the host and the sublist itself instead)
+            const parentItem = sublist.parentElement?.closest('li') as HTMLElement | null;
+            if (!parentItem) return;
+
+            const itemOffset = getOffset(parentItem);
+            const itemLeft = itemOffset.left as number;
+            const viewport = getViewport();
+            const sublistWidth = sublist.offsetParent ? sublist.offsetWidth : getHiddenElementOuterWidth(sublist);
+            const sublistHeight = sublist.offsetParent ? sublist.offsetHeight : getHiddenElementOuterHeight(sublist);
+            const itemOuterWidth = getOuterWidth(parentItem.children[0]);
+            const itemTop = parentItem.getBoundingClientRect().top;
+            let left: string;
+
+            if (itemLeft + itemOuterWidth + sublistWidth > viewport.width) {
+                if (itemLeft < sublistWidth) {
+                    // for too small screens
+                    left = this.level() % 2 === 1 ? (itemLeft ? '-' + itemLeft + 'px' : '100%') : viewport.width - sublistWidth + 'px';
+                } else {
+                    // flip by the width of the sublist, which can be wider than the menu
+                    left = -sublistWidth + 'px';
+                }
+            } else {
+                left = '100%';
             }
+
+            // move the submenu up just enough to keep it inside the viewport, never above its top edge
+            const overflowBottom = itemTop + sublistHeight - viewport.height;
+
+            sublist.style.top = overflowBottom > 0 ? -1 * Math.min(overflowBottom, Math.max(itemTop, 0)) + 'px' : '0px';
+            sublist.style.insetInlineStart = left;
         }
     }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, provideZonelessChangeDetection, viewChild, ViewEncapsulation } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -1819,5 +1819,90 @@ describe('TieredMenu Signal Query API', () => {
         expect(instance.rootmenu()).toBeDefined();
         expect(instance.containerViewChild()).toBeDefined();
         expect(() => instance.rootmenu()?.sublistViewChild()).not.toThrow();
+    });
+});
+
+describe('TieredMenu popup submenu near the bottom of the window (optimus-ui#421)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TieredMenu],
+        template: `
+            <button #trigger type="button" class="popup-trigger" style="position: fixed; left: 20px; bottom: 120px" (click)="menu.toggle($event)">Open</button>
+            <p-tieredmenu #menu [model]="model" [popup]="true" breakpoint="100px" />
+        `
+    })
+    class PopupBottomHost {
+        model: MenuItem[] = [{ label: 'File', items: Array.from({ length: 8 }, (_, i) => ({ label: `Entry ${i}` })) }, { label: 'Edit' }];
+    }
+
+    it('keeps the submenu inside the viewport', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PopupBottomHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PopupBottomHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        (fixture.nativeElement.querySelector('.popup-trigger') as HTMLElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const fileContent = document.querySelector('li[aria-label="File"] [data-pc-section="itemcontent"]') as HTMLElement;
+        expect(fileContent).toBeTruthy();
+        fileContent.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const sublist = document.querySelector('li[aria-label="File"] ul') as HTMLElement;
+        expect(sublist).toBeTruthy();
+        const parentTop = (sublist.offsetParent as HTMLElement).getBoundingClientRect().top;
+        // offsetTop ignores the scale of the enter animation
+        expect(Math.round(parentTop + sublist.offsetTop + sublist.offsetHeight)).toBeLessThanOrEqual(window.innerHeight);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('TieredMenu submenu flipped to the left (optimus-ui#335)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TieredMenu],
+        encapsulation: ViewEncapsulation.None,
+        styles: ['.flip-host .p-tieredmenu-submenu { width: 220px; }'],
+        template: `<div class="flip-host" style="position: fixed; right: 0; top: 0; width: 150px"><p-tieredmenu [model]="model" breakpoint="100px" [style]="{ width: '150px', minWidth: '150px' }" /></div>`
+    })
+    class FlipHost {
+        model: MenuItem[] = [{ label: 'File', items: [{ label: 'A much longer submenu label' }, { label: 'Other' }] }, { label: 'Edit' }];
+    }
+
+    it('opens a submenu wider than the menu fully beside it', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [FlipHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(FlipHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const fileContent = fixture.nativeElement.querySelector('li[aria-label="File"] [data-pc-section="itemcontent"]') as HTMLElement;
+        fileContent.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const root = fixture.nativeElement.querySelector('.p-tieredmenu') as HTMLElement;
+        const sublist = fixture.nativeElement.querySelector('li[aria-label="File"] ul') as HTMLElement;
+        expect(sublist).toBeTruthy();
+        expect(sublist.offsetWidth).toBeGreaterThan(root.offsetWidth);
+        const rootLeft = root.getBoundingClientRect().left;
+        const parentItemLeft = (sublist.offsetParent as HTMLElement).getBoundingClientRect().left;
+        // offsetLeft ignores the scale of the enter animation
+        expect(Math.round(parentItemLeft + sublist.offsetLeft + sublist.offsetWidth)).toBeLessThanOrEqual(Math.round(rootLeft) + 1);
+        fixture.nativeElement.remove();
     });
 });
