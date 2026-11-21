@@ -88,7 +88,7 @@ const style = /*css*/ `
 }
 
 .p-treetable-frozen-view>.p-treetable-scrollable-body>table>.p-treetable-tbody>tr>td:last-child {
-    border-right: 0 none;
+    border-inline-end: 0 none;
 }
 
 .p-treetable-unfrozen-view {

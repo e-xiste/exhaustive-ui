@@ -4785,3 +4785,106 @@ describe('TreeTable low bug fixes', () => {
         expect(unlisten).toHaveBeenCalled();
     });
 });
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <div [attr.dir]="dir" style="width: 600px">
+            <p-treetable [value]="nodes" [columns]="cols" [frozenColumns]="frozenCols" [scrollable]="true" scrollHeight="100px" frozenWidth="200px" [tableStyle]="{ width: '1000px' }">
+                <ng-template pTemplate="frozenheader">
+                    <tr style="height: 30px">
+                        <th>Name</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="frozenbody" let-rowNode let-rowData="rowData">
+                    <tr [ttRow]="rowNode" style="height: 30px">
+                        <td>{{ rowData.name }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr style="height: 30px">
+                        @for (col of columns; track col.field) {
+                            <th>{{ col.header }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode" style="height: 30px">
+                        @for (col of columns; track col.field) {
+                            <td>{{ rowData[col.field] }}</td>
+                        }
+                    </tr>
+                </ng-template>
+            </p-treetable>
+        </div>
+    `
+})
+class TreeTableFrozenDirHostComponent {
+    dir = 'rtl';
+    frozenCols = [{ field: 'name', header: 'Name' }];
+    cols = [
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' }
+    ];
+    nodes: TreeNode[] = Array.from({ length: 10 }, (_, i) => ({ key: `${i}`, data: { name: `Node ${i}`, size: `${i}kb`, type: 'File' } }));
+}
+
+describe('TreeTable frozen columns direction', () => {
+    const setup = async (dir: string) => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableFrozenDirHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TreeTableFrozenDirHostComponent);
+        fixture.componentInstance.dir = dir;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const root: HTMLElement = fixture.nativeElement;
+        return {
+            fixture,
+            frozenView: root.querySelector<HTMLElement>('.p-treetable-frozen-view')!,
+            unfrozenView: root.querySelector<HTMLElement>('.p-treetable-unfrozen-view')!
+        };
+    };
+
+    it('places the unfrozen view after the frozen view in LTR', async () => {
+        const { frozenView, unfrozenView } = await setup('ltr');
+
+        expect(Math.round(unfrozenView.getBoundingClientRect().left)).toBe(Math.round(frozenView.getBoundingClientRect().right));
+    });
+
+    it('places the unfrozen view after the frozen view in RTL (optimus-ui#417)', async () => {
+        const { frozenView, unfrozenView } = await setup('rtl');
+        const frozen = frozenView.getBoundingClientRect();
+        const unfrozen = unfrozenView.getBoundingClientRect();
+
+        expect(Math.round(unfrozen.right)).toBe(Math.round(frozen.left));
+        expect(Math.round(unfrozen.width)).toBe(400);
+    });
+
+    it('reserves the scrollbar gutter on the inline end of the unfrozen header (optimus-ui#417)', async () => {
+        const { unfrozenView } = await setup('rtl');
+        const headerBox = unfrozenView.querySelector<HTMLElement>('.p-treetable-scrollable-header-box')!;
+
+        // the vertical scrollbar of the body is on the left in RTL, so the gutter must follow the direction
+        expect(headerBox.style.paddingInlineEnd).toMatch(/^\d+px$/);
+        expect(headerBox.style.paddingRight).toBe('');
+    });
+
+    it('keeps the unfrozen header aligned with the body when scrolled horizontally in RTL (optimus-ui#417)', async () => {
+        const { unfrozenView } = await setup('rtl');
+        const headerTable = unfrozenView.querySelector<HTMLElement>('.p-treetable-scrollable-header-table')!;
+        const body = unfrozenView.querySelector<HTMLElement>('.p-treetable-scrollable-body')!;
+        const bodyTable = body.querySelector<HTMLElement>('table')!;
+
+        body.scrollLeft = -150;
+        expect(body.scrollLeft).toBe(-150);
+        body.dispatchEvent(new Event('scroll'));
+
+        expect(Math.round(headerTable.getBoundingClientRect().right)).toBe(Math.round(bodyTable.getBoundingClientRect().right));
+    });
+});

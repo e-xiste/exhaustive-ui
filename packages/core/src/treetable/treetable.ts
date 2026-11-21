@@ -249,7 +249,7 @@ export class TreeTableService {
                     [unstyled]="unstyled()"
                     [frozen]="false"
                     [scrollHeight]="scrollHeight()"
-                    [ngStyle]="{ left: frozenWidth(), width: 'calc(100% - ' + frozenWidth() + ')' }"
+                    [ngStyle]="{ 'inset-inline-start': frozenWidth(), width: 'calc(100% - ' + frozenWidth() + ')' }"
                 ></div>
             </div>
         }
@@ -2605,11 +2605,11 @@ export class TTScrollableView extends BaseComponent {
 
                     if (this.scrollHeight()) {
                         let scrollBarWidth = calculateScrollbarWidth();
-                        this.scrollHeaderBoxViewChild().nativeElement.style.paddingRight = scrollBarWidth + 'px';
+                        this.scrollHeaderBoxViewChild().nativeElement.style.paddingInlineEnd = scrollBarWidth + 'px';
 
                         const scrollFooterBoxViewChild = this.scrollFooterBoxViewChild();
                         if (scrollFooterBoxViewChild && scrollFooterBoxViewChild.nativeElement) {
-                            scrollFooterBoxViewChild.nativeElement.style.paddingRight = scrollBarWidth + 'px';
+                            scrollFooterBoxViewChild.nativeElement.style.paddingInlineEnd = scrollBarWidth + 'px';
                         }
                     }
                 } else {
@@ -2706,11 +2706,11 @@ export class TTScrollableView extends BaseComponent {
             return;
         }
 
-        (this.scrollHeaderBoxViewChild() as ElementRef).nativeElement.style.marginLeft = -1 * event.target.scrollLeft + 'px';
+        (this.scrollHeaderBoxViewChild() as ElementRef).nativeElement.style.marginInlineStart = -1 * Math.abs(event.target.scrollLeft) + 'px';
 
         const scrollFooterViewChild = this.scrollFooterViewChild();
         if (scrollFooterViewChild && scrollFooterViewChild.nativeElement) {
-            (this.scrollFooterBoxViewChild() as ElementRef).nativeElement.style.marginLeft = -1 * event.target.scrollLeft + 'px';
+            (this.scrollFooterBoxViewChild() as ElementRef).nativeElement.style.marginInlineStart = -1 * Math.abs(event.target.scrollLeft) + 'px';
         }
 
         if (this.frozenSiblingBody()) {
