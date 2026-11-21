@@ -2398,4 +2398,25 @@ describe('InputMask inherited issue reproductions', () => {
         }
     });
 
+    it('keeps an escaped mask character as a literal (optimus-ui#911)', async () => {
+        fixture.componentInstance.mask = '+\\9 (999) 999';
+        fixture.componentInstance.unmask = true;
+        await render();
+
+        for (const input of [componentInput(), directiveInput()]) {
+            input.focus();
+            await wait(20);
+            expect(input.value).toBe('+9 (___) ___');
+            expect(input.selectionStart).toBe(4);
+            for (const key of '123456') {
+                const code = key.charCodeAt(0);
+                input.dispatchEvent(new KeyboardEvent('keypress', { key, keyCode: code, charCode: code, which: code, cancelable: true, bubbles: true } as KeyboardEventInit));
+            }
+            expect(input.value).toBe('+9 (123) 456');
+            input.blur();
+            await render();
+            expect(input.value).toBe('+9 (123) 456');
+        }
+        expect(fixture.componentInstance.value).toBe('123456');
+    });
 });

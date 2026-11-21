@@ -69,6 +69,21 @@ const INPUTMASK_INSTANCE = new InjectionToken<InputMask>('INPUTMASK_INSTANCE');
 const INPUTMASK_DIRECTIVE_INSTANCE = new InjectionToken<InputMaskDirective>('INPUTMASK_DIRECTIVE_INSTANCE');
 
 /**
+ * Splits a mask into its characters; a backslash makes the next character a literal, so '+\\9 999' keeps its '9' prefix.
+ */
+function maskTokens(mask: string): { char: string; literal: boolean }[] {
+    const tokens: { char: string; literal: boolean }[] = [];
+    for (let i = 0; i < mask.length; i++) {
+        if (mask[i] === '\\' && i + 1 < mask.length) {
+            tokens.push({ char: mask[++i], literal: true });
+        } else {
+            tokens.push({ char: mask[i], literal: false });
+        }
+    }
+    return tokens;
+}
+
+/**
  * InputMask directive is applied directly to input elements to enable masked input.
  * @group Components
  */
@@ -99,7 +114,7 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
     pInputMaskUnstyled = input<boolean | undefined>();
 
     /**
-     * Mask pattern.
+     * Mask pattern. A backslash makes the next character a literal, e.g. mask="+\9 999" for a fixed '+9' prefix.
      * @group Props
      */
     pInputMask = input<string>();
@@ -147,8 +162,9 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
         }
 
         const tests: RegExp[] | any = [];
-        let partialPosition = maskValue.length;
-        let len = maskValue.length;
+        const tokens = maskTokens(maskValue);
+        let partialPosition = tokens.length;
+        let len = tokens.length;
         let firstNonMaskPos: Nullable<number> = null;
         let lastRequiredNonMaskPos: Nullable<number>;
         const defs: { [klass: string]: any } = {
@@ -157,13 +173,12 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
             '*': `${this.characterPattern()}|[0-9]`
         };
 
-        const maskTokens = maskValue.split('');
-        for (let i = 0; i < maskTokens.length; i++) {
-            const c = maskTokens[i];
-            if (c == '?') {
+        for (let i = 0; i < tokens.length; i++) {
+            const { char: c, literal } = tokens[i];
+            if (c == '?' && !literal) {
                 len--;
                 partialPosition = i;
-            } else if (defs[c]) {
+            } else if (!literal && defs[c]) {
                 tests.push(new RegExp(defs[c]));
                 if (firstNonMaskPos === null) {
                     firstNonMaskPos = tests.length - 1;
@@ -177,10 +192,10 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
         }
 
         const buffer: string[] = [];
-        for (let i = 0; i < maskTokens.length; i++) {
-            const c = maskTokens[i];
-            if (c != '?') {
-                if (defs[c]) buffer.push(this.getPlaceholder(i));
+        for (let i = 0; i < tokens.length; i++) {
+            const { char: c, literal } = tokens[i];
+            if (c != '?' || literal) {
+                if (!literal && defs[c]) buffer.push(this.getPlaceholder(i));
                 else buffer.push(c);
             }
         }
@@ -271,7 +286,7 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
                     return;
                 }
                 this.writeBuffer();
-                if (pos == this.pInputMask()?.replace('?', '').length) {
+                if (pos == this.len()) {
                     this.caret(0, pos);
                 } else {
                     this.caret(pos);
@@ -911,7 +926,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
      */
     keepBuffer = input<boolean, unknown>(false, { transform: booleanAttribute });
     /**
-     * Mask pattern.
+     * Mask pattern. A backslash makes the next character a literal, e.g. mask="+\9 999" for a fixed '+9' prefix.
      * @group Props
      */
     mask = input<string | undefined | null>();
@@ -968,8 +983,9 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         }
 
         const tests: RegExp[] | any = [];
-        let partialPosition = mask.length;
-        let len = mask.length;
+        const tokens = maskTokens(mask);
+        let partialPosition = tokens.length;
+        let len = tokens.length;
         let firstNonMaskPos: Nullable<number> = null;
         let lastRequiredNonMaskPos: Nullable<number>;
         const defs: { [klass: string]: any } = {
@@ -978,13 +994,12 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             '*': `${this.characterPattern()}|[0-9]`
         };
 
-        let maskTokens = mask.split('');
-        for (let i = 0; i < maskTokens.length; i++) {
-            let c = maskTokens[i];
-            if (c == '?') {
+        for (let i = 0; i < tokens.length; i++) {
+            const { char: c, literal } = tokens[i];
+            if (c == '?' && !literal) {
                 len--;
                 partialPosition = i;
-            } else if (defs[c]) {
+            } else if (!literal && defs[c]) {
                 tests.push(new RegExp(defs[c]));
                 if (firstNonMaskPos === null) {
                     firstNonMaskPos = tests.length - 1;
@@ -998,10 +1013,10 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
         }
 
         const buffer: string[] = [];
-        for (let i = 0; i < maskTokens.length; i++) {
-            let c = maskTokens[i];
-            if (c != '?') {
-                if (defs[c]) buffer.push(this.getPlaceholder(i));
+        for (let i = 0; i < tokens.length; i++) {
+            const { char: c, literal } = tokens[i];
+            if (c != '?' || literal) {
+                if (!literal && defs[c]) buffer.push(this.getPlaceholder(i));
                 else buffer.push(c);
             }
         }
@@ -1441,7 +1456,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                     return;
                 }
                 this.writeBuffer();
-                if (pos == this.mask()?.replace('?', '').length) {
+                if (pos == this.len()) {
                     this.caret(0, pos);
                 } else {
                     this.caret(pos);
