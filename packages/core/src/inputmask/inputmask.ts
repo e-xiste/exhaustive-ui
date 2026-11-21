@@ -554,6 +554,9 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
                 while (pos.begin < (this.firstNonMaskPos() as number) && !this.tests()[pos.begin]) pos.begin++;
             }
 
+            // checkVal() rewrote the value and sent the caret to the end: put it back now so it does not flicker,
+            // and again after the keyboard has finished its own update
+            this.caret(pos.begin, pos.begin);
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
                 this.onUnmaskedChange.emit(this.getUnmaskedValue());
@@ -570,6 +573,9 @@ export class InputMaskDirective extends BaseComponent<InputMaskPassThrough> {
                 while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
             }
 
+            // checkVal() rewrote the value and sent the caret to the end: put it back now so it does not flicker,
+            // and again after the keyboard has finished its own update
+            this.caret(pos.begin, pos.begin);
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
                 this.onUnmaskedChange.emit(this.getUnmaskedValue());
@@ -1160,6 +1166,9 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 while (pos.begin < (this.firstNonMaskPos() as number) && !this.tests()[pos.begin]) pos.begin++;
             }
 
+            // checkVal() rewrote the value and sent the caret to the end: put it back now so it does not flicker,
+            // and again after the keyboard has finished its own update
+            this.caret(pos.begin, pos.begin);
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);
@@ -1176,6 +1185,9 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
                 while (pos.begin < (this.len() as number) && !this.tests()[pos.begin]) pos.begin++;
             }
 
+            // checkVal() rewrote the value and sent the caret to the end: put it back now so it does not flicker,
+            // and again after the keyboard has finished its own update
+            this.caret(pos.begin, pos.begin);
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);

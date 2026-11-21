@@ -2314,3 +2314,88 @@ describe('InputMask Android input (optimus-ui#507)', () => {
         expect(input.selectionStart).toBe(1);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputMask, InputMaskDirective, FormsModule],
+    template: `
+        <p-inputmask [mask]="mask" [(ngModel)]="value" [unmask]="unmask" />
+        <input class="directive" [pInputMask]="mask" />
+    `
+})
+class TestInputMaskIssuesComponent {
+    mask = '99-99';
+    value: string | null = null;
+    unmask = false;
+}
+
+describe('InputMask inherited issue reproductions', () => {
+    let fixture: ComponentFixture<TestInputMaskIssuesComponent>;
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    const render = async () => {
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+    const componentInput = () => fixture.nativeElement.querySelector('p-inputmask input') as HTMLInputElement;
+    const directiveInput = () => fixture.nativeElement.querySelector('input.directive') as HTMLInputElement;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestInputMaskIssuesComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestInputMaskIssuesComponent);
+        await render();
+    });
+
+    afterEach(() => fixture.destroy());
+
+    // the directive ignores untrusted input events: hand it the event the browser would have sent
+    const sendInput = (input: HTMLInputElement, event: InputEvent) => {
+        if (input.classList.contains('directive')) {
+            fixture.debugElement.query(By.directive(InputMaskDirective)).injector.get(InputMaskDirective).handleAndroidInput(event);
+        } else {
+            input.dispatchEvent(event);
+        }
+    };
+
+    const typeOnAndroid = (input: HTMLInputElement, char: string) => {
+        const caret = input.selectionStart as number;
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229 } as KeyboardEventInit));
+        input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+        input.setSelectionRange(caret + 1, caret + 1);
+        sendInput(input, new InputEvent('input', { inputType: 'insertText', data: char }));
+    };
+
+    it('places the caret in the same task as the Android input, without a jump to the end (optimus-ui#370)', async () => {
+        const inputMask = fixture.debugElement.query(By.directive(InputMask)).componentInstance as InputMask;
+        const directive = fixture.debugElement.query(By.directive(InputMaskDirective)).injector.get(InputMaskDirective);
+        inputMask.androidChrome = true;
+        directive.androidChrome = true;
+
+        for (const input of [componentInput(), directiveInput()]) {
+            input.focus();
+            await wait(20);
+            input.setSelectionRange(0, 0);
+
+            typeOnAndroid(input, '1');
+            expect(input.value).toBe('1_-__');
+            expect(input.selectionStart).toBe(1);
+
+            typeOnAndroid(input, '2');
+            expect(input.value).toBe('12-__');
+            expect(input.selectionStart).toBe(3);
+
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229 } as KeyboardEventInit));
+            input.value = '1-__';
+            input.setSelectionRange(1, 1);
+            sendInput(input, new InputEvent('input', { inputType: 'deleteContentBackward' }));
+            expect(input.value).toBe('1_-__');
+            expect(input.selectionStart).toBe(1);
+            await wait(5);
+            expect(input.selectionStart).toBe(1);
+        }
+    });
+
+});
