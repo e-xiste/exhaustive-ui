@@ -90,6 +90,12 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
+## Unreleased
+
+### Documentation site
+
+- `/templates`, the removed Templates page, now redirects permanently to the home page.
+
 ## 22.0.0-rc.2 (2026-11-21)
 
 Second release candidate of 22.0.0. It fixes two crashes found by clicking through every demo of the documentation site with 22.0.0-rc.1.
