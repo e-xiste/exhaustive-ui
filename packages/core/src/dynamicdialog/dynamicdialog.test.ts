@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ErrorHandler, provideZonelessChangeDetection, inject, input } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, createComponent, createEnvironmentInjector, EnvironmentInjector, ErrorHandler, Injectable, provideZonelessChangeDetection, inject, input } from '@angular/core';
+import { DialogService } from './dialogservice';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Dialog } from '@exhaustive-ui/core/dialog';
@@ -705,5 +706,58 @@ describe('DynamicDialog', () => {
             expect(dialog.styleElement().innerHTML).toContain('75vw');
             expect(dialog.styleElement().innerHTML).toContain('90vw');
         });
+    });
+});
+
+@Injectable()
+class FeatureService {
+    name = 'feature-scoped';
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    template: `<span class="feature-dialog-content">{{ feature.name }}</span>`
+})
+class FeatureDialogContentComponent {
+    feature = inject(FeatureService);
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    template: `<span>host</span>`,
+    providers: [DialogService]
+})
+class FeatureHostComponent {
+    dialogService = inject(DialogService);
+}
+
+describe('DialogService injector hierarchy', () => {
+    it('should resolve providers of the environment injector the DialogService belongs to (optimus-ui#631, optimus-ui#759)', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
+        // a lazy route / child module environment that provides FeatureService
+        const featureInjector = createEnvironmentInjector([FeatureService], TestBed.inject(EnvironmentInjector));
+        const appRef = TestBed.inject(ApplicationRef);
+        const hostRef = createComponent(FeatureHostComponent, { environmentInjector: featureInjector });
+        appRef.attachView(hostRef.hostView);
+        await appRef.whenStable();
+        expect(hostRef.injector.get(FeatureService).name).toBe('feature-scoped');
+
+        const errors: any[] = [];
+        let ref: DynamicDialogRef | null = null;
+        try {
+            ref = hostRef.instance.dialogService.open(FeatureDialogContentComponent, { header: 'Feature' });
+            await appRef.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        } catch (e) {
+            errors.push(e);
+        }
+
+        expect(errors).toEqual([]);
+        expect(document.querySelector('.feature-dialog-content')?.textContent).toBe('feature-scoped');
+        ref?.close();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        hostRef.destroy();
+        featureInjector.destroy();
     });
 });
