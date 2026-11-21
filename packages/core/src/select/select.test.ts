@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DebugElement, provideZonelessChangeDetection, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DebugElement, effect, provideZonelessChangeDetection, signal, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -5179,5 +5179,81 @@ describe('Select low bug fixes', () => {
         hostFixture.detectChanges();
 
         expect(hostSelect.focusedOptionIndex()).toBe(0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [ReactiveFormsModule, Select],
+    template: `<p-select [formControl]="control" [options]="options" optionLabel="name" optionValue="code" />`
+})
+class TestSelectEffectWriteComponent {
+    options = [
+        { name: 'Option 1', code: 'opt1' },
+        { name: 'Option 2', code: 'opt2' }
+    ];
+    control = new FormControl<string | null>(null);
+    source = signal('opt1');
+    effectRuns = 0;
+
+    constructor() {
+        effect(() => {
+            this.effectRuns++;
+            this.control.setValue(this.source());
+        });
+    }
+}
+
+describe('Select - writeValue from a consumer effect (optimus-ui#480)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestSelectEffectWriteComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('does not make the effect depend on the internal signals of the select', async () => {
+        const fixture = TestBed.createComponent(TestSelectEffectWriteComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const host = fixture.componentInstance;
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+
+        expect(host.effectRuns).toBe(1);
+        expect(select.modelValue()).toBe('opt1');
+
+        select.onOptionSelect(new Event('click'), host.options[1]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(host.effectRuns).toBe(1);
+        expect(host.control.value).toBe('opt2');
+        expect(select.modelValue()).toBe('opt2');
+    });
+
+    it('does not track the select signals when writeValue is called from an effect', async () => {
+        const fixture = TestBed.createComponent(TestSelectEffectWriteComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const host = fixture.componentInstance;
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        let runs = 0;
+
+        const ref = TestBed.runInInjectionContext(() =>
+            effect(() => {
+                runs++;
+                select.writeValue('opt1');
+            })
+        );
+        TestBed.tick();
+        expect(runs).toBe(1);
+
+        select.onOptionSelect(new Event('click'), host.options[1]);
+        TestBed.tick();
+
+        expect(runs).toBe(1);
+        expect(select.modelValue()).toBe('opt2');
+        ref.destroy();
     });
 });

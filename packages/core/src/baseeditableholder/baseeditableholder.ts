@@ -1,4 +1,4 @@
-import { booleanAttribute, computed, Directive, input, signal } from '@angular/core';
+import { booleanAttribute, computed, Directive, input, signal, untracked } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { BaseModelHolder } from '@exhaustive-ui/core/basemodelholder';
 
@@ -47,7 +47,9 @@ export class BaseEditableHolder<PT = any> extends BaseModelHolder<PT> implements
 
     /**** Angular ControlValueAccessors ****/
     writeValue(value: any) {
-        this.writeControlValue(value, this.writeModelValue.bind(this));
+        // Forms can call writeValue from a reactive context (e.g. a consumer effect); the signals read
+        // while applying the value must not become dependencies of that context.
+        untracked(() => this.writeControlValue(value, this.writeModelValue.bind(this)));
     }
 
     registerOnChange(fn: Function) {
