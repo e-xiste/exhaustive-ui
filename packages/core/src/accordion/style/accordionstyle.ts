@@ -23,6 +23,11 @@ ${accordion_style}
 .p-accordioncontent .p-motion {
     display: grid;
     grid-template-rows: 1fr;
+    min-width: 0;
+}
+
+.p-accordioncontent-wrapper {
+    min-width: 0;
 }
 `;
 

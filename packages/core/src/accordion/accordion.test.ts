@@ -1212,3 +1212,46 @@ describe('Accordion inside a popover that is closed and reopened (optimus-ui#280
         fixture.nativeElement.remove();
     });
 });
+
+describe('Accordion with a horizontally scrollable content (optimus-ui#146)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
+        template: `
+            <div style="width: 300px">
+                <p-accordion value="0">
+                    <p-accordion-panel value="0">
+                        <p-accordion-header>Table</p-accordion-header>
+                        <p-accordion-content>
+                            <div class="scroller" style="width: 100%; overflow-x: auto">
+                                <div style="width: 1000px; height: 20px"></div>
+                            </div>
+                        </p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            </div>
+        `
+    })
+    class WideContentHost {}
+
+    it('keeps the content as wide as the accordion so it can scroll', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [WideContentHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(WideContentHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const content = fixture.nativeElement.querySelector('.p-accordioncontent') as HTMLElement;
+        const scroller = fixture.nativeElement.querySelector('.scroller') as HTMLElement;
+        expect(getComputedStyle(content).display).toBe('grid');
+        expect(content.getBoundingClientRect().width).toBeLessThanOrEqual(300);
+        expect(scroller.getBoundingClientRect().right).toBeLessThanOrEqual(content.getBoundingClientRect().right);
+        expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+});
