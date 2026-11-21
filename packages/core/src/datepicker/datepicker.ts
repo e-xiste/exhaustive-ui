@@ -365,6 +365,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                     }
                     @if ((showTime() || timeOnly()) && currentView() === 'date') {
                         <div [class]="cx('timePicker')" [pBind]="ptm('timePicker')">
+                            <div class="p-hidden-accessible" aria-live="polite" aria-atomic="true">{{ timeAnnouncement() }}</div>
                             <div [class]="cx('hourPicker')" [pBind]="ptm('hourPicker')">
                                 <p-button
                                     rounded
@@ -1025,6 +1026,16 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
     currentSecond = signal<Nullable<number>>(undefined);
 
     pm = signal<Nullable<boolean>>(undefined);
+
+    // Text of the time picker live region, so screen readers announce the time when it changes.
+    timeAnnouncement = computed(() => {
+        const pad = (value: Nullable<number>) => (value == null ? '' : `${value < 10 ? '0' : ''}${value}`);
+        const separator = this.timeSeparator();
+        let time = pad(this.currentHour()) + separator + pad(this.currentMinute());
+        if (this.showSeconds()) time += separator + pad(this.currentSecond());
+        if (this.hourFormat() == '12') time += ' ' + this.getTranslation(this.pm() ? 'pm' : 'am');
+        return time;
+    });
 
     mask = signal<Nullable<HTMLDivElement>>(undefined);
 

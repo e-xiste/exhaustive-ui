@@ -2924,3 +2924,35 @@ describe('DatePicker numeric hourFormat', () => {
         expect(picker.pm()).toBe(true);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule],
+    template: `<p-datepicker [inline]="true" [showTime]="true" hourFormat="12" [(ngModel)]="value" />`
+})
+class TestTimeAnnouncementDatePickerComponent {
+    value = new Date(2026, 4, 10, 9, 5);
+}
+
+describe('DatePicker time announcement', () => {
+    it('announces the changed time in a polite live region (optimus-ui#627)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestTimeAnnouncementDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestTimeAnnouncementDatePickerComponent);
+        await fixture.whenStable();
+        const timePicker: HTMLElement = fixture.nativeElement.querySelector('.p-datepicker-time-picker');
+        const liveRegion = () => timePicker.querySelector<HTMLElement>('[aria-live="polite"]');
+
+        expect(liveRegion()).not.toBeNull();
+        expect(liveRegion()!.getAttribute('aria-atomic')).toBe('true');
+        expect(liveRegion()!.textContent!.trim()).toBe('09:05 am');
+
+        const incrementHour: HTMLElement = timePicker.querySelector('.p-datepicker-hour-picker button')!;
+        incrementHour.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await fixture.whenStable();
+
+        expect(liveRegion()!.textContent!.trim()).toBe('10:05 am');
+    });
+});
