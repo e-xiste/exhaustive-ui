@@ -5,6 +5,7 @@ import { cn, getKeyValue, isArray, isFunction, isNotEmpty, isString, mergeProps,
 import type { Lifecycle, PassThroughOptions } from '@exhaustive-ui/core/api';
 import { Base, BaseStyle } from '@exhaustive-ui/core/base';
 import { Exhaustive } from '@exhaustive-ui/core/config';
+import { UseStyle } from '@exhaustive-ui/core/usestyle';
 import { BaseComponentStyle } from './style/basecomponentstyle';
 
 export const PARENT_INSTANCE = new InjectionToken<BaseComponent>('PARENT_INSTANCE');
@@ -42,6 +43,10 @@ export class BaseComponent<PT = any> implements Lifecycle {
     public scopedStyleEl: any;
 
     private scopedCustomStyleEl: any;
+
+    private useStyle: UseStyle = inject(UseStyle);
+
+    private _shadowRoot: ShadowRoot | undefined;
 
     public parent = this.$params.parent;
 
@@ -212,6 +217,8 @@ export class BaseComponent<PT = any> implements Lifecycle {
      * Use 'onInit()' in subclasses instead.
      */
     ngOnInit() {
+        // a ViewEncapsulation.ShadowDom ancestor does not see the styles of the document head
+        this._shadowRoot = this.useStyle.attach(this.$el);
         this._loadCoreStyles();
         this._loadStyles();
 
@@ -290,6 +297,7 @@ export class BaseComponent<PT = any> implements Lifecycle {
     ngOnDestroy() {
         this._removeThemeListeners();
         this._unloadScopedThemeStyles();
+        this.useStyle.detach(this._shadowRoot);
 
         this.onDestroy();
         this._hook('onDestroy');
@@ -401,8 +409,11 @@ export class BaseComponent<PT = any> implements Lifecycle {
     }
 
     private _unloadScopedThemeStyles() {
-        this.scopedStyleEl?.remove();
-        this.scopedCustomStyleEl?.remove();
+        [this.scopedStyleEl, this.scopedCustomStyleEl].forEach((el) => {
+            el?.remove();
+            // and its copies in the shadow roots
+            el && this.useStyle.remove(el.getAttribute('data-exhaustive-style-id'));
+        });
     }
 
     private _themeChangeListener(id: string, callback = () => {}) {

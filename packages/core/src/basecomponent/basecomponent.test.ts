@@ -1,6 +1,6 @@
 import { Base } from '@exhaustive-ui/core/base';
 import { Theme } from '@exhaustive-ui/styled';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, ViewEncapsulation } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { Button } from '@exhaustive-ui/core/button';
@@ -81,5 +81,32 @@ describe('BaseComponent scoped design tokens', () => {
         fixture.destroy();
 
         expect(hasRule()).toBe(false);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.ShadowDom,
+    imports: [Button],
+    template: `<p-button label="Save" />`
+})
+class TestShadowDomHostComponent {}
+
+describe('BaseComponent inside a ViewEncapsulation.ShadowDom host', () => {
+    it('adds the component styles to the shadow root (optimus-ui#802)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestShadowDomHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestShadowDomHostComponent);
+        await fixture.whenStable();
+
+        const shadowRoot = (fixture.nativeElement as HTMLElement).shadowRoot as ShadowRoot;
+        const button = shadowRoot.querySelector('button') as HTMLButtonElement;
+        const names = (root: Document | ShadowRoot) => Array.from(root.querySelectorAll('style[data-exhaustive-style-id]')).map((style) => style.getAttribute('data-exhaustive-style-id'));
+
+        expect(names(document)).toContain('button-style');
+        expect(names(shadowRoot)).toEqual(names(document));
+        expect(getComputedStyle(button).display).toBe('inline-flex');
     });
 });
