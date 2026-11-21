@@ -2034,3 +2034,82 @@ describe('InputNumber updateOn blur (optimus-ui#428)', () => {
         expect(emitted).toEqual([57]);
     });
 });
+
+describe('InputNumber inherited issue reproductions', () => {
+    let fixture: ComponentFixture<InputNumber>;
+    let inputNumber: InputNumber;
+    let input: HTMLInputElement;
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const create = async (inputs: Record<string, unknown> = {}, value: number | null = null) => {
+        fixture = TestBed.createComponent(InputNumber);
+        inputNumber = fixture.componentInstance;
+        Object.entries(inputs).forEach(([name, inputValue]) => fixture.componentRef.setInput(name, inputValue));
+        inputNumber.registerOnChange(() => {});
+        await render();
+        inputNumber.writeValue(value);
+        await render();
+        input = fixture.nativeElement.querySelector('input');
+    };
+
+    const keypress = async (key: string) => {
+        const code = key.charCodeAt(0);
+        input.dispatchEvent(new KeyboardEvent('keydown', { key, keyCode: code, cancelable: true, bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keypress', { key, keyCode: code, charCode: code, which: code, cancelable: true, bubbles: true } as KeyboardEventInit));
+        await render();
+    };
+
+    const backspace = async () => {
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', code: 'Backspace', keyCode: 8, cancelable: true, bubbles: true }));
+        await render();
+    };
+
+    const blur = async () => {
+        input.dispatchEvent(new FocusEvent('blur'));
+        await render();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [InputNumber],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        fixture?.destroy();
+    });
+
+    for (const [locale, currency] of [
+        ['de-AT', 'EUR'],
+        ['ja-JP', 'JPY'],
+        ['jp-JP', 'JPY']
+    ]) {
+        it(`keeps four typed digits in currency mode for ${locale} (optimus-ui#15)`, async () => {
+            await create({ mode: 'currency', currency, locale }, null);
+            input.focus();
+            for (const digit of '2222') {
+                await keypress(digit);
+            }
+            await blur();
+            expect(inputNumber.value()).toBe(2222);
+
+            input.focus();
+            // type the next digits before the decimal separator (EUR has two fraction digits, JPY none)
+            const decimal = currency === 'EUR' ? input.value.indexOf(',') : -1;
+            const caret = decimal >= 0 ? decimal : input.value.length;
+            input.setSelectionRange(caret, caret);
+            for (const digit of '511') {
+                await keypress(digit);
+            }
+            await blur();
+            expect(inputNumber.value()).toBe(2222511);
+        });
+    }
+
+});

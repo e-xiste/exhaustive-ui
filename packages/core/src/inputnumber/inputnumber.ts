@@ -468,7 +468,12 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     focused = signal<Nullable<boolean>>(undefined);
 
-    groupChar = computed<string>(() => new Intl.NumberFormat(this.locale(), { useGrouping: true }).format(1000000).trim().replace(this._numeral(), '').charAt(0));
+    groupChar = computed<string>(() => {
+        // some locales group currencies with another character than plain numbers (de-AT: '€ 1.000' but '1 000'), read it from the formatter in use
+        const options = Object.fromEntries(Object.entries(this.getOptions()).filter(([_key, value]) => value !== undefined));
+        const group = new Intl.NumberFormat(this.locale(), { ...options, useGrouping: true }).formatToParts(1000000).find((part) => part.type === 'group');
+        return group ? group.value : new Intl.NumberFormat(this.locale(), { useGrouping: true }).format(1000000).trim().replace(this._numeral(), '').charAt(0);
+    });
 
     prefixChar = computed<string>(() => {
         if (this.prefix()) {
