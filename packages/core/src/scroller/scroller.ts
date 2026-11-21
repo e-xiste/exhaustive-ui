@@ -550,6 +550,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.setSize();
                 this.calculateOptions();
                 this.calculateAutoSize();
+                // the new range is rendered on the next change detection: measure it again then
+                this._autoSize() && afterNextRender(() => this.calculateAutoSize(), { injector: this.injector });
             }, 1);
         }
     }
@@ -763,6 +765,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
                     const [contentWidth, contentHeight] = [getWidth(contentEl), getHeight(contentEl)];
                     const element = (<ElementRef>this.elementViewChild()).nativeElement;
+                    // releasing the size below can shrink the viewport for a moment and clamp its scroll position
+                    const { scrollTop, scrollLeft } = element;
                     // A list smaller than the viewport is measured even when its content has the size it had at init
                     // (one item on the first search): the default size is that of the content, not of the viewport.
                     const items = this._items() || [];
@@ -779,6 +783,10 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                     contentEl.style.minHeight = contentEl.style.minWidth = '';
                     contentEl.style.position = '';
                     (<ElementRef>this.elementViewChild()).nativeElement.style.contain = '';
+                    if (element.scrollTop !== scrollTop || element.scrollLeft !== scrollLeft) {
+                        element.scrollTop = scrollTop;
+                        element.scrollLeft = scrollLeft;
+                    }
                 }
             });
         }

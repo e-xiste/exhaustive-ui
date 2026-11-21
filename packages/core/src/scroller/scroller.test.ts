@@ -5070,3 +5070,45 @@ describe('AutoComplete virtual scroll height', () => {
         fixture.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MultiSelect],
+    template: `<p-multiselect [options]="items" [filter]="true" [virtualScroll]="true" [virtualScrollItemSize]="40" optionLabel="label" appendTo="self" />`
+})
+class TestMultiSelectVirtualFilterComponent {
+    items = Array.from({ length: 100000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+}
+
+describe('MultiSelect virtual scroll while filtering', () => {
+    it('sizes the viewport to the filtered items at every keystroke (optimus-ui#647)', async () => {
+        TestBed.configureTestingModule({ imports: [TestMultiSelectVirtualFilterComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestMultiSelectVirtualFilterComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('.p-multiselect') as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const filterInput = fixture.nativeElement.querySelector('.p-multiselect-filter') as HTMLInputElement;
+        const type = async (value: string) => {
+            filterInput.value = value;
+            filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+            const count = fixture.debugElement.query(By.directive(Scroller)).componentInstance._items().length;
+            const height = (fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).getBoundingClientRect().height;
+            return { value, count, height: Math.round(height) };
+        };
+        // no match renders one empty message row
+        const expected = (count: number) => Math.min(200, Math.max(count, 1) * 40);
+
+        const results: { value: string; count: number; height: number }[] = [];
+        for (const value of ['321321', '', '3', '32', '321', '3213', '32132', '321321']) {
+            results.push(await type(value));
+        }
+
+        expect(results.map((r) => r.height)).toEqual(results.map((r) => expected(r.count)));
+        fixture.destroy();
+    });
+});
