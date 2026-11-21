@@ -590,3 +590,61 @@ describe('Overlay positioning next to the page scrollbar (optimus-ui#1926)', () 
         });
     }
 });
+
+describe('Overlay appended to body with a target inside a fixed container (optimus-ui#50)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        standalone: true,
+        imports: [Overlay],
+        template: `<div style="height: 3000px">
+            <div class="fixed-dialog" style="position: fixed; top: 50px; left: 50px; width: 200px; height: 100px">
+                <div class="overlay-target" style="width: 100px; height: 30px">
+                    <p-overlay [(visible)]="visible" [target]="'@parent'" appendTo="body">
+                        <div style="width: 100px; height: 40px">Options</div>
+                    </p-overlay>
+                </div>
+            </div>
+        </div>`
+    })
+    class TestFixedTargetOverlayComponent {
+        visible = signal(false);
+    }
+
+    it('should keep the overlay next to its target when the page scrolls', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestFixedTargetOverlayComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestFixedTargetOverlayComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await fixture.whenStable();
+
+        const overlay = fixture.debugElement.query(By.directive(Overlay)).componentInstance as Overlay;
+        const target = fixture.nativeElement.querySelector('.overlay-target') as HTMLElement;
+        // listeners are bound once the enter motion is done
+        for (let i = 0; i < 100 && !overlay.scrollHandler(); i++) {
+            await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+        const gap = () => overlay.overlayEl().getBoundingClientRect().top - target.getBoundingClientRect().bottom;
+        const initialGap = gap();
+        expect(Math.abs(initialGap)).toBeLessThan(10);
+
+        window.scrollTo(0, 400);
+        window.dispatchEvent(new Event('scroll'));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        await fixture.whenStable();
+
+        const stillOpen = overlay.visible() && !!overlay.overlayEl()?.isConnected;
+        // either the overlay follows the fixed target or it closes, it must not drift away with the page
+        if (stillOpen) {
+            expect(Math.abs(gap() - initialGap)).toBeLessThan(2);
+        }
+        window.scrollTo(0, 0);
+        fixture.destroy();
+    });
+});
