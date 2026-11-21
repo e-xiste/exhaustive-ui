@@ -4798,3 +4798,57 @@ describe('Scroller lazy with delay', () => {
         expect(scroller.d_loading()).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="46" [style]="{ height: scrollHeight }" [step]="10" [delay]="20" [lazy]="true" [showLoader]="true" [loaderDisabled]="true" [autoSize]="true" [inline]="true" (onLazyLoad)="onLazyLoad($event)">
+            <ng-template #item let-item>
+                <div style="height: 46px">{{ item?.name ?? 'loading' }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestLazyStepScrollerComponent {
+    scrollHeight = '250px';
+    items = signal<any[]>(Array.from({ length: 1000 }));
+    requests: { first: number; last: number }[] = [];
+
+    onLazyLoad(event: ScrollerLazyLoadEvent) {
+        this.requests.push({ first: event.first, last: event.last });
+        setTimeout(() => {
+            const items = [...this.items()];
+            for (let i = event.first; i < event.last; i++) items[i] = { name: 'Item ' + i };
+            this.items.set(items);
+        }, 5);
+    }
+}
+
+describe('Scroller lazy with a step', () => {
+    for (const scrollHeight of ['200px', '250px', '400px']) {
+        it(`requests the second page while scrolling down with height ${scrollHeight} (optimus-ui#682)`, async () => {
+            TestBed.configureTestingModule({ imports: [TestLazyStepScrollerComponent], providers: [provideZonelessChangeDetection()] });
+            const fixture = TestBed.createComponent(TestLazyStepScrollerComponent);
+            fixture.componentInstance.scrollHeight = scrollHeight;
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+
+            const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            for (let top = 0; top <= 46 * 40; top += 23) {
+                el.scrollTop = top;
+                el.dispatchEvent(new Event('scroll'));
+                await new Promise((resolve) => setTimeout(resolve, 30));
+                await fixture.whenStable();
+            }
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+
+            const loaded = fixture.componentInstance.items();
+            const missing: number[] = [];
+            for (let i = 0; i < 45; i++) if (!loaded[i]) missing.push(i);
+            expect(missing).toEqual([]);
+        });
+    }
+});

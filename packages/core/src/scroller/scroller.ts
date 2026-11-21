@@ -738,9 +738,13 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
         if (this._lazy()) {
             Promise.resolve().then(() => {
+                const step = this._step();
+                // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
+                // the first one: request every page up to it, the scroll handlers only request the pages after it.
+                const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
                 this.lazyLoadState.set({
-                    first: this._step() ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
-                    last: Math.min(this._step() ? this._step() : this.last(), (<any[]>this._items()).length)
+                    first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
+                    last: Math.min(step ? step * pages : this.last(), (<any[]>this._items()).length)
                 });
 
                 this.handleEvents('onLazyLoad', this.lazyLoadState());
