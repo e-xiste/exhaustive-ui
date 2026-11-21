@@ -5618,3 +5618,63 @@ describe('Select - with Angular Signal Forms (optimus-ui#155)', () => {
         expect(select.required()).toBe(true);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormsModule, InputText],
+    template: `
+        <table>
+            <tr>
+                <td><p-select id="in-table" [options]="options" [(ngModel)]="value" [required]="true" placeholder="Pick" [overlayOptions]="{ mode: 'overlay' }" /></td>
+                <td><input id="cell-input" pInputText /></td>
+            </tr>
+        </table>
+    `
+})
+class TestSelectInTableComponent {
+    options = ['One', 'Two'];
+    value = null;
+}
+
+describe('Select - inside a table', () => {
+    let fixture: ComponentFixture<TestSelectInTableComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectInTableComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestSelectInTableComponent);
+        await settle(fixture);
+    });
+
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('leaves the other inputs of the table usable while it is invalid and was opened (optimus-ui#887)', async () => {
+        const host = fixture.nativeElement as HTMLElement;
+        const select = fixture.debugElement.query(By.css('#in-table')).componentInstance as Select;
+        expect(host.querySelector('#in-table')!.classList).toContain('ng-invalid');
+
+        host.querySelector<HTMLElement>('#in-table .p-select-dropdown')!.click();
+        // the overlay listens to outside clicks once its enter animation is over
+        await settle(fixture, 1000);
+        expect(select.overlayVisible()).toBe(true);
+
+        const input = host.querySelector('#cell-input') as HTMLInputElement;
+        const box = input.getBoundingClientRect();
+        expect(document.elementFromPoint(box.left + 5, box.top + box.height / 2)).toBe(input);
+        input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        input.focus();
+        input.click();
+        await settle(fixture);
+
+        expect(document.activeElement).toBe(input);
+        expect(input.readOnly || input.disabled).toBe(false);
+        expect(select.overlayVisible()).toBe(false);
+    });
+});
