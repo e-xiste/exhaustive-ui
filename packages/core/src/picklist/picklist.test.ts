@@ -2583,3 +2583,75 @@ describe('PickList two-way bound lists (optimus-ui#260)', () => {
         expect(host.targetChanges).toBe(1);
     });
 });
+
+describe('PickList r22 regressions', () => {
+    let fixture: ComponentFixture<PickList>;
+    const items = () => ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon'].map((name, i) => ({ id: i, name }));
+    const labels = (selector: string) => fixture.debugElement.queryAll(By.css(`${selector} .p-listbox-option`)).map((o) => o.nativeElement.textContent.trim());
+    const moveRightButton = () => fixture.debugElement.query(By.css('.p-picklist-transfer-controls button')).nativeElement as HTMLButtonElement;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [PickList],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(PickList);
+    });
+
+    it('removes a moved item from the filtered source list (optimus-ui#133)', async () => {
+        const source = items();
+        fixture.componentRef.setInput('source', source);
+        fixture.componentRef.setInput('target', []);
+        fixture.componentRef.setInput('filterBy', 'name');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const filterInput = fixture.debugElement.query(By.css('.p-picklist-source-list-container input')).nativeElement as HTMLInputElement;
+        filterInput.value = 'a';
+        filterInput.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const filtered = labels('.p-picklist-source-list-container');
+        expect(filtered).toContain('Beta');
+        expect(filtered).not.toContain('Epsilon');
+
+        const beta = fixture.debugElement.queryAll(By.css('.p-picklist-source-list-container .p-listbox-option')).find((o) => o.nativeElement.textContent.trim() === 'Beta')!.nativeElement as HTMLElement;
+        beta.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        moveRightButton().click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(labels('.p-picklist-source-list-container')).toEqual(filtered.filter((l) => l !== 'Beta'));
+        expect(labels('.p-picklist-target-list-container')).toEqual(['Beta']);
+    });
+
+    it('moves only the item selected with the keyboard (optimus-ui#506)', async () => {
+        fixture.componentRef.setInput('source', items());
+        fixture.componentRef.setInput('target', []);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const list = fixture.debugElement.query(By.css('.p-picklist-source-list-container [role="listbox"]')).nativeElement as HTMLElement;
+        list.focus();
+        fixture.detectChanges();
+        for (const code of ['ArrowDown', 'ArrowDown', 'Space']) {
+            list.dispatchEvent(new KeyboardEvent('keydown', { code, key: code === 'Space' ? ' ' : code, bubbles: true, cancelable: true }));
+            fixture.detectChanges();
+            await fixture.whenStable();
+        }
+        const selected = fixture.componentInstance.selectedItemsSource().map((i: any) => i.name);
+        expect(selected.length).toBe(1);
+
+        const button = moveRightButton();
+        button.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        button.focus();
+        button.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(labels('.p-picklist-target-list-container')).toEqual(selected);
+    });
+});
