@@ -1869,3 +1869,34 @@ describe('PanelMenu pointer focus with a custom item template (optimus-ui#52)', 
         fixture.nativeElement.remove();
     });
 });
+
+describe('PanelMenu root list spacing (optimus-ui#59)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class RootListHost {
+        model: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+    }
+
+    it('does not let the browser list padding and margin indent the root list', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [RootListHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(RootListHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const content = fixture.nativeElement.querySelector('[data-pc-section="content"]') as HTMLElement;
+        const list = content.firstElementChild as HTMLElement;
+        const rootList = fixture.nativeElement.querySelector('[data-pc-section="rootlist"]') as HTMLElement;
+        const listStyle = getComputedStyle(list);
+
+        expect(list.tagName).toBe('UL');
+        expect(listStyle.paddingInlineStart).toBe('0px');
+        expect(listStyle.marginBlockStart).toBe('0px');
+        expect(listStyle.marginBlockEnd).toBe('0px');
+        expect(listStyle.listStyleType).toBe('none');
+        expect(rootList.getBoundingClientRect().left).toBe(content.getBoundingClientRect().left);
+        fixture.nativeElement.remove();
+    });
+});
