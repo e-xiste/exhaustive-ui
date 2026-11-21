@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, sig
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { AutoFocus } from '@exhaustive-ui/core/autofocus';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 import { FocusTrap } from '@exhaustive-ui/core/focustrap';
 import { Dialog } from './dialog';
@@ -2222,5 +2223,42 @@ describe('Dialog drag of a positioned dialog', () => {
         const moved = dialogEl.getBoundingClientRect();
         expect(moved.left).toBeCloseTo(before.left + 20, 0);
         expect(moved.top).toBeCloseTo(before.top + 30, 0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog, AutoFocus],
+    template: `
+        <p-dialog [(visible)]="visible" [modal]="true" header="Edit">
+            <button class="dialog-other-button">Other</button>
+            <input class="dialog-autofocus-input" [pAutoFocus]="true" />
+        </p-dialog>
+    `
+})
+class AutoFocusDialogHostComponent {
+    visible = signal(false);
+}
+
+describe('Dialog with a pAutoFocus field', () => {
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should keep the focus on the pAutoFocus field instead of the first focusable element (optimus-ui#455)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoFocusDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(AutoFocusDialogHostComponent);
+        await fixture.whenStable();
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        expect(document.activeElement?.classList.contains('dialog-autofocus-input')).toBe(true);
+        fixture.destroy();
     });
 });
