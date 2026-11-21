@@ -1151,8 +1151,10 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
         focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
 
-        this.pageX.set(event.pageX);
-        this.pageY.set(event.pageY);
+        // a long press passes a TouchEvent, which carries its coordinates on the touch points
+        const point = event?.touches?.[0] ?? event?.changedTouches?.[0] ?? event;
+        this.pageX.set(point?.pageX);
+        this.pageY.set(point?.pageY);
 
         visibleContextMenus.forEach((contextMenu) => contextMenu !== this && contextMenu.hide());
         visibleContextMenus.add(this);
