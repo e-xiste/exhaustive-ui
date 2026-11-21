@@ -5150,6 +5150,31 @@ describe('Select lazy virtual scroll starting empty', () => {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [Scroller],
+    template: `<p-scroller [items]="items" [itemSize]="50" scrollHeight="200px" [autoSize]="true" />`
+})
+class TestDestroyedAutoSizeScrollerComponent {
+    items = Array.from({ length: 100 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller destroyed before its init tick', () => {
+    it('does not run the pending init on the destroyed view', async () => {
+        TestBed.configureTestingModule({ imports: [TestDestroyedAutoSizeScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestDestroyedAutoSizeScrollerComponent);
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        const setSpacerSize = vi.spyOn(scroller, 'setSpacerSize');
+        await fixture.whenStable();
+        // the init tick is pending: afterNextRender would throw NG0205 with the destroyed injector
+        scroller.init();
+        fixture.destroy();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+
+        expect(setSpacerSize).not.toHaveBeenCalled();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
     template: `
         <!-- the viewport has its height before the scroller measures it, as in Tree and Listbox -->
         <p-scroller [items]="items" [itemSize]="50" [style]="{ height: '200px' }">

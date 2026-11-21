@@ -516,8 +516,14 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         });
     }
 
+    private destroyed = false;
+
     onDestroy() {
         this.unbindResizeListener();
+        // a pending init would run on a destroyed view (afterNextRender throws NG0205 with a destroyed injector)
+        this.destroyed = true;
+        clearTimeout(this.resizeTimeout());
+        clearTimeout(this.scrollTimeout());
 
         this.contentEl.set(null);
         this.initialized.set(false);
@@ -546,6 +552,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
             // wait for the next tick
             setTimeout(() => {
+                if (this.destroyed) return;
+
                 this.setSpacerSize();
                 this.setSize();
                 this.calculateOptions();
