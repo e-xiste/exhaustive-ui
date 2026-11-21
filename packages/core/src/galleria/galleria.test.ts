@@ -2095,3 +2095,43 @@ describe('Galleria autoplay destroy', () => {
         expect(onActiveIndexChange).not.toHaveBeenCalled();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [GalleriaModule],
+    template: `
+        <p-galleria [value]="images" [numVisible]="5" [circular]="true" [autoPlay]="true" [transitionInterval]="100" [containerStyle]="{ 'max-width': '640px' }">
+            <ng-template #item let-item>
+                <div class="main-item" style="width: 100%; height: 100px">{{ item.alt }}</div>
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <div class="thumbnail-item" style="height: 20px">{{ item.alt }}</div>
+            </ng-template>
+        </p-galleria>
+    `
+})
+class TestAutoPlayDemoGalleriaComponent {
+    images = Array.from({ length: 8 }, (_, i) => ({ alt: `Image ${i + 1}` }));
+}
+
+describe('Galleria autoplay rendering (optimus-ui#865)', () => {
+    it('should render a single item and each thumbnail once while it plays', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [TestAutoPlayDemoGalleriaComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(TestAutoPlayDemoGalleriaComponent);
+        await fixture.whenStable();
+        const host = fixture.nativeElement as HTMLElement;
+        const mainItems = () => Array.from(host.querySelectorAll('.main-item')).map((item) => item.textContent?.trim());
+
+        expect(mainItems()).toEqual(['Image 1']);
+
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        await fixture.whenStable();
+
+        expect(mainItems().length).toBe(1);
+        expect(mainItems()[0]).not.toBe('Image 1');
+        expect(host.querySelectorAll('.thumbnail-item').length).toBe(8);
+        expect(host.querySelectorAll('.p-galleria-item').length).toBe(1);
+        fixture.destroy();
+    });
+});
