@@ -1,4 +1,9 @@
 import { CommonModule } from '@angular/common';
+import { Base } from '@exhaustive-ui/core/base';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -2141,4 +2146,105 @@ describe('InputNumber inherited issue reproductions', () => {
         expect(input.selectionStart).toBe(4);
     });
 
+    it('types decimals before a trailing currency symbol (optimus-ui#520)', async () => {
+        await create({ mode: 'currency', currency: 'EUR', locale: 'de-DE' }, null);
+        input.focus();
+        for (const key of '12,34') {
+            await keypress(key);
+        }
+        expect(input.value).toBe('12,34\u00a0€');
+        expect(inputNumber.value()).toBe(12.34);
+
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(input.value).toBe('12,30\u00a0€');
+        await backspace();
+        expect(input.value).toBe('12,00\u00a0€');
+    });
+
+    it('formats and types decimals with the de-DE locale (optimus-ui#672)', async () => {
+        await create({ locale: 'de-DE', minFractionDigits: 2 }, 635524.23);
+        expect(input.value).toBe('635.524,23');
+
+        inputNumber.writeValue(null);
+        await render();
+        input.focus();
+        for (const key of '635524,23') {
+            await keypress(key);
+        }
+        expect(input.value).toBe('635.524,23');
+        expect(inputNumber.value()).toBe(635524.23);
+    });
+
+    it('accepts soft keyboard digits with minFractionDigits and a suffix (optimus-ui#71)', async () => {
+        await create({ locale: 'de-DE', mode: 'decimal', minFractionDigits: 2, suffix: ' €' }, null);
+        input.focus();
+
+        const softType = async (char: string) => {
+            const caret = input.selectionStart as number;
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229, bubbles: true }));
+            input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+            input.setSelectionRange(caret + 1, caret + 1);
+            input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: char, bubbles: true }));
+            await render();
+        };
+
+        for (const char of '123') {
+            await softType(char);
+        }
+        expect(input.value).toBe('123,00 €');
+        expect(inputNumber.value()).toBe(123);
+        expect(input.selectionStart).toBe(3);
+    });
+
+    it('exposes the current value to assistive technology (optimus-ui#643)', async () => {
+        await create({ min: 0, max: 100 }, 42);
+        expect(input.getAttribute('role')).toBe('spinbutton');
+        expect(input.getAttribute('aria-valuenow')).toBe('42');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputNumber, InputGroup, InputGroupAddon],
+    template: `
+        <p-inputgroup>
+            <p-inputnumber [showButtons]="showButtons" />
+            <p-inputgroup-addon>%</p-inputgroup-addon>
+        </p-inputgroup>
+        <p-inputgroup>
+            <p-inputgroup-addon>%</p-inputgroup-addon>
+            <p-inputnumber [showButtons]="showButtons" />
+        </p-inputgroup>
+    `
+})
+class TestThemedInputGroupInputNumberComponent {
+    showButtons = false;
+}
+
+describe('InputNumber themed inside an input group', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    for (const showButtons of [false, true]) {
+        it(`squares the corners next to an addon${showButtons ? ' with stacked buttons' : ''} (optimus-ui#912)`, async () => {
+            TestBed.configureTestingModule({
+                imports: [TestThemedInputGroupInputNumberComponent],
+                providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+            });
+            const fixture = TestBed.createComponent(TestThemedInputGroupInputNumberComponent);
+            fixture.componentInstance.showButtons = showButtons;
+            await fixture.whenStable();
+            const [first, last] = Array.from(fixture.nativeElement.querySelectorAll('input')).map((input) => getComputedStyle(input as HTMLInputElement));
+
+            expect(first.borderTopLeftRadius).not.toBe('0px');
+            expect([first.borderTopRightRadius, first.borderBottomRightRadius]).toEqual(['0px', '0px']);
+            expect([last.borderTopLeftRadius, last.borderBottomLeftRadius]).toEqual(['0px', '0px']);
+        });
+    }
 });
