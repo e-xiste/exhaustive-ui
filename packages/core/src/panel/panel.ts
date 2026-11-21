@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, model, NgModule, TemplateRef, ViewEncapsulation, contentChild, viewChild, contentChildren, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, model, NgModule, TemplateRef, ViewEncapsulation, contentChild, viewChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { uuid } from '@exhaustive-ui/utils';
 import { BlockableUI, Footer, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -108,7 +108,7 @@ export class Panel extends BaseComponent<PanelPassThrough> implements BlockableU
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     /**

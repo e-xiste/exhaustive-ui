@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
-import { ChangeDetectorRef, computed, Directive, effect, ElementRef, inject, InjectionToken, Injector, input, PLATFORM_ID, Renderer2, signal, SimpleChanges } from '@angular/core';
+import { afterEveryRender, ChangeDetectorRef, computed, Directive, effect, ElementRef, inject, InjectionToken, Injector, input, PLATFORM_ID, Renderer2, signal, SimpleChanges } from '@angular/core';
 import { Theme, ThemeService } from '@exhaustive-ui/styled';
 import { cn, getKeyValue, isArray, isFunction, isNotEmpty, isString, mergeProps, resolve, toFlatCase, uuid } from '@exhaustive-ui/utils';
 import type { Lifecycle, PassThroughOptions } from '@exhaustive-ui/core/api';
@@ -47,6 +47,8 @@ export class BaseComponent<PT = any> implements Lifecycle {
     private useStyle: UseStyle = inject(UseStyle);
 
     private _shadowRoot: ShadowRoot | undefined;
+
+    private _serverRenderCallbacks: (() => void)[] = [];
 
     public parent = this.$params.parent;
 
@@ -285,6 +287,7 @@ export class BaseComponent<PT = any> implements Lifecycle {
      * Use 'onAfterViewChecked()' in subclasses instead.
      */
     ngAfterViewChecked() {
+        this._serverRenderCallbacks.forEach((callback) => callback());
         this.onAfterViewChecked();
         this._hook('onAfterViewChecked');
     }
@@ -516,6 +519,17 @@ export class BaseComponent<PT = any> implements Lifecycle {
     }
 
     /******************** Exposed API ********************/
+
+    /**
+     * Passes the attributes returned by `attrs` (usually the host/root PassThrough) to a `Bind` host directive after every render.
+     * Render hooks never run on the server, so there the attributes are applied after every view check instead, and the server-rendered HTML contains them.
+     * Call it from the constructor.
+     */
+    protected bindHostAttrs(bind: { setAttrs(attrs: { [key: string]: any } | undefined): void }, attrs: () => { [key: string]: any } | undefined) {
+        const apply = () => bind.setAttrs(attrs());
+
+        isPlatformServer(this.platformId) ? this._serverRenderCallbacks.push(apply) : afterEveryRender(apply, { injector: this.injector });
+    }
 
     public ptm(key = '', params = {}) {
         return this._getPTValue(this.$pt() as any, key, { ...this.$params, ...params });

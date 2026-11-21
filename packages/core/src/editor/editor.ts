@@ -1,24 +1,5 @@
 import { CommonModule, isPlatformServer } from '@angular/common';
-import {
-    afterEveryRender,
-    afterNextRender,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    forwardRef,
-    inject,
-    InjectionToken,
-    input,
-    NgModule,
-    signal,
-    TemplateRef,
-    untracked,
-    ViewEncapsulation,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, forwardRef, inject, InjectionToken, input, NgModule, signal, TemplateRef, untracked, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { findSingle } from '@exhaustive-ui/utils';
 import { Header, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -226,7 +207,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         effect(() => {
             const readonly = this.readonly();
             const quill = untracked(() => this.quill());

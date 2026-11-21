@@ -1,23 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-    afterEveryRender,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    inject,
-    input,
-    NgModule,
-    numberAttribute,
-    signal,
-    TemplateRef,
-    untracked,
-    ViewEncapsulation,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, NgModule, numberAttribute, signal, TemplateRef, untracked, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { blockBodyScroll, unblockBodyScroll } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -53,7 +35,7 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         effect(() => {
             const blocked = this.blocked();
             untracked(() => {

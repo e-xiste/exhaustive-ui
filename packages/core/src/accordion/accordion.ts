@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, input, InputSignalWithTransform, model, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, input, InputSignalWithTransform, model, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, output } from '@angular/core';
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { findSingle, focus, getAttribute, uuid } from '@exhaustive-ui/utils';
 import { BlockableUI, SharedModule } from '@exhaustive-ui/core/api';
@@ -72,7 +72,7 @@ export class AccordionPanel extends BaseComponent<AccordionPanelPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -155,7 +155,7 @@ export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -340,7 +340,7 @@ export class AccordionContent extends BaseComponent<AccordionContentPassThrough>
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     pcAccordion = inject(forwardRef(() => Accordion));
@@ -387,7 +387,7 @@ export class Accordion extends BaseComponent<AccordionPassThrough> implements Bl
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     /**

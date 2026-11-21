@@ -1,10 +1,15 @@
 import { Base } from '@exhaustive-ui/core/base';
 import { Theme } from '@exhaustive-ui/styled';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, ViewEncapsulation } from '@angular/core';
+import { ɵgetDOM, ɵsetRootDomAdapter } from '@angular/common';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, ViewEncapsulation, ɵgetDocument, ɵsetDocument } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideServerRendering, renderApplication } from '@angular/platform-server';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { Button } from '@exhaustive-ui/core/button';
+import { Fieldset } from '@exhaustive-ui/core/fieldset';
 import { TableModule } from '@exhaustive-ui/core/table';
+import { Tag } from '@exhaustive-ui/core/tag';
 import Aura from '@exhaustive-ui/themes/aura';
 
 // Tests that load a theme preset change the global Theme state and add <style> tags to the document,
@@ -108,5 +113,50 @@ describe('BaseComponent inside a ViewEncapsulation.ShadowDom host', () => {
         expect(names(document)).toContain('button-style');
         expect(names(shadowRoot)).toEqual(names(document));
         expect(getComputedStyle(button).display).toBe('inline-flex');
+    });
+});
+
+@Component({
+    selector: 'app-ssr-root',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Tag, Fieldset],
+    template: `
+        <p-tag value="New" [pt]="{ root: { 'aria-label': 'status', class: 'pt-root-class' } }" />
+        <p-fieldset legend="Info" [pt]="{ host: { 'data-test': 'fieldset-host' } }">Content</p-fieldset>
+    `
+})
+class TestServerRenderedPTComponent {}
+
+describe('BaseComponent host PassThrough on the server', () => {
+    // The server platform replaces the global DOM adapter, document and DOM classes (Node, Event...) with its emulated ones;
+    // the other test files run in the same page, so put the browser ones back.
+    const domAdapter = ɵgetDOM();
+    const doc = ɵgetDocument();
+    const domClasses = Object.getOwnPropertyNames(globalThis)
+        .map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)?.value] as const)
+        .filter(([, value]) => typeof value === 'function');
+
+    afterEach(() => {
+        ɵsetRootDomAdapter(domAdapter);
+        ɵsetDocument(doc);
+        domClasses.forEach(([name, value]) => globalThis[name] !== value && (globalThis[name] = value));
+    });
+
+    it('renders the host and root PT attributes in the server output (optimus-ui#2083)', async () => {
+        const html = await renderApplication((context) => bootstrapApplication(TestServerRenderedPTComponent, { providers: [provideZonelessChangeDetection(), provideServerRendering()] }, context), {
+            document: '<html><head></head><body><app-ssr-root></app-ssr-root></body></html>',
+            url: '/'
+        });
+        const body = new DOMParser().parseFromString(html, 'text/html').body;
+        const tag = body.querySelector('p-tag') as HTMLElement;
+        const fieldset = body.querySelector('p-fieldset') as HTMLElement;
+
+        expect(tag.getAttribute('data-pc-name')).toBe('tag');
+        expect(tag.getAttribute('data-pc-section')).toBe('root');
+        expect(tag.getAttribute('aria-label')).toBe('status');
+        expect(tag.classList).toContain('pt-root-class');
+        expect(tag.classList).toContain('p-tag');
+        expect(fieldset.getAttribute('data-test')).toBe('fieldset-host');
+        expect(fieldset.getAttribute('data-pc-section')).toBe('host');
     });
 });

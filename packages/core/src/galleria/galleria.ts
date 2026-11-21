@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -111,7 +110,7 @@ export class Galleria extends BaseComponent<GalleriaPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
         effect(() => {
             if (this.visible()) {
                 this.renderMask.set(true);
@@ -567,7 +566,7 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.getPTOptions('root')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.getPTOptions('root'));
     }
 
     activeIndex = input<number>(0);
@@ -803,7 +802,7 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('itemsContainer')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('itemsContainer'));
         effect(() => {
             const autoPlay = this.autoPlay();
 
@@ -1055,7 +1054,7 @@ export class GalleriaThumbnails extends BaseComponent<GalleriaPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('thumbnails')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('thumbnails'));
         effect(() => {
             const activeIndex = this.activeIndex();
 

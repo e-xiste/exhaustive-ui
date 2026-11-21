@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -164,7 +163,7 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
                 }
             }
         });
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
 
     /**

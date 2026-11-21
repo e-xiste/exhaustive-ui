@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -406,7 +405,7 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
         afterNextRender(() => {
             if (isPlatformBrowser(this.platformId)) {
                 if (this.mode() === 'advanced') {

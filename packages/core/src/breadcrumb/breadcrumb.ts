@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, ChangeDetectionStrategy, Component, computed, inject, input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { MenuItem, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { Badge } from '@exhaustive-ui/core/badge';
@@ -215,7 +215,7 @@ export class Breadcrumb extends BaseComponent<BreadcrumbPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
     /**
      * An array of menuitems.

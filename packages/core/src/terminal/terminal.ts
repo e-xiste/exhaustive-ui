@@ -89,9 +89,8 @@ export class Terminal extends BaseComponent<TerminalPassThrough> {
                 this.commandProcessed.set(true);
             }
         });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-
             if (this.commandProcessed()) {
                 this.container.scrollTop = this.container.scrollHeight;
                 this.commandProcessed.set(false);

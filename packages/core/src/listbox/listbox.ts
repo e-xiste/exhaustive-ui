@@ -1,7 +1,6 @@
 import { CDK_DRAG_CONFIG, CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     ChangeDetectionStrategy,
     Component,
     ElementRef,
@@ -390,7 +389,7 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     /**

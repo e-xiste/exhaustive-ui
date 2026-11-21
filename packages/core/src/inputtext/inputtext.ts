@@ -1,4 +1,4 @@
-import { afterEveryRender, afterNextRender, booleanAttribute, computed, Directive, effect, HostListener, inject, input, NgModule } from '@angular/core';
+import { afterNextRender, booleanAttribute, computed, Directive, effect, HostListener, inject, input, NgModule } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { BaseModelHolder } from '@exhaustive-ui/core/basemodelholder';
@@ -95,9 +95,7 @@ export class InputText extends BaseModelHolder<InputTextPassThrough> {
             this.writeModelValue(this.ngControl?.value ?? this.el.nativeElement.value);
         });
 
-        afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptm('root'));
-        });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('root'));
     }
 
     onDoCheck() {

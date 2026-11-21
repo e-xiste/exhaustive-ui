@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -265,7 +264,7 @@ export class PanelMenuSub extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm(this.root() ? 'rootList' : 'submenu')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm(this.root() ? 'rootList' : 'submenu'));
     }
 
     getPTOptions(processedItem: any, index: number, key: string) {
@@ -1023,7 +1022,7 @@ export class PanelMenu extends BaseComponent<PanelMenuPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     getPTOptions(key: string, item: any, index: number) {

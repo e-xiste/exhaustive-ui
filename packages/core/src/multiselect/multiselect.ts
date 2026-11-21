@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -1343,9 +1342,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 this.show();
             }
         });
-        afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-        });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         // the list can change size while the overlay is open: position it again once the new content is rendered
         effect(() => {
             this._options();

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -98,7 +97,7 @@ export class ButtonLabel extends BaseComponent {
             this.pButtonLabelUnstyled() && this.directiveUnstyled.set(this.pButtonLabelUnstyled());
         });
 
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 }
 
@@ -148,7 +147,7 @@ export class ButtonIcon extends BaseComponent {
             this.pButtonUnstyled() && this.directiveUnstyled.set(this.pButtonUnstyled());
         });
 
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 }
 /**
@@ -270,7 +269,7 @@ export class ButtonDirective extends BaseComponent {
             this.initialized.set(true);
         });
 
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('root')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('root'));
     }
 
     /**
@@ -626,7 +625,7 @@ export class Button extends BaseComponent<ButtonPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
 
     /**

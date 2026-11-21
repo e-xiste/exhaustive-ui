@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -158,7 +157,7 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
      * MenuModel instance to define the overlay items.

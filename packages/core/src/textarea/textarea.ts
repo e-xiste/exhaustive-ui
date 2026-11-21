@@ -1,4 +1,4 @@
-import { afterEveryRender, booleanAttribute, computed, DestroyRef, Directive, effect, HostListener, inject, input, NgModule, output } from '@angular/core';
+import { booleanAttribute, computed, DestroyRef, Directive, effect, HostListener, inject, input, NgModule, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -96,9 +96,7 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
             this.pTextareaUnstyled() && this.directiveUnstyled.set(this.pTextareaUnstyled());
         });
 
-        afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-        });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     onInit() {

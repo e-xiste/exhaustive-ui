@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -308,7 +307,7 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     positionSubmenu(sublist) {
@@ -671,7 +670,7 @@ export class TieredMenu extends BaseComponent<TieredMenuPassThrough> {
                 this.unbindResizeListener();
             }
         });
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     onInit() {

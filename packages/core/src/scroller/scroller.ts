@@ -507,8 +507,9 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
             });
         });
 
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
+
         afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptm('host'));
             if (!this.initialized()) {
                 this.viewInit();
             }

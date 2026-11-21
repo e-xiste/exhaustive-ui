@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    afterEveryRender,
-    afterNextRender,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    forwardRef,
-    HostListener,
-    inject,
-    input,
-    NgModule,
-    numberAttribute,
-    signal,
-    TemplateRef,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, HostListener, inject, input, NgModule, numberAttribute, signal, TemplateRef, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -80,7 +62,7 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         // The host element is the focusable button itself, so `autofocus` is applied to it directly
         // (the pAutoFocus directive cannot be used here: its input has no boolean attribute transform).
         afterNextRender(() => {

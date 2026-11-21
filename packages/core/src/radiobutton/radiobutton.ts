@@ -1,4 +1,4 @@
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, inject, Injectable, Injector, input, NgModule, numberAttribute, signal, viewChild, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, inject, Injectable, Injector, input, NgModule, numberAttribute, signal, viewChild, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { AutoFocus } from '@exhaustive-ui/core/autofocus';
@@ -105,7 +105,7 @@ export class RadioButton extends BaseEditableHolder<RadioButtonPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     /**

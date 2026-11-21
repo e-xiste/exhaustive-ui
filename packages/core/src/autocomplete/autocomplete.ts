@@ -989,8 +989,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
             this.suggestions();
             untracked(() => this.handleSuggestionsChange());
         });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
             //Use timeouts as since Angular 4.2, AfterViewChecked is broken and not called after panel is updated
             if (this.suggestionsUpdated()) {
                 this.zone.runOutsideAngular(() => {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, afterNextRender, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, TemplateRef, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
 import { getOuterHeight } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -123,7 +123,7 @@ export class MeterGroup extends BaseComponent<MeterGroupPassThrough> {
             const height = getOuterHeight(_container);
             this.vertical() && (_container.style.height = height + 'px');
         });
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
      * Current value of the metergroup.

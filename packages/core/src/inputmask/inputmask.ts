@@ -27,7 +27,6 @@
 */
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -805,7 +804,7 @@ export class InputMask extends BaseInput<InputMaskPassThrough> {
             maskBound = true;
         });
 
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     ptmParams = computed(() => ({ context: { filled: this.$variant() === 'filled' } }));

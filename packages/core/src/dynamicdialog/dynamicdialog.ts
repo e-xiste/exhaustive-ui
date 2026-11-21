@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, afterNextRender, ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, signal, Type, ViewEncapsulation, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, ComponentRef, inject, InjectionToken, NgModule, signal, Type, ViewEncapsulation, viewChild } from '@angular/core';
 import { uuid } from '@exhaustive-ui/utils';
 import { SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -116,7 +116,7 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterNextRender(() => {
             this.loadChildComponent(this.childComponentType()!);
             this.cd.detectChanges();

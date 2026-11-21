@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -540,7 +539,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         effect(() => {
             const path = this.activeItemPath();
 

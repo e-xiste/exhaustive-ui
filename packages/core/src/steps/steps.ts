@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, model, NgModule, ViewEncapsulation, viewChild } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, model, NgModule, ViewEncapsulation, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { find, findSingle } from '@exhaustive-ui/utils';
@@ -98,7 +98,7 @@ export class Steps extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
     /**
      * Index of the active item. Emits the new index through `activeIndexChange` when a step is selected.

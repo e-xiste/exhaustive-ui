@@ -1,4 +1,4 @@
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, Directive, effect, inject, input, NgModule, signal, untracked, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, Directive, effect, inject, input, NgModule, signal, untracked, ViewEncapsulation } from '@angular/core';
 import { addClass, createElement, hasClass, removeClass, uuid } from '@exhaustive-ui/utils';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -275,7 +275,7 @@ export class Badge extends BaseComponent<BadgePassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
      * Size of the badge, valid options are "large" and "xlarge".

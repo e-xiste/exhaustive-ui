@@ -1,6 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import {
-    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -286,7 +285,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
         this.confirmationService.requireConfirmation$.pipe(takeUntilDestroyed()).subscribe((confirmation) => {
             if (!confirmation) {
                 this.hide();

@@ -1,4 +1,4 @@
-import { afterEveryRender, afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, viewChild, output } from '@angular/core';
+import { afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, viewChild, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { OverlayOptions, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
@@ -93,7 +93,7 @@ export class ColorPicker extends BaseEditableHolder<ColorPickerPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterNextRender(() => {
             if (this.inline()) {
                 this.updateColorSelector();

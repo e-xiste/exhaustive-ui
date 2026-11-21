@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    afterEveryRender,
-    afterNextRender,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    input,
-    NgModule,
-    NgZone,
-    numberAttribute,
-    signal,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren
-} from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, NgModule, NgZone, numberAttribute, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren } from '@angular/core';
 import { addClass, getHeight, removeClass, uuid } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -103,7 +85,7 @@ export class ScrollPanel extends BaseComponent<ScrollPanelPassThrough> {
                 this.initialized.set(true);
             });
         });
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
      * Step factor to scroll the content while pressing the arrow keys.

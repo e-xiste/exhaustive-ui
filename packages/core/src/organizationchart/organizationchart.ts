@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, model, NgModule, TemplateRef, ViewEncapsulation, contentChildren, contentChild, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, model, NgModule, TemplateRef, ViewEncapsulation, contentChildren, contentChild, output } from '@angular/core';
 import { isAttributeEquals } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule, TreeNode } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -254,7 +254,7 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     readonly root = computed<TreeNode<any> | null>(() => {

@@ -1,4 +1,4 @@
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, inject, input, NgModule, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, NgModule, ViewEncapsulation } from '@angular/core';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -63,7 +63,7 @@ export class OverlayBadge extends BaseComponent<OverlayBadgePassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
     }
 
     _componentStyle = inject(OverlayBadgeStyle);

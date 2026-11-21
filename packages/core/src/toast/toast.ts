@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { afterEveryRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, contentChildren, effect, inject, input, NgModule, NgZone, numberAttribute, output, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, contentChildren, effect, inject, input, NgModule, NgZone, numberAttribute, output, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { isEmpty, setAttribute, uuid } from '@exhaustive-ui/utils';
 import { MessageService, PrimeTemplate, SharedModule, ToastMessageOptions } from '@exhaustive-ui/core/api';
@@ -259,9 +259,7 @@ export class Toast extends BaseComponent<ToastPassThrough> {
     constructor() {
         super();
 
-        afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-        });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     /**

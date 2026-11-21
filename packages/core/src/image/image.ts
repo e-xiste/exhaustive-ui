@@ -1,23 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    afterEveryRender,
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    HostListener,
-    inject,
-    input,
-    NgModule,
-    signal,
-    TemplateRef,
-    ViewEncapsulation,
-    viewChild,
-    contentChild,
-    contentChildren,
-    output
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { appendChild, focus } from '@exhaustive-ui/utils';
@@ -170,7 +152,7 @@ export class Image extends BaseComponent<ImagePassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
      * Style class of the image element.

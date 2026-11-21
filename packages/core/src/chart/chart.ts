@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { afterEveryRender, afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, NgModule, NgZone, signal, untracked, ViewEncapsulation, output } from '@angular/core';
+import { afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, NgModule, NgZone, signal, untracked, ViewEncapsulation, output } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
@@ -44,7 +44,7 @@ export class UIChart extends BaseComponent<ChartPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         effect(() => {
             this.data();
             this.options();

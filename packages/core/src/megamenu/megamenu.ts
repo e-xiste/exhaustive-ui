@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -300,7 +299,7 @@ export class MegaMenuSub extends BaseComponent<MegaMenuPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm(this.root() ? 'rootList' : 'submenu')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm(this.root() ? 'rootList' : 'submenu'));
     }
 
     onItemClick(event: any, processedItem: any) {
@@ -656,7 +655,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
                 }
             });
         });
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     onInit(): void {

@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     ChangeDetectionStrategy,
     Component,
@@ -85,7 +84,7 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         effect(() => {
             const panelSizes = this.panelSizes();
 

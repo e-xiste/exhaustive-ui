@@ -1,4 +1,4 @@
-import { afterEveryRender, ChangeDetectionStrategy, Component, inject, NgModule } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, NgModule } from '@angular/core';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -29,7 +29,7 @@ export class InputGroup extends BaseComponent<InputGroupPassThrough> {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 }
 
