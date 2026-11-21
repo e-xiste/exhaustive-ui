@@ -512,6 +512,14 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         afterEveryRender(() => {
             if (!this.initialized()) {
                 this.viewInit();
+            } else if (this.pendingScrollToIndex) {
+                // a scroll requested before the viewport could be laid out was clamped by the browser:
+                // apply it again once the spacer has been rendered at its full size
+                const element = this.elementViewChild()?.nativeElement;
+                if (element && (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth)) {
+                    const { index, behavior } = this.pendingScrollToIndex;
+                    this.scrollToIndex(index, behavior);
+                }
             }
         });
     }
@@ -536,6 +544,7 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.defaultContentWidth.set(getWidth(this.contentEl()));
                 this.defaultContentHeight.set(getHeight(this.contentEl()));
                 this.initialized.set(true);
+
             }
         }
     }
@@ -587,10 +596,13 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         this.elementViewChild()?.nativeElement?.scrollTo(options);
     }
 
+    private pendingScrollToIndex: { index: number | number[]; behavior: ScrollBehavior } | null = null;
+
     scrollToIndex(index: number | number[], behavior: ScrollBehavior = 'auto') {
         const valid = this.both() ? (index as number[]).every((i) => i > -1) : (index as number) > -1;
 
         if (valid) {
+            this.pendingScrollToIndex = this.initialized() ? null : { index, behavior };
             const first = this.first();
             const { scrollTop = 0, scrollLeft = 0 } = this.elementViewChild()?.nativeElement;
             const { numToleratedItems } = this.calculateNumItems();
