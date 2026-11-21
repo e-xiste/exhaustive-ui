@@ -1250,6 +1250,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     _sortOrder = linkedSignal<number>(() => this.sortOrder());
 
+    /** Field and order of the last single sort, to ignore a sortField/sortOrder binding that only mirrors it. */
+    private lastSingleSort: SortMeta | null = null;
+
     preventSelectionSetterPropagation = signal<boolean | undefined>(undefined);
 
     anchorRowIndex = signal<number | undefined | null>(undefined);
@@ -1361,14 +1364,18 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             });
         });
         effect(() => {
-            this.sortField();
+            const sortField = this.sortField();
             this.groupRowsBy();
-            this.sortOrder();
+            const sortOrder = this.sortOrder();
             this.groupRowsByOrder();
 
             untracked(() => {
+                // a consumer writing back the sort it received in onLazyLoad must not load the data again
+                const mirrorsLastSort = this.lazy() && this.lastSingleSort?.field === sortField && this.lastSingleSort?.order === sortOrder;
+                if (!mirrorsLastSort) this.lastSingleSort = null;
+
                 //avoid triggering lazy load prior to lazy initialization at onInit
-                if (!this.lazy() || this.initialized()) {
+                if ((!this.lazy() || this.initialized()) && !mirrorsLastSort) {
                     if (this.sortMode() === 'single') {
                         this.sortSingle();
                     }
@@ -1617,6 +1624,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 field: field,
                 order: order
             };
+            this.lastSingleSort = sortMeta;
 
             this.onSort.emit(sortMeta);
             this.tableService.onSort(sortMeta);
