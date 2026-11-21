@@ -2790,6 +2790,21 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
 
+    // keyboard alternative to the drag and drop: move the column one place towards the given direction
+    onColumnKeyboardReorder(event: KeyboardEvent, columnElement: any) {
+        const isRTL = getComputedStyle(this.el?.nativeElement ?? document.documentElement).direction === 'rtl';
+        const forward = (event.code === 'ArrowRight') !== isRTL;
+        const dropColumn = forward ? columnElement.nextElementSibling : columnElement.previousElementSibling;
+
+        if (this.reorderableColumns() && dropColumn?.hasAttribute('preorderablecolumn')) {
+            this.draggedColumn.set(columnElement);
+            this.dropPosition.set(forward ? 1 : -1);
+            this.onColumnDrop(event, dropColumn);
+            // re-rendering the header can move the focused cell: keep the focus on it
+            setTimeout(() => columnElement.isConnected && columnElement.focus());
+        }
+    }
+
     onColumnDragEnd() {
         // a drop outside a header fires no drop event: clear the drag state here
         if (this.draggedColumn()) {
@@ -2890,6 +2905,26 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         //cleanup
         this.onRowDragLeave(event, rowElement);
         this.onRowDragEnd(event);
+    }
+
+    // keyboard alternative to the drag and drop: move the row one place up (-1) or down (1)
+    onRowKeyboardReorder(event: KeyboardEvent, index: number, offset: number) {
+        const value = this._value();
+        const dropIndex = index + offset;
+
+        if (value && dropIndex >= 0 && dropIndex < value.length) {
+            event.preventDefault();
+            ObjectUtils.reorderArray(value, index, dropIndex);
+
+            if (this.virtualScroll()) {
+                this._value.set([...value]);
+            }
+
+            this.onRowReorder.emit({
+                dragIndex: index,
+                dropIndex: dropIndex
+            });
+        }
     }
 
     readonly isEmpty = computed(() => {
@@ -4421,7 +4456,9 @@ export class ResizableColumn extends BaseComponent {
     selector: '[pReorderableColumn]',
     standalone: false,
     host: {
-        '[class]': "cx('reorderableColumn')"
+        '[class]': "cx('reorderableColumn')",
+        '[attr.tabindex]': 'isEnabled() && dataTable.reorderableColumns() ? "0" : null',
+        '[attr.aria-keyshortcuts]': 'isEnabled() && dataTable.reorderableColumns() ? "Control+ArrowLeft Control+ArrowRight Meta+ArrowLeft Meta+ArrowRight" : null'
     },
     providers: [TableStyle]
 })
@@ -4534,6 +4571,15 @@ export class ReorderableColumn extends BaseComponent {
     onDrop(event: any) {
         if (this.isEnabled()) {
             this.dataTable.onColumnDrop(event, this.el.nativeElement);
+        }
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        // Ctrl/Cmd + Left/Right on the header cell itself, not on an input or a button inside it
+        if (this.isEnabled() && (event.ctrlKey || event.metaKey) && (event.code === 'ArrowLeft' || event.code === 'ArrowRight') && event.target === this.el.nativeElement) {
+            event.preventDefault();
+            this.dataTable.onColumnKeyboardReorder(event, this.el.nativeElement);
         }
     }
 
@@ -5290,13 +5336,17 @@ export class TableHeaderCheckbox extends BaseComponent {
     selector: '[pReorderableRowHandle]',
     standalone: false,
     host: {
-        '[class]': "cx('reorderableRowHandle')"
+        '[class]': "cx('reorderableRowHandle')",
+        '[attr.tabindex]': 'row?.isEnabled() ? "0" : null',
+        '[attr.aria-keyshortcuts]': 'row?.isEnabled() ? "Control+ArrowUp Control+ArrowDown Meta+ArrowUp Meta+ArrowDown" : null'
     },
     providers: [TableStyle],
     hostDirectives: [Bind]
 })
 export class ReorderableRowHandle extends BaseComponent {
     el = inject(ElementRef);
+
+    row = inject(ReorderableRow, { optional: true });
 
     hostName = 'Table';
 
@@ -5307,6 +5357,18 @@ export class ReorderableRowHandle extends BaseComponent {
     constructor() {
         super();
         afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRowHandle')));
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        // Ctrl/Cmd + Up/Down moves the row; stop it there so a selectable row does not move the focus too
+        if (this.row?.isEnabled() && (event.ctrlKey || event.metaKey) && (event.code === 'ArrowUp' || event.code === 'ArrowDown')) {
+            event.stopPropagation();
+            this.row.dataTable.onRowKeyboardReorder(event, <number>this.row.index(), event.code === 'ArrowUp' ? -1 : 1);
+            // re-rendering the body moves the row: keep the focus on the handle
+            const handle = this.el.nativeElement;
+            setTimeout(() => handle.isConnected && handle.focus());
+        }
     }
 }
 

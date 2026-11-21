@@ -3813,3 +3813,118 @@ describe('Table frozen footer cells', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [columns]="cols" [reorderableColumns]="true" (onColReorder)="colReorder = $event" (onRowReorder)="rowReorder = $event">
+            <ng-template #header let-columns>
+                <tr>
+                    <th></th>
+                    @for (col of columns; track col.field) {
+                        <th pReorderableColumn>{{ col.header }}</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template #body let-row let-columns="columns" let-index="rowIndex">
+                <tr [pReorderableRow]="index">
+                    <td><span pReorderableRowHandle>=</span></td>
+                    @for (col of columns; track col.field) {
+                        <td>{{ row[col.field] }}</td>
+                    }
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestKeyboardReorderComponent {
+    cols = [
+        { field: 'a', header: 'A' },
+        { field: 'b', header: 'B' },
+        { field: 'c', header: 'C' }
+    ];
+    rows = [
+        { a: 'a1', b: 'b1', c: 'c1' },
+        { a: 'a2', b: 'b2', c: 'c2' },
+        { a: 'a3', b: 'b3', c: 'c3' }
+    ];
+    colReorder: any;
+    rowReorder: any;
+}
+
+describe('Table keyboard reorder (optimus-ui#13)', () => {
+    let fixture: ComponentFixture<TestKeyboardReorderComponent>;
+
+    const press = (element: HTMLElement, code: string, init: KeyboardEventInit = { ctrlKey: true }) => element.dispatchEvent(new KeyboardEvent('keydown', { code, key: code, bubbles: true, cancelable: true, ...init }));
+    const headers = () => Array.from(fixture.nativeElement.querySelectorAll('thead th')).map((th: any) => th.textContent.trim());
+    const firstCells = () => Array.from(fixture.nativeElement.querySelectorAll('tbody tr')).map((tr: any) => tr.children[1].textContent.trim());
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestKeyboardReorderComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        fixture = TestBed.createComponent(TestKeyboardReorderComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+    });
+
+    afterEach(() => fixture.nativeElement.remove());
+
+    it('makes reorderable columns and row handles focusable', () => {
+        const th = fixture.nativeElement.querySelectorAll('thead th')[1] as HTMLElement;
+        const handle = fixture.nativeElement.querySelector('[preorderablerowhandle]') as HTMLElement;
+
+        expect(th.getAttribute('tabindex')).toBe('0');
+        expect(th.getAttribute('aria-keyshortcuts')).toContain('Control+ArrowRight');
+        expect(handle.getAttribute('tabindex')).toBe('0');
+        expect(handle.getAttribute('aria-keyshortcuts')).toContain('Control+ArrowDown');
+    });
+
+    it('moves a column with Ctrl+ArrowRight and Cmd+ArrowLeft', async () => {
+        const th = fixture.nativeElement.querySelectorAll('thead th')[1] as HTMLElement;
+
+        press(th, 'ArrowRight');
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.colReorder).toEqual(expect.objectContaining({ dragIndex: 0, dropIndex: 1 }));
+        expect(headers()).toEqual(['', 'B', 'A', 'C']);
+        expect(firstCells()).toEqual(['b1', 'b2', 'b3']);
+
+        press(th, 'ArrowLeft', { metaKey: true });
+        await fixture.whenStable();
+
+        expect(headers()).toEqual(['', 'A', 'B', 'C']);
+    });
+
+    it('does not move a column without the modifier or past the reorderable columns', async () => {
+        const ths = fixture.nativeElement.querySelectorAll('thead th');
+
+        press(ths[1], 'ArrowRight', {});
+        press(ths[1], 'ArrowLeft');
+        press(ths[3], 'ArrowRight');
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.colReorder).toBeUndefined();
+        expect(headers()).toEqual(['', 'A', 'B', 'C']);
+    });
+
+    it('moves a row with Ctrl+ArrowDown and Ctrl+ArrowUp on its handle', async () => {
+        const handle = fixture.nativeElement.querySelector('[preorderablerowhandle]') as HTMLElement;
+
+        press(handle, 'ArrowDown');
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.rowReorder).toEqual({ dragIndex: 0, dropIndex: 1 });
+        expect(firstCells()).toEqual(['a2', 'a1', 'a3']);
+
+        press(handle, 'ArrowUp');
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.rowReorder).toEqual({ dragIndex: 1, dropIndex: 0 });
+        expect(firstCells()).toEqual(['a1', 'a2', 'a3']);
+
+        press(handle, 'ArrowUp');
+        await fixture.whenStable();
+        expect(firstCells()).toEqual(['a1', 'a2', 'a3']);
+    });
+});
