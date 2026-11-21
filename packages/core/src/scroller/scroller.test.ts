@@ -5264,3 +5264,37 @@ describe('Scroller spacer', () => {
         expect(el.scrollHeight).toBe(100 * 50);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="50" scrollHeight="200px" [lazy]="true">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item ?? 'loading' }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestLazyPlaceholderScrollerComponent {
+    // the items not loaded yet are undefined
+    items = signal<any[]>(Array.from({ length: 100 }));
+}
+
+describe('Scroller lazy placeholders', () => {
+    it('renders the undefined items not loaded yet without duplicate track keys', async () => {
+        const warn = vi.spyOn(console, 'warn');
+        TestBed.configureTestingModule({ imports: [TestLazyPlaceholderScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestLazyPlaceholderScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+        fixture.componentInstance.items.update((items) => items.map((item, i) => (i < 3 ? 'Item ' + i : item)));
+        await fixture.whenStable();
+
+        const texts = Array.from(fixture.nativeElement.querySelectorAll('.p-virtualscroller-content > div')).map((div: any) => div.textContent.trim());
+        expect(texts.slice(0, 4)).toEqual(['Item 0', 'Item 1', 'Item 2', 'loading']);
+        expect(warn.mock.calls.some((call) => String(call[0]).includes('NG0955'))).toBe(false);
+        warn.mockRestore();
+    });
+});

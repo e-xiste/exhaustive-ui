@@ -57,7 +57,7 @@ const SCROLLER_INSTANCE = new InjectionToken<Scroller>('SCROLLER_INSTANCE');
                     <ng-container *ngTemplateOutlet="contentTemplate() || _contentTemplate(); context: { $implicit: loadedItems(), options: getContentOptions() }"></ng-container>
                 } @else {
                     <div #content [class]="cn(cx('content'), contentStyleClass())" [style]="contentStyle()" [pBind]="ptm('content')">
-                        @for (item of loadedItems(); track _trackBy() ? _trackBy()($index, item) : item; let index = $index) {
+                        @for (item of loadedItems(); track _trackBy() ? _trackBy()($index, item) : trackItem($index, item); let index = $index) {
                             <ng-container *ngTemplateOutlet="itemTemplate() || _itemTemplate(); context: { $implicit: item, options: getOptions(index) }"></ng-container>
                         }
                     </div>
@@ -1132,6 +1132,13 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
             orientation: this._orientation(),
             scrollableElement: this.elementViewChild()?.nativeElement
         };
+    }
+
+    /**
+     * The items of a lazy list that are not loaded yet are all undefined: track them by position.
+     */
+    trackItem(index: number, item: any) {
+        return item === undefined ? 'p-virtualscroller-pending-' + ((this.both() ? this.first().rows : this.first()) + index) : item;
     }
 
     getOptions(renderedIndex: number) {
