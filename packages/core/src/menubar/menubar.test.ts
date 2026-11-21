@@ -1930,3 +1930,32 @@ describe('Menubar submenu viewport position', () => {
         expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight);
     });
 });
+
+describe('Menubar destroyed while it loses the focus', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Menubar],
+        template: `<p-menubar [model]="items" (onBlur)="blurred = true" />`
+    })
+    class DestroyOnBlurHost {
+        items: MenuItem[] = [{ label: 'Go' }];
+        blurred = false;
+    }
+
+    it('does not emit onBlur after it is destroyed, e.g. by an item command that navigates away', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({ imports: [DestroyOnBlurHost], providers: [provideZonelessChangeDetection()] }).createComponent(DestroyOnBlurHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const menubar: Menubar = fixture.debugElement.query(By.directive(Menubar)).componentInstance;
+        const warn = vi.spyOn(console, 'warn');
+
+        menubar.onMenuBlur(new FocusEvent('blur'));
+        fixture.destroy();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        expect(fixture.componentInstance.blurred).toBe(false);
+        expect(warn.mock.calls.some((call) => String(call[0]).includes('NG0953'))).toBe(false);
+        warn.mockRestore();
+    });
+});

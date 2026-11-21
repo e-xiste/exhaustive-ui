@@ -878,7 +878,9 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             return;
         }
 
-        setTimeout(() => {
+        clearTimeout(this.blurTimeout);
+        this.blurTimeout = setTimeout(() => {
+            this.blurTimeout = undefined;
             const activeElement = this.document.activeElement;
             if (activeElement && this.el.nativeElement.contains(activeElement)) {
                 return;
@@ -891,6 +893,9 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
             this.onBlur.emit(event);
         });
     }
+
+    // pending blur handling: an item command that navigates away destroys the menubar before it runs
+    private blurTimeout: ReturnType<typeof setTimeout> | undefined;
 
     onKeyDown(event: KeyboardEvent) {
         const metaKey = event.metaKey || event.ctrlKey;
@@ -1259,6 +1264,7 @@ export class Menubar extends BaseComponent<MenubarPassThrough> {
     }
 
     onDestroy() {
+        clearTimeout(this.blurTimeout);
         this.mouseLeaveSubscriber()?.unsubscribe();
         this.unbindOutsideClickListener();
         this.unbindResizeListener();
