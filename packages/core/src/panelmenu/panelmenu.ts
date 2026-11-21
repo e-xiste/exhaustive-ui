@@ -56,14 +56,18 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                     [attr.aria-posinset]="getAriaPosInset(index)"
                     [class]="cn(cx('item', { processedItem }), getItemProp(processedItem, 'styleClass'))"
                     [ngStyle]="getItemProp(processedItem, 'style')"
-                    [pTooltip]="getItemProp(processedItem, 'tooltip')"
-                    [pTooltipUnstyled]="unstyled()"
                     [pBind]="getPTOptions(processedItem, index, 'item')"
                     [attr.data-p-disabled]="isItemDisabled(processedItem)"
                     [attr.data-p-focused]="isItemFocused(processedItem)"
-                    [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
                 >
-                    <div [class]="cx('itemContent')" [pBind]="getPTOptions(processedItem, index, 'itemContent')" (click)="onItemClick($event, processedItem)">
+                    <div
+                        [class]="cx('itemContent')"
+                        [pTooltip]="getItemProp(processedItem, 'tooltip')"
+                        [pTooltipUnstyled]="unstyled()"
+                        [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
+                        [pBind]="getPTOptions(processedItem, index, 'itemContent')"
+                        (click)="onItemClick($event, processedItem)"
+                    >
                         @if (!itemTemplate()) {
                             @if (!getItemProp(processedItem, 'routerLink')) {
                                 <a

@@ -2010,3 +2010,56 @@ describe('PanelMenu model replacement (optimus-ui#904)', () => {
         expect(labels()).toEqual(['New', 'Open', 'Save', 'As PDF', 'Copy']);
     });
 });
+
+describe('PanelMenu item tooltip of an expanded group (optimus-ui#827)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" style="display: block; width: 250px" />` })
+    class TooltipHost {
+        model: MenuItem[] = [
+            {
+                label: 'Components Store',
+                expanded: true,
+                items: [
+                    {
+                        label: 'Inputs',
+                        expanded: true,
+                        tooltip: 'Inputs tooltip',
+                        tooltipOptions: { tooltipPosition: 'right', showDelay: 0, hideDelay: 0 },
+                        items: Array.from({ length: 10 }, (_, i) => ({ label: `Field ${i}` }))
+                    }
+                ]
+            }
+        ];
+    }
+
+    it('places the tooltip next to the item row, not next to its expanded sub list', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [TooltipHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(TooltipHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const inputs = fixture.nativeElement.querySelector('li[aria-label="Inputs"]') as HTMLElement;
+        const content = inputs.querySelector('[data-pc-section="itemcontent"]') as HTMLElement;
+        // a real pointer entering the row enters the li and then its content
+        inputs.dispatchEvent(new MouseEvent('mouseenter'));
+        content.dispatchEvent(new MouseEvent('mouseenter'));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const tooltips = document.querySelectorAll('.p-tooltip');
+        expect(tooltips.length).toBe(1);
+        const tooltipRect = tooltips[0].getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        const tooltipCenter = tooltipRect.top + tooltipRect.height / 2;
+        expect(tooltipCenter).toBeGreaterThanOrEqual(contentRect.top);
+        expect(tooltipCenter).toBeLessThanOrEqual(contentRect.bottom);
+
+        content.dispatchEvent(new MouseEvent('mouseleave'));
+        inputs.dispatchEvent(new MouseEvent('mouseleave'));
+        fixture.destroy();
+        fixture.nativeElement.remove();
+        document.querySelectorAll('.p-tooltip').forEach((el) => el.remove());
+    });
+});
