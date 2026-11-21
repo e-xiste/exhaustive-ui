@@ -3366,3 +3366,27 @@ describe('DatePicker server rendering with hydration (optimus-ui#34)', () => {
         expect(html).toContain('ngh=');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [DatePicker],
+    template: `<p-datepicker [touchUI]="true"></p-datepicker>`
+})
+class TouchUIDatePickerDestroyHostComponent {}
+
+describe('DatePicker destroyed while the touchUI panel is open', () => {
+    it('releases the body scroll lock and removes its mask', async () => {
+        TestBed.configureTestingModule({ imports: [TouchUIDatePickerDestroyHostComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(TouchUIDatePickerDestroyHostComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('input') as HTMLInputElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(true);
+        expect(document.querySelector('.p-datepicker-mask')).not.toBeNull();
+
+        fixture.destroy();
+
+        expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
+    });
+});
