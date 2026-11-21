@@ -1,5 +1,5 @@
 import type { Mock } from 'vitest';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -2647,5 +2647,48 @@ describe('Password toggleMask keyboard access (optimus-ui#823)', () => {
         fixture.detectChanges();
         await fixture.whenStable();
         expect(fixture.componentInstance.unmasked()).toBe(false);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [PasswordDirective],
+    template: `<input type="password" pPassword [mediumRegex]="mediumRegex()" [strongRegex]="strongRegex()" />`
+})
+class TestPasswordDirectiveRegexComponent {
+    mediumRegex = signal<string | undefined>('^.{4,}$');
+    strongRegex = signal<string | undefined>('^.{6,}$');
+}
+
+describe('PasswordDirective strength regexes (optimus-ui#953)', () => {
+    it('grades the strength with mediumRegex and strongRegex', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestPasswordDirectiveRegexComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestPasswordDirectiveRegexComponent);
+        await fixture.whenStable();
+        const directive = fixture.debugElement.query(By.directive(PasswordDirective)).injector.get(PasswordDirective);
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        const typeValue = async (value: string) => {
+            input.value = value;
+            input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+            await fixture.whenStable();
+        };
+
+        await typeValue('abc');
+        expect(directive.strength()).toBe('weak');
+        await typeValue('abcd');
+        expect(directive.strength()).toBe('medium');
+        await typeValue('abcdef');
+        expect(directive.strength()).toBe('strong');
+
+        // without the regexes the directive keeps its score based grading
+        fixture.componentInstance.mediumRegex.set(undefined);
+        fixture.componentInstance.strongRegex.set(undefined);
+        await fixture.whenStable();
+        await typeValue('abcdef');
+        expect(directive.strength()).toBe('weak');
+        directive.onDestroy();
     });
 });
