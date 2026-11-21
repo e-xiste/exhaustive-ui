@@ -120,6 +120,7 @@ const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_
                             [pTooltip]="getItemProp(processedItem, 'tooltip')"
                             [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
                             [pTooltipUnstyled]="unstyled()"
+                            (click)="onListItemClick($event, processedItem)"
                         >
                             <div
                                 [class]="cx('itemContent')"
@@ -450,6 +451,13 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
             const { event, processedItem } = param;
             // an event re-emitted by a nested submenu already carries the pointer type of its own item
             this.itemMouseEnter.emit({ originalEvent: event, processedItem, pointerType: param.pointerType ?? this.lastPointerType });
+        }
+    }
+
+    /** Screen readers activate the element with role="menuitem" itself, not its inner content. */
+    onListItemClick(event: MouseEvent, processedItem: any) {
+        if (event.target === event.currentTarget) {
+            this.onItemClick(event, processedItem);
         }
     }
 

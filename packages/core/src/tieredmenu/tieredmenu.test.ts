@@ -1945,3 +1945,49 @@ describe('TieredMenu with a large model (optimus-ui#504)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+describe('TieredMenu item activated by a screen reader (optimus-ui#249)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TieredMenu],
+        template: `<p-tieredmenu [model]="model" />`
+    })
+    class ScreenReaderHost {
+        executed: string[] = [];
+        model: MenuItem[] = [
+            { label: 'Update', command: () => this.executed.push('Update') },
+            { label: 'More', items: [{ label: 'Delete', command: () => this.executed.push('Delete') }] }
+        ];
+    }
+
+    it('runs the command when the menuitem element itself is clicked', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [ScreenReaderHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(ScreenReaderHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        // screen readers (Narrator, NVDA browse mode) dispatch the click on the element with role="menuitem"
+        (fixture.nativeElement.querySelector('li[aria-label="Update"]') as HTMLElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.componentInstance.executed).toEqual(['Update']);
+
+        (fixture.nativeElement.querySelector('li[aria-label="More"]') as HTMLElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const deleteItem = fixture.nativeElement.querySelector('li[aria-label="Delete"]') as HTMLElement;
+        expect(deleteItem).toBeTruthy();
+
+        // a click on a nested item runs its own command only, not the one of its parent item
+        deleteItem.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.componentInstance.executed).toEqual(['Update', 'Delete']);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+});
