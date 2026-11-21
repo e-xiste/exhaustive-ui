@@ -51,7 +51,7 @@ import {
     reorderArray,
     resolveFieldData
 } from '@exhaustive-ui/utils';
-import { BlockableUI, FilterMetadata, FilterService, PrimeTemplate, ScrollerOptions, SharedModule, SortMeta, TreeNode, TreeTableNode } from '@exhaustive-ui/core/api';
+import { BlockableUI, FilterMetadata, FilterService, OverlayService, PrimeTemplate, ScrollerOptions, SharedModule, SortMeta, TreeNode, TreeTableNode } from '@exhaustive-ui/core/api';
 import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -1018,6 +1018,14 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
     editingCellClick = signal<Nullable<boolean>>(undefined);
 
     documentEditListener = signal<VoidListener>(undefined);
+
+    overlayService = inject(OverlayService);
+
+    /**
+     * Clicks inside an overlay appended to the body (MultiSelect, Select, DatePicker...) never bubble through the editing cell;
+     * the overlay reports them here with the component host as target.
+     */
+    overlaySubscription = signal<Subscription | undefined>(undefined);
 
     initialized = signal<Nullable<boolean>>(undefined);
 
@@ -2351,6 +2359,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
             this.documentEditListener()!();
             this.documentEditListener.set(null);
         }
+
+        if (this.overlaySubscription()) {
+            this.overlaySubscription()!.unsubscribe();
+            this.overlaySubscription.set(undefined);
+        }
     }
 
     onDestroy() {
@@ -3634,6 +3647,14 @@ export class TTEditableColumn extends BaseComponent {
         this.el?.nativeElement.setAttribute('data-p-cell-editing', 'true');
         this.tt.onEditInit.emit({ field: this.field(), data: this.data() });
         this.tt.editingCellClick.set(true);
+        this.tt.overlaySubscription()?.unsubscribe();
+        this.tt.overlaySubscription.set(
+            this.tt.overlayService.clickObservable.subscribe((event: any) => {
+                if (this.el.nativeElement.contains(event.target)) {
+                    this.tt.editingCellClick.set(true);
+                }
+            })
+        );
         this.zone.runOutsideAngular(() => {
             setTimeout(() => {
                 let focusable = <any>findSingle(this.el.nativeElement, 'input, textarea');

@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 
 import { SharedModule, TreeNode } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { MultiSelect } from '@exhaustive-ui/core/multiselect';
 import { of } from 'rxjs';
 import { TreeTable, TreeTableModule, TreeTableToggler, TTEditableColumn, TTReorderableColumn, TTScrollableView } from './treetable';
 
@@ -4966,6 +4967,80 @@ describe('TreeTable scrollable column resize', () => {
             // the document listeners are gone: moving the pointer no longer shows the helper
             document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + 80, clientY: 10 }));
             expect(helper.style.display).toBe('none');
+        });
+    }
+});
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, MultiSelect, FormsModule],
+    template: `
+        <p-treetable [value]="nodes">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td ttEditableColumn [ttEditableColumnField]="'tags'">
+                        <p-treeTableCellEditor>
+                            <ng-template #input>
+                                <p-multiselect [options]="options" [(ngModel)]="rowData.tags" optionLabel="label" optionValue="value" [appendTo]="appendTo" />
+                            </ng-template>
+                            <ng-template #output>
+                                <span class="tags-output">{{ rowData.tags.join(',') }}</span>
+                            </ng-template>
+                        </p-treeTableCellEditor>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableMultiSelectEditorHostComponent {
+    appendTo: any = undefined;
+    options = [
+        { label: 'A', value: 'a' },
+        { label: 'B', value: 'b' }
+    ];
+    nodes: TreeNode[] = [{ key: '0', data: { tags: [] as string[] } }];
+}
+
+describe('TreeTable cell editor with an overlay component', () => {
+    for (const appendTo of [undefined, 'body']) {
+        it(`keeps the cell editing when Select All of a MultiSelect (appendTo ${appendTo}) is checked (optimus-ui#194)`, async () => {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                imports: [TreeTableMultiSelectEditorHostComponent],
+                providers: [provideZonelessChangeDetection()]
+            });
+            const fixture = TestBed.createComponent(TreeTableMultiSelectEditorHostComponent);
+            fixture.componentInstance.appendTo = appendTo;
+            const settle = async () => {
+                for (let i = 0; i < 3; i++) {
+                    fixture.detectChanges();
+                    await new Promise((resolve) => setTimeout(resolve, 60));
+                    await fixture.whenStable();
+                }
+            };
+            await settle();
+
+            const cell = fixture.nativeElement.querySelector('td') as HTMLElement;
+            cell.click();
+            await settle();
+            const multiselect = fixture.nativeElement.querySelector('p-multiselect') as HTMLElement;
+            expect(multiselect).not.toBeNull();
+
+            multiselect.click();
+            await settle();
+            const overlay = document.querySelector('.p-multiselect-overlay') as HTMLElement;
+            expect(overlay).not.toBeNull();
+
+            const headerCheckbox = overlay.querySelector('.p-multiselect-header p-checkbox input') as HTMLInputElement;
+            headerCheckbox.click();
+            await settle();
+
+            expect(fixture.componentInstance.nodes[0].data.tags).toEqual(['a', 'b']);
+            expect(fixture.nativeElement.querySelector('p-multiselect')).not.toBeNull();
+            expect(document.querySelector('.p-multiselect-overlay')).not.toBeNull();
+            document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
         });
     }
 });
