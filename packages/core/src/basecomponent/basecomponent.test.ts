@@ -198,7 +198,14 @@ describe('BaseComponent with a custom preset across route changes', () => {
             }
         });
         TestBed.configureTestingModule({
-            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset } }), provideRouter([{ path: '', component: TestCustomPresetHomePage }, { path: 'tag', component: TestCustomPresetTagPage }])]
+            providers: [
+                provideZonelessChangeDetection(),
+                provideExhaustive({ theme: { preset } }),
+                provideRouter([
+                    { path: '', component: TestCustomPresetHomePage },
+                    { path: 'tag', component: TestCustomPresetTagPage }
+                ])
+            ]
         });
         const harness = await RouterTestingHarness.create('/');
         const themeChange = vi.fn();

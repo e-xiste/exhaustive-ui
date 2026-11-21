@@ -5695,7 +5695,10 @@ describe('Select - hover on a page with scroll-padding-top (optimus-ui#320)', ()
                 providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
             }).compileComponents();
             const fixture = TestBed.createComponent(Select);
-            fixture.componentRef.setInput('options', Array.from({ length: 50 }, (_, i) => `Item ${i}`));
+            fixture.componentRef.setInput(
+                'options',
+                Array.from({ length: 50 }, (_, i) => `Item ${i}`)
+            );
             fixture.componentRef.setInput('scrollHeight', '200px');
             document.body.appendChild(fixture.nativeElement);
             await settle(fixture);

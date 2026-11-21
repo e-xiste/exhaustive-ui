@@ -9,7 +9,13 @@ import { Fluid } from '@exhaustive-ui/core/fluid';
  * accept those values, dropping the ones they cannot render as an HTML attribute.
  */
 function toNumberConstraint(value: unknown): number | null | undefined {
-    if (value === null || value === undefined || typeof value === 'number') {
+    if (value === null) {
+        return null;
+    }
+    if (value === undefined) {
+        return undefined;
+    }
+    if (typeof value === 'number') {
         return value;
     }
 
