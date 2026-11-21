@@ -4888,3 +4888,84 @@ describe('TreeTable frozen columns direction', () => {
         expect(Math.round(headerTable.getBoundingClientRect().right)).toBe(Math.round(bodyTable.getBoundingClientRect().right));
     });
 });
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <div style="width: 600px">
+            <p-treetable [value]="nodes" [columns]="cols" [resizableColumns]="true" [columnResizeMode]="mode" [scrollable]="true" scrollHeight="200px">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        @for (col of columns; track col.field) {
+                            <th ttResizableColumn>{{ col.header }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode">
+                        @for (col of columns; track col.field) {
+                            <td>{{ rowData[col.field] }}</td>
+                        }
+                    </tr>
+                </ng-template>
+            </p-treetable>
+        </div>
+    `
+})
+class TreeTableScrollableResizeHostComponent {
+    mode = 'expand';
+    cols = [
+        { field: 'name', header: 'Name' },
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' }
+    ];
+    nodes: TreeNode[] = Array.from({ length: 5 }, (_, i) => ({ key: `${i}`, data: { name: `Node ${i}`, size: `${i}kb`, type: 'File' } }));
+}
+
+describe('TreeTable scrollable column resize', () => {
+    for (const mode of ['expand', 'fit']) {
+        it(`hides the resize helper and stops following the pointer after a ${mode} resize without colgroup (optimus-ui#94)`, async () => {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                imports: [TreeTableScrollableResizeHostComponent],
+                providers: [provideZonelessChangeDetection()]
+            });
+            const fixture = TestBed.createComponent(TreeTableScrollableResizeHostComponent);
+            fixture.componentInstance.mode = mode;
+            fixture.detectChanges();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve));
+            fixture.detectChanges();
+
+            const root: HTMLElement = fixture.nativeElement;
+            const th = root.querySelector<HTMLElement>('.p-treetable-scrollable-header-table th')!;
+            const resizer = th.querySelector<HTMLElement>('.p-column-resizer')!;
+            const helper = root.querySelector<HTMLElement>('.p-column-resizer-helper')!;
+            const startWidth = th.offsetWidth;
+            const x = th.getBoundingClientRect().right;
+            const errors: unknown[] = [];
+            const onError = (e: ErrorEvent) => {
+                errors.push(e.error);
+                e.preventDefault();
+            };
+            window.addEventListener('error', onError);
+
+            resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: 10 }));
+            document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + 40, clientY: 10 }));
+            expect(helper.style.display).toBe('block');
+            document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x + 40, clientY: 10 }));
+            await new Promise((resolve) => setTimeout(resolve));
+            window.removeEventListener('error', onError);
+
+            expect(errors).toEqual([]);
+            expect(helper.style.display).toBe('none');
+            expect(Math.round(th.offsetWidth - startWidth)).toBe(40);
+
+            // the document listeners are gone: moving the pointer no longer shows the helper
+            document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + 80, clientY: 10 }));
+            expect(helper.style.display).toBe('none');
+        });
+    }
+});

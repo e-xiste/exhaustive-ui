@@ -1584,7 +1584,17 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                     (<HTMLElement>nextCol).style.width = nextColumnWidth + 'px';
                 }
             } else {
-                throw 'Scrollable tables require a colgroup to support resizable columns';
+                // Without a colgroup template the cells of the first row set the column widths
+                const cell = (<HTMLTableElement>table).rows?.[0]?.cells[<number>resizeColumnIndex];
+
+                if (cell) {
+                    cell.style.width = newColumnWidth + 'px';
+                    const nextCell = <HTMLElement>cell.nextElementSibling;
+
+                    if (nextCell && nextColumnWidth) {
+                        nextCell.style.width = nextColumnWidth + 'px';
+                    }
+                }
             }
         }
     }
@@ -3000,8 +3010,12 @@ export class TTResizableColumn extends BaseComponent {
     }
 
     onDocumentMouseUp(event: MouseEvent) {
-        this.tt.onColumnResizeEnd(event, this.el.nativeElement);
-        this.unbindDocumentEvents();
+        try {
+            this.tt.onColumnResizeEnd(event, this.el.nativeElement);
+        } finally {
+            // never leave the helper following the pointer, even if the resize failed
+            this.unbindDocumentEvents();
+        }
     }
 
     isEnabled() {
