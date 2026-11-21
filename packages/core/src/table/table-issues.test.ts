@@ -938,3 +938,53 @@ describe('Table text column filter applied when leaving the input (optimus-ui#86
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" dataKey="group" rowGroupMode="subheader" groupRowsBy="group" [expandedRowKeys]="expanded" [scrollable]="true" scrollHeight="400px" [virtualScroll]="true" [virtualScrollItemSize]="40">
+            <ng-template #groupheader let-row let-expanded="expanded">
+                <tr class="group-header" style="height: 40px">
+                    <td>
+                        <button type="button" [pRowToggler]="row">toggle</button>
+                        {{ row.group }}
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template #expandedrow let-row>
+                <tr class="data-row" style="height: 40px">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class VirtualExpandableGroupsComponent {
+    rows = makeRows(600).map((row) => ({ ...row, group: 'G' + Math.floor(row.id / 30) }));
+    expanded: Record<string, boolean> = Object.fromEntries(Array.from({ length: 20 }, (_, i) => ['G' + i, true]));
+}
+
+describe('Table expandable row groups with virtual scroll (optimus-ui#783)', () => {
+    it('renders one group header per group in the rendered rows, also after scrolling', async () => {
+        const fixture = await mount(VirtualExpandableGroupsComponent);
+        await tick(50);
+        await fixture.whenStable();
+        const el = fixture.nativeElement as HTMLElement;
+        const check = () => {
+            const headers = Array.from(el.querySelectorAll('.group-header')).map((h) => h.textContent!.replace('toggle', '').trim());
+            expect(headers.length).toBeGreaterThan(0);
+            expect(new Set(headers).size).toBe(headers.length);
+        };
+        check();
+
+        const scroller = el.querySelector('.p-virtualscroller') as HTMLElement;
+        scroller.scrollTop = 8000;
+        scroller.dispatchEvent(new Event('scroll'));
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await tick(50);
+        await fixture.whenStable();
+        check();
+        fixture.nativeElement.remove();
+    });
+});
