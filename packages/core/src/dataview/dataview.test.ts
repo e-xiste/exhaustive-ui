@@ -7,7 +7,53 @@ import { PaginatorModule } from '@exhaustive-ui/core/paginator';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
-import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import Lara from '@exhaustive-ui/themes/lara';
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DataView],
+    template: `
+        <p-dataview [value]="items" layout="grid">
+            <ng-template #header>Header</ng-template>
+            <ng-template #grid let-items>
+                @for (item of items; track item) {
+                    <div>{{ item }}</div>
+                }
+            </ng-template>
+            <ng-template #footer>Footer</ng-template>
+        </p-dataview>
+    `
+})
+class TestLaraDataViewComponent {
+    items = ['A', 'B'];
+}
+
+describe('DataView corners with the Lara preset (optimus-ui#261)', () => {
+    it('should round the header and the footer like the inner edge of the bordered root', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestLaraDataViewComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Lara } })]
+        });
+        const fixture = TestBed.createComponent(TestLaraDataViewComponent);
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        const root = getComputedStyle(host.querySelector('.p-dataview')!);
+        const header = getComputedStyle(host.querySelector('.p-dataview-header')!);
+        const footer = getComputedStyle(host.querySelector('.p-dataview-footer')!);
+        // a corner rounder than the inner edge of the root border leaves a gap between the two curves
+        const innerRadius = parseFloat(root.borderTopLeftRadius) - parseFloat(root.borderTopWidth);
+
+        expect(parseFloat(root.borderTopWidth)).toBe(1);
+        expect(parseFloat(header.borderTopLeftRadius)).toBe(innerRadius);
+        expect(parseFloat(header.borderTopRightRadius)).toBe(innerRadius);
+        expect(parseFloat(footer.borderBottomLeftRadius)).toBe(innerRadius);
+        expect(parseFloat(footer.borderBottomRightRadius)).toBe(innerRadius);
+        fixture.destroy();
+    });
+});
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
