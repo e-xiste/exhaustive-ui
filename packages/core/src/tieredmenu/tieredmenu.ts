@@ -381,22 +381,25 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
         return this.getItemProp(processedItem, 'label');
     }
 
+    /** Computed once per items change: computing them per rendered item made every change detection quadratic. */
+    private ariaSetSize = computed(() => this.items().filter((processedItem) => this.isItemVisible(processedItem) && !this.getItemProp(processedItem, 'separator')).length);
+
+    private ariaPosInsets = computed(() => {
+        let skipped = 0;
+        return this.items().map((processedItem, index) => {
+            const posInset = index - skipped + 1;
+            const isItemVisible = this.isItemVisible(processedItem);
+            if (!isItemVisible || this.getItemProp(processedItem, 'separator')) skipped++;
+            return posInset;
+        });
+    });
+
     getAriaSetSize() {
-        return this.items().filter((processedItem) => this.isItemVisible(processedItem) && !this.getItemProp(processedItem, 'separator')).length;
+        return this.ariaSetSize();
     }
 
     getAriaPosInset(index: number) {
-        return (
-            index -
-            this.items()
-                .slice(0, index)
-                .filter((processedItem) => {
-                    const isItemVisible = this.isItemVisible(processedItem);
-                    const isVisibleSeparator = isItemVisible && this.getItemProp(processedItem, 'separator');
-                    return !isItemVisible || isVisibleSeparator;
-                }).length +
-            1
-        );
+        return this.ariaPosInsets()[index];
     }
 
     isItemVisible(processedItem: any): boolean {

@@ -1906,3 +1906,42 @@ describe('TieredMenu submenu flipped to the left (optimus-ui#335)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+describe('TieredMenu with a large model (optimus-ui#504)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TieredMenu],
+        template: `<p-tieredmenu [model]="model" breakpoint="100px" />`
+    })
+    class LargeHost {
+        model: MenuItem[] = Array.from({ length: 300 }, (_, i) => ({
+            label: `Group ${i}`,
+            items: Array.from({ length: 5 }, (_, j) => ({ label: `Item ${i}.${j}` }))
+        }));
+    }
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('keeps the work of a change detection linear in the number of items', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [LargeHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(LargeHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('li[role="menuitem"]').length).toBe(300);
+
+        const visibilityChecks = vi.spyOn(TieredMenuSub.prototype, 'isItemVisible');
+        (fixture.nativeElement.querySelector('li[aria-label="Group 3"] [data-pc-section="itemcontent"]') as HTMLElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.nativeElement.querySelector('li[aria-label="Group 3"]').getAttribute('aria-expanded')).toBe('true');
+        expect(fixture.nativeElement.querySelector('li[aria-label="Item 3.4"]').getAttribute('aria-posinset')).toBe('5');
+        // aria-setsize and aria-posinset used to scan every item for every item: 300 x 300 checks per pass
+        expect(visibilityChecks.mock.calls.length).toBeLessThan(300 * 20);
+        fixture.nativeElement.remove();
+    });
+});
