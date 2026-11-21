@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { FormField, form, max, min } from '@angular/forms/signals';
 
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@exhaustive-ui/core/api';
@@ -1831,5 +1832,48 @@ describe('Slider non-cancelable touch events (optimus-ui#787)', () => {
         slider.onDrag(cancelable[1]);
         slider.onDragEnd(cancelable[2]);
         cancelable.forEach((event) => expect(event.preventDefault).toHaveBeenCalled());
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Slider, FormField],
+    template: `<p-slider [formField]="settings.volume" />`
+})
+class TestSignalFormSliderComponent {
+    model = signal({ volume: 20 });
+    settings = form(this.model, (path) => {
+        min(path.volume, 10);
+        max(path.volume, 50);
+    });
+}
+
+describe('Slider with signal forms (optimus-ui#175)', () => {
+    it('writes the slid value back to the form model and reads it from the model', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestSignalFormSliderComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TestSignalFormSliderComponent);
+        await fixture.whenStable();
+        const handle = fixture.nativeElement.querySelector('.p-slider-handle') as HTMLElement;
+        expect(handle.getAttribute('aria-valuenow')).toBe('20');
+
+        handle.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', code: 'ArrowRight', bubbles: true, cancelable: true }));
+        await fixture.whenStable();
+        expect(fixture.componentInstance.model().volume).toBe(21);
+        expect(fixture.componentInstance.settings.volume().touched()).toBe(false);
+
+        fixture.componentInstance.model.set({ volume: 40 });
+        await fixture.whenStable();
+        expect(handle.getAttribute('aria-valuenow')).toBe('40');
+
+        // the schema min and max reach the slider inputs
+        const slider = fixture.debugElement.query(By.directive(Slider)).componentInstance as Slider;
+        expect([slider.min(), slider.max()]).toEqual([10, 50]);
+
+        handle.dispatchEvent(new FocusEvent('blur'));
+        await fixture.whenStable();
+        expect(fixture.componentInstance.settings.volume().touched()).toBe(true);
     });
 });
