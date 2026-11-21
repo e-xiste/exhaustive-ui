@@ -4,7 +4,9 @@ import { ImportDoc } from '@/doc/focustrap/import-doc';
 import { Component } from '@angular/core';
 
 @Component({
-    template: ` <app-doc docTitle="Angular Focus Trap Component - ExhaustiveUI" header="Focus Trap" description="Focus Trap keeps focus within a certain DOM element while tabbing." [docs]="docs" [apiDocs]="['FocusTrap']" componentName="focustrap"></app-doc> `,
+    template: `
+        <app-doc docTitle="Angular Focus Trap Component - ExhaustiveUI" header="Focus Trap" description="Focus Trap keeps focus within a certain DOM element while tabbing." [docs]="docs" [apiDocs]="['FocusTrap']" componentName="focustrap"></app-doc>
+    `,
     standalone: true,
     imports: [AppDoc]
 })
