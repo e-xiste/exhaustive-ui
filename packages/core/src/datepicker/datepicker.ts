@@ -3322,6 +3322,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     alignOverlay() {
         if (this.touchUI()) {
+            if (this.overlay()) {
+                // center the panel in the viewport over the modal mask
+                addStyle(this.overlay()!, { position: 'fixed', inset: '0', margin: 'auto', width: 'fit-content', height: 'fit-content', minWidth: '80vw' });
+            }
             this.enableModality(this.overlay());
         } else if (this.overlay()) {
             if (this.$appendTo() && this.$appendTo() !== 'self') {

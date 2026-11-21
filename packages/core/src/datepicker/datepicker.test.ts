@@ -3095,3 +3095,40 @@ describe('DatePicker range across months (optimus-ui#379)', () => {
         expect(july.every((span) => span.classList.contains('p-disabled'))).toBe(true);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `<p-datepicker [touchUI]="true" />`
+})
+class TestThemedTouchUIDatePickerComponent {}
+
+describe('DatePicker themed layout', () => {
+
+    it('centers the touchUI panel over a modal mask (optimus-ui#427)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedTouchUIDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedTouchUIDatePickerComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        input.click();
+        input.focus();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const panel = document.querySelector('.p-datepicker-panel') as HTMLElement;
+        const rect = panel.getBoundingClientRect();
+        const picker = fixture.debugElement.query(By.directive(DatePicker)).componentInstance as DatePicker;
+        expect(document.querySelector('.p-datepicker-mask')).not.toBeNull();
+        expect(getComputedStyle(picker.overlay()!).position).toBe('fixed');
+        expect(Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2)).toBeLessThan(2);
+        expect(Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2)).toBeLessThan(2);
+        expect(rect.width).toBeGreaterThanOrEqual(window.innerWidth * 0.8 - 1);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+        document.querySelectorAll('.p-datepicker-mask').forEach((mask) => mask.remove());
+    });
+});
