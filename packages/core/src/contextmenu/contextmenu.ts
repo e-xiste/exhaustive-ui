@@ -1151,8 +1151,10 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
         this.focusedItemInfo.set({ index: -1, level: 0, parentKey: '', item: null });
         focus(this.rootmenu()?.sublistViewChild()?.nativeElement);
 
-        this.pageX.set(event.pageX);
-        this.pageY.set(event.pageY);
+        // a long press passes a TouchEvent, which carries its coordinates on the touch points
+        const point = event?.touches?.[0] ?? event?.changedTouches?.[0] ?? event;
+        this.pageX.set(point?.pageX);
+        this.pageY.set(point?.pageY);
 
         visibleContextMenus.forEach((contextMenu) => contextMenu !== this && contextMenu.hide());
         visibleContextMenus.add(this);
@@ -1194,6 +1196,15 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
         //fit
         if (top < this.document.scrollingElement.scrollTop) {
             top = this.document.scrollingElement.scrollTop;
+        }
+
+        // left/top are page coordinates; an absolute container is placed relative to its offset parent, which is not
+        // the page when the menu stays inside a positioned or transformed element (appendTo self, e.g. in a drawer)
+        const offsetParent = container.offsetParent as HTMLElement | null;
+        if (offsetParent && offsetParent !== this.document.body && offsetParent !== this.document.documentElement) {
+            const parentRect = offsetParent.getBoundingClientRect();
+            left -= parentRect.left + this.document.scrollingElement.scrollLeft + offsetParent.clientLeft - offsetParent.scrollLeft;
+            top -= parentRect.top + this.document.scrollingElement.scrollTop + offsetParent.clientTop - offsetParent.scrollTop;
         }
 
         container.style.left = left + 'px';

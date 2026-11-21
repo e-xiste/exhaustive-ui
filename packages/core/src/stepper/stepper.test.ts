@@ -917,3 +917,90 @@ describe('Stepper as a BlockUI target (optimus-ui#885)', () => {
         expect(stepperEl.nativeElement.querySelector('.p-blockui')).toBeTruthy();
     });
 });
+
+describe('Stepper inactive panels (optimus-ui#245, #714)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [StepperModule],
+        template: `
+            <p-stepper [value]="1" class="horizontal">
+                <p-step-list>
+                    <p-step [value]="1">One</p-step>
+                    <p-step [value]="2">Two</p-step>
+                    <p-step [value]="3">Three</p-step>
+                </p-step-list>
+                <p-step-panels>
+                    @for (v of [1, 2, 3]; track v) {
+                        <p-step-panel [value]="v">
+                            <ng-template #content
+                                ><div class="panel-body" style="height: 120px">Content {{ v }}</div></ng-template
+                            >
+                        </p-step-panel>
+                    }
+                </p-step-panels>
+            </p-stepper>
+            @if (showVertical) {
+                <p-stepper [value]="1" class="vertical">
+                    @for (v of [1, 2, 3]; track v) {
+                        <p-step-item [value]="v">
+                            <p-step>Step {{ v }}</p-step>
+                            <p-step-panel>
+                                <ng-template #content
+                                    ><div class="panel-body" style="height: 120px">Content {{ v }}</div></ng-template
+                                >
+                            </p-step-panel>
+                        </p-step-item>
+                    }
+                </p-stepper>
+            }
+        `
+    })
+    class PanelsHost {
+        showVertical = true;
+    }
+
+    async function setup() {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PanelsHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PanelsHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return fixture;
+    }
+
+    it('gives inactive panels no height, horizontal and vertical (optimus-ui#245)', async () => {
+        const fixture = await setup();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        for (const orientation of ['horizontal', 'vertical']) {
+            const panels = [...fixture.nativeElement.querySelectorAll(`.${orientation} [data-pc-name="steppanel"]`)] as HTMLElement[];
+            expect(panels.length).toBe(3);
+            expect(panels[0].getBoundingClientRect().height).toBeGreaterThan(100);
+            expect(panels[1].getBoundingClientRect().height).toBe(0);
+            expect(panels[2].getBoundingClientRect().height).toBe(0);
+        }
+        fixture.nativeElement.remove();
+    });
+
+    it('never lays out the content of inactive vertical panels on creation (optimus-ui#714)', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PanelsHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PanelsHost);
+        document.body.appendChild(fixture.nativeElement);
+        // first synchronous render, before any animation frame
+        fixture.detectChanges();
+        const panels = [...fixture.nativeElement.querySelectorAll('.vertical [data-pc-name="steppanel"]')] as HTMLElement[];
+        expect(panels.length).toBe(3);
+        expect(panels[1].getBoundingClientRect().height).toBe(0);
+        expect(panels[2].getBoundingClientRect().height).toBe(0);
+        // content of inactive panels is not mounted, so a destroy (dialog closing) has nothing hidden to reveal
+        expect(panels[1].querySelector('.panel-body')).toBeNull();
+        expect(panels[2].querySelector('.panel-body')).toBeNull();
+        fixture.nativeElement.remove();
+    });
+});

@@ -1808,3 +1808,258 @@ describe('PanelMenu global PassThrough on sub items', () => {
         items.forEach((item: HTMLElement) => expect(item.classList.contains('GLOBAL_ITEM')).toBe(true));
     });
 });
+
+describe('PanelMenu pointer focus with a custom item template (optimus-ui#52)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [PanelMenu],
+        template: `
+            <p-panelmenu [model]="model">
+                <ng-template #item let-item>
+                    <a class="custom-link">{{ item.label }}</a>
+                </ng-template>
+            </p-panelmenu>
+        `
+    })
+    class PointerFocusHost {
+        model: MenuItem[] = [{ label: 'Mail', expanded: true, items: [{ label: 'Compose' }, { label: 'Inbox' }, { label: 'Sent' }] }];
+    }
+
+    async function setup() {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PointerFocusHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PointerFocusHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return fixture;
+    }
+
+    it('focuses the pressed item, not the first one, when the list receives focus from a mouse press', async () => {
+        const fixture = await setup();
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        const rootList = fixture.nativeElement.querySelector('[data-pc-section="rootlist"]') as HTMLElement;
+        const items = fixture.nativeElement.querySelectorAll('li[role="treeitem"]');
+        const inbox = items[1].querySelector('.custom-link') as HTMLElement;
+
+        header.focus();
+        // the custom anchor has no href, so a press moves focus to the closest focusable ancestor: the list
+        inbox.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        rootList.focus();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(items[0].getAttribute('data-p-focused')).not.toBe('true');
+        expect(items[1].getAttribute('data-p-focused')).toBe('true');
+        fixture.nativeElement.remove();
+    });
+
+    it('still focuses the first item when the list is focused from the keyboard', async () => {
+        const fixture = await setup();
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        header.focus();
+        header.dispatchEvent(new KeyboardEvent('keydown', { code: 'ArrowDown', key: 'ArrowDown', bubbles: true }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const items = fixture.nativeElement.querySelectorAll('li[role="treeitem"]');
+        expect(items[0].getAttribute('data-p-focused')).toBe('true');
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('PanelMenu root list spacing (optimus-ui#59)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class RootListHost {
+        model: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+    }
+
+    it('does not let the browser list padding and margin indent the root list', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [RootListHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(RootListHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const content = fixture.nativeElement.querySelector('[data-pc-section="content"]') as HTMLElement;
+        const list = content.firstElementChild as HTMLElement;
+        const rootList = fixture.nativeElement.querySelector('[data-pc-section="rootlist"]') as HTMLElement;
+        const listStyle = getComputedStyle(list);
+
+        expect(list.tagName).toBe('UL');
+        expect(listStyle.paddingInlineStart).toBe('0px');
+        expect(listStyle.marginBlockStart).toBe('0px');
+        expect(listStyle.marginBlockEnd).toBe('0px');
+        expect(listStyle.listStyleType).toBe('none');
+        expect(rootList.getBoundingClientRect().left).toBe(content.getBoundingClientRect().left);
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('PanelMenu ripple (optimus-ui#540)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class RippleHost {
+        model: MenuItem[] = [
+            { label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Home', routerLink: '/' }] },
+            { label: 'Home', routerLink: '/' }
+        ];
+    }
+
+    it('adds the ripple to header and item links when ripple is enabled in the config', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [RippleHost, RouterTestingModule],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ ripple: true })]
+        }).createComponent(RippleHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const headerLinks = fixture.nativeElement.querySelectorAll('[data-pc-section="headerlink"]');
+        const itemLinks = fixture.nativeElement.querySelectorAll('[data-pc-section="itemlink"]');
+        expect(headerLinks.length).toBe(2);
+        expect(itemLinks.length).toBe(2);
+        [...headerLinks, ...itemLinks].forEach((link: HTMLElement) => expect(link.classList.contains('p-ripple')).toBe(true));
+
+        itemLinks[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 5, clientY: 5 }));
+        expect(itemLinks[0].querySelector('.p-ink')).toBeTruthy();
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('PanelMenu focus across several panel menus (optimus-ui#541)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [PanelMenu],
+        template: `<p-panelmenu class="first" [model]="first" /><p-panelmenu class="second" [model]="second" />`
+    })
+    class TwoMenusHost {
+        first: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+        second: MenuItem[] = [{ label: 'Edit', expanded: true, items: [{ label: 'Copy' }, { label: 'Paste' }] }];
+    }
+
+    it('clears the focused item of a panel menu when an item of another one is clicked', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [TwoMenusHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(TwoMenusHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const press = async (li: HTMLElement) => {
+            const link = li.querySelector('[data-pc-section="itemlink"]') as HTMLElement;
+            link.focus();
+            (li.querySelector('[data-pc-section="itemcontent"]') as HTMLElement).click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+        };
+        const firstItems = fixture.nativeElement.querySelectorAll('.first li[role="treeitem"]');
+        const secondItems = fixture.nativeElement.querySelectorAll('.second li[role="treeitem"]');
+
+        await press(firstItems[1]);
+        expect(firstItems[1].getAttribute('data-p-focused')).toBe('true');
+
+        await press(secondItems[0]);
+        expect(secondItems[0].getAttribute('data-p-focused')).toBe('true');
+        expect(fixture.nativeElement.querySelectorAll('li[data-p-focused="true"]').length).toBe(1);
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('PanelMenu model replacement (optimus-ui#904)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class ReplaceModelHost {
+        model: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+    }
+
+    it('does not repeat items when the model is replaced or expanded again', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [ReplaceModelHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(ReplaceModelHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const labels = () => [...fixture.nativeElement.querySelectorAll('li[role="treeitem"]')].map((li: HTMLElement) => li.getAttribute('aria-label'));
+        expect(labels()).toEqual(['New', 'Open']);
+
+        fixture.componentInstance.model = [
+            { label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }, { label: 'Save', items: [{ label: 'As PDF' }] }] },
+            { label: 'Edit', expanded: true, items: [{ label: 'Copy' }] }
+        ];
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(labels()).toEqual(['New', 'Open', 'Save', 'As PDF', 'Copy']);
+
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        header.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        header.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(labels()).toEqual(['New', 'Open', 'Save', 'As PDF', 'Copy']);
+    });
+});
+
+describe('PanelMenu item tooltip of an expanded group (optimus-ui#827)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" style="display: block; width: 250px" />` })
+    class TooltipHost {
+        model: MenuItem[] = [
+            {
+                label: 'Components Store',
+                expanded: true,
+                items: [
+                    {
+                        label: 'Inputs',
+                        expanded: true,
+                        tooltip: 'Inputs tooltip',
+                        tooltipOptions: { tooltipPosition: 'right', showDelay: 0, hideDelay: 0 },
+                        items: Array.from({ length: 10 }, (_, i) => ({ label: `Field ${i}` }))
+                    }
+                ]
+            }
+        ];
+    }
+
+    it('places the tooltip next to the item row, not next to its expanded sub list', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [TooltipHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(TooltipHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const inputs = fixture.nativeElement.querySelector('li[aria-label="Inputs"]') as HTMLElement;
+        const content = inputs.querySelector('[data-pc-section="itemcontent"]') as HTMLElement;
+        // a real pointer entering the row enters the li and then its content
+        inputs.dispatchEvent(new MouseEvent('mouseenter'));
+        content.dispatchEvent(new MouseEvent('mouseenter'));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const tooltips = document.querySelectorAll('.p-tooltip');
+        expect(tooltips.length).toBe(1);
+        const tooltipRect = tooltips[0].getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        const tooltipCenter = tooltipRect.top + tooltipRect.height / 2;
+        expect(tooltipCenter).toBeGreaterThanOrEqual(contentRect.top);
+        expect(tooltipCenter).toBeLessThanOrEqual(contentRect.bottom);
+
+        content.dispatchEvent(new MouseEvent('mouseleave'));
+        inputs.dispatchEvent(new MouseEvent('mouseleave'));
+        fixture.destroy();
+        fixture.nativeElement.remove();
+        document.querySelectorAll('.p-tooltip').forEach((el) => el.remove());
+    });
+});

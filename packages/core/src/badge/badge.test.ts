@@ -1470,3 +1470,37 @@ describe('BadgeDirective on a component whose first node is not an element', () 
         expect(avatar.classList).toContain('p-overlay-badge');
     });
 });
+
+describe('pBadge on a component with its own size input (optimus-ui#715)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Avatar, BadgeModule],
+        template: `
+            <p-avatar class="large" label="A" pBadge value="4" [size]="largeSize" />
+            <p-avatar class="normal" label="B" pBadge value="5" [size]="normalSize" />
+            <span class="plain" pBadge value="6" size="large"></span>
+        `
+    })
+    class AvatarSizeHost {
+        largeSize: 'large' = 'large';
+        normalSize: 'normal' = 'normal';
+    }
+
+    it('leaves size to the component and keeps the badge at its own size', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({ imports: [AvatarSizeHost], providers: [provideZonelessChangeDetection()] }).createComponent(AvatarSizeHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const large = fixture.nativeElement.querySelector('p-avatar.large') as HTMLElement;
+        const normal = fixture.nativeElement.querySelector('p-avatar.normal') as HTMLElement;
+        expect(large.classList.contains('p-avatar-lg')).toBe(true);
+        expect(large.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(false);
+        expect(normal.classList.contains('p-avatar-lg')).toBe(false);
+        expect(normal.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(false);
+
+        // on a plain element the deprecated size still sizes the badge
+        const plain = fixture.nativeElement.querySelector('span.plain') as HTMLElement;
+        expect(plain.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(true);
+    });
+});

@@ -6,6 +6,9 @@ import { Button, ButtonDirective, ButtonIcon, ButtonLabel } from './button';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { Base } from '@exhaustive-ui/core/base';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+import { Theme } from '@exhaustive-ui/styled';
 // Basic Button Component Test
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1830,5 +1833,106 @@ describe('Button buttonProps icon position', () => {
         expect(icon.classList).not.toContain('p-button-icon-right');
         expect(icon.classList).not.toContain('p-button-icon-top');
         expect(icon.classList).not.toContain('p-button-icon-bottom');
+    });
+});
+
+describe('Button created in a lazy tab (optimus-ui#87)', () => {
+    // start without any loaded component style, as an app that shows its first button in a lazy tab
+    beforeEach(() => {
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TabsModule, Button],
+        template: `
+            <p-tabs [(value)]="tab" [lazy]="true">
+                <p-tablist>
+                    <p-tab value="a">A</p-tab>
+                    <p-tab value="b">B</p-tab>
+                </p-tablist>
+                <p-tabpanels>
+                    <p-tabpanel value="a">Text only</p-tabpanel>
+                    <p-tabpanel value="b"><p-button label="Save" /></p-tabpanel>
+                </p-tabpanels>
+            </p-tabs>
+        `
+    })
+    class LazyTabsHost {
+        tab = 'a';
+    }
+
+    it('has its styles in the document in the same render that creates it', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [LazyTabsHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(LazyTabsHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelector('.p-button')).toBeNull();
+
+        fixture.componentInstance.tab = 'b';
+        fixture.changeDetectorRef.markForCheck();
+        // one synchronous pass, no frame in between: what the first paint shows
+        fixture.detectChanges();
+
+        const button = fixture.nativeElement.querySelector('.p-button') as HTMLElement;
+        expect(button).toBeTruthy();
+        expect(document.head.querySelector('style[data-exhaustive-style-id="button-style"]')).toBeTruthy();
+        expect(getComputedStyle(button).display).toBe('inline-flex');
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('pButton with pButtonIcon and pButtonLabel toggling loading (optimus-ui#668)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [ButtonDirective, ButtonIcon, ButtonLabel],
+        template: `
+            <button pButton type="button" [loading]="loading">
+                <i class="pi pi-check custom-icon" pButtonIcon></i>
+                <span pButtonLabel>Save</span>
+            </button>
+        `
+    })
+    class LoadingDirectiveHost {
+        loading = false;
+    }
+
+    it('gives the icon back when loading ends', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [LoadingDirectiveHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(LoadingDirectiveHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+        const icon = () => button.querySelector('.custom-icon, [data-pc-section="buttonicon"], .p-button-icon') as HTMLElement;
+        expect(icon().classList.contains('pi-check')).toBe(true);
+
+        fixture.componentInstance.loading = true;
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(button.classList.contains('p-button-loading')).toBe(true);
+
+        fixture.componentInstance.loading = false;
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const icons = button.querySelectorAll('.pi-check');
+        expect(icons.length).toBe(1);
+        expect(icons[0].classList.contains('p-hidden')).toBe(false);
+        expect(icons[0].innerHTML).toBe('');
+        expect(button.querySelector('.p-button-loading-icon')).toBeNull();
+        fixture.nativeElement.remove();
     });
 });

@@ -1487,3 +1487,106 @@ describe('Scrollable Tabs with a controlled value', () => {
         });
     });
 });
+
+describe('Scrollable TabList paging and tab changes (optimus-ui#124, #695, #696)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [TabsModule],
+        encapsulation: ViewEncapsulation.None,
+        styles: ['.paging-host .p-tablist-viewport { scroll-behavior: auto; } .paging-host .p-tab { width: 100px; box-sizing: border-box; padding: 0; }'],
+        template: `
+            <div class="paging-host" [style.width.px]="width()">
+                <p-tabs [value]="value()" [scrollable]="true">
+                    <p-tablist>
+                        @for (tab of tabs(); track tab) {
+                            <p-tab [value]="tab">Tab {{ tab }}</p-tab>
+                        }
+                    </p-tablist>
+                </p-tabs>
+            </div>
+        `
+    })
+    class PagingHost {
+        width = signal(450);
+        value = signal<number>(0);
+        tabs = signal(Array.from({ length: 20 }, (_, i) => i));
+    }
+
+    const frame = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve)));
+
+    async function setup() {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PagingHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PagingHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await frame();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return fixture;
+    }
+
+    const settle = async (fixture: ComponentFixture<PagingHost>) => {
+        await frame();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await frame();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    it('does not skip the tab cut by the next button when paging forward (optimus-ui#124)', async () => {
+        const fixture = await setup();
+        const viewport = fixture.nativeElement.querySelector('.p-tablist-viewport') as HTMLElement;
+        const tabs = [...fixture.nativeElement.querySelectorAll('.p-tab')] as HTMLElement[];
+        const next = fixture.nativeElement.querySelector('.p-tablist-next-button') as HTMLElement;
+        expect(next).toBeTruthy();
+
+        const visibleEnd = next.getBoundingClientRect().left;
+        const firstCut = tabs.find((tab) => tab.getBoundingClientRect().right > visibleEnd + 0.5)!;
+
+        next.click();
+        await settle(fixture);
+
+        const prev = fixture.nativeElement.querySelector('.p-tablist-prev-button') as HTMLElement;
+        expect(prev).toBeTruthy();
+        expect(viewport.scrollLeft).toBeGreaterThan(0);
+        // the tab that was cut on the first page must not slide under the previous button
+        expect(firstCut.getBoundingClientRect().left).toBeGreaterThanOrEqual(prev.getBoundingClientRect().right - 0.5);
+        fixture.nativeElement.remove();
+    });
+
+    it('shows a tab and drops the navigators when the list shrinks while scrolled (optimus-ui#695)', async () => {
+        const fixture = await setup();
+        const viewport = fixture.nativeElement.querySelector('.p-tablist-viewport') as HTMLElement;
+        viewport.scrollLeft = viewport.scrollWidth;
+        await settle(fixture);
+        expect(fixture.nativeElement.querySelector('.p-tablist-prev-button')).toBeTruthy();
+
+        fixture.componentInstance.tabs.set([0]);
+        await settle(fixture);
+
+        const tab = fixture.nativeElement.querySelector('.p-tab') as HTMLElement;
+        const viewportRect = viewport.getBoundingClientRect();
+        expect(tab.getBoundingClientRect().left).toBeGreaterThanOrEqual(viewportRect.left - 0.5);
+        expect(tab.getBoundingClientRect().right).toBeLessThanOrEqual(viewportRect.right + 0.5);
+        expect(fixture.nativeElement.querySelector('.p-tablist-prev-button')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.p-tablist-next-button')).toBeNull();
+        fixture.nativeElement.remove();
+    });
+
+    it('shows the next navigator when a long tab list replaces a short one (optimus-ui#695, #696)', async () => {
+        const fixture = await setup();
+        fixture.componentInstance.tabs.set([0]);
+        await settle(fixture);
+        expect(fixture.nativeElement.querySelector('.p-tablist-next-button')).toBeNull();
+
+        fixture.componentInstance.tabs.set(Array.from({ length: 20 }, (_, i) => i + 100));
+        await settle(fixture);
+        expect(fixture.nativeElement.querySelector('.p-tablist-next-button')).toBeTruthy();
+        fixture.nativeElement.remove();
+    });
+});

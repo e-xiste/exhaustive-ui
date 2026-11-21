@@ -2126,3 +2126,98 @@ describe('ContextMenu with several click-triggered instances (optimus-ui#359)', 
         expect(host.menuA().visible()).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ContextMenu],
+    template: `
+        <div #zone class="touch-zone" style="position: absolute; left: 0; top: 0; width: 300px; height: 300px">Zone</div>
+        <p-contextmenu #cm [target]="zone" [model]="model" [pressDelay]="10" />
+    `
+})
+class TestTouchContextMenuComponent {
+    model: MenuItem[] = [{ label: 'Copy' }, { label: 'Paste' }];
+
+    cm = viewChild.required<ContextMenu>('cm');
+}
+
+describe('ContextMenu long press on touch devices (optimus-ui#932)', () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    it('opens at the touch point after a long press', async () => {
+        vi.spyOn(ContextMenu.prototype, 'isMobile').mockReturnValue(true);
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestTouchContextMenuComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestTouchContextMenuComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const zone = fixture.nativeElement.querySelector('.touch-zone') as HTMLElement;
+        const touch = new Touch({ identifier: 1, target: zone, clientX: 120, clientY: 80, pageX: 120, pageY: 80 });
+        zone.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [touch], targetTouches: [touch], changedTouches: [touch] }));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const cm = fixture.componentInstance.cm();
+        expect(cm.visible()).toBe(true);
+        expect(cm.pageX()).toBe(120);
+        expect(cm.pageY()).toBe(80);
+        const container = document.querySelector('.p-contextmenu') as HTMLElement;
+        expect(container.style.left).toBe('121px');
+        expect(container.style.top).toBe('81px');
+
+        cm.hide();
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ContextMenu],
+    template: `
+        <div class="drawer-like" style="position: fixed; left: 100px; top: 200px; width: 400px; height: 300px; transform: translate3d(0px, 0px, 0px)">
+            <div #zone class="cm-zone" style="width: 400px; height: 300px">Zone</div>
+            <p-contextmenu #cm [target]="zone" [model]="model" />
+        </div>
+    `
+})
+class TestContextMenuInTransformedParentComponent {
+    model: MenuItem[] = [{ label: 'Copy' }, { label: 'Paste' }];
+
+    cm = viewChild.required<ContextMenu>('cm');
+}
+
+describe('ContextMenu inside a positioned or transformed container (optimus-ui#809)', () => {
+    it('opens at the pointer, not offset by the container position', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestContextMenuInTransformedParentComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestContextMenuInTransformedParentComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const zone = fixture.nativeElement.querySelector('.cm-zone') as HTMLElement;
+        zone.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 150, clientY: 250 }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const container = fixture.nativeElement.querySelector('.p-contextmenu') as HTMLElement;
+        expect(container).toBeTruthy();
+        // offsetLeft/Top ignore the scale of the enter animation
+        const parentRect = (container.offsetParent as HTMLElement).getBoundingClientRect();
+        expect(Math.round(parentRect.left + container.offsetLeft)).toBe(151);
+        expect(Math.round(parentRect.top + container.offsetTop)).toBe(251);
+
+        fixture.componentInstance.cm().hide();
+        fixture.nativeElement.remove();
+    });
+});

@@ -23,6 +23,7 @@ export const header: AccordionTokenSections.Header = {
     hoverBackground: '{content.hover.background}',
     activeBackground: '{content.background}',
     activeHoverBackground: '{content.background}',
+    focusBackground: '{navigation.item.active.background}',
     focusRing: {
         width: '0',
         style: 'none',
@@ -77,7 +78,7 @@ export const css: AccordionTokenSections.CSS = /*css*/ `
 }
 
 .p-accordionpanel:not(.p-disabled) .p-accordionheader:focus-visible {
-    background: dt('navigation.item.active.background');
+    background: dt('accordion.header.focus.background');
 }
 `;
 

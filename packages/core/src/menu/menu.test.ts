@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, viewChild, viewChildren } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -2437,5 +2437,76 @@ describe('MenuItemContent', () => {
         instance.onItemClick(clickEvent, item);
 
         expect(instance.onMenuItemClick.emit).toHaveBeenCalledWith({ originalEvent: clickEvent, item });
+    });
+});
+
+describe('Popup menu in a table cell that stops click propagation (optimus-ui#538)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Menu],
+        template: `
+            <table>
+                <tbody>
+                    @for (user of users; track user; let i = $index) {
+                        <tr>
+                            <td (click)="$event.stopPropagation()">
+                                <button type="button" class="row-toggle" (click)="toggleMenu($event, i)">...</button>
+                                <p-menu #menu [popup]="true" [model]="getMenuItems(user)" appendTo="body" [baseZIndex]="10000" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        `
+    })
+    class TableMenuHost {
+        users = ['ada', 'bob'];
+        edited: string[] = [];
+        menus = viewChildren<Menu>('menu');
+
+        getMenuItems(user: string): MenuItem[] {
+            return [
+                { label: 'Edit', command: () => this.edited.push(user) },
+                { label: 'Delete', command: () => {} }
+            ];
+        }
+
+        toggleMenu(event: Event, index: number) {
+            event.stopPropagation();
+            this.menus()[index].toggle(event);
+        }
+    }
+
+    it('runs the command of the first click on an item', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [TableMenuHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(TableMenuHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.nativeElement.querySelectorAll('.row-toggle')[1].click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const menu = fixture.componentInstance.menus()[1];
+        expect(menu.visible()).toBe(true);
+        const editLink = document.body.querySelector('.p-menu-overlay [data-pc-section="itemlink"]') as HTMLElement;
+        expect(editLink).toBeTruthy();
+
+        const editContent = editLink.closest('[data-pc-section="itemcontent"]') as HTMLElement;
+        editContent.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        (editLink.closest('ul') as HTMLElement).focus();
+        fixture.detectChanges();
+        editLink.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.edited).toEqual(['bob']);
+        expect(menu.visible()).toBe(false);
+        fixture.destroy();
+        fixture.nativeElement.remove();
     });
 });

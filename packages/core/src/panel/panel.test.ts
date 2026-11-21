@@ -1574,3 +1574,38 @@ describe('Panel Signal Query API', () => {
         expect(instance.footerFacet()).toBeDefined();
     });
 });
+
+describe('Panel collapsed on creation with a focusable field (optimus-ui#266)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Panel],
+        template: `
+            <p-panel header="Amounts" [toggleable]="true" [collapsed]="true">
+                <input class="amount" type="text" />
+            </p-panel>
+        `
+    })
+    class CollapsedHost {}
+
+    it('keeps the fields of the aria-hidden content out of the focus order', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [CollapsedHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(CollapsedHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const region = fixture.nativeElement.querySelector('[role="region"]') as HTMLElement;
+        const input = fixture.nativeElement.querySelector('input.amount') as HTMLInputElement;
+        expect(region.getAttribute('aria-hidden')).toBe('true');
+        expect(region.contains(input)).toBe(true);
+
+        input.focus();
+        expect(document.activeElement).not.toBe(input);
+        expect(input.checkVisibility()).toBe(false);
+        fixture.nativeElement.remove();
+    });
+});

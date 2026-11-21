@@ -28,6 +28,7 @@ import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponen
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { ChevronDownIcon, ChevronRightIcon } from '@exhaustive-ui/core/icons';
 import { MotionModule } from '@exhaustive-ui/core/motion';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 import { PanelMenuItemTemplateContext, PanelMenuPassThrough } from '@exhaustive-ui/core/types/panelmenu';
 import { PanelMenuStyle } from './style/panelmenustyle';
@@ -38,7 +39,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ul[pPanelMenuSub]',
-    imports: [CommonModule, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
+    imports: [CommonModule, RouterModule, Ripple, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @for (processedItem of items(); track processedItem.key; let index = $index) {
             @if (processedItem.separator) {
@@ -55,14 +56,18 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                     [attr.aria-posinset]="getAriaPosInset(index)"
                     [class]="cn(cx('item', { processedItem }), getItemProp(processedItem, 'styleClass'))"
                     [ngStyle]="getItemProp(processedItem, 'style')"
-                    [pTooltip]="getItemProp(processedItem, 'tooltip')"
-                    [pTooltipUnstyled]="unstyled()"
                     [pBind]="getPTOptions(processedItem, index, 'item')"
                     [attr.data-p-disabled]="isItemDisabled(processedItem)"
                     [attr.data-p-focused]="isItemFocused(processedItem)"
-                    [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
                 >
-                    <div [class]="cx('itemContent')" [pBind]="getPTOptions(processedItem, index, 'itemContent')" (click)="onItemClick($event, processedItem)">
+                    <div
+                        [class]="cx('itemContent')"
+                        [pTooltip]="getItemProp(processedItem, 'tooltip')"
+                        [pTooltipUnstyled]="unstyled()"
+                        [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
+                        [pBind]="getPTOptions(processedItem, index, 'itemContent')"
+                        (click)="onItemClick($event, processedItem)"
+                    >
                         @if (!itemTemplate()) {
                             @if (!getItemProp(processedItem, 'routerLink')) {
                                 <a
@@ -74,6 +79,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                     [target]="getItemProp(processedItem, 'target')"
                                     [attr.tabindex]="!!parentExpanded() ? '0' : '-1'"
                                     [pBind]="getPTOptions(processedItem, index, 'itemLink')"
+                                    pRipple
                                 >
                                     @if (isItemGroup(processedItem)) {
                                         @if (!panelMenu.submenuIconTemplate() && !panelMenu._submenuIconTemplate()) {
@@ -139,6 +145,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                     [state]="getItemProp(processedItem, 'state')"
                                     [attr.tabindex]="!!parentExpanded() ? '0' : '-1'"
                                     [pBind]="getPTOptions(processedItem, index, 'itemLink')"
+                                    pRipple
                                 >
                                     @if (isItemGroup(processedItem)) {
                                         @if (!panelMenu.submenuIconTemplate() && !panelMenu._submenuIconTemplate()) {
@@ -354,6 +361,8 @@ export class PanelMenuSub extends BaseComponent {
             [parentExpanded]="parentExpanded()"
             (itemToggle)="onItemToggle($event)"
             (keydown)="onKeyDown($event)"
+            (mousedown)="onMouseDown($event)"
+            (mouseup)="pointerTarget = null"
             (menuFocus)="onFocus($event)"
             (menuBlur)="onBlur($event)"
             [pt]="pt()"
@@ -392,6 +401,9 @@ export class PanelMenuList extends BaseComponent {
     focused = signal<boolean | undefined>(undefined);
 
     focusedItem = signal<any>(null);
+
+    /** Target of the mouse press in progress, used to focus the pressed item instead of the first one. */
+    pointerTarget: EventTarget | null = null;
 
     activeItemPath = signal<any[]>([]);
 
@@ -534,10 +546,19 @@ export class PanelMenuList extends BaseComponent {
         }
     }
 
+    onMouseDown(event: MouseEvent) {
+        this.pointerTarget = event.target;
+    }
+
     onFocus(event) {
         if (!this.focused()) {
             this.focused.set(true);
-            const focusedItem = this.focusedItem() || (this.isElementInPanel(event, event.relatedTarget) ? this.findItemByEventTarget(event.target) || this.findFirstItem() : this.findLastItem());
+            const pointerTarget = this.pointerTarget;
+            this.pointerTarget = null;
+            // A press on an item that holds no focusable element (custom item template) focuses the list itself:
+            // the pressed item gets the focus, not the first one.
+            const focusedItem =
+                this.focusedItem() || (pointerTarget ? this.findItemByEventTarget(pointerTarget) : this.isElementInPanel(event, event.relatedTarget) ? this.findItemByEventTarget(event.target) || this.findFirstItem() : this.findLastItem());
             if (event.relatedTarget !== null) this.focusedItem.set(focusedItem);
         }
     }
@@ -784,7 +805,7 @@ export class PanelMenuList extends BaseComponent {
  */
 @Component({
     selector: 'p-panelMenu, p-panelmenu, p-panel-menu',
-    imports: [CommonModule, PanelMenuList, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
+    imports: [CommonModule, PanelMenuList, RouterModule, Ripple, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @for (item of model(); track $index; let f = $first; let l = $last; let i = $index) {
             @if (isItemVisible(item)) {
@@ -820,6 +841,7 @@ export class PanelMenuList extends BaseComponent {
                                         [class]="cn(cx('headerLink'), getItemProp(item, 'linkClass'))"
                                         [ngStyle]="getItemProp(item, 'linkStyle')"
                                         [pBind]="getPTOptions('headerLink', item, i)"
+                                        pRipple
                                     >
                                         @if (isItemGroup(item)) {
                                             @if (!headerIconTemplate() && !_headerIconTemplate()) {
@@ -871,6 +893,7 @@ export class PanelMenuList extends BaseComponent {
                                     [replaceUrl]="getItemProp(item, 'replaceUrl')"
                                     [state]="getItemProp(item, 'state')"
                                     [pBind]="getPTOptions('headerLink', item, i)"
+                                    pRipple
                                 >
                                     @if (isItemGroup(item)) {
                                         @if (!headerIconTemplate() && !_headerIconTemplate()) {

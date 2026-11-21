@@ -2,6 +2,13 @@ import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZoneles
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MotionOptions } from '@exhaustive-ui/motion';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Base } from '@exhaustive-ui/core/base';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { Theme } from '@exhaustive-ui/styled';
+import { definePreset } from '@exhaustive-ui/themes';
+import Material from '@exhaustive-ui/themes/material';
+import { Popover } from '@exhaustive-ui/core/popover';
 import { Accordion, AccordionContent, AccordionHeader, AccordionPanel, AccordionTabCloseEvent, AccordionTabOpenEvent } from './accordion';
 
 @Component({
@@ -1090,5 +1097,118 @@ describe('Accordion', () => {
             expect(accordion.selectOnFocus()).toBe(true);
             expect(panel.disabled()).toBe(true);
         });
+    });
+});
+
+describe('Accordion focused header background in the Material preset (optimus-ui#237)', () => {
+    // the preset adds <style> tags and global Theme state shared by every test file: reset them afterwards
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent],
+        template: `
+            <p-accordion>
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Header</p-accordion-header>
+                    <p-accordion-content>Content</p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        `
+    })
+    class MaterialAccordionHost {}
+
+    it('takes the focused header background from an accordion token', async () => {
+        const preset = definePreset(Material, { components: { accordion: { header: { focusBackground: 'rgb(255, 0, 0)' } } } } as any);
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [MaterialAccordionHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset } })]
+        }).createComponent(MaterialAccordionHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const header = fixture.nativeElement.querySelector('.p-accordionheader') as HTMLElement;
+        // the header animates its background: read the end value
+        header.style.transition = 'none';
+        header.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+        header.focus();
+        expect(header.matches(':focus-visible')).toBe(true);
+        expect(getComputedStyle(header).backgroundColor).toBe('rgb(255, 0, 0)');
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('Accordion inside a popover that is closed and reopened (optimus-ui#280)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Accordion, AccordionPanel, AccordionHeader, AccordionContent, Popover],
+        template: `
+            <button type="button" class="open-menu" (click)="op.toggle($event)">Open Menu</button>
+            <p-popover #op>
+                <p-accordion value="0">
+                    <p-accordion-panel value="0">
+                        <p-accordion-header>Account Settings</p-accordion-header>
+                        <p-accordion-content>Settings</p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            </p-popover>
+        `
+    })
+    class PopoverAccordionHost {}
+
+    it('opens the panel on the first click after the popover is reopened', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [PopoverAccordionHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(PopoverAccordionHost);
+        document.body.appendChild(fixture.nativeElement);
+        const settle = async () => {
+            fixture.detectChanges();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 400));
+            fixture.detectChanges();
+            await fixture.whenStable();
+        };
+        await settle();
+
+        const toggle = fixture.nativeElement.querySelector('.open-menu') as HTMLElement;
+        const header = () => document.querySelector('.p-accordionheader') as HTMLElement;
+        const expanded = () => header().getAttribute('aria-expanded');
+
+        toggle.click();
+        await settle();
+        expect(expanded()).toBe('true');
+
+        header().click();
+        await settle();
+        expect(expanded()).toBe('false');
+
+        // close by clicking outside, then reopen
+        document.body.click();
+        await settle();
+        expect(document.querySelector('.p-accordionheader')).toBeNull();
+        toggle.click();
+        await settle();
+        expect(header()).toBeTruthy();
+
+        if (expanded() === 'true') {
+            header().click();
+            await settle();
+            expect(expanded()).toBe('false');
+        }
+        header().click();
+        await settle();
+        expect(expanded()).toBe('true');
+        fixture.destroy();
+        fixture.nativeElement.remove();
     });
 });

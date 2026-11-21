@@ -116,6 +116,12 @@ export declare namespace AccordionTokenSections {
          */
         activeHoverBackground?: string;
         /**
+         * Focus background of header
+         *
+         * @designToken accordion.header.focus.background
+         */
+        focusBackground?: string;
+        /**
          * Focus ring of header
          */
         focusRing?: {
