@@ -6,7 +6,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ## 22.0.0 (in progress)
 
-ExhaustiveUI v22 is the first major of the fork. It requires Angular 22 and moves the whole library to the Angular Signals API. The alphas below lead up to it. This section sums them up.
+ExhaustiveUI v22 is the first major of the fork. It requires Angular 22 and moves the whole library to the Angular Signals API. The alphas and release candidates below lead up to it. This section sums them up.
 
 ### Upgrade
 
@@ -90,9 +90,9 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
-## Unreleased
+## 22.0.0-rc.1 (2026-11-21)
 
-Fixes for 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs set aside in 22.0.0-alpha.10. Each one has a regression test; the issue numbers are Optimus UI's. #593 (Popover in a Dialog with `appendTo`) was already fixed and now has tests. #731 (one table for screen readers in a scrollable TreeTable) needs a redesign of the scrollable TreeTable and stays open.
+First release candidate of 22.0.0. It fixes 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs set aside in 22.0.0-alpha.10. Each one has a regression test; the issue numbers are Optimus UI's. #593 (Popover in a Dialog with `appendTo`) was already fixed and now has tests. #731 (one table for screen readers in a scrollable TreeTable) needs a redesign of the scrollable TreeTable and stays open.
 
 ### Behaviour changes
 

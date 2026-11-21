@@ -62,8 +62,19 @@ export class RoadmapDemo {
                 link: 'https://github.com/e-xiste/exhaustive-ui/releases'
             },
             {
+                title: 'v22 release candidate',
+                shipped: true,
+                features: [
+                    'Fixes for the inherited high- and medium-severity bugs, each with a regression test',
+                    'Fixes for 108 inherited low-severity bugs',
+                    'Tailwind CSS v4 plugin, docs site and PrimeFlex migration',
+                    'PassThrough attributes rendered on the server and styles inside Shadow DOM hosts'
+                ],
+                link: 'https://github.com/e-xiste/exhaustive-ui/releases'
+            },
+            {
                 title: 'v22 stable',
-                features: ['Triage and address the inherited open issues', 'Stabilize the API surface before the first stable release', 'Documentation code modernization']
+                features: ['Triage the remaining inherited issues', 'Stabilize the API surface before the first stable release', 'Documentation code modernization']
             },
             {
                 title: 'Next',
