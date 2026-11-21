@@ -6,6 +6,12 @@ import { By } from '@angular/platform-browser';
 import { InputMask, InputMaskModule, InputMaskDirective } from './inputmask';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { CommonModule } from '@angular/common';
+import { Base } from '@exhaustive-ui/core/base';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 
 // Test Components
 @Component({
@@ -2398,6 +2404,24 @@ describe('InputMask inherited issue reproductions', () => {
         }
     });
 
+    it('puts the caret on the first empty slot when the input is clicked (optimus-ui#843)', async () => {
+        for (const input of [componentInput(), directiveInput()]) {
+            input.style.width = '200px';
+            const rect = input.getBoundingClientRect();
+            // a click near the right edge places the caret at the end, the mask moves it back to the first slot
+            input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+            input.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            input.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            await wait(20);
+            expect(input.value).toBe('__-__');
+            expect([input.selectionStart, input.selectionEnd]).toEqual([0, 0]);
+            input.blur();
+            await render();
+        }
+    });
+
     it('keeps an escaped mask character as a literal (optimus-ui#911)', async () => {
         fixture.componentInstance.mask = '+\\9 (999) 999';
         fixture.componentInstance.unmask = true;
@@ -2418,5 +2442,54 @@ describe('InputMask inherited issue reproductions', () => {
             expect(input.value).toBe('+9 (123) 456');
         }
         expect(fixture.componentInstance.value).toBe('123456');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputMask, InputGroup, InputGroupAddon],
+    template: `
+        <div style="width: 400px">
+            <p-inputgroup>
+                <p-inputgroup-addon>+</p-inputgroup-addon>
+                <p-inputmask mask="99-99" />
+                <p-inputgroup-addon>#</p-inputgroup-addon>
+            </p-inputgroup>
+            <p-inputmask class="fluid" mask="99-99" [fluid]="true" />
+        </div>
+    `
+})
+class TestThemedInputGroupInputMaskComponent {}
+
+describe('InputMask themed layout', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('fills an input group between addons and supports fluid (optimus-ui#690)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedInputGroupInputMaskComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedInputGroupInputMaskComponent);
+        await fixture.whenStable();
+        const group = fixture.nativeElement.querySelector('p-inputgroup') as HTMLElement;
+        const [before, after] = Array.from(group.querySelectorAll('p-inputgroup-addon')).map((addon) => (addon as HTMLElement).getBoundingClientRect());
+        const input = group.querySelector('input') as HTMLInputElement;
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+
+        expect(Math.round(group.getBoundingClientRect().width)).toBe(400);
+        expect(Math.round(rect.left)).toBe(Math.round(before.right));
+        expect(Math.round(rect.right)).toBe(Math.round(after.left));
+        expect(Math.round(rect.height)).toBe(Math.round(before.height));
+        expect([style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius]).toEqual(['0px', '0px', '0px', '0px']);
+
+        const fluid = fixture.nativeElement.querySelector('p-inputmask.fluid input') as HTMLInputElement;
+        expect(Math.round(fluid.getBoundingClientRect().width)).toBe(400);
     });
 });
