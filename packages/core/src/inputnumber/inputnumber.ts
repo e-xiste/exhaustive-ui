@@ -1376,17 +1376,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         } else {
             let selectionStart: any = input.nativeElement.selectionStart;
             let selectionEnd: any = input.nativeElement.selectionEnd;
-            const maxlength = this.maxlength();
-            if (maxlength && newValue.length > maxlength) {
-                newValue = newValue.slice(0, maxlength);
-                selectionStart = Math.min(selectionStart, maxlength);
-                selectionEnd = Math.min(selectionEnd, maxlength);
-            }
-
-            if (maxlength && maxlength < newValue.length) {
-                return;
-            }
-
+            // an insertion beyond maxlength is rejected by updateValue(); a deletion may leave a value longer than maxlength
+            // (written by the model), truncating it here would corrupt the value and send the caret to the end
             input.nativeElement.value = newValue;
             let newLength = newValue.length;
 

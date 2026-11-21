@@ -2112,4 +2112,33 @@ describe('InputNumber inherited issue reproductions', () => {
         });
     }
 
+    it('keeps the caret in place when deleting inside a grouped value at maxlength (optimus-ui#356)', async () => {
+        await create({ locale: 'en-US', useGrouping: true, maxFractionDigits: 0, maxlength: 19 }, null);
+        input.focus();
+        for (const digit of '1234567890123456') {
+            await keypress(digit);
+        }
+        expect(input.value).toBe('123,456,789,012,345');
+
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(input.value).toBe('12,356,789,012,345');
+        expect(input.selectionStart).toBe(4);
+
+        await backspace();
+        expect(input.value).toBe('1,256,789,012,345');
+        expect(input.selectionStart).toBe(3);
+    });
+
+    it('does not truncate a model value longer than maxlength when deleting a digit (optimus-ui#356)', async () => {
+        await create({ locale: 'en-US', useGrouping: true, maxFractionDigits: 0, maxlength: 15 }, 123456789012345);
+        expect(input.value).toBe('123,456,789,012,345');
+        input.focus();
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(inputNumber.value()).toBe(12356789012345);
+        expect(input.value).toBe('12,356,789,012,345');
+        expect(input.selectionStart).toBe(4);
+    });
+
 });
