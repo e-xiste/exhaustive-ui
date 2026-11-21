@@ -556,7 +556,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.calculateOptions();
                 this.calculateAutoSize();
                 // the new range is rendered on the next change detection: measure it again then
-                this._autoSize() && afterNextRender(() => this.calculateAutoSize(), { injector: this.injector });
+                // (unless the scroller was destroyed meanwhile: its injector cannot register render hooks any more)
+                this._autoSize() && this.initialized() && afterNextRender(() => this.calculateAutoSize(), { injector: this.injector });
             }, 1);
         }
     }
