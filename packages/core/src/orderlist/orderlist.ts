@@ -827,6 +827,12 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
                 this.onReorder.emit([event.item.data]);
             }
         }
+
+        // The listbox reorders a copy of its options on drop; point it back at value so the
+        // move buttons, which reorder value in place, keep updating the rendered list.
+        if (value) {
+            this.listViewChild()._options.set(value);
+        }
     }
 
     // Helper method to sort items by their index in a list
