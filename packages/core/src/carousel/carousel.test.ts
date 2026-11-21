@@ -1885,3 +1885,19 @@ describe('Carousel items exposed to screen readers after paging (optimus-ui#704)
         fixture.destroy();
     });
 });
+
+describe('Carousel destroyed', () => {
+    it('removes its responsive style element from the head', async () => {
+        TestBed.configureTestingModule({ imports: [Carousel], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(Carousel);
+        fixture.componentRef.setInput('value', [1, 2, 3, 4]);
+        fixture.componentRef.setInput('responsiveOptions', [{ breakpoint: '768px', numVisible: 1, numScroll: 1 }]);
+        await fixture.whenStable();
+        const style = fixture.componentInstance.carouselStyle() as HTMLStyleElement;
+        expect(style.isConnected).toBe(true);
+
+        fixture.destroy();
+
+        expect(style.isConnected).toBe(false);
+    });
+});
