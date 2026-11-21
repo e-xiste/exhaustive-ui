@@ -118,7 +118,7 @@ describe('Table lazy loading counts', () => {
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [TableModule],
     template: `
-        <p-table [value]="rows" [lazy]="true" [scrollable]="true" scrollHeight="300px" [rows]="20" [virtualScroll]="true" [virtualScrollItemSize]="40" [totalRecords]="1000" (onLazyLoad)="load($event)">
+        <p-table [rowTrackBy]="trackRow" [value]="rows" [lazy]="true" [scrollable]="true" scrollHeight="300px" [rows]="20" [virtualScroll]="true" [virtualScrollItemSize]="40" [totalRecords]="1000" (onLazyLoad)="load($event)">
             <ng-template #header>
                 <tr>
                     <th>Name</th>
@@ -133,6 +133,9 @@ describe('Table lazy loading counts', () => {
     `
 })
 class LazyVirtualTableComponent {
+    // the rows not loaded yet are undefined: track them by position
+    trackRow = (index: number, row: any) => row?.id ?? 'pending-' + index;
+
     rows: any[] = Array.from({ length: 1000 });
     events: TableLazyLoadEvent[] = [];
 
@@ -293,7 +296,7 @@ describe('Table editable cells and filtering (optimus-ui#537)', () => {
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [TableModule],
     template: `
-        <p-table [value]="rows()" [lazy]="true" [scrollable]="true" scrollHeight="400px" [rows]="20" [virtualScroll]="true" [virtualScrollItemSize]="40" (onLazyLoad)="load($event)">
+        <p-table [rowTrackBy]="trackRow" [value]="rows()" [lazy]="true" [scrollable]="true" scrollHeight="400px" [rows]="20" [virtualScroll]="true" [virtualScrollItemSize]="40" (onLazyLoad)="load($event)">
             <ng-template #header>
                 <tr>
                     <th>Name</th>
@@ -313,6 +316,9 @@ describe('Table editable cells and filtering (optimus-ui#537)', () => {
     `
 })
 class LazyVirtualLoadingComponent {
+    // the rows not loaded yet are undefined: track them by position
+    trackRow = (index: number, row: any) => row?.id ?? 'pending-' + index;
+
     rows = signal<any[]>(Array.from({ length: 2000 }));
     responseDelay = 0;
 
@@ -971,6 +977,10 @@ describe('Table expandable row groups with virtual scroll (optimus-ui#783)', () 
         await tick(50);
         await fixture.whenStable();
         const el = fixture.nativeElement as HTMLElement;
+        for (let i = 0; i < 20 && !el.querySelector('.group-header'); i++) {
+            await tick(20);
+            await fixture.whenStable();
+        }
         const check = () => {
             const headers = Array.from(el.querySelectorAll('.group-header')).map((h) => h.textContent!.replace('toggle', '').trim());
             expect(headers.length).toBeGreaterThan(0);
@@ -985,6 +995,62 @@ describe('Table expandable row groups with virtual scroll (optimus-ui#783)', () 
         await tick(50);
         await fixture.whenStable();
         check();
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <div id="host" style="height: 400px; width: 600px; display: flex; flex-direction: column">
+            <p-table [value]="rows()" [lazy]="true" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="40" [virtualScrollDelay]="0" [rows]="30" [rowTrackBy]="trackRow" (onLazyLoad)="load($event)">
+                <ng-template #body let-row>
+                    <tr style="height: 40px" class="data-row">
+                        <td>{{ row?.name }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class LazyVirtualFlexResizeComponent {
+    // the rows not loaded yet are undefined: track them by position
+    trackRow = (index: number, row: any) => row?.id ?? 'pending-' + index;
+
+    rows = signal<any[]>(Array.from({ length: 1000 }));
+
+    load(event: TableLazyLoadEvent) {
+        const first = event.first ?? 0;
+        const last = event.last ?? first + 30;
+        setTimeout(() => {
+            const next = [...this.rows()];
+            for (let i = first; i < last; i++) next[i] = { id: i, name: 'Name ' + i };
+            this.rows.set(next);
+        });
+    }
+}
+
+describe('Table lazy virtual scroll with a flex height resized (optimus-ui#750)', () => {
+    // the report is Firefox only: this keeps the Chromium behaviour
+    it('keeps the scroll position and the rows when the container is resized', async () => {
+        const fixture = await mount(LazyVirtualFlexResizeComponent);
+        await tick(100);
+        await fixture.whenStable();
+        const el = fixture.nativeElement as HTMLElement;
+        const scroller = el.querySelector('.p-virtualscroller') as HTMLElement;
+        scroller.scrollTop = 2000;
+        scroller.dispatchEvent(new Event('scroll'));
+        await tick(100);
+        await fixture.whenStable();
+        expect(scroller.scrollTop).toBe(2000);
+        (el.querySelector('#host') as HTMLElement).style.height = '300px';
+        window.dispatchEvent(new Event('resize'));
+        await tick(300);
+        await fixture.whenStable();
+        await tick(100);
+        expect(scroller.scrollTop).toBe(2000);
+        expect(el.querySelectorAll('.data-row').length).toBeGreaterThan(0);
         fixture.nativeElement.remove();
     });
 });
