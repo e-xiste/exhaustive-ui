@@ -7,6 +7,8 @@ import type { ScrollerLazyLoadEvent, ScrollerScrollEvent, ScrollerScrollIndexCha
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Scroller } from './scroller';
 import { Select } from '@exhaustive-ui/core/select';
+import { AutoComplete } from '@exhaustive-ui/core/autocomplete';
+import { MultiSelect } from '@exhaustive-ui/core/multiselect';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -5016,4 +5018,55 @@ describe('Select lazy virtual scroll at the end of the list', () => {
             fixture.destroy();
         });
     }
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AutoComplete],
+    template: `<p-autocomplete [virtualScroll]="true" [suggestions]="filtered()" [virtualScrollItemSize]="34" (completeMethod)="filter($event.query)" optionLabel="label" appendTo="self" [delay]="0" />`
+})
+class TestAutoCompleteVirtualComponent {
+    all = Array.from({ length: 10000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+    filtered = signal<any[]>([]);
+
+    filter(query: string) {
+        this.filtered.set(this.all.filter((item) => item.label.toLowerCase().startsWith(query.toLowerCase())));
+    }
+}
+
+describe('AutoComplete virtual scroll height', () => {
+    const search = async (fixture: ComponentFixture<any>, value: string) => {
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        input.focus();
+        input.value = value;
+        // a paste: the whole value arrives in one input event
+        input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: value }));
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+    };
+    const viewportHeight = (fixture: ComponentFixture<any>) => (fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).getBoundingClientRect().height;
+
+    it('fits a single suggestion on the first search (optimus-ui#656)', async () => {
+        TestBed.configureTestingModule({ imports: [TestAutoCompleteVirtualComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestAutoCompleteVirtualComponent);
+        await fixture.whenStable();
+        await search(fixture, 'Item 6666');
+
+        expect(fixture.componentInstance.filtered().length).toBe(1);
+        expect(viewportHeight(fixture)).toBeLessThan(34 * 2);
+        fixture.destroy();
+    });
+
+    it('shrinks to a single suggestion after a search with many results (optimus-ui#444)', async () => {
+        TestBed.configureTestingModule({ imports: [TestAutoCompleteVirtualComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestAutoCompleteVirtualComponent);
+        await fixture.whenStable();
+        await search(fixture, 'Item');
+        expect(viewportHeight(fixture)).toBeGreaterThan(34 * 4);
+        await search(fixture, 'Item 6666');
+
+        expect(viewportHeight(fixture)).toBeLessThan(34 * 2);
+        fixture.destroy();
+    });
 });

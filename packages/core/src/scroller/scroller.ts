@@ -762,8 +762,15 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                     (<ElementRef>this.elementViewChild()).nativeElement.style.contain = 'none';
 
                     const [contentWidth, contentHeight] = [getWidth(contentEl), getHeight(contentEl)];
-                    contentWidth !== this.defaultContentWidth() && ((<ElementRef>this.elementViewChild()).nativeElement.style.width = '');
-                    contentHeight !== this.defaultContentHeight() && ((<ElementRef>this.elementViewChild()).nativeElement.style.height = '');
+                    const element = (<ElementRef>this.elementViewChild()).nativeElement;
+                    // A list smaller than the viewport is measured even when its content has the size it had at init
+                    // (one item on the first search): the default size is that of the content, not of the viewport.
+                    const items = this._items() || [];
+                    const itemSize = this._itemSize();
+                    const listHeight = this.both() ? items.length * (<number[]>itemSize)[0] : this.vertical() ? items.length * <number>itemSize : Infinity;
+                    const listWidth = this.both() ? (this._columns() || items[0] || []).length * (<number[]>itemSize)[1] : this.horizontal() ? (this._columns() || items).length * <number>itemSize : Infinity;
+                    (contentWidth !== this.defaultContentWidth() || listWidth < getWidth(element)) && (element.style.width = '');
+                    (contentHeight !== this.defaultContentHeight() || listHeight < getHeight(element)) && (element.style.height = '');
 
                     const [width, height] = [getWidth((<ElementRef>this.elementViewChild()).nativeElement), getHeight((<ElementRef>this.elementViewChild()).nativeElement)];
                     (this.both() || this.horizontal()) && ((<ElementRef>this.elementViewChild()).nativeElement.style.width = width < <number>this.defaultWidth() ? width + 'px' : this._scrollWidth() || this.defaultWidth() + 'px');
