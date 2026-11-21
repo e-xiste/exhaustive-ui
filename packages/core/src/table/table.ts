@@ -2622,7 +2622,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     onColumnResize(event: any) {
         let containerLeft = DomHandler.getOffset(this.el?.nativeElement).left;
         !this.$unstyled() && DomHandler.addClass(this.el?.nativeElement, 'p-unselectable-text');
-        (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.height = this.el?.nativeElement.offsetHeight + 'px';
+        // offsetHeight rounds a fractional height up, which made the indicator overflow the container of the table
+        (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.height = this.el?.nativeElement.getBoundingClientRect().height + 'px';
         (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.top = 0 + 'px';
         if (event.type == 'touchmove') {
             (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.left = event.changedTouches[0].clientX - containerLeft + this.el?.nativeElement.scrollLeft + 'px';

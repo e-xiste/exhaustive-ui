@@ -4310,4 +4310,37 @@ describe('optimus-ui issues (part 1)', () => {
             expect(getComputedStyle(thead).backgroundColor).toBe(expected);
         });
     });
+
+    describe('column resize indicator height (optimus-ui#95)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div style="height: 150.6px">
+                    <p-table [value]="rows" [resizableColumns]="true" [scrollable]="true" scrollHeight="flex">
+                        <ng-template #header><tr><th pResizableColumn>Id</th><th pResizableColumn>Name</th></tr></ng-template>
+                        <ng-template #body let-row><tr><td>{{ row.id }}</td><td>{{ row.name }}</td></tr></ng-template>
+                    </p-table>
+                </div>
+            `
+        })
+        class FractionalHeightResizeComponent {
+            rows = rowsOf(10);
+        }
+
+        it('is not taller than a table of fractional height', async () => {
+            fixture = await render(FractionalHeightResizeComponent);
+            const resizer = fixture.nativeElement.querySelector('.p-datatable-column-resizer') as HTMLElement;
+            const rect = resizer.getBoundingClientRect();
+            resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: rect.left + 2, clientY: rect.top + 2 }));
+            document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: rect.left + 10, clientY: rect.top + 2 }));
+
+            const indicator = fixture.nativeElement.querySelector('.p-datatable-column-resize-indicator') as HTMLElement;
+            const tableHeight = (fixture.nativeElement.querySelector('p-table') as HTMLElement).getBoundingClientRect().height;
+            expect(tableHeight % 1).not.toBe(0);
+            expect(indicator.style.display).toBe('block');
+            expect(parseFloat(indicator.style.height)).toBeLessThanOrEqual(tableHeight);
+            document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: rect.left + 10, clientY: rect.top + 2 }));
+        });
+    });
 });
