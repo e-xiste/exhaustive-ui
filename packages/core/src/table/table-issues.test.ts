@@ -287,3 +287,372 @@ describe('Table editable cells and filtering (optimus-ui#537)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows()" [lazy]="true" [scrollable]="true" scrollHeight="400px" [rows]="20" [virtualScroll]="true" [virtualScrollItemSize]="40" (onLazyLoad)="load($event)">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr style="height: 40px" class="data-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #loadingbody>
+                <tr style="height: 40px" class="skeleton-row">
+                    <td>...</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class LazyVirtualLoadingComponent {
+    rows = signal<any[]>(Array.from({ length: 2000 }));
+    responseDelay = 0;
+
+    load(event: TableLazyLoadEvent) {
+        const first = event.first ?? 0;
+        const last = event.last ?? first + 20;
+        setTimeout(() => {
+            const next = [...this.rows()];
+            for (let i = first; i < last; i++) next[i] = { id: i, name: 'Name ' + i };
+            this.rows.set(next);
+        }, this.responseDelay);
+    }
+}
+
+describe('Table lazy virtual scroll loading body (optimus-ui#543)', () => {
+    it('shows the loading body rows while the rows reached by a fast scroll are loading', async () => {
+        const fixture = await mount(LazyVirtualLoadingComponent);
+        await tick(50);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBeGreaterThan(0);
+
+        fixture.componentInstance.responseDelay = 1000;
+        const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        scroller.scrollTop = scroller.scrollHeight;
+        scroller.dispatchEvent(new Event('scroll'));
+        await tick(20);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('.skeleton-row').length).toBeGreaterThan(0);
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBe(0);
+
+        // the scroll delay is over but the data has not arrived yet
+        await tick(400);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('.skeleton-row').length).toBeGreaterThan(0);
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBe(0);
+
+        await tick(1000);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBeGreaterThan(0);
+        expect(fixture.nativeElement.querySelector('.data-row td').textContent).toContain('Name 19');
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <div style="height: 400px; display: flex; flex-direction: column">
+            <div style="height: 50px; flex: none">toolbar</div>
+            <p-table [value]="rows" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="40" style="flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column">
+                <ng-template #header>
+                    <tr>
+                        <th>Name</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr style="height: 40px" class="data-row">
+                        <td>{{ row.name }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class VirtualFlexComponent {
+    rows = makeRows(1000);
+}
+
+describe('Table virtual scroll with a flex scroll height (optimus-ui#617)', () => {
+    it('renders a window of rows inside a scroller that fills the flex parent', async () => {
+        const fixture = await mount(VirtualFlexComponent);
+        await tick(50);
+        await fixture.whenStable();
+
+        const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        const rows = fixture.nativeElement.querySelectorAll('.data-row').length;
+        expect(scroller.getBoundingClientRect().height).toBeGreaterThan(300);
+        expect(scroller.getBoundingClientRect().height).toBeLessThanOrEqual(350);
+        expect(scroller.scrollHeight).toBeGreaterThan(30000);
+        expect(rows).toBeGreaterThan(5);
+        expect(rows).toBeLessThan(100);
+
+        scroller.scrollTop = 20000;
+        scroller.dispatchEvent(new Event('scroll'));
+        await tick(50);
+        await fixture.whenStable();
+        const firstVisible = fixture.nativeElement.querySelector('.data-row td').textContent.trim();
+        expect(Number(firstVisible.replace('Name ', ''))).toBeGreaterThan(400);
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table #dt [value]="rows" [scrollable]="true" scrollHeight="400px" [virtualScroll]="true" [virtualScrollItemSize]="40" [globalFilterFields]="['name']">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr style="height: 40px" class="data-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr class="empty-row">
+                    <td>No data</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class VirtualFilterComponent {
+    @ViewChild('dt') table!: Table;
+    rows = makeRows(1000);
+}
+
+describe('Table virtual scroll and a filter without match (optimus-ui#796)', () => {
+    it('shows the rows again when the filter matches after an empty result', async () => {
+        const fixture = await mount(VirtualFilterComponent);
+        await tick(50);
+        const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        scroller.scrollTop = 4000;
+        scroller.dispatchEvent(new Event('scroll'));
+        await tick(50);
+        await fixture.whenStable();
+
+        fixture.componentInstance.table.filterGlobal('nothing matches', 'contains');
+        await tick(400);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBe(0);
+        expect(fixture.nativeElement.querySelectorAll('.empty-row').length).toBe(1);
+
+        fixture.componentInstance.table.filterGlobal('Name 1', 'contains');
+        await tick(400);
+        await fixture.whenStable();
+        await tick(50);
+        await fixture.whenStable();
+
+        const rendered = fixture.nativeElement.querySelectorAll('.data-row').length;
+        expect(rendered).toBeGreaterThan(5);
+        expect(fixture.nativeElement.querySelectorAll('.empty-row').length).toBe(0);
+        // 111 matches of 40px
+        expect(scroller.scrollHeight).toBeGreaterThan(4000);
+
+        fixture.componentInstance.table.filterGlobal('', 'contains');
+        await tick(400);
+        await fixture.whenStable();
+        await tick(50);
+        expect(scroller.scrollHeight).toBeGreaterThan(39000);
+        expect(fixture.nativeElement.querySelectorAll('.data-row').length).toBeGreaterThan(5);
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <div style="width: 500px">
+            <p-table [value]="rows" [scrollable]="true" scrollHeight="400px" [virtualScroll]="true" [virtualScrollItemSize]="40">
+                <ng-template #header>
+                    <tr>
+                        <th pFrozenColumn style="min-width: 120px">Id</th>
+                        <th pFrozenColumn style="min-width: 120px">Name</th>
+                        <th pFrozenColumn style="min-width: 120px">Code</th>
+                        @for (c of extra; track c) {
+                            <th style="min-width: 200px">Extra {{ c }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr style="height: 40px" class="data-row">
+                        <td pFrozenColumn>{{ row.id }}</td>
+                        <td pFrozenColumn>{{ row.name }}</td>
+                        <td pFrozenColumn>{{ row.code }}</td>
+                        @for (c of extra; track c) {
+                            <td>{{ row.name }} {{ c }}</td>
+                        }
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class VirtualFrozenComponent {
+    rows = makeRows(2000);
+    extra = [1, 2, 3, 4];
+}
+
+describe('Table virtual scroll with frozen columns (optimus-ui#799, optimus-ui#890)', () => {
+    it('follows the scroll position, upwards as well as downwards', async () => {
+        const fixture = await mount(VirtualFrozenComponent);
+        await tick(50);
+        await fixture.whenStable();
+        const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        const firstRenderedId = () => Number((fixture.nativeElement.querySelector('.data-row td') as HTMLElement).textContent!.trim());
+        const scrollTo = async (top: number) => {
+            scroller.scrollTop = top;
+            scroller.dispatchEvent(new Event('scroll'));
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+            await fixture.whenStable();
+            await tick(20);
+        };
+
+        await scrollTo(40000);
+        expect(scroller.scrollTop).toBe(40000);
+
+        for (let top = 40000; top >= 36000; top -= 200) {
+            await scrollTo(top);
+            expect(scroller.scrollTop).toBe(top);
+            const first = firstRenderedId();
+            // the rendered window starts at or before the first visible row and covers the viewport
+            expect(first).toBeLessThanOrEqual(top / 40);
+            expect(first).toBeGreaterThan(top / 40 - 40);
+        }
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table id="outer" [value]="rows" dataKey="id" [showGridlines]="true" [expandedRowKeys]="expanded">
+            <ng-template #header>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr class="outer-row">
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #expandedrow let-row>
+                <tr class="expansion-row">
+                    <td colspan="2">
+                        <p-table id="inner" [value]="orders">
+                            <ng-template #header>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-order>
+                                <tr class="inner-row">
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.amount }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template #footer>
+                <tr>
+                    <td id="footer-first">Total</td>
+                    <td id="footer-last">3</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class GridlinesExpansionFooterComponent {
+    rows = makeRows(2);
+    expanded: Record<string, boolean> = { '1': true };
+    orders = [
+        { id: 'o1', amount: 1 },
+        { id: 'o2', amount: 2 }
+    ];
+}
+
+describe('Table gridlines with an expanded row and a footer (optimus-ui#951)', () => {
+    it('keeps the bottom border of the table and of the nested table rows', async () => {
+        const fixture = await mount(GridlinesExpansionFooterComponent);
+        await tick(20);
+        const el = fixture.nativeElement as HTMLElement;
+        expect(el.querySelectorAll('.expansion-row').length).toBe(1);
+
+        const footer = el.querySelector('#footer-first') as HTMLElement;
+        expect(getComputedStyle(footer).borderBottomWidth).toBe('1px');
+        expect(getComputedStyle(el.querySelector('#footer-last') as HTMLElement).borderBottomWidth).toBe('1px');
+
+        // the nested table has no gridlines: the rules of the outer table must not leak into it
+        const innerCells = Array.from(el.querySelectorAll('.inner-row td')) as HTMLElement[];
+        const outerCellWidth = getComputedStyle(el.querySelector('.outer-row td') as HTMLElement).borderLeftWidth;
+        expect(outerCellWidth).toBe('1px');
+        for (const cell of innerCells) {
+            expect(getComputedStyle(cell).borderLeftWidth).toBe('0px');
+            expect(getComputedStyle(cell).borderBottomWidth).toBe('1px');
+        }
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [scrollable]="true" scrollHeight="200px">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr style="height: 40px">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+            <ng-template #footer>
+                <tr>
+                    <td id="sticky-footer">Total</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class ScrollableFooterComponent {
+    rows = makeRows(50);
+}
+
+describe('Table scrollable footer (optimus-ui#679)', () => {
+    it('keeps the footer at the bottom of the scroll viewport', async () => {
+        const fixture = await mount(ScrollableFooterComponent);
+        const container = fixture.nativeElement.querySelector('.p-datatable-table-container') as HTMLElement;
+        const footer = fixture.nativeElement.querySelector('#sticky-footer') as HTMLElement;
+        expect(container.scrollHeight).toBeGreaterThan(1000);
+
+        const bottom = () => Math.round(container.getBoundingClientRect().bottom - footer.getBoundingClientRect().bottom);
+        expect(Math.abs(bottom())).toBeLessThanOrEqual(1);
+        container.scrollTop = 500;
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        expect(Math.abs(bottom())).toBeLessThanOrEqual(1);
+        fixture.nativeElement.remove();
+    });
+});
