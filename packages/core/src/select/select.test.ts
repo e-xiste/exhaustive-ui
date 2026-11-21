@@ -9,6 +9,7 @@ import { map, take } from 'rxjs/operators';
 import { Select, SelectItem } from './select';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { Base } from '@exhaustive-ui/core/base';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
@@ -5509,5 +5510,41 @@ describe('Select - inside a Dialog', () => {
         await settle(fixture, 400);
         expect(select.overlayVisible()).toBe(false);
         expect(document.querySelectorAll('.p-select-overlay').length).toBe(0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormField],
+    template: `<p-select [formField]="profile.city" [options]="cities" [editable]="true" />`
+})
+class TestSelectSignalFormsComponent {
+    cities = ['Rome', 'Paris'];
+    model = signal({ city: '' });
+    profile = form(this.model, (path) => {
+        required(path.city);
+        pattern(path.city, /^[A-Z]/);
+    });
+}
+
+describe('Select - with Angular Signal Forms (optimus-ui#155)', () => {
+    it('accepts the constraints Signal Forms bind to it and renders no pattern it cannot honour', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectSignalFormsComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectSignalFormsComponent);
+        await settle(fixture);
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const input = fixture.nativeElement.querySelector('input.p-select-label') as HTMLInputElement;
+
+        // Signal Forms bind the RegExp list of the field (an unanchored match) to the pattern input
+        expect(select.pattern()).toBeUndefined();
+        expect(input.hasAttribute('pattern')).toBe(false);
+        expect(select.min()).toBeUndefined();
+        expect(select.max()).toBeUndefined();
+        expect(select.required()).toBe(true);
     });
 });
