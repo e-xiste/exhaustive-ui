@@ -2073,4 +2073,33 @@ describe('TreeSelect r22 regressions', () => {
         // The parent link stays available to code that walks the tree
         expect(value[0].parent?.label).toBe('A');
     });
+
+    it('writes the model once when checking a node with many descendants (optimus-ui#836)', async () => {
+        const changes: any[] = [];
+        treeSelect.registerOnChange((value: any) => changes.push(value));
+        fixture.componentRef.setInput('options', [
+            {
+                key: 'r',
+                label: 'Root',
+                expanded: true,
+                children: Array.from({ length: 300 }, (_, i) => ({ key: `r-${i}`, label: `Leaf ${i}` }))
+            }
+        ]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        await settle();
+
+        treeSelect.show();
+        await settle();
+        const root = Array.from(document.querySelectorAll('.p-treeselect-overlay .p-tree-node-content')).find((c) => c.textContent!.trim() === 'Root') as HTMLElement;
+        root.click();
+        await settle();
+
+        expect(changes.length).toBe(1);
+        expect(changes[0].length).toBe(301);
+
+        root.click();
+        await settle();
+        expect(changes.length).toBe(2);
+        expect(changes[1].length).toBe(0);
+    });
 });

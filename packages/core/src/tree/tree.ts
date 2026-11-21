@@ -1483,25 +1483,32 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
             const currentSelection = this.selection();
 
             if (this.isCheckboxSelectionMode()) {
+                // Propagation adds or removes every descendant and ancestor one by one: collect the changes
+                // and write the model once, instead of emitting selectionChange for each of them.
+                this.pendingSelection = [...((currentSelection as TreeNode[]) || [])];
+
                 if (selected) {
                     if (this.propagateSelectionDown()) this.propagateDown(node, false);
-                    else this.selection.set((currentSelection as TreeNode[]).filter((_val: TreeNode, i: number) => i != index));
+                    else this.writeSelection(this.pendingSelection.filter((_val: TreeNode, i: number) => i != index));
 
                     if (this.propagateSelectionUp() && node.parent) {
                         this.propagateUp(node.parent, false);
                     }
-
-                    this.onNodeUnselect.emit({ originalEvent: event, node: node });
                 } else {
                     if (this.propagateSelectionDown()) this.propagateDown(node, true);
-                    else this.selection.set([...((currentSelection as TreeNode[]) || []), node]);
+                    else this.writeSelection([...this.pendingSelection, node]);
 
                     if (this.propagateSelectionUp() && node.parent) {
                         this.propagateUp(node.parent, true);
                     }
-
-                    this.onNodeSelect.emit({ originalEvent: event, node: node });
                 }
+
+                const nextSelection = this.pendingSelection;
+                this.pendingSelection = null;
+                this.selection.set(nextSelection);
+
+                if (selected) this.onNodeUnselect.emit({ originalEvent: event, node: node });
+                else this.onNodeSelect.emit({ originalEvent: event, node: node });
             } else {
                 let metaSelection = this.nodeTouched() ? false : this.metaKeySelection();
 
@@ -1606,7 +1613,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
 
     findIndexInSelection(node: TreeNode) {
         let index: number = -1;
-        const currentSelection = this.selection();
+        const currentSelection = this.currentSelection();
         if (this.selectionMode() && currentSelection) {
             if (this.isSingleSelectionMode()) {
                 const sel = currentSelection as TreeNode;
@@ -1666,6 +1673,20 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
         }
     }
 
+    /**
+     * Working copy of the selection while a checkbox click propagates to descendants and ancestors.
+     */
+    private pendingSelection: TreeNode[] | null = null;
+
+    private currentSelection() {
+        return this.pendingSelection !== null ? this.pendingSelection : this.selection();
+    }
+
+    private writeSelection(value: TreeNode[]) {
+        if (this.pendingSelection !== null) this.pendingSelection = value;
+        else this.selection.set(value);
+    }
+
     propagateUp(node: TreeNode, select: boolean) {
         if (node.children && node.children.length) {
             let selectedCount: number = 0;
@@ -1678,15 +1699,15 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
                 }
             }
 
-            const currentSelection = (this.selection() as TreeNode[]) || [];
+            const currentSelection = (this.currentSelection() as TreeNode[]) || [];
             if (select && selectedCount == node.children.length) {
-                if (!this.isSelected(node)) this.selection.set([...currentSelection, node]);
+                if (!this.isSelected(node)) this.writeSelection([...currentSelection, node]);
                 node.partialSelected = false;
             } else {
                 if (!select) {
                     let index = this.findIndexInSelection(node);
                     if (index >= 0) {
-                        this.selection.set(currentSelection.filter((_val: TreeNode, i: number) => i != index));
+                        this.writeSelection(currentSelection.filter((_val: TreeNode, i: number) => i != index));
                     }
                 }
 
@@ -1705,12 +1726,12 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
 
     propagateDown(node: TreeNode, select: boolean) {
         let index = this.findIndexInSelection(node);
-        const currentSelection = (this.selection() as TreeNode[]) || [];
+        const currentSelection = (this.currentSelection() as TreeNode[]) || [];
 
         if (select && index == -1) {
-            this.selection.set([...currentSelection, node]);
+            this.writeSelection([...currentSelection, node]);
         } else if (!select && index > -1) {
-            this.selection.set(currentSelection.filter((_val: TreeNode, i: number) => i != index));
+            this.writeSelection(currentSelection.filter((_val: TreeNode, i: number) => i != index));
         }
 
         node.partialSelected = false;
