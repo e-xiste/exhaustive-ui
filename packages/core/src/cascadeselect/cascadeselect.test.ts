@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsMo
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
-import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
 import { CascadeSelectBeforeHideEvent, CascadeSelectBeforeShowEvent, CascadeSelectChangeEvent, CascadeSelectHideEvent, CascadeSelectShowEvent } from '@exhaustive-ui/core/types/cascadeselect';
 import { BehaviorSubject } from 'rxjs';
 import { CASCADESELECT_VALUE_ACCESSOR, CascadeSelect, CascadeSelectModule } from './cascadeselect';
@@ -2553,5 +2553,38 @@ describe('CascadeSelect low bug fixes', () => {
         expect(icon.classList).toContain('p-icon-spin');
         expect(icon.classList).not.toContain('pi-spin');
         expect(icon.getAttribute('aria-hidden')).toBe('true');
+    });
+});
+
+describe('CascadeSelect global PassThrough on options', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [CascadeSelect],
+        template: `<p-cascadeselect [options]="options" optionLabel="name" optionGroupLabel="name" [optionGroupChildren]="['items']" />`
+    })
+    class GlobalPTHost {
+        options = [
+            { name: 'A', items: [{ name: 'A1' }] },
+            { name: 'B', items: [{ name: 'B1' }] }
+        ];
+    }
+
+    it('applies the global cascadeselect PT to the options of the sub lists', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [GlobalPTHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ pt: { cascadeselect: { option: { class: 'GLOBAL_OPTION' } } } })]
+        }).createComponent(GlobalPTHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        fixture.debugElement.query(By.directive(CascadeSelect)).componentInstance.show();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const options = document.querySelectorAll('li.p-cascadeselect-option');
+        expect(options.length).toBe(2);
+        options.forEach((option) => expect(option.classList.contains('GLOBAL_OPTION')).toBe(true));
+        fixture.destroy();
     });
 });

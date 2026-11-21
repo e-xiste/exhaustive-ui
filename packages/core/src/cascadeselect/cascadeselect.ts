@@ -127,6 +127,8 @@ export const CASCADESELECT_VALUE_ACCESSOR: any = {
     providers: [CascadeSelectStyle, { provide: PARENT_INSTANCE, useExisting: CascadeSelectSub }]
 })
 export class CascadeSelectSub extends BaseComponent {
+    hostName = 'CascadeSelect';
+
     cascadeselect = inject(CascadeSelect);
 
     selectId = input<string | undefined>();
