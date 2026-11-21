@@ -1771,13 +1771,41 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     }
 
     onPageDownKey(event) {
-        this.scrollInView(this.visibleOptions().length - 1);
+        this.changeFocusedOptionIndex(event, this.findPageOptionIndex(1));
+        !this._overlayVisible() && this.show();
         event.preventDefault();
     }
 
     onPageUpKey(event) {
-        this.scrollInView(0);
+        this.changeFocusedOptionIndex(event, this.findPageOptionIndex(-1));
+        !this._overlayVisible() && this.show();
         event.preventDefault();
+    }
+
+    /**
+     * Index of the option one page away from the focused option: a page is the number of options the
+     * list shows at once, so PageDown/PageUp move the focus like a scroll of the list.
+     */
+    findPageOptionIndex(direction: 1 | -1): number {
+        const focusedIndex = this.focusedOptionIndex();
+        const firstIndex = this.findFirstOptionIndex();
+        const lastIndex = this.findLastOptionIndex();
+
+        if (focusedIndex === -1) {
+            return direction > 0 ? firstIndex : lastIndex;
+        }
+
+        const wrapper = this.itemsWrapper();
+        const option = this.itemsViewChild()?.nativeElement?.querySelector(`li[id="${this.focusedOptionId()}"]`) as HTMLElement | null;
+        const optionHeight = this.virtualScroll() ? this.virtualScrollItemSize() : option?.offsetHeight;
+        const pageSize = wrapper?.clientHeight && optionHeight ? Math.max(1, Math.floor(wrapper.clientHeight / optionHeight)) : 10;
+        const index = focusedIndex + direction * pageSize;
+
+        if (direction > 0) {
+            return index >= lastIndex ? lastIndex : this.findNextOptionIndex(index - 1);
+        }
+
+        return index <= firstIndex ? firstIndex : this.findPrevOptionIndex(index + 1);
     }
 
     onEnterKey(event) {

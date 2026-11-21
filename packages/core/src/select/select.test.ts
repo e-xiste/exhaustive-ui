@@ -5523,6 +5523,69 @@ describe('Select - inside a Dialog', () => {
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
+    imports: [Select, FormsModule],
+    template: `<p-select [options]="options" [(ngModel)]="value" optionLabel="label" [group]="true" optionGroupLabel="label" optionGroupChildren="items" scrollHeight="190px" />`
+})
+class TestSelectPagingComponent {
+    options = ['A', 'B', 'C', 'D', 'E'].map((group) => ({ label: group, items: Array.from({ length: 10 }, (_, i) => ({ label: `${group}${i}` })) }));
+    value = null;
+}
+
+describe('Select - PageDown and PageUp (optimus-ui#721)', () => {
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('moves the focus one page of options down and up instead of jumping to the ends', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectPagingComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectPagingComponent);
+        await settle(fixture);
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const combobox = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+        const press = async (key: string) => {
+            const event = new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true });
+            combobox.dispatchEvent(event);
+            await settle(fixture);
+            return event;
+        };
+
+        combobox.focus();
+        const opening = await press('PageDown');
+        expect(opening.defaultPrevented).toBe(true);
+        expect(select.overlayVisible()).toBe(true);
+        expect(select.focusedOptionIndex()).toBe(1);
+
+        const container = fixture.nativeElement.querySelector('.p-select-list-container') as HTMLElement;
+        const optionHeight = (fixture.nativeElement.querySelector(`li[id="${select.focusedOptionId()}"]`) as HTMLElement).offsetHeight;
+        const pageSize = Math.floor(container.clientHeight / optionHeight);
+        expect(pageSize).toBe(5);
+
+        await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(1 + pageSize);
+        expect(container.scrollTop).toBeGreaterThan(0);
+
+        // the label of group B (index 11) is skipped
+        await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(2 + 2 * pageSize);
+        await press('PageUp');
+        expect(select.focusedOptionIndex()).toBe(2 + pageSize);
+
+        // the ends of the list stop the paging, on an option rather than a group label
+        for (let i = 0; i < 10; i++) await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(select.visibleOptions().length - 1);
+        for (let i = 0; i < 10; i++) await press('PageUp');
+        expect(select.focusedOptionIndex()).toBe(1);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
     imports: [Select, FormField],
     template: `<p-select [formField]="profile.city" [options]="cities" [editable]="true" />`
 })

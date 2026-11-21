@@ -4964,3 +4964,62 @@ describe('MultiSelect - themed', () => {
         expect(getComputedStyle(host.querySelector('#float label')!).top).toBe('0px');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MultiSelect, FormsModule],
+    template: `<p-multiselect [options]="options" [(ngModel)]="value" optionLabel="label" [group]="true" optionGroupLabel="label" optionGroupChildren="items" scrollHeight="190px" />`
+})
+class TestMultiSelectPagingComponent {
+    options = groupedOptions;
+    value = [];
+}
+
+describe('MultiSelect - PageDown and PageUp (optimus-ui#721)', () => {
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-multiselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('moves the focus one page of options down and up instead of jumping to the ends', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestMultiSelectPagingComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestMultiSelectPagingComponent);
+        await settle(fixture);
+        const multiSelect = fixture.debugElement.query(By.directive(MultiSelect)).componentInstance as MultiSelect;
+        const combobox = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+        const press = async (key: string) => {
+            const event = new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true });
+            combobox.dispatchEvent(event);
+            await settle(fixture);
+            return event;
+        };
+
+        combobox.focus();
+        const opening = await press('PageDown');
+        expect(opening.defaultPrevented).toBe(true);
+        expect(multiSelect._overlayVisible()).toBe(true);
+        expect(multiSelect.focusedOptionIndex()).toBe(1);
+
+        const container = fixture.nativeElement.querySelector('.p-multiselect-list-container') as HTMLElement;
+        const optionHeight = (fixture.nativeElement.querySelector(`li[id="${multiSelect.focusedOptionId()}"]`) as HTMLElement).offsetHeight;
+        const pageSize = Math.floor(container.clientHeight / optionHeight);
+        expect(pageSize).toBeGreaterThan(1);
+
+        await press('PageDown');
+        expect(multiSelect.focusedOptionIndex()).toBe(1 + pageSize);
+        expect(container.scrollTop).toBeGreaterThan(0);
+        await press('PageUp');
+        expect(multiSelect.focusedOptionIndex()).toBe(1);
+
+        // the ends of the list stop the paging, on an option rather than a group label
+        for (let i = 0; i < 12; i++) await press('PageDown');
+        expect(multiSelect.focusedOptionIndex()).toBe(multiSelect.visibleOptions().length - 1);
+        for (let i = 0; i < 12; i++) await press('PageUp');
+        expect(multiSelect.focusedOptionIndex()).toBe(1);
+    });
+});
