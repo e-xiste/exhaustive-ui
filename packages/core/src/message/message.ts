@@ -4,6 +4,7 @@ import { MotionOptions } from '@exhaustive-ui/motion';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
+import { TimesIcon } from '@exhaustive-ui/core/icons';
 import { MotionModule } from '@exhaustive-ui/core/motion';
 import { Ripple } from '@exhaustive-ui/core/ripple';
 import { MessageContainerTemplateContext, MessagePassThrough, MessageSeverity } from '@exhaustive-ui/core/types/message';
@@ -17,7 +18,7 @@ const MESSAGE_INSTANCE = new InjectionToken<Message>('MESSAGE_INSTANCE');
  */
 @Component({
     selector: 'p-message',
-    imports: [CommonModule, Ripple, SharedModule, Bind, MotionModule],
+    imports: [CommonModule, TimesIcon, Ripple, SharedModule, Bind, MotionModule],
     template: `
         <div [pBind]="ptm('contentWrapper')" [class]="cx('contentWrapper')" [attr.data-p]="dataP()">
             <div [pBind]="ptm('content')" [class]="cx('content')" [attr.data-p]="dataP()">

@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@exhaustive-ui/core/api';
+import { isIOS } from '@exhaustive-ui/utils';
 import { ContextMenu, ContextMenuSub } from './contextmenu';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -2235,5 +2236,48 @@ describe('ContextMenu inside a positioned or transformed container (optimus-ui#8
 
         fixture.componentInstance.cm().hide();
         fixture.nativeElement.remove();
+    });
+});
+
+describe('ContextMenu long press on an iPad', () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    // iPadOS Safari reports the user agent and platform of a desktop Mac, with touch points
+    const fakeDevice = (platform: string, maxTouchPoints: number) => {
+        vi.spyOn(Navigator.prototype, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15');
+        vi.spyOn(Navigator.prototype, 'platform', 'get').mockReturnValue(platform);
+        vi.spyOn(Navigator.prototype, 'maxTouchPoints', 'get').mockReturnValue(maxTouchPoints);
+    };
+
+    it('opens the menu after a long press', async () => {
+        fakeDevice('MacIntel', 5);
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestTouchContextMenuComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestTouchContextMenuComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const zone = fixture.nativeElement.querySelector('.touch-zone') as HTMLElement;
+        const touch = new Touch({ identifier: 1, target: zone, clientX: 120, clientY: 80, pageX: 120, pageY: 80 });
+        zone.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [touch], targetTouches: [touch], changedTouches: [touch] }));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const cm = fixture.componentInstance.cm();
+        expect(cm.isMobile()).toBe(true);
+        expect(cm.visible()).toBe(true);
+
+        cm.hide();
+        fixture.nativeElement.remove();
+    });
+
+    it('still treats a Mac without touch as a desktop', () => {
+        fakeDevice('MacIntel', 0);
+        expect(isIOS()).toBe(false);
     });
 });

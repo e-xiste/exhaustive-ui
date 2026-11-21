@@ -209,7 +209,12 @@ export class DomHandler {
     }
 
     static getParents(element: any, parents: any = []): any {
-        return element['parentNode'] === null ? parents : this.getParents(element.parentNode, parents.concat([element.parentNode]));
+        let parent = element['parentNode'];
+        // continue from the host of a shadow root: the root itself is not an Element
+        if (parent && parent instanceof ShadowRoot && parent.host) {
+            parent = parent.host;
+        }
+        return parent == null ? parents : this.getParents(parent, parents.concat([parent]));
     }
 
     static getScrollableParents(element: any) {
@@ -488,7 +493,9 @@ export class DomHandler {
     }
 
     public static isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
+        // iPadOS reports the user agent of a desktop Mac: tell it apart by its touch points
+        const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+        return (/iPad|iPhone|iPod/.test(navigator.userAgent) || isIPadOS) && !window['MSStream'];
     }
 
     public static isAndroid() {

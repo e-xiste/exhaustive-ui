@@ -3411,3 +3411,78 @@ describe('Listbox - themed layout', () => {
         expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Listbox, FormsModule],
+    template: `<p-listbox [options]="options" [(ngModel)]="value" optionLabel="label" [group]="true" optionGroupLabel="label" optionGroupChildren="items" scrollHeight="190px" />`
+})
+class ListboxPagingHostComponent {
+    options = ['A', 'B', 'C', 'D', 'E'].map((group) => ({ label: group, items: Array.from({ length: 10 }, (_, i) => ({ label: `${group}${i}` })) }));
+    value = null;
+}
+
+describe('Listbox - PageDown and PageUp', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('moves the focus one page of options down and up', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ListboxPagingHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ListboxPagingHostComponent);
+        document.body.appendChild(fixture.nativeElement);
+        const settle = async () => {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+            fixture.detectChanges();
+        };
+        await settle();
+        const listbox = fixture.debugElement.query(By.directive(Listbox)).componentInstance as Listbox;
+        const list = fixture.nativeElement.querySelector('ul[role="listbox"]') as HTMLElement;
+        const press = async (key: string) => {
+            const event = new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true });
+            list.dispatchEvent(event);
+            await settle();
+            return event;
+        };
+
+        list.focus();
+        await settle();
+        expect(listbox.focusedOptionIndex()).toBe(1);
+
+        const container = fixture.nativeElement.querySelector('.p-listbox-list-container') as HTMLElement;
+        const optionHeight = (fixture.nativeElement.querySelector(`li[id="${listbox.focusedOptionId()}"]`) as HTMLElement).offsetHeight;
+        const pageSize = Math.floor(container.clientHeight / optionHeight);
+        expect(pageSize).toBeGreaterThan(1);
+        expect(pageSize).toBeLessThan(10);
+
+        const down = await press('PageDown');
+        expect(down.defaultPrevented).toBe(true);
+        expect(listbox.focusedOptionIndex()).toBe(1 + pageSize);
+        expect(container.scrollTop).toBeGreaterThan(0);
+
+        // the label of group B (index 11) is skipped
+        await press('PageDown');
+        expect(listbox.focusedOptionIndex()).toBe(2 + 2 * pageSize);
+        await press('PageUp');
+        expect(listbox.focusedOptionIndex()).toBe(2 + pageSize);
+
+        // the ends of the list stop the paging, on an option rather than a group label
+        for (let i = 0; i < 12; i++) await press('PageDown');
+        expect(listbox.focusedOptionIndex()).toBe(listbox.visibleOptions().length - 1);
+        for (let i = 0; i < 12; i++) await press('PageUp');
+        expect(listbox.focusedOptionIndex()).toBe(1);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+});

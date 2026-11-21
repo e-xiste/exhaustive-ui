@@ -560,7 +560,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
 
     getHostOffset() {
         if (this.getOption('appendTo') === 'body' || this.getOption('appendTo') === 'target') {
-            let offset = this.el.nativeElement.getBoundingClientRect();
+            let offset = this.activeElement.getBoundingClientRect();
             let targetLeft = offset.left + getWindowScrollLeft();
             let targetTop = offset.top + getWindowScrollTop();
 
@@ -571,7 +571,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     }
 
     private get activeElement(): HTMLElement {
-        return this.el.nativeElement.nodeName.startsWith('P-') ? (findSingle(this.el.nativeElement, '.p-component') as HTMLElement) : this.el.nativeElement;
+        return (this.el.nativeElement.nodeName.startsWith('P-') && (findSingle(this.el.nativeElement, '.p-component') as HTMLElement)) || this.el.nativeElement;
     }
 
     alignRight() {
@@ -592,7 +592,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         this.preAlign('left');
         let arrowElement = this.getArrowElement();
         let offsetLeft = getOuterWidth(this.container());
-        let offsetTop = (getOuterHeight(this.el.nativeElement) - getOuterHeight(this.container())) / 2;
+        let offsetTop = (getOuterHeight(this.activeElement) - getOuterHeight(this.container())) / 2;
         this.alignTooltip(-offsetLeft, offsetTop);
 
         arrowElement.style.top = '50%';
@@ -607,7 +607,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         let hostOffset = this.getHostOffset();
         let elementWidth = getOuterWidth(this.container());
 
-        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container())) / 2;
+        let offsetLeft = (getOuterWidth(this.activeElement) - getOuterWidth(this.container())) / 2;
         let offsetTop = getOuterHeight(this.container());
         this.alignTooltip(offsetLeft, -offsetTop);
 
@@ -627,8 +627,8 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
         let arrowElement = this.getArrowElement();
         let elementWidth = getOuterWidth(this.container());
         let hostOffset = this.getHostOffset();
-        let offsetLeft = (getOuterWidth(this.el.nativeElement) - getOuterWidth(this.container())) / 2;
-        let offsetTop = getOuterHeight(this.el.nativeElement);
+        let offsetLeft = (getOuterWidth(this.activeElement) - getOuterWidth(this.container())) / 2;
+        let offsetTop = getOuterHeight(this.activeElement);
         this.alignTooltip(offsetLeft, offsetTop);
 
         let elementRelativeCenter = hostOffset.left - this.getHostOffset().left + elementWidth / 2;
