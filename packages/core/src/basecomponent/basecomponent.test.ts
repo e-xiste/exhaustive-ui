@@ -230,6 +230,50 @@ describe('BaseComponent with a custom preset across route changes', () => {
 });
 
 @Component({
+    selector: 'app-mfe-shell',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Button],
+    template: `<p-button label="Shell" />`
+})
+class TestMicroFrontendShellComponent {}
+
+@Component({
+    selector: 'app-mfe-remote',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Fieldset],
+    template: `<p-fieldset legend="Remote">Content</p-fieldset>`
+})
+class TestMicroFrontendRemoteComponent {}
+
+describe('BaseComponent in micro frontends sharing the library', () => {
+    it('loads the styles of a component that only a second application renders (optimus-ui#717, optimus-ui#850)', async () => {
+        const shellHost = document.body.appendChild(document.createElement('app-mfe-shell'));
+        const remoteHost = document.body.appendChild(document.createElement('app-mfe-remote'));
+        const shell = await bootstrapApplication(TestMicroFrontendShellComponent, { providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })] });
+        await shell.whenStable();
+        const styleIds = () => Array.from(document.head.querySelectorAll('style[data-exhaustive-style-id]')).map((style) => style.getAttribute('data-exhaustive-style-id'));
+
+        expect(styleIds()).not.toContain('fieldset-style');
+
+        // the remote application has its own injector and does not configure the theme again
+        const remote = await bootstrapApplication(TestMicroFrontendRemoteComponent, { providers: [provideZonelessChangeDetection()] });
+        await remote.whenStable();
+
+        try {
+            expect(styleIds()).toEqual(expect.arrayContaining(['fieldset-style', 'fieldset-variables']));
+            const legend = remoteHost.querySelector('.p-fieldset-legend') as HTMLElement;
+            expect(getComputedStyle(remoteHost.querySelector('.p-fieldset')!).borderStyle).toBe('solid');
+            expect(parseFloat(getComputedStyle(legend).paddingLeft)).toBeGreaterThan(0);
+        } finally {
+            remote.destroy();
+            shell.destroy();
+            shellHost.remove();
+            remoteHost.remove();
+        }
+    });
+});
+
+@Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.ShadowDom,
     imports: [Button],
