@@ -8,7 +8,10 @@ import { Tree, UITreeNode } from './tree';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
-import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Base } from '@exhaustive-ui/core/base';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 // Test component for basic use cases
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -3529,5 +3532,250 @@ describe('Tree low bug fixes', () => {
         expect(contents.length).toBe(2);
         const [root, child] = contents.map((content) => content.getBoundingClientRect().left);
         expect(child).toBeGreaterThan(root);
+    });
+});
+
+describe('Tree r22 regressions', () => {
+    const settle = async (fixture: ComponentFixture<Tree>) => {
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('updates the parent checkbox when a child is checked in virtual scroll (optimus-ui#55, optimus-ui#923)', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            {
+                key: 'a',
+                label: 'A',
+                children: [
+                    { key: 'a-0', label: 'A0' },
+                    { key: 'a-1', label: 'A1' }
+                ]
+            },
+            { key: 'b', label: 'B' }
+        ]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 40);
+        fixture.componentRef.setInput('scrollHeight', '300px');
+        await settle(fixture);
+
+        const content = (label: string) => Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content') as NodeListOf<HTMLElement>).find((c) => c.textContent!.trim() === label)!;
+        const checkboxInput = (label: string) => content(label).querySelector('p-checkbox input') as HTMLInputElement;
+        const checkboxHost = (label: string) => content(label).querySelector('p-checkbox') as HTMLElement;
+
+        (content('A').querySelector('button') as HTMLButtonElement).click();
+        await settle(fixture);
+        expect(fixture.nativeElement.querySelectorAll('.p-tree-node-content').length).toBe(4);
+
+        content('A0').click();
+        await settle(fixture);
+        expect(checkboxInput('A0').checked).toBe(true);
+        expect(checkboxHost('A').getAttribute('data-p-partialchecked')).toBe('true');
+        expect(checkboxHost('A').querySelector('svg[data-p-icon="minus"]')).not.toBeNull();
+
+        content('A1').click();
+        await settle(fixture);
+        expect(checkboxInput('A').checked).toBe(true);
+        expect(checkboxHost('A').querySelector('svg[data-p-icon="minus"]')).toBeNull();
+    });
+});
+
+describe('Tree drag and drop drop points', () => {
+    let fixture: ComponentFixture<Tree>;
+    let style: HTMLStyleElement;
+    const content = (label: string) => Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content') as NodeListOf<HTMLElement>).find((c) => c.textContent!.trim() === label)!;
+    const drag = (type: string, target: Element, init: DragEventInit = {}) => {
+        const event = new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: new DataTransfer(), ...init });
+        target.dispatchEvent(event);
+        return event;
+    };
+    const settle = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [TreeDragDropService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        style = document.createElement('style');
+        style.textContent = '.p-tree-node-drop-point { height: 30px; }';
+        document.head.appendChild(style);
+        fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            { key: 'a', label: 'A' },
+            { key: 'b', label: 'B' },
+            { key: 'c', label: 'C' }
+        ]);
+        fixture.componentRef.setInput('draggableNodes', true);
+        fixture.componentRef.setInput('droppableNodes', true);
+        await settle();
+    });
+
+    afterEach(() => style.remove());
+
+    it('keeps a custom-height drop point open and accepts a drop on it (optimus-ui#77)', async () => {
+        const drops: any[] = [];
+        fixture.componentInstance.onNodeDrop.subscribe((e) => drops.push(e));
+
+        drag('dragstart', content('C'));
+        await settle();
+
+        const target = content('B');
+        let rect = target.getBoundingClientRect();
+        drag('dragover', target, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+
+        const dropPoint = fixture.nativeElement.querySelector('.p-tree-node-drop-point') as HTMLElement;
+        expect(dropPoint).not.toBeNull();
+        expect(dropPoint.getBoundingClientRect().height).toBe(30);
+
+        // The drop point pushed the content down, the pointer now sits on the drop point
+        drag('dragleave', target, { relatedTarget: dropPoint });
+        drag('dragover', dropPoint, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+        expect(fixture.nativeElement.querySelector('.p-tree-node-drop-point')).toBe(dropPoint);
+
+        drag('drop', dropPoint, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+
+        expect(drops.length).toBe(1);
+        expect(drops[0].dropNode.label).toBe('B');
+        expect((fixture.componentInstance.value() as TreeNode[]).map((n) => n.label)).toEqual(['A', 'C', 'B']);
+    });
+
+    it('tells where the node was dropped relative to the drop node (optimus-ui#851)', async () => {
+        const drops: any[] = [];
+        fixture.componentInstance.onNodeDrop.subscribe((e) => drops.push(e));
+        const dropOn = async (dragged: string, label: string, ratio: number) => {
+            drag('dragstart', content(dragged));
+            await settle();
+            const target = content(label);
+            const rect = target.getBoundingClientRect();
+            const point = { clientX: rect.left + 10, clientY: rect.top + rect.height * ratio };
+            drag('dragover', target, point);
+            drag('drop', target, point);
+            await settle();
+        };
+
+        await dropOn('A', 'C', 0.9);
+        expect(drops[0].dropNode.label).toBe('C');
+        expect(drops[0].dropPosition).toBe('after');
+        expect((fixture.componentInstance.value() as TreeNode[]).map((n) => n.label)).toEqual(['B', 'C', 'A']);
+
+        await dropOn('B', 'C', 0.5);
+        expect(drops[1].dropPosition).toBe('inside');
+
+        await dropOn('A', 'C', 0.05);
+        expect(drops[2].dropPosition).toBe('before');
+    });
+
+    it('selects a node from a click a screen reader sends to the treeitem (optimus-ui#115)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+        const treeitem = content('B').closest('[role="treeitem"]') as HTMLElement;
+
+        treeitem.focus();
+        treeitem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        await settle();
+
+        expect((fixture.componentInstance.selection() as TreeNode)?.label).toBe('B');
+        expect(treeitem.getAttribute('aria-selected')).toBe('true');
+    });
+
+    it('selects a node with Enter on the focused treeitem (optimus-ui#115)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+        const treeitem = content('C').closest('[role="treeitem"]') as HTMLElement;
+
+        treeitem.focus();
+        treeitem.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', key: 'Enter', bubbles: true, cancelable: true }));
+        await settle();
+
+        expect((fixture.componentInstance.selection() as TreeNode)?.label).toBe('C');
+    });
+});
+
+describe('Tree virtual scroll layout with a theme', () => {
+    let fixture: ComponentFixture<Tree>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(Tree);
+    });
+
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    const settle = async () => {
+        for (let i = 0; i < 4; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+
+    it('does not let a node overflow onto the next one in virtual scroll (optimus-ui#582)', async () => {
+        fixture.componentRef.setInput(
+            'value',
+            Array.from({ length: 30 }, (_, i) => ({ key: `${i}`, label: `Node ${i}`, leaf: false }))
+        );
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('scrollHeight', '250px');
+        fixture.componentRef.setInput('lazy', true);
+        await settle();
+
+        const contents = (Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content')) as HTMLElement[]).map((c) => c.getBoundingClientRect());
+        for (let i = 1; i < contents.length; i++) {
+            expect(contents[i].top).toBeGreaterThanOrEqual(contents[i - 1].bottom - 0.5);
+        }
+    });
+
+    it('renders the nodes loaded after creation with virtual scroll, filter and drag and drop (optimus-ui#893)', async () => {
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('scrollHeight', '250px');
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('draggableNodes', true);
+        fixture.componentRef.setInput('droppableNodes', true);
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+
+        // Nodes arrive later from a service
+        fixture.componentRef.setInput(
+            'value',
+            Array.from({ length: 20 }, (_, i) => ({ key: `${i}`, label: `Node ${i}`, children: [{ key: `${i}-0`, label: `Child ${i}` }] }))
+        );
+        await settle();
+
+        const labels = (Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-label')) as HTMLElement[]).map((l) => l.textContent!.trim());
+        expect(labels.length).toBeGreaterThan(0);
+        expect(labels[0]).toBe('Node 0');
+        const viewport = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(viewport.getBoundingClientRect().height).toBe(250);
     });
 });

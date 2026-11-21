@@ -2001,3 +2001,105 @@ describe('TreeSelect low bug fixes', () => {
         expect(touched).toHaveBeenCalled();
     });
 });
+
+describe('TreeSelect r22 regressions', () => {
+    let fixture: ComponentFixture<TreeSelect>;
+    let treeSelect: TreeSelect;
+    const nodes = () =>
+        Array.from({ length: 30 }, (_, i) => ({
+            key: `${i}`,
+            label: `Node ${i}`,
+            children: [
+                { key: `${i}-0`, label: `Child ${i}.0` },
+                { key: `${i}-1`, label: `Child ${i}.1` }
+            ]
+        }));
+    const settle = async () => {
+        for (let i = 0; i < 4; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TreeSelect, ReactiveFormsModule],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TreeSelect);
+        treeSelect = fixture.componentInstance;
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-treeselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('shows the nodes when the overlay opens with filter and virtual scroll (optimus-ui#238)', async () => {
+        fixture.componentRef.setInput('options', nodes());
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('virtualScrollOptions', { scrollHeight: '200px' });
+        await settle();
+
+        treeSelect.show();
+        await settle();
+
+        const labels = Array.from(document.querySelectorAll('.p-treeselect-overlay .p-tree-node-label')).map((l) => l.textContent!.trim());
+        expect(labels.length).toBeGreaterThan(0);
+        expect(labels[0]).toBe('Node 0');
+    });
+
+    it('keeps the form value serializable after selecting a nested node (optimus-ui#674)', async () => {
+        const changes: any[] = [];
+        treeSelect.registerOnChange((value: any) => changes.push(value));
+        fixture.componentRef.setInput('options', [{ key: 'a', label: 'A', expanded: true, children: [{ key: 'a-0', label: 'A0' }] }]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        await settle();
+
+        treeSelect.show();
+        await settle();
+        const child = Array.from(document.querySelectorAll('.p-treeselect-overlay .p-tree-node-content')).find((c) => c.textContent!.trim() === 'A0') as HTMLElement;
+        child.click();
+        await settle();
+
+        const value = changes[changes.length - 1];
+        expect(value.map((n: TreeNode) => n.label)).toEqual(['A0', 'A']);
+        expect(() => JSON.stringify(value)).not.toThrow();
+        // The parent link stays available to code that walks the tree
+        expect(value[0].parent?.label).toBe('A');
+    });
+
+    it('writes the model once when checking a node with many descendants (optimus-ui#836)', async () => {
+        const changes: any[] = [];
+        treeSelect.registerOnChange((value: any) => changes.push(value));
+        fixture.componentRef.setInput('options', [
+            {
+                key: 'r',
+                label: 'Root',
+                expanded: true,
+                children: Array.from({ length: 300 }, (_, i) => ({ key: `r-${i}`, label: `Leaf ${i}` }))
+            }
+        ]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        await settle();
+
+        treeSelect.show();
+        await settle();
+        const root = Array.from(document.querySelectorAll('.p-treeselect-overlay .p-tree-node-content')).find((c) => c.textContent!.trim() === 'Root') as HTMLElement;
+        root.click();
+        await settle();
+
+        expect(changes.length).toBe(1);
+        expect(changes[0].length).toBe(301);
+
+        root.click();
+        await settle();
+        expect(changes.length).toBe(2);
+        expect(changes[1].length).toBe(0);
+    });
+});

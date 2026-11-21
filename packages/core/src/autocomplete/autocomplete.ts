@@ -1313,7 +1313,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         // Emit keydown event for external handling
         this.onInputKeydown.emit(event);
 
-        switch (event.code) {
+        // Android virtual keyboards send an empty code: fall back to the key, whose names match for the keys handled here
+        switch (event.code || event.key) {
             case 'ArrowDown':
                 this.onArrowDownKey(event);
                 break;
@@ -1601,7 +1602,9 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     onOptionMouseEnter(event, index) {
         if (this.focusOnHover()) {
-            this.changeFocusedOptionIndex(event, index);
+            // the hovered option is already visible: scrolling it into view would only move the list
+            // (scrollIntoView honours a page scroll-padding, which pushed the list away from the pointer)
+            this.changeFocusedOptionIndex(event, index, false);
         }
     }
 
@@ -1702,10 +1705,10 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         }
     }
 
-    changeFocusedOptionIndex(event, index) {
+    changeFocusedOptionIndex(event, index, scroll = true) {
         if (this.focusedOptionIndex() !== index) {
             this.focusedOptionIndex.set(index);
-            this.scrollInView();
+            scroll && this.scrollInView();
 
             if (this.selectOnFocus()) {
                 this.onOptionSelect(event, this.visibleOptions()[index], false);

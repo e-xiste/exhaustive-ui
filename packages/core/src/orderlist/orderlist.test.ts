@@ -2296,3 +2296,45 @@ describe('OrderList medium bug fixes', () => {
         expect(listbox.focusOnHover()).toBe(false);
     });
 });
+
+describe('OrderList r22 regressions', () => {
+    let fixture: ComponentFixture<OrderList>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [OrderList],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(OrderList);
+    });
+
+    it('keeps the move buttons working after a drag and drop reorder (optimus-ui#5)', async () => {
+        const items = [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }];
+        fixture.componentRef.setInput('value', items);
+        fixture.componentRef.setInput('dragdrop', true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const labels = () => fixture.debugElement.queryAll(By.css('.p-listbox-option')).map((o) => o.nativeElement.textContent.trim());
+        const listbox = fixture.debugElement.query(By.css('p-listbox')).componentInstance;
+        const container = {};
+        // Drag A below B, like the cdk drop list does
+        listbox.drop({ previousIndex: 0, currentIndex: 1, previousContainer: container, container, item: { data: items[0] } } as any);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(labels()).toEqual(['B', 'A', 'C', 'D']);
+
+        // Select D and move it up with the button
+        fixture.componentRef.setInput('selection', [items[3]]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const moveUp = fixture.debugElement.queryAll(By.css('.p-orderlist-controls button'))[0].nativeElement as HTMLButtonElement;
+        moveUp.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(labels()).toEqual(['B', 'A', 'D', 'C']);
+    });
+});

@@ -51,7 +51,7 @@ import {
     reorderArray,
     resolveFieldData
 } from '@exhaustive-ui/utils';
-import { BlockableUI, FilterMetadata, FilterService, PrimeTemplate, ScrollerOptions, SharedModule, SortMeta, TreeNode, TreeTableNode } from '@exhaustive-ui/core/api';
+import { BlockableUI, FilterMetadata, FilterService, OverlayService, PrimeTemplate, ScrollerOptions, SharedModule, SortMeta, TreeNode, TreeTableNode } from '@exhaustive-ui/core/api';
 import { BadgeModule } from '@exhaustive-ui/core/badge';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -574,10 +574,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      */
     readonly contextMenu = input<any>();
     /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
+     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for the identity of the row node.
      * @group Props
      */
-    readonly rowTrackBy = input<Function>((index: number, item: any) => item);
+    // The serialized row wrappers are rebuilt on every expand, collapse, sort or filter: tracking the wrapper re-created every row.
+    readonly rowTrackBy = input<Function>((index: number, item: any) => item?.node ?? item);
     /**
      * An array of FilterMetadata objects to provide external filters.
      * @group Props
@@ -1018,6 +1019,14 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
     editingCellClick = signal<Nullable<boolean>>(undefined);
 
     documentEditListener = signal<VoidListener>(undefined);
+
+    overlayService = inject(OverlayService);
+
+    /**
+     * Clicks inside an overlay appended to the body (MultiSelect, Select, DatePicker...) never bubble through the editing cell;
+     * the overlay reports them here with the component host as target.
+     */
+    overlaySubscription = signal<Subscription | undefined>(undefined);
 
     initialized = signal<Nullable<boolean>>(undefined);
 
@@ -1584,7 +1593,17 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                     (<HTMLElement>nextCol).style.width = nextColumnWidth + 'px';
                 }
             } else {
-                throw 'Scrollable tables require a colgroup to support resizable columns';
+                // Without a colgroup template the cells of the first row set the column widths
+                const cell = (<HTMLTableElement>table).rows?.[0]?.cells[<number>resizeColumnIndex];
+
+                if (cell) {
+                    cell.style.width = newColumnWidth + 'px';
+                    const nextCell = <HTMLElement>cell.nextElementSibling;
+
+                    if (nextCell && nextColumnWidth) {
+                        nextCell.style.width = nextColumnWidth + 'px';
+                    }
+                }
             }
         }
     }
@@ -2140,7 +2159,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 let isValueChanged = false;
 
                 for (let node of this.value()!) {
-                    let copyNode = { ...node };
+                    let copyNode = this.copyFilteredNode(node);
                     let localMatch = true;
                     let globalMatch = false;
                     let paramsWithoutNode;
@@ -2167,7 +2186,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                     }
 
                     if (this._filters()['global'] && !globalMatch && globalFilterFieldsArray) {
-                        let copyNodeForGlobal = { ...copyNode };
+                        let copyNodeForGlobal = this.copyFilteredNode(copyNode);
                         let filterField = undefined;
                         let filterValue = this._filters()['global']!.value;
                         let filterConstraint = (<any>this.filterService).filters[(<any>this._filters())['global'].matchMode];
@@ -2227,6 +2246,24 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
         }
     }
 
+    /**
+     * Filtering renders shallow copies of the nodes; this maps each copy back to the node of value().
+     */
+    private filteredNodeSources = new WeakMap<TreeTableNode, TreeTableNode>();
+
+    private copyFilteredNode(node: TreeTableNode): TreeTableNode {
+        const copy = { ...node };
+        this.filteredNodeSources.set(copy, this.getSourceNode(node));
+        return copy;
+    }
+
+    /**
+     * Returns the node of value() a filtered copy was made from, or the node itself when it is not a copy.
+     */
+    getSourceNode(node: TreeTableNode): TreeTableNode {
+        return this.filteredNodeSources.get(node) ?? node;
+    }
+
     findFilteredNodes(node: TreeTableNode, paramsWithoutNode: any) {
         if (node) {
             let matched = false;
@@ -2234,7 +2271,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 let childNodes = [...node.children];
                 node.children = [];
                 for (let childNode of childNodes) {
-                    let copyChildNode = { ...childNode };
+                    let copyChildNode = this.copyFilteredNode(childNode);
                     if (this.isFilterMatched(copyChildNode, paramsWithoutNode)) {
                         matched = true;
                         node.children.push(copyChildNode);
@@ -2340,6 +2377,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
         if (this.documentEditListener()) {
             this.documentEditListener()!();
             this.documentEditListener.set(null);
+        }
+
+        if (this.overlaySubscription()) {
+            this.overlaySubscription()!.unsubscribe();
+            this.overlaySubscription.set(undefined);
         }
     }
 
@@ -3000,8 +3042,12 @@ export class TTResizableColumn extends BaseComponent {
     }
 
     onDocumentMouseUp(event: MouseEvent) {
-        this.tt.onColumnResizeEnd(event, this.el.nativeElement);
-        this.unbindDocumentEvents();
+        try {
+            this.tt.onColumnResizeEnd(event, this.el.nativeElement);
+        } finally {
+            // never leave the helper following the pointer, even if the resize failed
+            this.unbindDocumentEvents();
+        }
     }
 
     isEnabled() {
@@ -3620,6 +3666,14 @@ export class TTEditableColumn extends BaseComponent {
         this.el?.nativeElement.setAttribute('data-p-cell-editing', 'true');
         this.tt.onEditInit.emit({ field: this.field(), data: this.data() });
         this.tt.editingCellClick.set(true);
+        this.tt.overlaySubscription()?.unsubscribe();
+        this.tt.overlaySubscription.set(
+            this.tt.overlayService.clickObservable.subscribe((event: any) => {
+                if (this.el.nativeElement.contains(event.target)) {
+                    this.tt.editingCellClick.set(true);
+                }
+            })
+        );
         this.zone.runOutsideAngular(() => {
             setTimeout(() => {
                 let focusable = <any>findSingle(this.el.nativeElement, 'input, textarea');
@@ -3971,6 +4025,7 @@ export class TTRow extends BaseComponent {
     expand(event: Event) {
         this.tt.toggleRowIndex.set(getIndex(this.el.nativeElement));
         this.rowNode().node['expanded'] = true;
+        this.tt.getSourceNode(this.rowNode().node)['expanded'] = true;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
@@ -3978,17 +4033,18 @@ export class TTRow extends BaseComponent {
 
         this.tt.onNodeExpand.emit({
             originalEvent: event,
-            node: this.rowNode().node
+            node: this.tt.getSourceNode(this.rowNode().node)
         });
     }
 
     collapse(event: Event) {
         this.rowNode().node['expanded'] = false;
+        this.tt.getSourceNode(this.rowNode().node)['expanded'] = false;
 
         this.tt.updateSerializedValue();
         this.tt.tableService.onUIUpdate(this.tt.value());
 
-        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.rowNode().node });
+        this.tt.onNodeCollapse.emit({ originalEvent: event, node: this.tt.getSourceNode(this.rowNode().node) });
     }
 
     focusRowChange(firstFocusableRow, currentFocusedRow, lastVisibleDescendant?) {
@@ -4087,16 +4143,20 @@ export class TreeTableToggler extends BaseComponent {
 
     onClick(event: Event) {
         this.rowNode().node.expanded = !this.rowNode().node.expanded;
+        // while filtered the row shows a copy: keep the node of value() in sync and hand it to the handlers,
+        // so children loaded in onNodeExpand survive the next filtering
+        const node = this.tt.getSourceNode(this.rowNode().node);
+        node.expanded = this.rowNode().node.expanded;
 
         if (this.rowNode().node.expanded) {
             this.tt.onNodeExpand.emit({
                 originalEvent: event,
-                node: this.rowNode().node
+                node
             });
         } else {
             this.tt.onNodeCollapse.emit({
                 originalEvent: event,
-                node: this.rowNode().node
+                node
             });
         }
 

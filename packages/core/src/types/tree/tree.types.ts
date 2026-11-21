@@ -184,6 +184,11 @@ export interface TreeNodeDropEvent {
      */
     dropNode?: TreeNode<any> | null;
     /**
+     * Where the dragged node lands relative to the drop node: before or after it as a sibling, or inside it as a child.
+     * Undefined when the node is dropped on the empty area of the tree, which appends it to the root nodes.
+     */
+    dropPosition?: 'before' | 'inside' | 'after';
+    /**
      * Index of the dragged node.
      */
     index?: number;
