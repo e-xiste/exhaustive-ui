@@ -1,6 +1,6 @@
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -2494,5 +2494,92 @@ describe('PickList regressions', () => {
         fixture.componentRef.setInput('sourceAriaLabel', 'Source items');
         fixture.detectChanges();
         expect(label('.p-picklist-source-list-container')).toBe('Source items');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [PickList],
+    template: `
+        <p-picklist [(source)]="source" [(target)]="target" (sourceChange)="sourceChanges = sourceChanges + 1" (targetChange)="targetChanges = targetChanges + 1" />
+        <span class="target-names">{{ targetNames() }}</span>
+    `
+})
+class PickListSignalModelHostComponent {
+    alpha = { id: 1, name: 'Alpha' };
+    beta = { id: 2, name: 'Beta' };
+    gamma = { id: 3, name: 'Gamma' };
+    source = signal<any[]>([this.alpha, this.beta, this.gamma]);
+    target = signal<any[]>([]);
+    targetNames = computed(() =>
+        this.target()
+            .map((item) => item.name)
+            .join(',')
+    );
+    sourceChanges = 0;
+    targetChanges = 0;
+}
+
+describe('PickList two-way bound lists (optimus-ui#260)', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PickListSignalModelHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('emits sourceChange/targetChange with new arrays on every transfer', async () => {
+        const fixture = TestBed.createComponent(PickListSignalModelHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const host = fixture.componentInstance;
+        const pickList = fixture.debugElement.query(By.directive(PickList)).componentInstance as PickList;
+        const names = () => fixture.nativeElement.querySelector('.target-names').textContent;
+
+        pickList.selectedItemsSource.set([host.alpha]);
+        pickList.moveRight();
+        fixture.detectChanges();
+        expect(names()).toBe('Alpha');
+
+        pickList.selectedItemsSource.set([host.beta]);
+        pickList.moveRight();
+        fixture.detectChanges();
+        expect(names()).toBe('Alpha,Beta');
+        expect(host.source()).toEqual([host.gamma]);
+
+        pickList.selectedItemsTarget.set([host.alpha]);
+        pickList.moveLeft();
+        fixture.detectChanges();
+        expect(names()).toBe('Beta');
+
+        pickList.moveAllRight();
+        fixture.detectChanges();
+        expect(names()).toBe('Beta,Gamma,Alpha');
+        expect(host.source()).toEqual([]);
+
+        pickList.moveAllLeft();
+        fixture.detectChanges();
+        expect(names()).toBe('');
+        expect(host.source().length).toBe(3);
+        expect(host.sourceChanges).toBe(5);
+        expect(host.targetChanges).toBe(5);
+    });
+
+    it('emits sourceChange/targetChange when an item is dropped on the other list', async () => {
+        const fixture = TestBed.createComponent(PickListSignalModelHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const host = fixture.componentInstance;
+        const pickList = fixture.debugElement.query(By.directive(PickList)).componentInstance as PickList;
+
+        const containerA = {};
+        const containerB = {};
+        pickList.onDrop({ previousContainer: containerA, container: containerB, previousIndex: 1, currentIndex: 0, item: { data: host.beta } } as unknown as CdkDragDrop<string[]>, pickList.TARGET_LIST);
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.target-names').textContent).toBe('Beta');
+        expect(host.source()).toEqual([host.alpha, host.gamma]);
+        expect(host.targetChanges).toBe(1);
     });
 });

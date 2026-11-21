@@ -1257,6 +1257,15 @@ export class PickList extends BaseComponent {
         return items.sort((item1, item2) => findIndexInList(item1, list) - findIndexInList(item2, list));
     }
 
+    /**
+     * Publishes the lists after a transfer mutated them in place, so two-way bindings
+     * (`[(source)]`/`[(target)]`, signals included) receive new arrays through sourceChange/targetChange.
+     */
+    private updateLists() {
+        this.source.set([...(this.source() || [])]);
+        this.target.set([...(this.target() || [])]);
+    }
+
     triggerChangeDetection() {
         this.listsVersion.update((version) => version + 1);
         this.listViewTargetChild().cd.markForCheck();
@@ -1371,6 +1380,7 @@ export class PickList extends BaseComponent {
                 }
             }
 
+            this.updateLists();
             this.onMoveToTarget.emit({
                 items: itemsToMove
             });
@@ -1402,6 +1412,7 @@ export class PickList extends BaseComponent {
                     i--;
                 }
             }
+            this.updateLists();
             this.onMoveAllToTarget.emit({
                 items: movedItems
             });
@@ -1432,6 +1443,7 @@ export class PickList extends BaseComponent {
                     }
                 }
             }
+            this.updateLists();
             this.onMoveToSource.emit({
                 items: itemsToMove
             });
@@ -1460,6 +1472,7 @@ export class PickList extends BaseComponent {
                     i--;
                 }
             }
+            this.updateLists();
             this.onMoveAllToSource.emit({
                 items: movedItems
             });
@@ -1537,6 +1550,7 @@ export class PickList extends BaseComponent {
                     }
                 }
 
+                this.updateLists();
                 this.onMoveToSource.emit({ items: itemsToMove });
             } else {
                 if (this.source()) {
@@ -1595,6 +1609,7 @@ export class PickList extends BaseComponent {
                     }
                 }
 
+                this.updateLists();
                 this.onMoveToTarget.emit({ items: itemsToMove });
             } else {
                 if (this.target()) {
