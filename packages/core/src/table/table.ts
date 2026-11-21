@@ -3622,8 +3622,6 @@ export class FrozenColumn extends BaseComponent {
 
     resizeListener = signal<VoidListener>(undefined);
 
-    private resizeObserver = signal<ResizeObserver | undefined>(undefined);
-
     _componentStyle = inject(TableStyle);
 
     constructor() {
@@ -3633,21 +3631,15 @@ export class FrozenColumn extends BaseComponent {
 
             untracked(() => Promise.resolve(null).then(() => this.updateStickyPosition()));
         });
-        afterNextRender(() => {
-            this.bindResizeListener();
-            this.observeChanges();
-        });
+        afterNextRender(() => this.bindResizeListener());
     }
 
+    // every frozen cell of the page shares one window resize listener and one ResizeObserver
     bindResizeListener() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (!this.resizeListener()) {
-                this.resizeListener.set(
-                    this.renderer.listen(this.document.defaultView, 'resize', () => {
-                        this.recalculateColumns();
-                    })
-                );
-            }
+        if (isPlatformBrowser(this.platformId) && !this.resizeListener()) {
+            const tracker = FrozenColumnTracker.get(this.document.defaultView!);
+            tracker.add(this);
+            this.resizeListener.set(() => tracker.remove(this));
         }
     }
 
@@ -3659,24 +3651,13 @@ export class FrozenColumn extends BaseComponent {
     }
 
     observeChanges() {
-        if (isPlatformBrowser(this.platformId)) {
-            const resizeObserver = new ResizeObserver(() => {
-                this.recalculateColumns();
-            });
-
-            resizeObserver.observe(this.el.nativeElement);
-            this.resizeObserver.set(resizeObserver);
-        }
+        this.bindResizeListener();
     }
 
     recalculateColumns() {
-        const siblings = DomHandler.siblings(this.el.nativeElement);
-        const index = DomHandler.index(this.el.nativeElement);
-        const time = (siblings.length - index + 1) * 50;
-
-        setTimeout(() => {
-            this.updateStickyPosition();
-        }, time);
+        if (isPlatformBrowser(this.platformId)) {
+            FrozenColumnTracker.get(this.document.defaultView!).schedule();
+        }
     }
 
     updateStickyPosition() {
@@ -3724,7 +3705,62 @@ export class FrozenColumn extends BaseComponent {
 
     onDestroy() {
         this.unbindResizeListener();
-        this.resizeObserver()?.disconnect();
+    }
+}
+
+/**
+ * Recalculates the sticky positions of all the frozen cells of a window once per frame on a window resize or a size change of
+ * any of them. A listener and an observer per cell made a resize or a page of many frozen cells block the page for seconds.
+ */
+class FrozenColumnTracker {
+    private static trackers = new WeakMap<Window, FrozenColumnTracker>();
+
+    private columns = new Set<FrozenColumn>();
+
+    private observer: ResizeObserver;
+
+    private frame: number | null = null;
+
+    private onResize = () => this.schedule();
+
+    static get(window: Window): FrozenColumnTracker {
+        let tracker = this.trackers.get(window);
+        if (!tracker) {
+            tracker = new FrozenColumnTracker(window);
+            this.trackers.set(window, tracker);
+        }
+        return tracker;
+    }
+
+    private constructor(private window: Window) {
+        this.observer = new (window as any).ResizeObserver(this.onResize);
+    }
+
+    add(column: FrozenColumn) {
+        if (!this.columns.size) {
+            this.window.addEventListener('resize', this.onResize);
+        }
+        this.columns.add(column);
+        this.observer.observe(column.el.nativeElement);
+    }
+
+    remove(column: FrozenColumn) {
+        this.columns.delete(column);
+        this.observer.unobserve(column.el.nativeElement);
+        if (!this.columns.size) {
+            this.window.removeEventListener('resize', this.onResize);
+            this.frame !== null && this.window.cancelAnimationFrame(this.frame);
+            this.frame = null;
+        }
+    }
+
+    schedule() {
+        if (this.frame === null && this.columns.size) {
+            this.frame = this.window.requestAnimationFrame(() => {
+                this.frame = null;
+                this.columns.forEach((column) => column.updateStickyPosition());
+            });
+        }
     }
 }
 @Directive({

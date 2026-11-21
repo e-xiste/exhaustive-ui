@@ -3982,3 +3982,93 @@ describe('Table caption association (optimus-ui#100)', () => {
         expect(fixture.nativeElement.querySelector('table').hasAttribute('aria-labelledby')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows" [scrollable]="true">
+            <ng-template #header>
+                <tr>
+                    <th pFrozenColumn style="min-width: 100px">Id</th>
+                    <th pFrozenColumn style="min-width: 120px">Code</th>
+                    <th style="min-width: 300px">Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td pFrozenColumn>{{ row.id }}</td>
+                    <td pFrozenColumn>{{ row.code }}</td>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestManyFrozenCellsComponent {
+    rows: any[] = [];
+}
+
+describe('Table frozen column listeners (optimus-ui#387, optimus-ui#426, optimus-ui#784)', () => {
+    const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    const render = async (rowCount: number) => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestManyFrozenCellsComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TestManyFrozenCellsComponent);
+        fixture.componentInstance.rows = Array.from({ length: rowCount }, (_, i) => ({ id: i, code: 'c' + i, name: 'n' + i }));
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await nextFrame();
+        return fixture;
+    };
+
+    it('binds one window resize listener and one ResizeObserver whatever the number of frozen cells', async () => {
+        const resizeListeners: any[] = [];
+        const originalAdd = window.addEventListener;
+        const addSpy = vi.spyOn(window, 'addEventListener').mockImplementation(function (this: any, type: string, listener: any, options?: any) {
+            if (type === 'resize') resizeListeners.push(listener);
+            return originalAdd.call(this, type, listener, options);
+        });
+        const frozenObservers = new Set<ResizeObserver>();
+        const originalObserve = ResizeObserver.prototype.observe;
+        const observeSpy = vi.spyOn(ResizeObserver.prototype, 'observe').mockImplementation(function (this: ResizeObserver, target: Element, options?: ResizeObserverOptions) {
+            if (target.hasAttribute('pfrozencolumn')) frozenObservers.add(this);
+            return originalObserve.call(this, target, options);
+        });
+
+        try {
+            const fixture = await render(40);
+
+            expect(fixture.nativeElement.querySelectorAll('[pfrozencolumn]').length).toBe(82);
+            expect(frozenObservers.size).toBe(1);
+            expect(resizeListeners.length).toBeLessThanOrEqual(2);
+            fixture.destroy();
+            fixture.nativeElement.remove();
+        } finally {
+            addSpy.mockRestore();
+            observeSpy.mockRestore();
+        }
+    });
+
+    it('still repositions the frozen cells when a frozen cell is resized', async () => {
+        const fixture = await render(2);
+        const headers = fixture.nativeElement.querySelectorAll('thead th');
+
+        expect(headers[1].style.left).toBe(headers[0].offsetWidth + 'px');
+
+        headers[0].style.minWidth = '250px';
+        await nextFrame();
+        await nextFrame();
+
+        expect(headers[0].offsetWidth).toBeGreaterThanOrEqual(250);
+        expect(headers[1].style.left).toBe(headers[0].offsetWidth + 'px');
+
+        window.dispatchEvent(new Event('resize'));
+        await nextFrame();
+        expect(headers[1].style.left).toBe(headers[0].offsetWidth + 'px');
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+});
