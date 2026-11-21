@@ -650,3 +650,42 @@ describe('InputText invalid input over ng-invalid (optimus-ui#372)', () => {
         expect(borderColor('bound')).toBe(borderColor('valid'));
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [InputText],
+    template: `
+        @for (index of inputs; track index) {
+            <input pInputText [value]="index" />
+        }
+    `
+})
+class TestManyInputTextComponent {
+    inputs = Array.from({ length: 1500 }, (_, i) => i);
+}
+
+describe('InputText - many instances at once (optimus-ui#154)', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('renders 1500 inputs in one pass without overflowing the call stack', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestManyInputTextComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestManyInputTextComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const inputs = fixture.nativeElement.querySelectorAll('input.p-inputtext');
+        expect(inputs.length).toBe(1500);
+        expect(document.head.querySelectorAll('style[data-exhaustive-style-id="inputtext"]').length).toBeLessThanOrEqual(1);
+    });
+});

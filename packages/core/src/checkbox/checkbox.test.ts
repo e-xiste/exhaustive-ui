@@ -1834,3 +1834,44 @@ describe('Checkbox Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Checkbox, ReactiveFormsModule],
+    template: `
+        <form [formGroup]="form">
+            @for (alias of aliases; track alias) {
+                <p-checkbox formControlName="aliases" [value]="alias" [inputId]="'alias-' + alias" />
+            }
+        </form>
+    `
+})
+class TestCheckboxGroupFormComponent {
+    aliases = ['a', 'b', 'c'];
+    form = new FormGroup({ aliases: new FormControl<string[]>([]) });
+}
+
+describe('Checkbox - several checkboxes on one reactive form control (optimus-ui#870)', () => {
+    it('collects the checked values in a flat array', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestCheckboxGroupFormComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestCheckboxGroupFormComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const host = fixture.nativeElement as HTMLElement;
+
+        (host.querySelector('#alias-a') as HTMLElement).click();
+        fixture.detectChanges();
+        (host.querySelector('#alias-c') as HTMLElement).click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.form.value).toEqual({ aliases: ['a', 'c'] });
+
+        (host.querySelector('#alias-a') as HTMLElement).click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.form.value).toEqual({ aliases: ['c'] });
+    });
+});

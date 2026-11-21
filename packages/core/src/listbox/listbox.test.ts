@@ -4,7 +4,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Base } from '@exhaustive-ui/core/base';
 import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { ListboxChangeEvent } from '@exhaustive-ui/core/types/listbox';
 import { BehaviorSubject, Observable, delay, of } from 'rxjs';
 import { Listbox } from './listbox';
@@ -3270,6 +3273,25 @@ describe('Listbox medium bug fixes', () => {
         expect(listbox.modelValue() ?? []).toEqual([]);
     });
 
+    it('lets typed characters through to an input inside an item template (optimus-ui#856)', async () => {
+        const hostFixture = TestBed.createComponent(ListboxItemInputHostComponent);
+        hostFixture.detectChanges();
+        await hostFixture.whenStable();
+        const listbox = hostFixture.debugElement.query(By.directive(Listbox)).componentInstance as Listbox;
+
+        const itemInput = hostFixture.nativeElement.querySelector('.item-input') as HTMLInputElement;
+        for (const [key, code] of [
+            ['b', 'KeyB'],
+            ['1', 'Digit1'],
+            ['ArrowDown', 'ArrowDown']
+        ]) {
+            const keydown = new KeyboardEvent('keydown', { key, code, bubbles: true, cancelable: true });
+            itemInput.dispatchEvent(keydown);
+            expect(keydown.defaultPrevented).toBe(false);
+        }
+        expect(listbox.focusedOptionIndex()).toBe(-1);
+    });
+
     it('keeps pre-selected disabled options selected on toggle all (optimus-ui#830)', () => {
         const fixture = TestBed.createComponent(Listbox);
         const listbox = fixture.componentInstance;
@@ -3328,5 +3350,64 @@ describe('Listbox low bug fixes', () => {
 
         const inputs = Array.from(fixture.nativeElement.querySelectorAll('li[role="option"] p-checkbox input')) as HTMLInputElement[];
         expect(inputs.map((input) => input.getAttribute('aria-label'))).toEqual(['Alpha', 'Beta']);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Listbox],
+    template: `
+        <p-listbox id="checkboxes" [options]="few" [multiple]="true" [checkbox]="true" [filter]="true" [showToggleAll]="true" />
+        <div id="sized" style="height: 300px">
+            <p-listbox [options]="many" [filter]="true" [group]="false" scrollHeight="flex" style="height: 100%">
+                <ng-template #header>Header</ng-template>
+            </p-listbox>
+        </div>
+    `
+})
+class ListboxThemedHostComponent {
+    many = Array.from({ length: 100 }, (_, i) => ({ label: `Item ${i}`, value: i }));
+    few = this.many.slice(0, 5);
+}
+
+describe('Listbox - themed layout', () => {
+    let host: HTMLElement;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ListboxThemedHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(ListboxThemedHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        host = fixture.nativeElement;
+    });
+
+    // the preset adds global styles shared by every test file: reset them
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('aligns the toggle all checkbox with the option checkboxes (optimus-ui#1252)', () => {
+        const header = host.querySelector('#checkboxes .p-listbox-header .p-checkbox')!.getBoundingClientRect();
+        const option = host.querySelector('#checkboxes li[role="option"] .p-checkbox')!.getBoundingClientRect();
+        expect(header.left).toBe(option.left);
+    });
+
+    it('keeps the list of a flex listbox inside its box when it has a filter and a header (optimus-ui#72)', () => {
+        const box = host.querySelector('#sized')!.getBoundingClientRect();
+        const listbox = host.querySelector('#sized p-listbox')!.getBoundingClientRect();
+        const list = host.querySelector('#sized .p-listbox-list-container') as HTMLElement;
+
+        expect(listbox.bottom).toBe(box.bottom);
+        expect(list.getBoundingClientRect().bottom).toBeLessThanOrEqual(listbox.bottom);
+        expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
     });
 });

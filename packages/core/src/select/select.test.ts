@@ -9,7 +9,18 @@ import { map, take } from 'rxjs/operators';
 import { Select, SelectItem } from './select';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { Base } from '@exhaustive-ui/core/base';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { Dialog } from '@exhaustive-ui/core/dialog';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { IftaLabel } from '@exhaustive-ui/core/iftalabel';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -5305,5 +5316,365 @@ describe('Select - inside a disabled fieldset (optimus-ui#366)', () => {
         expect(select.$disabled()).toBe(false);
         expect(combobox.getAttribute('aria-disabled')).toBe('false');
         expect(combobox.getAttribute('tabindex')).toBe('0');
+    });
+});
+
+// Tests that load a theme preset change the global Theme state and add <style> tags to the document,
+// which every test file shares: the describe blocks below reset them after each test.
+const resetTheme = () => {
+    Theme._theme = undefined;
+    Theme._tokens = {};
+    Theme.clearLoadedStyleNames();
+    Base.clearLoadedStyleNames();
+    document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+};
+
+const settle = async (fixture: ComponentFixture<any>, ms = 50) => {
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    await fixture.whenStable();
+    fixture.detectChanges();
+};
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormsModule, InputText, FloatLabel, IftaLabel, InputGroup, InputGroupAddon],
+    template: `
+        <div style="display: flex; align-items: flex-start">
+            @for (size of sizes; track size.input) {
+                <p-select [id]="'select-' + size.input" [size]="size.select" [options]="options" placeholder="Pick" />
+                <input [id]="'input-' + size.input" pInputText [pSize]="size.select" placeholder="Pick" />
+                <p-iftalabel [id]="'ifta-select-' + size.input"><p-select [size]="size.select" [options]="options" [ngModel]="'One'" [inputId]="'is-' + size.input" /><label [for]="'is-' + size.input">Select</label></p-iftalabel>
+                <p-iftalabel [id]="'ifta-input-' + size.input"><input pInputText [pSize]="size.select" [id]="'ii-' + size.input" value="One" /><label [for]="'ii-' + size.input">Input</label></p-iftalabel>
+            }
+        </div>
+        <p-floatlabel id="null-option" variant="on">
+            <p-select [options]="nullableOptions" [(ngModel)]="nullValue" optionLabel="label" optionValue="value" inputId="null-option-input" />
+            <label for="null-option-input">Null</label>
+        </p-floatlabel>
+        <p-floatlabel id="empty" variant="on">
+            <p-select [options]="nullableOptions.slice(1)" optionLabel="label" optionValue="value" inputId="empty-input" />
+            <label for="empty-input">Empty</label>
+        </p-floatlabel>
+        <p-floatlabel id="string-value" variant="on">
+            <p-select [options]="intervals" [(ngModel)]="interval" optionLabel="name" optionValue="altName" inputId="string-value-input" [showClear]="true" />
+            <label for="string-value-input">Interval</label>
+        </p-floatlabel>
+        <p-inputgroup id="group" style="width: 300px">
+            <p-inputgroup-addon>X</p-inputgroup-addon>
+            <p-select [options]="options" [ngModel]="'One'" [showClear]="true" placeholder="City" />
+        </p-inputgroup>
+    `
+})
+class TestSelectThemedLayoutComponent {
+    sizes = [
+        { input: 'small', select: 'small' as const },
+        { input: 'normal', select: undefined },
+        { input: 'large', select: 'large' as const }
+    ];
+    options = ['One', 'Two'];
+    nullableOptions = [
+        { label: 'None', value: null },
+        { label: 'X', value: 'x' }
+    ];
+    nullValue = null;
+    intervals = [
+        { id: 1, name: 'Use 5 minute candles', altName: '00:05:00' },
+        { id: 2, name: 'Use 15 minute candles', altName: '00:15:00' }
+    ];
+    interval: string | null = '00:05:00';
+}
+
+describe('Select - themed layout', () => {
+    let fixture: ComponentFixture<TestSelectThemedLayoutComponent>;
+    let host: HTMLElement;
+    const labelTop = (id: string) => getComputedStyle(host.querySelector(`#${id} label`)!).top;
+    const height = (selector: string) => (host.querySelector(selector) as HTMLElement).getBoundingClientRect().height;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectThemedLayoutComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestSelectThemedLayoutComponent);
+        host = fixture.nativeElement;
+        // wait for the float label transitions
+        await settle(fixture, 300);
+    });
+
+    afterEach(resetTheme);
+
+    it('has the height of an InputText of the same size, alone and inside an IftaLabel (optimus-ui#23, optimus-ui#618)', () => {
+        for (const size of ['small', 'normal', 'large']) {
+            expect(height(`#select-${size}`)).toBe(height(`#input-${size}`));
+            expect(height(`#ifta-select-${size}`)).toBe(height(`#ifta-input-${size}`));
+        }
+    });
+
+    it('floats the label above a selected option whose value is null (optimus-ui#156)', () => {
+        expect(host.querySelector('#null-option .p-select-label')!.textContent!.trim()).toBe('None');
+        expect(host.querySelector('#null-option p-select')!.classList).toContain('p-inputwrapper-filled');
+        expect(labelTop('null-option')).toBe(labelTop('string-value'));
+        expect(labelTop('empty')).not.toBe(labelTop('string-value'));
+    });
+
+    it('floats the label above a value picked with a string optionValue and lowers it when cleared (optimus-ui#489, optimus-ui#510)', async () => {
+        const floated = labelTop('string-value');
+        expect(host.querySelector('#string-value p-select')!.classList).toContain('p-inputwrapper-filled');
+        expect(floated).not.toBe(labelTop('empty'));
+
+        // a mouse click on the clear icon moves the focus from the select to the icon
+        const clearIcon = host.querySelector('#string-value .p-select-clear-icon') as HTMLElement;
+        clearIcon.focus();
+        clearIcon.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await settle(fixture, 300);
+
+        expect(fixture.componentInstance.interval).toBeNull();
+        expect(host.querySelector('#string-value p-select')!.classList).not.toContain('p-inputwrapper-filled');
+        expect(labelTop('string-value')).toBe(labelTop('empty'));
+    });
+
+    it('centers the clear icon vertically inside an InputGroup (optimus-ui#188)', () => {
+        const select = host.querySelector('#group p-select')!.getBoundingClientRect();
+        const icon = host.querySelector('#group .p-select-clear-icon')!.getBoundingClientRect();
+        expect(Math.abs(icon.top + icon.height / 2 - (select.top + select.height / 2))).toBeLessThan(1);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, Dialog, FormsModule],
+    template: `
+        <p-dialog header="Dialog" [(visible)]="visible" [style]="{ width: '400px' }">
+            <p-select [options]="options" [(ngModel)]="value" [showClear]="true" appendTo="body" />
+        </p-dialog>
+    `
+})
+class TestSelectInDialogComponent {
+    visible = true;
+    options = ['One', 'Two'];
+    value = 'One';
+}
+
+describe('Select - inside a Dialog', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectInDialogComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        resetTheme();
+        document.documentElement.removeAttribute('dir');
+        document.querySelectorAll('.p-select-overlay, .p-dialog-mask').forEach((el) => el.remove());
+    });
+
+    it('lays out the select and its overlay in a right-to-left document (optimus-ui#533)', async () => {
+        document.documentElement.setAttribute('dir', 'rtl');
+        const fixture = TestBed.createComponent(TestSelectInDialogComponent);
+        await settle(fixture, 400);
+        const host = document.querySelector('.p-dialog p-select') as HTMLElement;
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const box = host.getBoundingClientRect();
+        const label = host.querySelector('.p-select-label')!.getBoundingClientRect();
+        const clear = host.querySelector('.p-select-clear-icon')!.getBoundingClientRect();
+        const trigger = host.querySelector('.p-select-dropdown')!.getBoundingClientRect();
+
+        // right to left: label, clear icon then dropdown trigger
+        expect(label.right).toBeLessThanOrEqual(box.right);
+        expect(clear.right).toBeLessThanOrEqual(label.left + 1);
+        expect(trigger.right).toBeLessThanOrEqual(clear.left + 1);
+        expect(trigger.left).toBeGreaterThanOrEqual(box.left);
+
+        select.show();
+        await settle(fixture, 300);
+        const overlay = document.querySelector('.p-select-overlay')!.getBoundingClientRect();
+        expect(Math.abs(overlay.left - box.left)).toBeLessThan(1);
+        expect(overlay.top).toBeGreaterThanOrEqual(box.bottom);
+    });
+
+    it('stays responsive when it is clicked many times in a row (optimus-ui#230)', async () => {
+        const fixture = TestBed.createComponent(TestSelectInDialogComponent);
+        await settle(fixture, 300);
+        const host = document.querySelector('.p-dialog p-select') as HTMLElement;
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+
+        for (let i = 0; i < 15; i++) {
+            host.querySelector<HTMLElement>('.p-select-dropdown')!.click();
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+        await settle(fixture, 400);
+        expect(select.overlayVisible()).toBe(true);
+        expect(document.querySelectorAll('.p-select-overlay').length).toBe(1);
+
+        host.querySelector<HTMLElement>('.p-select-dropdown')!.click();
+        await settle(fixture, 400);
+        expect(select.overlayVisible()).toBe(false);
+        expect(document.querySelectorAll('.p-select-overlay').length).toBe(0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormsModule],
+    template: `<p-select [options]="options" [(ngModel)]="value" optionLabel="label" [group]="true" optionGroupLabel="label" optionGroupChildren="items" scrollHeight="190px" />`
+})
+class TestSelectPagingComponent {
+    options = ['A', 'B', 'C', 'D', 'E'].map((group) => ({ label: group, items: Array.from({ length: 10 }, (_, i) => ({ label: `${group}${i}` })) }));
+    value = null;
+}
+
+describe('Select - PageDown and PageUp (optimus-ui#721)', () => {
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('moves the focus one page of options down and up instead of jumping to the ends', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectPagingComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectPagingComponent);
+        await settle(fixture);
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const combobox = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement;
+        const press = async (key: string) => {
+            const event = new KeyboardEvent('keydown', { key, code: key, bubbles: true, cancelable: true });
+            combobox.dispatchEvent(event);
+            await settle(fixture);
+            return event;
+        };
+
+        combobox.focus();
+        const opening = await press('PageDown');
+        expect(opening.defaultPrevented).toBe(true);
+        expect(select.overlayVisible()).toBe(true);
+        expect(select.focusedOptionIndex()).toBe(1);
+
+        const container = fixture.nativeElement.querySelector('.p-select-list-container') as HTMLElement;
+        const optionHeight = (fixture.nativeElement.querySelector(`li[id="${select.focusedOptionId()}"]`) as HTMLElement).offsetHeight;
+        const pageSize = Math.floor(container.clientHeight / optionHeight);
+        expect(pageSize).toBe(5);
+
+        await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(1 + pageSize);
+        expect(container.scrollTop).toBeGreaterThan(0);
+
+        // the label of group B (index 11) is skipped
+        await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(2 + 2 * pageSize);
+        await press('PageUp');
+        expect(select.focusedOptionIndex()).toBe(2 + pageSize);
+
+        // the ends of the list stop the paging, on an option rather than a group label
+        for (let i = 0; i < 10; i++) await press('PageDown');
+        expect(select.focusedOptionIndex()).toBe(select.visibleOptions().length - 1);
+        for (let i = 0; i < 10; i++) await press('PageUp');
+        expect(select.focusedOptionIndex()).toBe(1);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormField],
+    template: `<p-select [formField]="profile.city" [options]="cities" [editable]="true" />`
+})
+class TestSelectSignalFormsComponent {
+    cities = ['Rome', 'Paris'];
+    model = signal({ city: '' });
+    profile = form(this.model, (path) => {
+        required(path.city);
+        pattern(path.city, /^[A-Z]/);
+    });
+}
+
+describe('Select - with Angular Signal Forms (optimus-ui#155)', () => {
+    it('accepts the constraints Signal Forms bind to it and renders no pattern it cannot honour', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectSignalFormsComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectSignalFormsComponent);
+        await settle(fixture);
+        const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
+        const input = fixture.nativeElement.querySelector('input.p-select-label') as HTMLInputElement;
+
+        // Signal Forms bind the RegExp list of the field (an unanchored match) to the pattern input
+        expect(select.pattern()).toBeUndefined();
+        expect(input.hasAttribute('pattern')).toBe(false);
+        expect(select.min()).toBeUndefined();
+        expect(select.max()).toBeUndefined();
+        expect(select.required()).toBe(true);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormsModule, InputText],
+    template: `
+        <table>
+            <tr>
+                <td><p-select id="in-table" [options]="options" [(ngModel)]="value" [required]="true" placeholder="Pick" [overlayOptions]="{ mode: 'overlay' }" /></td>
+                <td><input id="cell-input" pInputText /></td>
+            </tr>
+        </table>
+    `
+})
+class TestSelectInTableComponent {
+    options = ['One', 'Two'];
+    value = null;
+}
+
+describe('Select - inside a table', () => {
+    let fixture: ComponentFixture<TestSelectInTableComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectInTableComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestSelectInTableComponent);
+        await settle(fixture);
+    });
+
+    afterEach(() => {
+        resetTheme();
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('leaves the other inputs of the table usable while it is invalid and was opened (optimus-ui#887)', async () => {
+        const host = fixture.nativeElement as HTMLElement;
+        const select = fixture.debugElement.query(By.css('#in-table')).componentInstance as Select;
+        expect(host.querySelector('#in-table')!.classList).toContain('ng-invalid');
+
+        host.querySelector<HTMLElement>('#in-table .p-select-dropdown')!.click();
+        // the overlay listens to outside clicks once its enter animation is over
+        await settle(fixture, 1000);
+        expect(select.overlayVisible()).toBe(true);
+
+        const input = host.querySelector('#cell-input') as HTMLInputElement;
+        const box = input.getBoundingClientRect();
+        expect(document.elementFromPoint(box.left + 5, box.top + box.height / 2)).toBe(input);
+        input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        input.focus();
+        input.click();
+        await settle(fixture);
+
+        expect(document.activeElement).toBe(input);
+        expect(input.readOnly || input.disabled).toBe(false);
+        expect(select.overlayVisible()).toBe(false);
     });
 });
