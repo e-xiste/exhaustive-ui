@@ -4242,6 +4242,46 @@ describe('optimus-ui issues (part 1)', () => {
         });
     });
 
+    describe('frozen column over scrolled content (optimus-ui#232)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div style="width: 300px">
+                    <p-table [value]="rows" [scrollable]="true">
+                        <ng-template #header>
+                            <tr><th pFrozenColumn style="min-width: 150px">Code</th><th style="min-width: 200px">Action</th><th style="min-width: 300px">Other</th></tr>
+                        </ng-template>
+                        <ng-template #body let-row>
+                            <tr>
+                                <td pFrozenColumn style="min-width: 150px">{{ row.code }}</td>
+                                <td style="min-width: 200px"><button class="action" style="position: relative; width: 80px">Go</button></td>
+                                <td style="min-width: 300px">x</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            `
+        })
+        class FrozenColumnPositionedContentComponent {
+            rows = rowsOf(2);
+        }
+
+        it('paints the frozen cell above the positioned content scrolled under it', async () => {
+            fixture = await render(FrozenColumnPositionedContentComponent);
+            const container = fixture.nativeElement.querySelector('.p-datatable-table-container') as HTMLElement;
+            await scrollTo(fixture, container, 0, 120);
+
+            const button = fixture.nativeElement.querySelector('.action') as HTMLElement;
+            const frozenCell = fixture.nativeElement.querySelector('tbody td') as HTMLElement;
+            const buttonRect = button.getBoundingClientRect();
+            expect(buttonRect.left).toBeLessThan(frozenCell.getBoundingClientRect().right - 10);
+
+            const hit = document.elementFromPoint(buttonRect.left + 5, buttonRect.top + buttonRect.height / 2);
+            expect(hit?.closest('td')).toBe(frozenCell);
+        });
+    });
+
     describe('sorted header with virtual scroll (optimus-ui#281)', () => {
         @Component({
             changeDetection: ChangeDetectionStrategy.Eager,

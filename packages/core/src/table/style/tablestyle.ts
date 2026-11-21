@@ -20,6 +20,11 @@ ${datatable_style}
     z-index: 1;
 }
 
+/* positioned content of the scrolled cells (buttons, badges...) must pass under the frozen cells */
+.p-datatable-scrollable td.p-datatable-frozen-column {
+    z-index: 1;
+}
+
 /* the scroller host element sits between the table container and the scroller root */
 .p-datatable-scrollable > .p-datatable-table-container > p-scroller > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {
     background: dt('datatable.header.cell.background');
