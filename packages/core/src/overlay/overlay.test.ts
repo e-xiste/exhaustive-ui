@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Overlay } from './overlay';
+import { Panel } from '@exhaustive-ui/core/panel';
+import { Select } from '@exhaustive-ui/core/select';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
@@ -645,6 +647,54 @@ describe('Overlay appended to body with a target inside a fixed container (optim
             expect(Math.abs(gap() - initialGap)).toBeLessThan(2);
         }
         window.scrollTo(0, 0);
+        fixture.destroy();
+    });
+});
+
+describe('Overlay toggled quickly inside a Panel (optimus-ui#571)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.OnPush,
+        imports: [Panel, Select],
+        template: `<p-panel header="Panel">
+            <p-select [options]="options" optionLabel="name" placeholder="Pick" />
+        </p-panel>`
+    })
+    class TestSelectInPanelComponent {
+        options = Array.from({ length: 20 }, (_, i) => ({ name: 'Option ' + i }));
+    }
+
+    it('should stay responsive and end in a consistent state', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectInPanelComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectInPanelComponent);
+        await fixture.whenStable();
+        const select = fixture.nativeElement.querySelector('.p-select') as HTMLElement;
+
+        const start = performance.now();
+        for (let i = 0; i < 15; i++) {
+            select.click();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, i % 3 === 0 ? 0 : 30));
+            // every click toggles: a click during the frame before the enter must not be undone by that enter
+            expect((fixture.debugElement.query(By.directive(Overlay)).componentInstance as Overlay).visible()).toBe(i % 2 === 0);
+        }
+        // odd number of clicks: the overlay ends open
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await fixture.whenStable();
+        expect(performance.now() - start).toBeLessThan(5000);
+
+        const overlay = fixture.debugElement.query(By.directive(Overlay)).componentInstance as Overlay;
+        expect(overlay.visible()).toBe(true);
+        expect(document.querySelectorAll('.p-select-overlay').length).toBe(1);
+
+        select.click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        expect(overlay.visible()).toBe(false);
+        expect(document.querySelectorAll('.p-select-overlay').length).toBe(0);
         fixture.destroy();
     });
 });
