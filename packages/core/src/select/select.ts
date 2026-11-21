@@ -1138,9 +1138,8 @@ export class Select extends BaseInput<SelectPassThrough> {
             }
             this.updatePlaceHolderForFloatingLabel();
         });
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterEveryRender(() => {
-            this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
-
             const itemsWrapper = this.itemsWrapper();
             if (this.selectedOptionUpdated() && itemsWrapper) {
                 let selectedItem = <any>findSingle(this.overlayViewChild().overlayViewChild()?.nativeElement, 'li[data-p-selected="true"]');

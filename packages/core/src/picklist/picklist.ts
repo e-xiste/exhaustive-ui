@@ -4,7 +4,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    afterEveryRender,
     computed,
     effect,
     ElementRef,
@@ -482,7 +481,7 @@ export class PickList extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('host')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('host'));
         // Re-creates the media query listener when the breakpoint moves away from the applied one, as the former setter did.
         effect(() => {
             const breakpoint = this.breakpoint();

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -1395,7 +1394,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             }
         });
 
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
     onInit() {

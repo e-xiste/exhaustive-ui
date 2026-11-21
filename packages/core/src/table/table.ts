@@ -1301,7 +1301,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterNextRender(() => {
             if (isPlatformBrowser(this.platformId)) {
                 if (this.isStateful() && this.resizableColumns()) {
@@ -5316,7 +5316,7 @@ export class TableHeaderCheckbox extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('headerCheckbox')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('headerCheckbox'));
         this.valueChangeSubscription = this.dataTable.tableService.valueSource$.subscribe(() => {
             this.checked.set(this.updateCheckedState());
             this._ariaLabel.set(this._ariaLabel() || (this.dataTable.config.translation.aria ? (this.checked() ? this.dataTable.config.translation.aria.selectAll : this.dataTable.config.translation.aria.unselectAll) : undefined));
@@ -5393,7 +5393,7 @@ export class ReorderableRowHandle extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRowHandle')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('reorderableRowHandle'));
     }
 
     @HostListener('keydown', ['$event'])
@@ -5450,7 +5450,7 @@ export class ReorderableRow extends BaseComponent {
     constructor() {
         super();
         reorderableRowElements.set(this.el.nativeElement, this);
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('reorderableRow')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('reorderableRow'));
         afterNextRender(() => {
             if (this.isEnabled()) {
                 this.el.nativeElement.droppable = true;
@@ -6807,7 +6807,7 @@ export class ColumnFilterFormElement extends BaseComponent<ColumnFilterPassThrou
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('columnFilterFormElement')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('columnFilterFormElement'));
     }
 
     readonly field = input<string | undefined>();

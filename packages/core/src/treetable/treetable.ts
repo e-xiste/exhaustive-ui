@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-    afterEveryRender,
     afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -1040,7 +1039,7 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root'])));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterNextRender(() => {
             this.initialized.set(true);
         });
@@ -2784,7 +2783,7 @@ export class TTSortableColumn extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('sortableColumn', { context: { sorted: this.sorted() } })));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('sortableColumn', { context: { sorted: this.sorted() } }));
         if (this.isEnabled()) {
             this.subscription = this.tt.tableService.sortSource$.subscribe((sortMeta) => {
                 this.updateSortState();
@@ -3801,7 +3800,7 @@ export class TreeTableCellEditor extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('cellEditor')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('cellEditor'));
     }
 }
 
@@ -3831,7 +3830,7 @@ export class TTRow extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('row', this.ptmOptions())));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('row', this.ptmOptions()));
     }
 
     get level() {
@@ -4079,7 +4078,7 @@ export class TreeTableToggler extends BaseComponent {
 
     constructor() {
         super();
-        afterEveryRender(() => this.bindDirectiveInstance.setAttrs(this.ptm('toggler')));
+        this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptm('toggler'));
     }
 
     get toggleButtonAriaLabel() {
