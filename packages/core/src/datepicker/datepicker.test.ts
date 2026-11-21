@@ -3053,3 +3053,45 @@ describe('DatePicker inherited issue reproductions', () => {
         host.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule],
+    template: `<p-datepicker [inline]="true" selectionMode="range" [(ngModel)]="range" />`
+})
+class TestRangeOtherMonthDatePickerComponent {
+    range = [new Date(2025, 5, 20), new Date(2025, 6, 10)];
+}
+
+describe('DatePicker range across months (optimus-ui#379)', () => {
+    it('highlights the days of the adjacent months that are in the range', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestRangeOtherMonthDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestRangeOtherMonthDatePickerComponent);
+        await fixture.whenStable();
+        const picker = fixture.debugElement.query(By.directive(DatePicker)).componentInstance as DatePicker;
+        const otherMonthDays = (month: number) =>
+            Array.from(fixture.nativeElement.querySelectorAll('td.p-datepicker-other-month span.p-datepicker-day') as NodeListOf<HTMLElement>).filter((span) => Number(span.getAttribute('data-date')!.split('-')[1]) === month + 1);
+        const isInRange = (span: HTMLElement) => span.classList.contains('p-datepicker-day-selected-range');
+
+        // the range ends in July: June 29 and 30 lead the July sheet and are in the range
+        expect(picker.currentMonth()).toBe(6);
+        const june = otherMonthDays(5);
+        expect(june.length).toBeGreaterThan(0);
+        expect(june.every(isInRange)).toBe(true);
+
+        (fixture.nativeElement.querySelector('.p-datepicker-prev-button') as HTMLButtonElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        await fixture.whenStable();
+
+        expect(picker.currentMonth()).toBe(5);
+        const july = otherMonthDays(6);
+        expect(july.length).toBeGreaterThan(0);
+        expect(july.every(isInRange)).toBe(true);
+        // other month days stay unselectable
+        expect(july.every((span) => span.classList.contains('p-disabled'))).toBe(true);
+    });
+});
