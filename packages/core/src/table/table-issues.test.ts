@@ -715,3 +715,59 @@ describe('Table responsive stack layout (optimus-ui#814)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <div style="width: 500px">
+            <p-table [value]="rows" [scrollable]="true" scrollHeight="300px">
+                <ng-template #header>
+                    <tr>
+                        <th id="h-name" style="min-width: 200px" pFrozenColumn rowspan="2">Name</th>
+                        <th id="h-id" style="min-width: 100px" pFrozenColumn>Id</th>
+                        <th style="min-width: 200px" rowspan="2">Country</th>
+                        <th style="min-width: 200px" rowspan="2">Company</th>
+                    </tr>
+                    <tr>
+                        <th id="h-other" pFrozenColumn>Other header</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-row>
+                    <tr>
+                        <td pFrozenColumn>{{ row.name }}</td>
+                        <td id="b-id" pFrozenColumn>{{ row.id }}</td>
+                        <td>{{ row.code }}</td>
+                        <td>{{ row.code }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class FrozenRowspanComponent {
+    rows = makeRows(3);
+}
+
+describe('Table frozen columns in a multi-row header (optimus-ui#711)', () => {
+    it('places a frozen cell of the second header row after the frozen cell spanning both rows', async () => {
+        const fixture = await mount(FrozenRowspanComponent);
+        await tick(50);
+        await fixture.whenStable();
+        const el = fixture.nativeElement as HTMLElement;
+        const name = el.querySelector('#h-name') as HTMLElement;
+        const id = el.querySelector('#h-id') as HTMLElement;
+        const other = el.querySelector('#h-other') as HTMLElement;
+
+        expect(parseFloat(getComputedStyle(id).insetInlineStart)).toBe(name.offsetWidth);
+        expect(parseFloat(getComputedStyle(other).insetInlineStart)).toBe(name.offsetWidth);
+        expect(parseFloat(getComputedStyle(el.querySelector('#b-id') as HTMLElement).insetInlineStart)).toBe(name.offsetWidth);
+
+        // still in place when the table is scrolled horizontally
+        const container = el.querySelector('.p-datatable-table-container') as HTMLElement;
+        container.scrollLeft = 200;
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        expect(Math.round(other.getBoundingClientRect().left - container.getBoundingClientRect().left)).toBe(name.offsetWidth);
+        fixture.nativeElement.remove();
+    });
+});

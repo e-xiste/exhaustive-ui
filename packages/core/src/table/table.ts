@@ -3699,21 +3699,31 @@ export class FrozenColumn extends BaseComponent {
             const startSide = isRTL ? 'right' : 'left';
             const endSide = isRTL ? 'left' : 'right';
 
+            const spannedOffset = this.getSpannedRowsOffset();
+
             if (this.alignFrozen() === 'right') {
                 let end = 0;
-                let sibling = this.el.nativeElement.nextElementSibling;
-                while (sibling) {
-                    end += this.getFrozenWidth(sibling);
-                    sibling = sibling.nextElementSibling;
+                if (spannedOffset) {
+                    end = spannedOffset.end;
+                } else {
+                    let sibling = this.el.nativeElement.nextElementSibling;
+                    while (sibling) {
+                        end += this.getFrozenWidth(sibling);
+                        sibling = sibling.nextElementSibling;
+                    }
                 }
                 this.el.nativeElement.style[endSide] = end + 'px';
                 this.el.nativeElement.style[startSide] = '';
             } else {
                 let start = 0;
-                let sibling = this.el.nativeElement.previousElementSibling;
-                while (sibling) {
-                    start += this.getFrozenWidth(sibling);
-                    sibling = sibling.previousElementSibling;
+                if (spannedOffset) {
+                    start = spannedOffset.start;
+                } else {
+                    let sibling = this.el.nativeElement.previousElementSibling;
+                    while (sibling) {
+                        start += this.getFrozenWidth(sibling);
+                        sibling = sibling.previousElementSibling;
+                    }
                 }
                 this.el.nativeElement.style[startSide] = start + 'px';
                 this.el.nativeElement.style[endSide] = '';
@@ -3728,6 +3738,54 @@ export class FrozenColumn extends BaseComponent {
                 }
             }
         }
+    }
+
+    /**
+     * In a header or footer of several rows, the frozen cells before or after this one can be in a previous row and span down
+     * to this one (rowspan): place the cells on the column grid of the section to find them. Null when no cell spans rows.
+     */
+    private getSpannedRowsOffset(): { start: number; end: number } | null {
+        const cell = this.el.nativeElement as HTMLTableCellElement;
+        const section = cell.parentElement?.parentElement as HTMLTableSectionElement | null | undefined;
+
+        if (!section || (section.tagName !== 'THEAD' && section.tagName !== 'TFOOT')) {
+            return null;
+        }
+
+        const rows = Array.from(section.rows);
+        if (!rows.some((row) => Array.from(row.cells).some((c) => c.rowSpan !== 1))) {
+            return null;
+        }
+
+        const placed: { cell: HTMLTableCellElement; row: number; col: number; rowSpan: number; colSpan: number }[] = [];
+        const taken: boolean[][] = [];
+        rows.forEach((row, rowIndex) => {
+            let col = 0;
+            for (const c of Array.from(row.cells)) {
+                while (taken[rowIndex]?.[col]) col++;
+                const rowSpan = c.rowSpan === 0 ? rows.length - rowIndex : c.rowSpan;
+                const colSpan = c.colSpan || 1;
+                placed.push({ cell: c, row: rowIndex, col, rowSpan, colSpan });
+                for (let i = 0; i < rowSpan; i++) for (let j = 0; j < colSpan; j++) (taken[rowIndex + i] ??= [])[col + j] = true;
+                col += colSpan;
+            }
+        });
+
+        const self = placed.find((p) => p.cell === cell);
+        if (!self) {
+            return null;
+        }
+
+        let start = 0;
+        let end = 0;
+        for (const p of placed) {
+            if (p.cell !== cell && p.row <= self.row && self.row < p.row + p.rowSpan) {
+                if (p.col + p.colSpan <= self.col) start += this.getFrozenWidth(p.cell);
+                else if (p.col >= self.col + self.colSpan) end += this.getFrozenWidth(p.cell);
+            }
+        }
+
+        return { start, end };
     }
 
     // only the frozen (sticky) cells stay between a frozen cell and the edge: the others scroll away
