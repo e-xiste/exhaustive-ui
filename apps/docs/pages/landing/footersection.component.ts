@@ -1,4 +1,4 @@
-import { EXISTE_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL, SPARKED_DEMO_URL } from '@/utils/constants';
+import { EXISTE_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -16,9 +16,6 @@ import { RouterModule } from '@angular/router';
                             <li class="font-bold mb-8">General</li>
                             <li class="mb-6">
                                 <a [routerLink]="['installation']" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300"> Get Started </a>
-                            </li>
-                            <li class="mb-6">
-                                <a [routerLink]="['templates']" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300"> Templates </a>
                             </li>
                         </ul>
                     </div>
@@ -45,9 +42,6 @@ import { RouterModule } from '@angular/router';
                                 <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300">Source Code</a>
                             </li>
                             <li class="mb-6">
-                                <a [href]="sparkedDemoUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300">Sparked Demo</a>
-                            </li>
-                            <li class="mb-6">
                                 <a [href]="existeUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300">e-xiste</a>
                             </li>
                         </ul>
@@ -55,6 +49,12 @@ import { RouterModule } from '@angular/router';
                 </div>
 
                 <hr class="section-divider" />
+
+                <aside class="landing-announcement">
+                    <span class="landing-announcement-text">ExhaustiveUI is a community MIT licensed fork of PrimeNG, now closed source and using a commercial license.</span>
+                    <a href="https://primeui.dev/nextchapter" target="_blank" rel="noopener noreferrer" class="landing-announcement-link">Read their announcement</a>
+                    <span class="landing-announcement-version">ExhaustiveUI v22 supports Angular v22</span>
+                </aside>
 
                 <div class="flex flex-wrap justify-between py-12 gap-8">
                     <img ngSrc="logo.svg" height="40" width="200" alt="" class="dark:invert" />
@@ -75,6 +75,4 @@ export class FooterSectionComponent {
     readonly githubRepoUrl = GITHUB_REPO_URL;
     readonly githubDiscussionsUrl = GITHUB_DISCUSSIONS_URL;
     readonly existeUrl = EXISTE_URL;
-
-    readonly sparkedDemoUrl = SPARKED_DEMO_URL;
 }

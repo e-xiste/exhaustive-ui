@@ -32,4 +32,3 @@ the script; they were done once with `git mv` (`packages/optimus-ui-*` → `pack
 - `@openng/icons`, `OpenngIcons`, "OpenNG Icons": the icon set is OpenNG's and is consumed as a dependency.
 - Copyright notices in `LICENSE.md` and `packages/*/LICENSE`.
 - `v1.optimus.openng.org`: Optimus UI's v1 documentation, linked for the PrimeNG migration guide.
-- Sparked, OpenNG's admin template, referenced as a showcase.
