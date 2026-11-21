@@ -541,3 +541,52 @@ describe('Overlay Signal Query API', () => {
         expect(instance.contentViewChild()).toBeUndefined();
     });
 });
+
+describe('Overlay positioning next to the page scrollbar (optimus-ui#1926)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        standalone: true,
+        imports: [Overlay],
+        template: `<div style="position: fixed; top: 10px; right: 0; width: 60px; height: 30px">
+            <p-overlay [visible]="true" [target]="'@parent'" [appendTo]="appendTo()">
+                <div style="width: 70px; height: 40px">Long option</div>
+            </p-overlay>
+        </div>`
+    })
+    class TestEdgeOverlayComponent {
+        appendTo = input<any>('self');
+    }
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestEdgeOverlayComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    for (const appendTo of ['self', 'body']) {
+        it(`should keep the overlay out of the vertical scrollbar with appendTo="${appendTo}"`, async () => {
+            const fixture = TestBed.createComponent(TestEdgeOverlayComponent);
+            fixture.componentRef.setInput('appendTo', appendTo);
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            await fixture.whenStable();
+
+            // A classic 17px vertical scrollbar, as on Windows: window.innerWidth includes it, the root element's
+            // clientWidth (the visible area, where right: 0 lands) does not. Headless Chromium hides page
+            // scrollbars, so the scrollbar width is reported through innerWidth.
+            const viewportWidth = document.documentElement.clientWidth;
+            vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(viewportWidth + 17);
+
+            // The 70px overlay overflows the 60px anchor at the right edge by 10px: inside the scrollbar.
+            const overlay = fixture.debugElement.query(By.directive(Overlay)).componentInstance as Overlay;
+            expect(overlay.overlayEl()).toBeTruthy();
+            overlay.alignOverlay();
+
+            expect(overlay.overlayEl().getBoundingClientRect().right).toBeLessThanOrEqual(viewportWidth + 0.5);
+
+            fixture.destroy();
+        });
+    }
+});
