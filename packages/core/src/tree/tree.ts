@@ -60,6 +60,14 @@ import { Subscription } from 'rxjs';
 import { TreeStyle } from './style/treestyle';
 
 const TREE_INSTANCE = new InjectionToken<Tree>('TREE_INSTANCE');
+
+/**
+ * Links a node to its parent without making the link enumerable: selected nodes end up in form values
+ * and a plain parent property would make them circular (parent.children contains the node) for JSON.stringify.
+ */
+function setNodeParent(node: TreeNode<any>, parent: TreeNode<any> | null | undefined) {
+    Object.defineProperty(node, 'parent', { value: parent, writable: true, configurable: true, enumerable: false });
+}
 const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
 
 @Component({
@@ -281,7 +289,7 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
 
     onInit() {
         const parentNode = this.parentNode();
-        (<TreeNode>this.node()).parent = parentNode;
+        setNodeParent(<TreeNode>this.node(), parentNode);
         const nativeElement = this.tree.el.nativeElement;
         const pDialogWrapper = nativeElement.closest('p-dialog');
         if (parentNode && !pDialogWrapper) {
@@ -1424,7 +1432,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
     serializeNodes(parent: TreeNode<any> | null, nodes: TreeNode<any>[] | any, level: number, visible: boolean) {
         if (nodes && nodes.length) {
             for (let node of nodes) {
-                node.parent = parent;
+                setNodeParent(node, parent);
                 const rowNode = {
                     node: node,
                     parent: parent,
@@ -1652,7 +1660,7 @@ export class Tree extends BaseComponent<TreePassThrough> implements BlockableUI 
     linkParentNodes(nodes: TreeNode<any>[] | undefined, parent: TreeNode<any> | undefined) {
         if (nodes) {
             for (let node of nodes) {
-                node.parent = parent;
+                setNodeParent(node, parent);
                 this.linkParentNodes(node.children, node);
             }
         }
