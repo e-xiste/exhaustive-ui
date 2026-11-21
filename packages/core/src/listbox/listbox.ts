@@ -713,6 +713,8 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     readonly listViewChild = viewChild<Nullable<ElementRef>>('list');
 
+    readonly containerViewChild = viewChild<Nullable<ElementRef>>('container');
+
     readonly headerFacet = contentChild(Header);
 
     readonly footerFacet = contentChild(Footer);
@@ -1317,13 +1319,39 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
     }
 
     onPageDownKey(event: KeyboardEvent) {
-        this.scrollInView(0);
+        this.changeFocusedOptionIndex(event, this.findPageOptionIndex(1));
         event.preventDefault();
     }
 
     onPageUpKey(event: KeyboardEvent) {
-        this.scrollInView(this.visibleOptions().length - 1);
+        this.changeFocusedOptionIndex(event, this.findPageOptionIndex(-1));
         event.preventDefault();
+    }
+
+    /**
+     * Index of the option one page away from the focused option: a page is the number of options the
+     * list shows at once, so PageDown/PageUp move the focus like a scroll of the list.
+     */
+    findPageOptionIndex(direction: 1 | -1): number {
+        const focusedIndex = this.focusedOptionIndex();
+        const firstIndex = this.findFirstOptionIndex();
+        const lastIndex = this.findLastOptionIndex();
+
+        if (focusedIndex === -1) {
+            return direction > 0 ? firstIndex : lastIndex;
+        }
+
+        const container = this.containerViewChild()?.nativeElement as HTMLElement | undefined;
+        const option = findSingle(this.listViewChild()?.nativeElement, `li[id="${this.focusedOptionId()}"]`) as HTMLElement | null;
+        const optionHeight = this.virtualScroll() ? this.virtualScrollItemSize() : option?.offsetHeight;
+        const pageSize = container?.clientHeight && optionHeight ? Math.max(1, Math.floor(container.clientHeight / optionHeight)) : 10;
+        const index = focusedIndex + direction * pageSize;
+
+        if (direction > 0) {
+            return index >= lastIndex ? lastIndex : this.findNextOptionIndex(index - 1);
+        }
+
+        return index <= firstIndex ? firstIndex : this.findPrevOptionIndex(index + 1);
     }
 
     onEnterKey(event) {
