@@ -1282,6 +1282,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     rowGroupHeaderStyleObject: any = {};
 
+    /**
+     * Sticky top of the row group headers: the height of the header above the rows.
+     * @group Interface
+     */
+    readonly rowGroupHeaderTop = signal<string>('');
+
     id: string = UniqueComponentId();
 
     styleElement = signal<any>(undefined);
@@ -3477,6 +3483,8 @@ export class TableBody extends BaseComponent {
         }
     });
 
+    private headerResizeObserver: ResizeObserver | undefined;
+
     constructor() {
         super();
         afterNextRender(() => {
@@ -3487,6 +3495,8 @@ export class TableBody extends BaseComponent {
             if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
                 this.updateFrozenRowGroupHeaderStickyPosition();
             }
+
+            this.observeHeaderSize();
         });
         effect(() => {
             this.value();
@@ -3558,6 +3568,29 @@ export class TableBody extends BaseComponent {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+
+        this.headerResizeObserver?.disconnect();
+    }
+
+    // the sticky rows are placed under the header, whose height can change after the first render (a component
+    // or an image in it, a wrapped title): follow its size instead of measuring it once
+    observeHeaderSize() {
+        const header = this.el.nativeElement.previousElementSibling;
+        const ResizeObserverType = this.document.defaultView?.ResizeObserver;
+        const isSticky = this.frozenRows() || (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader');
+
+        if (isPlatformBrowser(this.platformId) && header && ResizeObserverType && isSticky && !this.headerResizeObserver) {
+            this.headerResizeObserver = new ResizeObserverType(() => {
+                if (this.frozenRows()) {
+                    this.updateFrozenRowStickyPosition();
+                }
+
+                if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
+                    this.updateFrozenRowGroupHeaderStickyPosition();
+                }
+            });
+            this.headerResizeObserver.observe(header);
+        }
     }
 
     updateFrozenRowStickyPosition() {
@@ -3568,6 +3601,8 @@ export class TableBody extends BaseComponent {
         if (this.el.nativeElement.previousElementSibling) {
             let tableHeaderHeight = DomHandler.getOuterHeight(this.el.nativeElement.previousElementSibling);
             this.dataTable.rowGroupHeaderStyleObject.top = tableHeaderHeight + 'px';
+            // a signal: the row group headers bind it, and a plain object changed after their check threw NG0100
+            this.dataTable.rowGroupHeaderTop.set(tableHeaderHeight + 'px');
         }
     }
 
@@ -3615,7 +3650,7 @@ export class RowGroupHeader extends BaseComponent {
     _componentStyle = inject(TableStyle);
 
     get getFrozenRowGroupHeaderStickyPosition() {
-        return this.dataTable.rowGroupHeaderStyleObject ? this.dataTable.rowGroupHeaderStyleObject.top : '';
+        return this.dataTable.rowGroupHeaderTop();
     }
 }
 

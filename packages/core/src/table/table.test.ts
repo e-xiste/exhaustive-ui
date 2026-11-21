@@ -4375,4 +4375,37 @@ describe('optimus-ui issues (part 1)', () => {
             }
         });
     });
+
+    describe('row group header under a header that grows after rendering (optimus-ui#208)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows" rowGroupMode="subheader" groupRowsBy="cat" [scrollable]="true" scrollHeight="300px">
+                    <ng-template #header>
+                        <tr><th><div [style.height.px]="headerHeight()">Id</div></th></tr>
+                    </ng-template>
+                    <ng-template #groupheader let-row><tr pRowGroupHeader><td>{{ row.cat }}</td></tr></ng-template>
+                    <ng-template #body let-row><tr><td>{{ row.id }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class GrowingHeaderSubheaderComponent {
+            rows = rowsOf(6);
+            headerHeight = signal(20);
+        }
+
+        it('sticks the group headers right under the header', async () => {
+            fixture = await render(GrowingHeaderSubheaderComponent);
+            fixture.componentInstance.headerHeight.set(60);
+            await settle(fixture);
+            await nextFrame();
+            await settle(fixture);
+
+            const thead = fixture.nativeElement.querySelector('thead') as HTMLElement;
+            const groupHeaders = fixture.nativeElement.querySelectorAll('.p-datatable-row-group-header') as NodeListOf<HTMLElement>;
+            expect(groupHeaders.length).toBe(2);
+            groupHeaders.forEach((groupHeader) => expect(groupHeader.style.top).toBe(thead.offsetHeight + 'px'));
+        });
+    });
 });
