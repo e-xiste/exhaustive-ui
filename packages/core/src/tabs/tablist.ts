@@ -199,8 +199,25 @@ export class TabList extends BaseComponent<TabListPassThrough> {
     onNextButtonClick() {
         const _content = this.content().nativeElement;
         const width = getWidth(_content) - this.getVisibleButtonWidths();
-        const pos = _content.scrollLeft + width;
         const lastPos = _content.scrollWidth - width;
+        let pos = _content.scrollLeft + width;
+
+        if (!isRTL(_content)) {
+            // start the next page with the first tab the next button cuts, right after the previous button, which shows
+            // up once the list is scrolled (it has the size of the next button): a plain page width hid that tab under it
+            const nextButton = this.nextButton()?.nativeElement;
+            const buttonWidth = nextButton ? getWidth(nextButton) : 0;
+            const contentLeft = _content.getBoundingClientRect().left;
+            const visibleEnd = _content.getBoundingClientRect().right - buttonWidth;
+            const tabs = Array.from(_content.querySelectorAll<HTMLElement>('[data-pc-name="tab"]'));
+            const firstCut = tabs.find((tab) => tab.getBoundingClientRect().right > visibleEnd + 0.5);
+
+            if (firstCut) {
+                const target = _content.scrollLeft + firstCut.getBoundingClientRect().left - contentLeft - buttonWidth;
+                if (target > _content.scrollLeft) pos = target;
+            }
+        }
+
         const scrollLeft = pos >= lastPos ? lastPos : pos;
 
         _content.scrollLeft = isRTL(_content) ? -1 * scrollLeft : scrollLeft;

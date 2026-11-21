@@ -1488,7 +1488,7 @@ describe('Scrollable Tabs with a controlled value', () => {
     });
 });
 
-describe('Scrollable TabList paging and tab changes (optimus-ui#695, #696)', () => {
+describe('Scrollable TabList paging and tab changes (optimus-ui#124, #695, #696)', () => {
     @Component({
         changeDetection: ChangeDetectionStrategy.Eager,
         imports: [TabsModule],
@@ -1537,6 +1537,27 @@ describe('Scrollable TabList paging and tab changes (optimus-ui#695, #696)', () 
         fixture.detectChanges();
         await fixture.whenStable();
     };
+
+    it('does not skip the tab cut by the next button when paging forward (optimus-ui#124)', async () => {
+        const fixture = await setup();
+        const viewport = fixture.nativeElement.querySelector('.p-tablist-viewport') as HTMLElement;
+        const tabs = [...fixture.nativeElement.querySelectorAll('.p-tab')] as HTMLElement[];
+        const next = fixture.nativeElement.querySelector('.p-tablist-next-button') as HTMLElement;
+        expect(next).toBeTruthy();
+
+        const visibleEnd = next.getBoundingClientRect().left;
+        const firstCut = tabs.find((tab) => tab.getBoundingClientRect().right > visibleEnd + 0.5)!;
+
+        next.click();
+        await settle(fixture);
+
+        const prev = fixture.nativeElement.querySelector('.p-tablist-prev-button') as HTMLElement;
+        expect(prev).toBeTruthy();
+        expect(viewport.scrollLeft).toBeGreaterThan(0);
+        // the tab that was cut on the first page must not slide under the previous button
+        expect(firstCut.getBoundingClientRect().left).toBeGreaterThanOrEqual(prev.getBoundingClientRect().right - 0.5);
+        fixture.nativeElement.remove();
+    });
 
     it('shows a tab and drops the navigators when the list shrinks while scrolled (optimus-ui#695)', async () => {
         const fixture = await setup();
