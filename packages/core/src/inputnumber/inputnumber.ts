@@ -468,7 +468,12 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     focused = signal<Nullable<boolean>>(undefined);
 
-    groupChar = computed<string>(() => new Intl.NumberFormat(this.locale(), { useGrouping: true }).format(1000000).trim().replace(this._numeral(), '').charAt(0));
+    groupChar = computed<string>(() => {
+        // some locales group currencies with another character than plain numbers (de-AT: '€ 1.000' but '1 000'), read it from the formatter in use
+        const options = Object.fromEntries(Object.entries(this.getOptions()).filter(([_key, value]) => value !== undefined));
+        const group = new Intl.NumberFormat(this.locale(), { ...options, useGrouping: true }).formatToParts(1000000).find((part) => part.type === 'group');
+        return group ? group.value : new Intl.NumberFormat(this.locale(), { useGrouping: true }).format(1000000).trim().replace(this._numeral(), '').charAt(0);
+    });
 
     prefixChar = computed<string>(() => {
         if (this.prefix()) {
@@ -1371,17 +1376,8 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
         } else {
             let selectionStart: any = input.nativeElement.selectionStart;
             let selectionEnd: any = input.nativeElement.selectionEnd;
-            const maxlength = this.maxlength();
-            if (maxlength && newValue.length > maxlength) {
-                newValue = newValue.slice(0, maxlength);
-                selectionStart = Math.min(selectionStart, maxlength);
-                selectionEnd = Math.min(selectionEnd, maxlength);
-            }
-
-            if (maxlength && maxlength < newValue.length) {
-                return;
-            }
-
+            // an insertion beyond maxlength is rejected by updateValue(); a deletion may leave a value longer than maxlength
+            // (written by the model), truncating it here would corrupt the value and send the caret to the end
             input.nativeElement.value = newValue;
             let newLength = newValue.length;
 

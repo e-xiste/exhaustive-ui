@@ -1,17 +1,21 @@
 import { Base } from '@exhaustive-ui/core/base';
 import { Theme } from '@exhaustive-ui/styled';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal, ɵgetDocument, ɵsetDocument } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { By } from '@angular/platform-browser';
+import { bootstrapApplication, By, provideClientHydration } from '@angular/platform-browser';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, ɵgetDOM, ɵsetRootDomAdapter } from '@angular/common';
 import type { DatePickerMonthChangeEvent, DatePickerYearChangeEvent } from '@exhaustive-ui/core/types/datepicker';
 import { DatePicker } from './datepicker';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import Aura from '@exhaustive-ui/themes/aura';
+import { provideServerRendering, renderApplication } from '@angular/platform-server';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
 
 // Tests that load a theme preset change the global Theme state and add <style> tags to the document,
 // which every test file shares: reset them after each test (the styles are added again on demand)
@@ -2954,5 +2958,411 @@ describe('DatePicker time announcement', () => {
         await fixture.whenStable();
 
         expect(liveRegion()!.textContent!.trim()).toBe('10:05 am');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, ReactiveFormsModule],
+    template: `<p-datepicker [formControl]="control" [showClear]="true" />`
+})
+class TestShowClearInitialValueDatePickerComponent {
+    control = new FormControl<Date | null>(new Date(2026, 4, 10));
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule],
+    template: `<p-datepicker [(ngModel)]="value" dateFormat="dd/mm/yy" />`
+})
+class TestNgModelDisplayDatePickerComponent {
+    value = signal<Date | null>(null);
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `
+        <div style="position: absolute; top: 20px; left: 40px; width: 200px; height: 40px; overflow: hidden">
+            <p-datepicker appendTo="body" />
+        </div>
+    `
+})
+class TestAppendToBodyDatePickerComponent {}
+
+describe('DatePicker inherited issue reproductions', () => {
+    let fixture: ComponentFixture<DatePicker>;
+    let picker: DatePicker;
+    let el: HTMLElement;
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const panelShown = () => vi.waitFor(() => expect(getComputedStyle(el.querySelector('p-motion')!).display).not.toBe('none'));
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DatePicker],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(DatePicker);
+        picker = fixture.componentInstance;
+        el = fixture.nativeElement;
+    });
+
+    afterEach(() => {
+        fixture.destroy();
+    });
+
+    it('shows the clear icon for an initial FormControl value (optimus-ui#73)', async () => {
+        const host = TestBed.createComponent(TestShowClearInitialValueDatePickerComponent);
+        await host.whenStable();
+
+        expect(host.nativeElement.querySelector('input').value).not.toBe('');
+        expect(host.nativeElement.querySelector('.p-datepicker-clear-icon')).not.toBeNull();
+        host.destroy();
+    });
+
+    it('lists the years of the decade before a range date is picked (optimus-ui#409)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        fixture.componentRef.setInput('selectionMode', 'range');
+        await render();
+        await panelShown();
+
+        (el.querySelector('.p-datepicker-select-year') as HTMLButtonElement).click();
+        await render();
+
+        const years = Array.from(el.querySelectorAll('.p-datepicker-year')).map((year) => Number(year.textContent!.trim()));
+        expect(years.length).toBe(10);
+        expect(years).toContain(new Date().getFullYear());
+    });
+
+    for (const view of ['month', 'year'] as const) {
+        it(`keeps the focus on the previous button in the ${view} view (optimus-ui#374)`, async () => {
+            fixture.componentRef.setInput('inline', true);
+            fixture.componentRef.setInput('view', view);
+            await render();
+            await panelShown();
+            const prev = () => el.querySelector('.p-datepicker-prev-button') as HTMLButtonElement;
+            const decade = () => el.querySelector('.p-datepicker-header')!.textContent!.trim();
+
+            for (let i = 0; i < 3; i++) {
+                const before = decade();
+                prev().focus();
+                prev().click();
+                await render();
+                await wait(10);
+                await render();
+                expect(decade()).not.toBe(before);
+                expect(document.activeElement).toBe(prev());
+            }
+        });
+    }
+
+    it('shows every ngModel value written in a row (optimus-ui#841)', async () => {
+        const host = TestBed.createComponent(TestNgModelDisplayDatePickerComponent);
+        await host.whenStable();
+        const input = host.nativeElement.querySelector('input') as HTMLInputElement;
+
+        for (let i = 0; i < 20; i++) {
+            const date = new Date(2000 + ((i * 7) % 30), (i * 5) % 12, 1 + ((i * 11) % 28));
+            host.componentInstance.value.set(date);
+            await host.whenStable();
+            const pad = (n: number) => String(n).padStart(2, '0');
+            expect(input.value).toBe(`${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`);
+        }
+        host.destroy();
+    });
+
+    it('keeps a single tabbable day cell after the header buttons in the inline calendar (optimus-ui#845)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        await render();
+        await panelShown();
+        const tabbable = () => Array.from(el.querySelectorAll<HTMLElement>('button, [tabindex]')).filter((element) => element.tabIndex >= 0 && !(element as HTMLButtonElement).disabled);
+
+        const check = () => {
+            const order = tabbable();
+            const cells = order.filter((element) => element.matches('.p-datepicker-day'));
+            expect(cells.length).toBe(1);
+            const cellIndex = order.indexOf(cells[0]);
+            // Shift+Tab from the day cell reaches the header buttons
+            expect(order.slice(0, cellIndex).map((element) => element.className.match(/p-datepicker-(prev-button|select-month|select-year|next-button)/)?.[1])).toEqual(['prev-button', 'select-month', 'select-year', 'next-button']);
+            return cells[0];
+        };
+
+        const cell = check();
+        cell.focus();
+        cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', which: 39, keyCode: 39, bubbles: true, cancelable: true } as KeyboardEventInit));
+        await render();
+        expect(document.activeElement).not.toBe(cell);
+        check();
+
+        (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', which: 33, keyCode: 33, bubbles: true, cancelable: true } as KeyboardEventInit));
+        await render();
+        await wait(10);
+        expect(document.activeElement).toBe(check());
+    });
+
+    it('keeps the panel appended to body visible outside a clipping container (optimus-ui#952)', async () => {
+        const host = TestBed.createComponent(TestAppendToBodyDatePickerComponent);
+        document.body.appendChild(host.nativeElement);
+        await host.whenStable();
+        const input = host.nativeElement.querySelector('input') as HTMLInputElement;
+        input.click();
+        input.focus();
+        await host.whenStable();
+        await vi.waitFor(() => expect(document.body.querySelector(':scope > p-motion .p-datepicker-panel, :scope > .p-datepicker-panel')).not.toBeNull());
+        const panel = document.body.querySelector('.p-datepicker-panel') as HTMLElement;
+        await vi.waitFor(() => expect(panel.getBoundingClientRect().height).toBeGreaterThan(100));
+        const rect = panel.getBoundingClientRect();
+
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        expect(panel.contains(hit)).toBe(true);
+        host.destroy();
+        host.nativeElement.remove();
+    });
+
+    it('keeps the panel appended to body aligned when switching to the year view (optimus-ui#30)', async () => {
+        const host = TestBed.createComponent(TestAppendToBodyDatePickerComponent);
+        document.body.appendChild(host.nativeElement);
+        await host.whenStable();
+        const input = host.nativeElement.querySelector('input') as HTMLInputElement;
+        input.click();
+        input.focus();
+        await host.whenStable();
+        const panel = () => document.body.querySelector('.p-datepicker-panel') as HTMLElement;
+        await vi.waitFor(() => expect(panel()?.getBoundingClientRect().height).toBeGreaterThan(100));
+        // let the enter transition finish
+        await wait(300);
+        const before = panel().getBoundingClientRect();
+        expect(before.left).toBe(input.getBoundingClientRect().left);
+
+        for (const selector of ['.p-datepicker-select-year', '.p-datepicker-year', '.p-datepicker-month']) {
+            (panel().querySelector(selector) as HTMLElement).click();
+            await host.whenStable();
+            await wait(300);
+            const after = panel().getBoundingClientRect();
+            // the month and year views must not stretch the panel to the viewport edge
+            expect([after.left, after.width]).toEqual([before.left, before.width]);
+        }
+        host.destroy();
+        host.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule],
+    template: `<p-datepicker [inline]="true" selectionMode="range" [(ngModel)]="range" />`
+})
+class TestRangeOtherMonthDatePickerComponent {
+    range = [new Date(2025, 5, 20), new Date(2025, 6, 10)];
+}
+
+describe('DatePicker range across months (optimus-ui#379)', () => {
+    it('highlights the days of the adjacent months that are in the range', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestRangeOtherMonthDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestRangeOtherMonthDatePickerComponent);
+        await fixture.whenStable();
+        const picker = fixture.debugElement.query(By.directive(DatePicker)).componentInstance as DatePicker;
+        const otherMonthDays = (month: number) =>
+            Array.from(fixture.nativeElement.querySelectorAll('td.p-datepicker-other-month span.p-datepicker-day') as NodeListOf<HTMLElement>).filter((span) => Number(span.getAttribute('data-date')!.split('-')[1]) === month + 1);
+        const isInRange = (span: HTMLElement) => span.classList.contains('p-datepicker-day-selected-range');
+
+        // the range ends in July: June 29 and 30 lead the July sheet and are in the range
+        expect(picker.currentMonth()).toBe(6);
+        const june = otherMonthDays(5);
+        expect(june.length).toBeGreaterThan(0);
+        expect(june.every(isInRange)).toBe(true);
+
+        (fixture.nativeElement.querySelector('.p-datepicker-prev-button') as HTMLButtonElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        await fixture.whenStable();
+
+        expect(picker.currentMonth()).toBe(5);
+        const july = otherMonthDays(6);
+        expect(july.length).toBeGreaterThan(0);
+        expect(july.every(isInRange)).toBe(true);
+        // other month days stay unselectable
+        expect(july.every((span) => span.classList.contains('p-disabled'))).toBe(true);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule, InputGroup, InputGroupAddon, FloatLabel],
+    template: `
+        <div style="width: 400px">
+            <p-inputgroup class="addons">
+                <p-inputgroup-addon>www</p-inputgroup-addon>
+                <p-datepicker [(ngModel)]="value" placeholder="Website" />
+                <p-inputgroup-addon>.com</p-inputgroup-addon>
+            </p-inputgroup>
+            <p-inputgroup class="float" style="margin-top: 40px">
+                <p-inputgroup-addon>@</p-inputgroup-addon>
+                <p-floatlabel>
+                    <p-datepicker [(ngModel)]="value" inputId="float-date" />
+                    <label for="float-date">Date</label>
+                </p-floatlabel>
+            </p-inputgroup>
+            <table style="width: 400px; border-collapse: collapse">
+                <tr>
+                    <td style="padding: 0"><p-datepicker class="cell" [(ngModel)]="value" [fluid]="true" /></td>
+                </tr>
+            </table>
+        </div>
+    `
+})
+class TestThemedLayoutDatePickerComponent {
+    value: Date | null = null;
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker],
+    template: `<p-datepicker [touchUI]="true" />`
+})
+class TestThemedTouchUIDatePickerComponent {}
+
+describe('DatePicker themed layout', () => {
+    it('fills an input group between addons (optimus-ui#420)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedLayoutDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedLayoutDatePickerComponent);
+        await fixture.whenStable();
+        const group = fixture.nativeElement.querySelector('p-inputgroup.addons') as HTMLElement;
+        const [before, after] = Array.from(group.querySelectorAll('p-inputgroup-addon')).map((addon) => (addon as HTMLElement).getBoundingClientRect());
+        const input = group.querySelector('input') as HTMLInputElement;
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+
+        expect(Math.round(rect.left)).toBe(Math.round(before.right));
+        expect(Math.round(rect.right)).toBe(Math.round(after.left));
+        expect(Math.round(rect.height)).toBe(Math.round(before.height));
+        expect([style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius]).toEqual(['0px', '0px', '0px', '0px']);
+    });
+
+    it('fills an input group with a float label and keeps the label above the open panel (optimus-ui#433)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedLayoutDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedLayoutDatePickerComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const group = fixture.nativeElement.querySelector('p-inputgroup.float') as HTMLElement;
+        const addon = (group.querySelector('p-inputgroup-addon') as HTMLElement).getBoundingClientRect();
+        const input = group.querySelector('input') as HTMLInputElement;
+
+        expect(Math.round(input.getBoundingClientRect().left)).toBe(Math.round(addon.right));
+        expect(Math.round(input.getBoundingClientRect().right)).toBe(Math.round(group.getBoundingClientRect().right));
+
+        input.click();
+        input.focus();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const label = group.querySelector('label') as HTMLElement;
+        const labelRect = label.getBoundingClientRect();
+        const panel = group.querySelector('.p-datepicker-panel') as HTMLElement;
+        expect(panel).not.toBeNull();
+        // the label ignores pointer events: what lies under it must not be the panel
+        expect(panel.contains(document.elementFromPoint(labelRect.left + labelRect.width / 2, labelRect.top + labelRect.height / 2))).toBe(false);
+        expect(labelRect.top).toBeLessThan(input.getBoundingClientRect().top);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+    });
+
+    it('lets a fluid date picker fill a table cell (optimus-ui#808)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedLayoutDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedLayoutDatePickerComponent);
+        await fixture.whenStable();
+        const input = fixture.nativeElement.querySelector('p-datepicker.cell input') as HTMLInputElement;
+        expect(Math.round(input.getBoundingClientRect().width)).toBe(400);
+    });
+
+    it('centers the touchUI panel over a modal mask (optimus-ui#427)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedTouchUIDatePickerComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedTouchUIDatePickerComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        input.click();
+        input.focus();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const panel = document.querySelector('.p-datepicker-panel') as HTMLElement;
+        const rect = panel.getBoundingClientRect();
+        const picker = fixture.debugElement.query(By.directive(DatePicker)).componentInstance as DatePicker;
+        expect(document.querySelector('.p-datepicker-mask')).not.toBeNull();
+        expect(getComputedStyle(picker.overlay()!).position).toBe('fixed');
+        expect(Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2)).toBeLessThan(2);
+        expect(Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2)).toBeLessThan(2);
+        expect(rect.width).toBeGreaterThanOrEqual(window.innerWidth * 0.8 - 1);
+        fixture.destroy();
+        fixture.nativeElement.remove();
+        document.querySelectorAll('.p-datepicker-mask').forEach((mask) => mask.remove());
+    });
+});
+
+@Component({
+    selector: 'app-ssr-root',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [DatePicker, FormsModule, SharedModule],
+    template: `
+        <p-datepicker [(ngModel)]="value" [showIcon]="true" [showButtonBar]="true"><p-footer>Popup footer</p-footer></p-datepicker>
+        <p-datepicker [(ngModel)]="value" [inline]="true" [showTime]="true">
+            <p-header>Inline header</p-header>
+            <p-footer>Inline footer</p-footer>
+        </p-datepicker>
+    `
+})
+class TestServerRenderedDatePickerComponent {
+    value = new Date(2026, 4, 10);
+}
+
+describe('DatePicker server rendering with hydration (optimus-ui#34)', () => {
+    // The server platform replaces the global DOM adapter, document and DOM classes (Node, Event...) with its emulated ones;
+    // the other tests run in the same page, so put the browser ones back.
+    const domAdapter = ɵgetDOM();
+    const doc = ɵgetDocument();
+    const domClasses = Object.getOwnPropertyNames(globalThis)
+        .map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)?.value] as const)
+        .filter(([, value]) => typeof value === 'function');
+
+    afterEach(() => {
+        ɵsetRootDomAdapter(domAdapter);
+        ɵsetDocument(doc);
+        domClasses.forEach(([name, value]) => globalThis[name] !== value && (globalThis[name] = value));
+    });
+
+    it('serializes the hydration annotations of a popup and an inline date picker', async () => {
+        const html = await renderApplication((context) => bootstrapApplication(TestServerRenderedDatePickerComponent, { providers: [provideZonelessChangeDetection(), provideServerRendering(), provideClientHydration()] }, context), {
+            document: '<html><head></head><body><app-ssr-root></app-ssr-root></body></html>',
+            url: '/'
+        });
+        const body = new DOMParser().parseFromString(html, 'text/html').body;
+
+        expect(body.querySelectorAll('p-datepicker').length).toBe(2);
+        expect(body.querySelector('p-datepicker input')!.getAttribute('value') ?? (body.querySelector('p-datepicker input') as HTMLInputElement).value).toBe('05/10/2026');
+        expect(body.querySelector('.p-datepicker-panel-inline')!.textContent).toContain('Inline header');
+        expect(html).toContain('ngh=');
     });
 });

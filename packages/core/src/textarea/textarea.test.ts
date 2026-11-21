@@ -6,6 +6,13 @@ import { By } from '@angular/platform-browser';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { TextareaPassThrough } from '@exhaustive-ui/core/types/textarea';
 import { Textarea } from './textarea';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Base } from '@exhaustive-ui/core/base';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { IftaLabel } from '@exhaustive-ui/core/iftalabel';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@exhaustive-ui/core/tabs';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -811,5 +818,133 @@ describe('Textarea autoResize scroll position (optimus-ui#646)', () => {
 
         expect(scroller.scrollTop).toBe(scrollTop);
         fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Textarea, FormsModule],
+    template: `
+        <div style="height: 300px"></div>
+        <textarea pTextarea [(ngModel)]="value" [autoResize]="true" rows="3" style="display: block; width: 200px"></textarea>
+        <div style="height: 2000px"></div>
+    `
+})
+class TestAutoResizePageScrollComponent {
+    value = Array.from({ length: 80 }, (_, i) => 'line ' + i).join('\n');
+}
+
+describe('Textarea autoResize page scroll (optimus-ui#735)', () => {
+    it('keeps the page scroll position while typing in a tall textarea', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestAutoResizePageScrollComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TestAutoResizePageScrollComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+        expect(textarea.offsetHeight).toBeGreaterThan(800);
+
+        const scroller = document.scrollingElement as HTMLElement;
+        scroller.scrollTop = textarea.getBoundingClientRect().top + scroller.scrollTop + 400;
+        const scrollTop = scroller.scrollTop;
+        expect(textarea.getBoundingClientRect().top).toBeLessThan(0);
+
+        textarea.focus({ preventScroll: true });
+        textarea.setSelectionRange(textarea.value.length / 2, textarea.value.length / 2);
+        textarea.setRangeText('x');
+        textarea.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: 'x' }));
+        await fixture.whenStable();
+
+        expect(scroller.scrollTop).toBe(scrollTop);
+        scroller.scrollTop = 0;
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Textarea, FormsModule, Tabs, TabList, Tab, TabPanels, TabPanel],
+    template: `
+        <p-tabs value="0" style="width: 300px">
+            <p-tablist>
+                <p-tab value="0">One</p-tab>
+                <p-tab value="1">Two</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0"><textarea pTextarea [(ngModel)]="value" [autoResize]="true" rows="2"></textarea></p-tabpanel>
+                <p-tabpanel value="1"><textarea pTextarea [(ngModel)]="value" [autoResize]="true" rows="2"></textarea></p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    `
+})
+class TestAutoResizeTabsComponent {
+    value = Array.from({ length: 10 }, (_, i) => 'line ' + i).join('\n');
+}
+
+describe('Textarea autoResize in tabs (optimus-ui#665)', () => {
+    it('sizes the textarea of a tab shown after the first render', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestAutoResizeTabsComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestAutoResizeTabsComponent);
+        document.body.appendChild(fixture.nativeElement);
+        await fixture.whenStable();
+        const [first, second] = Array.from(fixture.nativeElement.querySelectorAll('textarea')) as HTMLTextAreaElement[];
+        const height = first.offsetHeight;
+        expect(height).toBeGreaterThan(150);
+        expect(first.scrollHeight).toBeLessThanOrEqual(first.clientHeight);
+
+        (fixture.nativeElement.querySelectorAll('p-tab')[1] as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        expect(second.offsetParent).not.toBeNull();
+        expect(second.offsetHeight).toBe(height);
+        expect(second.scrollHeight).toBeLessThanOrEqual(second.clientHeight);
+        fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Textarea, IftaLabel, FloatLabel],
+    template: `
+        <p-iftalabel>
+            <textarea pTextarea id="ifta" rows="5" cols="30"></textarea>
+            <label for="ifta">Description</label>
+        </p-iftalabel>
+        <p-floatlabel>
+            <textarea pTextarea id="float" rows="5" cols="30"></textarea>
+            <label for="float">Description</label>
+        </p-floatlabel>
+    `
+})
+class TestThemedLabelTextareaComponent {}
+
+describe('Textarea themed inside labels', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('does not leave a gap under the textarea of an ifta or float label (optimus-ui#213)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedLabelTextareaComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedLabelTextareaComponent);
+        await fixture.whenStable();
+
+        const gaps = ['p-iftalabel', 'p-floatlabel'].map((selector) => {
+            const label = fixture.nativeElement.querySelector(selector) as HTMLElement;
+            return label.getBoundingClientRect().height - (label.querySelector('textarea') as HTMLTextAreaElement).getBoundingClientRect().height;
+        });
+        expect(gaps).toEqual([0, 0]);
     });
 });

@@ -57,6 +57,10 @@ type Meter = {
  * Password directive.
  * @group Components
  */
+const DEFAULT_MEDIUM_REGEX = '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})';
+
+const DEFAULT_STRONG_REGEX = '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})';
+
 @Directive({
     selector: '[pPassword]',
     host: {
@@ -104,6 +108,20 @@ export class PasswordDirective extends BaseEditableHolder {
      * @group Props
      */
     strongLabel = input<string>('Strong');
+    /**
+     * Regex value for medium regex. When mediumRegex or strongRegex is set, the strength is graded with the regexes like the p-password component,
+     * otherwise with a score based on the length and the character classes.
+     * @defaultValue undefined
+     * @group Props
+     */
+    mediumRegex = input<string | undefined>();
+    /**
+     * Regex value for strong regex. When mediumRegex or strongRegex is set, the strength is graded with the regexes like the p-password component,
+     * otherwise with a score based on the length and the character classes.
+     * @defaultValue undefined
+     * @group Props
+     */
+    strongRegex = input<string | undefined>();
     /**
      * Whether to show the strength indicator or not.
      * @group Props
@@ -281,7 +299,7 @@ export class PasswordDirective extends BaseEditableHolder {
                 label = this.promptLabel();
                 meterPos = '0px 0px';
             } else {
-                var score = this.testStrength(value);
+                var score = this.mediumRegex() || this.strongRegex() ? this.testRegexStrength(value) : this.testStrength(value);
 
                 if (score < 30) {
                     label = this.weakLabel();
@@ -365,6 +383,12 @@ export class PasswordDirective extends BaseEditableHolder {
         grade *= str.length / 8;
 
         return grade > 100 ? 100 : grade;
+    }
+
+    testRegexStrength(str: string) {
+        if (new RegExp(this.strongRegex() || DEFAULT_STRONG_REGEX).test(str)) return 100;
+        if (new RegExp(this.mediumRegex() || DEFAULT_MEDIUM_REGEX).test(str)) return 50;
+        return 0;
     }
 
     normalize(x: number, y: number) {
@@ -610,12 +634,12 @@ export class Password extends BaseInput<PasswordPassThrough> {
      * Regex value for medium regex.
      * @group Props
      */
-    mediumRegex = input<string>('^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})');
+    mediumRegex = input<string>(DEFAULT_MEDIUM_REGEX);
     /**
      * Regex value for strong regex.
      * @group Props
      */
-    strongRegex = input<string>('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})');
+    strongRegex = input<string>(DEFAULT_STRONG_REGEX);
     /**
      * Text for a weak password. Defaults to Exhaustive I18N API configuration.
      * @group Props

@@ -1382,6 +1382,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         afterNextRender(() => {
             if (this.inline()) {
                 this.contentViewChild() && this.contentViewChild()!.nativeElement.setAttribute(this.attributeSelector, '');
+                // make one cell tabbable so Tab and Shift+Tab move between the header buttons and the dates
+                this.preventFocus.set(true);
+                this.initFocusableCell();
             } else {
                 if (!this.$disabled() && this.overlay()) {
                     this.initFocusableCell();
@@ -1616,6 +1619,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
             this.realignOverlay();
+            if (this.navigationState()) {
+                // keyboard or button navigation: move the focus and the tabbable cell to the rendered month
+                setTimeout(() => this.updateFocus(), 1);
+            }
         }
     }
 
@@ -1648,6 +1655,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
             this.realignOverlay();
+            if (this.navigationState()) {
+                // keyboard or button navigation: move the focus and the tabbable cell to the rendered month
+                setTimeout(() => this.updateFocus(), 1);
+            }
         }
     }
 
@@ -1832,7 +1843,21 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         }
     }
 
+    private dateViewPanelWidth: string | null = null;
+
     setCurrentView(currentView: DatePickerTypeView) {
+        const panel = this.inline() ? null : this.contentViewChild()?.nativeElement;
+        if (panel) {
+            if (this.currentView() === 'date' && currentView !== 'date') {
+                // the month and year cells are laid out inline: they would stretch the positioned panel to their max-content width
+                // and move it away from the input, so keep the width of the date view
+                this.dateViewPanelWidth = panel.style.width;
+                panel.style.width = panel.offsetWidth + 'px';
+            } else if (currentView === 'date' && this.dateViewPanelWidth !== null) {
+                panel.style.width = this.dateViewPanelWidth;
+                this.dateViewPanelWidth = null;
+            }
+        }
         this.currentView.set(currentView);
         this.cd.detectChanges();
         this.alignOverlay();
@@ -3297,6 +3322,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     alignOverlay() {
         if (this.touchUI()) {
+            if (this.overlay()) {
+                // center the panel in the viewport over the modal mask
+                addStyle(this.overlay()!, { position: 'fixed', inset: '0', margin: 'auto', width: 'fit-content', height: 'fit-content', minWidth: '80vw' });
+            }
             this.enableModality(this.overlay());
         } else if (this.overlay()) {
             if (this.$appendTo() && this.$appendTo() !== 'self') {
@@ -3877,6 +3906,7 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
 
     onOverlayHide() {
         this.currentView.set(this.view());
+        this.dateViewPanelWidth = null;
 
         if (this.mask()) {
             this.destroyMask();

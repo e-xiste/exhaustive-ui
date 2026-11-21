@@ -1172,3 +1172,42 @@ describe('InputOtp soft keyboard input', () => {
         expect(fixture.componentInstance.value).toBe('1');
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputOtp, FormsModule],
+    template: `<p-inputotp [(ngModel)]="value" [length]="4" />`
+})
+class TestInputOtpEditComponent {
+    value: string | null = '1234';
+}
+
+describe('InputOtp editing a filled value (optimus-ui#833)', () => {
+    it('replaces the character of a box whose selection a click collapsed', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestInputOtpEditComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TestInputOtpEditComponent);
+        await fixture.whenStable();
+        const inputs = Array.from(fixture.nativeElement.querySelectorAll('input')) as HTMLInputElement[];
+        expect(inputs.map((input) => input.value)).toEqual(['1', '2', '3', '4']);
+
+        // focus selects the box, the mouseup of the click then collapses the selection behind the character
+        inputs[1].focus();
+        inputs[1].setSelectionRange(1, 1);
+
+        const keydown = new KeyboardEvent('keydown', { key: '9', cancelable: true, bubbles: true });
+        inputs[1].dispatchEvent(keydown);
+        expect(keydown.defaultPrevented).toBe(false);
+        expect([inputs[1].selectionStart, inputs[1].selectionEnd]).toEqual([0, 1]);
+
+        // the browser replaces the selected character
+        inputs[1].value = '9';
+        inputs[1].dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: '9', bubbles: true }));
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.value).toBe('1934');
+        expect(document.activeElement).toBe(inputs[2]);
+    });
+});

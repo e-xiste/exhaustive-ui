@@ -6,6 +6,12 @@ import { By } from '@angular/platform-browser';
 import { InputMask, InputMaskModule, InputMaskDirective } from './inputmask';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { CommonModule } from '@angular/common';
+import { Base } from '@exhaustive-ui/core/base';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 
 // Test Components
 @Component({
@@ -2312,5 +2318,178 @@ describe('InputMask Android input (optimus-ui#507)', () => {
         await typeOnAndroid(fixture, input, 'a');
         expect(input.value).toBe('1_-__');
         expect(input.selectionStart).toBe(1);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputMask, InputMaskDirective, FormsModule],
+    template: `
+        <p-inputmask [mask]="mask" [(ngModel)]="value" [unmask]="unmask" />
+        <input class="directive" [pInputMask]="mask" />
+    `
+})
+class TestInputMaskIssuesComponent {
+    mask = '99-99';
+    value: string | null = null;
+    unmask = false;
+}
+
+describe('InputMask inherited issue reproductions', () => {
+    let fixture: ComponentFixture<TestInputMaskIssuesComponent>;
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    const render = async () => {
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+    const componentInput = () => fixture.nativeElement.querySelector('p-inputmask input') as HTMLInputElement;
+    const directiveInput = () => fixture.nativeElement.querySelector('input.directive') as HTMLInputElement;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestInputMaskIssuesComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        fixture = TestBed.createComponent(TestInputMaskIssuesComponent);
+        await render();
+    });
+
+    afterEach(() => fixture.destroy());
+
+    // the directive ignores untrusted input events: hand it the event the browser would have sent
+    const sendInput = (input: HTMLInputElement, event: InputEvent) => {
+        if (input.classList.contains('directive')) {
+            fixture.debugElement.query(By.directive(InputMaskDirective)).injector.get(InputMaskDirective).handleAndroidInput(event);
+        } else {
+            input.dispatchEvent(event);
+        }
+    };
+
+    const typeOnAndroid = (input: HTMLInputElement, char: string) => {
+        const caret = input.selectionStart as number;
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229 } as KeyboardEventInit));
+        input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+        input.setSelectionRange(caret + 1, caret + 1);
+        sendInput(input, new InputEvent('input', { inputType: 'insertText', data: char }));
+    };
+
+    it('places the caret in the same task as the Android input, without a jump to the end (optimus-ui#370)', async () => {
+        const inputMask = fixture.debugElement.query(By.directive(InputMask)).componentInstance as InputMask;
+        const directive = fixture.debugElement.query(By.directive(InputMaskDirective)).injector.get(InputMaskDirective);
+        inputMask.androidChrome = true;
+        directive.androidChrome = true;
+
+        for (const input of [componentInput(), directiveInput()]) {
+            input.focus();
+            await wait(20);
+            input.setSelectionRange(0, 0);
+
+            typeOnAndroid(input, '1');
+            expect(input.value).toBe('1_-__');
+            expect(input.selectionStart).toBe(1);
+
+            typeOnAndroid(input, '2');
+            expect(input.value).toBe('12-__');
+            expect(input.selectionStart).toBe(3);
+
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229 } as KeyboardEventInit));
+            input.value = '1-__';
+            input.setSelectionRange(1, 1);
+            sendInput(input, new InputEvent('input', { inputType: 'deleteContentBackward' }));
+            expect(input.value).toBe('1_-__');
+            expect(input.selectionStart).toBe(1);
+            await wait(5);
+            expect(input.selectionStart).toBe(1);
+        }
+    });
+
+    it('puts the caret on the first empty slot when the input is clicked (optimus-ui#843)', async () => {
+        for (const input of [componentInput(), directiveInput()]) {
+            input.style.width = '200px';
+            const rect = input.getBoundingClientRect();
+            // a click near the right edge places the caret at the end, the mask moves it back to the first slot
+            input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+            input.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            input.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: rect.right - 5, clientY: rect.top + rect.height / 2 }));
+            await wait(20);
+            expect(input.value).toBe('__-__');
+            expect([input.selectionStart, input.selectionEnd]).toEqual([0, 0]);
+            input.blur();
+            await render();
+        }
+    });
+
+    it('keeps an escaped mask character as a literal (optimus-ui#911)', async () => {
+        fixture.componentInstance.mask = '+\\9 (999) 999';
+        fixture.componentInstance.unmask = true;
+        await render();
+
+        for (const input of [componentInput(), directiveInput()]) {
+            input.focus();
+            await wait(20);
+            expect(input.value).toBe('+9 (___) ___');
+            expect(input.selectionStart).toBe(4);
+            for (const key of '123456') {
+                const code = key.charCodeAt(0);
+                input.dispatchEvent(new KeyboardEvent('keypress', { key, keyCode: code, charCode: code, which: code, cancelable: true, bubbles: true } as KeyboardEventInit));
+            }
+            expect(input.value).toBe('+9 (123) 456');
+            input.blur();
+            await render();
+            expect(input.value).toBe('+9 (123) 456');
+        }
+        expect(fixture.componentInstance.value).toBe('123456');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputMask, InputGroup, InputGroupAddon],
+    template: `
+        <div style="width: 400px">
+            <p-inputgroup>
+                <p-inputgroup-addon>+</p-inputgroup-addon>
+                <p-inputmask mask="99-99" />
+                <p-inputgroup-addon>#</p-inputgroup-addon>
+            </p-inputgroup>
+            <p-inputmask class="fluid" mask="99-99" [fluid]="true" />
+        </div>
+    `
+})
+class TestThemedInputGroupInputMaskComponent {}
+
+describe('InputMask themed layout', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('fills an input group between addons and supports fluid (optimus-ui#690)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedInputGroupInputMaskComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedInputGroupInputMaskComponent);
+        await fixture.whenStable();
+        const group = fixture.nativeElement.querySelector('p-inputgroup') as HTMLElement;
+        const [before, after] = Array.from(group.querySelectorAll('p-inputgroup-addon')).map((addon) => (addon as HTMLElement).getBoundingClientRect());
+        const input = group.querySelector('input') as HTMLInputElement;
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+
+        expect(Math.round(group.getBoundingClientRect().width)).toBe(400);
+        expect(Math.round(rect.left)).toBe(Math.round(before.right));
+        expect(Math.round(rect.right)).toBe(Math.round(after.left));
+        expect(Math.round(rect.height)).toBe(Math.round(before.height));
+        expect([style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius]).toEqual(['0px', '0px', '0px', '0px']);
+
+        const fluid = fixture.nativeElement.querySelector('p-inputmask.fluid input') as HTMLInputElement;
+        expect(Math.round(fluid.getBoundingClientRect().width)).toBe(400);
     });
 });

@@ -1,4 +1,9 @@
 import { CommonModule } from '@angular/common';
+import { Base } from '@exhaustive-ui/core/base';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -2033,4 +2038,213 @@ describe('InputNumber updateOn blur (optimus-ui#428)', () => {
         expect(control.dirty).toBe(true);
         expect(emitted).toEqual([57]);
     });
+});
+
+describe('InputNumber inherited issue reproductions', () => {
+    let fixture: ComponentFixture<InputNumber>;
+    let inputNumber: InputNumber;
+    let input: HTMLInputElement;
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const create = async (inputs: Record<string, unknown> = {}, value: number | null = null) => {
+        fixture = TestBed.createComponent(InputNumber);
+        inputNumber = fixture.componentInstance;
+        Object.entries(inputs).forEach(([name, inputValue]) => fixture.componentRef.setInput(name, inputValue));
+        inputNumber.registerOnChange(() => {});
+        await render();
+        inputNumber.writeValue(value);
+        await render();
+        input = fixture.nativeElement.querySelector('input');
+    };
+
+    const keypress = async (key: string) => {
+        const code = key.charCodeAt(0);
+        input.dispatchEvent(new KeyboardEvent('keydown', { key, keyCode: code, cancelable: true, bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keypress', { key, keyCode: code, charCode: code, which: code, cancelable: true, bubbles: true } as KeyboardEventInit));
+        await render();
+    };
+
+    const backspace = async () => {
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', code: 'Backspace', keyCode: 8, cancelable: true, bubbles: true }));
+        await render();
+    };
+
+    const blur = async () => {
+        input.dispatchEvent(new FocusEvent('blur'));
+        await render();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [InputNumber],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    afterEach(() => {
+        fixture?.destroy();
+    });
+
+    for (const [locale, currency] of [
+        ['de-AT', 'EUR'],
+        ['ja-JP', 'JPY'],
+        ['jp-JP', 'JPY']
+    ]) {
+        it(`keeps four typed digits in currency mode for ${locale} (optimus-ui#15)`, async () => {
+            await create({ mode: 'currency', currency, locale }, null);
+            input.focus();
+            for (const digit of '2222') {
+                await keypress(digit);
+            }
+            await blur();
+            expect(inputNumber.value()).toBe(2222);
+
+            input.focus();
+            // type the next digits before the decimal separator (EUR has two fraction digits, JPY none)
+            const decimal = currency === 'EUR' ? input.value.indexOf(',') : -1;
+            const caret = decimal >= 0 ? decimal : input.value.length;
+            input.setSelectionRange(caret, caret);
+            for (const digit of '511') {
+                await keypress(digit);
+            }
+            await blur();
+            expect(inputNumber.value()).toBe(2222511);
+        });
+    }
+
+    it('keeps the caret in place when deleting inside a grouped value at maxlength (optimus-ui#356)', async () => {
+        await create({ locale: 'en-US', useGrouping: true, maxFractionDigits: 0, maxlength: 19 }, null);
+        input.focus();
+        for (const digit of '1234567890123456') {
+            await keypress(digit);
+        }
+        expect(input.value).toBe('123,456,789,012,345');
+
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(input.value).toBe('12,356,789,012,345');
+        expect(input.selectionStart).toBe(4);
+
+        await backspace();
+        expect(input.value).toBe('1,256,789,012,345');
+        expect(input.selectionStart).toBe(3);
+    });
+
+    it('does not truncate a model value longer than maxlength when deleting a digit (optimus-ui#356)', async () => {
+        await create({ locale: 'en-US', useGrouping: true, maxFractionDigits: 0, maxlength: 15 }, 123456789012345);
+        expect(input.value).toBe('123,456,789,012,345');
+        input.focus();
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(inputNumber.value()).toBe(12356789012345);
+        expect(input.value).toBe('12,356,789,012,345');
+        expect(input.selectionStart).toBe(4);
+    });
+
+    it('types decimals before a trailing currency symbol (optimus-ui#520)', async () => {
+        await create({ mode: 'currency', currency: 'EUR', locale: 'de-DE' }, null);
+        input.focus();
+        for (const key of '12,34') {
+            await keypress(key);
+        }
+        expect(input.value).toBe('12,34\u00a0€');
+        expect(inputNumber.value()).toBe(12.34);
+
+        input.setSelectionRange(5, 5);
+        await backspace();
+        expect(input.value).toBe('12,30\u00a0€');
+        await backspace();
+        expect(input.value).toBe('12,00\u00a0€');
+    });
+
+    it('formats and types decimals with the de-DE locale (optimus-ui#672)', async () => {
+        await create({ locale: 'de-DE', minFractionDigits: 2 }, 635524.23);
+        expect(input.value).toBe('635.524,23');
+
+        inputNumber.writeValue(null);
+        await render();
+        input.focus();
+        for (const key of '635524,23') {
+            await keypress(key);
+        }
+        expect(input.value).toBe('635.524,23');
+        expect(inputNumber.value()).toBe(635524.23);
+    });
+
+    it('accepts soft keyboard digits with minFractionDigits and a suffix (optimus-ui#71)', async () => {
+        await create({ locale: 'de-DE', mode: 'decimal', minFractionDigits: 2, suffix: ' €' }, null);
+        input.focus();
+
+        const softType = async (char: string) => {
+            const caret = input.selectionStart as number;
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', keyCode: 229, bubbles: true }));
+            input.value = input.value.slice(0, caret) + char + input.value.slice(caret);
+            input.setSelectionRange(caret + 1, caret + 1);
+            input.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: char, bubbles: true }));
+            await render();
+        };
+
+        for (const char of '123') {
+            await softType(char);
+        }
+        expect(input.value).toBe('123,00 €');
+        expect(inputNumber.value()).toBe(123);
+        expect(input.selectionStart).toBe(3);
+    });
+
+    it('exposes the current value to assistive technology (optimus-ui#643)', async () => {
+        await create({ min: 0, max: 100 }, 42);
+        expect(input.getAttribute('role')).toBe('spinbutton');
+        expect(input.getAttribute('aria-valuenow')).toBe('42');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [InputNumber, InputGroup, InputGroupAddon],
+    template: `
+        <p-inputgroup>
+            <p-inputnumber [showButtons]="showButtons" />
+            <p-inputgroup-addon>%</p-inputgroup-addon>
+        </p-inputgroup>
+        <p-inputgroup>
+            <p-inputgroup-addon>%</p-inputgroup-addon>
+            <p-inputnumber [showButtons]="showButtons" />
+        </p-inputgroup>
+    `
+})
+class TestThemedInputGroupInputNumberComponent {
+    showButtons = false;
+}
+
+describe('InputNumber themed inside an input group', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    for (const showButtons of [false, true]) {
+        it(`squares the corners next to an addon${showButtons ? ' with stacked buttons' : ''} (optimus-ui#912)`, async () => {
+            TestBed.configureTestingModule({
+                imports: [TestThemedInputGroupInputNumberComponent],
+                providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+            });
+            const fixture = TestBed.createComponent(TestThemedInputGroupInputNumberComponent);
+            fixture.componentInstance.showButtons = showButtons;
+            await fixture.whenStable();
+            const [first, last] = Array.from(fixture.nativeElement.querySelectorAll('input')).map((input) => getComputedStyle(input as HTMLInputElement));
+
+            expect(first.borderTopLeftRadius).not.toBe('0px');
+            expect([first.borderTopRightRadius, first.borderBottomRightRadius]).toEqual(['0px', '0px']);
+            expect([last.borderTopLeftRadius, last.borderBottomLeftRadius]).toEqual(['0px', '0px']);
+        });
+    }
 });

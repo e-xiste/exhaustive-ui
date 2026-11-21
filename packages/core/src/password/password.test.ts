@@ -1,10 +1,15 @@
 import type { Mock } from 'vitest';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { CommonModule } from '@angular/common';
+import { Base } from '@exhaustive-ui/core/base';
+import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { MapperPipe, Password, PasswordDirective, PasswordModule } from './password';
@@ -2647,5 +2652,97 @@ describe('Password toggleMask keyboard access (optimus-ui#823)', () => {
         fixture.detectChanges();
         await fixture.whenStable();
         expect(fixture.componentInstance.unmasked()).toBe(false);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [PasswordDirective],
+    template: `<input type="password" pPassword [mediumRegex]="mediumRegex()" [strongRegex]="strongRegex()" />`
+})
+class TestPasswordDirectiveRegexComponent {
+    mediumRegex = signal<string | undefined>('^.{4,}$');
+    strongRegex = signal<string | undefined>('^.{6,}$');
+}
+
+describe('PasswordDirective strength regexes (optimus-ui#953)', () => {
+    it('grades the strength with mediumRegex and strongRegex', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestPasswordDirectiveRegexComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestPasswordDirectiveRegexComponent);
+        await fixture.whenStable();
+        const directive = fixture.debugElement.query(By.directive(PasswordDirective)).injector.get(PasswordDirective);
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        const typeValue = async (value: string) => {
+            input.value = value;
+            input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+            await fixture.whenStable();
+        };
+
+        await typeValue('abc');
+        expect(directive.strength()).toBe('weak');
+        await typeValue('abcd');
+        expect(directive.strength()).toBe('medium');
+        await typeValue('abcdef');
+        expect(directive.strength()).toBe('strong');
+
+        // without the regexes the directive keeps its score based grading
+        fixture.componentInstance.mediumRegex.set(undefined);
+        fixture.componentInstance.strongRegex.set(undefined);
+        await fixture.whenStable();
+        await typeValue('abcdef');
+        expect(directive.strength()).toBe('weak');
+        directive.onDestroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Password, InputGroup, InputGroupAddon],
+    template: `
+        <div style="width: 400px">
+            <p-inputgroup>
+                <p-inputgroup-addon>@</p-inputgroup-addon>
+                <p-password [feedback]="false" />
+                <p-inputgroup-addon>#</p-inputgroup-addon>
+            </p-inputgroup>
+            <p-password class="fluid" [feedback]="false" [fluid]="true" />
+        </div>
+    `
+})
+class TestThemedInputGroupPasswordComponent {}
+
+describe('Password themed layout', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('fills an input group between addons and supports fluid (optimus-ui#690)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedInputGroupPasswordComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedInputGroupPasswordComponent);
+        await fixture.whenStable();
+        const group = fixture.nativeElement.querySelector('p-inputgroup') as HTMLElement;
+        const [before, after] = Array.from(group.querySelectorAll('p-inputgroup-addon')).map((addon) => (addon as HTMLElement).getBoundingClientRect());
+        const input = group.querySelector('input') as HTMLInputElement;
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+
+        expect(Math.round(group.getBoundingClientRect().width)).toBe(400);
+        expect(Math.round(rect.left)).toBe(Math.round(before.right));
+        expect(Math.round(rect.right)).toBe(Math.round(after.left));
+        expect(Math.round(rect.height)).toBe(Math.round(before.height));
+        expect([style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius]).toEqual(['0px', '0px', '0px', '0px']);
+
+        const fluid = fixture.nativeElement.querySelector('p-password.fluid input') as HTMLInputElement;
+        expect(Math.round(fluid.getBoundingClientRect().width)).toBe(400);
     });
 });

@@ -69,7 +69,10 @@ const classes = {
     day: ({ instance, date }) => {
         let selectedDayClass = '';
 
-        if (instance.isRangeSelection() && instance.isSelected(date) && date.selectable) {
+        // a day of the adjacent months is not selectable unless selectOtherMonths is set, but still shows that it is in the range
+        const showsRange = date.selectable || (date.otherMonth && instance.isSelectable(date.day, date.month, date.year, false));
+
+        if (instance.isRangeSelection() && instance.isSelected(date) && showsRange) {
             const startDate = instance.value()[0];
             const endDate = instance.value()[1];
 
