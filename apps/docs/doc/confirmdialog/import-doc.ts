@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ConfirmDialogModule } from '@exhaustive-ui/core/confirmdialog';`
+        typescript: `import { ConfirmDialog } from '@exhaustive-ui/core/confirmdialog';`
     };
 }

@@ -10,6 +10,6 @@ import { Component } from '@angular/core';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ClassNamesModule } from '@exhaustive-ui/core/classnames'`
+        typescript: `import { ClassNames } from '@exhaustive-ui/core/classnames'`
     };
 }

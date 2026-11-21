@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ColorPickerModule } from '@exhaustive-ui/core/colorpicker';`
+        typescript: `import { ColorPicker } from '@exhaustive-ui/core/colorpicker';`
     };
 }

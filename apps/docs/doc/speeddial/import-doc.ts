@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';`
+        typescript: `import { SpeedDial } from '@exhaustive-ui/core/speeddial';`
     };
 }

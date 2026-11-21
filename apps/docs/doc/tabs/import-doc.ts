@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TabsModule } from '@exhaustive-ui/core/tabs';`
+        typescript: `import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@exhaustive-ui/core/tabs';`
     };
 }

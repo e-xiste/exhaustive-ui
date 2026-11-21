@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SkeletonModule } from '@exhaustive-ui/core/skeleton';`
+        typescript: `import { Skeleton } from '@exhaustive-ui/core/skeleton';`
     };
 }

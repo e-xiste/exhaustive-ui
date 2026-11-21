@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PanelMenuModule } from '@exhaustive-ui/core/panelmenu';`
+        typescript: `import { PanelMenu } from '@exhaustive-ui/core/panelmenu';`
     };
 }

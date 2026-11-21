@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { FieldsetModule } from '@exhaustive-ui/core/fieldset';`
+        typescript: `import { Fieldset } from '@exhaustive-ui/core/fieldset';`
     };
 }

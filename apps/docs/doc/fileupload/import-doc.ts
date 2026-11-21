@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { FileUploadModule } from '@exhaustive-ui/core/fileupload';`
+        typescript: `import { FileUpload } from '@exhaustive-ui/core/fileupload';`
     };
 }

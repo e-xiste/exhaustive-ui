@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { BreadcrumbModule } from '@exhaustive-ui/core/breadcrumb';`
+        typescript: `import { Breadcrumb } from '@exhaustive-ui/core/breadcrumb';`
     };
 }

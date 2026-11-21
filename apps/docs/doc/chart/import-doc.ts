@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ChartModule } from '@exhaustive-ui/core/chart';`
+        typescript: `import { UIChart } from '@exhaustive-ui/core/chart';`
     };
 }

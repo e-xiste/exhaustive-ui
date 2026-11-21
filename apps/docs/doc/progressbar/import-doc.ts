@@ -10,8 +10,8 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
+        typescript: `import { ProgressBar } from '@exhaustive-ui/core/progressbar';
 // For dynamic progressbar demo
-import { ToastModule } from '@exhaustive-ui/core/toast';`
+import { Toast } from '@exhaustive-ui/core/toast';`
     };
 }

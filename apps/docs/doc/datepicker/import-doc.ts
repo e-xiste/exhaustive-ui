@@ -10,6 +10,6 @@ import { Component } from '@angular/core';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { DatePickerModule } from '@exhaustive-ui/core/datepicker';`
+        typescript: `import { DatePicker } from '@exhaustive-ui/core/datepicker';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TimelineModule } from '@exhaustive-ui/core/timeline';`
+        typescript: `import { Timeline } from '@exhaustive-ui/core/timeline';`
     };
 }

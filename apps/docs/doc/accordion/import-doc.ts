@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { AccordionModule } from '@exhaustive-ui/core/accordion';`
+        typescript: `import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from '@exhaustive-ui/core/accordion';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { DynamicDialogModule } from '@exhaustive-ui/core/dynamicdialog';`
+        typescript: `import { DialogService, DynamicDialogRef, DynamicDialogConfig } from '@exhaustive-ui/core/dynamicdialog';`
     };
 }

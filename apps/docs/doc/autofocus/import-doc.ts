@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { AutoFocusModule } from '@exhaustive-ui/core/autofocus';`
+        typescript: `import { AutoFocus } from '@exhaustive-ui/core/autofocus';`
     };
 }

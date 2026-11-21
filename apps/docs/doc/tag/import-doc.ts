@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TagModule } from '@exhaustive-ui/core/tag';`
+        typescript: `import { Tag } from '@exhaustive-ui/core/tag';`
     };
 }

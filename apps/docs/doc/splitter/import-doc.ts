@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SplitterModule } from '@exhaustive-ui/core/splitter';`
+        typescript: `import { Splitter } from '@exhaustive-ui/core/splitter';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { DataViewModule } from '@exhaustive-ui/core/dataview';`
+        typescript: `import { DataView } from '@exhaustive-ui/core/dataview';`
     };
 }

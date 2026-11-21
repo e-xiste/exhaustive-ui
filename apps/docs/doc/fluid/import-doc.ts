@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { FluidModule } from '@exhaustive-ui/core/fluid';`
+        typescript: `import { Fluid } from '@exhaustive-ui/core/fluid';`
     };
 }

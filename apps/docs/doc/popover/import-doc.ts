@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PopoverModule } from '@exhaustive-ui/core/popover';`
+        typescript: `import { Popover } from '@exhaustive-ui/core/popover';`
     };
 }

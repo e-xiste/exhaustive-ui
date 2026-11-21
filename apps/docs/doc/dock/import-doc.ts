@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { DockModule } from '@exhaustive-ui/core/dock';`
+        typescript: `import { Dock } from '@exhaustive-ui/core/dock';`
     };
 }

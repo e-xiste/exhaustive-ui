@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TreeModule } from '@exhaustive-ui/core/tree';`
+        typescript: `import { Tree } from '@exhaustive-ui/core/tree';`
     };
 }

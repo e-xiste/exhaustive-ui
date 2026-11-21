@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PickListModule } from '@exhaustive-ui/core/picklist';`
+        typescript: `import { PickList } from '@exhaustive-ui/core/picklist';`
     };
 }

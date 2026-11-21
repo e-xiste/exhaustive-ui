@@ -10,6 +10,6 @@ import { Component } from '@angular/core';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { BindModule } from '@exhaustive-ui/core/bind'`
+        typescript: `import { Bind } from '@exhaustive-ui/core/bind'`
     };
 }
