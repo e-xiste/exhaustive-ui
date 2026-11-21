@@ -1,5 +1,23 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, NgModule, numberAttribute, signal, TemplateRef, untracked, ViewEncapsulation, contentChild, contentChildren } from '@angular/core';
+import {
+    afterEveryRender,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    input,
+    NgModule,
+    numberAttribute,
+    signal,
+    TemplateRef,
+    untracked,
+    ViewEncapsulation,
+    contentChild,
+    contentChildren
+} from '@angular/core';
 import { blockBodyScroll, unblockBodyScroll } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -49,6 +67,18 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
                     this.renderer.setStyle(this.el.nativeElement, 'display', 'none');
                 }
             });
+        });
+        // A parent that projects this element later (e.g. a Dialog rendering its content) moves it out of the target again
+        afterEveryRender({
+            write: () => {
+                if (!this._blocked()) {
+                    return;
+                }
+                const blockableElement = this.target()?.getBlockableElement?.();
+                if (blockableElement && this.el.nativeElement.parentElement !== blockableElement) {
+                    blockableElement.appendChild(this.el.nativeElement);
+                }
+            }
         });
     }
     /**

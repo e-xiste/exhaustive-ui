@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
+import { Dialog } from '@exhaustive-ui/core/dialog';
+import { Panel } from '@exhaustive-ui/core/panel';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -1175,5 +1177,56 @@ describe('BlockUI initial unblocked state', () => {
 
         blockUI.unblock();
         element.dispatchEvent(new Event('animationend'));
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [BlockUI, Dialog, Panel],
+    template: `
+        <p-dialog header="Dialog" [(visible)]="visible" [style]="{ width: '600px' }">
+            <p class="before">Text above the panel</p>
+            <p-blockui [target]="pnl" [blocked]="blocked()"></p-blockui>
+            <p-panel #pnl header="Panel"><div style="height: 80px">Panel content</div></p-panel>
+        </p-dialog>
+    `
+})
+class BlockUIInDialogHostComponent {
+    visible = signal(false);
+    blocked = signal(true);
+}
+
+describe('BlockUI targeting a sibling inside a Dialog', () => {
+    it('should mask the target panel, not the dialog (optimus-ui#385)', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [BlockUIInDialogHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(BlockUIInDialogHostComponent);
+        await fixture.whenStable();
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const check = () => {
+            const panel = document.querySelector('.p-dialog p-panel') as HTMLElement;
+            const mask = fixture.debugElement.query(By.directive(BlockUI)).nativeElement as HTMLElement;
+            expect(mask.parentElement).toBe(panel);
+            const maskRect = mask.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            expect(Math.round(maskRect.top)).toBe(Math.round(panelRect.top));
+            expect(Math.round(maskRect.height)).toBe(Math.round(panelRect.height));
+            expect(Math.round(maskRect.width)).toBe(Math.round(panelRect.width));
+        };
+        check();
+
+        fixture.componentInstance.blocked.set(false);
+        await fixture.whenStable();
+        (fixture.debugElement.query(By.directive(BlockUI)).nativeElement as HTMLElement).dispatchEvent(new Event('animationend'));
+        fixture.componentInstance.blocked.set(true);
+        await fixture.whenStable();
+        check();
+        fixture.destroy();
     });
 });
