@@ -1,3 +1,5 @@
+import { Theme } from '@exhaustive-ui/styled';
+import { Base } from '@exhaustive-ui/core/base';
 import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -2142,6 +2144,13 @@ class TestTouchContextMenuComponent {
 }
 
 describe('ContextMenu long press on touch devices (optimus-ui#932)', () => {
+    // Other test files share this document and may remove the component <style> tags at any time:
+    // forget which styles were loaded so these layout checks get them injected again.
+    beforeEach(() => {
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+    });
+
     afterEach(() => vi.restoreAllMocks());
 
     it('opens at the touch point after a long press', async () => {
@@ -2193,6 +2202,13 @@ class TestContextMenuInTransformedParentComponent {
 }
 
 describe('ContextMenu inside a positioned or transformed container (optimus-ui#809)', () => {
+    // Other test files share this document and may remove the component <style> tags at any time:
+    // forget which styles were loaded so these layout checks get them injected again.
+    beforeEach(() => {
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+    });
+
     it('opens at the pointer, not offset by the container position', async () => {
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({

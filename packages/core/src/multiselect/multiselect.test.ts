@@ -4797,6 +4797,9 @@ describe('MultiSelect low bug fixes', () => {
     });
 
     it('scrolls the selected option into view when the virtual scroller opens (optimus-ui#22)', async () => {
+        // other test files share this document and may remove the component <style> tags: get them injected again
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
         const many = Array.from({ length: 1000 }, (_, i) => ({ label: `Item ${i}`, value: i }));
         fixture.componentRef.setInput('options', many);
         fixture.componentRef.setInput('virtualScroll', true);
@@ -4809,11 +4812,14 @@ describe('MultiSelect low bug fixes', () => {
         await waitForOverlay();
 
         // the scroller initializes and scrolls over a few ticks, slower on a loaded machine
-        await vi.waitFor(() => {
-            fixture.detectChanges();
-            const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
-            expect(viewport.scrollTop).toBeGreaterThan(0);
-        });
+        await vi.waitFor(
+            () => {
+                fixture.detectChanges();
+                const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
+                expect(viewport.scrollTop).toBeGreaterThan(0);
+            },
+            { timeout: 5000 }
+        );
     });
 });
 

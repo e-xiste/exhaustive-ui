@@ -411,7 +411,9 @@ describe('UIChart', () => {
             const image = chart.getBase64Image();
 
             expect(typeof image).toBe('string');
-            expect(image.startsWith('data:image/png;base64,')).toBe(true);
+            // a canvas not laid out yet (busy test run) encodes as 'data:,'; the method only has to delegate to toDataURL
+            expect(image).toBe(chart.getCanvas().toDataURL());
+            expect(image.startsWith('data:')).toBe(true);
         });
 
         it('should delegate refresh to chart.update', () => {

@@ -1,3 +1,5 @@
+import { Theme } from '@exhaustive-ui/styled';
+import { Base } from '@exhaustive-ui/core/base';
 import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -919,6 +921,13 @@ describe('Stepper as a BlockUI target (optimus-ui#885)', () => {
 });
 
 describe('Stepper inactive panels (optimus-ui#245, #714)', () => {
+    // Other test files share this document and may remove the component <style> tags at any time:
+    // forget which styles were loaded so these layout checks get them injected again.
+    beforeEach(() => {
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+    });
+
     @Component({
         changeDetection: ChangeDetectionStrategy.Eager,
         imports: [StepperModule],
