@@ -786,3 +786,37 @@ describe('DynamicDialog style binding', () => {
         expect(dialog.style()).toBe(first);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<span class="zoneless-dialog-content">zoneless</span>`
+})
+class ZonelessDialogContentComponent {}
+
+describe('DialogService in a zoneless application', () => {
+    it('should open and close a dialog without motion errors (optimus-ui#70)', async () => {
+        TestBed.resetTestingModule();
+        const errors: any[] = [];
+        const onRejection = (event: PromiseRejectionEvent) => errors.push(event.reason);
+        window.addEventListener('unhandledrejection', onRejection);
+        TestBed.configureTestingModule({
+            providers: [provideZonelessChangeDetection(), DialogService, { provide: ErrorHandler, useValue: { handleError: (e: any) => errors.push(e) } }]
+        });
+        const appRef = TestBed.inject(ApplicationRef);
+        const ref = TestBed.inject(DialogService).open(ZonelessDialogContentComponent, { header: 'Zoneless', modal: true });
+        await appRef.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        expect(document.querySelector('.zoneless-dialog-content')).toBeTruthy();
+        const dialog = document.querySelector('.p-dialog') as HTMLElement;
+        expect(dialog.style.display).not.toBe('none');
+
+        ref?.close();
+        await appRef.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        window.removeEventListener('unhandledrejection', onRejection);
+
+        expect(errors).toEqual([]);
+        expect(document.querySelector('.zoneless-dialog-content')).toBeNull();
+    });
+});
