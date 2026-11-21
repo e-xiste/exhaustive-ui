@@ -1,7 +1,7 @@
 {
     "name": "docs",
     "private": true,
-    "version": "22.0.0-alpha.11",
+    "version": "22.0.0-alpha.12",
     "license": "MIT",
     "type": "module",
     "scripts": {
