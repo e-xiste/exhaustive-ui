@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { TooltipOptions } from '@exhaustive-ui/core/api';
 import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Button } from '@exhaustive-ui/core/button';
 import { Tooltip } from './tooltip';
 
 @Component({
@@ -1186,4 +1187,56 @@ describe('Tooltip', () => {
             expect(container?.hasAttribute('data-test')).toBeFalsy();
         });
     });
+});
+
+describe('Tooltip on a component whose button is fixed elsewhere (optimus-ui#700)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Button, Tooltip],
+        template: `
+            <div style="height: 40px"></div>
+            <p-button label="Up" pTooltip="Scroll to top" [tooltipPosition]="position" [style]="{ position: 'fixed', right: '200px', bottom: '200px' }" />
+        `
+    })
+    class FixedButtonHost {
+        position = 'left';
+    }
+
+    for (const position of ['left', 'right', 'top', 'bottom']) {
+        it(`places a ${position} tooltip next to the button`, async () => {
+            TestBed.resetTestingModule();
+            const fixture = TestBed.configureTestingModule({
+                imports: [FixedButtonHost],
+                providers: [provideZonelessChangeDetection()]
+            }).createComponent(FixedButtonHost);
+            fixture.componentInstance.position = position;
+            document.body.appendChild(fixture.nativeElement);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const tooltip = fixture.debugElement.query(By.directive(Tooltip)).injector.get(Tooltip);
+            tooltip.activate();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            const button = (fixture.nativeElement.querySelector('button') as HTMLElement).getBoundingClientRect();
+            const box = (document.querySelector('.p-tooltip') as HTMLElement).getBoundingClientRect();
+            const centerX = box.left + box.width / 2;
+            const centerY = box.top + box.height / 2;
+            if (position === 'left' || position === 'right') {
+                const gap = position === 'left' ? button.left - box.right : box.left - button.right;
+                expect(Math.abs(centerY - (button.top + button.height / 2))).toBeLessThan(2);
+                expect(gap).toBeGreaterThanOrEqual(-1);
+                expect(gap).toBeLessThan(20);
+            } else {
+                const gap = position === 'top' ? button.top - box.bottom : box.top - button.bottom;
+                expect(Math.abs(centerX - (button.left + button.width / 2))).toBeLessThan(2);
+                expect(gap).toBeGreaterThanOrEqual(-1);
+                expect(gap).toBeLessThan(20);
+            }
+
+            tooltip.deactivate();
+            fixture.destroy();
+            fixture.nativeElement.remove();
+        });
+    }
 });
