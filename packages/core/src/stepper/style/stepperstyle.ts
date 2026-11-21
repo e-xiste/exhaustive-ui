@@ -5,6 +5,11 @@ import { BaseStyle } from '@exhaustive-ui/core/base';
 const style = /*css*/ `
 ${stepper_style}
 
+/* the host is a custom element (inline by default): as an empty inline box it would keep a line of height once its content is hidden */
+.p-steppanel {
+    display: block;
+}
+
 .p-steppanel .p-motion {
     display: grid;
     grid-template-rows: 1fr;

@@ -5316,3 +5316,40 @@ describe('Scroller lazy placeholders', () => {
         warn.mockRestore();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [Scroller],
+    template: `
+        <div [style.display]="shown() ? 'block' : 'none'">
+            <p-virtualscroller [items]="items" [itemSize]="40" scrollHeight="200px">
+                <ng-template #item let-item>
+                    <div style="height: 40px">{{ item }}</div>
+                </ng-template>
+            </p-virtualscroller>
+        </div>
+    `
+})
+class HiddenScrollerHostComponent {
+    shown = signal(false);
+    items = Array.from({ length: 1000 }, (_, i) => `Item ${i}`);
+}
+
+describe('Scroller scrollToIndex before it can be laid out', () => {
+    it('applies the scroll once the viewport becomes visible', async () => {
+        TestBed.configureTestingModule({ imports: [HiddenScrollerHostComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(HiddenScrollerHostComponent);
+        await fixture.whenStable();
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        expect(scroller.initialized()).toBe(false);
+
+        scroller.scrollToIndex(500);
+        fixture.componentInstance.shown.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        expect(scroller.initialized()).toBe(true);
+        expect((scroller.elementViewChild()?.nativeElement as HTMLElement).scrollTop).toBe(500 * 40);
+        fixture.destroy();
+    });
+});

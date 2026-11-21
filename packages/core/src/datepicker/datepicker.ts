@@ -3380,12 +3380,14 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         if (!this.mask()) {
             return;
         }
-        this.renderer.removeChild(this.document.body, this.mask());
+        const mask = this.mask();
+        this.renderer.removeChild(this.document.body, mask);
         let bodyChildren = this.document.body.children;
         let hasBlockerMasks!: boolean;
         for (let i = 0; i < bodyChildren.length; i++) {
             let bodyChild = bodyChildren[i];
-            if (hasClass(bodyChild, 'p-datepicker-mask-scrollblocker')) {
+            // the renderer may defer the removal (on destroy, with animations): ignore this picker's own mask
+            if (bodyChild !== mask && hasClass(bodyChild, 'p-datepicker-mask-scrollblocker')) {
                 hasBlockerMasks = true;
                 break;
             }

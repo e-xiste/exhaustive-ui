@@ -734,10 +734,11 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
                 this.unbindMaskClickListener();
             }
 
-            // for nested dialogs w/modal
-            const scrollBlockers = document.querySelectorAll('[data-p-scrollblocker-active="true"]');
+            // for nested dialogs w/modal: unblock only when no other dialog still blocks the scroll
+            // (this dialog's own wrapper may already be detached when it is destroyed while open)
+            const otherScrollBlockers = Array.from(document.querySelectorAll('[data-p-scrollblocker-active="true"]')).filter((el) => el !== this.wrapper());
 
-            if (this.modal() && scrollBlockers && scrollBlockers.length == 1) {
+            if (this.modal() && otherScrollBlockers.length === 0) {
                 unblockBodyScroll();
             }
         }

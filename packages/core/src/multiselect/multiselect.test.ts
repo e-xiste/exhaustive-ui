@@ -4815,7 +4815,9 @@ describe('MultiSelect low bug fixes', () => {
         await vi.waitFor(
             () => {
                 fixture.detectChanges();
-                const viewport = document.querySelector('.p-multiselect-overlay .p-virtualscroller') as HTMLElement;
+                // this instance's scroller: earlier tests may leave other multiselect overlays in the document
+                const viewport = multiSelect.scroller()?.elementViewChild()?.nativeElement as HTMLElement;
+                expect(viewport.classList).toContain('p-virtualscroller');
                 expect(viewport.scrollTop).toBeGreaterThan(0);
             },
             { timeout: 5000 }

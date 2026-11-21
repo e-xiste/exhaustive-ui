@@ -971,6 +971,11 @@ export class Carousel extends BaseComponent {
         if (this.autoplayInterval()) {
             this.stopAutoplay();
         }
+        const carouselStyle = this.carouselStyle();
+        if (carouselStyle) {
+            carouselStyle.remove();
+            this.carouselStyle.set(null);
+        }
     }
 }
 

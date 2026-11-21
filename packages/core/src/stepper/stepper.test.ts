@@ -10,6 +10,8 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { StepperModule } from './stepper';
 import { BlockUI } from '@exhaustive-ui/core/blockui';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import Aura from '@exhaustive-ui/themes/aura';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -968,11 +970,11 @@ describe('Stepper inactive panels (optimus-ui#245, #714)', () => {
         showVertical = true;
     }
 
-    async function setup() {
+    async function setup(providers: any[] = []) {
         TestBed.resetTestingModule();
         const fixture = TestBed.configureTestingModule({
             imports: [PanelsHost],
-            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), ...providers]
         }).createComponent(PanelsHost);
         document.body.appendChild(fixture.nativeElement);
         fixture.detectChanges();
@@ -980,18 +982,29 @@ describe('Stepper inactive panels (optimus-ui#245, #714)', () => {
         return fixture;
     }
 
-    it('gives inactive panels no height, horizontal and vertical (optimus-ui#245)', async () => {
-        const fixture = await setup();
+    async function expectInactivePanelsCollapsed(providers: any[] = []) {
+        const fixture = await setup(providers);
         await new Promise((resolve) => setTimeout(resolve, 50));
 
-        for (const orientation of ['horizontal', 'vertical']) {
-            const panels = [...fixture.nativeElement.querySelectorAll(`.${orientation} [data-pc-name="steppanel"]`)] as HTMLElement[];
-            expect(panels.length).toBe(3);
-            expect(panels[0].getBoundingClientRect().height).toBeGreaterThan(100);
-            expect(panels[1].getBoundingClientRect().height).toBe(0);
-            expect(panels[2].getBoundingClientRect().height).toBe(0);
+        try {
+            for (const orientation of ['horizontal', 'vertical']) {
+                const panels = [...fixture.nativeElement.querySelectorAll(`.${orientation} [data-pc-name="steppanel"]`)] as HTMLElement[];
+                expect(panels.length).toBe(3);
+                expect(panels[0].getBoundingClientRect().height).toBeGreaterThan(100);
+                expect(panels[1].getBoundingClientRect().height).toBe(0);
+                expect(panels[2].getBoundingClientRect().height).toBe(0);
+            }
+        } finally {
+            fixture.nativeElement.remove();
         }
-        fixture.nativeElement.remove();
+    }
+
+    it('gives inactive panels no height, horizontal and vertical (optimus-ui#245)', async () => {
+        await expectInactivePanelsCollapsed();
+    });
+
+    it('gives inactive panels no height with a theme preset loaded (optimus-ui#245)', async () => {
+        await expectInactivePanelsCollapsed([provideExhaustive({ theme: { preset: Aura } })]);
     });
 
     it('never lays out the content of inactive vertical panels on creation (optimus-ui#714)', async () => {
