@@ -741,13 +741,25 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
         if (this._lazy()) {
             Promise.resolve().then(() => {
                 const step = this._step();
-                // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
-                // the first one: request every page up to it, the scroll handlers only request the pages after it.
-                const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
-                this.lazyLoadState.set({
-                    first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
-                    last: Math.min(step ? step * pages : this.last(), (<any[]>this._items()).length)
-                });
+                const itemsLength = (<any[]>this._items()).length;
+
+                if (step && !this.both() && first > 0) {
+                    // Initialized again away from the top (the items grew, the viewport was resized): request the pages
+                    // around the current position as a scroll does, not the first page.
+                    const currentPage = this.getPageByFirst(first);
+                    this.lazyLoadState.set({
+                        first: Math.max(0, Math.min((currentPage - 1) * step, itemsLength - step)),
+                        last: Math.min((currentPage + 1) * step, itemsLength)
+                    });
+                } else {
+                    // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
+                    // the first one: request every page up to it, the scroll handlers only request the pages after it.
+                    const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
+                    this.lazyLoadState.set({
+                        first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
+                        last: Math.min(step ? step * pages : this.last(), itemsLength)
+                    });
+                }
 
                 this.handleEvents('onLazyLoad', this.lazyLoadState());
             });

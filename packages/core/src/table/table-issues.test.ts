@@ -1054,3 +1054,65 @@ describe('Table lazy virtual scroll with a flex height resized (optimus-ui#750)'
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <div style="height: 400px; display: flex; flex-direction: column">
+            <p-table [value]="rows()" [lazy]="true" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="40" [rows]="30" (onLazyLoad)="load($event)">
+                <ng-template #body let-row>
+                    <tr style="height: 40px" class="data-row">
+                        <td>{{ row.name }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `
+})
+class LazyVirtualGrowingComponent {
+    // the total is unknown: the rows are appended as the user scrolls down
+    rows = signal<any[]>([]);
+    requests: TableLazyLoadEvent[] = [];
+
+    load(event: TableLazyLoadEvent) {
+        this.requests.push(event);
+        const rows = this.rows();
+        if ((event.last ?? 0) >= rows.length && rows.length < 300) {
+            setTimeout(() => this.rows.set([...rows, ...Array.from({ length: 30 }, (_, i) => ({ id: rows.length + i, name: 'Name ' + (rows.length + i) }))]), 20);
+        }
+    }
+}
+
+describe('Table lazy virtual scroll with rows appended (optimus-ui#686)', () => {
+    it('keeps the scroll position when the next rows are appended', async () => {
+        const fixture = await mount(LazyVirtualGrowingComponent);
+        await tick(100);
+        await fixture.whenStable();
+        const el = fixture.nativeElement as HTMLElement;
+        const scroller = el.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(fixture.componentInstance.rows().length).toBeGreaterThan(0);
+
+        for (let round = 0; round < 3; round++) {
+            const length = fixture.componentInstance.rows().length;
+            const requests = fixture.componentInstance.requests.length;
+            const top = length * 40 - 400;
+            scroller.scrollTop = top;
+            scroller.dispatchEvent(new Event('scroll'));
+            // the lazy scroll delay is 250ms
+            await tick(500);
+            await fixture.whenStable();
+            await tick(50);
+
+            expect(fixture.componentInstance.rows().length).toBeGreaterThan(length);
+            expect(scroller.scrollTop).toBe(top);
+            const names = Array.from(el.querySelectorAll('.data-row td')).map((td) => td.textContent!.trim());
+            expect(names).toContain('Name ' + (length - 1));
+            // the scroller initializes again with the new rows: it must not request the first page again
+            const firsts = fixture.componentInstance.requests.slice(requests).map((request) => request.first);
+            expect(firsts.length).toBeGreaterThan(0);
+            expect(firsts).not.toContain(0);
+        }
+        fixture.nativeElement.remove();
+    });
+});
