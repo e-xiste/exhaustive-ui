@@ -316,11 +316,11 @@ export class Popover extends BaseComponent<PopoverPassThrough> {
 
             const containerOffset = <any>getOffset(container);
             const targetOffset = <any>getOffset(target);
-            const borderRadius = this.document.defaultView?.getComputedStyle(container).getPropertyValue('border-radius');
             let arrowLeft = 0;
 
+            // keeps the arrow at the same place of the target as when the popover is not shifted to fit the viewport
             if (containerOffset.left < targetOffset.left) {
-                arrowLeft = targetOffset.left - containerOffset.left - parseFloat(borderRadius!) * 2;
+                arrowLeft = targetOffset.left - containerOffset.left;
             }
             container.style.setProperty($dt('popover.arrow.left').name, `${arrowLeft}px`);
 

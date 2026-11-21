@@ -10,6 +10,7 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TreeTableModule } from '@exhaustive-ui/core/treetable';`
+        typescript: `import { TreeTable } from '@exhaustive-ui/core/treetable';
+// TreeTableModule imports TreeTable together with all its directives`
     };
 }

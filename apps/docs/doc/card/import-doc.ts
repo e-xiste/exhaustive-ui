@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { CardModule } from '@exhaustive-ui/core/card';`
+        typescript: `import { Card } from '@exhaustive-ui/core/card';`
     };
 }

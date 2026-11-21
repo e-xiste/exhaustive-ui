@@ -5,6 +5,7 @@ import { isEmpty, setAttribute, uuid } from '@exhaustive-ui/utils';
 import { MessageService, PrimeTemplate, SharedModule, ToastMessageOptions } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
+import { CheckIcon, ExclamationTriangleIcon, InfoCircleIcon, TimesCircleIcon, TimesIcon } from '@exhaustive-ui/core/icons';
 import { MotionModule } from '@exhaustive-ui/core/motion';
 import { ToastCloseEvent, ToastHeadlessTemplateContext, ToastItemCloseEvent, ToastMessageTemplateContext, ToastPassThrough, ToastPositionType } from '@exhaustive-ui/core/types/toast';
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
@@ -13,7 +14,7 @@ import { ToastStyle } from './style/toaststyle';
 
 @Component({
     selector: 'p-toastItem',
-    imports: [CommonModule, SharedModule, Bind, MotionModule],
+    imports: [CommonModule, CheckIcon, ExclamationTriangleIcon, InfoCircleIcon, TimesCircleIcon, TimesIcon, SharedModule, Bind, MotionModule],
     template: `
         <div
             #container

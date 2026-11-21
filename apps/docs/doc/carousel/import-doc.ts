@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { CarouselModule } from '@exhaustive-ui/core/carousel';`
+        typescript: `import { Carousel } from '@exhaustive-ui/core/carousel';`
     };
 }

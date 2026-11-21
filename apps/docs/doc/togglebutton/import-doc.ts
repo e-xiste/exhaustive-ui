@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';`
+        typescript: `import { ToggleButton } from '@exhaustive-ui/core/togglebutton';`
     };
 }

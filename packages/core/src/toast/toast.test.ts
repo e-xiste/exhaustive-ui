@@ -2272,3 +2272,46 @@ describe('Toast centered with breakpoints', () => {
         fixture.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Toast],
+    template: `<p-toast [life]="60000" />`
+})
+class ToastIconHostComponent {}
+
+describe('Toast severity icons', () => {
+    let fixture: ComponentFixture<ToastIconHostComponent>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ToastIconHostComponent],
+            providers: [MessageService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        fixture = TestBed.createComponent(ToastIconHostComponent);
+        await fixture.whenStable();
+    });
+
+    afterEach(() => fixture.destroy());
+
+    const show = async (severity: string) => {
+        TestBed.inject(MessageService).add({ severity, summary: 'Info', detail: 'Message Content' });
+        await fixture.whenStable();
+
+        return document.querySelector('.p-toast-message-content') as HTMLElement;
+    };
+
+    it.each([
+        ['success', 'check'],
+        ['info', 'info-circle'],
+        ['error', 'times-circle'],
+        ['warn', 'exclamation-triangle'],
+        ['secondary', 'info-circle']
+    ])('should draw the %s icon and the close icon', async (severity, icon) => {
+        const content = await show(severity);
+
+        expect(content.querySelector(`svg[data-p-icon="${icon}"].p-toast-message-icon path`)).toBeTruthy();
+        expect(content.querySelector('svg[data-p-icon="times"].p-toast-close-icon path')).toBeTruthy();
+    });
+});

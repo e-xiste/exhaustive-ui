@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { KeyFilterModule } from '@exhaustive-ui/core/keyfilter';`
+        typescript: `import { KeyFilter } from '@exhaustive-ui/core/keyfilter';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ImageCompareModule } from '@exhaustive-ui/core/imagecompare';`
+        typescript: `import { ImageCompare } from '@exhaustive-ui/core/imagecompare';`
     };
 }

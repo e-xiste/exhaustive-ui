@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';`
+        typescript: `import { AutoComplete } from '@exhaustive-ui/core/autocomplete';`
     };
 }

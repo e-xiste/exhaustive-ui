@@ -10,7 +10,7 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
-import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';`
+        typescript: `import { InputGroup } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddon } from '@exhaustive-ui/core/inputgroupaddon';`
     };
 }

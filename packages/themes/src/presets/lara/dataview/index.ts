@@ -3,7 +3,7 @@ import type { DataViewDesignTokens, DataViewTokenSections } from '@exhaustive-ui
 export const root: DataViewTokenSections.Root = {
     borderColor: '{content.border.color}',
     borderWidth: '1px',
-    borderRadius: '4px',
+    borderRadius: '{content.border.radius}',
     padding: '0'
 };
 

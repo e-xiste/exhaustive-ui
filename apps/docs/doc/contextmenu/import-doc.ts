@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';`
+        typescript: `import { ContextMenu } from '@exhaustive-ui/core/contextmenu';`
     };
 }

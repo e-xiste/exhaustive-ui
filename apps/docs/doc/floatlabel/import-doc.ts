@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';`
+        typescript: `import { FloatLabel } from '@exhaustive-ui/core/floatlabel';`
     };
 }

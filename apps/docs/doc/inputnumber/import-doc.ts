@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';`
+        typescript: `import { InputNumber } from '@exhaustive-ui/core/inputnumber';`
     };
 }

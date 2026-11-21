@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { RippleModule } from '@exhaustive-ui/core/ripple';`
+        typescript: `import { Ripple } from '@exhaustive-ui/core/ripple';`
     };
 }

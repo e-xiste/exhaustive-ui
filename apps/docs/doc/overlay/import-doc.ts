@@ -14,6 +14,6 @@ export class ImportDoc {
     @Input() title: string;
 
     code: Code = {
-        typescript: `import { OverlayModule } from '@exhaustive-ui/core/overlay';`
+        typescript: `import { Overlay } from '@exhaustive-ui/core/overlay';`
     };
 }

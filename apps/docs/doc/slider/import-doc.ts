@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SliderModule } from '@exhaustive-ui/core/slider';`
+        typescript: `import { Slider } from '@exhaustive-ui/core/slider';`
     };
 }

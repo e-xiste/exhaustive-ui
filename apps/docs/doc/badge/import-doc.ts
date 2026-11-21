@@ -10,7 +10,7 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { BadgeModule } from '@exhaustive-ui/core/badge';
-import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';`
+        typescript: `import { Badge } from '@exhaustive-ui/core/badge';
+import { OverlayBadge } from '@exhaustive-ui/core/overlaybadge';`
     };
 }

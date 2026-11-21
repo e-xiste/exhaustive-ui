@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { EditorModule } from '@exhaustive-ui/core/editor';`
+        typescript: `import { Editor } from '@exhaustive-ui/core/editor';`
     };
 }

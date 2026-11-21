@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';`
+        typescript: `import { MultiSelect } from '@exhaustive-ui/core/multiselect';`
     };
 }

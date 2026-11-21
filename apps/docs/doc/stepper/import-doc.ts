@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { StepperModule } from '@exhaustive-ui/core/stepper';`
+        typescript: `import { Stepper, StepList, StepPanels, StepPanel, StepItem, Step } from '@exhaustive-ui/core/stepper';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ListboxModule } from '@exhaustive-ui/core/listbox';`
+        typescript: `import { Listbox } from '@exhaustive-ui/core/listbox';`
     };
 }

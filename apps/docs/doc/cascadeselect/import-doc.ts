@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { CascadeSelectModule } from '@exhaustive-ui/core/cascadeselect';`
+        typescript: `import { CascadeSelect } from '@exhaustive-ui/core/cascadeselect';`
     };
 }

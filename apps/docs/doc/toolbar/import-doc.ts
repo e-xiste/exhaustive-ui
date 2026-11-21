@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ToolbarModule } from '@exhaustive-ui/core/toolbar';`
+        typescript: `import { Toolbar } from '@exhaustive-ui/core/toolbar';`
     };
 }

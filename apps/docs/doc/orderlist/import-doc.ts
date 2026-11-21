@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { OrderListModule } from '@exhaustive-ui/core/orderlist';`
+        typescript: `import { OrderList } from '@exhaustive-ui/core/orderlist';`
     };
 }

@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { PaginatorModule } from '@exhaustive-ui/core/paginator';`
+        typescript: `import { Paginator } from '@exhaustive-ui/core/paginator';`
     };
 }

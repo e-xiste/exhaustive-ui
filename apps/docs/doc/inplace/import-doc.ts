@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { InplaceModule } from '@exhaustive-ui/core/inplace';`
+        typescript: `import { Inplace } from '@exhaustive-ui/core/inplace';`
     };
 }

@@ -1402,3 +1402,38 @@ describe('RadioButton grouping in reactive forms', () => {
         expect(radioById(fixture, 'y0').checked()).toBe(true);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RadioButton],
+    template: `
+        <p-radiobutton name="size" value="S" inputId="size-s" />
+        <label for="size-s">Small</label>
+        <p-radiobutton name="size" value="M" ariaLabel="Medium" />
+        <span id="size-l-label">Large</span>
+        <p-radiobutton name="size" value="L" ariaLabelledBy="size-l-label" />
+    `
+})
+class TestLabelledRadioButtonComponent {}
+
+describe('RadioButton labelling (optimus-ui#274)', () => {
+    it('should give the native radio input the label provided by the application', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [TestLabelledRadioButtonComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestLabelledRadioButtonComponent);
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        const inputs = Array.from(host.querySelectorAll('input[type="radio"]')) as HTMLInputElement[];
+
+        expect(inputs.length).toBe(3);
+        expect((host.querySelector('label[for="size-s"]') as HTMLLabelElement).control).toBe(inputs[0]);
+        expect(inputs[1].getAttribute('aria-label')).toBe('Medium');
+        expect(inputs[2].getAttribute('aria-labelledby')).toBe('size-l-label');
+
+        // without ngModel or a form control, a click still checks the radio button
+        inputs[1].click();
+        await fixture.whenStable();
+        expect(inputs[1].checked).toBe(true);
+    });
+});

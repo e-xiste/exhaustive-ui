@@ -1050,3 +1050,56 @@ describe('Popover positioning in a dialog with a local appendTo (optimus-ui#593)
         fixture.destroy();
     });
 });
+
+describe('Popover arrow position when the popover is shifted to fit the viewport (optimus-ui#122)', () => {
+    let host: HTMLElement | undefined;
+
+    beforeEach(() => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PopoverAlignHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+    });
+
+    afterEach(() => host?.remove());
+
+    // The arrow is centered at `arrow.offset` (1.25rem) + `--p-popover-arrow-left` from the left edge of the popover.
+    const arrowCenter = (overlay: HTMLElement) => overlay.getBoundingClientRect().left + 20 + parseFloat(overlay.style.getPropertyValue('--p-popover-arrow-left'));
+
+    const align = (targetStyle: string) => {
+        host = document.createElement('div');
+        host.innerHTML = `<button class="target" style="position: fixed; top: 10px; ${targetStyle}; width: 40px; height: 30px; padding: 0; border: 0">!</button>`;
+        document.body.appendChild(host);
+
+        const fixture = TestBed.createComponent(PopoverAlignHostComponent);
+        fixture.detectChanges();
+        const popover = fixture.componentInstance.popover();
+        const target = host.querySelector('.target') as HTMLElement;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position: absolute; width: 300px; height: 80px; border-radius: 12px';
+        host.appendChild(overlay);
+
+        popover.target.set(target);
+        popover.container.set(overlay as HTMLDivElement);
+        popover.align();
+
+        return { target, overlay };
+    };
+
+    it('should point the arrow 1.25rem from the left of the target when the popover is not shifted', () => {
+        const { target, overlay } = align('left: 10px');
+
+        expect(overlay.getBoundingClientRect().left).toBeCloseTo(target.getBoundingClientRect().left, 0);
+        expect(arrowCenter(overlay) - target.getBoundingClientRect().left).toBeCloseTo(20, 0);
+    });
+
+    it('should keep the arrow at the same place of a target at the right edge of the viewport', () => {
+        const { target, overlay } = align('right: 0');
+        const targetRect = target.getBoundingClientRect();
+
+        // the popover is shifted to the left to stay in the viewport
+        expect(overlay.getBoundingClientRect().left).toBeLessThan(targetRect.left);
+        expect(arrowCenter(overlay) - targetRect.left).toBeCloseTo(20, 0);
+    });
+});

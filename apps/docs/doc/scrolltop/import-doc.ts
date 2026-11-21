@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ScrollTopModule } from '@exhaustive-ui/core/scrolltop';`
+        typescript: `import { ScrollTop } from '@exhaustive-ui/core/scrolltop';`
     };
 }

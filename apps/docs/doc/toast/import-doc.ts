@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { ToastModule } from '@exhaustive-ui/core/toast';`
+        typescript: `import { Toast } from '@exhaustive-ui/core/toast';`
     };
 }

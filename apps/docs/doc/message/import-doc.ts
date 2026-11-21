@@ -10,6 +10,6 @@ import { AppCodeModule } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { MessageModule } from '@exhaustive-ui/core/message';`
+        typescript: `import { Message } from '@exhaustive-ui/core/message';`
     };
 }

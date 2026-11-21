@@ -10,6 +10,6 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';`
+        typescript: `import { SelectButton } from '@exhaustive-ui/core/selectbutton';`
     };
 }

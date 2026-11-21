@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import type { EditorBlurEvent, EditorChangeEvent, EditorFocusEvent, EditorInitEvent, EditorSelectionChangeEvent, EditorTextChangeEvent } from '@exhaustive-ui/core/types/editor';
+import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Editor } from './editor';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { style as editorCss } from '@exhaustive-ui/styles/editor';
@@ -1426,5 +1427,60 @@ describe('Editor toolbar tokens with a custom toolbar element (optimus-ui#99)', 
         expect(getComputedStyle(host.querySelector('.ql-fill')!).fill).toBe('rgb(1, 2, 3)');
         expect(getComputedStyle(host.querySelector('#custom-toolbar')!).borderTopColor).toBe('rgb(4, 5, 6)');
         expect(getComputedStyle(host.querySelector('#custom-toolbar')!).borderStartStartRadius).toBe('7px');
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Editor, Dialog, ReactiveFormsModule],
+    template: `
+        <p-editor class="inline-editor" [formControl]="control" [style]="{ height: '100px' }" />
+        <p-dialog header="Edit" [visible]="visible()" (visibleChange)="visible.set($event)">
+            <p-editor class="dialog-editor" [formControl]="control" [style]="{ height: '100px' }" />
+        </p-dialog>
+    `
+})
+class TestEditorInDialogComponent {
+    control = new FormControl<string | null>('<p>Original</p>');
+    visible = signal(false);
+}
+
+describe('Editor inside a Dialog (optimus-ui#815)', () => {
+    const settle = async (fixture: ComponentFixture<TestEditorInDialogComponent>) => {
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await fixture.whenStable();
+    };
+    const text = (selector: string) => (document.querySelector(`${selector} .ql-editor`) as HTMLElement | null)?.textContent;
+
+    it('should show the form value set before and after the dialog opens', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [TestEditorInDialogComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(TestEditorInDialogComponent);
+        await settle(fixture);
+
+        // the Edit button of the report: update the value, then open the dialog
+        fixture.componentInstance.control.setValue('<p>Updated</p>');
+        fixture.componentInstance.visible.set(true);
+        await settle(fixture);
+
+        expect(text('.inline-editor')).toBe('Updated');
+        expect(text('.dialog-editor')).toBe('Updated');
+
+        fixture.componentInstance.control.setValue('<p>Again</p>');
+        await settle(fixture);
+
+        expect(text('.inline-editor')).toBe('Again');
+        expect(text('.dialog-editor')).toBe('Again');
+
+        // reopening creates the editor again with the current value
+        fixture.componentInstance.visible.set(false);
+        await settle(fixture);
+        fixture.componentInstance.control.setValue('<p>Reopened</p>');
+        fixture.componentInstance.visible.set(true);
+        await settle(fixture);
+
+        expect(text('.dialog-editor')).toBe('Reopened');
+        fixture.destroy();
     });
 });

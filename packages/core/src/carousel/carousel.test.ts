@@ -1845,3 +1845,43 @@ describe('Carousel off-page items', () => {
         expect(document.activeElement).not.toBe(buttons[1]);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Carousel],
+    template: `
+        <p-carousel [value]="items" [numVisible]="3" [numScroll]="3">
+            <ng-template #item let-item>{{ item }}</ng-template>
+        </p-carousel>
+    `
+})
+class TestScreenReaderPagingCarouselComponent {
+    items = ['A', 'B', 'C', 'D', 'E', 'F'];
+}
+
+describe('Carousel items exposed to screen readers after paging (optimus-ui#704)', () => {
+    it('should expose the items of the new page and hide the others after a page change', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [TestScreenReaderPagingCarouselComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(TestScreenReaderPagingCarouselComponent);
+        await fixture.whenStable();
+
+        const host = fixture.nativeElement as HTMLElement;
+        // the items a screen reader can reach: not hidden from the accessibility tree and not inert
+        const readable = () =>
+            Array.from(host.querySelectorAll('.p-carousel-item-list > *'))
+                .filter((item) => item.getAttribute('aria-hidden') !== 'true' && !item.hasAttribute('inert'))
+                .map((item) => item.textContent?.trim());
+
+        expect(readable()).toEqual(['A', 'B', 'C']);
+
+        (host.querySelector('.p-carousel-next-button') as HTMLButtonElement).click();
+        await fixture.whenStable();
+        expect(readable()).toEqual(['D', 'E', 'F']);
+
+        (host.querySelectorAll('.p-carousel-indicator-button')[0] as HTMLButtonElement).click();
+        await fixture.whenStable();
+        expect(readable()).toEqual(['A', 'B', 'C']);
+        fixture.destroy();
+    });
+});

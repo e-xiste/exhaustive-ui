@@ -10,6 +10,7 @@ import { AppCode } from '@/components/doc/app.code';
 })
 export class ImportDoc {
     code: Code = {
-        typescript: `import { TableModule } from '@exhaustive-ui/core/table';`
+        typescript: `import { Table } from '@exhaustive-ui/core/table';
+// TableModule imports Table together with all its directives`
     };
 }
