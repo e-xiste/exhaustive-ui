@@ -3393,3 +3393,61 @@ describe('AutoComplete low bug fixes', () => {
         expect(spy).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('AutoComplete r22 regressions', () => {
+    let fixture: ComponentFixture<AutoComplete>;
+    let autocomplete: AutoComplete;
+    const input = () => fixture.nativeElement.querySelector('input[role="combobox"]') as HTMLInputElement;
+    const settle = async () => {
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 20));
+            await fixture.whenStable();
+        }
+    };
+    const items = (count: number) => Array.from({ length: count }, (_, i) => `Item ${i}`);
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoComplete],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(AutoComplete);
+        autocomplete = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        document.querySelectorAll('.p-autocomplete-overlay').forEach((el) => el.remove());
+    });
+
+    it('does not scroll the list when an option is hovered on a page with scroll-padding-top (optimus-ui#320)', async () => {
+        const style = document.createElement('style');
+        style.textContent = '* { scroll-padding-top: 100px; } .p-autocomplete-option { height: 30px; box-sizing: border-box; }';
+        document.head.appendChild(style);
+        try {
+            fixture.componentRef.setInput('suggestions', items(50));
+            fixture.componentRef.setInput('scrollHeight', '200px');
+            await settle();
+            autocomplete.show();
+            await settle();
+
+            const wrapper = document.querySelector('.p-autocomplete-overlay .p-autocomplete-list-container') as HTMLElement;
+            wrapper.scrollTop = 300;
+            await settle();
+            const options = Array.from(document.querySelectorAll('.p-autocomplete-overlay li[role="option"]')) as HTMLElement[];
+            // the first option visible at the top of the list, inside the 100px scroll padding
+            const top = wrapper.getBoundingClientRect().top;
+            const hovered = options.find((o) => o.getBoundingClientRect().top >= top - 1)!;
+            hovered.dispatchEvent(new MouseEvent('mouseenter'));
+            await settle();
+
+            expect(wrapper.scrollTop).toBe(300);
+            expect(autocomplete.focusedOptionIndex()).toBe(options.indexOf(hovered));
+        } finally {
+            style.remove();
+        }
+    });
+});
