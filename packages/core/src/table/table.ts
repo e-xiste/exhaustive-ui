@@ -213,7 +213,7 @@ export class TableService {
                     [style]="{
                         height: scrollHeight() !== 'flex' ? scrollHeight() : undefined
                     }"
-                    [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
+                    [scrollHeight]="scrollHeight() !== 'flex' ? scrollHeight() : '100%'"
                     [itemSize]="virtualScrollItemSize()"
                     [step]="rows()"
                     [delay]="lazy() ? virtualScrollDelay() : 0"

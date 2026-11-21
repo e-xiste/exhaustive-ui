@@ -4339,8 +4339,40 @@ describe('optimus-ui issues (part 1)', () => {
             const tableHeight = (fixture.nativeElement.querySelector('p-table') as HTMLElement).getBoundingClientRect().height;
             expect(tableHeight % 1).not.toBe(0);
             expect(indicator.style.display).toBe('block');
-            expect(parseFloat(indicator.style.height)).toBeLessThanOrEqual(tableHeight);
+            expect(indicator.getBoundingClientRect().height).toBeLessThanOrEqual(tableHeight);
             document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: rect.left + 10, clientY: rect.top + 2 }));
+        });
+    });
+
+    describe('virtual scroll height changed at runtime (optimus-ui#365)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <p-table [value]="rows" [globalFilterFields]="['name']" [scrollable]="true" [scrollHeight]="height()" [virtualScroll]="true" [virtualScrollItemSize]="40">
+                    <ng-template #header><tr><th>Name</th></tr></ng-template>
+                    <ng-template #body let-row><tr style="height: 40px"><td>{{ row.name }}</td></tr></ng-template>
+                </p-table>
+            `
+        })
+        class DynamicScrollHeightComponent {
+            rows = rowsOf(100);
+            height = signal('300px');
+        }
+
+        it('keeps the new height after the rows are filtered and unfiltered', async () => {
+            fixture = await render(DynamicScrollHeightComponent);
+            fixture.componentInstance.height.set('200px');
+            await settle(fixture);
+            const table = fixture.debugElement.query(By.directive(Table)).componentInstance as Table;
+
+            for (const value of ['n1', '']) {
+                table.filterGlobal(value, 'contains');
+                await wait(table.filterDelay() + 50);
+                await settle(fixture);
+                // the scroller fitted its height to the rows with the height given first
+                expect((fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).offsetHeight).toBe(200);
+            }
         });
     });
 });
