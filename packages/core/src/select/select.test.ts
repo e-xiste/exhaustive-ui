@@ -5678,3 +5678,46 @@ describe('Select - inside a table', () => {
         expect(select.overlayVisible()).toBe(false);
     });
 });
+
+describe('Select - hover on a page with scroll-padding-top (optimus-ui#320)', () => {
+    afterEach(() => {
+        document.querySelectorAll('.p-select-overlay').forEach((el) => el.remove());
+    });
+
+    it('does not scroll the list when an option is hovered', async () => {
+        const style = document.createElement('style');
+        style.textContent = '* { scroll-padding-top: 100px; } .p-select-option { height: 30px; box-sizing: border-box; }';
+        document.head.appendChild(style);
+        try {
+            TestBed.resetTestingModule();
+            await TestBed.configureTestingModule({
+                imports: [Select],
+                providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+            }).compileComponents();
+            const fixture = TestBed.createComponent(Select);
+            fixture.componentRef.setInput('options', Array.from({ length: 50 }, (_, i) => `Item ${i}`));
+            fixture.componentRef.setInput('scrollHeight', '200px');
+            document.body.appendChild(fixture.nativeElement);
+            await settle(fixture);
+            fixture.componentInstance.show();
+            await settle(fixture);
+
+            const wrapper = document.querySelector('.p-select-overlay .p-select-list-container') as HTMLElement;
+            wrapper.scrollTop = 300;
+            await settle(fixture);
+            const options = Array.from(document.querySelectorAll('.p-select-overlay li[role="option"]')) as HTMLElement[];
+            // the first option visible at the top of the list, inside the 100px scroll padding
+            const top = wrapper.getBoundingClientRect().top;
+            const hovered = options.find((o) => o.getBoundingClientRect().top >= top - 1)!;
+            hovered.dispatchEvent(new MouseEvent('mouseenter'));
+            await settle(fixture);
+
+            expect(wrapper.scrollTop).toBe(300);
+            expect(fixture.componentInstance.focusedOptionIndex()).toBe(options.indexOf(hovered));
+            fixture.destroy();
+            fixture.nativeElement.remove();
+        } finally {
+            style.remove();
+        }
+    });
+});
