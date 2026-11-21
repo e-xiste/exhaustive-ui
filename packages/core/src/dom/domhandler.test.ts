@@ -39,4 +39,25 @@ describe('DomHandler', () => {
         expect((DomHandler as any).calculatedScrollbarHeight).toBe(height);
         expect((DomHandler as any).calculatedScrollbarWidth).toBeNull();
     });
+
+    it('getScrollableParents crosses shadow roots to the host instead of throwing (optimus-ui#172)', () => {
+        const scroller = document.createElement('div');
+        scroller.style.overflow = 'auto';
+        const host = document.createElement('div');
+        scroller.appendChild(host);
+        document.body.appendChild(scroller);
+        // a popup trigger rendered by a component with ViewEncapsulation.ShadowDom
+        const button = document.createElement('button');
+        host.attachShadow({ mode: 'open' }).appendChild(button);
+
+        try {
+            let parents: Element[] = [];
+            expect(() => (parents = DomHandler.getScrollableParents(button))).not.toThrow();
+            expect(parents).toContain(scroller);
+            expect(DomHandler.getParents(button)).toContain(host);
+            expect(DomHandler.getParents(button).some((node: Node) => node.nodeType === Node.DOCUMENT_FRAGMENT_NODE)).toBe(false);
+        } finally {
+            scroller.remove();
+        }
+    });
 });

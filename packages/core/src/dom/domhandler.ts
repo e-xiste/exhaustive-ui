@@ -209,7 +209,12 @@ export class DomHandler {
     }
 
     static getParents(element: any, parents: any = []): any {
-        return element['parentNode'] === null ? parents : this.getParents(element.parentNode, parents.concat([element.parentNode]));
+        let parent = element['parentNode'];
+        // continue from the host of a shadow root: the root itself is not an Element
+        if (parent && parent instanceof ShadowRoot && parent.host) {
+            parent = parent.host;
+        }
+        return parent == null ? parents : this.getParents(parent, parents.concat([parent]));
     }
 
     static getScrollableParents(element: any) {
