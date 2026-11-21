@@ -8,7 +8,10 @@ import { Tree, UITreeNode } from './tree';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
-import { Exhaustive } from '@exhaustive-ui/core/config';
+import { Base } from '@exhaustive-ui/core/base';
+import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 // Test component for basic use cases
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -3704,5 +3707,75 @@ describe('Tree drag and drop drop points', () => {
         await settle();
 
         expect((fixture.componentInstance.selection() as TreeNode)?.label).toBe('C');
+    });
+});
+
+describe('Tree virtual scroll layout with a theme', () => {
+    let fixture: ComponentFixture<Tree>;
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        fixture = TestBed.createComponent(Tree);
+    });
+
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    const settle = async () => {
+        for (let i = 0; i < 4; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+
+    it('does not let a node overflow onto the next one in virtual scroll (optimus-ui#582)', async () => {
+        fixture.componentRef.setInput(
+            'value',
+            Array.from({ length: 30 }, (_, i) => ({ key: `${i}`, label: `Node ${i}`, leaf: false }))
+        );
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('scrollHeight', '250px');
+        fixture.componentRef.setInput('lazy', true);
+        await settle();
+
+        const contents = (Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content')) as HTMLElement[]).map((c) => c.getBoundingClientRect());
+        for (let i = 1; i < contents.length; i++) {
+            expect(contents[i].top).toBeGreaterThanOrEqual(contents[i - 1].bottom - 0.5);
+        }
+    });
+
+    it('renders the nodes loaded after creation with virtual scroll, filter and drag and drop (optimus-ui#893)', async () => {
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 35);
+        fixture.componentRef.setInput('scrollHeight', '250px');
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('draggableNodes', true);
+        fixture.componentRef.setInput('droppableNodes', true);
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+
+        // Nodes arrive later from a service
+        fixture.componentRef.setInput(
+            'value',
+            Array.from({ length: 20 }, (_, i) => ({ key: `${i}`, label: `Node ${i}`, children: [{ key: `${i}-0`, label: `Child ${i}` }] }))
+        );
+        await settle();
+
+        const labels = (Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-label')) as HTMLElement[]).map((l) => l.textContent!.trim());
+        expect(labels.length).toBeGreaterThan(0);
+        expect(labels[0]).toBe('Node 0');
+        const viewport = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(viewport.getBoundingClientRect().height).toBe(250);
     });
 });
