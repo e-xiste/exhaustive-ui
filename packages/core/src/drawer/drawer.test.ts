@@ -1717,3 +1717,55 @@ describe('Drawer without a header', () => {
         expect(buttonRect.left - headerRect.left).toBeGreaterThan(headerRect.width / 2);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Drawer],
+    template: `
+        <p-drawer [(visible)]="outer" position="left" header="Outer" [style]="{ width: '300px' }">
+            <button class="outer-action">Outer action</button>
+            <p-drawer [(visible)]="inner" position="right" header="Inner" appendTo="body" [style]="{ width: '200px' }">
+                <button class="inner-action">Inner action</button>
+            </p-drawer>
+        </p-drawer>
+    `
+})
+class NestedDrawersHostComponent {
+    outer = signal(true);
+    inner = signal(false);
+}
+
+describe('Nested Drawers (optimus-ui#849)', () => {
+    // the outer .p-drawer has a transform, so a nested drawer must leave it (appendTo body) to cover the viewport
+    it('should cover the outer drawer with the mask of an inner drawer appended to the body, and not the inner drawer', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ imports: [NestedDrawersHostComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(NestedDrawersHostComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        fixture.componentInstance.inner.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        const topmost = (element: Element) => {
+            const rect = element.getBoundingClientRect();
+            return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        };
+        const outerAction = document.querySelector('.outer-action')!;
+        const innerAction = document.querySelector('.inner-action')!;
+
+        expect(document.querySelectorAll('.p-drawer-mask').length).toBe(2);
+        // the outer drawer content is under the inner mask
+        expect(topmost(outerAction)).not.toBe(outerAction);
+        expect(topmost(outerAction)?.classList).toContain('p-drawer-mask');
+        // the inner drawer stays usable
+        expect(topmost(innerAction)).toBe(innerAction);
+
+        fixture.componentInstance.inner.set(false);
+        fixture.componentInstance.outer.set(false);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        fixture.destroy();
+    });
+});
