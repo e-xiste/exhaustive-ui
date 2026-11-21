@@ -2175,3 +2175,49 @@ describe('ContextMenu long press on touch devices (optimus-ui#932)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ContextMenu],
+    template: `
+        <div class="drawer-like" style="position: fixed; left: 100px; top: 200px; width: 400px; height: 300px; transform: translate3d(0px, 0px, 0px)">
+            <div #zone class="cm-zone" style="width: 400px; height: 300px">Zone</div>
+            <p-contextmenu #cm [target]="zone" [model]="model" />
+        </div>
+    `
+})
+class TestContextMenuInTransformedParentComponent {
+    model: MenuItem[] = [{ label: 'Copy' }, { label: 'Paste' }];
+
+    cm = viewChild.required<ContextMenu>('cm');
+}
+
+describe('ContextMenu inside a positioned or transformed container (optimus-ui#809)', () => {
+    it('opens at the pointer, not offset by the container position', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestContextMenuInTransformedParentComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+        const fixture = TestBed.createComponent(TestContextMenuInTransformedParentComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const zone = fixture.nativeElement.querySelector('.cm-zone') as HTMLElement;
+        zone.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 150, clientY: 250 }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const container = fixture.nativeElement.querySelector('.p-contextmenu') as HTMLElement;
+        expect(container).toBeTruthy();
+        // offsetLeft/Top ignore the scale of the enter animation
+        const parentRect = (container.offsetParent as HTMLElement).getBoundingClientRect();
+        expect(Math.round(parentRect.left + container.offsetLeft)).toBe(151);
+        expect(Math.round(parentRect.top + container.offsetTop)).toBe(251);
+
+        fixture.componentInstance.cm().hide();
+        fixture.nativeElement.remove();
+    });
+});

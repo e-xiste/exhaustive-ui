@@ -1198,6 +1198,15 @@ export class ContextMenu extends BaseComponent<ContextMenuPassThrough> {
             top = this.document.scrollingElement.scrollTop;
         }
 
+        // left/top are page coordinates; an absolute container is placed relative to its offset parent, which is not
+        // the page when the menu stays inside a positioned or transformed element (appendTo self, e.g. in a drawer)
+        const offsetParent = container.offsetParent as HTMLElement | null;
+        if (offsetParent && offsetParent !== this.document.body && offsetParent !== this.document.documentElement) {
+            const parentRect = offsetParent.getBoundingClientRect();
+            left -= parentRect.left + this.document.scrollingElement.scrollLeft + offsetParent.clientLeft - offsetParent.scrollLeft;
+            top -= parentRect.top + this.document.scrollingElement.scrollTop + offsetParent.clientTop - offsetParent.scrollTop;
+        }
+
         container.style.left = left + 'px';
         container.style.top = top + 'px';
     }
