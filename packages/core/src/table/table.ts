@@ -1314,6 +1314,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 if (this.isStateful() && this.resizableColumns()) {
                     this.restoreColumnWidths();
                 }
+
+                this.observeContainerSize();
             }
 
             this.initialized.set(true);
@@ -3260,10 +3262,29 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
 
+    private containerResizeObserver: ResizeObserver | undefined;
+
+    // the virtual scroller measures its viewport on its first render and on window resizes only: a container sized
+    // later (a dialog opening, a flex layout settling) left it with no rows, so tell it when the container size changes
+    observeContainerSize() {
+        const ResizeObserverType = this.document.defaultView?.ResizeObserver;
+        const wrapper = this.wrapperViewChild()?.nativeElement;
+
+        if (ResizeObserverType && wrapper && !this.containerResizeObserver) {
+            this.containerResizeObserver = new ResizeObserverType(() => {
+                if (this.virtualScroll()) {
+                    this.scroller()?.onWindowResize();
+                }
+            });
+            this.containerResizeObserver.observe(wrapper);
+        }
+    }
+
     onDestroy() {
         this.unbindDocumentEditListener();
         this.editingCell.set(null);
         this.initialized.set(null);
+        this.containerResizeObserver?.disconnect();
 
         this.destroyStyleElement();
         this.destroyResponsiveStyle();

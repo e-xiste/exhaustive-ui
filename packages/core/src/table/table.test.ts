@@ -4408,4 +4408,33 @@ describe('optimus-ui issues (part 1)', () => {
             groupHeaders.forEach((groupHeader) => expect(groupHeader.style.top).toBe(thead.offsetHeight + 'px'));
         });
     });
+
+    describe('flex virtual scroll in a container sized after rendering (optimus-ui#269)', () => {
+        @Component({
+            changeDetection: ChangeDetectionStrategy.Eager,
+            imports: [TableModule],
+            template: `
+                <div [style.height.px]="height()" style="display: flex; flex-direction: column">
+                    <p-table [value]="rows" [scrollable]="true" scrollHeight="flex" [virtualScroll]="true" [virtualScrollItemSize]="40">
+                        <ng-template #header><tr><th>Id</th></tr></ng-template>
+                        <ng-template #body let-row><tr style="height: 40px"><td>{{ row.id }}</td></tr></ng-template>
+                    </p-table>
+                </div>
+            `
+        })
+        class LateSizedFlexComponent {
+            rows = rowsOf(500);
+            height = signal(0);
+        }
+
+        it('renders the rows once the container gets its height', async () => {
+            fixture = await render(LateSizedFlexComponent);
+            fixture.componentInstance.height.set(300);
+            await settle(fixture);
+            await wait(50);
+            await settle(fixture);
+
+            expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(7);
+        });
+    });
 });
