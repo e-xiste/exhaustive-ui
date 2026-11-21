@@ -3531,3 +3531,60 @@ describe('Tree low bug fixes', () => {
         expect(child).toBeGreaterThan(root);
     });
 });
+
+describe('Tree r22 regressions', () => {
+    const settle = async (fixture: ComponentFixture<Tree>) => {
+        for (let i = 0; i < 3; i++) {
+            fixture.detectChanges();
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            await fixture.whenStable();
+        }
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('updates the parent checkbox when a child is checked in virtual scroll (optimus-ui#55, optimus-ui#923)', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            {
+                key: 'a',
+                label: 'A',
+                children: [
+                    { key: 'a-0', label: 'A0' },
+                    { key: 'a-1', label: 'A1' }
+                ]
+            },
+            { key: 'b', label: 'B' }
+        ]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        fixture.componentRef.setInput('virtualScroll', true);
+        fixture.componentRef.setInput('virtualScrollItemSize', 40);
+        fixture.componentRef.setInput('scrollHeight', '300px');
+        await settle(fixture);
+
+        const content = (label: string) => Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content') as NodeListOf<HTMLElement>).find((c) => c.textContent!.trim() === label)!;
+        const checkboxInput = (label: string) => content(label).querySelector('p-checkbox input') as HTMLInputElement;
+        const checkboxHost = (label: string) => content(label).querySelector('p-checkbox') as HTMLElement;
+
+        (content('A').querySelector('button') as HTMLButtonElement).click();
+        await settle(fixture);
+        expect(fixture.nativeElement.querySelectorAll('.p-tree-node-content').length).toBe(4);
+
+        content('A0').click();
+        await settle(fixture);
+        expect(checkboxInput('A0').checked).toBe(true);
+        expect(checkboxHost('A').getAttribute('data-p-partialchecked')).toBe('true');
+        expect(checkboxHost('A').querySelector('svg[data-p-icon="minus"]')).not.toBeNull();
+
+        content('A1').click();
+        await settle(fixture);
+        expect(checkboxInput('A').checked).toBe(true);
+        expect(checkboxHost('A').querySelector('svg[data-p-icon="minus"]')).toBeNull();
+    });
+});

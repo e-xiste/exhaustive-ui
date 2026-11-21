@@ -130,10 +130,10 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                             [ngModelOptions]="{ standalone: true }"
                             [class]="cx('nodeCheckbox')"
                             [binary]="true"
-                            [indeterminate]="node()!.partialSelected"
+                            [indeterminate]="partialSelected()"
                             [disabled]="node()!.selectable === false"
                             [variant]="tree?.config.inputStyle() === 'filled' || tree?.config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
-                            [attr.data-p-partialchecked]="node()!.partialSelected"
+                            [attr.data-p-partialchecked]="partialSelected()"
                             [tabindex]="-1"
                             (click)="$event.preventDefault()"
                             [pt]="getPTOptions('pcNodeCheckbox')"
@@ -146,7 +146,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                                             tree.checkboxIconTemplate() || tree._checkboxIconTemplate();
                                             context: {
                                                 $implicit: isSelected(),
-                                                partialSelected: node()!.partialSelected,
+                                                partialSelected: partialSelected(),
                                                 class: cx('nodeCheckbox')
                                             }
                                         "
@@ -247,6 +247,15 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
     selected = computed(() => (this.tree.selectionMode() === 'single' || this.tree.selectionMode() === 'multiple' ? this._selected() : undefined));
 
     checked = computed(() => (this.tree.selectionMode() === 'checkbox' ? this._selected() : undefined));
+
+    /**
+     * Partial selection is written on the node by propagateUp/propagateDown together with each selection change.
+     * Reading selection() refreshes it in virtual scroll, where a parent row is not an ancestor view of its children.
+     */
+    partialSelected = computed(() => {
+        this.tree.selection();
+        return this.node()?.partialSelected;
+    });
 
     selectable = computed(() => (this.node()?.selectable === false ? false : this.tree?.selectionMode() != null));
 
