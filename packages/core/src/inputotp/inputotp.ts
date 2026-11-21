@@ -325,9 +325,16 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
                 }
 
                 const target = event.target;
+                const isValidKey = this.integerOnly() ? /^[0-9]$/.test(event.key) : true;
+
+                if (isValidKey && target.value.length > 0 && target.selectionStart === target.selectionEnd) {
+                    // focus selects the character of the box but a click collapses that selection: select it again
+                    // so the key replaces it instead of being dropped by the maxlength of the box
+                    target.select();
+                }
+
                 const hasSelection = target.selectionStart !== target.selectionEnd;
                 const isAtMaxLength = this.tokens().join('').length >= this.length();
-                const isValidKey = this.integerOnly() ? /^[0-9]$/.test(event.key) : true;
 
                 if (!isValidKey || (isAtMaxLength && !hasSelection)) {
                     event.preventDefault();
