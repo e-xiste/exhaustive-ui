@@ -7,6 +7,7 @@ import type { Mock } from 'vitest';
 import { MotionEvent } from '@exhaustive-ui/motion';
 import { OverlayService, PrimeTemplate } from '@exhaustive-ui/core/api';
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
+import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Popover } from './popover';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -947,5 +948,105 @@ describe('Popover Signal Query API', () => {
         expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
         expect(templates[0].template).toBeDefined();
         expect(instance._contentTemplate()).toBeUndefined();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Positioning with a local appendTo inside a dialog (optimus-ui#593)
+// ---------------------------------------------------------------------------
+
+@Component({
+    imports: [Popover, Dialog],
+    template: `
+        <p-dialog header="Dialog" [visible]="true" [style]="{ width: '25rem' }">
+            <div style="display: flex" #container>
+                <button #targetButton style="margin-left: 40px" (click)="popover.toggle($event)">Open</button>
+                <p-popover #popover [appendTo]="container">Popover</p-popover>
+            </div>
+        </p-dialog>
+    `
+})
+class PopoverInDialogHostComponent {
+    popover = viewChild.required<Popover>('popover');
+    targetButton = viewChild.required('targetButton', { read: ElementRef });
+}
+
+@Component({
+    imports: [Popover],
+    template: `<p-popover #popover>Popover</p-popover>`
+})
+class PopoverAlignHostComponent {
+    popover = viewChild.required<Popover>('popover');
+}
+
+describe('Popover positioning in a dialog with a local appendTo (optimus-ui#593)', () => {
+    let host: HTMLElement | undefined;
+
+    beforeEach(() => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PopoverInDialogHostComponent, PopoverAlignHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        });
+    });
+
+    afterEach(() => host?.remove());
+
+    it('should align under the target when its containing block is a transformed, non-positioned dialog', () => {
+        // Same layout as p-dialog: a fixed full-screen mask centering a dialog that has a transform, which makes the
+        // dialog (not the mask) the containing block of the absolutely positioned popover.
+        host = document.createElement('div');
+        host.innerHTML = `
+            <div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center">
+                <div style="transform: scale(1); width: 400px; height: 300px; padding: 40px; box-sizing: border-box">
+                    <div class="local-container" style="display: flex">
+                        <button class="target" style="width: 100px; height: 30px; margin-left: 60px; padding: 0; border: 0">Open</button>
+                    </div>
+                </div>
+            </div>`;
+        document.body.appendChild(host);
+
+        const fixture = TestBed.createComponent(PopoverAlignHostComponent);
+        fixture.detectChanges();
+        const popover = fixture.componentInstance.popover();
+        const target = host.querySelector('.target') as HTMLElement;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position: absolute; width: 150px; height: 80px; border-radius: 0';
+        host.querySelector('.local-container')!.appendChild(overlay);
+
+        popover.target.set(target);
+        popover.container.set(overlay as HTMLDivElement);
+        popover.align();
+
+        const targetRect = target.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+
+        expect(overlayRect.top).toBeCloseTo(targetRect.bottom, 0);
+        expect(overlayRect.left).toBeCloseTo(targetRect.left, 0);
+    });
+
+    it('should open under its target when appended to a local container inside a p-dialog', async () => {
+        const fixture = TestBed.createComponent(PopoverInDialogHostComponent);
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+
+        const target = fixture.componentInstance.targetButton().nativeElement as HTMLElement;
+        target.click();
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+
+        const overlay = fixture.componentInstance.popover().container() as HTMLElement;
+        expect(overlay).toBeTruthy();
+        expect(overlay.parentElement).toBe(target.parentElement);
+
+        const targetRect = target.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const gutter = parseFloat(getComputedStyle(overlay).marginTop) || 0;
+
+        expect(overlayRect.top - gutter).toBeCloseTo(targetRect.bottom, 0);
+        expect(overlayRect.left).toBeCloseTo(targetRect.left, 0);
+        fixture.destroy();
     });
 });
