@@ -78,8 +78,18 @@ export class BadgeDirective extends BaseComponent {
     _componentStyle = inject(BadgeStyle);
 
     private get activeElement(): HTMLElement {
-        return this.el.nativeElement.nodeName.indexOf('-') != -1 ? this.el.nativeElement.firstChild : this.el.nativeElement;
+        const host: HTMLElement = this.el.nativeElement;
+        if (host.nodeName.indexOf('-') === -1) {
+            return host;
+        }
+        // on a component, the badge goes into its first rendered element (e.g. the <button> of p-button); when the
+        // component starts with a comment or text node (control flow, projection) or an element that cannot hold
+        // children (e.g. <img>), the host itself is the target, as for p-avatar
+        const first = host.firstChild;
+        return first instanceof HTMLElement && !BadgeDirective.VOID_ELEMENTS.has(first.nodeName) ? first : host;
     }
+
+    private static readonly VOID_ELEMENTS = new Set(['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'SOURCE', 'TRACK', 'WBR']);
 
     constructor() {
         super();

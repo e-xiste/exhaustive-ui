@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { Badge, BadgeDirective, BadgeModule } from './badge';
+import { Avatar } from '@exhaustive-ui/core/avatar';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -1443,5 +1444,29 @@ describe('Badge', () => {
                 expect(hookCalled).toBe(true);
             });
         });
+    });
+});
+
+describe('BadgeDirective on a component whose first node is not an element', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [Avatar, BadgeModule],
+        template: `<p-avatar image="avatar.png" pBadge value="4" severity="danger" />`
+    })
+    class AvatarBadgeHost {}
+
+    it('renders the avatar image and attaches the badge to the avatar host', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({ imports: [AvatarBadgeHost], providers: [provideZonelessChangeDetection()] }).createComponent(AvatarBadgeHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const avatar: HTMLElement = fixture.nativeElement.querySelector('p-avatar');
+        expect(avatar.querySelector('img')).toBeTruthy();
+        const badge = avatar.querySelector('.p-badge') as HTMLElement;
+        expect(badge).toBeTruthy();
+        expect(badge.parentElement).toBe(avatar);
+        expect(badge.textContent).toBe('4');
+        expect(avatar.classList).toContain('p-overlay-badge');
     });
 });
