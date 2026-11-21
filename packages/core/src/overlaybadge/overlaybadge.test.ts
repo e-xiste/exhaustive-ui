@@ -2,7 +2,63 @@ import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, sig
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Badge } from '@exhaustive-ui/core/badge';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@exhaustive-ui/core/tabs';
+import Aura from '@exhaustive-ui/themes/aura';
 import { OverlayBadge, OverlayBadgeModule } from './overlaybadge';
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [OverlayBadge, Tabs, TabList, Tab, TabPanels, TabPanel],
+    template: `
+        <p-tabs value="1" style="width: 500px">
+            <p-tablist>
+                <p-tab value="0" class="tab-0">Header I</p-tab>
+                <p-overlaybadge value="2">
+                    <p-tab value="1" class="tab-1">Header II</p-tab>
+                </p-overlaybadge>
+                <p-tab value="2" class="tab-2">Header III</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">Content I</p-tabpanel>
+                <p-tabpanel value="1">Content II</p-tabpanel>
+                <p-tabpanel value="2">Content III</p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    `
+})
+class TestOverlayBadgeTabComponent {}
+
+describe('OverlayBadge wrapping a Tab (optimus-ui#241)', () => {
+    it('should keep the wrapped tab aligned with the other tabs', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TestOverlayBadgeTabComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestOverlayBadgeTabComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const host = fixture.nativeElement as HTMLElement;
+        const rect = (selector: string) => host.querySelector(selector)!.getBoundingClientRect();
+        const [first, wrapped, last] = [rect('.tab-0'), rect('.tab-1'), rect('.tab-2')];
+        const list = rect('.p-tablist-tab-list');
+        const bar = rect('.p-tablist-active-bar');
+
+        expect(wrapped.top).toBeCloseTo(first.top, 0);
+        expect(wrapped.bottom).toBeCloseTo(first.bottom, 0);
+        expect(wrapped.left).toBeCloseTo(first.right, 0);
+        expect(last.left).toBeCloseTo(wrapped.right, 0);
+        // the tabs overlap the bottom border of the list by their own bottom border
+        expect(wrapped.bottom).toBeCloseTo(list.bottom, 0);
+        // the active bar sits under the wrapped (active) tab only
+        expect(bar.left).toBeCloseTo(wrapped.left, 0);
+        expect(bar.width).toBeCloseTo(wrapped.width, 0);
+        expect(bar.bottom).toBeCloseTo(wrapped.bottom, 0);
+        fixture.destroy();
+    });
+});
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
