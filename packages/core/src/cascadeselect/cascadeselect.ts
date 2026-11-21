@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -175,10 +176,14 @@ export class CascadeSelectSub extends BaseComponent {
         });
     }
 
-    onInit() {
-        if (!this.root()) {
-            this.position();
-        }
+    constructor() {
+        super();
+        // the sublist is measured once it is rendered, next to its parent option
+        afterNextRender(() => {
+            if (!this.root()) {
+                this.position();
+            }
+        });
     }
 
     onOptionClick(event, processedOption: any) {
@@ -238,13 +243,21 @@ export class CascadeSelectSub extends BaseComponent {
     }
 
     position() {
-        const parentItem = this.el.nativeElement.parentElement;
+        // the host is the sublist itself, opened next to the option (li) that holds it
+        const sublist = this.el.nativeElement as HTMLElement;
+        const parentItem = sublist.parentElement;
+        if (!parentItem) {
+            return;
+        }
+
         const containerOffset = <any>getOffset(parentItem);
         const viewport = <any>getViewport();
-        const sublistWidth = this.el.nativeElement.childNodes[0].offsetParent ? this.el.nativeElement.children[0].offsetWidth : getHiddenElementOuterWidth(this.el.nativeElement.children[0]);
+        const sublistWidth = sublist.offsetParent ? sublist.offsetWidth : getHiddenElementOuterWidth(sublist);
         const itemOuterWidth = <any>getOuterWidth(parentItem.children[0]);
         if (parseInt(containerOffset.left, 10) + itemOuterWidth + sublistWidth > viewport.width) {
-            this.el.nativeElement.children[0].style.left = '-200%';
+            // not enough room on the right: open the sublist on the left of its option
+            sublist.style.left = 'auto';
+            sublist.style.right = '100%';
         }
     }
 }

@@ -4,7 +4,10 @@ import { FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsMo
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedModule } from '@exhaustive-ui/core/api';
+import { Base } from '@exhaustive-ui/core/base';
 import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { CascadeSelectBeforeHideEvent, CascadeSelectBeforeShowEvent, CascadeSelectChangeEvent, CascadeSelectHideEvent, CascadeSelectShowEvent } from '@exhaustive-ui/core/types/cascadeselect';
 import { BehaviorSubject } from 'rxjs';
 import { CASCADESELECT_VALUE_ACCESSOR, CascadeSelect, CascadeSelectModule } from './cascadeselect';
@@ -2586,5 +2589,67 @@ describe('CascadeSelect global PassThrough on options', () => {
         expect(options.length).toBe(2);
         options.forEach((option) => expect(option.classList.contains('GLOBAL_OPTION')).toBe(true));
         fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [CascadeSelect],
+    template: `
+        <div style="display: flex; justify-content: flex-end">
+            <p-cascadeselect [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" placeholder="Pick" breakpoint="1px" style="width: 8rem" />
+        </div>
+    `
+})
+class TestCascadeSelectAtRightEdgeComponent {
+    countries = [
+        {
+            name: 'Australia',
+            states: [
+                { name: 'New South Wales', cities: [{ cname: 'Sydney' }, { cname: 'Newcastle' }] },
+                { name: 'Queensland', cities: [{ cname: 'Brisbane' }] }
+            ]
+        }
+    ];
+}
+
+describe('CascadeSelect - sublist next to the edge of the viewport (optimus-ui#328)', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+        document.querySelectorAll('.p-cascadeselect-overlay').forEach((el) => el.remove());
+    });
+
+    it('opens a sublist on the left of its option when there is no room on the right', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestCascadeSelectAtRightEdgeComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestCascadeSelectAtRightEdgeComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const cascadeSelect = fixture.debugElement.query(By.directive(CascadeSelect)).componentInstance as CascadeSelect;
+
+        cascadeSelect.show();
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await fixture.whenStable();
+        (document.querySelector('.p-cascadeselect-overlay .p-cascadeselect-option-content') as HTMLElement).click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        fixture.detectChanges();
+
+        const option = document.querySelector('.p-cascadeselect-overlay li.p-cascadeselect-option-active') as HTMLElement;
+        const sublist = option.querySelector('ul.p-cascadeselect-option-list') as HTMLElement;
+        const box = sublist.getBoundingClientRect();
+        expect(box.width).toBeGreaterThan(0);
+        expect(box.right).toBeLessThanOrEqual(option.getBoundingClientRect().left + 1);
+        expect(box.left).toBeGreaterThanOrEqual(0);
     });
 });
