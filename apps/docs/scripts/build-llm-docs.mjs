@@ -60,6 +60,7 @@ const COMPONENT_NAME_MAP = {
     animateonscroll: 'AnimateOnScroll',
     autofocus: 'AutoFocus',
     focustrap: 'FocusTrap',
+    classnames: 'ClassNames',
     styleclass: 'StyleClass'
 };
 
@@ -543,7 +544,6 @@ function getAllComponents() {
         'primeflex',
         'domain',
         'filterservice',
-        'classnames',
         'bind',
         'forms',
         'passthrough',

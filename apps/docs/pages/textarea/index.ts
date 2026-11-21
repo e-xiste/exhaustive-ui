@@ -25,7 +25,7 @@ import { AppDoc } from '@/components/doc/app.doc';
         [docs]="docs"
         [apiDocs]="['Textarea']"
         [ptDocs]="ptComponent"
-        themeDocs="textearea"
+        themeDocs="textarea"
     ></app-doc>`
 })
 export class TextareaDemo {
