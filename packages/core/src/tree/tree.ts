@@ -87,7 +87,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                 [pBind]="getPTOptions('node')"
             >
                 @if (isPrevDropPointActive()) {
-                    <div [class]="cx('dropPoint')" [attr.aria-hidden]="true" [pBind]="getPTOptions('dropPoint')"></div>
+                    <div [class]="cx('dropPoint')" [attr.aria-hidden]="true" (dragover)="onDropPointDragOver($event)" (dragleave)="onNodeDragLeave($event)" (drop)="onNodeDrop($event)" [pBind]="getPTOptions('dropPoint')"></div>
                 }
                 <div
                     [class]="cx('nodeContent')"
@@ -171,7 +171,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                     </span>
                 </div>
                 @if (isNextDropPointActive()) {
-                    <div [class]="cx('dropPoint', { next: true })" [attr.aria-hidden]="true" [pBind]="getPTOptions('dropPoint')"></div>
+                    <div [class]="cx('dropPoint', { next: true })" [attr.aria-hidden]="true" (dragover)="onDropPointDragOver($event)" (dragleave)="onNodeDragLeave($event)" (drop)="onNodeDrop($event)" [pBind]="getPTOptions('dropPoint')"></div>
                 }
                 @if (!tree.virtualScroll() && node()!.children && node()!.expanded) {
                     <ul [class]="cx('nodeChildren')" role="group" [pBind]="ptm('nodeChildren')">
@@ -507,7 +507,28 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
         }
     }
 
-    onNodeDragLeave() {
+    onDropPointDragOver(event: any) {
+        // A drop point with a custom height pushes the node content away from the pointer: keep it open while hovered
+        if (this.isDroppable()) {
+            event.dataTransfer.dropEffect = 'copy';
+        } else {
+            event.dataTransfer.dropEffect = 'none';
+        }
+
+        if (this.tree.droppableNodes()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
+
+    onNodeDragLeave(event?: any) {
+        // Moving between the node content and its own drop points is not leaving the node
+        const nodeElement = (event?.currentTarget as HTMLElement | undefined)?.parentElement;
+        const relatedTarget = event?.relatedTarget as Node | null | undefined;
+        if (nodeElement && relatedTarget && Array.from(nodeElement.children).some((child) => child.getAttribute('role') !== 'group' && child.contains(relatedTarget))) {
+            return;
+        }
+
         this.isPrevDropPointHovered.set(false);
         this.isNextDropPointHovered.set(false);
         this.isNodeDropHovered.set(false);

@@ -3588,3 +3588,70 @@ describe('Tree r22 regressions', () => {
         expect(checkboxHost('A').querySelector('svg[data-p-icon="minus"]')).toBeNull();
     });
 });
+
+describe('Tree drag and drop drop points', () => {
+    let fixture: ComponentFixture<Tree>;
+    let style: HTMLStyleElement;
+    const content = (label: string) => Array.from(fixture.nativeElement.querySelectorAll('.p-tree-node-content') as NodeListOf<HTMLElement>).find((c) => c.textContent!.trim() === label)!;
+    const drag = (type: string, target: Element, init: DragEventInit = {}) => {
+        const event = new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: new DataTransfer(), ...init });
+        target.dispatchEvent(event);
+        return event;
+    };
+    const settle = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [Tree],
+            providers: [TreeDragDropService, provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        style = document.createElement('style');
+        style.textContent = '.p-tree-node-drop-point { height: 30px; }';
+        document.head.appendChild(style);
+        fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            { key: 'a', label: 'A' },
+            { key: 'b', label: 'B' },
+            { key: 'c', label: 'C' }
+        ]);
+        fixture.componentRef.setInput('draggableNodes', true);
+        fixture.componentRef.setInput('droppableNodes', true);
+        await settle();
+    });
+
+    afterEach(() => style.remove());
+
+    it('keeps a custom-height drop point open and accepts a drop on it (optimus-ui#77)', async () => {
+        const drops: any[] = [];
+        fixture.componentInstance.onNodeDrop.subscribe((e) => drops.push(e));
+
+        drag('dragstart', content('C'));
+        await settle();
+
+        const target = content('B');
+        let rect = target.getBoundingClientRect();
+        drag('dragover', target, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+
+        const dropPoint = fixture.nativeElement.querySelector('.p-tree-node-drop-point') as HTMLElement;
+        expect(dropPoint).not.toBeNull();
+        expect(dropPoint.getBoundingClientRect().height).toBe(30);
+
+        // The drop point pushed the content down, the pointer now sits on the drop point
+        drag('dragleave', target, { relatedTarget: dropPoint });
+        drag('dragover', dropPoint, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+        expect(fixture.nativeElement.querySelector('.p-tree-node-drop-point')).toBe(dropPoint);
+
+        drag('drop', dropPoint, { clientX: rect.left + 10, clientY: rect.top + 1 });
+        await settle();
+
+        expect(drops.length).toBe(1);
+        expect(drops[0].dropNode.label).toBe('B');
+        expect((fixture.componentInstance.value() as TreeNode[]).map((n) => n.label)).toEqual(['A', 'C', 'B']);
+    });
+});
