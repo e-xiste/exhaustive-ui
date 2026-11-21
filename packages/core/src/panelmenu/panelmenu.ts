@@ -28,6 +28,7 @@ import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponen
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { ChevronDownIcon, ChevronRightIcon } from '@exhaustive-ui/core/icons';
 import { MotionModule } from '@exhaustive-ui/core/motion';
+import { Ripple } from '@exhaustive-ui/core/ripple';
 import { TooltipModule } from '@exhaustive-ui/core/tooltip';
 import { PanelMenuItemTemplateContext, PanelMenuPassThrough } from '@exhaustive-ui/core/types/panelmenu';
 import { PanelMenuStyle } from './style/panelmenustyle';
@@ -38,7 +39,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ul[pPanelMenuSub]',
-    imports: [CommonModule, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
+    imports: [CommonModule, RouterModule, Ripple, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @for (processedItem of items(); track processedItem.key; let index = $index) {
             @if (processedItem.separator) {
@@ -74,6 +75,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                     [target]="getItemProp(processedItem, 'target')"
                                     [attr.tabindex]="!!parentExpanded() ? '0' : '-1'"
                                     [pBind]="getPTOptions(processedItem, index, 'itemLink')"
+                                    pRipple
                                 >
                                     @if (isItemGroup(processedItem)) {
                                         @if (!panelMenu.submenuIconTemplate() && !panelMenu._submenuIconTemplate()) {
@@ -139,6 +141,7 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
                                     [state]="getItemProp(processedItem, 'state')"
                                     [attr.tabindex]="!!parentExpanded() ? '0' : '-1'"
                                     [pBind]="getPTOptions(processedItem, index, 'itemLink')"
+                                    pRipple
                                 >
                                     @if (isItemGroup(processedItem)) {
                                         @if (!panelMenu.submenuIconTemplate() && !panelMenu._submenuIconTemplate()) {
@@ -798,7 +801,7 @@ export class PanelMenuList extends BaseComponent {
  */
 @Component({
     selector: 'p-panelMenu, p-panelmenu, p-panel-menu',
-    imports: [CommonModule, PanelMenuList, RouterModule, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
+    imports: [CommonModule, PanelMenuList, RouterModule, Ripple, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @for (item of model(); track $index; let f = $first; let l = $last; let i = $index) {
             @if (isItemVisible(item)) {
@@ -834,6 +837,7 @@ export class PanelMenuList extends BaseComponent {
                                         [class]="cn(cx('headerLink'), getItemProp(item, 'linkClass'))"
                                         [ngStyle]="getItemProp(item, 'linkStyle')"
                                         [pBind]="getPTOptions('headerLink', item, i)"
+                                        pRipple
                                     >
                                         @if (isItemGroup(item)) {
                                             @if (!headerIconTemplate() && !_headerIconTemplate()) {
@@ -885,6 +889,7 @@ export class PanelMenuList extends BaseComponent {
                                     [replaceUrl]="getItemProp(item, 'replaceUrl')"
                                     [state]="getItemProp(item, 'state')"
                                     [pBind]="getPTOptions('headerLink', item, i)"
+                                    pRipple
                                 >
                                     @if (isItemGroup(item)) {
                                         @if (!headerIconTemplate() && !_headerIconTemplate()) {

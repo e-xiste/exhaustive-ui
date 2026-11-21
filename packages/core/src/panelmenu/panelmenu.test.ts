@@ -1900,3 +1900,34 @@ describe('PanelMenu root list spacing (optimus-ui#59)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+describe('PanelMenu ripple (optimus-ui#540)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class RippleHost {
+        model: MenuItem[] = [
+            { label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Home', routerLink: '/' }] },
+            { label: 'Home', routerLink: '/' }
+        ];
+    }
+
+    it('adds the ripple to header and item links when ripple is enabled in the config', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [RippleHost, RouterTestingModule],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ ripple: true })]
+        }).createComponent(RippleHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const headerLinks = fixture.nativeElement.querySelectorAll('[data-pc-section="headerlink"]');
+        const itemLinks = fixture.nativeElement.querySelectorAll('[data-pc-section="itemlink"]');
+        expect(headerLinks.length).toBe(2);
+        expect(itemLinks.length).toBe(2);
+        [...headerLinks, ...itemLinks].forEach((link: HTMLElement) => expect(link.classList.contains('p-ripple')).toBe(true));
+
+        itemLinks[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 5, clientY: 5 }));
+        expect(itemLinks[0].querySelector('.p-ink')).toBeTruthy();
+        fixture.nativeElement.remove();
+    });
+});

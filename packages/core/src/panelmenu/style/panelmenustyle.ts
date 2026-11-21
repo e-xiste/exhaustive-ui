@@ -13,6 +13,11 @@ const style = /*css*/ `
         outline: 0 none;
     }
 
+    /* keeps the ripple ink inside the header */
+    .p-panelmenu-header-link {
+        overflow: hidden;
+    }
+
     /* the ul[pPanelMenuList] wrapper of the root list has no theme class: drop the browser list spacing */
     .p-panelmenu-content > ul {
         margin: 0;
