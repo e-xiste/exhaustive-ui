@@ -90,6 +90,25 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
+## Unreleased
+
+Fixes for 14 of the 16 medium-severity [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs set aside in 22.0.0-alpha.10. Each one has a regression test; the issue numbers are Optimus UI's. #593 (Popover in a Dialog with `appendTo`) was already fixed and now has tests. #731 (one table for screen readers in a scrollable TreeTable) needs a redesign of the scrollable TreeTable and stays open.
+
+### Behaviour changes
+
+- Overlays: the viewport size used to place overlays excludes the page scrollbars, so overlays at the right edge no longer go under the vertical scrollbar. TieredMenu, Menubar, ContextMenu and CascadeSelect submenus no longer subtract the scrollbar width a second time (#1926).
+- Select: a Select inside a disabled `<fieldset>` is disabled, except inside the fieldset's first `<legend>`, as for native controls (#366).
+- PickList: moving items sets `source` and `target` to new arrays and emits `sourceChange`/`targetChange`, so `[(source)]`/`[(target)]` bindings follow (#260).
+
+### Fixes
+
+- Table: columns and rows can be reordered with the keyboard (Ctrl/Cmd + arrows) and rows with a touch on the handle; the caption names the table through `aria-labelledby`; frozen columns share one resize listener and one ResizeObserver, repositioned once per frame, instead of one per cell (#13, #960, #100, #387, #426, #784).
+- TreeTable: frozen columns are laid out from the inline start in right-to-left pages (#417).
+- DatePicker: time picker changes are announced to screen readers (#627).
+- Forms: `writeValue` called from an effect no longer makes the effect track the component's internal signals (#480).
+- Styles: components inside a `ViewEncapsulation.ShadowDom` host get their styles, which are copied into the shadow root and kept in step (#802).
+- SSR: host and root PassThrough attributes (`data-pc-*`, `pt.root`, `pt.host`) are rendered on the server (#2083).
+
 ## 22.0.0-alpha.12 (2026-11-21)
 
 ### Tailwind CSS v4

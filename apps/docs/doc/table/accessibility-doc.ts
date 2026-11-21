@@ -30,6 +30,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             Editable cells use custom templating so you need to manage aria roles and attributes manually if required. The row editor controls are button elements with <i>aria.editRow</i>, <i>aria.cancelEdit</i> and <i>aria.saveEdit</i> used for the
             <i>aria-label</i>.
         </p>
+        <p>When a caption is defined, the table element refers to it with <i>aria-labelledby</i> so that screen readers announce it as the name of the table.</p>
         <p>Paginator is a standalone component used inside the Table, refer to the <a href="/paginator" class="">paginator</a> for more information about the accessibility features.</p>
         <h3>Keyboard Support</h3>
         <p>
@@ -151,6 +152,36 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 </tbody>
             </table>
         </div>
+        <h3>Reorder Keyboard Support</h3>
+        <div class="doc-tablewrapper">
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i>control</i> + <i>left arrow</i></td>
+                        <td>Moves the focused reorderable column one place towards the start (towards the end in right-to-left layouts).</td>
+                    </tr>
+                    <tr>
+                        <td><i>control</i> + <i>right arrow</i></td>
+                        <td>Moves the focused reorderable column one place towards the end (towards the start in right-to-left layouts).</td>
+                    </tr>
+                    <tr>
+                        <td><i>control</i> + <i>up arrow</i></td>
+                        <td>Moves the row of the focused reorder handle one place up.</td>
+                    </tr>
+                    <tr>
+                        <td><i>control</i> + <i>down arrow</i></td>
+                        <td>Moves the row of the focused reorder handle one place down.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>On macOS, <i>command</i> can be used instead of <i>control</i>. Rows can also be reordered with a touch or a pen on the reorder handle.</p>
     </app-docsectiontext>`
 })
 export class AccessibilityDoc {}
