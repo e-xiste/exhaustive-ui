@@ -262,6 +262,19 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
         }
     }
 
+    /**
+     * Runs the value written while the editor was detached from the document (e.g. the hidden content of a Dialog)
+     * once it is attached.
+     */
+    onAfterViewChecked() {
+        const command = this.delayedCommand();
+
+        if (command && this.isAttachedQuillEditorToDOM) {
+            this.delayedCommand.set(null);
+            command();
+        }
+    }
+
     getQuill() {
         return this.quill();
     }
