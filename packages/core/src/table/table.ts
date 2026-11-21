@@ -4694,7 +4694,8 @@ export class EditableColumn extends BaseComponent {
                     return;
                 }
 
-                if (this.el.nativeElement) {
+                // only the cell being edited follows its new data: a row reused for other data (e.g. after filtering) is not edited
+                if (this.el.nativeElement && this.dataTable.editingCell() === this.el.nativeElement) {
                     this.dataTable.updateEditingCell(this.el.nativeElement, data, field, <number>rowIndex);
                 }
             });
