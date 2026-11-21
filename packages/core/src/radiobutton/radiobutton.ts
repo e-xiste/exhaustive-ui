@@ -191,9 +191,10 @@ export class RadioButton extends BaseEditableHolder<RadioButtonPassThrough> {
     registry = inject(RadioControlRegistry);
 
     onInit() {
-        const control = this.injector.get(NgControl);
+        // a radio button without ngModel or a form control has no NgControl and no group to sync
+        const control = this.injector.get(NgControl, null);
         this.control.set(control);
-        this.registry.add(control, this);
+        control && this.registry.add(control, this);
     }
 
     onChange(event) {
