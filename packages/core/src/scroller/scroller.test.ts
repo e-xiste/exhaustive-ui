@@ -5112,3 +5112,37 @@ describe('MultiSelect virtual scroll while filtering', () => {
         fixture.destroy();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Select],
+    template: `<p-select [options]="items()" placeholder="Select Item" [virtualScroll]="true" [virtualScrollItemSize]="32" [lazy]="true" (onLazyLoad)="onLazyLoad()" appendTo="self" />`
+})
+class TestSelectLazyEmptyComponent {
+    items = signal<any[]>([]);
+    requests = 0;
+
+    onLazyLoad() {
+        this.requests++;
+        setTimeout(() => this.items.set(Array.from({ length: 100 }, (_, i) => ({ label: 'Item ' + i, value: i }))), 50);
+    }
+}
+
+describe('Select lazy virtual scroll starting empty', () => {
+    it('renders the items loaded into an initially empty list (optimus-ui#173)', async () => {
+        TestBed.configureTestingModule({ imports: [TestSelectLazyEmptyComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestSelectLazyEmptyComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('.p-select') as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.requests).toBeGreaterThan(0);
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        const labels = Array.from(el.querySelectorAll('li')).map((li) => li.textContent?.trim());
+        expect(labels).toContain('Item 0');
+        expect(el.getBoundingClientRect().height).toBeGreaterThan(32 * 3);
+        fixture.destroy();
+    });
+});
