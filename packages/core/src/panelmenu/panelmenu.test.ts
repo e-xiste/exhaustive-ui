@@ -1931,3 +1931,82 @@ describe('PanelMenu ripple (optimus-ui#540)', () => {
         fixture.nativeElement.remove();
     });
 });
+
+describe('PanelMenu focus across several panel menus (optimus-ui#541)', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [PanelMenu],
+        template: `<p-panelmenu class="first" [model]="first" /><p-panelmenu class="second" [model]="second" />`
+    })
+    class TwoMenusHost {
+        first: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+        second: MenuItem[] = [{ label: 'Edit', expanded: true, items: [{ label: 'Copy' }, { label: 'Paste' }] }];
+    }
+
+    it('clears the focused item of a panel menu when an item of another one is clicked', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [TwoMenusHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(TwoMenusHost);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const press = async (li: HTMLElement) => {
+            const link = li.querySelector('[data-pc-section="itemlink"]') as HTMLElement;
+            link.focus();
+            (li.querySelector('[data-pc-section="itemcontent"]') as HTMLElement).click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+        };
+        const firstItems = fixture.nativeElement.querySelectorAll('.first li[role="treeitem"]');
+        const secondItems = fixture.nativeElement.querySelectorAll('.second li[role="treeitem"]');
+
+        await press(firstItems[1]);
+        expect(firstItems[1].getAttribute('data-p-focused')).toBe('true');
+
+        await press(secondItems[0]);
+        expect(secondItems[0].getAttribute('data-p-focused')).toBe('true');
+        expect(fixture.nativeElement.querySelectorAll('li[data-p-focused="true"]').length).toBe(1);
+        fixture.nativeElement.remove();
+    });
+});
+
+describe('PanelMenu model replacement (optimus-ui#904)', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class ReplaceModelHost {
+        model: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+    }
+
+    it('does not repeat items when the model is replaced or expanded again', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [ReplaceModelHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).createComponent(ReplaceModelHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const labels = () => [...fixture.nativeElement.querySelectorAll('li[role="treeitem"]')].map((li: HTMLElement) => li.getAttribute('aria-label'));
+        expect(labels()).toEqual(['New', 'Open']);
+
+        fixture.componentInstance.model = [
+            { label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }, { label: 'Save', items: [{ label: 'As PDF' }] }] },
+            { label: 'Edit', expanded: true, items: [{ label: 'Copy' }] }
+        ];
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(labels()).toEqual(['New', 'Open', 'Save', 'As PDF', 'Copy']);
+
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        header.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        header.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(labels()).toEqual(['New', 'Open', 'Save', 'As PDF', 'Copy']);
+    });
+});
