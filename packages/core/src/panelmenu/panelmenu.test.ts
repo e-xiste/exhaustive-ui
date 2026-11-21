@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@exhaustive-ui/core/api';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { PanelMenu } from './panelmenu';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -1784,5 +1785,26 @@ describe('PanelMenu Signal API', () => {
         expect(routerLinkGroup).toBeTruthy();
         expect(routerLinkGroup.querySelector('.custom-submenu-icon')).toBeTruthy();
         expect(routerLinkGroup.querySelector('svg[data-p-icon]')).toBeNull();
+    });
+});
+
+describe('PanelMenu global PassThrough on sub items', () => {
+    @Component({ changeDetection: ChangeDetectionStrategy.Eager, imports: [PanelMenu], template: `<p-panelmenu [model]="model" />` })
+    class GlobalPTHost {
+        model: MenuItem[] = [{ label: 'Files', expanded: true, items: [{ label: 'New' }, { label: 'Open' }] }];
+    }
+
+    it('applies the global panelmenu PT to the items of the sub lists', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({
+            imports: [GlobalPTHost],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations(), provideExhaustive({ pt: { panelmenu: { item: { class: 'GLOBAL_ITEM' } } } })]
+        }).createComponent(GlobalPTHost);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const items = fixture.nativeElement.querySelectorAll('li[role="treeitem"]');
+        expect(items.length).toBe(2);
+        items.forEach((item: HTMLElement) => expect(item.classList.contains('GLOBAL_ITEM')).toBe(true));
     });
 });

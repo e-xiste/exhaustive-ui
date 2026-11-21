@@ -228,6 +228,8 @@ const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INS
     hostDirectives: [Bind]
 })
 export class PanelMenuSub extends BaseComponent {
+    hostName = 'PanelMenu';
+
     panelId = input<string | undefined>(undefined);
 
     focusedItemId = input<string | undefined>(undefined);
@@ -363,6 +365,8 @@ export class PanelMenuSub extends BaseComponent {
     encapsulation: ViewEncapsulation.None
 })
 export class PanelMenuList extends BaseComponent {
+    hostName = 'PanelMenu';
+
     panelId = input<string | undefined>(undefined);
 
     items = input<any[]>();
