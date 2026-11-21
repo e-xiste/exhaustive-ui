@@ -20,6 +20,20 @@ ${datatable_style}
     z-index: 1;
 }
 
+/* positioned content of the scrolled cells (buttons, badges...) must pass under the frozen cells */
+.p-datatable-scrollable td.p-datatable-frozen-column {
+    z-index: 1;
+}
+
+/* the scroller host element sits between the table container and the scroller root */
+.p-datatable-scrollable > .p-datatable-table-container > p-scroller > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {
+    background: dt('datatable.header.cell.background');
+}
+
+.p-datatable-scrollable > .p-datatable-table-container > p-scroller > .p-virtualscroller > .p-datatable-table > .p-datatable-tfoot {
+    background: dt('datatable.footer.cell.background');
+}
+
 .p-datatable-mask.p-overlay-mask {
     position: absolute;
     display: flex;
@@ -180,10 +194,11 @@ const classes = {
     filterButtonbar: 'p-datatable-filter-buttonbar',
     pcFilterClearButton: 'p-datatable-filter-clear-button',
     pcFilterApplyButton: 'p-datatable-filter-apply-button',
-    tbody: ({ instance }) => ({
+    tbody: ({ instance, frozen }) => ({
         'p-datatable-tbody': true,
         'p-datatable-frozen-tbody': instance.frozenValue() || instance.frozenBodyTemplate(),
-        'p-virtualscroller-content': instance.virtualScroll()
+        // the frozen rows stay out of the scrolled content: the scroller makes its content static and translates it
+        'p-virtualscroller-content': instance.virtualScroll() && !frozen
     }),
     rowGroupHeader: 'p-datatable-row-group-header',
     rowToggleButton: 'p-datatable-row-toggle-button',

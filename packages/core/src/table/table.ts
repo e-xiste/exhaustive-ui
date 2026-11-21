@@ -213,7 +213,7 @@ export class TableService {
                     [style]="{
                         height: scrollHeight() !== 'flex' ? scrollHeight() : undefined
                     }"
-                    [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
+                    [scrollHeight]="scrollHeight() !== 'flex' ? scrollHeight() : '100%'"
                     [itemSize]="virtualScrollItemSize()"
                     [step]="rows()"
                     [delay]="lazy() ? virtualScrollDelay() : 0"
@@ -268,7 +268,7 @@ export class TableService {
                     @if (frozenValue() || frozenBodyTemplate() || _frozenBodyTemplate()) {
                         <tbody
                             role="rowgroup"
-                            [class]="cx('tbody')"
+                            [class]="cx('tbody', { frozen: true })"
                             [pBind]="ptm('tbody')"
                             [value]="frozenValue()"
                             [frozenRows]="true"
@@ -1282,6 +1282,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     rowGroupHeaderStyleObject: any = {};
 
+    /**
+     * Sticky top of the row group headers: the height of the header above the rows.
+     * @group Interface
+     */
+    readonly rowGroupHeaderTop = signal<string>('');
+
     id: string = UniqueComponentId();
 
     styleElement = signal<any>(undefined);
@@ -1308,6 +1314,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 if (this.isStateful() && this.resizableColumns()) {
                     this.restoreColumnWidths();
                 }
+
+                this.observeContainerSize();
             }
 
             this.initialized.set(true);
@@ -2622,7 +2630,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     onColumnResize(event: any) {
         let containerLeft = DomHandler.getOffset(this.el?.nativeElement).left;
         !this.$unstyled() && DomHandler.addClass(this.el?.nativeElement, 'p-unselectable-text');
-        (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.height = this.el?.nativeElement.offsetHeight + 'px';
+        // offsetHeight rounds a fractional height up, which made the indicator overflow the container of the table
+        (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.height = this.el?.nativeElement.getBoundingClientRect().height + 'px';
         (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.top = 0 + 'px';
         if (event.type == 'touchmove') {
             (<ElementRef>this.resizeHelperViewChild()).nativeElement.style.left = event.changedTouches[0].clientX - containerLeft + this.el?.nativeElement.scrollLeft + 'px';
@@ -2688,6 +2697,33 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         this.reorderIconHeight.set(DomHandler.getHiddenElementOuterHeight(this.reorderIndicatorDownViewChild()?.nativeElement));
         this.draggedColumn.set(columnElement);
         event.dataTransfer.setData('text', 'b'); // For firefox
+        this.bindColumnDragScrollLock();
+    }
+
+    private columnDragScrollListener: VoidListener;
+
+    // the browser scrolls a container when a dragged pointer comes near its edge, and the sticky header is at the top
+    // edge of the rows: keep the rows still while a column is dragged, a column moves sideways only
+    bindColumnDragScrollLock() {
+        const container = this.virtualScroll() ? this.scroller()?.getElementRef()?.nativeElement : this.wrapperViewChild()?.nativeElement;
+
+        if (container && !this.columnDragScrollListener) {
+            const scrollTop = container.scrollTop;
+            this.columnDragScrollListener = this.renderer.listen(container, 'scroll', () => {
+                if (!this.draggedColumn()) {
+                    this.unbindColumnDragScrollLock();
+                } else if (container.scrollTop !== scrollTop) {
+                    container.scrollTop = scrollTop;
+                }
+            });
+        }
+    }
+
+    unbindColumnDragScrollLock() {
+        if (this.columnDragScrollListener) {
+            this.columnDragScrollListener();
+            this.columnDragScrollListener = null;
+        }
     }
 
     onColumnDragEnter(event: any, dropHeader: any) {
@@ -2789,6 +2825,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.draggedColumn.set(null);
             this.dropPosition.set(null);
         }
+
+        this.unbindColumnDragScrollLock();
     }
 
     // keyboard alternative to the drag and drop: move the column one place towards the given direction
@@ -2833,6 +2871,8 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
             this.draggedColumn.set(null);
             this.dropPosition.set(null);
         }
+
+        this.unbindColumnDragScrollLock();
     }
 
     resizeTableCells(newColumnWidth: number, nextColumnWidth: number | null) {
@@ -3253,10 +3293,30 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
         }
     }
 
+    private containerResizeObserver: ResizeObserver | undefined;
+
+    // the virtual scroller measures its viewport on its first render and on window resizes only: a container sized
+    // later (a dialog opening, a flex layout settling) left it with no rows, so tell it when the container size changes
+    observeContainerSize() {
+        const ResizeObserverType = this.document.defaultView?.ResizeObserver;
+        const wrapper = this.wrapperViewChild()?.nativeElement;
+
+        if (ResizeObserverType && wrapper && !this.containerResizeObserver) {
+            this.containerResizeObserver = new ResizeObserverType(() => {
+                if (this.virtualScroll()) {
+                    this.scroller()?.onWindowResize();
+                }
+            });
+            this.containerResizeObserver.observe(wrapper);
+        }
+    }
+
     onDestroy() {
         this.unbindDocumentEditListener();
         this.editingCell.set(null);
         this.initialized.set(null);
+        this.containerResizeObserver?.disconnect();
+        this.unbindColumnDragScrollLock();
 
         this.destroyStyleElement();
         this.destroyResponsiveStyle();
@@ -3476,6 +3536,8 @@ export class TableBody extends BaseComponent {
         }
     });
 
+    private headerResizeObserver: ResizeObserver | undefined;
+
     constructor() {
         super();
         afterNextRender(() => {
@@ -3486,6 +3548,8 @@ export class TableBody extends BaseComponent {
             if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
                 this.updateFrozenRowGroupHeaderStickyPosition();
             }
+
+            this.observeHeaderSize();
         });
         effect(() => {
             this.value();
@@ -3557,6 +3621,29 @@ export class TableBody extends BaseComponent {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+
+        this.headerResizeObserver?.disconnect();
+    }
+
+    // the sticky rows are placed under the header, whose height can change after the first render (a component
+    // or an image in it, a wrapped title): follow its size instead of measuring it once
+    observeHeaderSize() {
+        const header = this.el.nativeElement.previousElementSibling;
+        const ResizeObserverType = this.document.defaultView?.ResizeObserver;
+        const isSticky = this.frozenRows() || (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader');
+
+        if (isPlatformBrowser(this.platformId) && header && ResizeObserverType && isSticky && !this.headerResizeObserver) {
+            this.headerResizeObserver = new ResizeObserverType(() => {
+                if (this.frozenRows()) {
+                    this.updateFrozenRowStickyPosition();
+                }
+
+                if (this.dataTable.scrollable() && this.dataTable.rowGroupMode() === 'subheader') {
+                    this.updateFrozenRowGroupHeaderStickyPosition();
+                }
+            });
+            this.headerResizeObserver.observe(header);
+        }
     }
 
     updateFrozenRowStickyPosition() {
@@ -3567,6 +3654,8 @@ export class TableBody extends BaseComponent {
         if (this.el.nativeElement.previousElementSibling) {
             let tableHeaderHeight = DomHandler.getOuterHeight(this.el.nativeElement.previousElementSibling);
             this.dataTable.rowGroupHeaderStyleObject.top = tableHeaderHeight + 'px';
+            // a signal: the row group headers bind it, and a plain object changed after their check threw NG0100
+            this.dataTable.rowGroupHeaderTop.set(tableHeaderHeight + 'px');
         }
     }
 
@@ -3614,7 +3703,7 @@ export class RowGroupHeader extends BaseComponent {
     _componentStyle = inject(TableStyle);
 
     get getFrozenRowGroupHeaderStickyPosition() {
-        return this.dataTable.rowGroupHeaderStyleObject ? this.dataTable.rowGroupHeaderStyleObject.top : '';
+        return this.dataTable.rowGroupHeaderTop();
     }
 }
 
@@ -6409,6 +6498,7 @@ export class ColumnFilter extends BaseComponent {
             operator: this.getDefaultOperator()
         });
         DomHandler.focus(this.clearButtonViewChild()?.nativeElement);
+        this.realignOverlayAfterRender();
     }
 
     removeConstraint(filterMeta: FilterMetadata) {
@@ -6417,6 +6507,22 @@ export class ColumnFilter extends BaseComponent {
             this.dataTable._filter();
         }
         DomHandler.focus(this.clearButtonViewChild()?.nativeElement);
+        this.realignOverlayAfterRender();
+    }
+
+    // the overlay is positioned when it opens: a rule added or removed changes its height, so place it again for the
+    // new height, above the button when it no longer fits below
+    realignOverlayAfterRender() {
+        afterNextRender(
+            () => {
+                const overlay = this.overlay();
+                const buttonEl = <HTMLButtonElement>findSingle(this.el.nativeElement, '[data-pc-name="pccolumnfilterbutton"]');
+                if (overlay?.isConnected && buttonEl && overlay.parentElement === this.document.body) {
+                    absolutePosition(overlay, buttonEl);
+                }
+            },
+            { injector: this.injector }
+        );
     }
 
     onOperatorChange(value: any) {
