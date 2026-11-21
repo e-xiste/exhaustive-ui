@@ -499,9 +499,41 @@ export class Overlay extends BaseComponent {
         }
 
         this.scrollHandler().bindScrollListener();
+        this.bindWindowScrollListener();
+    }
+
+    private windowScrollListener: VoidListener;
+
+    /**
+     * An overlay appended outside of a fixed container (e.g. a Select in a Dialog with appendTo="body") is positioned
+     * against the page, while its target does not move when the page scrolls: realign it on page scroll.
+     */
+    bindWindowScrollListener() {
+        if (this.windowScrollListener || this.$appendTo() === 'self' || !this.targetEl || !this.hasFixedAncestor(this.targetEl)) {
+            return;
+        }
+        this.windowScrollListener = this.renderer.listen(this.document.defaultView, 'scroll', () => this.alignOverlay());
+    }
+
+    unbindWindowScrollListener() {
+        if (this.windowScrollListener) {
+            this.windowScrollListener();
+            this.windowScrollListener = null;
+        }
+    }
+
+    private hasFixedAncestor(element: HTMLElement): boolean {
+        const view = this.document.defaultView;
+        for (let el: HTMLElement | null = element; el && el !== this.document.body; el = el.parentElement) {
+            if (view?.getComputedStyle(el).position === 'fixed') {
+                return true;
+            }
+        }
+        return false;
     }
 
     unbindScrollListener() {
+        this.unbindWindowScrollListener();
         if (this.scrollHandler()) {
             this.scrollHandler().unbindScrollListener();
         }

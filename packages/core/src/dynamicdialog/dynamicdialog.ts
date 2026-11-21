@@ -199,12 +199,24 @@ export class DynamicDialog extends BaseComponent<DialogPassThrough> {
         return this.ddconfig?.templates?.closeicon;
     }
 
+    private _dialogStyleCache: { style: any; width: any; height: any; value: { [klass: string]: any } } | undefined;
+
     get dialogStyle() {
-        return {
-            ...(this.ddconfig?.style || {}),
-            ...(this.ddconfig?.width && { width: this.ddconfig.width }),
-            ...(this.ddconfig?.height && { height: this.ddconfig.height })
+        const style = this.ddconfig?.style;
+        const width = this.ddconfig?.width;
+        const height = this.ddconfig?.height;
+        const cache = this._dialogStyleCache;
+        // keep the same object while the config is unchanged so the Dialog style input does not change on every check
+        if (cache && cache.style === style && cache.width === width && cache.height === height) {
+            return cache.value;
+        }
+        const value = {
+            ...(style || {}),
+            ...(width && { width }),
+            ...(height && { height })
         };
+        this._dialogStyleCache = { style, width, height, value };
+        return value;
     }
 
     get header() {

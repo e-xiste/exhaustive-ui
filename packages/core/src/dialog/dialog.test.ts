@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, sig
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { AccordionModule } from '@exhaustive-ui/core/accordion';
+import { AutoFocus } from '@exhaustive-ui/core/autofocus';
+import { Drawer } from '@exhaustive-ui/core/drawer';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 import { FocusTrap } from '@exhaustive-ui/core/focustrap';
 import { Dialog } from './dialog';
@@ -2222,5 +2225,152 @@ describe('Dialog drag of a positioned dialog', () => {
         const moved = dialogEl.getBoundingClientRect();
         expect(moved.left).toBeCloseTo(before.left + 20, 0);
         expect(moved.top).toBeCloseTo(before.top + 30, 0);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog, AutoFocus],
+    template: `
+        <p-dialog [(visible)]="visible" [modal]="true" header="Edit">
+            <button class="dialog-other-button">Other</button>
+            <input class="dialog-autofocus-input" [pAutoFocus]="true" />
+        </p-dialog>
+    `
+})
+class AutoFocusDialogHostComponent {
+    visible = signal(false);
+}
+
+describe('Dialog with a pAutoFocus field', () => {
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should keep the focus on the pAutoFocus field instead of the first focusable element (optimus-ui#455)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AutoFocusDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(AutoFocusDialogHostComponent);
+        await fixture.whenStable();
+
+        fixture.componentInstance.visible.set(true);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        expect(document.activeElement?.classList.contains('dialog-autofocus-input')).toBe(true);
+        fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog, AccordionModule],
+    template: `
+        <p-dialog [(visible)]="visible" header="Accordion">
+            <p-accordion>
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Header 1</p-accordion-header>
+                    <p-accordion-content>Content 1</p-accordion-content>
+                </p-accordion-panel>
+                <p-accordion-panel value="1">
+                    <p-accordion-header>Header 2</p-accordion-header>
+                    <p-accordion-content>Content 2</p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        </p-dialog>
+    `
+})
+class AccordionDialogHostComponent {
+    visible = signal(false);
+}
+
+describe('Dialog with an Accordion', () => {
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should not expand the accordion panels when the dialog is reopened (optimus-ui#959)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [AccordionDialogHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(AccordionDialogHostComponent);
+        const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+        const setVisible = async (visible: boolean) => {
+            fixture.componentInstance.visible.set(visible);
+            await fixture.whenStable();
+            await wait(400);
+        };
+        const headers = () => Array.from(document.querySelectorAll('.p-dialog p-accordion-header')) as HTMLElement[];
+
+        await setVisible(true);
+        expect(headers().map((h) => h.getAttribute('aria-expanded'))).toEqual(['false', 'false']);
+        await setVisible(false);
+        await setVisible(true);
+        expect(headers().map((h) => h.getAttribute('aria-expanded'))).toEqual(['false', 'false']);
+
+        headers()[1].click();
+        await fixture.whenStable();
+        expect(headers()[1].getAttribute('aria-expanded')).toBe('true');
+        headers()[1].click();
+        await fixture.whenStable();
+        expect(headers()[1].getAttribute('aria-expanded')).toBe('false');
+        fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Dialog, Drawer],
+    template: `
+        <p-drawer [(visible)]="drawerVisible" header="Drawer">
+            <button class="open-dialog" (click)="dialogVisible.set(true)">Open dialog</button>
+            <p-dialog [(visible)]="dialogVisible" [modal]="true" header="From drawer" [style]="{ width: '300px' }">
+                <button class="dialog-button">Inside dialog</button>
+            </p-dialog>
+        </p-drawer>
+    `
+})
+class DialogInDrawerHostComponent {
+    drawerVisible = signal(false);
+    dialogVisible = signal(false);
+}
+
+describe('Dialog opened from a Drawer', () => {
+    afterEach(() => {
+        document.body.classList.remove('p-overflow-hidden');
+    });
+
+    it('should show the dialog above the drawer and its mask (optimus-ui#106)', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DialogInDrawerHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(DialogInDrawerHostComponent);
+        const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        fixture.componentInstance.drawerVisible.set(true);
+        await fixture.whenStable();
+        await wait(400);
+        (document.querySelector('.open-dialog') as HTMLElement).click();
+        await fixture.whenStable();
+        await wait(400);
+
+        const dialog = document.querySelector('.p-dialog') as HTMLElement;
+        const rect = dialog.getBoundingClientRect();
+        expect(rect.width).toBeGreaterThan(0);
+        const topElement = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        expect(dialog.contains(topElement)).toBe(true);
+
+        const dialogMask = dialog.parentElement as HTMLElement;
+        const maskColor = getComputedStyle(dialogMask).backgroundColor;
+        const alpha = maskColor.startsWith('rgba') ? parseFloat(maskColor.split(',')[3]) : maskColor === 'transparent' ? 0 : 1;
+        expect(alpha).toBeLessThan(1);
+        fixture.destroy();
     });
 });

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ErrorHandler, provideZonelessChangeDetection, inject, input } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, createComponent, createEnvironmentInjector, EnvironmentInjector, ErrorHandler, Injectable, provideZonelessChangeDetection, inject, input } from '@angular/core';
+import { DialogService } from './dialogservice';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Dialog } from '@exhaustive-ui/core/dialog';
@@ -705,5 +706,117 @@ describe('DynamicDialog', () => {
             expect(dialog.styleElement().innerHTML).toContain('75vw');
             expect(dialog.styleElement().innerHTML).toContain('90vw');
         });
+    });
+});
+
+@Injectable()
+class FeatureService {
+    name = 'feature-scoped';
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    template: `<span class="feature-dialog-content">{{ feature.name }}</span>`
+})
+class FeatureDialogContentComponent {
+    feature = inject(FeatureService);
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    template: `<span>host</span>`,
+    providers: [DialogService]
+})
+class FeatureHostComponent {
+    dialogService = inject(DialogService);
+}
+
+describe('DialogService injector hierarchy', () => {
+    it('should resolve providers of the environment injector the DialogService belongs to (optimus-ui#631, optimus-ui#759)', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
+        // a lazy route / child module environment that provides FeatureService
+        const featureInjector = createEnvironmentInjector([FeatureService], TestBed.inject(EnvironmentInjector));
+        const appRef = TestBed.inject(ApplicationRef);
+        const hostRef = createComponent(FeatureHostComponent, { environmentInjector: featureInjector });
+        appRef.attachView(hostRef.hostView);
+        await appRef.whenStable();
+        expect(hostRef.injector.get(FeatureService).name).toBe('feature-scoped');
+
+        const errors: any[] = [];
+        let ref: DynamicDialogRef | null = null;
+        try {
+            ref = hostRef.instance.dialogService.open(FeatureDialogContentComponent, { header: 'Feature' });
+            await appRef.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        } catch (e) {
+            errors.push(e);
+        }
+
+        expect(errors).toEqual([]);
+        expect(document.querySelector('.feature-dialog-content')?.textContent).toBe('feature-scoped');
+        ref?.close();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        hostRef.destroy();
+        featureInjector.destroy();
+    });
+});
+
+describe('DynamicDialog style binding', () => {
+    it('should pass the same style object to the Dialog across change detection cycles (optimus-ui#896)', async () => {
+        TestBed.resetTestingModule();
+        const config = new DynamicDialogConfig();
+        config.style = { color: 'red' };
+        config.width = '300px';
+        TestBed.configureTestingModule({
+            imports: [DynamicDialog],
+            providers: [{ provide: DynamicDialogConfig, useValue: config }, { provide: DynamicDialogRef, useValue: new DynamicDialogRef() }, provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(DynamicDialog);
+        fixture.detectChanges();
+        const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
+        const first = dialog.style();
+        expect(first).toEqual({ color: 'red', width: '300px' });
+
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+        fixture.changeDetectorRef.markForCheck();
+        fixture.detectChanges();
+
+        expect(dialog.style()).toBe(first);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<span class="zoneless-dialog-content">zoneless</span>`
+})
+class ZonelessDialogContentComponent {}
+
+describe('DialogService in a zoneless application', () => {
+    it('should open and close a dialog without motion errors (optimus-ui#70)', async () => {
+        TestBed.resetTestingModule();
+        const errors: any[] = [];
+        const onRejection = (event: PromiseRejectionEvent) => errors.push(event.reason);
+        window.addEventListener('unhandledrejection', onRejection);
+        TestBed.configureTestingModule({
+            providers: [provideZonelessChangeDetection(), DialogService, { provide: ErrorHandler, useValue: { handleError: (e: any) => errors.push(e) } }]
+        });
+        const appRef = TestBed.inject(ApplicationRef);
+        const ref = TestBed.inject(DialogService).open(ZonelessDialogContentComponent, { header: 'Zoneless', modal: true });
+        await appRef.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        expect(document.querySelector('.zoneless-dialog-content')).toBeTruthy();
+        const dialog = document.querySelector('.p-dialog') as HTMLElement;
+        expect(dialog.style.display).not.toBe('none');
+
+        ref?.close();
+        await appRef.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        window.removeEventListener('unhandledrejection', onRejection);
+
+        expect(errors).toEqual([]);
+        expect(document.querySelector('.zoneless-dialog-content')).toBeNull();
     });
 });

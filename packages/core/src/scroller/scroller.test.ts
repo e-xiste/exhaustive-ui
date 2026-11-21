@@ -6,6 +6,9 @@ import { provideExhaustive } from '@exhaustive-ui/core/config';
 import type { ScrollerLazyLoadEvent, ScrollerScrollEvent, ScrollerScrollIndexChangeEvent } from '@exhaustive-ui/core/types/scroller';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Scroller } from './scroller';
+import { Select } from '@exhaustive-ui/core/select';
+import { AutoComplete } from '@exhaustive-ui/core/autocomplete';
+import { MultiSelect } from '@exhaustive-ui/core/multiselect';
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
@@ -4796,5 +4799,350 @@ describe('Scroller lazy with delay', () => {
 
         expect(fixture.componentInstance.lazyLoads).toBe(lazyLoads);
         expect(scroller.d_loading()).toBe(false);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="46" [style]="{ height: scrollHeight }" [step]="10" [delay]="20" [lazy]="true" [showLoader]="true" [loaderDisabled]="true" [autoSize]="true" [inline]="true" (onLazyLoad)="onLazyLoad($event)">
+            <ng-template #item let-item>
+                <div style="height: 46px">{{ item?.name ?? 'loading' }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestLazyStepScrollerComponent {
+    scrollHeight = '250px';
+    items = signal<any[]>(Array.from({ length: 1000 }));
+    requests: { first: number; last: number }[] = [];
+
+    onLazyLoad(event: ScrollerLazyLoadEvent) {
+        this.requests.push({ first: event.first, last: event.last });
+        setTimeout(() => {
+            const items = [...this.items()];
+            for (let i = event.first; i < event.last; i++) items[i] = { name: 'Item ' + i };
+            this.items.set(items);
+        }, 5);
+    }
+}
+
+describe('Scroller lazy with a step', () => {
+    for (const scrollHeight of ['200px', '250px', '400px']) {
+        it(`requests the second page while scrolling down with height ${scrollHeight} (optimus-ui#682)`, async () => {
+            TestBed.configureTestingModule({ imports: [TestLazyStepScrollerComponent], providers: [provideZonelessChangeDetection()] });
+            const fixture = TestBed.createComponent(TestLazyStepScrollerComponent);
+            fixture.componentInstance.scrollHeight = scrollHeight;
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+
+            const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            for (let top = 0; top <= 46 * 40; top += 23) {
+                el.scrollTop = top;
+                el.dispatchEvent(new Event('scroll'));
+                await new Promise((resolve) => setTimeout(resolve, 30));
+                await fixture.whenStable();
+            }
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            await fixture.whenStable();
+
+            const loaded = fixture.componentInstance.items();
+            const missing: number[] = [];
+            for (let i = 0; i < 45; i++) if (!loaded[i]) missing.push(i);
+            expect(missing).toEqual([]);
+        });
+    }
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Scroller],
+    template: `
+        <p-scroller [items]="items()" [itemSize]="50" scrollHeight="200px" [lazy]="lazy" (onLazyLoad)="lazyLoads.push($event)">
+            <ng-template #item let-item>
+                <div style="height: 50px">{{ item }}</div>
+            </ng-template>
+        </p-scroller>
+    `
+})
+class TestChangingItemsScrollerComponent {
+    lazy = false;
+    items = signal(Array.from({ length: 1000 }, (_, i) => `Item ${i}`));
+    lazyLoads: ScrollerLazyLoadEvent[] = [];
+}
+
+describe('Scroller keeps its position when the items change', () => {
+    const settle = async (fixture: ComponentFixture<any>) => {
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+    };
+    const scroll = async (fixture: ComponentFixture<any>, el: HTMLElement, top: number) => {
+        el.scrollTop = top;
+        el.dispatchEvent(new Event('scroll'));
+        await settle(fixture);
+    };
+
+    it('does not jump to the top when an item is removed (optimus-ui#864)', async () => {
+        TestBed.configureTestingModule({ imports: [TestChangingItemsScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestChangingItemsScrollerComponent);
+        await settle(fixture);
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        await scroll(fixture, el, 5000);
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        expect(scroller.loadedItems()).toContain('Item 100');
+
+        fixture.componentInstance.items.update((items) => items.filter((item) => item !== 'Item 101'));
+        await settle(fixture);
+
+        expect(el.scrollTop).toBe(5000);
+        expect(scroller.loadedItems()).toContain('Item 100');
+        expect(scroller.loadedItems()).not.toContain('Item 101');
+    });
+
+    it('does not jump when items are appended after a delay at the end (optimus-ui#101)', async () => {
+        TestBed.configureTestingModule({ imports: [TestChangingItemsScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestChangingItemsScrollerComponent);
+        fixture.componentInstance.lazy = true;
+        fixture.componentInstance.items.set(Array.from({ length: 50 }, (_, i) => `Item ${i}`));
+        await settle(fixture);
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        await scroll(fixture, el, 50 * 50 - 200);
+        const top = el.scrollTop;
+        expect(top).toBe(2300);
+
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        fixture.componentInstance.items.update((items) => [...items, ...Array.from({ length: 50 }, (_, i) => `Item ${50 + i}`)]);
+        await settle(fixture);
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        expect(el.scrollTop).toBe(top);
+        expect(scroller.loadedItems()).toContain('Item 49');
+    });
+
+    it('keeps the spacer of a grown lazy list after scrolling back to the top (optimus-ui#189)', async () => {
+        TestBed.configureTestingModule({ imports: [TestChangingItemsScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestChangingItemsScrollerComponent);
+        fixture.componentInstance.lazy = true;
+        fixture.componentInstance.items.set(Array.from({ length: 50 }, (_, i) => `Item ${i}`));
+        await settle(fixture);
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        await scroll(fixture, el, 2300);
+        fixture.componentInstance.items.update((items) => [...items, ...Array.from({ length: 100 }, (_, i) => `Item ${50 + i}`)]);
+        await settle(fixture);
+        await scroll(fixture, el, 6000);
+        await scroll(fixture, el, 0);
+
+        expect(el.scrollHeight).toBe(150 * 50);
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Select],
+    template: `<p-select [options]="items()" placeholder="Select Item" [virtualScroll]="true" [virtualScrollItemSize]="32" [virtualScrollOptions]="options" appendTo="self" />`
+})
+class TestSelectLazyEndComponent {
+    total = 300;
+    append = false;
+    items = signal<any[]>([]);
+    requests: ScrollerLazyLoadEvent[] = [];
+    options = { delay: 50, showLoader: true, lazy: true, step: 50, appendOnly: false, onLazyLoad: (event: ScrollerLazyLoadEvent) => this.onLazyLoad(event) };
+
+    constructor() {
+        this.items.set(Array.from({ length: this.append ? 60 : this.total }, (_, i) => ({ label: 'Item ' + i, value: i })));
+    }
+
+    onLazyLoad(event: ScrollerLazyLoadEvent) {
+        this.requests.push(event);
+        setTimeout(() => {
+            const items = [...this.items()];
+            if (this.append) {
+                if (event.last >= items.length && items.length < this.total) {
+                    items.push(...Array.from({ length: 60 }, (_, i) => ({ label: 'Item ' + (items.length + i), value: items.length + i })));
+                }
+            } else {
+                for (let i = event.first; i < event.last; i++) items[i] = { label: 'Loaded ' + i, value: i };
+            }
+            this.items.set(items);
+        }, 120);
+    }
+}
+
+describe('Select lazy virtual scroll at the end of the list', () => {
+    for (const append of [false, true]) {
+        it(`stops loading and keeps the last items visible (${append ? 'appending pages, optimus-ui#101' : 'fixed size, optimus-ui#39'})`, async () => {
+            TestBed.configureTestingModule({ imports: [TestSelectLazyEndComponent], providers: [provideZonelessChangeDetection()] });
+            const fixture = TestBed.createComponent(TestSelectLazyEndComponent);
+            fixture.componentInstance.append = append;
+            fixture.componentInstance.items.set(Array.from({ length: append ? 60 : 300 }, (_, i) => ({ label: 'Item ' + i, value: i })));
+            await fixture.whenStable();
+            (fixture.nativeElement.querySelector('.p-select') as HTMLElement).click();
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            await fixture.whenStable();
+
+            const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+            const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+            const labels = () => Array.from(el.querySelectorAll('li')).map((li) => li.textContent?.trim());
+            if (!append) {
+                for (let round = 0; round < 12; round++) {
+                    el.scrollTop = el.scrollHeight;
+                    el.dispatchEvent(new Event('scroll'));
+                    await new Promise((resolve) => setTimeout(resolve, 80));
+                    await fixture.whenStable();
+                }
+                await new Promise((resolve) => setTimeout(resolve, 600));
+                await fixture.whenStable();
+
+                expect(scroller.d_loading()).toBe(false);
+                expect(el.scrollTop + el.clientHeight).toBeGreaterThanOrEqual(el.scrollHeight - 2);
+                expect(labels()).toContain('Loaded 299');
+            } else {
+                el.scrollTop = el.scrollHeight;
+                el.dispatchEvent(new Event('scroll'));
+                await new Promise((resolve) => setTimeout(resolve, 80));
+                await fixture.whenStable();
+                const top = el.scrollTop;
+                // the next page is appended 120ms after the request
+                await new Promise((resolve) => setTimeout(resolve, 600));
+                await fixture.whenStable();
+
+                expect(fixture.componentInstance.items().length).toBe(120);
+                expect(scroller.d_loading()).toBe(false);
+                expect(el.scrollTop).toBe(top);
+                expect(labels()).toContain('Item 59');
+            }
+            fixture.destroy();
+        });
+    }
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AutoComplete],
+    template: `<p-autocomplete [virtualScroll]="true" [suggestions]="filtered()" [virtualScrollItemSize]="34" (completeMethod)="filter($event.query)" optionLabel="label" appendTo="self" [delay]="0" />`
+})
+class TestAutoCompleteVirtualComponent {
+    all = Array.from({ length: 10000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+    filtered = signal<any[]>([]);
+
+    filter(query: string) {
+        this.filtered.set(this.all.filter((item) => item.label.toLowerCase().startsWith(query.toLowerCase())));
+    }
+}
+
+describe('AutoComplete virtual scroll height', () => {
+    const search = async (fixture: ComponentFixture<any>, value: string) => {
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        input.focus();
+        input.value = value;
+        // a paste: the whole value arrives in one input event
+        input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: value }));
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+    };
+    const viewportHeight = (fixture: ComponentFixture<any>) => (fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).getBoundingClientRect().height;
+
+    it('fits a single suggestion on the first search (optimus-ui#656)', async () => {
+        TestBed.configureTestingModule({ imports: [TestAutoCompleteVirtualComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestAutoCompleteVirtualComponent);
+        await fixture.whenStable();
+        await search(fixture, 'Item 6666');
+
+        expect(fixture.componentInstance.filtered().length).toBe(1);
+        expect(viewportHeight(fixture)).toBeLessThan(34 * 2);
+        fixture.destroy();
+    });
+
+    it('shrinks to a single suggestion after a search with many results (optimus-ui#444)', async () => {
+        TestBed.configureTestingModule({ imports: [TestAutoCompleteVirtualComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestAutoCompleteVirtualComponent);
+        await fixture.whenStable();
+        await search(fixture, 'Item');
+        expect(viewportHeight(fixture)).toBeGreaterThan(34 * 4);
+        await search(fixture, 'Item 6666');
+
+        expect(viewportHeight(fixture)).toBeLessThan(34 * 2);
+        fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MultiSelect],
+    template: `<p-multiselect [options]="items" [filter]="true" [virtualScroll]="true" [virtualScrollItemSize]="40" optionLabel="label" appendTo="self" />`
+})
+class TestMultiSelectVirtualFilterComponent {
+    items = Array.from({ length: 100000 }, (_, i) => ({ label: 'Item ' + i, value: i }));
+}
+
+describe('MultiSelect virtual scroll while filtering', () => {
+    it('sizes the viewport to the filtered items at every keystroke (optimus-ui#647)', async () => {
+        TestBed.configureTestingModule({ imports: [TestMultiSelectVirtualFilterComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestMultiSelectVirtualFilterComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('.p-multiselect') as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const filterInput = fixture.nativeElement.querySelector('.p-multiselect-filter') as HTMLInputElement;
+        const type = async (value: string) => {
+            filterInput.value = value;
+            filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await fixture.whenStable();
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            await fixture.whenStable();
+            const count = fixture.debugElement.query(By.directive(Scroller)).componentInstance._items().length;
+            const height = (fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement).getBoundingClientRect().height;
+            return { value, count, height: Math.round(height) };
+        };
+        // no match renders one empty message row
+        const expected = (count: number) => Math.min(200, Math.max(count, 1) * 40);
+
+        const results: { value: string; count: number; height: number }[] = [];
+        for (const value of ['321321', '', '3', '32', '321', '3213', '32132', '321321']) {
+            results.push(await type(value));
+        }
+
+        expect(results.map((r) => r.height)).toEqual(results.map((r) => expected(r.count)));
+        fixture.destroy();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Select],
+    template: `<p-select [options]="items()" placeholder="Select Item" [virtualScroll]="true" [virtualScrollItemSize]="32" [lazy]="true" (onLazyLoad)="onLazyLoad()" appendTo="self" />`
+})
+class TestSelectLazyEmptyComponent {
+    items = signal<any[]>([]);
+    requests = 0;
+
+    onLazyLoad() {
+        this.requests++;
+        setTimeout(() => this.items.set(Array.from({ length: 100 }, (_, i) => ({ label: 'Item ' + i, value: i }))), 50);
+    }
+}
+
+describe('Select lazy virtual scroll starting empty', () => {
+    it('renders the items loaded into an initially empty list (optimus-ui#173)', async () => {
+        TestBed.configureTestingModule({ imports: [TestSelectLazyEmptyComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestSelectLazyEmptyComponent);
+        await fixture.whenStable();
+        (fixture.nativeElement.querySelector('.p-select') as HTMLElement).click();
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await fixture.whenStable();
+
+        expect(fixture.componentInstance.requests).toBeGreaterThan(0);
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        const labels = Array.from(el.querySelectorAll('li')).map((li) => li.textContent?.trim());
+        expect(labels).toContain('Item 0');
+        expect(el.getBoundingClientRect().height).toBeGreaterThan(32 * 3);
+        fixture.destroy();
     });
 });

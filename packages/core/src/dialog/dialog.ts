@@ -672,8 +672,11 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
         if (focusParentElement) {
             let _focusableElements = DomHandler.getFocusableElements(focusParentElement);
             if (_focusableElements && _focusableElements.length > 0) {
+                // an [autofocus] / pAutoFocus element (or the first focusable inside it) wins over the first focusable element
+                const autoFocusElement = focusParentElement.querySelector('[autofocus]');
+                const elementToFocus = (autoFocusElement && _focusableElements.find((el) => autoFocusElement === el || autoFocusElement.contains(el))) || _focusableElements[0];
                 this.zone.runOutsideAngular(() => {
-                    setTimeout(() => _focusableElements[0].focus(), 5);
+                    setTimeout(() => elementToFocus.focus(), 5);
                 });
                 return true;
             }

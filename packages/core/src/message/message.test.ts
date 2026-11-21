@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChangeDetection, signal, viewChild } from '@angular/core';
+import { Drawer } from '@exhaustive-ui/core/drawer';
+import { Popover } from '@exhaustive-ui/core/popover';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -1803,5 +1805,127 @@ describe('Message Signal Query API', () => {
         expect(templates.length).toBe(2);
         expect(templates.map((t: any) => t.getType())).toEqual(['header', 'footer']);
         expect(templates[0].template).toBeDefined();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Message],
+    template: `
+        @if (error()) {
+            <p-message severity="error">Error</p-message>
+        } @else {
+            <span class="message-else">ok</span>
+        }
+    `
+})
+class MessageInIfHostComponent {
+    error = signal(true);
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Message, Drawer],
+    template: `<p-drawer [(visible)]="visible"><p-message>Message Content</p-message></p-drawer>`
+})
+class MessageInDrawerHostComponent {
+    visible = signal(false);
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Message, Popover],
+    template: `<button class="popover-target">t</button><p-popover #op><p-message>Message Content</p-message></p-popover>`
+})
+class MessageInPopoverHostComponent {
+    op = viewChild.required<Popover>('op');
+}
+
+const waitFor = async (check: () => boolean, timeout = 2000) => {
+    const start = Date.now();
+    while (!check() && Date.now() - start < timeout) {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+};
+
+describe('Message lifecycle with animations enabled', () => {
+    beforeEach(() => {
+        TestBed.resetTestingModule();
+    });
+
+    it('should leave the DOM when an @if around it becomes false (optimus-ui#174)', async () => {
+        TestBed.configureTestingModule({
+            imports: [MessageInIfHostComponent],
+            providers: [provideZonelessChangeDetection()],
+            animationsEnabled: true
+        } as any);
+        const fixture = TestBed.createComponent(MessageInIfHostComponent);
+        await fixture.whenStable();
+        expect(fixture.nativeElement.querySelector('p-message')).toBeTruthy();
+
+        fixture.componentInstance.error.set(false);
+        await fixture.whenStable();
+        await waitFor(() => !fixture.nativeElement.querySelector('p-message'));
+
+        expect(fixture.nativeElement.querySelector('.message-else')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('p-message')).toBeNull();
+    });
+
+    it('should keep its projected content when a drawer is closed and reopened (optimus-ui#452)', async () => {
+        TestBed.configureTestingModule({
+            imports: [MessageInDrawerHostComponent],
+            providers: [provideZonelessChangeDetection()],
+            animationsEnabled: true
+        } as any);
+        const fixture = TestBed.createComponent(MessageInDrawerHostComponent);
+        await fixture.whenStable();
+
+        const setVisible = async (visible: boolean) => {
+            fixture.componentInstance.visible.set(visible);
+            await fixture.whenStable();
+            await waitFor(() => !!document.querySelector('.p-drawer p-message') === visible);
+        };
+        await setVisible(true);
+        expect(document.querySelector('.p-drawer p-message')?.textContent).toContain('Message Content');
+        await setVisible(false);
+        await setVisible(true);
+
+        const message = document.querySelector('.p-drawer p-message') as HTMLElement;
+        expect(message?.textContent).toContain('Message Content');
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        expect(getComputedStyle(message).opacity).toBe('1');
+        expect(message.getBoundingClientRect().height).toBeGreaterThan(0);
+        fixture.destroy();
+    });
+
+    it('should keep its projected content when a popover is closed and reopened (optimus-ui#516)', async () => {
+        TestBed.configureTestingModule({
+            imports: [MessageInPopoverHostComponent],
+            providers: [provideZonelessChangeDetection()],
+            animationsEnabled: true
+        } as any);
+        const fixture = TestBed.createComponent(MessageInPopoverHostComponent);
+        await fixture.whenStable();
+        const target = fixture.nativeElement.querySelector('.popover-target');
+        const popover = fixture.componentInstance.op();
+
+        popover.show(new MouseEvent('click'), target);
+        await fixture.whenStable();
+        await waitFor(() => !!document.querySelector('.p-popover p-message'));
+        expect(document.querySelector('.p-popover p-message')?.textContent).toContain('Message Content');
+
+        popover.hide();
+        await fixture.whenStable();
+        await waitFor(() => !document.querySelector('.p-popover'));
+
+        popover.show(new MouseEvent('click'), target);
+        await fixture.whenStable();
+        await waitFor(() => !!document.querySelector('.p-popover p-message'));
+        const message = document.querySelector('.p-popover p-message') as HTMLElement;
+        expect(message?.textContent).toContain('Message Content');
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        expect(getComputedStyle(message).opacity).toBe('1');
+        expect(message.getBoundingClientRect().height).toBeGreaterThan(0);
+        fixture.destroy();
     });
 });

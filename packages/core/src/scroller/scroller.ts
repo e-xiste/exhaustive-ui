@@ -550,6 +550,8 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.setSize();
                 this.calculateOptions();
                 this.calculateAutoSize();
+                // the new range is rendered on the next change detection: measure it again then
+                this._autoSize() && afterNextRender(() => this.calculateAutoSize(), { injector: this.injector });
             }, 1);
         }
     }
@@ -738,9 +740,13 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
 
         if (this._lazy()) {
             Promise.resolve().then(() => {
+                const step = this._step();
+                // From the top, the current page (getPageByFirst looks ahead by the tolerated items) can already be past
+                // the first one: request every page up to it, the scroll handlers only request the pages after it.
+                const pages = step && !this.both() && first === 0 ? this.getPageByFirst(0) + 1 : 1;
                 this.lazyLoadState.set({
-                    first: this._step() ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
-                    last: Math.min(this._step() ? this._step() : this.last(), (<any[]>this._items()).length)
+                    first: step ? (this.both() ? { rows: 0, cols: first.cols } : 0) : first,
+                    last: Math.min(step ? step * pages : this.last(), (<any[]>this._items()).length)
                 });
 
                 this.handleEvents('onLazyLoad', this.lazyLoadState());
@@ -758,8 +764,17 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                     (<ElementRef>this.elementViewChild()).nativeElement.style.contain = 'none';
 
                     const [contentWidth, contentHeight] = [getWidth(contentEl), getHeight(contentEl)];
-                    contentWidth !== this.defaultContentWidth() && ((<ElementRef>this.elementViewChild()).nativeElement.style.width = '');
-                    contentHeight !== this.defaultContentHeight() && ((<ElementRef>this.elementViewChild()).nativeElement.style.height = '');
+                    const element = (<ElementRef>this.elementViewChild()).nativeElement;
+                    // releasing the size below can shrink the viewport for a moment and clamp its scroll position
+                    const { scrollTop, scrollLeft } = element;
+                    // A list smaller than the viewport is measured even when its content has the size it had at init
+                    // (one item on the first search): the default size is that of the content, not of the viewport.
+                    const items = this._items() || [];
+                    const itemSize = this._itemSize();
+                    const listHeight = this.both() ? items.length * (<number[]>itemSize)[0] : this.vertical() ? items.length * <number>itemSize : Infinity;
+                    const listWidth = this.both() ? (this._columns() || items[0] || []).length * (<number[]>itemSize)[1] : this.horizontal() ? (this._columns() || items).length * <number>itemSize : Infinity;
+                    (contentWidth !== this.defaultContentWidth() || listWidth < getWidth(element)) && (element.style.width = '');
+                    (contentHeight !== this.defaultContentHeight() || listHeight < getHeight(element)) && (element.style.height = '');
 
                     const [width, height] = [getWidth((<ElementRef>this.elementViewChild()).nativeElement), getHeight((<ElementRef>this.elementViewChild()).nativeElement)];
                     (this.both() || this.horizontal()) && ((<ElementRef>this.elementViewChild()).nativeElement.style.width = width < <number>this.defaultWidth() ? width + 'px' : this._scrollWidth() || this.defaultWidth() + 'px');
@@ -768,6 +783,10 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                     contentEl.style.minHeight = contentEl.style.minWidth = '';
                     contentEl.style.position = '';
                     (<ElementRef>this.elementViewChild()).nativeElement.style.contain = '';
+                    if (element.scrollTop !== scrollTop || element.scrollLeft !== scrollLeft) {
+                        element.scrollTop = scrollTop;
+                        element.scrollLeft = scrollLeft;
+                    }
                 }
             });
         }

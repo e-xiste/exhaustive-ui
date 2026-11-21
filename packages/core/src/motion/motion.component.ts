@@ -291,15 +291,23 @@ export class Motion extends BaseComponent<MotionPassThrough> {
             const hideStrategy = this.hideStrategy();
 
             if (this.visible()) {
+                const initialMount = this.isInitialMount;
                 await nextFrame();
+                // closed again while waiting for the frame: the leave run of this effect takes over
+                if (!untracked(this.visible)) {
+                    this.isInitialMount = false;
+                    return;
+                }
                 resetStyles(this.$el, hideStrategy);
 
-                if (shouldAppear || !this.isInitialMount) {
+                if (shouldAppear || !initialMount) {
                     this.applyMotionDuration('enter');
                     this.motion?.enter();
                 }
             } else if (!this.isInitialMount) {
                 await nextFrame();
+                // reopened while waiting for the frame: the enter run of this effect takes over
+                if (untracked(this.visible)) return;
                 this.applyMotionDuration('leave');
                 this.motion?.leave()?.then(async () => {
                     if (this.$el && !this.cancelled && !this.visible()) {

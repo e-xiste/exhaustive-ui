@@ -92,8 +92,9 @@ export function getMotionMetadata(element: Element, expectedType?: MotionMetadat
     const styles = window.getComputedStyle(element);
 
     const getDelaysAndDurations = (type: MotionType): [number[], number[]] => {
-        const delays = styles[`${type}Delay`];
-        const durations = styles[`${type}Duration`];
+        // jsdom does not implement transition-* / animation-* computed properties
+        const delays = styles[`${type}Delay`] || '';
+        const durations = styles[`${type}Duration`] || '';
 
         return [delays.split(', ').map(toMs), durations.split(', ').map(toMs)];
     };

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ApplicationRef, ComponentRef, EmbeddedViewRef, Injectable, Injector, Type, createComponent, inject } from '@angular/core';
+import { ApplicationRef, ComponentRef, EmbeddedViewRef, EnvironmentInjector, Injectable, Injector, Type, createComponent, inject } from '@angular/core';
 import { appendChild } from '@exhaustive-ui/utils';
 import { DynamicDialog } from './dynamicdialog';
 import { DynamicDialogConfig } from './dynamicdialog-config';
@@ -67,7 +67,8 @@ export class DialogService {
         });
 
         const componentRef = createComponent(DynamicDialog, {
-            environmentInjector: this.appRef.injector,
+            // the environment the service was created in (lazy route, child module), not always the root one
+            environmentInjector: this.injector.get(EnvironmentInjector),
             elementInjector: new DynamicDialogInjector(this.injector, map)
         });
 
