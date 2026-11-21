@@ -2956,3 +2956,63 @@ describe('DatePicker time announcement', () => {
         expect(liveRegion()!.textContent!.trim()).toBe('10:05 am');
     });
 });
+
+describe('DatePicker inherited issue reproductions', () => {
+    let fixture: ComponentFixture<DatePicker>;
+    let picker: DatePicker;
+    let el: HTMLElement;
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const render = async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+    };
+
+    const panelShown = () => vi.waitFor(() => expect(getComputedStyle(el.querySelector('p-motion')!).display).not.toBe('none'));
+
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [DatePicker],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(DatePicker);
+        picker = fixture.componentInstance;
+        el = fixture.nativeElement;
+    });
+
+    afterEach(() => {
+        fixture.destroy();
+    });
+
+    it('keeps a single tabbable day cell after the header buttons in the inline calendar (optimus-ui#845)', async () => {
+        fixture.componentRef.setInput('inline', true);
+        await render();
+        await panelShown();
+        const tabbable = () => Array.from(el.querySelectorAll<HTMLElement>('button, [tabindex]')).filter((element) => element.tabIndex >= 0 && !(element as HTMLButtonElement).disabled);
+
+        const check = () => {
+            const order = tabbable();
+            const cells = order.filter((element) => element.matches('.p-datepicker-day'));
+            expect(cells.length).toBe(1);
+            const cellIndex = order.indexOf(cells[0]);
+            // Shift+Tab from the day cell reaches the header buttons
+            expect(order.slice(0, cellIndex).map((element) => element.className.match(/p-datepicker-(prev-button|select-month|select-year|next-button)/)?.[1])).toEqual(['prev-button', 'select-month', 'select-year', 'next-button']);
+            return cells[0];
+        };
+
+        const cell = check();
+        cell.focus();
+        cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', which: 39, keyCode: 39, bubbles: true, cancelable: true } as KeyboardEventInit));
+        await render();
+        expect(document.activeElement).not.toBe(cell);
+        check();
+
+        (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', which: 33, keyCode: 33, bubbles: true, cancelable: true } as KeyboardEventInit));
+        await render();
+        await wait(10);
+        expect(document.activeElement).toBe(check());
+    });
+
+});

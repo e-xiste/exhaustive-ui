@@ -1382,6 +1382,9 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
         afterNextRender(() => {
             if (this.inline()) {
                 this.contentViewChild() && this.contentViewChild()!.nativeElement.setAttribute(this.attributeSelector, '');
+                // make one cell tabbable so Tab and Shift+Tab move between the header buttons and the dates
+                this.preventFocus.set(true);
+                this.initFocusableCell();
             } else {
                 if (!this.$disabled() && this.overlay()) {
                     this.initFocusableCell();
@@ -1616,6 +1619,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
             this.realignOverlay();
+            if (this.navigationState()) {
+                // keyboard or button navigation: move the focus and the tabbable cell to the rendered month
+                setTimeout(() => this.updateFocus(), 1);
+            }
         }
     }
 
@@ -1648,6 +1655,10 @@ export class DatePicker extends BaseInput<DatePickerPassThrough> {
             this.onMonthChange.emit({ month: this.currentMonth() + 1, year: this.currentYear() });
             this.createMonths(this.currentMonth(), this.currentYear());
             this.realignOverlay();
+            if (this.navigationState()) {
+                // keyboard or button navigation: move the focus and the tabbable cell to the rendered month
+                setTimeout(() => this.updateFocus(), 1);
+            }
         }
     }
 
