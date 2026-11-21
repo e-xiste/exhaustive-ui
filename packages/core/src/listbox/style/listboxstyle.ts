@@ -19,8 +19,15 @@ const style = /*css*/ `
         flex-grow: 1;
     }
 
+    /* the list fills what the header and footer leave of a sized listbox (scrollHeight="flex") */
+    .p-listbox {
+        display: flex;
+        flex-direction: column;
+    }
+
     .p-listbox-list-container {
-        height: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     /* CDK Drag & Drop styles */

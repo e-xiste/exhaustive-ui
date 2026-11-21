@@ -3400,4 +3400,14 @@ describe('Listbox - themed layout', () => {
         const option = host.querySelector('#checkboxes li[role="option"] .p-checkbox')!.getBoundingClientRect();
         expect(header.left).toBe(option.left);
     });
+
+    it('keeps the list of a flex listbox inside its box when it has a filter and a header (optimus-ui#72)', () => {
+        const box = host.querySelector('#sized')!.getBoundingClientRect();
+        const listbox = host.querySelector('#sized p-listbox')!.getBoundingClientRect();
+        const list = host.querySelector('#sized .p-listbox-list-container') as HTMLElement;
+
+        expect(listbox.bottom).toBe(box.bottom);
+        expect(list.getBoundingClientRect().bottom).toBeLessThanOrEqual(listbox.bottom);
+        expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+    });
 });
