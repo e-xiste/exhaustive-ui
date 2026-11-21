@@ -147,7 +147,7 @@ export class TableService {
             </div>
         }
         @if (captionTemplate() || _captionTemplate()) {
-            <div [class]="cx('header')" [pBind]="ptm('header')">
+            <div [class]="cx('header')" [pBind]="ptm('header')" [attr.id]="id + '-caption'">
                 <ng-container *ngTemplateOutlet="captionTemplate() || _captionTemplate()"></ng-container>
             </div>
         }
@@ -253,7 +253,7 @@ export class TableService {
             }
 
             <ng-template #buildInTable let-items let-scrollerOptions="options">
-                <table #table role="table" [class]="cn(cx('table'), tableStyleClass())" [pBind]="ptm('table')" [style]="tableStyle()" [attr.id]="id + '-table'">
+                <table #table role="table" [class]="cn(cx('table'), tableStyleClass())" [pBind]="ptm('table')" [style]="tableStyle()" [attr.id]="id + '-table'" [attr.aria-labelledby]="captionTemplate() || _captionTemplate() ? id + '-caption' : null">
                     <ng-container *ngTemplateOutlet="colGroupTemplate() || _colGroupTemplate(); context: { $implicit: scrollerOptions.columns }"></ng-container>
                     <thead role="rowgroup" #thead [class]="cx('thead')" [ngStyle]="sx('thead')" [pBind]="ptm('thead')">
                         <ng-container

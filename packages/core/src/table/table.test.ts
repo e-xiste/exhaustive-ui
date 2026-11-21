@@ -3928,3 +3928,57 @@ describe('Table keyboard reorder (optimus-ui#13)', () => {
         expect(firstCells()).toEqual(['a1', 'a2', 'a3']);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table [value]="rows">
+            @if (withCaption) {
+                <ng-template #caption>Products</ng-template>
+            }
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-row>
+                <tr>
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class TestTableCaptionComponent {
+    withCaption = true;
+    rows = [{ name: 'A' }];
+}
+
+describe('Table caption association (optimus-ui#100)', () => {
+    const render = async (withCaption: boolean) => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TestTableCaptionComponent], providers: [provideZonelessChangeDetection()] }).compileComponents();
+        const fixture = TestBed.createComponent(TestTableCaptionComponent);
+        fixture.componentInstance.withCaption = withCaption;
+        await fixture.whenStable();
+        return fixture;
+    };
+
+    it('names the table with its caption', async () => {
+        const fixture = await render(true);
+        const table = fixture.nativeElement.querySelector('table') as HTMLElement;
+        const labelledBy = table.getAttribute('aria-labelledby');
+
+        expect(labelledBy).toBeTruthy();
+        const caption = fixture.nativeElement.querySelector('#' + labelledBy) as HTMLElement;
+        expect(caption.classList).toContain('p-datatable-header');
+        expect(caption.textContent!.trim()).toBe('Products');
+    });
+
+    it('does not reference a caption when there is none', async () => {
+        const fixture = await render(false);
+
+        expect(fixture.nativeElement.querySelector('table').hasAttribute('aria-labelledby')).toBe(false);
+    });
+});
