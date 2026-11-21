@@ -83,6 +83,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                 [attr.data-id]="node()!.key"
                 role="treeitem"
                 (keydown)="onKeyDown($event)"
+                (click)="onTreeItemClick($event)"
                 (contextmenu)="onNodeRightClick($event)"
                 [pBind]="getPTOptions('node')"
             >
@@ -352,6 +353,14 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
 
     onNodeClick(event: MouseEvent) {
         this.tree.onNodeClick(event, <TreeNode>this.node());
+    }
+
+    onTreeItemClick(event: MouseEvent) {
+        // Screen readers in browse mode (Narrator, NVDA, JAWS) activate the focused treeitem with a click on it
+        // instead of a keydown; clicks bubbling from the node content are already handled by onNodeClick.
+        if (event.target === event.currentTarget) {
+            this.onNodeClick(event);
+        }
     }
 
     onNodeTouchEnd() {

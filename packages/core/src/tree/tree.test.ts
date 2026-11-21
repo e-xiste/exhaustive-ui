@@ -3680,4 +3680,29 @@ describe('Tree drag and drop drop points', () => {
         await dropOn('A', 'C', 0.05);
         expect(drops[2].dropPosition).toBe('before');
     });
+
+    it('selects a node from a click a screen reader sends to the treeitem (optimus-ui#115)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+        const treeitem = content('B').closest('[role="treeitem"]') as HTMLElement;
+
+        treeitem.focus();
+        treeitem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        await settle();
+
+        expect((fixture.componentInstance.selection() as TreeNode)?.label).toBe('B');
+        expect(treeitem.getAttribute('aria-selected')).toBe('true');
+    });
+
+    it('selects a node with Enter on the focused treeitem (optimus-ui#115)', async () => {
+        fixture.componentRef.setInput('selectionMode', 'single');
+        await settle();
+        const treeitem = content('C').closest('[role="treeitem"]') as HTMLElement;
+
+        treeitem.focus();
+        treeitem.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', key: 'Enter', bubbles: true, cancelable: true }));
+        await settle();
+
+        expect((fixture.componentInstance.selection() as TreeNode)?.label).toBe('C');
+    });
 });
