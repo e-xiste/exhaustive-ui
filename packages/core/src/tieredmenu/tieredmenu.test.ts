@@ -1642,9 +1642,60 @@ describe('TieredMenu', () => {
 
             it('should apply global PT to all items', () => {
                 const items = ptFixture.debugElement.queryAll(By.css('li[role="menuitem"]'));
+                expect(items.length).toBeGreaterThan(0);
                 items.forEach((item) => {
                     expect(item.nativeElement.classList.contains('GLOBAL_ITEM_CLASS')).toBe(true);
                 });
+            });
+        });
+
+        describe('Case 7b: Global PT on submenu sections', () => {
+            @Component({
+                changeDetection: ChangeDetectionStrategy.Eager,
+                standalone: true,
+                imports: [TieredMenu],
+                template: `<p-tieredmenu [model]="model"></p-tieredmenu>`
+            })
+            class PTGlobalSubTestComponent {
+                model: MenuItem[] = [{ label: 'File', items: [{ label: 'New' }, { separator: true }, { label: 'Open' }] }, { label: 'Edit' }];
+            }
+
+            it('should apply the global tieredmenu PT to item, label, submenu and separator sections', async () => {
+                TestBed.resetTestingModule();
+                const fixture = TestBed.configureTestingModule({
+                    imports: [PTGlobalSubTestComponent],
+                    providers: [
+                        provideZonelessChangeDetection(),
+                        provideExhaustive({
+                            pt: {
+                                tieredmenu: {
+                                    item: { class: 'G_ITEM' },
+                                    itemLabel: { class: 'G_LABEL' },
+                                    rootList: { class: 'G_ROOTLIST' },
+                                    submenu: { class: 'G_SUBMENU' },
+                                    separator: { class: 'G_SEPARATOR' }
+                                }
+                            }
+                        })
+                    ]
+                }).createComponent(PTGlobalSubTestComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+
+                const el: HTMLElement = fixture.nativeElement;
+                (el.querySelector('.p-tieredmenu-item-content') as HTMLElement).click();
+                fixture.detectChanges();
+                await fixture.whenStable();
+
+                const items = el.querySelectorAll('li.p-tieredmenu-item');
+                const labels = el.querySelectorAll('.p-tieredmenu-item-label');
+                expect(items.length).toBe(4);
+                expect(labels.length).toBe(4);
+                items.forEach((item) => expect(item.classList.contains('G_ITEM')).toBe(true));
+                labels.forEach((label) => expect(label.classList.contains('G_LABEL')).toBe(true));
+                expect(el.querySelector('.p-tieredmenu-root-list')!.classList.contains('G_ROOTLIST')).toBe(true);
+                expect(el.querySelector('.p-tieredmenu-submenu')!.classList.contains('G_SUBMENU')).toBe(true);
+                expect(el.querySelector('.p-tieredmenu-separator')!.classList.contains('G_SEPARATOR')).toBe(true);
             });
         });
 
