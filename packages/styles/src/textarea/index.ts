@@ -65,6 +65,11 @@ export const style = /*css*/ `
         width: 100%;
     }
 
+    .p-iftalabel > .p-textarea,
+    .p-floatlabel > .p-textarea {
+        vertical-align: top;
+    }
+
     .p-textarea-resizable {
         overflow: hidden;
         resize: none;

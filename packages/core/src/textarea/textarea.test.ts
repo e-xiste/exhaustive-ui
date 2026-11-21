@@ -6,6 +6,11 @@ import { By } from '@angular/platform-browser';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { TextareaPassThrough } from '@exhaustive-ui/core/types/textarea';
 import { Textarea } from './textarea';
+import { Base } from '@exhaustive-ui/core/base';
+import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { IftaLabel } from '@exhaustive-ui/core/iftalabel';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -811,5 +816,46 @@ describe('Textarea autoResize scroll position (optimus-ui#646)', () => {
 
         expect(scroller.scrollTop).toBe(scrollTop);
         fixture.nativeElement.remove();
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [Textarea, IftaLabel, FloatLabel],
+    template: `
+        <p-iftalabel>
+            <textarea pTextarea id="ifta" rows="5" cols="30"></textarea>
+            <label for="ifta">Description</label>
+        </p-iftalabel>
+        <p-floatlabel>
+            <textarea pTextarea id="float" rows="5" cols="30"></textarea>
+            <label for="float">Description</label>
+        </p-floatlabel>
+    `
+})
+class TestThemedLabelTextareaComponent {}
+
+describe('Textarea themed inside labels', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('does not leave a gap under the textarea of an ifta or float label (optimus-ui#213)', async () => {
+        TestBed.configureTestingModule({
+            imports: [TestThemedLabelTextareaComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(TestThemedLabelTextareaComponent);
+        await fixture.whenStable();
+
+        const gaps = ['p-iftalabel', 'p-floatlabel'].map((selector) => {
+            const label = fixture.nativeElement.querySelector(selector) as HTMLElement;
+            return label.getBoundingClientRect().height - (label.querySelector('textarea') as HTMLTextAreaElement).getBoundingClientRect().height;
+        });
+        expect(gaps).toEqual([0, 0]);
     });
 });
