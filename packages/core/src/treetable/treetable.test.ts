@@ -7,7 +7,7 @@ import { SharedModule, TreeNode } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { MultiSelect } from '@exhaustive-ui/core/multiselect';
 import { of } from 'rxjs';
-import { TreeTable, TreeTableModule, TreeTableToggler, TTEditableColumn, TTReorderableColumn, TTScrollableView } from './treetable';
+import { TreeTable, TreeTableModule, TreeTableToggler, TTCheckbox, TTEditableColumn, TTReorderableColumn, TTScrollableView } from './treetable';
 
 describe('TreeTable', () => {
     let component: TestBasicTreeTableComponent;
@@ -5305,5 +5305,69 @@ describe('TreeTable expand while filtered', () => {
         await toggle('Beta');
 
         expect(names()).toEqual(['Beta', 'Beta child']);
+    });
+});
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" [columns]="cols" selectionMode="checkbox" dataKey="key" [(selectionKeys)]="selectionKeys">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td>
+                        <p-treetable-toggler [rowNode]="rowNode" />
+                        <p-treetable-checkbox [value]="rowNode" />
+                        <span class="name">{{ rowData.name }}</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableCheckboxExpandHostComponent {
+    cols = [{ field: 'name', header: 'Name' }];
+    selectionKeys: any = { '0-0': { checked: true, partialChecked: false } };
+    nodes: TreeNode[] = Array.from({ length: 60 }, (_, i) => ({
+        key: `${i}`,
+        data: { name: `Node ${i}` },
+        children: Array.from({ length: 3 }, (_, j) => ({ key: `${i}-${j}`, data: { name: `Node ${i}.${j}` } }))
+    }));
+
+    expandAll() {
+        this.nodes.forEach((node) => (node.expanded = true));
+        this.nodes = [...this.nodes];
+    }
+}
+
+describe('TreeTable checkbox rendering cost', () => {
+    it('keeps the existing rows and checkboxes when expanding all rows (optimus-ui#539)', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableCheckboxExpandHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TreeTableCheckboxExpandHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const timers = vi.spyOn(window, 'setTimeout');
+        const checkboxRenders = vi.spyOn(TTCheckbox.prototype, 'onInit');
+        fixture.componentInstance.expandAll();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const timerCalls = timers.mock.calls.length;
+        timers.mockRestore();
+
+        expect(fixture.nativeElement.querySelectorAll('p-treetable-checkbox').length).toBe(240);
+        // only the 180 new child rows create a checkbox
+        expect(checkboxRenders.mock.calls.length).toBe(180);
+        expect(timerCalls).toBeLessThan(20);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const checkedRow = (Array.from(fixture.nativeElement.querySelectorAll('tr')) as HTMLElement[]).find((tr) => tr.querySelector('.name')!.textContent!.trim() === 'Node 0.0')!;
+        expect(checkedRow.querySelector('p-checkbox')!.getAttribute('data-p-highlight')).toBe('true');
+        checkboxRenders.mockRestore();
     });
 });

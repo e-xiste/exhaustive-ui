@@ -574,10 +574,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
      */
     readonly contextMenu = input<any>();
     /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
+     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for the identity of the row node.
      * @group Props
      */
-    readonly rowTrackBy = input<Function>((index: number, item: any) => item);
+    // The serialized row wrappers are rebuilt on every expand, collapse, sort or filter: tracking the wrapper re-created every row.
+    readonly rowTrackBy = input<Function>((index: number, item: any) => item?.node ?? item);
     /**
      * An array of FilterMetadata objects to provide external filters.
      * @group Props
