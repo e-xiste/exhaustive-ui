@@ -31,6 +31,7 @@
                         "browsers": ["ChromiumHeadless"],
                         "include": ["**/*.test.ts"],
                         "runnerConfig": "vitest.config.mts",
+                        "setupFiles": ["src/test-setup.ts"],
                         "reporters": ["default", ["junit", { "outputFile": "reports/junit/vitest.xml" }]]
                     }
                 },
