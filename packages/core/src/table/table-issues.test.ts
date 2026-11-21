@@ -1116,3 +1116,51 @@ describe('Table lazy virtual scroll with rows appended (optimus-ui#686)', () => 
         fixture.nativeElement.remove();
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [TableModule],
+    template: `
+        <p-table #dt [value]="rows" [scrollable]="true" [scrollHeight]="scrollHeight()" [virtualScroll]="true" [virtualScrollItemSize]="40" [globalFilterFields]="['name']">
+            <ng-template #body let-row>
+                <tr style="height: 40px" class="data-row">
+                    <td>{{ row.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    `
+})
+class VirtualDynamicHeightComponent {
+    @ViewChild('dt') table!: Table;
+    rows = makeRows(1000);
+    scrollHeight = signal('300px');
+}
+
+describe('Table virtual scroll with a changed scroll height (optimus-ui#365)', () => {
+    it('keeps the new scroll height after a filter is applied and cleared', async () => {
+        const fixture = await mount(VirtualDynamicHeightComponent);
+        await tick(50);
+        await fixture.whenStable();
+        const scroller = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        const height = () => Math.round(scroller.getBoundingClientRect().height);
+        expect(height()).toBe(300);
+
+        fixture.componentInstance.scrollHeight.set('200px');
+        await tick(50);
+        await fixture.whenStable();
+        expect(height()).toBe(200);
+
+        fixture.componentInstance.table.filterGlobal('Name 999', 'contains');
+        await tick(400);
+        await fixture.whenStable();
+        await tick(50);
+        expect(height()).toBeLessThan(200);
+
+        fixture.componentInstance.table.filterGlobal('', 'contains');
+        await tick(400);
+        await fixture.whenStable();
+        await tick(50);
+        expect(height()).toBe(200);
+        fixture.nativeElement.remove();
+    });
+});
