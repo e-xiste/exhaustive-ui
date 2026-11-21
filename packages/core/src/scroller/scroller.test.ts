@@ -4722,6 +4722,24 @@ describe('Scroller scrollToIndex', () => {
         scroller.scrollToIndex(20);
         expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, top: 1000, behavior: 'auto' });
     });
+
+    it('reaches the index when the new spacer size is not rendered yet', async () => {
+        TestBed.configureTestingModule({ imports: [TestScrollToIndexScrollerComponent], providers: [provideZonelessChangeDetection()] });
+        const fixture = TestBed.createComponent(TestScrollToIndexScrollerComponent);
+        await fixture.whenStable();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        await fixture.whenStable();
+
+        const scroller = fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        const el = fixture.nativeElement.querySelector('.p-virtualscroller') as HTMLElement;
+        expect(el.scrollHeight).toBe(1000 * 50);
+        // as right after an init: the spacer grew but the next render has not applied it yet
+        scroller.spacerStyle.set({ height: 2000 * 50 + 'px' });
+        scroller.scrollToIndex(1500);
+        await fixture.whenStable();
+
+        expect(el.scrollTop).toBe(1500 * 50);
+    });
 });
 
 @Component({

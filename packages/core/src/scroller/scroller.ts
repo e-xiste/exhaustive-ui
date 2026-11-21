@@ -624,6 +624,17 @@ export class Scroller extends BaseComponent<VirtualScrollerPassThrough> {
                 this.horizontal() ? scrollTo(calculateCoord(index, itemSize, contentPos.left), scrollTop) : scrollTo(scrollLeft, calculateCoord(index, itemSize, contentPos.top));
                 isScrollChanged = this.lastScrollPos() !== (this.horizontal() ? scrollLeft : scrollTop);
                 isRangeChanged = newFirst !== first;
+
+                // Called right after the scroller is initialized (a Select opening on its selected option), the new spacer
+                // size is not rendered yet and the browser stops the scroll at the end of the current content: scroll
+                // again once it is.
+                const element = this.elementViewChild()?.nativeElement;
+                const spacerSize = parseFloat(this.spacerStyle()?.[this.horizontal() ? 'width' : 'height']);
+                if (element && !this.destroyed && this._showSpacer() && spacerSize > (this.horizontal() ? element.scrollWidth : element.scrollHeight)) {
+                    afterNextRender(() => !this.destroyed && this.scrollTo(this.horizontal() ? { left: calculateCoord(index, itemSize, contentPos.left), behavior } : { top: calculateCoord(index, itemSize, contentPos.top), behavior }), {
+                        injector: this.injector
+                    });
+                }
             }
 
             this.isRangeChanged.set(isRangeChanged);
