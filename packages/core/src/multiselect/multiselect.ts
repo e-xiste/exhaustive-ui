@@ -410,7 +410,7 @@ export class MultiSelectItem extends BaseComponent {
                                             (blur)="onFilterBlur($event)"
                                             [class]="cx('pcFilter')"
                                             [attr.disabled]="$disabled() ? '' : undefined"
-                                            [attr.placeholder]="filterPlaceHolder()"
+                                            [attr.placeholder]="filterPlaceholder()"
                                             [attr.aria-label]="ariaFilterLabel()"
                                             [unstyled]="unstyled()"
                                         />
@@ -597,7 +597,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * Defines placeholder of the filter input.
      * @group Props
      */
-    filterPlaceHolder = input<string | undefined>();
+    filterPlaceholder = input<string | undefined>();
     /**
      * Locale to use in filtering. The default locale is the host environment's current locale.
      * @group Props
@@ -914,13 +914,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    readonly onPanelShow = output<AnimationEvent>();
+    readonly onShow = output<AnimationEvent>();
     /**
      * Callback to invoke when overlay panel becomes hidden.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    readonly onPanelHide = output<AnimationEvent>();
+    readonly onHide = output<AnimationEvent>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {MultiSelectLazyLoadEvent} event - Lazy load event.
@@ -2083,13 +2083,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             }
         }
 
-        this.onPanelShow.emit(event);
+        this.onShow.emit(event);
     }
 
     onOverlayAfterLeave(event: any) {
         this.itemsWrapper.set(null);
         this.onModelTouched();
-        this.onPanelHide.emit(event);
+        this.onHide.emit(event);
     }
 
     resetFilter() {

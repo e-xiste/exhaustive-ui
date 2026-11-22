@@ -187,7 +187,7 @@ export const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * Fieldset's, Panel's, Accordion's and Drawer's `transitionOptions` is left out too: the same input is still alive on
  * other components (p-stepper, ...), so a name-only scan cannot tell their reads apart.
  * ToggleButton's `inputId` is left out for the same reason: every other form component still exposes
- * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: Dialog and Drawer still read it.
+ * a working `inputId`. Popover's `ariaCloseLabel` is left out as well: renamed-inputs already reports it (Drawer's became `closeAriaLabel`).
  * SplitButton's `plain` is left out too: Button and pButton still expose a working `plain`.
  * ContextMenuSub's `autoZIndex`, `baseZIndex` and `popup` are left out too: ContextMenu itself and every
  * other overlay component still expose them.

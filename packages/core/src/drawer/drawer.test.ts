@@ -28,7 +28,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
             [autoZIndex]="autoZIndex"
             [baseZIndex]="baseZIndex"
             [closeButtonProps]="closeButtonProps"
-            [ariaCloseLabel]="ariaCloseLabel"
+            [closeAriaLabel]="closeAriaLabel"
             [fullScreen]="fullScreen"
             (onShow)="onShow($event)"
             (onHide)="onHide($event)"
@@ -54,7 +54,7 @@ class TestDrawerBasicComponent {
     autoZIndex = true;
     baseZIndex = 0;
     closeButtonProps: any = { severity: 'secondary', text: true, rounded: true };
-    ariaCloseLabel = '';
+    closeAriaLabel = '';
     fullScreen = false;
 
     showCount = 0;
@@ -200,7 +200,7 @@ class TestDrawerModalComponent {
     standalone: false,
     imports: [Drawer],
     template: `
-        <p-drawer [(visible)]="visible" [closable]="closable" [closeOnEscape]="closeOnEscape" [ariaCloseLabel]="ariaCloseLabel">
+        <p-drawer [(visible)]="visible" [closable]="closable" [closeOnEscape]="closeOnEscape" [closeAriaLabel]="closeAriaLabel">
             <p>Accessibility test content</p>
         </p-drawer>
     `
@@ -209,7 +209,7 @@ class TestDrawerAccessibilityComponent {
     visible = false;
     closable = true;
     closeOnEscape = true;
-    ariaCloseLabel = 'Close drawer';
+    closeAriaLabel = 'Close drawer';
 }
 
 describe('Drawer', () => {
@@ -805,17 +805,17 @@ describe('Drawer', () => {
             expect(drawerContainer.nativeElement.getAttribute('data-pc-section')).toBe('root');
         });
 
-        it('should set aria-label on close button when ariaCloseLabel is provided', async () => {
+        it('should set aria-label on close button when closeAriaLabel is provided', async () => {
             testComponent.visible = true;
-            testComponent.ariaCloseLabel = 'Close drawer';
+            testComponent.closeAriaLabel = 'Close drawer';
             testComponent.closable = true;
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
             await new Promise((resolve) => setTimeout(resolve, 100));
 
-            // Check if ariaCloseLabel property is set on the drawer component
+            // Check if closeAriaLabel property is set on the drawer component
             const drawerComponent = testFixture.debugElement.query(By.directive(Drawer)).componentInstance;
-            expect(drawerComponent.ariaCloseLabel()).toBe('Close drawer');
+            expect(drawerComponent.closeAriaLabel()).toBe('Close drawer');
 
             const closeButton = testFixture.debugElement.query(By.css('p-button'));
             if (closeButton) {

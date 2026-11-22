@@ -21,10 +21,15 @@
             "factory": "./migrations/config-overlay-options-signal/migration",
             "description": "Rewrite programmatic access to Exhaustive.overlayOptions, which is a signal in this version: assignments become .set(value) and reads become () calls."
         },
+        "renamed-outputs": {
+            "version": "22.0.0",
+            "factory": "./migrations/renamed-outputs/migration",
+            "description": "Rename event bindings of outputs renamed in this version to the name the other components use: onFilterEvent to onFilter on p-orderList/p-orderlist/p-order-list; selectAllChange to onSelectAllChange on p-table; onPanelShow to onShow and onPanelHide to onHide on p-multiSelect/p-multiselect/p-multi-select. The event payloads are unchanged, so $event keeps working. A p-table [(selectAll)] two-way binding, which relied on selectAllChange, is reported for manual review, as are programmatic references to the old names."
+        },
         "renamed-inputs": {
             "version": "22.0.0",
             "factory": "./migrations/renamed-inputs/migration",
-            "description": "Rename bindings of deprecated input aliases removed in this version to their replacement: showCloseIcon to closable on p-drawer; dropdownAppendTo to appendTo on p-paginator; maxLength to maxlength on p-password; minLength to minQueryLength on p-autoComplete/p-autocomplete/p-auto-complete; containerStyleClass to class and containerStyle to style on p-treeSelect/p-treeselect/p-tree-select; virtualRowHeight to virtualScrollItemSize on p-treeTable/p-treetable/p-tree-table. A tag that already binds the replacement is reported for manual review, as are programmatic reads/writes of the removed names."
+            "description": "Rename bindings of deprecated input aliases removed in this version to their replacement: showCloseIcon to closable on p-drawer; dropdownAppendTo to appendTo on p-paginator; maxLength to maxlength on p-password; minLength to minQueryLength on p-autoComplete/p-autocomplete/p-auto-complete; containerStyleClass to class and containerStyle to style on p-treeSelect/p-treeselect/p-tree-select; virtualRowHeight to virtualScrollItemSize on p-treeTable/p-treetable/p-tree-table; filterPlaceHolder to filterPlaceholder on p-listbox/p-listBox/p-list-box and p-multiSelect/p-multiselect/p-multi-select; ariaLabelledby to ariaLabelledBy on p-imageCompare/p-imagecompare/p-image-compare; ariaCloseLabel to closeAriaLabel on p-drawer. A tag that already binds the replacement is reported for manual review, as are programmatic reads/writes of the removed names."
         }
     }
 }

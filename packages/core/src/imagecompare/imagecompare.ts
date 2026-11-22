@@ -24,7 +24,7 @@ const IMAGECOMPARE_INSTANCE = new InjectionToken<ImageCompare>('IMAGECOMPARE_INS
     host: {
         '[class]': "cx('root')",
         '[attr.tabindex]': 'tabindex()',
-        '[attr.aria-labelledby]': 'ariaLabelledby()',
+        '[attr.aria-labelledby]': 'ariaLabelledBy()',
         '[attr.aria-label]': 'ariaLabel()'
     },
     hostDirectives: [Bind],
@@ -53,7 +53,7 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
      * Defines a string value that labels an interactive element.
      * @group Props
      */
-    readonly ariaLabelledby = input<string | undefined>();
+    readonly ariaLabelledBy = input<string | undefined>();
     /**
      * Identifier of the underlying input element.
      * @group Props

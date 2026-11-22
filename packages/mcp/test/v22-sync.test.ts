@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { REMOVED_INPUT_GROUPS } from '../../core/schematics/migrations/remove-dead-inputs/migration';
 import { REMOVED_OUTPUT_GROUPS } from '../../core/schematics/migrations/remove-dead-outputs/migration';
 import { RENAMED_INPUT_GROUPS } from '../../core/schematics/migrations/renamed-inputs/migration';
+import { RENAMED_OUTPUT_GROUPS } from '../../core/schematics/migrations/renamed-outputs/migration';
 import { MIGRATED_SELECTORS } from '../../core/schematics/migrations/styleclass-to-class/migration';
-import { DEAD_INPUTS, DEAD_OUTPUTS, RENAMED, STYLE_CLASS_REMOVED } from '../src/v22';
+import { DEAD_INPUTS, DEAD_OUTPUTS, RENAMED, RENAMED_OUTPUTS, STYLE_CLASS_REMOVED } from '../src/v22';
 
 const key = (selector: string) => selector.toLowerCase().replace(/^p-/, '').replace(/-/g, '');
 
@@ -18,13 +19,27 @@ describe('v22 data matches the ng update migrations', () => {
 
         for (const group of RENAMED_INPUT_GROUPS) {
             for (const { from, to } of group.renames) {
-                (fromMigrations[key(group.selector)] ??= {})[from.toLowerCase()] = to;
+                // A rename that only changes case (maxLength → maxlength, filterPlaceHolder → filterPlaceholder...)
+                // needs no hint: the validator compares input names case-insensitively already.
+                if (from.toLowerCase() !== to.toLowerCase()) {
+                    (fromMigrations[key(group.selector)] ??= {})[from.toLowerCase()] = to;
+                }
             }
         }
 
-        // maxLength → maxlength only changes case: the validator compares names case-insensitively already.
-        delete fromMigrations.password;
         expect(RENAMED).toEqual(fromMigrations);
+    });
+
+    it('renamed outputs', () => {
+        const fromMigrations: Record<string, Record<string, string>> = {};
+
+        for (const group of RENAMED_OUTPUT_GROUPS) {
+            for (const { from, to } of group.renames) {
+                (fromMigrations[key(group.selector)] ??= {})[from] = to;
+            }
+        }
+
+        expect(RENAMED_OUTPUTS).toEqual(fromMigrations);
     });
 
     it('dead inputs', () => {

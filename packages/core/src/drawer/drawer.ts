@@ -82,7 +82,7 @@ const DRAWER_INSTANCE = new InjectionToken<Drawer>('DRAWER_INSTANCE');
                                 (onClick)="close($event)"
                                 (keydown.enter)="close($event)"
                                 [buttonProps]="closeButtonProps()"
-                                [ariaLabel]="ariaCloseLabel()"
+                                [ariaLabel]="closeAriaLabel()"
                                 [attr.data-pc-group-section]="'iconcontainer'"
                                 [unstyled]="unstyled()"
                             >
@@ -161,7 +161,7 @@ export class Drawer extends BaseComponent<DrawerPassThrough> {
      * Aria label of the close icon.
      * @group Props
      */
-    ariaCloseLabel = input<string | undefined>(undefined);
+    closeAriaLabel = input<string | undefined>(undefined);
     /**
      * Whether to automatically manage layering.
      * @group Props

@@ -58,7 +58,7 @@ interface Product {
             (selectionChange)="onSelectionChange($event)"
             (onReorder)="onReorder($event)"
             (onSelectionChange)="onSelectionChangeEvent($event)"
-            (onFilterEvent)="onFilterEvent($event)"
+            (onFilter)="onFilter($event)"
             (onFocus)="onFocus($event)"
             (onBlur)="onBlur($event)"
         >
@@ -128,7 +128,7 @@ class TestBasicOrderListComponent {
         this.selectionChangeEventData = event;
     }
 
-    onFilterEvent(event: any) {
+    onFilter(event: any) {
         this.filterEventData = event;
     }
 
@@ -716,10 +716,10 @@ describe('OrderList', () => {
             expect(component.onReorder).toHaveBeenCalledWith(component.selection);
         });
 
-        it('should emit onFilterEvent when filtering', async () => {
+        it('should emit onFilter when filtering', async () => {
             component.filterBy = 'name';
             fixture.detectChanges();
-            vi.spyOn(component, 'onFilterEvent').mockImplementation(() => {});
+            vi.spyOn(component, 'onFilter').mockImplementation(() => {});
 
             const event = new KeyboardEvent('keyup', { key: 'a' });
             Object.defineProperty(event, 'target', {
@@ -730,7 +730,7 @@ describe('OrderList', () => {
             orderList.onFilterKeyup(event);
             await fixture.whenStable();
 
-            expect(component.onFilterEvent).toHaveBeenCalled();
+            expect(component.onFilter).toHaveBeenCalled();
             expect(orderList.filterValue()).toBe('product a');
         });
 
@@ -2190,9 +2190,9 @@ describe('OrderList filter wiring', () => {
         expect(optionEls().map((o) => o.nativeElement.textContent.trim())).toEqual(['Beta', 'Delta']);
     });
 
-    it('syncs filterValue/visibleOptions and emits onFilterEvent when typing', async () => {
+    it('syncs filterValue/visibleOptions and emits onFilter when typing', async () => {
         const emitted: any[] = [];
-        orderList.onFilterEvent.subscribe((event) => emitted.push(event.value));
+        orderList.onFilter.subscribe((event) => emitted.push(event.value));
 
         await type('ta');
 

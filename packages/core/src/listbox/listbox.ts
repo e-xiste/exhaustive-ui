@@ -126,7 +126,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                                 [attr.disabled]="$disabled() ? '' : undefined"
                                 [attr.aria-controls]="_id() + '_list'"
                                 [attr.aria-activedescendant]="focusedOptionId()"
-                                [attr.placeholder]="filterPlaceHolder()"
+                                [attr.placeholder]="filterPlaceholder()"
                                 [attr.aria-label]="ariaFilterLabel()"
                                 [attr.tabindex]="!$disabled() && !focused() ? tabindex() : -1"
                                 (input)="onFilterChange($event)"
@@ -575,7 +575,7 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      * Defines placeholder of the filter input.
      * @group Props
      */
-    readonly filterPlaceHolder = input<string | undefined>();
+    readonly filterPlaceholder = input<string | undefined>();
     /**
      * Text to display when filtering does not return any results.
      * @group Props

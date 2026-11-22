@@ -374,15 +374,16 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                     break;
                 }
 
-                if (/^on[A-Z]/.test(attribute.name)) {
-                    const removed = isOwnElement ? removedOutputHint(element.name, attribute.name) : undefined;
+                const removed = isOwnElement ? removedOutputHint(element.name, attribute.name) : undefined;
 
+                if (removed || /^on[A-Z]/.test(attribute.name)) {
                     issues.push({
                         kind: 'unknown-output',
                         severity: 'error',
                         name: attribute.name,
                         message: `"${attribute.name}" is not an output of ${label}.${removed ? ` ${removed.message}` : ''}`,
-                        allowedEvents
+                        allowedEvents,
+                        ...(removed?.suggestion ? { suggestion: removed.suggestion } : {})
                     });
                 }
 

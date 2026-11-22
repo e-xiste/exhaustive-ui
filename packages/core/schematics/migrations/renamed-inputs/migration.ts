@@ -6,6 +6,9 @@ import { renameInputsInHtml, renameInputsInTypeScript, SelectorInputRename } fro
 const AUTOCOMPLETE = ['p-autoComplete', 'p-autocomplete', 'p-auto-complete'];
 const TREESELECT = ['p-treeSelect', 'p-treeselect', 'p-tree-select'];
 const TREETABLE = ['p-treeTable', 'p-treetable', 'p-tree-table'];
+const LISTBOX = ['p-listbox', 'p-listBox', 'p-list-box'];
+const MULTISELECT = ['p-multiSelect', 'p-multiselect', 'p-multi-select'];
+const IMAGECOMPARE = ['p-imageCompare', 'p-imagecompare', 'p-image-compare'];
 
 /**
  * Deprecated input aliases removed in this version, each replaced by the input (or native
@@ -15,9 +18,19 @@ const TREETABLE = ['p-treeTable', 'p-treetable', 'p-tree-table'];
  * `maxlength`; AutoComplete's `minLength` → `minQueryLength` (the default minimum stays 1);
  * TreeSelect's `containerStyleClass` → `class` and `containerStyle` → `style`; TreeTable's
  * `virtualRowHeight` → `virtualScrollItemSize`.
+ * Inputs renamed to the spelling the other components use: Listbox's and MultiSelect's
+ * `filterPlaceHolder` → `filterPlaceholder` (as on Select, Tree, TreeSelect and OrderList);
+ * ImageCompare's `ariaLabelledby` → `ariaLabelledBy`; Drawer's `ariaCloseLabel` → `closeAriaLabel`
+ * (as on Dialog and Inplace).
  */
 export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
-    { selector: 'p-drawer', renames: [{ from: 'showCloseIcon', to: 'closable' }] },
+    {
+        selector: 'p-drawer',
+        renames: [
+            { from: 'showCloseIcon', to: 'closable' },
+            { from: 'ariaCloseLabel', to: 'closeAriaLabel' }
+        ]
+    },
     { selector: 'p-paginator', renames: [{ from: 'dropdownAppendTo', to: 'appendTo' }] },
     { selector: 'p-password', renames: [{ from: 'maxLength', to: 'maxlength' }] },
     ...AUTOCOMPLETE.map((selector) => ({ selector, renames: [{ from: 'minLength', to: 'minQueryLength' }] })),
@@ -28,7 +41,9 @@ export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
             { from: 'containerStyle', to: 'style' }
         ]
     })),
-    ...TREETABLE.map((selector) => ({ selector, renames: [{ from: 'virtualRowHeight', to: 'virtualScrollItemSize' }] }))
+    ...TREETABLE.map((selector) => ({ selector, renames: [{ from: 'virtualRowHeight', to: 'virtualScrollItemSize' }] })),
+    ...[...LISTBOX, ...MULTISELECT].map((selector) => ({ selector, renames: [{ from: 'filterPlaceHolder', to: 'filterPlaceholder' }] })),
+    ...IMAGECOMPARE.map((selector) => ({ selector, renames: [{ from: 'ariaLabelledby', to: 'ariaLabelledBy' }] }))
 ];
 
 /**
@@ -36,7 +51,7 @@ export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
  * queried instance), reported for manual review. `maxLength` and `minLength` are left out: they are
  * common DOM/validator property names and would mostly report unrelated code.
  */
-const LEFTOVER_SCAN_NAMES = ['showCloseIcon', 'dropdownAppendTo', 'containerStyleClass', 'virtualRowHeight'];
+const LEFTOVER_SCAN_NAMES = ['showCloseIcon', 'dropdownAppendTo', 'containerStyleClass', 'virtualRowHeight', 'filterPlaceHolder', 'ariaLabelledby', 'ariaCloseLabel'];
 
 /**
  * Rewrites template bindings of the removed deprecated input aliases listed in

@@ -3,7 +3,7 @@ import { compact } from './text';
 /**
  * Inputs and outputs removed or renamed in ExhaustiveUI v22, keyed by component tag (`p-` prefix,
  * case and hyphens ignored). Mirrors the `ng update` migrations of @exhaustive-ui/core
- * (styleclass-to-class, renamed-inputs, remove-dead-inputs, remove-dead-outputs) so that
+ * (styleclass-to-class, renamed-inputs, renamed-outputs, remove-dead-inputs, remove-dead-outputs) so that
  * validate_usage can name the replacement instead of only reporting an unknown binding.
  */
 
@@ -65,7 +65,7 @@ export const STYLE_CLASS_REMOVED: readonly string[] = [
 ];
 
 export const RENAMED: Record<string, Record<string, string>> = {
-    drawer: { showcloseicon: 'closable' },
+    drawer: { showcloseicon: 'closable', ariacloselabel: 'closeAriaLabel' },
     paginator: { dropdownappendto: 'appendTo' },
     autocomplete: { minlength: 'minQueryLength' },
     treeselect: { containerstyleclass: 'class', containerstyle: 'style' },
@@ -119,6 +119,12 @@ export const DEAD_INPUTS: Record<string, readonly string[]> = {
     treetablesorticon: ['ariaLabelAsc', 'ariaLabelDesc']
 };
 
+export const RENAMED_OUTPUTS: Record<string, Record<string, string>> = {
+    orderlist: { onFilterEvent: 'onFilter' },
+    table: { selectAllChange: 'onSelectAllChange' },
+    multiselect: { onPanelShow: 'onShow', onPanelHide: 'onHide' }
+};
+
 export const DEAD_OUTPUTS: Record<string, readonly string[]> = {
     overlay: ['onAnimationStart', 'onAnimationDone'],
     menubarsub: ['menuFocus', 'menuBlur', 'menuKeydown']
@@ -157,6 +163,11 @@ export function removedInputHint(tag: string, name: string): { message: string; 
 /** Replacement guidance for an output that no longer exists on `tag`, or undefined when it was not removed in v22. */
 export function removedOutputHint(tag: string, name: string): { message: string; suggestion?: string } | undefined {
     const key = tagKey(tag);
+    const renamed = RENAMED_OUTPUTS[key]?.[name];
+
+    if (renamed) {
+        return { message: `${name} was renamed to ${renamed} in v22, with the same event payload (ng update applies the renamed-outputs migration).`, suggestion: renamed };
+    }
 
     if (!has(DEAD_OUTPUTS[key], name)) {
         return undefined;

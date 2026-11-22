@@ -915,16 +915,16 @@ describe('Table', () => {
                 expect(outputComponent.onRowUnselect.emit).toHaveBeenCalledWith(expect.objectContaining({ data: rowData, type: 'radiobutton' }));
             });
 
-            it('emits selectAllChange via toggleRowsWithCheckbox when selectAll is bound (not null)', () => {
+            it('emits onSelectAllChange via toggleRowsWithCheckbox when selectAll is bound (not null)', () => {
                 outputFixture.componentRef.setInput('value', [{ id: '1' }, { id: '2' }]);
                 outputFixture.componentRef.setInput('dataKey', 'id');
                 outputFixture.componentRef.setInput('selectAll', false);
-                vi.spyOn(outputComponent.selectAllChange, 'emit');
+                vi.spyOn(outputComponent.onSelectAllChange, 'emit');
 
                 const originalEvent = new Event('change');
                 outputComponent.toggleRowsWithCheckbox({ originalEvent } as any, true);
 
-                expect(outputComponent.selectAllChange.emit).toHaveBeenCalledWith({ originalEvent, checked: true });
+                expect(outputComponent.onSelectAllChange.emit).toHaveBeenCalledWith({ originalEvent, checked: true });
             });
 
             it('emits onHeaderCheckboxToggle and selectionChange via toggleRowsWithCheckbox (selectAll not bound)', () => {

@@ -26,7 +26,11 @@ import { AppCode } from '@/components/doc/app.code';
                 <li><b>styleclass-to-class</b>: <i>styleClass</i> becomes the native <i>class</i> attribute on the components that dropped the input.</li>
                 <li>
                     <b>renamed-inputs</b>: deprecated aliases are renamed to their replacement, e.g. <i>showCloseIcon</i> to <i>closable</i> on Drawer, <i>minLength</i> to <i>minQueryLength</i> on AutoComplete, <i>virtualRowHeight</i> to
-                    <i>virtualScrollItemSize</i> on TreeTable.
+                    <i>virtualScrollItemSize</i> on TreeTable, <i>filterPlaceHolder</i> to <i>filterPlaceholder</i> on Listbox and MultiSelect.
+                </li>
+                <li>
+                    <b>renamed-outputs</b>: outputs are renamed to the name the other components use, with the same event payload: <i>onFilterEvent</i> to <i>onFilter</i> on OrderList, <i>selectAllChange</i> to <i>onSelectAllChange</i> on Table,
+                    <i>onPanelShow</i>/<i>onPanelHide</i> to <i>onShow</i>/<i>onHide</i> on MultiSelect.
                 </li>
                 <li><b>remove-dead-inputs</b> and <b>remove-dead-outputs</b>: bindings of inputs and outputs that already had no effect are removed.</li>
                 <li><b>config-overlay-options-signal</b>: <i>overlayOptions</i> on the global configuration is a signal; assignments become <i>.set()</i> and reads become calls.</li>

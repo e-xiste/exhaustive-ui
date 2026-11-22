@@ -15,7 +15,7 @@ ng update @angular/core@22 @angular/cli@22
 ng update @exhaustive-ui/core --next
 ```
 
-`ng update` rewrites your templates with five migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
+`ng update` rewrites your templates with six migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
 - `styleclass-to-class`: `styleClass`/`[styleClass]` becomes `class`/`[class]` on the ~60 components whose deprecated `styleClass` was removed. These include Tag, Card, Select, Table, DatePicker and Panel.
 - `renamed-inputs`: renames deprecated input aliases.
@@ -25,6 +25,13 @@ ng update @exhaustive-ui/core --next
   - AutoComplete: `minLength` becomes `minQueryLength`.
   - TreeSelect: `containerStyleClass` and `containerStyle` become `class` and `style`.
   - TreeTable: `virtualRowHeight` becomes `virtualScrollItemSize`.
+  - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
+  - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
+  - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+- `renamed-outputs`: renames outputs to the name the other components use. The payloads are unchanged.
+  - OrderList: `onFilterEvent` becomes `onFilter`.
+  - Table: `selectAllChange` becomes `onSelectAllChange`.
+  - MultiSelect: `onPanelShow`/`onPanelHide` become `onShow`/`onHide`.
 - `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
@@ -99,6 +106,16 @@ The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that 
 API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named below.
 
 - Removed inputs that did nothing (`remove-dead-inputs` deletes their bindings): Stepper `transitionOptions`, AutoComplete `autoHighlight`, Listbox `searchLocale`, DataView `gridStyleClass` and `trackBy`, OrderList `trackBy` and `header` (use the `header` template), PickList `trackBy`, `sourceTrackBy` and `targetTrackBy`, ToggleSwitch `size`, SelectButton `tabindex`, ConfirmPopup `baseZIndex`, and the TreeTable sort icon's `ariaLabelAsc`/`ariaLabelDesc`.
+
+- Renamed to the name the other components use (`renamed-inputs` and the new `renamed-outputs` migration rewrite the bindings):
+  - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
+  - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
+  - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+  - OrderList: the `onFilterEvent` output becomes `onFilter`.
+  - Table: the `selectAllChange` output becomes `onSelectAllChange`. A `[(selectAll)]` two-way binding is reported: bind `[selectAll]` and `(onSelectAllChange)="selectAll = $event.checked"`.
+  - MultiSelect: the `onPanelShow`/`onPanelHide` outputs become `onShow`/`onHide`.
+
+  The event payloads are unchanged, so handlers that read `$event` keep working.
 
 ### Features
 

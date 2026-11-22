@@ -120,7 +120,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             [filterBy]="filterBy()"
             [filterLocale]="filterLocale()"
             [filterMatchMode]="filterMatchMode()"
-            [filterPlaceHolder]="filterPlaceholder()"
+            [filterPlaceholder]="filterPlaceholder()"
             [ariaFilterLabel]="ariaFilterLabel()"
             (onFilter)="onFilterKeyup($event.originalEvent)"
             [dragdrop]="dragdrop()"
@@ -364,7 +364,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @param {OrderListFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    readonly onFilterEvent = output<OrderListFilterEvent>();
+    readonly onFilter = output<OrderListFilterEvent>();
 
     /**
      * Callback to invoke when the list is focused
@@ -561,7 +561,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         this.filterValue.set(((<HTMLInputElement>event.target).value.trim() as any).toLocaleLowerCase(this.filterLocale()));
         this.filter();
 
-        this.onFilterEvent.emit({
+        this.onFilter.emit({
             originalEvent: event,
             value: this.visibleOptions() as any[]
         });

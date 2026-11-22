@@ -73,4 +73,27 @@ describe('renamed-inputs', () => {
         expect(ts).toContain('p.dropdownAppendTo()');
         expect(logs.some((l) => l.includes('/src/app/app.ts:8'))).toBe(true);
     });
+
+    it('renames filterPlaceHolder, ariaLabelledby and ariaCloseLabel to the spelling the other components use', async () => {
+        const { result } = await run({
+            '/src/app/app.html': [
+                `<p-listbox filterPlaceHolder="Search"></p-listbox>`,
+                `<p-multiselect [filterPlaceHolder]="placeholder"></p-multiselect>`,
+                `<p-select filterPlaceHolder="kept"></p-select>`,
+                `<p-imagecompare ariaLabelledby="label"></p-imagecompare>`,
+                `<p-drawer [ariaCloseLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                ''
+            ].join('\n')
+        });
+        expect(result.readContent('/src/app/app.html')).toBe(
+            [
+                `<p-listbox filterPlaceholder="Search"></p-listbox>`,
+                `<p-multiselect [filterPlaceholder]="placeholder"></p-multiselect>`,
+                `<p-select filterPlaceHolder="kept"></p-select>`,
+                `<p-imagecompare ariaLabelledBy="label"></p-imagecompare>`,
+                `<p-drawer [closeAriaLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                ''
+            ].join('\n')
+        );
+    });
 });
