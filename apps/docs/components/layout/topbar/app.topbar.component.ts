@@ -18,26 +18,26 @@ import { SelectModule } from '@exhaustive-ui/core/select';
         <div class="layout-topbar-inner">
             <div class="layout-topbar-logo-container">
                 <a [routerLink]="['/']" class="layout-topbar-logo" aria-label="ExhaustiveUI Logo">
-                    <img ngSrc="logo.svg" height="40" width="200" class="dark:invert" />
+                    <img ngSrc="logo.svg" height="40" width="200" class="dark:invert" alt="" />
                 </a>
                 <a [routerLink]="['/']" class="layout-topbar-icon" aria-label="ExhaustiveUI Logo">
-                    <img ngSrc="logo-icon.svg" height="32" width="32" class="dark:invert" />
+                    <img ngSrc="logo-icon.svg" height="32" width="32" class="dark:invert" alt="" />
                 </a>
             </div>
 
             <ul class="topbar-items">
                 <li class="topbar-desktop-item">
-                    <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="topbar-item">
+                    <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="topbar-item" aria-label="GitHub repository">
                         <i class="pi pi-github text-surface-700 dark:text-surface-100"></i>
                     </a>
                 </li>
                 <li class="topbar-desktop-item">
-                    <a [href]="githubDiscussionsUrl" target="_blank" rel="noopener noreferrer" class="topbar-item">
+                    <a [href]="githubDiscussionsUrl" target="_blank" rel="noopener noreferrer" class="topbar-item" aria-label="GitHub discussions">
                         <i class="pi pi-comments text-surface-700 dark:text-surface-100"></i>
                     </a>
                 </li>
                 <li class="topbar-desktop-item">
-                    <button type="button" class="topbar-item" (click)="toggleDarkMode()">
+                    <button type="button" class="topbar-item" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
                         <i class="pi" [ngClass]="{ 'pi-moon': isDarkMode(), 'pi-sun': !isDarkMode() }"></i>
                     </button>
                 </li>
@@ -45,6 +45,7 @@ import { SelectModule } from '@exhaustive-ui/core/select';
                     <button
                         type="button"
                         class="topbar-item config-item"
+                        aria-label="Theme configurator"
                         enterActiveClass="px-overlay-enter-active"
                         enterFromClass="hidden"
                         leaveActiveClass="px-overlay-leave-active"
@@ -61,6 +62,7 @@ import { SelectModule } from '@exhaustive-ui/core/select';
                         [(ngModel)]="selectedVersion"
                         [options]="versions"
                         [group]="true"
+                        ariaLabel="Documentation version"
                         (onChange)="onVersionChange($event)"
                         [pt]="{
                             optionGroup: {

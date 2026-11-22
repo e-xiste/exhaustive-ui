@@ -171,8 +171,8 @@ export class AppCode {
             if (window['Prism'] && this.codeElement && !this.codeElement.nativeElement.classList.contains('prism')) {
                 window['Prism'].highlightElement(this.codeElement.nativeElement);
                 this.codeElement.nativeElement.classList.add('prism');
-                this.codeElement.nativeElement.setAttribute('tabindex', '-1');
-                this.codeElement.nativeElement.parentElement?.setAttribute('tabindex', '-1');
+                // the <pre> scrolls: keyboard users must be able to focus it to scroll the code
+                this.codeElement.nativeElement.parentElement?.setAttribute('tabindex', '0');
             }
         }
     }

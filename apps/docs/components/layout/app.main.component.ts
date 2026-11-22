@@ -20,9 +20,9 @@ import { AppTopBarComponent } from './topbar/app.topbar.component';
             }
             <div class="layout-content">
                 <app-menu />
-                <div class="layout-content-slot">
+                <main class="layout-content-slot">
                     <router-outlet></router-outlet>
-                </div>
+                </main>
             </div>
             <app-footer />
         </div>
