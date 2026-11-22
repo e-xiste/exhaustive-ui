@@ -636,6 +636,15 @@ describe('ScrollPanel', () => {
             expect(yBar.nativeElement.getAttribute('tabindex')).toBe('0');
         });
 
+        it('should point the scrollbars at the content element, which is keyboard focusable', () => {
+            const content = fixture.debugElement.query(By.css('.p-scrollpanel-content')).nativeElement as HTMLElement;
+            const bars = fixture.debugElement.queryAll(By.css('[role="scrollbar"]'));
+
+            expect(content.id).toBe(scrollPanel.contentId);
+            expect(content.getAttribute('tabindex')).toBe('0');
+            bars.forEach((bar) => expect(document.getElementById(bar.nativeElement.getAttribute('aria-controls'))).toBe(content));
+        });
+
         it('should update aria-valuenow on scroll', async () => {
             const xBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-x'));
             const yBar = fixture.debugElement.query(By.css('.p-scrollpanel-bar-y'));

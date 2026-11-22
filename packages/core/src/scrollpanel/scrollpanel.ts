@@ -17,7 +17,7 @@ import { ScrollPanelStyle } from './style/scrollpanelstyle';
     imports: [CommonModule, SharedModule, BindModule],
     template: `
         <div [pBind]="ptm('contentContainer')" [class]="cx('contentContainer')">
-            <div #content [pBind]="ptm('content')" [class]="cx('content')" (mouseenter)="moveBar()" (scroll)="onScroll($event)">
+            <div #content [pBind]="ptm('content')" [class]="cx('content')" [attr.id]="contentId" tabindex="0" (mouseenter)="moveBar()" (scroll)="onScroll($event)">
                 @if (!contentTemplate() && !_contentTemplate()) {
                     <ng-content></ng-content>
                 }
