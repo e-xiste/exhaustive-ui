@@ -203,9 +203,12 @@ export class StepItem extends BaseComponent<StepItemPassThrough> {
                 [attr.id]="id()"
                 [class]="cx('header')"
                 [pBind]="ptm('header')"
-                [attr.role]="'tab'"
+                [attr.role]="isTab() ? 'tab' : undefined"
                 [tabindex]="isStepDisabled() ? -1 : undefined"
-                [attr.aria-controls]="ariaControls()"
+                [attr.aria-selected]="isTab() ? active() : undefined"
+                [attr.aria-expanded]="isTab() ? undefined : active()"
+                [attr.aria-current]="active() ? 'step' : undefined"
+                [attr.aria-controls]="hasPanel() ? ariaControls() : undefined"
                 [disabled]="isStepDisabled()"
                 (click)="onStepClick()"
                 type="button"
@@ -229,8 +232,8 @@ export class StepItem extends BaseComponent<StepItemPassThrough> {
     encapsulation: ViewEncapsulation.None,
     host: {
         '[class]': 'cx("root")',
-        '[attr.aria-current]': 'active() ? "step" : undefined',
-        '[attr.role]': '"presentation"',
+        '[attr.aria-current]': 'hasDefaultHeader() || !active() ? undefined : "step"',
+        '[attr.role]': 'hasDefaultHeader() ? "presentation" : undefined',
         '[attr.data-p-active]': 'active()',
         '[attr.data-p-disabled]': 'isStepDisabled()'
     },
@@ -245,6 +248,8 @@ export class Step extends BaseComponent<StepPassThrough> {
     componentName = 'Step';
 
     pcStepper = inject(forwardRef(() => Stepper));
+
+    pcStepList: StepList | null = inject(STEPLIST_INSTANCE, { optional: true });
 
     onAfterViewChecked() {
         this.bindDirectiveInstance.setAttrs(this.ptms(['host', 'root']));
@@ -275,6 +280,20 @@ export class Step extends BaseComponent<StepPassThrough> {
 
     ariaControls = computed(() => `${this.pcStepper.id()}_steppanel_${this.value()}`);
 
+    /**
+     * The header is a tab when the step sits in a p-step-list; in a vertical stepper it is a disclosure button.
+     */
+    isTab = computed(() => !!this.pcStepList);
+
+    /**
+     * aria-controls is only rendered when a p-step-panel with the same value exists.
+     */
+    hasPanel = computed(() => this.pcStepper.allStepPanels().some((panel) => panel.value() === this.value()));
+
+    hasDefaultHeader = computed(() => !this.content() && !this._contentTemplateSet());
+
+    private _contentTemplateSet = signal(false);
+
     isSeparatorVisible = computed(() => {
         if (this.pcStepper.stepList()) {
             const steps = this.pcStepper.stepList().steps();
@@ -303,6 +322,7 @@ export class Step extends BaseComponent<StepPassThrough> {
             switch (item.getType()) {
                 case 'content':
                     this._contentTemplate = item.template;
+                    this._contentTemplateSet.set(true);
                     break;
             }
         });
@@ -337,8 +357,8 @@ export class Step extends BaseComponent<StepPassThrough> {
     encapsulation: ViewEncapsulation.None,
     host: {
         '[class]': 'cx("root")',
-        '[attr.role]': '"tabpanel"',
-        '[attr.aria-controls]': 'ariaControls()',
+        '[attr.role]': 'pcStepper.stepList() ? "tabpanel" : "region"',
+        '[attr.aria-labelledby]': 'hasHeader() ? ariaLabelledBy() : undefined',
         '[attr.id]': 'id()',
         '[attr.data-p-active]': 'active()',
         '[attr.data-pc-name]': '"steppanel"'
@@ -369,7 +389,17 @@ export class StepPanel extends BaseComponent<StepPanelPassThrough> {
 
     active = computed(() => this.pcStepper.value() === this.value());
 
-    ariaControls = computed(() => `${this.pcStepper.id()}_step_${this.value()}`);
+    ariaLabelledBy = computed(() => `${this.pcStepper.id()}_step_${this.value()}`);
+
+    /**
+     * @deprecated use ariaLabelledBy; kept for backward compatibility.
+     */
+    ariaControls = this.ariaLabelledBy;
+
+    /**
+     * aria-labelledby is only rendered when a p-step with the same value renders its default header button, which carries the referenced id.
+     */
+    hasHeader = computed(() => this.pcStepper.allSteps().some((step) => step.value() === this.value() && step.hasDefaultHeader()));
 
     id = computed(() => `${this.pcStepper.id()}_steppanel_${this.value()}`);
 
@@ -465,7 +495,6 @@ export class StepPanels extends BaseComponent<StepPanelsPassThrough> {
     providers: [StepperStyle, { provide: STEPPER_INSTANCE, useExisting: Stepper }, { provide: PARENT_INSTANCE, useExisting: Stepper }],
     host: {
         '[class]': 'cx("root")',
-        '[attr.role]': 'stepList() ? undefined : "tablist"',
         '[attr.id]': 'id()'
     },
     hostDirectives: [Bind]
@@ -523,6 +552,10 @@ export class Stepper extends BaseComponent<StepperPassThrough> implements Blocka
     steps = contentChildren(Step);
 
     stepList = contentChild(StepList);
+
+    allSteps = contentChildren(Step, { descendants: true });
+
+    allStepPanels = contentChildren(StepPanel, { descendants: true });
 
     updateValue(value: number) {
         this.value.set(value);

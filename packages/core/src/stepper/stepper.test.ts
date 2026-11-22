@@ -123,6 +123,20 @@ class TestPTStepperComponent {
     @Input() pt: any;
 }
 
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false,
+    template: `
+        <p-stepper [value]="1">
+            <p-step-list>
+                <p-step [value]="1">Step 1</p-step>
+                <p-step [value]="2">Step 2</p-step>
+            </p-step-list>
+        </p-stepper>
+    `
+})
+class TestStepsOnlyStepperComponent {}
+
 describe('Stepper', () => {
     let fixture: ComponentFixture<TestStepperComponent>;
     let component: TestStepperComponent;
@@ -132,7 +146,7 @@ describe('Stepper', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [Stepper, StepList, StepPanels, StepPanel, StepItem, Step],
-            declarations: [TestStepperComponent, TestVerticalStepperComponent, TestTemplateStepperComponent, TestPTStepperComponent],
+            declarations: [TestStepperComponent, TestVerticalStepperComponent, TestTemplateStepperComponent, TestPTStepperComponent, TestStepsOnlyStepperComponent],
             providers: [provideZonelessChangeDetection()]
         });
 
@@ -443,31 +457,75 @@ describe('Stepper', () => {
             expect(tablists[0].nativeElement.querySelector('[role="tabpanel"]')).toBeNull();
         });
 
-        it('should keep the tablist role on the stepper of a vertical stepper', async () => {
+        it('should not put a tablist role on the stepper of a vertical stepper, whose headers are disclosure buttons', async () => {
             const verticalFixture = TestBed.createComponent(TestVerticalStepperComponent);
             verticalFixture.detectChanges();
             await verticalFixture.whenStable();
+            verticalFixture.detectChanges();
 
-            expect(verticalFixture.debugElement.query(By.css('p-stepper')).nativeElement.getAttribute('role')).toBe('tablist');
+            const root = verticalFixture.debugElement.query(By.css('p-stepper')).nativeElement;
+            const buttons = verticalFixture.debugElement.queryAll(By.css('p-step button'));
+            const panels = verticalFixture.debugElement.queryAll(By.css('p-step-panel'));
+
+            expect(root.getAttribute('role')).toBeNull();
+            expect(root.querySelector('[role="tab"], [role="tablist"], [role="tabpanel"]')).toBeNull();
+            expect(buttons[0].nativeElement.getAttribute('aria-expanded')).toBe('true');
+            expect(buttons[1].nativeElement.getAttribute('aria-expanded')).toBe('false');
+            expect(buttons[0].nativeElement.getAttribute('aria-controls')).toBe(panels[0].nativeElement.id);
+            expect(panels[0].nativeElement.getAttribute('role')).toBe('region');
+            expect(panels[0].nativeElement.getAttribute('aria-labelledby')).toBe(buttons[0].nativeElement.id);
         });
 
-        it('should have correct ARIA attributes', () => {
+        it('should link each tab and its panel with ids from the same stepper', () => {
             const stepButtons = fixture.debugElement.queryAll(By.css('p-step button'));
             const stepPanels = fixture.debugElement.queryAll(By.css('p-step-panel'));
 
-            expect(stepButtons[0].nativeElement.getAttribute('aria-controls')).toBeTruthy();
-            expect(stepPanels[0].nativeElement.getAttribute('id')).toBeTruthy();
+            stepButtons.forEach((button, i) => {
+                const panel = stepPanels[i].nativeElement;
+                expect(button.nativeElement.getAttribute('aria-controls')).toBe(panel.id);
+                expect(panel.getAttribute('aria-labelledby')).toBe(button.nativeElement.id);
+                expect(panel.hasAttribute('aria-controls')).toBe(false);
+                expect(document.getElementById(button.nativeElement.getAttribute('aria-controls'))).toBe(panel);
+            });
         });
 
-        it('should set aria-current for active step', async () => {
+        it('should mark the selected tab with aria-selected and keep the step host presentational', async () => {
             component.value = 2;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
             fixture.detectChanges();
 
             const steps = fixture.debugElement.queryAll(By.css('p-step'));
-            expect(steps[1].nativeElement.getAttribute('aria-current')).toBe('step');
-            expect(steps[0].nativeElement.getAttribute('aria-current')).toBeNull();
+            const stepButtons = fixture.debugElement.queryAll(By.css('p-step button'));
+            expect(stepButtons[1].nativeElement.getAttribute('aria-selected')).toBe('true');
+            expect(stepButtons[0].nativeElement.getAttribute('aria-selected')).toBe('false');
+            expect(stepButtons[1].nativeElement.getAttribute('aria-current')).toBe('step');
+            expect(stepButtons[0].nativeElement.getAttribute('aria-current')).toBeNull();
+            steps.forEach((step) => {
+                expect(step.nativeElement.getAttribute('role')).toBe('presentation');
+                expect(step.nativeElement.hasAttribute('aria-current')).toBe(false);
+            });
+        });
+
+        it('should not render aria-controls when the stepper has no panels', async () => {
+            const stepsOnly = TestBed.createComponent(TestStepsOnlyStepperComponent);
+            stepsOnly.detectChanges();
+            await stepsOnly.whenStable();
+            stepsOnly.detectChanges();
+
+            stepsOnly.debugElement.queryAll(By.css('p-step button')).forEach((button) => expect(button.nativeElement.hasAttribute('aria-controls')).toBe(false));
+        });
+
+        it('should not label a panel by a step that renders a custom header', async () => {
+            const templateFixture = TestBed.createComponent(TestTemplateStepperComponent);
+            templateFixture.detectChanges();
+            await templateFixture.whenStable();
+            templateFixture.detectChanges();
+
+            const panels = templateFixture.debugElement.queryAll(By.css('p-step-panel'));
+            expect(panels[0].nativeElement.hasAttribute('aria-labelledby')).toBe(false);
+            expect(panels[1].nativeElement.getAttribute('aria-labelledby')).toBeTruthy();
+            expect(document.getElementById(panels[1].nativeElement.getAttribute('aria-labelledby'))).toBeTruthy();
         });
 
         it('should set correct tabindex for disabled steps', async () => {
