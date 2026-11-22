@@ -103,9 +103,9 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 - The documentation moved to https://exhaustive-ui.com. The old exhaustive-ui.e-xiste.com redirects there.
 - Packages are published with npm trusted publishing and carry provenance attestations.
 
-## Unreleased
+## 22.0.0-rc.3 (2026-11-22)
 
-The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that could not be confirmed by reading the code, and the 50 remaining low-severity ones, were each turned into a test in a real browser. About 85 were still present and are fixed below; about 100 already worked and most keep their test as a regression test. The others are feature requests, need a browser or a screen reader the tests cannot drive (Firefox, Edge, iOS, NVDA, VoiceOver), or need a redesign: virtual lists taller than the browser's maximum element height (#176, #336), row heights of a TreeTable with frozen columns (#933, #731), the overlay width with virtual scroll (#158), Signal Forms showing invalid before interaction (#162, #202) and ToggleSwitch sizes (#86). The issue numbers are Optimus UI's.
+Third release candidate of 22.0.0, and the last planned before the stable release: the public API is frozen for the v22 line. The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that could not be confirmed by reading the code, and the 50 remaining low-severity ones, were each turned into a test in a real browser. About 85 were still present and are fixed below; about 100 already worked and most keep their test as a regression test. The others are feature requests, need a browser or a screen reader the tests cannot drive (Firefox, Edge, iOS, NVDA, VoiceOver), or need a redesign: virtual lists taller than the browser's maximum element height (#176, #336), row heights of a TreeTable with frozen columns (#933, #731), the overlay width with virtual scroll (#158), Signal Forms showing invalid before interaction (#162, #202) and ToggleSwitch sizes (#86). The issue numbers are Optimus UI's.
 
 ### Breaking changes
 

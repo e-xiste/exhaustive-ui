@@ -68,13 +68,16 @@ export class RoadmapDemo {
                     'Fixes for the inherited high- and medium-severity bugs, each with a regression test',
                     'Fixes for 108 inherited low-severity bugs',
                     'Tailwind CSS v4 plugin, docs site and PrimeFlex migration',
-                    'PassThrough attributes rendered on the server and styles inside Shadow DOM hosts'
+                    'PassThrough attributes rendered on the server and styles inside Shadow DOM hosts',
+                    'Every remaining inherited bug report reproduced in a real browser test: about 85 fixed',
+                    'Public API cleaned up before the freeze, with ng update migrations',
+                    'Small and large form fields inside FloatLabel and IftaLabel, Signal Forms examples'
                 ],
                 link: 'https://github.com/e-xiste/exhaustive-ui/releases'
             },
             {
                 title: 'v22 stable',
-                features: ['Triage the remaining inherited issues', 'Stabilize the API surface before the first stable release', 'Documentation code modernization']
+                features: ['Feedback from the release candidates', 'API frozen for the v22 line', 'Documentation code modernization']
             },
             {
                 title: 'Next',
