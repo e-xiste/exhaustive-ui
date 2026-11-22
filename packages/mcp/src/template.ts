@@ -79,6 +79,10 @@ export function classifyAttribute(raw: string): { kind: AttributeKind; name: str
         return { kind: 'structural', name: raw.slice(1) };
     }
 
+    if (raw.startsWith('let-')) {
+        return { kind: 'other', name: raw };
+    }
+
     if (raw.startsWith('#') || raw.startsWith('ref-')) {
         return { kind: 'reference', name: raw.replace(/^#|^ref-/, '') };
     }

@@ -119,7 +119,8 @@ function registerTools(server: McpServer, ctx: ToolContext): void {
         'get_component',
         {
             title: 'Get component docs',
-            description: 'Read the docs of an ExhaustiveUI component: sections, available examples, and optionally its API, compiled declarations and full Markdown document. Accepts a batch of up to 10 components.',
+            description:
+                'Read an ExhaustiveUI component: its card (import, tag, key inputs, outputs, every template with the context it receives, one example), its sections and available examples, and optionally its full API, compiled declarations and full Markdown document. Start here before writing code with a component. Accepts a batch of up to 10 components.',
             inputSchema: getComponentInput,
             annotations: readOnly
         },

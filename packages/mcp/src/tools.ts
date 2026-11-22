@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { findComponent, findGuide, findSection, requireSection } from './catalog';
 import { RESOURCE_BASE_URI } from './config';
-import { ToolError, describeError } from './errors';
+import { DocsNotFoundError, ToolError, describeError } from './errors';
 import { searchCatalog } from './search';
 import type { DocsSource, SourceStatus } from './source';
 import { compact, expandTerm, slugify, unique } from './text';
@@ -89,7 +89,7 @@ const componentRequest = z.object({
     sections: z.array(z.string()).optional().describe('Restrict to these section ids or labels.'),
     includeApi: z.boolean().default(false).describe('Include the API (inputs, outputs, templates, methods, PT keys, CSS classes, tokens) and compiled declarations.'),
     includeExamples: z.boolean().default(false).describe('Include the code of every example section.'),
-    detail: z.enum(['compact', 'full']).default('compact').describe('"full" also returns the complete Markdown document.')
+    detail: z.enum(['compact', 'full']).default('compact').describe('"compact" returns the component card (import, tag, key inputs, outputs, templates with their context, one example); "full" also returns the complete Markdown document.')
 });
 
 export const getComponentInput = {
@@ -268,9 +268,11 @@ async function getSingleComponent(ctx: ToolContext, input: ComponentRequest): Pr
     const sections = input.sections?.length ? input.sections.map((query) => requireSection(component.sections, query)) : component.sections;
     const withCode = sections.filter((section) => section.hasCode);
     const document = input.detail === 'full' ? await ctx.source.readText(component.docPath) : undefined;
+    const card = input.sections?.length ? undefined : await readOptional(ctx, component.cardPath);
 
     const result: Record<string, unknown> = {
         ...componentSummary(component),
+        ...(card !== undefined ? { card } : {}),
         route: component.route,
         declarations: component.declarations.map((declaration) => ({ kind: declaration.kind, className: declaration.className, selector: declaration.selector, forms: declaration.forms, standalone: declaration.standalone })),
         sections: sections.map(sectionSummary),
@@ -293,6 +295,19 @@ async function getSingleComponent(ctx: ToolContext, input: ComponentRequest): Pr
     const next = withCode[0] ? ` Next: get_example ${JSON.stringify({ component: component.name, section: withCode[0].id })}.` : '';
 
     return ok({ component: result }, `${component.title}: ${sections.length} section${sections.length === 1 ? '' : 's'}, ${withCode.length} with code; source ${component.resourceUri}.${next}`);
+}
+
+/** A generated document that older docs deployments or snapshots may not have yet. */
+async function readOptional(ctx: ToolContext, docsPath: string): Promise<string | undefined> {
+    try {
+        return await ctx.source.readText(docsPath);
+    } catch (error) {
+        if (error instanceof DocsNotFoundError) {
+            return undefined;
+        }
+
+        throw error;
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

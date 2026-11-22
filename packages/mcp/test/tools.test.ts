@@ -105,6 +105,26 @@ describe('search', () => {
 describe('get_component', () => {
     const base = { includeApi: false, includeExamples: false, detail: 'compact' as const };
 
+    it('starts with the component card when the docs have one', async () => {
+        const { component } = structured(await getComponentTool(ctx, { ...base, component: 'dropdown' }));
+
+        expect(component.name).toBe('select');
+        expect(component.card).toContain("import { Select } from '@exhaustive-ui/core/select';");
+        expect(Object.keys(component).indexOf('card')).toBeLessThan(Object.keys(component).indexOf('sections'));
+    });
+
+    it('works without a card, for docs generated before cards existed', async () => {
+        const { component } = structured(await getComponentTool(ctx, { ...base, component: 'p-button' }));
+
+        expect(component.card).toBeUndefined();
+    });
+
+    it('leaves the card out when only some sections are asked for', async () => {
+        const { component } = structured(await getComponentTool(ctx, { ...base, component: 'select', sections: ['basic'] }));
+
+        expect(component.card).toBeUndefined();
+    });
+
     it('returns a compact description with the available examples', async () => {
         const { component } = structured(await getComponentTool(ctx, { ...base, component: 'p-button' }));
 

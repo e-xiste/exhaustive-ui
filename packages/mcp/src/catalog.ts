@@ -61,6 +61,8 @@ export function buildCatalog(componentsJson: ComponentsJson, manifest: ManifestJ
                 publicUrl: `${site}/${component.name}`,
                 markdownUrl: `${site}/llms/components/${component.name}.md`,
                 docPath: `components/${component.name}.md`,
+                cardPath: `cards/${component.name}.md`,
+                cardUrl: `${site}/llms/cards/${component.name}.md`,
                 resourceUri: `${base}/components/${component.name}.md`,
                 apiResourceUri: `${base}/components/${component.name}/api.json`,
                 import: entryPoint?.import,
@@ -86,12 +88,41 @@ export function buildCatalog(componentsJson: ComponentsJson, manifest: ManifestJ
             }))
     );
 
+    const parts: ComponentEntry[] = manifest.entryPoints
+        .filter((entryPoint) => !componentNames.has(entryPoint.name) && !entryPoint.name.startsWith('icons/') && entryPoint.declarations?.some((declaration) => declaration.selector))
+        .map((entryPoint) => {
+            const declarations = entryPoint.declarations ?? [];
+            const title = declarations[0]!.className;
+
+            return {
+                kind: 'component',
+                name: entryPoint.name,
+                title,
+                description: entryPoint.description ?? '',
+                route: `/${entryPoint.name}`,
+                publicUrl: `${site}/${entryPoint.name}`,
+                markdownUrl: `${site}/llms/components/${entryPoint.name}.md`,
+                docPath: `components/${entryPoint.name}.md`,
+                cardPath: `cards/${entryPoint.name}.md`,
+                cardUrl: `${site}/llms/cards/${entryPoint.name}.md`,
+                resourceUri: `${base}/components/${entryPoint.name}.md`,
+                apiResourceUri: `${base}/components/${entryPoint.name}/api.json`,
+                import: entryPoint.import,
+                modules: entryPoint.modules ?? [],
+                selectors: unique(declarations.flatMap((declaration) => splitSelectors(declaration.selector))),
+                declarations,
+                sections: [],
+                api: {}
+            };
+        });
+
     return {
         libraryVersion: manifest.version,
         docsVersion: componentsJson.version,
         generatedAt: componentsJson.generatedAt,
         site,
         components,
+        parts,
         guides,
         directives
     };

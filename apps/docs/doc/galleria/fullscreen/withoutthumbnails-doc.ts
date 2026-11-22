@@ -17,7 +17,7 @@ import { GalleriaModule } from '@exhaustive-ui/core/galleria';
         <div class="card flex justify-center">
             <p-button icon="pi pi-external-link" label="Show" (click)="displayBasic = true" />
             <p-galleria
-                [(value)]="images"
+                [value]="images"
                 [(visible)]="displayBasic"
                 [responsiveOptions]="responsiveOptions"
                 [containerStyle]="{ 'max-width': '850px' }"

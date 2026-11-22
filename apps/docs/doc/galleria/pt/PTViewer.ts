@@ -10,7 +10,7 @@ import { GalleriaModule } from '@exhaustive-ui/core/galleria';
     imports: [CommonModule, AppDocPtViewer, GalleriaModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width:100%" />
                 </ng-template>

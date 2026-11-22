@@ -14,7 +14,7 @@ import { GalleriaModule } from '@exhaustive-ui/core/galleria';
             <p>Simple example with indicators only.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-galleria [(value)]="images" [numVisible]="5" [circular]="true" [showItemNavigators]="true" [showThumbnails]="false" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }">
+            <p-galleria [value]="images" [numVisible]="5" [circular]="true" [showItemNavigators]="true" [showThumbnails]="false" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
                 </ng-template>

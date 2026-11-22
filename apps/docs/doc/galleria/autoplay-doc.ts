@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>A slideshow implementation is defined by adding <i>circular</i> and <i>autoPlay</i> properties.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-galleria [(value)]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
+            <p-galleria [value]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%; display: block" />
                 </ng-template>

@@ -19,7 +19,7 @@
         "release:rc": "pnpm run build && pnpm recursive publish --filter './packages/*' --no-git-checks --report-summary --tag rc",
         "build": "cross-env NODE_ENV=production pnpm run build:check && pnpm run build:packages",
         "build:check": "pnpm run format:check && pnpm run security:check",
-        "build:packages": "pnpm run build:exhaustive-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm run build:mcp && pnpm run build:docs",
+        "build:packages": "pnpm run build:exhaustive-ui && pnpm run build:lib && pnpm run build:themes && pnpm run build:docs:content && pnpm --filter @exhaustive-ui/core build:llms && pnpm run build:mcp && pnpm run build:docs",
         "build:exhaustive-ui": "pnpm --filter './packages/*' --filter '!@exhaustive-ui/core' --filter '!@exhaustive-ui/mcp' build",
         "build:lib": "pnpm --filter @exhaustive-ui/core build",
         "build:themes": "pnpm --filter @exhaustive-ui/themes build",

@@ -17,7 +17,7 @@ import { Galleria, GalleriaModule } from '@exhaustive-ui/core/galleria';
         <div class="card">
             <p-galleria
                 #galleria
-                [(value)]="images"
+                [value]="images"
                 [(activeIndex)]="activeIndex"
                 [numVisible]="5"
                 [showThumbnails]="showThumbnails"

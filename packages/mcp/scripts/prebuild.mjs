@@ -25,6 +25,7 @@ function resetDataDir() {
     fs.rmSync(DATA_DIR, { recursive: true, force: true });
     fs.mkdirSync(path.join(DATA_DIR, 'components'), { recursive: true });
     fs.mkdirSync(path.join(DATA_DIR, 'pages'), { recursive: true });
+    fs.mkdirSync(path.join(DATA_DIR, 'cards'), { recursive: true });
 }
 
 function writeSnapshotMeta(meta) {
@@ -54,7 +55,7 @@ function copyLocal() {
         fs.copyFileSync(path.join(LOCAL_LLMS_DIR, file), path.join(DATA_DIR, file));
     }
 
-    for (const dir of ['components', 'pages']) {
+    for (const dir of ['components', 'pages', 'cards']) {
         const source = path.join(LOCAL_LLMS_DIR, dir);
 
         for (const file of fs.readdirSync(source).filter((name) => name.endsWith('.md'))) {
@@ -83,7 +84,7 @@ async function downloadRemote() {
     }
 
     const components = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'components.json'), 'utf-8'));
-    const targets = [...components.components.map((c) => `components/${c.name}.md`), ...components.pages.map((p) => `pages/${p.name}.md`)];
+    const targets = [...components.components.flatMap((c) => [`components/${c.name}.md`, `cards/${c.name}.md`]), ...components.pages.map((p) => `pages/${p.name}.md`)];
     let failed = 0;
 
     for (let i = 0; i < targets.length; i += 8) {

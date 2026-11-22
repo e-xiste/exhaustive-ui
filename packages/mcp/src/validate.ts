@@ -43,6 +43,13 @@ const GLOBAL_ATTRIBUTES = new Set([
     'ngstyle',
     'ngmodeloptions',
     'formcontrol',
+    // Angular signal forms
+    'formfield',
+    'field',
+    // Angular validator directives, which apply to any form control
+    'minlength',
+    'maxlength',
+    'email',
     'formcontrolname',
     'formgroup',
     'formgroupname',
@@ -110,29 +117,29 @@ const NATIVE_ATTRIBUTES = new Set([
     'scrollleft'
 ]);
 
-const LEGACY_IMPORT_PATTERN = /^(?:primeng(?:\/.*)?|@primeng\/.*|@openng\/optimus-ui(?:\/.*)?|optimus-ui(?:\/.*)?)$/;
+export const LEGACY_IMPORT_PATTERN = /^(?:primeng(?:\/.*)?|@primeng\/.*|@openng\/optimus-ui(?:\/.*)?|optimus-ui(?:\/.*)?)$/;
 
-interface SelectorIndex {
+export interface SelectorIndex {
     /** Lower-cased element selector -> declaration. */
     elements: Map<string, DeclarationRef>;
     /** Lower-cased attribute selector name -> declaration. */
     attributes: Map<string, DeclarationRef>;
 }
 
-interface DeclarationRef {
+export interface DeclarationRef {
     component: ComponentEntry;
     declaration: ManifestDeclaration;
 }
 
 const selectorIndexes = new WeakMap<Catalog, SelectorIndex>();
 
-function selectorIndex(catalog: Catalog): SelectorIndex {
+export function selectorIndex(catalog: Catalog): SelectorIndex {
     let index = selectorIndexes.get(catalog);
 
     if (!index) {
         index = { elements: new Map(), attributes: new Map() };
 
-        for (const component of catalog.components) {
+        for (const component of [...catalog.components, ...catalog.parts]) {
             for (const declaration of component.declarations) {
                 for (const selector of splitSelectors(declaration.selector)) {
                     const attribute = attributeSelectorName(selector);
@@ -215,7 +222,7 @@ function checkImports(component: ComponentEntry, code: string): UsageIssue[] {
     return issues;
 }
 
-function declarationsOn(element: TemplateElement, index: SelectorIndex): DeclarationRef[] {
+export function declarationsOn(element: TemplateElement, index: SelectorIndex): DeclarationRef[] {
     const refs: DeclarationRef[] = [];
     const byElement = index.elements.get(element.name.toLowerCase());
 
@@ -341,6 +348,18 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                         message: `"${attribute.name}" is not an input of ${label}.${removed ? ` ${removed.message}` : ''}`,
                         allowedProps,
                         ...(removed?.suggestion ? { suggestion: removed.suggestion } : {})
+                    });
+                    break;
+                }
+
+                if (input.name !== attribute.name) {
+                    // Angular matches inputs case sensitively: `datakey` sets an HTML attribute, not the dataKey input.
+                    issues.push({
+                        kind: 'input-case',
+                        severity: 'error',
+                        name: attribute.name,
+                        message: `"${attribute.name}" is not an input of ${label}: inputs are case sensitive, write "${input.name}".`,
+                        suggestion: input.name
                     });
                     break;
                 }

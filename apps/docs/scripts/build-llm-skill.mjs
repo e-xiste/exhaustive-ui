@@ -28,7 +28,13 @@ export function generateAgentSkill({ outputDir, wellKnownDir, components, pages,
     const componentEntries = components
         .filter((comp) => !pageNames.has(comp.name))
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((comp) => ({ file: `references/components/${comp.name}.md`, source: path.join(outputDir, 'components', `${comp.name}.md`), title: shortTitle(comp.title), description: comp.description }));
+        .map((comp) => ({
+            file: `references/components/${comp.name}.md`,
+            source: path.join(outputDir, 'components', `${comp.name}.md`),
+            card: fs.existsSync(path.join(outputDir, 'cards', `${comp.name}.md`)) ? `references/cards/${comp.name}.md` : undefined,
+            title: shortTitle(comp.title),
+            description: comp.description
+        }));
 
     const pageEntries = [...pages]
         .map((page) => {
@@ -40,6 +46,10 @@ export function generateAgentSkill({ outputDir, wellKnownDir, components, pages,
     for (const entry of [...pageEntries, ...componentEntries]) {
         if (fs.existsSync(entry.source)) {
             files.push({ name: entry.file, data: fs.readFileSync(entry.source) });
+        }
+
+        if (entry.card) {
+            files.push({ name: entry.card, data: fs.readFileSync(path.join(outputDir, 'cards', path.basename(entry.card))) });
         }
     }
 
@@ -79,6 +89,7 @@ function oneLine(text) {
 
 function renderSkillMd({ version, pageEntries, componentEntries }) {
     const indexLine = (e) => `- \`${e.file}\` — **${e.title}**: ${oneLine(e.description)}`;
+    const componentLine = (e) => (e.card ? `- \`${e.card}\` (full: \`${e.file}\`) — **${e.title}**: ${oneLine(e.description)}` : indexLine(e));
 
     return `---
 name: ${SKILL_NAME}
@@ -93,9 +104,10 @@ All paths below are relative to this skill's directory (the folder containing th
 
 ## How to use the docs
 
-1. Find the file in the index below. The file name is the component's docs slug (\`select\`, \`datepicker\`, \`inputotp\`, \`galleria\`, \`scroller\`, ...), which is not always the selector name.
-2. Read only the part you need. Component files are 10–60 KB, so list the headings first and then read the matching line range, for example \`grep -n '^##' references/components/table.md\`.
-3. When an exact API detail matters (input name, event payload, template context, token name), copy it from the docs instead of relying on memory of PrimeNG. ExhaustiveUI is API-compatible with PrimeNG v21 in most places, but names, packages and defaults can differ.
+1. Find the component in the index below. The file name is the component's docs slug (\`select\`, \`datepicker\`, \`inputotp\`, \`galleria\`, \`scroller\`, ...), which is not always the selector name.
+2. Read its card first: \`references/cards/<name>.md\` (2–16 KB) gives the import, the canonical tag, the inputs the examples use, the outputs, every template with the context it receives, and one example. It is enough for most tasks.
+3. For anything else (an input not detailed in the card, pass through keys, tokens, another example), read the full file \`references/components/<name>.md\`. Full files are 10–200 KB, so list the headings first and then read the matching line range, for example \`grep -n '^##' references/components/table.md\`.
+4. When an exact API detail matters (input name, event payload, template context, token name), copy it from the docs instead of relying on memory of PrimeNG. ExhaustiveUI is API-compatible with PrimeNG v21 in most places, but names, packages and defaults can differ.
 
 To search everything at once, grep the folder, for example \`grep -rn "appendTo" references/components/\`.
 
@@ -132,9 +144,9 @@ These docs are a snapshot of v${version}. If the project uses a newer Exhaustive
 
 ${pageEntries.map(indexLine).join('\n')}
 
-### Components (\`references/components/\`)
+### Components (cards in \`references/cards/\`, full docs in \`references/components/\`)
 
-${componentEntries.map(indexLine).join('\n')}
+${componentEntries.map(componentLine).join('\n')}
 `;
 }
 

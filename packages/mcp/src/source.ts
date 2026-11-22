@@ -5,14 +5,14 @@ import { DocsFetchError, DocsNotFoundError, describeError } from './errors';
 
 /**
  * Where the machine-readable docs come from. Paths are relative to the `/llms/` directory of the docs site:
- * `components.json`, `manifest.json`, `llms.txt`, `llms-full.txt`, `components/<name>.md`, `pages/<name>.md`.
+ * `components.json`, `manifest.json`, `llms.txt`, `llms-full.txt`, `components/<name>.md`, `cards/<name>.md`, `pages/<name>.md`.
  */
 export interface DocsSource {
     readonly kind: string;
     readText(docsPath: string): Promise<string>;
 }
 
-const DOCS_PATH_PATTERN = /^(?:components\.json|manifest\.json|llms\.txt|llms-full\.txt|(?:components|pages)\/[a-z0-9][a-z0-9._-]*\.md)$/;
+const DOCS_PATH_PATTERN = /^(?:components\.json|manifest\.json|llms\.txt|llms-full\.txt|(?:components|pages|cards)\/[a-z0-9][a-z0-9._-]*\.md)$/;
 
 /** Reject anything that is not one of the generated docs files, so a crafted resource URI cannot read elsewhere. */
 export function assertDocsPath(docsPath: string): string {

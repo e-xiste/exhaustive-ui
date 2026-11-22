@@ -27,7 +27,7 @@ import { PickListModule } from '@exhaustive-ui/core/picklist';
                 breakpoint="1400px"
                 scrollHeight="20rem"
             >
-                <ng-template let-option let-selected="selected" #option>
+                <ng-template let-option let-selected="selected" #item>
                     <div class="flex flex-wrap p-1 items-center gap-4 w-full">
                         <img class="w-12 shrink-0 rounded-sm" src="https://exhaustive-ui.com/demo/product/{{ option.image }}" [alt]="option.name" />
                         <div class="flex-1 flex flex-col">

@@ -56,7 +56,7 @@ import { Subscription } from 'rxjs';
                 </p-dialog>
 
                 <p-galleria
-                    [(value)]="images"
+                    [value]="images"
                     [showThumbnails]="false"
                     [showThumbnailNavigators]="false"
                     [showItemNavigators]="true"

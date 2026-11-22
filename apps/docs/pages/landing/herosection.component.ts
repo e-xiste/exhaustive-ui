@@ -217,7 +217,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                     <customers-app *ngIf="selectedSampleAppsSidebarNav === 'Customers'" />
                 </div>
             </div>
-            <p-drawer [(visible)]="dashboardSidebarVisible" position="right" closeIcon="pi pi-sign-out" styleClass="max-w-2xl! w-full! h-screen! rounded-l-2xl">
+            <p-drawer [(visible)]="dashboardSidebarVisible" position="right" styleClass="max-w-2xl! w-full! h-screen! rounded-l-2xl">
                 <ng-template #headless>
                     <div class="flex flex-col h-screen overflow-auto">
                         <div class="">
@@ -363,7 +363,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         <div class="font-medium text-color p-2">Product Usage</div>
                                     </div>
                                     <div class="flex-1 mt-2 py-4 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
-                                        <p-chart type="line" [data]="lineChartData" [options]="lineChartOptions" styleClass="min-h-44 w-full" width="100%" height="11rem" />
+                                        <p-chart type="line" [data]="lineChartData" [options]="lineChartOptions" class="min-h-44 w-full" width="100%" height="11rem" />
                                     </div>
                                 </div>
                                 <div class="w-full h-full flex flex-col p-3 rounded-xl bg-emphasis">

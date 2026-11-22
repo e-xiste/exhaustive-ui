@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Buttons can also placed vertically by setting <i>buttonLayout</i> as <i>vertical</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-input-number [(ngModel)]="value1" [showButtons]="true" buttonLayout="vertical" spinnerMode="vertical" inputId="vertical" [inputStyle]="{ width: '3rem' }">
+            <p-input-number [(ngModel)]="value1" [showButtons]="true" buttonLayout="vertical" inputId="vertical" [inputStyle]="{ width: '3rem' }">
                 <ng-template #incrementbuttonicon>
                     <span class="pi pi-plus"></span>
                 </ng-template>

@@ -204,6 +204,9 @@ export interface ComponentEntry {
     publicUrl: string;
     markdownUrl: string;
     docPath: string;
+    /** Compact card: import, tag, key inputs, templates with their context, one example. */
+    cardPath: string;
+    cardUrl: string;
     resourceUri: string;
     apiResourceUri: string;
     import?: string;
@@ -243,6 +246,11 @@ export interface Catalog {
     generatedAt: string;
     site: string;
     components: ComponentEntry[];
+    /**
+     * Entry points with selectors but no docs page of their own (InputIcon, OverlayBadge, Bind...): not listed or
+     * searchable as components, but known to the usage validators so their tags and inputs are recognized.
+     */
+    parts: ComponentEntry[];
     guides: GuideEntry[];
     directives: DirectiveEntry[];
 }

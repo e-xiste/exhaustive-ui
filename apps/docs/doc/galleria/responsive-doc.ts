@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Galleria responsiveness is defined with the <i>responsiveOptions</i> property.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
                 </ng-template>

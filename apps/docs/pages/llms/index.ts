@@ -4,6 +4,7 @@ import { MarkdownExtensionDoc } from '@/doc/llms/markdownextension-doc';
 import { AgentSkillDoc } from '@/doc/llms/agentskill-doc';
 import { McpDoc } from '@/doc/llms/mcp-doc';
 import { ManifestDoc } from '@/doc/llms/manifest-doc';
+import { AgentsDoc } from '@/doc/llms/agents-doc';
 import { Component } from '@angular/core';
 import { AppDoc } from '@/components/doc/app.doc';
 
@@ -15,6 +16,11 @@ import { AppDoc } from '@/components/doc/app.doc';
 })
 export class LLMsDemo {
     docs = [
+        {
+            id: 'agents',
+            label: 'AI coding agents',
+            component: AgentsDoc
+        },
         {
             id: 'llmstxt',
             label: '/llms.txt',

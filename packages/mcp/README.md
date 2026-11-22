@@ -89,7 +89,7 @@ args = ["-y", "@exhaustive-ui/mcp"]
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `list`           | List components, directives, guides, code examples or MCP resources (`kind`, `limit`, `offset`).                                                                                                                                                                                                                                     |
 | `search`         | Search component docs, guides, API members (inputs, outputs, templates, PT keys, CSS classes, tokens) and code examples (`query`, `scope`).                                                                                                                                                                                          |
-| `get_component`  | Read a component: selectors, import path, sections, available examples; optionally its API and compiled declarations (`includeApi`), example code (`includeExamples`) and the full Markdown document (`detail: "full"`). Accepts a batch of up to 10 `components`.                                                                   |
+| `get_component`  | Read a component: its card (import, tag, key inputs, outputs, every template with its context, one example), selectors, import path, sections, available examples; optionally its API and compiled declarations (`includeApi`), example code (`includeExamples`) and the full Markdown document (`detail: "full"`). Accepts a batch of up to 10 `components`.                                                                   |
 | `get_guide`      | Read a guide by name or route (`installation`, `configuration`, `theming/styled`, `tailwind`, `guides/accessibility`...), optionally one `section` or the full document.                                                                                                                                                             |
 | `get_example`    | Return one complete, source-backed code example of a component (a standalone Angular component with template and imports), by `section` or feature `variant`.                                                                                                                                                                        |
 | `get_setup`      | Return the setup guidance for an `environment`: `angular-cli` (default), `configuration`, `styled`, `unstyled`, `tailwind`, `icons`, `custom-icons`, `passthrough`.                                                                                                                                                                  |
@@ -99,6 +99,18 @@ args = ["-y", "@exhaustive-ui/mcp"]
 Component names are resolved loosely: `button`, `p-button`, `Button`, `[pTooltip]`, `@exhaustive-ui/core/select`, a docs URL, and the PrimeNG names of renamed components (`dropdown`, `calendar`, `sidebar`, `overlaypanel`, `inputswitch`, `tabview`...) all work.
 
 Every tool answers with `structuredContent` and the same JSON serialized in its text content, so clients that only forward text see the whole answer.
+
+## Checking a project
+
+The package also has a `check` command, for agents and CI: it validates every Angular template of a project (the `.html` files and the inline `template` of `.ts` files) against the ExhaustiveUI API, like `validate_usage` but for all the components of all the files, with file and line.
+
+```bash
+npx -y @exhaustive-ui/mcp check            # the templates under src/
+npx -y @exhaustive-ui/mcp check apps libs  # other folders or files
+npx -y @exhaustive-ui/mcp check --json     # the issues as JSON
+```
+
+It reports PrimeNG imports and tags with their replacement (`primeng/dropdown`, `<p-calendar>`...), unknown, miscased or deprecated inputs, invalid literal values, inputs removed in v22, `<ng-template #name>` names the component does not have, and the legacy `pTemplate`. It reads the API of the offline snapshot bundled with the package, without network, and exits with 1 when it finds an error.
 
 ## Resources and prompts
 

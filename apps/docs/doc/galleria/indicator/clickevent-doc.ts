@@ -14,7 +14,7 @@ import { GalleriaModule } from '@exhaustive-ui/core/galleria';
             <p>Indicators are displayed at the bottom by enabling <i>showIndicators</i> property and interacted with the click event by default.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-galleria [(value)]="images" [showIndicators]="true" [showThumbnails]="false" [containerStyle]="{ 'max-width': '640px' }">
+            <p-galleria [value]="images" [showIndicators]="true" [showThumbnails]="false" [containerStyle]="{ 'max-width': '640px' }">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
                 </ng-template>

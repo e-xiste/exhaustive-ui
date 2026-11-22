@@ -20,7 +20,7 @@ import { GalleriaModule } from '@exhaustive-ui/core/galleria';
                 </div>
             </div>
             <p-galleria
-                [(value)]="images"
+                [value]="images"
                 [(visible)]="displayCustom"
                 [(activeIndex)]="activeIndex"
                 [responsiveOptions]="responsiveOptions"

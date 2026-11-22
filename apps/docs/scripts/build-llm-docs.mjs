@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import ComponentTokens from '@exhaustive-ui/themes/tokens';
 import { generateAgentSkill } from './build-llm-skill.mjs';
+import { renderAgentsMd, checkRenames } from './llm/agents.mjs';
+import { generateCards } from './llm/cards.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1074,9 +1076,11 @@ function generateMarkdownOutput(components, apiDocs, guidePages = []) {
 /**
  * Generate llms.txt index file
  */
-function generateLlmsTxt(components, pages = []) {
+function generateLlmsTxt(components, pages = [], cardNames = new Set()) {
     let content = '# ExhaustiveUI\n\n';
     content += '> A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.\n\n';
+    content += `Before writing code with ExhaustiveUI, read the guide for AI coding agents (rules, setup, PrimeNG differences): ${SITE_URL}/llms/AGENTS.md\n\n`;
+    content += 'Each component link below is a compact card (import, tag, key inputs, templates with their context, one example); the complete document is at /llms/components/<name>.md.\n\n';
     content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.com/llms/manifest.json\n\n';
 
     // Add Guides section
@@ -1097,7 +1101,8 @@ function generateLlmsTxt(components, pages = []) {
 
     for (const comp of sorted) {
         const route = COMPONENT_ROUTE_MAP[comp.name] ?? comp.name;
-        content += `- [${comp.title}](https://exhaustive-ui.com/${route}): ${comp.description}\n`;
+        const link = cardNames.has(comp.name) ? `${SITE_URL}/llms/cards/${comp.name}.md` : `${SITE_URL}/${route}`;
+        content += `- [${comp.title}](${link}): ${comp.description}\n`;
     }
 
     const outputPath = path.join(OUTPUT_DIR, 'llms.txt');
@@ -1424,6 +1429,19 @@ function generatePageMarkdownFiles(pages) {
 }
 
 /**
+ * AGENTS.md on the site, with absolute links. The copy shipped in @exhaustive-ui/core is rendered by its build
+ * (packages/core/scripts/build-llms.mjs) from cards/index.json, with links to the cards packaged next to it.
+ */
+function generateAgentsMd(cards) {
+    const manifest = JSON.parse(fs.readFileSync(path.join(OUTPUT_DIR, 'manifest.json'), 'utf-8'));
+    checkRenames(manifest);
+    const version = JSON.parse(fs.readFileSync(EXHAUSTIVE_PACKAGE_JSON, 'utf-8')).version;
+    const docsLink = (route) => `${SITE_URL}/${route}`;
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'AGENTS.md'), renderAgentsMd({ version, cards, cardLink: (name) => docsLink(`llms/cards/${name}.md`), docsLink }), 'utf-8');
+    console.log('✓ Generated AGENTS.md');
+}
+
+/**
  * Main execution
  */
 function main() {
@@ -1451,8 +1469,11 @@ function main() {
 
     console.log('✨ Generating outputs...\n');
     generateJsonOutput(components, apiDocs, pages);
+    const cards = generateCards({ manifestPath: path.join(OUTPUT_DIR, 'manifest.json'), componentsPath: path.join(OUTPUT_DIR, 'components.json'), outputDir: OUTPUT_DIR });
+    console.log(`✓ Generated ${cards.length} component cards`);
+    generateAgentsMd(cards);
     generateMarkdownOutput(components, apiDocs, pages);
-    generateLlmsTxt(components, pages);
+    generateLlmsTxt(components, pages, new Set(cards.map((card) => card.name)));
     generateIndividualMarkdownFiles(components, apiDocs);
     generatePageMarkdownFiles(pages);
     generateAgentSkill({ outputDir: OUTPUT_DIR, wellKnownDir: path.resolve(__dirname, '../public/.well-known'), components, pages, version: JSON.parse(fs.readFileSync(EXHAUSTIVE_PACKAGE_JSON, 'utf-8')).version });
@@ -1464,6 +1485,7 @@ function main() {
     console.log('   - llms.txt (index file)');
     console.log('   - components/*.md (individual component files with complete API)');
     console.log('   - pages/*.md (guide/documentation page files)');
+    console.log('   - cards/*.md (compact component cards: import, selectors, key inputs, templates with their context, one example)');
     console.log('   - exhaustive-ui-skill.zip (Agent Skill bundling the markdown files)');
     console.log('   - ../.well-known/agent-skills/index.json (skills discovery index for `npx skills add`)');
 }

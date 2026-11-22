@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card">
             <p-galleria
-                [(value)]="images"
+                [value]="images"
                 [showItemNavigators]="true"
                 [showThumbnails]="false"
                 [showIndicators]="true"

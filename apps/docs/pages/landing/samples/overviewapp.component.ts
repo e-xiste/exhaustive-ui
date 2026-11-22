@@ -89,10 +89,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
                         </div>
                         <p-table
-                            datakey="id"
+                            dataKey="id"
                             [value]="sampleAppsTableDatas"
                             [paginator]="true"
-                            paginatorTemplate="PrevPageLink PageLinks NextPageLink  CurrentPageReport RowsPerPageDropdown"
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                             [showCurrentPageReport]="true"
                             [rows]="5"

@@ -98,6 +98,17 @@ For detailed documentation, interactive component demos, theming guides, and mor
 **[ExhaustiveUI Documentation](https://exhaustive-ui.com/)**
 
 
+## 🤖 AI coding agents
+
+This package ships a guide for AI coding agents, [`AGENTS.md`](https://exhaustive-ui.com/llms/AGENTS.md) at its root, with a short card per component in `llms/cards/` (import, tag, inputs, outputs, templates with their context, one example), matching the installed version. Point your agent to it from your project's `AGENTS.md` or `CLAUDE.md`:
+
+```
+This project uses ExhaustiveUI. Before writing code with it, read node_modules/@exhaustive-ui/core/AGENTS.md,
+then the card of each component you use. After changing templates, run: npx -y @exhaustive-ui/mcp check
+```
+
+The [MCP server](https://www.npmjs.com/package/@exhaustive-ui/mcp) gives agents search, cards, examples and usage validation, and `npx -y @exhaustive-ui/mcp check` validates the templates of a project. See [LLMs](https://exhaustive-ui.com/llms).
+
 ## 🤝 Contributing
 
 We welcome and appreciate contributions from the community! If you're interested in helping improve ExhaustiveUI, please take a look at our [Contributing Guide](https://github.com/e-xiste/exhaustive-ui/blob/main/CONTRIBUTING.md) for instructions on how to get started.

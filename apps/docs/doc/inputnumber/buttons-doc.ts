@@ -27,7 +27,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </div>
             <div class="flex-auto">
                 <label class="mb-2 block font-bold" for="horizontal">Horizontal with Step</label>
-                <p-input-number [(ngModel)]="value3" [showButtons]="true" buttonLayout="horizontal" inputId="horizontal" spinnerMode="horizontal" [step]="0.25" mode="currency" currency="EUR">
+                <p-input-number [(ngModel)]="value3" [showButtons]="true" buttonLayout="horizontal" inputId="horizontal" [step]="0.25" mode="currency" currency="EUR">
                     <ng-template #incrementbuttonicon>
                         <span class="pi pi-plus"></span>
                     </ng-template>

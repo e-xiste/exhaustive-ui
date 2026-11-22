@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Indicator content can be customized with the <i>indicator</i> template.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-galleria [(value)]="images" [showIndicators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" indicatorsPosition="left" [containerStyle]="{ maxWidth: '640px' }">
+            <p-galleria [value]="images" [showIndicators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" indicatorsPosition="left" [containerStyle]="{ maxWidth: '640px' }">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
                 </ng-template>

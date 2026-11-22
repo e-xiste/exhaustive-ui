@@ -19,7 +19,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <p-button type="button" icon="pi pi-minus" (click)="prev()" />
                 <p-button type="button" icon="pi pi-plus" (click)="next()" severity="secondary" styleClass="ml-2" />
             </div>
-            <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
                 <ng-template #item let-item>
                     <img [src]="item.itemImageSrc" style="width: 100%;" />
                 </ng-template>

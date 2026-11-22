@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import ts from 'typescript';
+import { fileURLToPath } from 'url';
+import { readTemplateNames } from '../apidoc/template-names.mjs';
 
 export const PACKAGE_NAME = '@exhaustive-ui/core';
 
@@ -149,6 +151,15 @@ function describeType(symbol, checker) {
     return undefined;
 }
 
+let templateNames;
+
+/** Template names of a class read from its contentChild queries, for the classes the API docs do not describe. */
+function queryTemplates(className) {
+    templateNames ??= readTemplateNames(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../packages/core/src'));
+    const names = [...new Set(templateNames.get(className)?.values() ?? [])];
+    return names.length ? names.map((name) => ({ name })) : undefined;
+}
+
 /**
  * Describe one component or directive: its selector, inputs (own, inherited and from host directives), outputs and templates.
  */
@@ -214,13 +225,16 @@ function describeDeclaration({ entry, symbol, classDecl, meta, checker, sourceIn
     });
 
     const apiComponent = apiDocs[entry]?.components?.[symbol.name];
-    const templates = apiComponent?.templates?.values?.map((t) =>
-        compact({
-            name: t.name,
-            context: t.type?.match(/^TemplateRef<(.+)>$/)?.[1]?.replace(/^void$/, '') || undefined,
-            description: t.description || undefined
-        })
-    );
+    // The API docs only describe the main classes of an entry point; the template names of the others (CellEditor...)
+    // are read from their queries.
+    const templates =
+        apiComponent?.templates?.values?.map((t) =>
+            compact({
+                name: t.name,
+                context: t.type?.match(/^TemplateRef<(.+)>$/)?.[1]?.replace(/^void$/, '') || undefined,
+                description: t.description || undefined
+            })
+        ) ?? queryTemplates(symbol.name);
 
     const methods = apiComponent?.methods?.values?.map((m) =>
         compact({

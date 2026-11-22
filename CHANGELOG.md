@@ -4,6 +4,23 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **AI coding agents:** `@exhaustive-ui/core` ships `AGENTS.md`, a guide for AI coding agents (rules, setup, the PrimeNG habits to drop), and a card per component in `llms/cards/`: import, canonical tag, the inputs the examples use, outputs, every template with the context it receives, one example. Agents read them from `node_modules`, for the installed version. Both are also published at `/llms/AGENTS.md` and `/llms/cards/<name>.md`, and `llms.txt` links to the cards.
+- **mcp:** `get_component` returns the component card first. The Agent Skill bundles the cards.
+- **mcp:** new `npx @exhaustive-ui/mcp check` command: validates every template of a project, with file and line (PrimeNG imports and tags with their replacement, unknown, miscased or deprecated inputs, invalid values, inputs removed in v22, template names the component does not have, legacy `pTemplate`). Exits with 1 on errors.
+
+### Bug Fixes
+
+- **mcp:** `validate_usage` knows the components documented on another page (InputIcon, InputGroupAddon, OverlayBadge, AvatarGroup, ButtonGroup...) and the `pBind`, `p-motion` and `pTemplate` directives, accepts the Angular signal forms and validator directives (`formField`, `minlength`, `maxlength`, `email`) and `let-` variables, and reports inputs written with the wrong case (`datakey`), which Angular does not bind.
+- **manifest:** the templates of CellEditor, TreeTableCellEditor, TabList and TabPanel are listed.
+
+### Documentation
+
+- Examples fixed by the new check: the PickList filter example used a `#option` template that does not exist (`#item`); the Galleria examples bound `[(value)]` without a `valueChange` output; RadioButton examples bound a `label` input it does not have; InputNumber `spinnerMode`, Password `type` and FileUpload `label` were not inputs; the Checkbox "label" section, not shown on the site, described a `label` input that does not exist and is removed. A CI test runs the check on every example.
+
 ## 22.4.0 (2026-11-22)
 
 Template contexts checked against the code, with the wrong ones fixed.
