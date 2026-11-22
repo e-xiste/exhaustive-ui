@@ -169,6 +169,7 @@ const visibleContextMenus = new Set<ContextMenu>();
                                             [attr.title]="getItemProp(processedItem, 'title')"
                                             [attr.tabindex]="-1"
                                             [queryParams]="getItemProp(processedItem, 'queryParams')"
+                                            [routerLinkActive]="'p-contextmenu-item-link-active'"
                                             [routerLinkActiveOptions]="getItemProp(processedItem, 'routerLinkActiveOptions') || { exact: false }"
                                             [target]="getItemProp(processedItem, 'target')"
                                             [class]="cn(cx('itemLink'), getItemProp(processedItem, 'linkClass'))"

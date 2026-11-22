@@ -6123,7 +6123,7 @@ export class ReorderableRow extends BaseComponent {
                                     {{ matchMode.label }}
                                 </li>
                             }
-                            <li [class]="cx('filterConstraintSeparator')" [pBind]="ptm('filterConstraintSeparator', { context: { index: i } })"></li>
+                            <li [class]="cx('filterConstraintSeparator')" [pBind]="ptm('filterConstraintSeparator')"></li>
                             <li [class]="cx('filterConstraint')" [pBind]="ptm('emtpyFilterLabel')" (click)="onRowClearItemClick()" (keydown)="onRowMatchModeKeyDown($event)" (keydown.enter)="onRowClearItemClick()">
                                 {{ noFilterLabel }}
                             </li>

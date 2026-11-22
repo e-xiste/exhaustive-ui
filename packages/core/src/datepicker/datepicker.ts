@@ -150,7 +150,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
                 </button>
             }
             @if (iconDisplay() === 'input' && showIcon()) {
-                <span [class]="cx('inputIconContainer')" [pBind]="ptm('inputIconContainer')" [attr.data-p]="inputIconDataP">
+                <span [class]="cx('inputIconContainer')" [pBind]="ptm('inputIconContainer')">
                     @if (!inputIconTemplate() && !_inputIconTemplate()) {
                         @if (icon()) {
                             <span (click)="onButtonClick($event)" [class]="cn(cx('inputIcon'), icon())" [pBind]="ptm('inputIcon')"></span>

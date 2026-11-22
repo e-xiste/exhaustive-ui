@@ -2663,7 +2663,7 @@ export class TTBody extends BaseComponent {
                     'overflow-y': !frozen() && tt.scrollHeight() ? 'scroll' : undefined
                 }"
             >
-                <ng-container *ngTemplateOutlet="buildInItems; context: { $implicit: serializedValue, options: {} }"></ng-container>
+                <ng-container *ngTemplateOutlet="buildInItems; context: { $implicit: tt.serializedValue(), options: {} }"></ng-container>
             </div>
         }
 

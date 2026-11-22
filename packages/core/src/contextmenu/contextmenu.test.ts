@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, DebugElement, provideZonelessChange
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem, SharedModule } from '@exhaustive-ui/core/api';
 import { isIOS } from '@exhaustive-ui/utils';
@@ -1299,6 +1300,22 @@ describe('ContextMenu', () => {
             expect(routerContextMenu.model()[0].routerLink).toBe('/');
             expect(routerContextMenu.model()[1].routerLink).toBe('/products');
             expect(routerContextMenu.model()[2].queryParams).toEqual({ tab: 'overview' });
+        });
+
+        it('should mark the router link of the active route', async () => {
+            const routerFixture = TestBed.createComponent(TestRouterContextMenuComponent);
+            await routerFixture.whenStable();
+            await TestBed.inject(Router).navigateByUrl('/products');
+
+            const routerContextMenu = routerFixture.debugElement.query(By.directive(ContextMenu)).componentInstance;
+            routerContextMenu.show({ pageX: 10, pageY: 10, stopPropagation: vi.fn(), preventDefault: vi.fn() });
+            routerFixture.changeDetectorRef.markForCheck();
+            await routerFixture.whenStable();
+
+            const links = routerFixture.debugElement.queryAll(By.css('a.p-contextmenu-item-link'));
+            const active = links.filter((l) => l.nativeElement.classList.contains('p-contextmenu-item-link-active'));
+            // routerLinkActiveOptions defaults to { exact: false }: '/' is active on /products too
+            expect(active.map((l) => l.nativeElement.textContent.trim())).toEqual(['Home', 'Products']);
         });
 
         it('should work with styled component', async () => {

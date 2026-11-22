@@ -123,9 +123,8 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
                     @if (!emptymessageTemplate()) {
                         {{ emptyMessageLabel() }}
                     } @else {
-                        <ng-template [ngTemplateOutlet]="empty"></ng-template>
+                        <ng-container *ngTemplateOutlet="emptymessageTemplate()"></ng-container>
                     }
-                    <ng-container #empty *ngTemplateOutlet="emptymessageTemplate()"></ng-container>
                 </div>
             }
         </div>
