@@ -4,25 +4,34 @@
 
 # ExhaustiveUI
 
-**A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.**
+**80+ accessible Angular UI components under the MIT license, rebuilt on Signals for Angular 22.**
+
+A community-maintained continuation of PrimeNG & Optimus UI, built to stay open.
 
 [![npm](https://img.shields.io/npm/v/@exhaustive-ui/core.svg?color=%23000)](https://www.npmjs.com/package/@exhaustive-ui/core)
 [![license](https://img.shields.io/badge/license-MIT-black.svg)](LICENSE.md)
 [![angular](https://img.shields.io/badge/angular-22-black.svg)](https://angular.dev)
+[![CI](https://github.com/e-xiste/exhaustive-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/e-xiste/exhaustive-ui/actions/workflows/ci.yml)
 
-[Documentation](https://exhaustive-ui.com) · [Getting started](https://exhaustive-ui.com/installation) · [Philosophy](https://exhaustive-ui.com/philosophy) · [FAQ](https://exhaustive-ui.com/faq)
+[Documentation](https://exhaustive-ui.com) · [Getting started](https://exhaustive-ui.com/installation) · [Migrate from PrimeNG](https://exhaustive-ui.com/migration/primeng) · [Roadmap](https://exhaustive-ui.com/roadmap) · [FAQ](https://exhaustive-ui.com/faq)
 
 </div>
 
 ---
 
-## Why this exists
+## What ExhaustiveUI brings
 
-In June 2026 PrimeTek archived the PrimeNG repository and moved future major versions, starting with v22, to a commercial license — [their announcement explains why](https://primeui.dev/nextchapter). [Optimus UI](https://github.com/openng-org/optimus-ui), maintained by OpenNG, picked up PrimeNG v21, the last MIT licensed version, and kept it open.
+ExhaustiveUI takes the last MIT-licensed PrimeNG codebase (v21, by way of Optimus UI) and keeps it alive on current Angular, in the open.
 
-ExhaustiveUI is a fork of Optimus UI, maintained by [e-xiste](https://e-xiste.com) and the community. It exists to ship fixes and releases at a steadier pace, starting from Optimus UI's `next` branch and its migration of every component to the Angular Signals API. It stays MIT. There is no paid tier and none is planned.
-
-It is not affiliated with, endorsed by, or sponsored by PrimeTek or OpenNG. The [philosophy page](https://exhaustive-ui.com/philosophy) sets out what the project commits to and — just as importantly — what it does not do.
+- **Angular 22, and every Angular major after it.** Each ExhaustiveUI major follows Angular's, and `ng update` migrates your code from one to the next.
+- **Full Signals.** Every component and directive uses `input()`, `model()`, `output()`, `computed()` and signal queries. No `@Input`, `@Output` or `@ViewChild` is left, and the form components work with Signal Forms.
+- **Modern Angular.** Standalone components, `OnPush` change detection and the built-in `@if` / `@for` control flow, tested without zone.js. Option lists, menus and paginators reuse their rows instead of recreating them.
+- **Close to 400 inherited bugs fixed.** Bug reports carried over from PrimeNG v21 and Optimus UI were reproduced in a real browser and fixed, each code fix with a regression test. The suite runs about 8,800 unit tests on every change.
+- **A cleaner API, migrated for you.** Inputs that were deprecated or did nothing are gone, names are consistent across components, and nine `ng update` migrations rewrite your templates and code, then list what they left for review.
+- **One command to switch.** The `migrate-from-primeng` and `migrate-from-optimus` schematics swap the packages, rewrite the imports, the configuration API and the CSS layer, and report anything left.
+- **Tailwind CSS 4**, alongside v3: theme colors and animation utilities from a single `@import`, and a `migrate-from-primeflex` schematic.
+- **Built for coding agents.** An MCP server and an agent skill give Claude Code, Cursor or Codex the real ExhaustiveUI API instead of their memory of PrimeNG, with a validator that names the replacement of every removed input.
+- **MIT, for good.** No paid tier, no license key, no telemetry. Packages are published with npm provenance.
 
 ## Quick start
 
@@ -44,56 +53,20 @@ import { Button } from '@exhaustive-ui/core/button';
 
 Full setup, including the manual path and icons, is in the [getting started guide](https://exhaustive-ui.com/installation).
 
-## What changes in v22
+## Coming from PrimeNG or Optimus UI
 
-v22 is the first major of ExhaustiveUI. Templates bind as before (`[name]`, `[(name)]`, `(name)`), but the library moved to the Angular Signals API:
+Selectors, CSS classes, design tokens and theme presets are the same, so most applications switch with a schematic, then the v22 migrations.
 
-- inputs are signal inputs and two-way properties are `model()` signals: code that holds a component instance reads `table.selection()` and writes `drawer.visible.set(true)` instead of assigning;
-- components use `OnPush` change detection (except Table, TreeTable and DynamicDialog), so pass them new arrays and objects rather than mutating bound data;
-- templates use the built-in `@if` / `@for` control flow;
-- inputs that were deprecated or had no effect are gone: `styleClass` becomes the native `class` attribute on most components, and aliases such as Drawer's `showCloseIcon` (now `closable`) are removed.
-
-`ng update @exhaustive-ui/core` rewrites the templates for you and lists what it left for review. The [update guide](https://exhaustive-ui.com/migration/update#v22) has the details. Every change is listed in the [changelog](CHANGELOG.md).
-
-## Migrating from Optimus UI
-
-The component selectors, CSS classes and theme presets are the same. Update Angular to v22, then swap the packages and rewrite the imports:
-
-| Optimus UI | ExhaustiveUI |
-| --- | --- |
-| `@openng/optimus-ui` | `@exhaustive-ui/core` |
-| `@openng/optimus-ui-themes` | `@exhaustive-ui/themes` |
-| `@openng/optimus-ui-styled` | `@exhaustive-ui/styled` |
-| `@openng/optimus-ui-styles` | `@exhaustive-ui/styles` |
-| `@openng/optimus-ui-tailwindcss` | `@exhaustive-ui/tailwindcss` |
-| `@openng/optimus-ui-locale` | `@exhaustive-ui/locale` |
-| `@openng/optimus-ui-motion` | `@exhaustive-ui/motion` |
-| `@openng/optimus-ui-utils` | `@exhaustive-ui/utils` |
-
-Then rename `provideOptimus` to `provideExhaustive`, the `Optimus` config service to `Exhaustive`, and `OptimusConfigType` to `ExhaustiveConfigType`. The default CSS cascade layer is named `exhaustive` instead of `optimus`; pass `cssLayer: { name: 'optimus' }` to the theme options if your stylesheets depend on the old name. `@openng/icons` is unchanged.
-
-Finally, run the v22 migrations described above. They run automatically during `ng update`; on a workspace that has just installed the package, ask for them explicitly:
+From **PrimeNG v21** ([guide](https://exhaustive-ui.com/migration/primeng)):
 
 ```bash
-ng update @exhaustive-ui/core --migrate-only --from=3.0.0
-```
-
-## Migrating from PrimeNG
-
-`ng add` does not migrate an existing workspace. It sets up new projects only, and when it detects a `primeng` dependency it leaves your code untouched and fails with an error rather than reporting success. Use the `migrate-from-primeng` schematic instead: install the package so the Angular CLI can resolve it, then run the schematic. Packages are swapped, imports are rewritten, and you get a report of anything it could not handle automatically, with file and line numbers.
-
-```bash
-ng update @angular/core@22 @angular/cli@22 --force
+ng update @angular/core@22 @angular/cli@22 --force   # PrimeNG v21 declares Angular 21 as a peer
 npm install @exhaustive-ui/core
 ng generate @exhaustive-ui/core:migrate-from-primeng
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 ```
 
-The last command applies the [v22 migrations](#what-changes-in-v22) (`styleClass` to `class`, renamed and removed inputs) to the migrated templates.
-
-The [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng) covers the prerequisites, what the schematic changes and the manual checks. `--force` is needed because PrimeNG v21 declares Angular 21 as a peer dependency; the schematic removes it right after. If you are on PrimeNG v20 or older, upgrade to v21 first.
-
-Coming from Optimus UI v2, the `migrate-from-optimus` schematic does the same for the `@openng/optimus-ui*` packages, the imports, the configuration API (`provideOptimus`, `Optimus`...) and the CSS layer:
+From **Optimus UI v2** ([guide](https://exhaustive-ui.com/migration/optimus)):
 
 ```bash
 npm install @exhaustive-ui/core
@@ -101,7 +74,17 @@ ng generate @exhaustive-ui/core:migrate-from-optimus
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 ```
 
-See the [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus).
+Each schematic swaps the packages, rewrites the imports, the configuration API (`providePrimeNG`, `provideOptimus`...) and the CSS layer, then reports what it could not handle, with file and line numbers. `ng add` does not migrate: it sets up new projects only, and refuses a PrimeNG or Optimus UI workspace. On PrimeNG v20 or older, upgrade to v21 first.
+
+## What changes in v22
+
+Templates bind as before (`[name]`, `[(name)]`, `(name)`). What changes is code that reaches into a component instance, and data mutated in place:
+
+- inputs are signal inputs and two-way properties are `model()` signals: code that holds a component instance reads `table.selection()` and writes `drawer.visible.set(true)` instead of assigning;
+- components use `OnPush` change detection (except Table, TreeTable and DynamicDialog), so pass them new arrays and objects rather than mutating bound data;
+- inputs that were deprecated or had no effect are gone: `styleClass` becomes the native `class` attribute on most components, and aliases such as Drawer's `showCloseIcon` (now `closable`) are removed.
+
+The [migration guide to v22](https://exhaustive-ui.com/migration/v22) covers each change and each case the migrations report. Every change is listed in the [changelog](CHANGELOG.md).
 
 ## Packages
 
@@ -117,7 +100,7 @@ See the [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus
 | [`@exhaustive-ui/utils`](packages/utils) | Shared helpers used across the packages. |
 | [`@exhaustive-ui/mcp`](packages/mcp) | MCP server that gives coding agents the documentation, the compiled API and a template validator. |
 
-Icons live in [`@openng/icons`](https://www.npmjs.com/package/@openng/icons) and are optional — components accept any icon through templating, but the documentation examples use the `pi pi-*` classes.
+Components ship their own SVG icons. [`@openng/icons`](https://www.npmjs.com/package/@openng/icons) is optional: install it for the `pi pi-*` icon classes the documentation examples use.
 
 ## Coding agents
 
@@ -126,6 +109,14 @@ Two ways to give an agent (Claude Code, Cursor, Codex, ...) the real ExhaustiveU
 - the MCP server: `npx @exhaustive-ui/mcp` (see [its README](packages/mcp));
 - the agent skill, an offline copy of the docs: `npx skills add https://exhaustive-ui.com`.
 
+## Why this exists
+
+In June 2026 PrimeTek archived the PrimeNG repository and moved future major versions, starting with v22, to a commercial license — [their announcement explains why](https://primeui.dev/nextchapter). [Optimus UI](https://github.com/openng-org/optimus-ui), maintained by OpenNG, picked up PrimeNG v21, the last MIT licensed version, and kept it open.
+
+ExhaustiveUI is a fork of Optimus UI, maintained by [e-xiste](https://e-xiste.com) and the community. It exists to ship fixes and releases at a steadier pace, starting from Optimus UI's `next` branch and its migration of every component to the Angular Signals API. It stays MIT. There is no paid tier and none is planned.
+
+It is not affiliated with, endorsed by, or sponsored by PrimeTek or OpenNG. The [philosophy page](https://exhaustive-ui.com/philosophy) sets out what the project commits to and — just as importantly — what it does not do.
+
 ## Requirements
 
 - Angular v22
@@ -133,7 +124,7 @@ Two ways to give an agent (Claude Code, Cursor, Codex, ...) the real ExhaustiveU
 
 ## Contributing
 
-Issue triage, reproductions, pull requests and documentation fixes are all welcome. Fixes landed upstream in Optimus UI are ported here too; [CONTRIBUTING.md](CONTRIBUTING.md) explains how, with the rebranding script that keeps the two codebases in step.
+Issue triage, reproductions, pull requests and documentation fixes are all welcome, including contributions written with AI coding agents, on the same terms as any other: you understand the change, it is scoped, and it comes with tests. Fixes landed upstream in Optimus UI are ported here too; [CONTRIBUTING.md](CONTRIBUTING.md) explains how, with the rebranding script that keeps the two codebases in step.
 
 ```bash
 pnpm install     # dependencies + git hooks
