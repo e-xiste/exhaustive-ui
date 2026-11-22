@@ -5,6 +5,7 @@ import * as TypeDoc from 'typedoc';
 import { fileURLToPath } from 'url';
 import { templateContextType, templateRefType } from './apidoc/template-type.mjs';
 import { readTemplateNames } from './apidoc/template-names.mjs';
+import { cleanDefault, collectSourceInfo, findSourceMember, unwrapSignalType } from './apidoc/source-members.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +28,9 @@ if (!fs.existsSync(outputFile)) {
 // per class and property. Deriving it from the property name gave wrong names
 // (disabledDateTemplate is #disabledDate, checkboxIconTemplate is #icon).
 const templateNames = readTemplateNames(path.resolve(__dirname, '../../../packages/core/src'));
+
+// Defaults and transforms of the inputs, read from the sources: TypeDoc prints `...` for a signal initializer.
+const sourceInfo = collectSourceInfo(path.resolve(__dirname, '../../../packages/core/src'));
 
 const staticMessages = {
     methods: "Defines methods that can be accessed by the component's reference.",
@@ -181,10 +185,13 @@ async function main() {
                                     };
 
                                     component_props_group.children.forEach((prop) => {
-                                        let defaultValue = prop.defaultValue ? prop.defaultValue.replace(/^'|'$/g, '') : undefined;
+                                        // TypeDoc prints "..." for the initializer of a signal input: read the default from the source,
+                                        // then from the @defaultValue tag, for members the source does not tell (getters).
+                                        const source = findSourceMember(sourceInfo, componentName, actualName, prop.name);
+                                        let defaultValue = prop.defaultValue && prop.defaultValue !== '...' ? prop.defaultValue.replace(/^'|'$/g, '') : undefined;
 
-                                        // Check for @defaultValue tag in comment blockTags
-                                        if (prop.comment && prop.comment.blockTags) {
+                                        if (source) defaultValue = cleanDefault(source.default);
+                                        if (defaultValue === undefined && prop.comment && prop.comment.blockTags) {
                                             const defaultValueTag = prop.comment.blockTags.find((tag) => tag.tag === '@defaultValue');
                                             if (defaultValueTag) {
                                                 defaultValue = defaultValueTag.content.map((c) => c.text.replace(/```ts\n|```/g, '').trim()).join(' ');
@@ -195,8 +202,8 @@ async function main() {
                                             name: prop.name,
                                             optional: prop.flags.isOptional,
                                             readonly: prop.flags.isReadonly,
-                                            type: prop.getSignature && prop.getSignature.type ? prop.getSignature.type.toString() : prop.type ? prop.type.toString() : null,
-                                            default: prop.type && prop.type.name === 'boolean' && !prop.defaultValue ? 'false' : defaultValue,
+                                            type: unwrapSignalType(prop.getSignature && prop.getSignature.type ? prop.getSignature.type.toString() : prop.type ? prop.type.toString() : null),
+                                            default: prop.type && prop.type.name === 'boolean' && !prop.defaultValue && !source ? 'false' : defaultValue,
                                             description: (prop.getSignature?.comment?.summary || prop.setSignature?.comment?.summary || prop.comment?.summary)?.map((s) => s.text || '').join(' '),
                                             deprecated: getDeprecatedText(prop.getSignature) || getDeprecatedText(prop.setSignature) || getDeprecatedText(prop)
                                         });

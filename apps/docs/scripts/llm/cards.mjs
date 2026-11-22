@@ -105,10 +105,22 @@ export function renderCard(entryPoint, component, types) {
 
     lines.push(`# ${title}`, '', firstSentence(entryPoint.description || component?.description), '');
     const modules = (entryPoint.modules ?? []).filter((m) => m !== main?.className);
-    const importLine = `import { ${main?.className ?? exports[0]} } from '${entryPoint.import}';`;
-    lines.push('```typescript', modules.length ? `${importLine} // standalone; or ${modules.join(', ')} for all its parts` : importLine, '```', '');
+    const importLine = `import { ${main?.className ?? entryPoint.services?.[0] ?? exports[0]} } from '${entryPoint.import}';`;
+    lines.push('```typescript', main && modules.length ? `${importLine} // standalone; or ${modules.join(', ')} for all its parts` : importLine, '```', '');
 
-    for (const declaration of [main, ...declarations.filter((d) => d !== main)]) {
+    // A service-driven entry point (DynamicDialog): no element to write, the service and its classes are the API.
+    if (!main) {
+        for (const service of entryPoint.services ?? []) lines.push(`## Service \`${service}\``, '', 'Provide it (`providers: [' + service + ']`) and inject it; it renders the component for you.', '');
+        for (const cls of entryPoint.classes ?? []) {
+            const members = (cls.members ?? []).filter((m) => !['pt', 'unstyled'].includes(m.name));
+            if (!members.length) continue;
+            lines.push(`### \`${cls.name}\``, '');
+            if (cls.description) lines.push(firstSentence(cls.description), '');
+            lines.push(`- Members: ${members.map((m) => `\`${m.name}${m.kind === 'method' ? '()' : ''}\``).join(', ')}.`, '');
+        }
+    }
+
+    for (const declaration of main ? [main, ...declarations.filter((d) => d !== main)] : []) {
         const selectors = selectorsOf(declaration);
         const isMain = declaration === main;
         const header = `${isMain ? '## ' : '### '}\`${selectors[0]}\`${
