@@ -3345,6 +3345,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     });
 }
 
+/**
+ * @internal Rendering detail of Table, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: '[pTableBody]',
     standalone: false,

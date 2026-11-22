@@ -66,6 +66,9 @@ export const SELECT_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Internal to Select, not exported from the entry point.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-selectItem',

@@ -70,6 +70,9 @@ function setNodeParent(node: TreeNode<any>, parent: TreeNode<any> | null | undef
 }
 const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
 
+/**
+ * @internal Rendering detail of Tree, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'p-treeNode',
     imports: [CommonModule, Ripple, Checkbox, FormsModule, ChevronRightIcon, ChevronDownIcon, SpinnerIcon, SharedModule, BindModule],

@@ -2403,6 +2403,9 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
     });
 }
 
+/**
+ * @internal Rendering detail of TreeTable, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: '[pTreeTableBody]',
@@ -2480,6 +2483,9 @@ export class TTBody extends BaseComponent {
     });
 }
 
+/**
+ * @internal Rendering detail of TreeTable, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: '[ttScrollableView]',

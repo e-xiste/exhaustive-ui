@@ -8,6 +8,9 @@ import { Exhaustive } from '@exhaustive-ui/core/config';
 import { UseStyle } from '@exhaustive-ui/core/usestyle';
 import { BaseComponentStyle } from './style/basecomponentstyle';
 
+/**
+ * @internal Links a component to its parent for the PassThrough API; provided by the components themselves.
+ */
 export const PARENT_INSTANCE = new InjectionToken<BaseComponent>('PARENT_INSTANCE');
 
 /**

@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { ButtonModule } from '@exhaustive-ui/core/button';
-import { Inplace, InplaceContent, InplaceDisplay, InplaceModule } from './inplace';
+import { Inplace, InplaceModule } from './inplace';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { PrimeTemplate } from '@exhaustive-ui/core/api';
@@ -15,12 +15,12 @@ import { PrimeTemplate } from '@exhaustive-ui/core/api';
     selector: 'test-basic-inplace',
     template: `
         <p-inplace>
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="display-content">Click to edit</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="edit-input" value="Edit mode" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -32,12 +32,12 @@ class TestBasicInplaceComponent {}
     selector: 'test-inplace-with-events',
     template: `
         <p-inplace (onActivate)="onActivate($event)" (onDeactivate)="onDeactivate($event)">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="display-text">Display Mode</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <textarea class="edit-textarea">Edit Mode Content</textarea>
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -60,12 +60,12 @@ class TestInplaceWithEventsComponent {
     selector: 'test-inplace-disabled',
     template: `
         <p-inplace [disabled]="disabled">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="disabled-display">Disabled inplace</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="disabled-input" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -79,12 +79,12 @@ class TestInplaceDisabledComponent {
     selector: 'test-inplace-closable',
     template: `
         <p-inplace [closable]="closable" [closeIcon]="closeIcon" [closeAriaLabel]="closeAriaLabel">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="closable-display">Closable inplace</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="closable-input" value="Closable content" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -100,12 +100,12 @@ class TestInplaceClosableComponent {
     selector: 'test-inplace-prevent-click',
     template: `
         <p-inplace [preventClick]="preventClick">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="prevent-click-display">Prevent click test</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="prevent-click-input" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -119,12 +119,12 @@ class TestInplacePreventClickComponent {
     selector: 'test-inplace-active-state',
     template: `
         <p-inplace [active]="active">
-            <p-inplacedisplay>
+            <span>
                 <span class="active-display">Active state test</span>
-            </p-inplacedisplay>
-            <p-inplacecontent>
+            </span>
+            <span>
                 <input type="text" class="active-input" value="Active content" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -138,12 +138,12 @@ class TestInplaceActiveStateComponent {
     selector: 'test-inplace-style-class',
     template: `
         <p-inplace [class]="customClass">
-            <p-inplacedisplay>
+            <span>
                 <span class="style-display">Style class test</span>
-            </p-inplacedisplay>
-            <p-inplacecontent>
+            </span>
+            <span>
                 <input type="text" class="style-input" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -157,12 +157,12 @@ class TestInplaceStyleClassComponent {
     selector: 'test-inplace-two-way',
     template: `
         <p-inplace [(active)]="active" (activeChange)="onActiveChange($event)">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="two-way-display">Two-way display</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="two-way-input" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -227,12 +227,12 @@ class TestInplaceExhaustiveTemplatesComponent {}
     selector: 'test-inplace-keyboard',
     template: `
         <p-inplace>
-            <p-inplacedisplay>
+            <span>
                 <span class="keyboard-display">Press Enter to edit</span>
-            </p-inplacedisplay>
-            <p-inplacecontent>
+            </span>
+            <span>
                 <input type="text" class="keyboard-input" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -244,14 +244,14 @@ class TestInplaceKeyboardComponent {}
     selector: 'test-inplace-complex-content',
     template: `
         <p-inplace [closable]="true">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <div class="complex-display">
                     <h4>Product Information</h4>
                     <p>Name: {{ productInfo.name }}</p>
                     <p>Price: {{ productInfo.price | currency }}</p>
                 </div>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <div class="complex-content">
                     <div class="form-group">
                         <label for="product-name">Name:</label>
@@ -266,7 +266,7 @@ class TestInplaceKeyboardComponent {}
                         <button type="button" class="cancel-btn">Cancel</button>
                     </div>
                 </div>
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -283,12 +283,12 @@ class TestInplaceComplexContentComponent {
     selector: 'test-inplace-dynamic',
     template: `
         <p-inplace [active]="dynamicActive" [disabled]="dynamicDisabled" [closable]="dynamicClosable" [preventClick]="dynamicPreventClick">
-            <p-inplacedisplay pInplaceDisplay>
+            <span pInplaceDisplay>
                 <span class="dynamic-display">Dynamic: {{ displayText }}</span>
-            </p-inplacedisplay>
-            <p-inplacecontent pInplaceContent>
+            </span>
+            <span pInplaceContent>
                 <input type="text" class="dynamic-input" [value]="contentText" />
-            </p-inplacecontent>
+            </span>
         </p-inplace>
     `
 })
@@ -388,7 +388,7 @@ describe('Inplace', () => {
             element = fixture.debugElement.query(By.directive(Inplace)).nativeElement;
         });
 
-        it('should project InplaceDisplay content', () => {
+        it('should project the pInplaceDisplay content', () => {
             const displayContent = element.querySelector('.display-content');
             expect(displayContent).toBeTruthy();
             expect(displayContent?.textContent?.trim()).toBe('Click to edit');
@@ -1338,14 +1338,14 @@ describe('Inplace', () => {
         @Component({
             changeDetection: ChangeDetectionStrategy.Eager,
             standalone: true,
-            imports: [Inplace, InplaceDisplay, InplaceContent],
+            imports: [Inplace],
             template: `<p-inplace [active]="active()" [closable]="closable()" [disabled]="disabled()" [closeIcon]="closeIcon()" [pt]="pt()">
-                <p-inplacedisplay>
+                <span>
                     <span class="test-display">Display Content</span>
-                </p-inplacedisplay>
-                <p-inplacecontent>
+                </span>
+                <span>
                     <input type="text" class="test-input" value="Content" />
-                </p-inplacecontent>
+                </span>
             </p-inplace>`
         })
         class TestPTInplaceComponent {

@@ -12,7 +12,7 @@ import { Theme } from '@exhaustive-ui/styled';
 import Aura from '@exhaustive-ui/themes/aura';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
-import { MapperPipe, Password, PasswordDirective, PasswordModule } from './password';
+import { Password, PasswordDirective, PasswordModule } from './password';
 
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // Test Components
@@ -1971,39 +1971,6 @@ describe('PasswordDirective', () => {
                 expect(checkedCount).toBeGreaterThan(0);
             });
         });
-    });
-});
-
-describe('MapperPipe', () => {
-    let pipe: MapperPipe;
-
-    beforeEach(() => {
-        pipe = new MapperPipe();
-    });
-
-    it('should create pipe', () => {
-        expect(pipe).toBeTruthy();
-    });
-
-    it('should transform value using mapper function', () => {
-        const mapper = (value: string, prefix: string) => `${prefix}${value}`;
-        const result = pipe.transform('test', mapper, 'prefix-');
-
-        expect(result).toBe('prefix-test');
-    });
-
-    it('should handle complex transformations', () => {
-        const mapper = (value: number[]) => value.reduce((sum, num) => sum + num, 0);
-        const result = pipe.transform([1, 2, 3, 4, 5], mapper);
-
-        expect(result).toBe(15);
-    });
-
-    it('should pass additional arguments to mapper', () => {
-        const mapper = (value: string, multiplier: number, suffix: string) => value.repeat(multiplier) + suffix;
-        const result = pipe.transform('A', mapper, 3, '!');
-
-        expect(result).toBe('AAA!');
     });
 });
 

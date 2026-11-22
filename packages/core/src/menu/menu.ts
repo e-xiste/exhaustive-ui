@@ -38,6 +38,9 @@ import { MenuItemTemplateContext, MenuPassThrough, MenuSubmenuHeaderTemplateCont
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { MenuStyle } from './style/menustyle';
 
+/**
+ * @internal Internal to Menu, not exported from the entry point.
+ */
 @Pipe({
     name: 'safeHtml'
 })
@@ -54,6 +57,9 @@ export class SafeHtmlPipe implements PipeTransform {
     }
 }
 
+/**
+ * @internal Rendering detail of Menu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: '[pMenuItemContent]',
@@ -918,7 +924,7 @@ export class Menu extends BaseComponent<MenuPassThrough> {
 }
 
 @NgModule({
-    imports: [Menu, SharedModule, SafeHtmlPipe],
-    exports: [Menu, SharedModule, SafeHtmlPipe]
+    imports: [Menu, SharedModule],
+    exports: [Menu, SharedModule]
 })
 export class MenuModule {}

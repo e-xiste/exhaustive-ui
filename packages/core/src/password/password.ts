@@ -15,8 +15,6 @@ import {
     NgModule,
     NgZone,
     numberAttribute,
-    Pipe,
-    PipeTransform,
     signal,
     TemplateRef,
     untracked,
@@ -461,19 +459,7 @@ export class PasswordDirective extends BaseEditableHolder {
     }
 }
 
-type Mapper<T, G> = (item: T, ...args: any[]) => G;
-
-@Pipe({
-    name: 'mapper',
-    pure: true
-})
-export class MapperPipe implements PipeTransform {
-    public transform<T, G>(value: T, mapper: Mapper<T, G>, ...args: unknown[]): G {
-        return mapper(value, ...args);
-    }
-}
-
-export const Password_VALUE_ACCESSOR: any = {
+export const PASSWORD_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => Password),
     multi: true
@@ -588,7 +574,7 @@ export const Password_VALUE_ACCESSOR: any = {
             </ng-template>
         </p-overlay>
     `,
-    providers: [Password_VALUE_ACCESSOR, PasswordStyle, { provide: PASSWORD_INSTANCE, useExisting: Password }, { provide: PARENT_INSTANCE, useExisting: Password }],
+    providers: [PASSWORD_VALUE_ACCESSOR, PasswordStyle, { provide: PASSWORD_INSTANCE, useExisting: Password }, { provide: PARENT_INSTANCE, useExisting: Password }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {

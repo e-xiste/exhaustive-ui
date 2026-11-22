@@ -35,6 +35,7 @@ import { AppCode } from '@/components/doc/app.code';
                 <li><b>renamed-templates</b>: the <i>removetokenicon</i> template of MultiSelect becomes <i>chipicon</i>.</li>
                 <li><b>remove-dead-inputs</b> and <b>remove-dead-outputs</b>: bindings of inputs and outputs that already had no effect are removed.</li>
                 <li><b>config-overlay-options-signal</b>: <i>overlayOptions</i> on the global configuration is a signal; assignments become <i>.set()</i> and reads become calls.</li>
+                <li><b>removed-exports</b>: <i>Password_VALUE_ACCESSOR</i> becomes <i>PASSWORD_VALUE_ACCESSOR</i>, and the removed <i>p-inplacedisplay</i>/<i>p-inplacecontent</i> wrappers become a <i>span</i>.</li>
                 <li><b>config-input-style-to-variant</b>: the global <i>inputStyle</i> option, deprecated since v20, becomes <i>inputVariant</i> in <i>provideExhaustive()</i> and on the configuration service.</li>
             </ul>
             <p>Each migration prints the files it changed and the places it left for you to review, with file and line numbers.</p>

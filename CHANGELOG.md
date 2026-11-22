@@ -15,7 +15,7 @@ ng update @angular/core@22 @angular/cli@22
 ng update @exhaustive-ui/core --next
 ```
 
-`ng update` rewrites your templates and code with eight migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
+`ng update` rewrites your templates and code with nine migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
 - `styleclass-to-class`: `styleClass`/`[styleClass]` becomes `class`/`[class]` on the ~60 components whose deprecated `styleClass` was removed. These include Tag, Card, Select, Table, DatePicker and Panel.
 - `renamed-inputs`: renames deprecated input aliases.
@@ -38,6 +38,7 @@ ng update @exhaustive-ui/core --next
 - `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
+- `removed-exports`: `Password_VALUE_ACCESSOR` becomes `PASSWORD_VALUE_ACCESSOR`, and the removed `<p-inplacedisplay>`/`<p-inplacecontent>` wrappers become `<span>`.
 - `config-input-style-to-variant`: the global `inputStyle` option becomes `inputVariant`, in `provideExhaustive()`/`setConfig()` objects and on the `Exhaustive` service.
 
 A workspace that just switched from PrimeNG (`migrate-from-primeng`) or from Optimus UI did not go through `ng update`. It runs the same migrations with:
@@ -133,6 +134,12 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
 - MultiSelect: the deprecated `removetokenicon` template is removed, use `chipicon` (same context). The new `renamed-templates` migration renames `#removetokenicon` and `pTemplate="removetokenicon"` inside `p-multiselect`.
 
 - Dialog: the header template input is public as `headerTemplate`, like `contentTemplate` and `footerTemplate`. It was exposed under the name `content`, so `[content]` set the header. `renamed-inputs` turns a `[content]` binding on `p-dialog` into `[headerTemplate]`.
+
+- Exports (the new `removed-exports` migration updates the imports):
+  - Password: `Password_VALUE_ACCESSOR` is renamed `PASSWORD_VALUE_ACCESSOR`, like the other value accessors. The unused `MapperPipe` is removed.
+  - Inplace: the empty `InplaceDisplay`/`InplaceContent` wrapper components are removed. Inplace projects the `pInplaceDisplay`/`pInplaceContent` attributes; the migration turns `<p-inplacedisplay>`/`<p-inplacecontent>` into `<span>` and drops them from imports.
+  - No longer exported from their entry point (imports are reported): the `SelectItem` option component of Select (the `SelectItem` interface of `@exhaustive-ui/core/api` is unchanged), Menu's `SafeHtmlPipe` (also dropped from `MenuModule`), `RadioControlRegistry` and `MenubarService`.
+  - The sub components that render the inside of a component (`ContextMenuSub`, `TieredMenuSub`, `MenuItemContent`, `MultiSelectItem`, `ToastItem`, `TableBody`, `TTBody`, `UITreeNode`, the Galleria parts...), `PARENT_INSTANCE` and the pre-signals helpers of `@exhaustive-ui/core/utils` are tagged `@internal`: they stay exported in v22 but are not public API.
 
 ### Features
 

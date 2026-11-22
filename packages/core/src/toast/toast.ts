@@ -12,6 +12,9 @@ import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { Subscription } from 'rxjs';
 import { ToastStyle } from './style/toaststyle';
 
+/**
+ * @internal Rendering detail of Toast, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'p-toastItem',
     imports: [CommonModule, CheckIcon, ExclamationTriangleIcon, InfoCircleIcon, TimesCircleIcon, TimesIcon, SharedModule, Bind, MotionModule],

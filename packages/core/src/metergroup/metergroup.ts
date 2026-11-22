@@ -7,6 +7,9 @@ import { Bind } from '@exhaustive-ui/core/bind';
 import { MeterGroupIconTemplateContext, MeterGroupLabelTemplateContext, MeterGroupMeterTemplateContext, MeterGroupPassThrough, MeterItem } from '@exhaustive-ui/core/types/metergroup';
 import { MeterGroupStyle } from './style/metergroupstyle';
 
+/**
+ * @internal Rendering detail of MeterGroup, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-meterGroupLabel, p-metergrouplabel',

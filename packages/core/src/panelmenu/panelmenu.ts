@@ -36,6 +36,9 @@ import { PanelMenuStyle } from './style/panelmenustyle';
 const PANELMENU_INSTANCE = new InjectionToken<PanelMenu>('PANELMENU_INSTANCE');
 const PANELMENUSUB_INSTANCE = new InjectionToken<PanelMenuSub>('PANELMENUSUB_INSTANCE');
 
+/**
+ * @internal Rendering detail of PanelMenu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ul[pPanelMenuSub]',
@@ -344,6 +347,9 @@ export class PanelMenuSub extends BaseComponent {
     }
 }
 
+/**
+ * @internal Rendering detail of PanelMenu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'ul[pPanelMenuList]',
     imports: [CommonModule, PanelMenuSub, RouterModule, TooltipModule, SharedModule],

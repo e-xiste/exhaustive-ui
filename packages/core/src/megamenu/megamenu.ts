@@ -38,6 +38,9 @@ import { MegaMenuStyle } from './style/megamenustyle';
 const MEGAMENU_INSTANCE = new InjectionToken<MegaMenu>('MEGAMENU_INSTANCE');
 const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INSTANCE');
 
+/**
+ * @internal Rendering detail of MegaMenu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-megaMenuSub, p-megamenu-sub, ul[pMegaMenuSub]',

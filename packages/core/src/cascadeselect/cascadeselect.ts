@@ -59,6 +59,9 @@ export const CASCADESELECT_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Rendering detail of CascadeSelect, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'ul[pCascadeSelectSub]',
     imports: [CommonModule, Ripple, AngleRightIcon, SharedModule, Bind],

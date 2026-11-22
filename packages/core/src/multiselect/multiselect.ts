@@ -76,6 +76,9 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Rendering detail of MultiSelect, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'li[pMultiSelectItem]',

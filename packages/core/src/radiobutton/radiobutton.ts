@@ -17,6 +17,9 @@ export const RADIO_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Internal to RadioButton, not exported from the entry point.
+ */
 @Injectable({
     providedIn: 'root'
 })

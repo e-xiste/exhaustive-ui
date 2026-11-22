@@ -36,6 +36,11 @@
             "factory": "./migrations/renamed-templates/migration",
             "description": "Rename templates removed in this version to their replacement inside the elements that project them: the removetokenicon template (#removetokenicon or pTemplate=\"removetokenicon\") becomes chipicon in p-multiSelect/p-multiselect/p-multi-select; both receive the same context. An element that already projects a chipicon template is reported for manual review."
         },
+        "removed-exports": {
+            "version": "22.0.0",
+            "factory": "./migrations/removed-exports/migration",
+            "description": "Update imports of exports renamed or removed in this version: Password_VALUE_ACCESSOR becomes PASSWORD_VALUE_ACCESSOR; the empty InplaceDisplay/InplaceContent wrapper components are dropped from imports and their <p-inplacedisplay>/<p-inplacecontent> elements become <span> (Inplace projects the pInplaceDisplay/pInplaceContent attributes). Imports of rendering internals that are no longer exported (the SelectItem option component of Select, SafeHtmlPipe, MapperPipe, RadioControlRegistry, MenubarService) are reported for manual review."
+        },
         "renamed-inputs": {
             "version": "22.0.0",
             "factory": "./migrations/renamed-inputs/migration",
