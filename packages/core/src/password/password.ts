@@ -155,7 +155,7 @@ export class PasswordDirective extends BaseEditableHolder {
 
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
 
     readonly hasFluid = computed(() => this.fluid() ?? !!this.pcFluid);
 

@@ -190,10 +190,6 @@ export interface GlobalPassThrough {
 export type ExhaustiveConfigType = {
     ripple?: boolean;
     overlayAppendTo?: HTMLElement | ElementRef | TemplateRef<any> | string | null | undefined | any;
-    /**
-     * @deprecated Since v20. Use `inputVariant` instead.
-     */
-    inputStyle?: 'outlined' | 'filled';
     inputVariant?: 'outlined' | 'filled';
     overlayOptions?: OverlayOptions;
     translation?: Translation;

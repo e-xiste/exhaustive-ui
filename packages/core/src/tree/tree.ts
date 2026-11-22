@@ -141,7 +141,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                             [binary]="true"
                             [indeterminate]="partialSelected()"
                             [disabled]="node()!.selectable === false"
-                            [variant]="tree?.config.inputStyle() === 'filled' || tree?.config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
+                            [variant]="tree?.config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                             [attr.data-p-partialchecked]="partialSelected()"
                             [tabindex]="-1"
                             (click)="$event.preventDefault()"

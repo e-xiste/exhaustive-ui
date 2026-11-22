@@ -26,6 +26,11 @@
             "factory": "./migrations/renamed-outputs/migration",
             "description": "Rename event bindings of outputs renamed in this version to the name the other components use: onFilterEvent to onFilter on p-orderList/p-orderlist/p-order-list; selectAllChange to onSelectAllChange on p-table; onPanelShow to onShow and onPanelHide to onHide on p-multiSelect/p-multiselect/p-multi-select. The event payloads are unchanged, so $event keeps working. A p-table [(selectAll)] two-way binding, which relied on selectAllChange, is reported for manual review, as are programmatic references to the old names."
         },
+        "config-input-style-to-variant": {
+            "version": "22.0.0",
+            "factory": "./migrations/config-input-style-to-variant/migration",
+            "description": "Rename the global inputStyle option, removed in this version, to inputVariant (same values): the inputStyle key of provideExhaustive()/setConfig() config objects, and reads and writes of Exhaustive.inputStyle. Config objects that set both names, receivers that cannot be proven to be the Exhaustive service and template reads are reported for manual review."
+        },
         "renamed-inputs": {
             "version": "22.0.0",
             "factory": "./migrations/renamed-inputs/migration",

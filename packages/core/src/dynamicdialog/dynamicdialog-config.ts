@@ -73,12 +73,6 @@ export class DynamicDialogConfig<DataType = any, InputValuesType extends Record<
     dismissableMask?: boolean = false;
     /**
      * Inline style of the component.
-     * @deprecated since v22.0.0. It has no effect anymore: the dialog never read it.
-     * @group Props
-     */
-    rtl?: boolean = false;
-    /**
-     * Inline style of the component.
      * @group Props
      */
     style?: { [klass: string]: any } | null | undefined;
@@ -92,12 +86,6 @@ export class DynamicDialogConfig<DataType = any, InputValuesType extends Record<
      * @group Props
      */
     styleClass?: string;
-    /**
-     * Transition options of the animation.
-     * @deprecated since v22.0.0. It has no effect anymore: the dialog animation is driven by motion options.
-     * @group Props
-     */
-    transitionOptions?: string;
     /**
      * Adds a close icon to the header to hide the dialog.
      * @group Props

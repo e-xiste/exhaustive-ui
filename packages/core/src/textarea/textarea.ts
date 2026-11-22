@@ -67,7 +67,7 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
      */
     invalid = input(undefined, { transform: booleanAttribute });
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
     /**
      * Callback to invoke on textarea resize.
      * @param {(Event | {})} event - Custom resize event.

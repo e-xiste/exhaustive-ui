@@ -176,7 +176,7 @@ export class RadioButton extends BaseEditableHolder<RadioButtonPassThrough> {
 
     readonly inputViewChild = viewChild.required<ElementRef>('input');
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
 
     public checked = signal<Nullable<boolean>>(undefined);
 

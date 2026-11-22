@@ -25,12 +25,3 @@ export function cn(...args: any[]): string | undefined {
 
     return undefined;
 }
-
-/**
- * @deprecated Use `cn` instead.
- * @param args
- * @returns
- */
-export function classNames(...args: any[]): string | undefined {
-    return cn(...args);
-}

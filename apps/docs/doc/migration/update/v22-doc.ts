@@ -34,6 +34,7 @@ import { AppCode } from '@/components/doc/app.code';
                 </li>
                 <li><b>remove-dead-inputs</b> and <b>remove-dead-outputs</b>: bindings of inputs and outputs that already had no effect are removed.</li>
                 <li><b>config-overlay-options-signal</b>: <i>overlayOptions</i> on the global configuration is a signal; assignments become <i>.set()</i> and reads become calls.</li>
+                <li><b>config-input-style-to-variant</b>: the global <i>inputStyle</i> option, deprecated since v20, becomes <i>inputVariant</i> in <i>provideExhaustive()</i> and on the configuration service.</li>
             </ul>
             <p>Each migration prints the files it changed and the places it left for you to review, with file and line numbers.</p>
             <p>A workspace that has just switched to ExhaustiveUI, from PrimeNG with the <i>migrate-from-primeng</i> schematic or from Optimus UI, did not go through <i>ng update</i>. Run the migrations explicitly:</p>

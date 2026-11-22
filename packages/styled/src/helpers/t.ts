@@ -1,4 +1,4 @@
-import { mergeKeys } from '@exhaustive-ui/utils/object';
+import { deepMerge } from '@exhaustive-ui/utils/object';
 import Theme from '../config/index';
 
 export const $t = (theme: any = {}) => {
@@ -6,7 +6,7 @@ export const $t = (theme: any = {}) => {
 
     return {
         preset(value: any) {
-            _preset = _preset ? mergeKeys(_preset, value) : value;
+            _preset = _preset ? deepMerge(_preset, value) : value;
 
             return this;
         },
@@ -47,7 +47,7 @@ export const $t = (theme: any = {}) => {
         },
         update({ mergePresets = true, mergeOptions = true } = {}) {
             const newTheme = {
-                preset: mergePresets ? mergeKeys(Theme.getPreset(), _preset) : _preset,
+                preset: mergePresets ? deepMerge(Theme.getPreset(), _preset) : _preset,
                 options: mergeOptions ? { ...Theme.getOptions(), ..._options } : _options
             };
 

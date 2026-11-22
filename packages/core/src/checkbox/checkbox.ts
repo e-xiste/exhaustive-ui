@@ -235,7 +235,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
 
     updateModel(event) {
         let newModelValue;

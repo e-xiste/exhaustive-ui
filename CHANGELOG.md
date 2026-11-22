@@ -15,7 +15,7 @@ ng update @angular/core@22 @angular/cli@22
 ng update @exhaustive-ui/core --next
 ```
 
-`ng update` rewrites your templates with six migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
+`ng update` rewrites your templates and code with seven migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
 - `styleclass-to-class`: `styleClass`/`[styleClass]` becomes `class`/`[class]` on the ~60 components whose deprecated `styleClass` was removed. These include Tag, Card, Select, Table, DatePicker and Panel.
 - `renamed-inputs`: renames deprecated input aliases.
@@ -35,6 +35,7 @@ ng update @exhaustive-ui/core --next
 - `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
+- `config-input-style-to-variant`: the global `inputStyle` option becomes `inputVariant`, in `provideExhaustive()`/`setConfig()` objects and on the `Exhaustive` service.
 
 A workspace that just switched from PrimeNG (`migrate-from-primeng`) or from Optimus UI did not go through `ng update`. It runs the same migrations with:
 
@@ -51,6 +52,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
   - Value plus change-event pairs became `model()`. This covers `first`, `rows` and `selection` on Table and TreeTable, and `visible` on Dialog and Galleria, among others. `[(x)]` keeps working.
 - **OnPush change detection** for every component except Table, TreeTable and DynamicDialog. Those three stay Eager on purpose, because they render consumer objects mutated in place. Give OnPush components new arrays and objects, or signals, instead of mutating bound data.
 - **Removed inputs and outputs**: see the migrations above.
+- **Removed TypeScript API** (no migration, the compiler points at each use): `OverlayOptions.showTransitionOptions`/`hideTransitionOptions`, `DynamicDialogConfig.rtl`/`transitionOptions`, and the deprecated `classNames`, `createStyleAsString`, `createStyleTag`, `mergeKeys` utils and the theme service's `getDirective`.
 - **TreeTable**: the selection change can fire once per intermediate step while a checkbox propagates.
 - **ConfirmPopup**: an `accepticon`/`rejecticon` template now replaces the confirmation's `acceptIcon`/`rejectIcon` class instead of rendering next to it, as ConfirmDialog already did.
 
@@ -116,6 +118,12 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
   - MultiSelect: the `onPanelShow`/`onPanelHide` outputs become `onShow`/`onHide`.
 
   The event payloads are unchanged, so handlers that read `$event` keep working.
+
+- Configuration: the global `inputStyle` option (deprecated since v20) is removed, use `inputVariant` (same values). The new `config-input-style-to-variant` migration renames it in `provideExhaustive()`/`setConfig()` objects and on the `Exhaustive` service.
+- TypeScript-only removals, with no migration (the compiler points at each use):
+  - `OverlayOptions.showTransitionOptions`/`hideTransitionOptions` and `DynamicDialogConfig.rtl`/`transitionOptions`: nothing read them. Use `motionOptions`.
+  - `@exhaustive-ui/utils`: `classNames` (use `cn`), `createStyleAsString` (use `createStyleMarkup`), `createStyleTag` (use `createStyleElement`), `mergeKeys` (use `deepMerge`).
+  - `@exhaustive-ui/styled`: `getDirective` on the theme service (use `getComponent`).
 
 ### Features
 
