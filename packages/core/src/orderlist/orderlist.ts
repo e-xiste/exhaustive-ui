@@ -110,6 +110,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             (onBlur)="onListBlur($event)"
             (onChange)="onChangeSelection($event)"
             [ariaLabel]="ariaLabel()"
+            [ariaLabelledBy]="ariaLabelledBy()"
             [disabled]="disabled()"
             [metaKeySelection]="metaKeySelection()"
             [scrollHeight]="scrollHeight()"

@@ -2508,6 +2508,7 @@ export class TTBody extends BaseComponent {
                 [style]="{ height: tt.scrollHeight() !== 'flex' ? tt.scrollHeight() : undefined }"
                 [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
                 [itemSize]="tt.virtualScrollItemSize() || 28"
+                [delay]="tt.lazy() ? tt.virtualScrollDelay() : 0"
                 [lazy]="tt.lazy()"
                 (onLazyLoad)="tt.onLazyItemLoad($event)"
                 [options]="tt.virtualScrollOptions()"

@@ -109,6 +109,7 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
 
 ### Fixes
 
+- PickList: `ariaSourceFilterLabel` and `ariaTargetFilterLabel` label the filter inputs. OrderList: `ariaLabelledBy` reaches the list, through a new Listbox `ariaLabelledBy` input. TreeTable: `virtualScrollDelay` is passed to the scroller in lazy mode, as Table does. The three inputs were ignored.
 - Table:
   - virtual scroll: frozen rows stay sticky (#432), the header keeps its background (#281), a runtime scroll height is kept (#365), rows render in a container sized after the first render (#269), one group header per group with expandable row groups (#783);
   - frozen columns: body cells paint above the scrolled content (#232), cells after a frozen cell spanning several header rows are placed correctly (#711);

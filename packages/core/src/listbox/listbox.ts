@@ -223,6 +223,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                         [style]="scrollerOptions.contentStyle"
                         [attr.aria-activedescendant]="focused() ? focusedOptionId() : undefined"
                         [attr.aria-label]="ariaLabel()"
+                        [attr.aria-labelledby]="ariaLabelledBy()"
                         [attr.aria-disabled]="$disabled()"
                         (focus)="onListFocus($event)"
                         (blur)="onListBlur($event)"
@@ -425,6 +426,11 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      * @group Props
      */
     readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
     /**
      * When enabled, the focused option is selected.
      * @group Props
