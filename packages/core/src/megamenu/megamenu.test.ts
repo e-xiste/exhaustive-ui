@@ -1373,6 +1373,15 @@ describe('MegaMenu', () => {
             expect(rootItems()[0].getAttribute('aria-setsize')).toBe('1');
         });
 
+        it('renders no aria-level on menuitems, where it is not allowed', () => {
+            fixture.componentRef.setInput('model', [{ label: 'Alpha', items: [[{ label: 'Group', items: [{ label: 'Child' }] }]] }, { label: 'Beta' }]);
+            fixture.detectChanges();
+
+            const menuitems = Array.from(hostEl().querySelectorAll('[role="menuitem"]')) as HTMLElement[];
+            expect(menuitems.length).toBeGreaterThan(0);
+            menuitems.forEach((item) => expect(item.hasAttribute('aria-level')).toBe(false));
+        });
+
         it('re-renders the orientation classes and aria-orientation when orientation changes', () => {
             expect(hostEl().classList.contains('p-megamenu-horizontal')).toBe(true);
 
