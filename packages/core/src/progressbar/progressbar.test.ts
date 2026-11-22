@@ -1079,3 +1079,26 @@ describe('ProgressBar', () => {
         });
     });
 });
+
+describe('ProgressBar accessible name', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [ProgressBar],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    it('applies ariaLabel and ariaLabelledBy to the element with role=progressbar', () => {
+        const fixture = TestBed.createComponent(ProgressBar);
+        fixture.componentRef.setInput('ariaLabel', 'Storage');
+        fixture.detectChanges();
+        const host = fixture.nativeElement as HTMLElement;
+        expect(host.getAttribute('role')).toBe('progressbar');
+        expect(host.getAttribute('aria-label')).toBe('Storage');
+
+        fixture.componentRef.setInput('ariaLabelledBy', 'storage-title');
+        fixture.detectChanges();
+        expect(host.getAttribute('aria-labelledby')).toBe('storage-title');
+    });
+});

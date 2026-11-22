@@ -109,6 +109,8 @@ export class MeterGroupLabel extends BaseComponent<MeterGroupPassThrough> {
         '[attr.role]': '"meter"',
         '[attr.aria-valuemax]': 'max()',
         '[attr.aria-valuenow]': 'totalPercent()',
+        '[attr.aria-label]': 'ariaLabel()',
+        '[attr.aria-labelledby]': 'ariaLabelledBy()',
         '[attr.data-p]': 'dataP()',
         '[class]': "cx('root')"
     },
@@ -158,6 +160,16 @@ export class MeterGroup extends BaseComponent<MeterGroupPassThrough> {
      * @group Props
      */
     readonly labelOrientation = input<'horizontal' | 'vertical' | undefined>('horizontal');
+    /**
+     * Defines a string that labels the meter.
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the meter and label(s) where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
 
     readonly vertical = computed(() => this.orientation() === 'vertical');
 

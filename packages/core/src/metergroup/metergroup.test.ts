@@ -1116,3 +1116,26 @@ describe('MeterGroup Signal Query API', () => {
         expect(templates[0].template).toBeDefined();
     });
 });
+
+describe('MeterGroup accessible name', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [MeterGroup],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+    });
+
+    it('applies ariaLabel and ariaLabelledBy to the element with role=meter', () => {
+        const fixture = TestBed.createComponent(MeterGroup);
+        fixture.componentRef.setInput('ariaLabel', 'Storage');
+        fixture.detectChanges();
+        const host = fixture.nativeElement as HTMLElement;
+        expect(host.getAttribute('role')).toBe('meter');
+        expect(host.getAttribute('aria-label')).toBe('Storage');
+
+        fixture.componentRef.setInput('ariaLabelledBy', 'storage-title');
+        fixture.detectChanges();
+        expect(host.getAttribute('aria-labelledby')).toBe('storage-title');
+    });
+});

@@ -37,6 +37,8 @@ import { ProgressBarStyle } from './style/progressbarstyle';
         '[attr.aria-valuenow]': 'value()',
         '[attr.aria-valuemax]': '100',
         '[attr.aria-valuetext]': 'value() != null ? value() + unit() : null',
+        '[attr.aria-label]': 'ariaLabel()',
+        '[attr.aria-labelledby]': 'ariaLabelledBy()',
         '[class]': "cx('root')",
         '[attr.data-p]': 'dataP()'
     },
@@ -78,6 +80,16 @@ export class ProgressBar extends BaseComponent<ProgressBarPassThrough> {
      * @group Props
      */
     readonly color = input<string | undefined>(undefined);
+    /**
+     * Defines a string that labels the progress bar.
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the progress bar and label(s) where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
     /**
      * Template of the content.
      * @param {ProgressBarContentTemplateContext} context - content context.
