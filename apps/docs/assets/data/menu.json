@@ -557,6 +557,10 @@
                 {
                     "name": "Update ExhaustiveUI",
                     "routerLink": "/migration/update"
+                },
+                {
+                    "name": "Migrating to v22",
+                    "routerLink": "/migration/v22"
                 }
             ]
         },

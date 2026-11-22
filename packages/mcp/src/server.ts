@@ -384,8 +384,8 @@ const PROMPTS: Record<(typeof PROMPT_NAMES)[number], { title: string; descriptio
         title: 'Update to ExhaustiveUI v22',
         description: 'Update an application to ExhaustiveUI v22 (Angular v22, Signals API) and fix what ng update leaves for review.',
         steps: [
-            'Call get_guide for "update" and read its v22 section.',
-            'Update Angular first (`ng update @angular/core@22 @angular/cli@22`), then run `ng update @exhaustive-ui/core@22`; its migrations rewrite styleClass to class, renamed inputs and bindings of removed inputs and outputs, and print what they left for review.',
+            'Call get_guide for "v22" (the migration guide to v22) and follow its update steps for the starting point: an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI.',
+            'Update Angular first (`ng update @angular/core@22 @angular/cli@22`), then run `ng update @exhaustive-ui/core@22`; its nine migrations rewrite styleClass to class, renamed inputs, outputs and templates, bindings of removed inputs and outputs, and the configuration API, and print what they left for review. Handle each reported place as the "Reviewing the report" section of the guide describes.',
             'In TypeScript code that holds a component instance (viewChild, ViewChild, injected component), read inputs as signals (`table.selection()`), write two-way properties with `.set()` (`drawer.visible.set(true)`), and call signal queries.',
             'Components are OnPush (except Table, TreeTable and DynamicDialog): pass new arrays or objects, or signals, instead of mutating data bound to them in place.',
             'Call validate_usage on each template that uses a `p-*` element: removed or renamed v22 inputs are reported with their replacement.'

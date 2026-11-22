@@ -70,7 +70,7 @@ ng update @exhaustive-ui/core@22
 ```
 
 `ng update` rewrites the affected templates and lists what it left for review. See the
-[update guide](https://exhaustive-ui.com/migration/update#v22).
+[migration guide to v22](https://exhaustive-ui.com/migration/v22).
 
 
 ## 🚀 Quick Start

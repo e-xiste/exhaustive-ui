@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DOCS_DIR = path.resolve(__dirname, '../doc');
+const SITE_URL = 'https://exhaustive-ui.com';
 const PAGES_DIR = path.resolve(__dirname, '../pages');
 const API_DOC_PATH = path.resolve(__dirname, '../doc/apidoc/index.json');
 const DEMOS_JSON_PATH = path.resolve(__dirname, '../public/demos.json');
@@ -168,7 +169,13 @@ const GUIDE_PAGES = [
         route: 'migration/update',
         docPath: 'migration/update',
         title: 'Update ExhaustiveUI',
-        description: 'Updating with ng update, Angular version compatibility, and what changes in v22 (Signals API, OnPush, automated migrations).'
+        description: 'Updating with ng update, Angular version compatibility, and a summary of what changes in v22.'
+    },
+    {
+        route: 'migration/v22',
+        docPath: 'migration/v22',
+        title: 'Migrating to v22',
+        description: 'Moving an application to ExhaustiveUI v22: update steps from an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI, the automated migrations and their report, the Signals API, OnPush, removed API, behavior and type changes.'
     },
     {
         route: 'contribution',
@@ -1140,6 +1147,123 @@ function generateIndividualMarkdownFiles(components, apiDocs) {
 }
 
 /**
+ * Collect the Code objects of a guide doc file, by field name: `code: Code = { command: `...` }`.
+ */
+function extractNamedCodeBlocks(content) {
+    const blocks = {};
+    for (const match of content.matchAll(/(\w+):\s*Code\s*=\s*\{/g)) {
+        let depth = 1;
+        let i = match.index + match[0].length;
+        const start = i;
+        for (; i < content.length && depth > 0; i++) {
+            if (content[i] === '{') depth++;
+            else if (content[i] === '}') depth--;
+        }
+        const body = content.substring(start, i - 1);
+        const fences = [];
+        for (const [key, lang] of [
+            ['command', 'bash'],
+            ['typescript', 'typescript'],
+            ['html', 'html'],
+            ['scss', 'scss']
+        ]) {
+            const m = body.match(new RegExp(key + ':\\s*`([\\s\\S]*?)`'));
+            if (m) fences.push('```' + lang + '\n' + m[1].trim() + '\n```');
+        }
+        if (fences.length) blocks[match[1]] = fences.join('\n\n');
+    }
+    return blocks;
+}
+
+function decodeEntities(text) {
+    return text
+        .replace(/&#64;/g, '@')
+        .replace(/&#123;/g, '{')
+        .replace(/&#125;/g, '}')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
+}
+
+/**
+ * Convert the text of a guide doc section (the app-docsectiontext blocks) to Markdown: headings, paragraphs,
+ * lists, inline code, links and the app-code blocks it references. Returns null when the template has no
+ * app-docsectiontext.
+ */
+function guideTemplateToMarkdown(content) {
+    const templateMatch = content.match(/template:\s*`([\s\S]*?)`(?=\s*(?:,|\}))/);
+    if (!templateMatch) return null;
+    const codeBlocks = extractNamedCodeBlocks(content);
+    const usedCode = new Set();
+    const parts = [];
+
+    for (const match of templateMatch[1].matchAll(/<app-docsectiontext[^>]*>([\s\S]*?)<\/app-docsectiontext>/gi)) {
+        let html = match[1];
+        html = html.replace(/<app-code[^>]*\[code\]="(\w+)"[^>]*>(?:\s*<\/app-code>)?/g, (_, name) => {
+            if (!codeBlocks[name]) return '';
+            usedCode.add(name);
+            return `\n\n@@CODE:${name}@@\n\n`;
+        });
+        html = html.replace(
+            /<(i|code)>([\s\S]*?)<\/\1>/g,
+            (_, __, t) =>
+                '`' +
+                t
+                    .replace(/<[^>]+>/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim() +
+                '`'
+        );
+        html = html.replace(/<(b|strong)>([\s\S]*?)<\/\1>/g, (_, __, t) => '**' + t.trim() + '**');
+        html = html.replace(/<a\s[^>]*?(?:href="([^"]+)"|\[routerLink\]="'([^']+)'")[^>]*>([\s\S]*?)<\/a>/g, (_, href, route, text) => {
+            const url = href || (route ? SITE_URL + route : '');
+            return url ? `[${text.replace(/\s+/g, ' ').trim()}](${url})` : text;
+        });
+        html = html.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/g, (_, t) => `\n\n### ${t.trim()}\n\n`);
+        html = html.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, (_, list) => {
+            let n = 0;
+            return '\n\n' + list.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, (__, t) => `\n${++n}. ${t.replace(/\s+/g, ' ').trim()}`) + '\n\n';
+        });
+        html = html.replace(/<li[^>]*>([\s\S]*?)<\/li>/g, (_, t) => `\n- ${t.replace(/\s+/g, ' ').trim()}`);
+        html = html.replace(/<\/?(ul|p)[^>]*>/g, '\n\n');
+        html = html.replace(/<[^>]+>/g, ' ');
+        const text = decodeEntities(html)
+            .split(/\n{2,}/)
+            .map((block) =>
+                block
+                    .split('\n')
+                    .map((line) => line.replace(/[ \t]+/g, ' ').trim())
+                    .filter(Boolean)
+                    .join('\n')
+            )
+            .filter(Boolean)
+            .join('\n\n')
+            .replace(/@@CODE:(\w+)@@/g, (_, name) => codeBlocks[name]);
+        if (text) parts.push(text);
+    }
+
+    return parts.length ? { markdown: parts.join('\n\n'), usedCode: usedCode.size > 0 } : null;
+}
+
+/**
+ * Section order and labels of a guide page, read from its pages/<route>/index.ts `docs` array.
+ * Maps the doc file path (relative to doc/, without extension) to { order, id, label }.
+ */
+function readGuideSectionOrder(route) {
+    const indexPath = path.join(PAGES_DIR, route, 'index.ts');
+    if (!fs.existsSync(indexPath)) return null;
+    const content = fs.readFileSync(indexPath, 'utf-8');
+    const imports = {};
+    for (const m of content.matchAll(/import\s*\{\s*(\w+)\s*\}\s*from\s*'@\/doc\/([^']+)'/g)) imports[m[1]] = m[2];
+    const order = {};
+    let index = 0;
+    for (const m of content.matchAll(/\{\s*id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*component:\s*(\w+)\s*\}/g)) {
+        if (imports[m[3]]) order[imports[m[3]]] = { order: index++, id: m[1], label: m[2] };
+    }
+    return Object.keys(order).length ? order : null;
+}
+
+/**
  * Process a guide/documentation page
  */
 function processGuidePage(pageConfig) {
@@ -1171,13 +1295,17 @@ function processGuidePage(pageConfig) {
             } else if (entry.endsWith('.ts') && !entry.endsWith('.spec.ts') && entry.toLowerCase().includes('doc')) {
                 const sectionId = entry.replace(/-?doc\.ts$/i, '').toLowerCase();
                 const docData = parseDocFile(entryPath);
+                const converted = guideTemplateToMarkdown(fs.readFileSync(entryPath, 'utf-8'));
+                if (converted) docData.description = converted.markdown;
+                const relativePath = path.relative(DOCS_DIR, entryPath).replace(/\.ts$/, '').split(path.sep).join('/');
+                const ordering = sectionOrder ? sectionOrder[relativePath] : null;
 
                 // Get code examples - priority: inline code > app-code selector > page/section naming
-                let codeExamples = docData.inlineCode;
+                let codeExamples = converted && converted.usedCode ? null : docData.inlineCode;
                 if (!codeExamples && docData.appCodeSelector) {
                     codeExamples = getCodeExamplesBySelector(docData.appCodeSelector);
                 }
-                if (!codeExamples) {
+                if (!codeExamples && !(converted && converted.usedCode)) {
                     const pageName = pageConfig.route.split('/').pop();
                     codeExamples = getCodeExamplesFromDemos(pageName, sectionId);
                 }
@@ -1190,8 +1318,9 @@ function processGuidePage(pageConfig) {
                         .trim();
 
                     page.sections.push({
-                        id: prefix + sectionId,
-                        label: label.charAt(0).toUpperCase() + label.slice(1),
+                        id: ordering ? ordering.id : prefix + sectionId,
+                        order: ordering ? ordering.order : Number.MAX_SAFE_INTEGER,
+                        label: ordering ? ordering.label : label.charAt(0).toUpperCase() + label.slice(1),
                         description: docData.description,
                         examples: codeExamples
                     });
@@ -1200,7 +1329,11 @@ function processGuidePage(pageConfig) {
         }
     }
 
+    const sectionOrder = readGuideSectionOrder(pageConfig.route);
     processDocDir(docDir);
+    // Sections follow the page's own order; sections missing from it keep the file order, at the end.
+    page.sections.sort((a, b) => a.order - b.order);
+    page.sections.forEach((section) => delete section.order);
 
     return page;
 }

@@ -9,7 +9,7 @@ const SITE_URL = 'https://exhaustive-ui.com';
 const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 const SKILL_DESCRIPTION =
-    'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility, PrimeNG-migration and update guides (including what changes in v22). ' +
+    'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility, PrimeNG-migration and update guides, and the migration guide to v22. ' +
     'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses ExhaustiveUI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@exhaustive-ui/core` or `@exhaustive-ui/themes`, theming/design tokens, migrating from PrimeNG, or updating to ExhaustiveUI v22 — and prefer it over fetching exhaustive-ui.com pages.';
 
 /**
@@ -120,7 +120,7 @@ Check the guides when in doubt; these are here so simple tasks don't need a look
 - Components use \`OnPush\` change detection, except Table, TreeTable and DynamicDialog: give them new arrays and objects (or signals) instead of mutating bound data in place.
 - Use the built-in \`@if\` / \`@for\` control flow (with a \`track\` expression) in examples and generated code, not \`*ngIf\` / \`*ngFor\`.
 - Tailwind CSS v4 is the recommended utility layer: \`@import 'tailwindcss';\` followed by \`@import '@exhaustive-ui/tailwindcss';\` in the CSS entry file adds the theme colors (\`bg-primary\`, \`text-surface-500\`, \`text-muted-color\`, \`border-surface\`) and the animation utilities. Tailwind v3 projects use the JS plugin in \`tailwind.config.js\` instead. Tailwind v4 puts the important modifier at the end (\`p-0!\`), v3 at the start (\`!p-0\`). See \`references/guides/tailwind.md\`.
-- Several inputs removed in v22 have a native or renamed replacement: \`styleClass\` becomes the native \`class\` attribute on most components (Tag, Card, Select, Table, DatePicker, Panel, ...), \`showCloseIcon\` becomes \`closable\` on Drawer. The API tables are authoritative; \`references/guides/update.md\` lists the \`ng update\` migrations and the v22 changes.
+- Several inputs removed in v22 have a native or renamed replacement: \`styleClass\` becomes the native \`class\` attribute on most components (Tag, Card, Select, Table, DatePicker, Panel, ...), \`showCloseIcon\` becomes \`closable\` on Drawer. The API tables are authoritative; \`references/guides/v22.md\` is the migration guide to v22: update steps, the \`ng update\` migrations and their report, the Signals API, OnPush, and the behavior and type changes.
 
 ## Keeping the docs up to date
 
