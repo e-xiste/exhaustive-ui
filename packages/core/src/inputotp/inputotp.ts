@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
+import { PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AutoFocus } from '@exhaustive-ui/core/autofocus';
 import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
@@ -42,6 +43,7 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
                     [attr.inputmode]="inputMode()"
                     [attr.name]="name()"
                     [attr.tabindex]="tabindex()"
+                    [attr.aria-label]="getOtpAriaLabel(i)"
                     [attr.required]="required() ? '' : undefined"
                     [attr.readonly]="readonly() ? '' : undefined"
                     [attr.disabled]="$disabled() ? '' : undefined"
@@ -56,7 +58,7 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
                 />
             }
             @if (inputTemplate() || _inputTemplate()) {
-                <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate(); context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i }"> </ng-container>
+                <ng-container *ngTemplateOutlet="inputTemplate() || _inputTemplate(); context: { $implicit: getToken(i - 1), events: getTemplateEvents(i - 1), index: i, ariaLabel: getOtpAriaLabel(i) }"> </ng-container>
             }
         }
     `,
@@ -233,6 +235,15 @@ export class InputOtp extends BaseEditableHolder<InputOtpPassThrough> {
 
     getModelValue(i: number) {
         return this.tokens()[i - 1] || '';
+    }
+
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
+
+    /**
+     * Label of the token input at the given 1-based position, from the aria.otpLabel locale key.
+     */
+    getOtpAriaLabel(i: number): string | undefined {
+        return this.translation()?.[TranslationKeys.ARIA]?.otpLabel?.replace(/\{0\}/g, String(i));
     }
 
     getAutofocus(i: number): boolean {

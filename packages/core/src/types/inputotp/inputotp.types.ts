@@ -89,6 +89,10 @@ export interface InputOtpInputTemplateContext {
      * Index of the token.
      */
     index: number;
+    /**
+     * Accessible label of the token input, built from the aria.otpLabel locale key.
+     */
+    ariaLabel?: string;
 }
 
 /**

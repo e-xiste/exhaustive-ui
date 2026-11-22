@@ -202,6 +202,12 @@ describe('InputOtp', () => {
             fixture.detectChanges();
         });
 
+        it('should label each input with its position from the aria.otpLabel locale key', () => {
+            const inputs = fixture.debugElement.queryAll(By.css('input'));
+            expect(inputs.length).toBeGreaterThan(1);
+            inputs.forEach((input, i) => expect(input.nativeElement.getAttribute('aria-label')).toBe(`Please enter one time password character ${i + 1}`));
+        });
+
         it('should handle single character input', async () => {
             const inputs = fixture.debugElement.queryAll(By.css('input'));
             const firstInput = inputs[0].nativeElement;
