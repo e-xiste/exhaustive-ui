@@ -7,6 +7,7 @@ import { Bind } from '@exhaustive-ui/core/bind';
 import { TerminalPassThrough } from '@exhaustive-ui/core/types/terminal';
 import { TerminalStyle } from './style/terminalstyle';
 import { TerminalService } from './terminalservice';
+import { uuid } from '@exhaustive-ui/utils';
 
 /**
  * Terminal is a text based user interface.
@@ -29,8 +30,20 @@ import { TerminalService } from './terminalservice';
             }
         </div>
         <div [class]="cx('prompt')" [pBind]="ptm('prompt')">
-            <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')">{{ prompt() }}</span>
-            <input #in type="text" [(ngModel)]="command" [ngModelOptions]="{ standalone: true }" [class]="cx('promptValue')" [pBind]="ptm('promptValue')" autocomplete="off" (keydown)="handleCommand($event)" autofocus />
+            <span [class]="cx('promptLabel')" [pBind]="ptm('promptLabel')" [attr.id]="promptLabelId">{{ prompt() }}</span>
+            <input
+                #in
+                type="text"
+                [attr.aria-label]="ariaLabel()"
+                [attr.aria-labelledby]="inputAriaLabelledBy()"
+                [(ngModel)]="command"
+                [ngModelOptions]="{ standalone: true }"
+                [class]="cx('promptValue')"
+                [pBind]="ptm('promptValue')"
+                autocomplete="off"
+                (keydown)="handleCommand($event)"
+                autofocus
+            />
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +71,22 @@ export class Terminal extends BaseComponent<TerminalPassThrough> {
      * @group Props
      */
     readonly prompt = input<string | undefined>();
+    /**
+     * Defines a string that labels the command input. When neither ariaLabel nor ariaLabelledBy is set, the input is labelled by the prompt text.
+     * @group Props
+     */
+    readonly ariaLabel = input<string | undefined>();
+    /**
+     * Establishes relationships between the command input and label(s) where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
+
+    promptLabelId = uuid('pn_id_') + '_prompt';
+
+    inputAriaLabelledBy() {
+        return this.ariaLabelledBy() || (!this.ariaLabel() && this.prompt() ? this.promptLabelId : undefined);
+    }
 
     commands = signal<any[]>([]);
 

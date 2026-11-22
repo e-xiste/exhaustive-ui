@@ -153,6 +153,25 @@ describe('Terminal', () => {
     });
 
     describe('Input Properties', () => {
+        it('should label the command input by the prompt, or by ariaLabel / ariaLabelledBy', async () => {
+            const input = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+            const labelledBy = input.getAttribute('aria-labelledby');
+            expect(labelledBy).toBeTruthy();
+            expect(document.getElementById(labelledBy!)?.textContent).toBe('prime$ ');
+
+            const direct = TestBed.createComponent(Terminal);
+            direct.componentRef.setInput('prompt', '$');
+            direct.componentRef.setInput('ariaLabel', 'Command');
+            direct.detectChanges();
+            const directInput = direct.nativeElement.querySelector('input') as HTMLInputElement;
+            expect(directInput.getAttribute('aria-label')).toBe('Command');
+            expect(directInput.hasAttribute('aria-labelledby')).toBe(false);
+
+            direct.componentRef.setInput('ariaLabelledBy', 'external');
+            direct.detectChanges();
+            expect(directInput.getAttribute('aria-labelledby')).toBe('external');
+        });
+
         it('should update welcomeMessage input', async () => {
             component.welcomeMessage = 'Updated Welcome';
             fixture.changeDetectorRef.markForCheck();
