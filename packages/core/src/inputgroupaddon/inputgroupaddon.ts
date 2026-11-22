@@ -15,7 +15,7 @@ import { InputGroupAddonStyle } from './style/inputgroupaddonstyle';
     template: ` <ng-content></ng-content> `,
     imports: [BindModule],
     host: {
-        '[class]': "cn(cx('root'), styleClass())",
+        '[class]': "cx('root')",
         '[style]': 'style()'
     },
     providers: [InputGroupAddonStyle, { provide: PARENT_INSTANCE, useExisting: InputGroupAddon }],
@@ -38,11 +38,6 @@ export class InputGroupAddon extends BaseComponent<InputGroupAddonPassThrough> {
      * @group Props
      */
     readonly style = input<{ [klass: string]: any } | null | undefined>();
-    /**
-     * Class of the element.
-     * @group Props
-     */
-    readonly styleClass = input<string | undefined>();
 }
 
 @NgModule({

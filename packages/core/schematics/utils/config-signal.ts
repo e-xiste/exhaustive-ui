@@ -107,6 +107,143 @@ export function rewriteConfigPropertyToSignal(fileName: string, text: string, ta
     return { text: result, changed: true, writes, reads, leftovers };
 }
 
+export interface ConfigPropertyRename {
+    /** Exported class name of the config service, e.g. 'Exhaustive'. */
+    className: string;
+    /** Removed property name, e.g. 'inputStyle'. */
+    from: string;
+    /** Property that replaces it, e.g. 'inputVariant'. */
+    to: string;
+    /** Functions/methods taking a config object literal whose `from` key is renamed too, e.g. ['provideExhaustive', 'setConfig']. */
+    configCalls: readonly string[];
+}
+
+export interface ConfigRenameResult {
+    text: string;
+    changed: boolean;
+    /** Number of `x.from` accesses and `{ from: ... }` config keys rewritten. */
+    renamed: number;
+    /** 1-based lines that need manual review. */
+    leftovers: number[];
+}
+
+/**
+ * Renames a config-service property replaced by another one of the same shape, inside one
+ * TypeScript source file:
+ * - `x.from` becomes `x.to` wherever `x` is provably the service (same rules as
+ *   rewriteConfigPropertyToSignal), so `config.from()` / `config.from.set(v)` keep working;
+ * - a `from` key of an object literal passed directly to one of `configCalls`
+ *   (`provideExhaustive({ from: v })`, `config.setConfig({ from })`) becomes `to`.
+ *
+ * Reported instead: accesses on a receiver that only looks like a config object, and object
+ * literals that already set `to` next to `from` (the author has to pick one).
+ */
+export function renameConfigProperty(fileName: string, text: string, target: ConfigPropertyRename): ConfigRenameResult {
+    const sourceFile = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true);
+    const bindings = collectServiceBindings(sourceFile, target.className);
+    const edits: Edit[] = [];
+    const leftovers: number[] = [];
+    let renamed = 0;
+
+    const isServiceReceiver = (expression: ts.Expression): boolean => {
+        const unwrapped = unwrap(expression);
+        if (isInjectCall(unwrapped, target.className)) {
+            return true;
+        }
+        if (ts.isIdentifier(unwrapped)) {
+            return bindings.resolvesIdentifier(unwrapped);
+        }
+        if (ts.isPropertyAccessExpression(unwrapped) && unwrap(unwrapped.expression).kind === ts.SyntaxKind.ThisKeyword) {
+            return bindings.resolvesMember(unwrapped);
+        }
+        return false;
+    };
+
+    const isConfigCallArgument = (node: ts.ObjectLiteralExpression): boolean => {
+        const call = node.parent;
+        if (!call || !ts.isCallExpression(call) || !call.arguments.includes(node)) {
+            return false;
+        }
+        const callee = call.expression;
+        const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : undefined;
+        return name !== undefined && target.configCalls.includes(name);
+    };
+
+    const keyOf = (property: ts.ObjectLiteralElementLike): string | undefined => (property.name && (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name)) ? property.name.text : undefined);
+
+    const visit = (node: ts.Node): void => {
+        if (ts.isPropertyAccessExpression(node) && node.name.text === target.from) {
+            if (isServiceReceiver(node.expression)) {
+                edits.push({ start: node.name.getStart(sourceFile), end: node.name.getEnd(), replacement: target.to });
+                renamed++;
+            } else if (looksLikeConfigReceiver(node.expression, sourceFile)) {
+                leftovers.push(lineOf(sourceFile, node));
+            }
+        } else if (ts.isObjectLiteralExpression(node) && isConfigCallArgument(node)) {
+            const old = node.properties.filter((property) => keyOf(property) === target.from);
+            if (old.length > 0 && node.properties.some((property) => keyOf(property) === target.to)) {
+                leftovers.push(lineOf(sourceFile, old[0]));
+            } else {
+                for (const property of old) {
+                    if (ts.isShorthandPropertyAssignment(property)) {
+                        edits.push({ start: property.name.getStart(sourceFile), end: property.name.getEnd(), replacement: `${target.to}: ${target.from}` });
+                    } else if (property.name) {
+                        const quote = ts.isStringLiteral(property.name) ? property.name.getText(sourceFile)[0] : '';
+                        edits.push({ start: property.name.getStart(sourceFile), end: property.name.getEnd(), replacement: `${quote}${target.to}${quote}` });
+                    }
+                    renamed++;
+                }
+            }
+        }
+        ts.forEachChild(node, visit);
+    };
+    visit(sourceFile);
+
+    if (edits.length === 0) {
+        return { text, changed: false, renamed, leftovers };
+    }
+    edits.sort((a, b) => b.start - a.start);
+    let result = text;
+    for (const edit of edits) {
+        result = result.slice(0, edit.start) + edit.replacement + result.slice(edit.end);
+    }
+    return { text: result, changed: true, renamed, leftovers };
+}
+
+/**
+ * Finds every `<receiver>.prop` access of a config-looking receiver inside an HTML fragment, calls
+ * included. Returns the 1-based line (relative to the fragment) of each match.
+ */
+export function findConfigPropertyAccessesInHtml(html: string, property: string): number[] {
+    const pattern = new RegExp(`\\b(?:config|primeng|exhaustive)\\w*(?:\\?\\.|\\.)${escapeRegExp(property)}\\b`, 'gi');
+    const lines: number[] = [];
+    for (const match of html.matchAll(pattern)) {
+        lines.push(html.slice(0, match.index).split('\n').length);
+    }
+    return lines;
+}
+
+/** Same scan, applied to the inline `template:` literals of `@Component` decorators. Returns 1-based lines within the file. */
+export function findConfigPropertyAccessesInTypeScript(fileName: string, text: string, property: string): number[] {
+    return scanInlineTemplates(fileName, text, (html) => findConfigPropertyAccessesInHtml(html, property));
+}
+
+function scanInlineTemplates(fileName: string, text: string, scan: (html: string) => number[]): number[] {
+    const sourceFile = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true);
+    const lines: number[] = [];
+    const visit = (node: ts.Node): void => {
+        if (ts.isPropertyAssignment(node) && isDirectComponentTemplateProperty(node) && ts.isStringLiteralLike(node.initializer)) {
+            const start = node.initializer.getStart(sourceFile) + 1;
+            for (const line of scan(node.initializer.text)) {
+                lines.push(sourceFile.getLineAndCharacterOfPosition(start).line + line);
+            }
+        }
+        ts.forEachChild(node, visit);
+    };
+    visit(sourceFile);
+    return lines;
+}
+
 /**
  * Finds `<receiver>.prop` reads of a config-looking receiver inside an HTML fragment — a template
  * file, or the body of an inline `template:` literal — that are not already calls. Returns the

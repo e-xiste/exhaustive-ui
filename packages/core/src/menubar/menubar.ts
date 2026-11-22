@@ -37,6 +37,9 @@ import { interval, Subject, Subscription } from 'rxjs';
 import { debounce, filter } from 'rxjs/operators';
 import { MenuBarStyle } from './style/menubarstyle';
 
+/**
+ * @internal Internal to Menubar, not exported from the entry point.
+ */
 @Injectable()
 export class MenubarService {
     autoHide: boolean | undefined;
@@ -51,6 +54,9 @@ export class MenubarService {
     );
 }
 
+/**
+ * @internal Rendering detail of Menubar, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-menubarSub, p-menubarsub, [pMenubarSub]',

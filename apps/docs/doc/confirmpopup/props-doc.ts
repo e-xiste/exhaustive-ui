@@ -29,12 +29,6 @@ import { Component } from '@angular/core';
                         <td>Whether to automatically manage layering.</td>
                     </tr>
                     <tr>
-                        <td>baseZIndex</td>
-                        <td>number</td>
-                        <td>0</td>
-                        <td>Base zIndex value to use in layering.</td>
-                    </tr>
-                    <tr>
                         <td>style</td>
                         <td>string</td>
                         <td>null</td>

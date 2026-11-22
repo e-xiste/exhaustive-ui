@@ -446,11 +446,6 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
      */
     virtualScrollOptions = input<ScrollerOptions | undefined>();
     /**
-     * When enabled, highlights the first item in the list by default.
-     * @group Props
-     */
-    autoHighlight = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
-    /**
      * When present, autocomplete clears the manual input if it does not match of the suggestions to force only accepting values from the suggestions.
      * @group Props
      */

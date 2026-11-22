@@ -9,6 +9,9 @@ import { Nullable } from '@exhaustive-ui/core/ts-helpers';
 import { OrganizationChartNodeCollapseEvent, OrganizationChartNodeExpandEvent, OrganizationChartNodeSelectEvent, OrganizationChartNodeUnSelectEvent, OrganizationChartPassThrough } from '@exhaustive-ui/core/types/organizationchart';
 import { OrganizationChartStyle } from './style/organizationchartstyle';
 
+/**
+ * @internal Rendering detail of OrganizationChart, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: '[pOrganizationChartNode]',
     imports: [CommonModule, ChevronDownIcon, ChevronUpIcon, SharedModule, BindModule],
@@ -186,7 +189,6 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
     readonly collapsible = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether the space allocated by a node is preserved when hidden.
-     * @deprecated since v20.0.0.
      * @group Props
      */
     readonly preserveSpace = input<boolean, unknown>(true, { transform: booleanAttribute });

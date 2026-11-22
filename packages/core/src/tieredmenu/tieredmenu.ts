@@ -61,6 +61,9 @@ import { TieredMenuStyle } from './style/tieredmenustyle';
 const TIEREDMENU_INSTANCE = new InjectionToken<TieredMenu>('TIEREDMENU_INSTANCE');
 const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_INSTANCE');
 
+/**
+ * @internal Rendering detail of TieredMenu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-tieredMenuSub, p-tieredmenusub',

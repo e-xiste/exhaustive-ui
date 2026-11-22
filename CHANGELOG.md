@@ -15,7 +15,7 @@ ng update @angular/core@22 @angular/cli@22
 ng update @exhaustive-ui/core --next
 ```
 
-`ng update` rewrites your templates with five migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
+`ng update` rewrites your templates and code with nine migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
 - `styleclass-to-class`: `styleClass`/`[styleClass]` becomes `class`/`[class]` on the ~60 components whose deprecated `styleClass` was removed. These include Tag, Card, Select, Table, DatePicker and Panel.
 - `renamed-inputs`: renames deprecated input aliases.
@@ -25,9 +25,21 @@ ng update @exhaustive-ui/core --next
   - AutoComplete: `minLength` becomes `minQueryLength`.
   - TreeSelect: `containerStyleClass` and `containerStyle` become `class` and `style`.
   - TreeTable: `virtualRowHeight` becomes `virtualScrollItemSize`.
-- `remove-dead-inputs`: removes bindings of about sixty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth` and the ConfirmDialog aria labels.
+  - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
+  - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
+  - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+  - Dialog: `content`, the old public name of the header template, becomes `headerTemplate`.
+  - pButton, pButtonLabel, pButtonIcon, pBadge, pInputText, pTooltip (on any element): the `pt*` pass-through aliases become `p*PT`, and pBadge `size` becomes `badgeSize`.
+- `renamed-outputs`: renames outputs to the name the other components use. The payloads are unchanged.
+  - OrderList: `onFilterEvent` becomes `onFilter`.
+  - Table: `selectAllChange` becomes `onSelectAllChange`.
+  - MultiSelect: `onPanelShow`/`onPanelHide` become `onShow`/`onHide`.
+- `renamed-templates`: the MultiSelect `removetokenicon` template becomes `chipicon`.
+- `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
+- `removed-exports`: `Password_VALUE_ACCESSOR` becomes `PASSWORD_VALUE_ACCESSOR`, and the removed `<p-inplacedisplay>`/`<p-inplacecontent>` wrappers become `<span>`.
+- `config-input-style-to-variant`: the global `inputStyle` option becomes `inputVariant`, in `provideExhaustive()`/`setConfig()` objects and on the `Exhaustive` service.
 
 A workspace that just switched from PrimeNG (`migrate-from-primeng`) or from Optimus UI did not go through `ng update`. It runs the same migrations with:
 
@@ -44,6 +56,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
   - Value plus change-event pairs became `model()`. This covers `first`, `rows` and `selection` on Table and TreeTable, and `visible` on Dialog and Galleria, among others. `[(x)]` keeps working.
 - **OnPush change detection** for every component except Table, TreeTable and DynamicDialog. Those three stay Eager on purpose, because they render consumer objects mutated in place. Give OnPush components new arrays and objects, or signals, instead of mutating bound data.
 - **Removed inputs and outputs**: see the migrations above.
+- **Removed TypeScript API** (no migration, the compiler points at each use): `OverlayOptions.showTransitionOptions`/`hideTransitionOptions`, `DynamicDialogConfig.rtl`/`transitionOptions`, and the deprecated `classNames`, `createStyleAsString`, `createStyleTag`, `mergeKeys` utils and the theme service's `getDirective`.
 - **TreeTable**: the selection change can fire once per intermediate step while a checkbox propagates.
 - **ConfirmPopup**: an `accepticon`/`rejecticon` template now replaces the confirmation's `acceptIcon`/`rejectIcon` class instead of rendering next to it, as ConfirmDialog already did.
 
@@ -94,6 +107,42 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 
 The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that could not be confirmed by reading the code, and the 50 remaining low-severity ones, were each turned into a test in a real browser. About 85 were still present and are fixed below; about 100 already worked and most keep their test as a regression test. The others are feature requests, need a browser or a screen reader the tests cannot drive (Firefox, Edge, iOS, NVDA, VoiceOver), or need a redesign: virtual lists taller than the browser's maximum element height (#176, #336), row heights of a TreeTable with frozen columns (#933, #731), the overlay width with virtual scroll (#158), Signal Forms showing invalid before interaction (#162, #202) and ToggleSwitch sizes (#86). The issue numbers are Optimus UI's.
 
+### Breaking changes
+
+API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named below.
+
+- Removed inputs that did nothing (`remove-dead-inputs` deletes their bindings): Stepper `transitionOptions`, AutoComplete `autoHighlight`, Listbox `searchLocale`, DataView `gridStyleClass` and `trackBy`, OrderList `trackBy` and `header` (use the `header` template), PickList `trackBy`, `sourceTrackBy` and `targetTrackBy`, ToggleSwitch `size`, SelectButton `tabindex`, ConfirmPopup `baseZIndex`, and the TreeTable sort icon's `ariaLabelAsc`/`ariaLabelDesc`.
+
+- Renamed to the name the other components use (`renamed-inputs` and the new `renamed-outputs` migration rewrite the bindings):
+  - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
+  - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
+  - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+  - OrderList: the `onFilterEvent` output becomes `onFilter`.
+  - Table: the `selectAllChange` output becomes `onSelectAllChange`. A `[(selectAll)]` two-way binding is reported: bind `[selectAll]` and `(onSelectAllChange)="selectAll = $event.checked"`.
+  - MultiSelect: the `onPanelShow`/`onPanelHide` outputs become `onShow`/`onHide`.
+
+  The event payloads are unchanged, so handlers that read `$event` keep working.
+
+- Configuration: the global `inputStyle` option (deprecated since v20) is removed, use `inputVariant` (same values). The new `config-input-style-to-variant` migration renames it in `provideExhaustive()`/`setConfig()` objects and on the `Exhaustive` service.
+- TypeScript-only removals, with no migration (the compiler points at each use):
+  - `OverlayOptions.showTransitionOptions`/`hideTransitionOptions` and `DynamicDialogConfig.rtl`/`transitionOptions`: nothing read them. Use `motionOptions`.
+  - `@exhaustive-ui/utils`: `classNames` (use `cn`), `createStyleAsString` (use `createStyleMarkup`), `createStyleTag` (use `createStyleElement`), `mergeKeys` (use `deepMerge`).
+  - `@exhaustive-ui/styled`: `getDirective` on the theme service (use `getComponent`).
+
+- Directives: the deprecated pass-through aliases `ptButtonDirective`, `ptButtonLabel`, `ptButtonIcon`, `ptBadgeDirective`, `ptInputText` and `ptTooltip` are removed, use `pButtonPT`, `pButtonLabelPT`, `pButtonIconPT`, `pBadgePT`, `pInputTextPT` and `pTooltipPT`. pBadge's deprecated `size` is removed, use `badgeSize`. `renamed-inputs` now also matches attribute directives on any element and renames these bindings (`size` only on plain elements, where it sized the badge).
+
+- MultiSelect: the deprecated `removetokenicon` template is removed, use `chipicon` (same context). The new `renamed-templates` migration renames `#removetokenicon` and `pTemplate="removetokenicon"` inside `p-multiselect`.
+
+- Dialog: the header template input is public as `headerTemplate`, like `contentTemplate` and `footerTemplate`. It was exposed under the name `content`, so `[content]` set the header. `renamed-inputs` turns a `[content]` binding on `p-dialog` into `[headerTemplate]`.
+
+- Exports (the new `removed-exports` migration updates the imports):
+  - Password: `Password_VALUE_ACCESSOR` is renamed `PASSWORD_VALUE_ACCESSOR`, like the other value accessors. The unused `MapperPipe` is removed.
+  - Inplace: the empty `InplaceDisplay`/`InplaceContent` wrapper components are removed. Inplace projects the `pInplaceDisplay`/`pInplaceContent` attributes; the migration turns `<p-inplacedisplay>`/`<p-inplacecontent>` into `<span>` and drops them from imports.
+  - No longer exported from their entry point (imports are reported): the `SelectItem` option component of Select (the `SelectItem` interface of `@exhaustive-ui/core/api` is unchanged), Menu's `SafeHtmlPipe` (also dropped from `MenuModule`), `RadioControlRegistry` and `MenubarService`.
+  - The sub components that render the inside of a component (`ContextMenuSub`, `TieredMenuSub`, `MenuItemContent`, `MultiSelectItem`, `ToastItem`, `TableBody`, `TTBody`, `UITreeNode`, the Galleria parts...), `PARENT_INSTANCE` and the pre-signals helpers of `@exhaustive-ui/core/utils` are tagged `@internal`: they stay exported in v22 but are not public API.
+
+- AvatarGroup and InputGroupAddon: the `styleClass` input is removed, since `class` already worked on them. The `styleclass-to-class` migration now covers `p-avatar-group`/`p-avatarGroup`/`p-avatargroup` and `p-inputgroup-addon`/`p-inputGroupAddon`.
+
 ### Features
 
 - InputMask: a backslash escapes a mask character, e.g. `+\9 999` (#911).
@@ -104,6 +153,9 @@ The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that 
 
 ### Fixes
 
+- Deprecation notes: OrganizationChart `preserveSpace` is no longer marked deprecated (it works and stays), Inplace `closeIcon` now points to the `closeicon` template instead of `class`, and the pButton directive's `buttonProps` note says that the `buttonProps` of p-button is not deprecated.
+- Message: `[style]` reaches the host element. A `style` input that nothing read captured the binding and dropped it; the input is removed.
+- PickList: `ariaSourceFilterLabel` and `ariaTargetFilterLabel` label the filter inputs. OrderList: `ariaLabelledBy` reaches the list, through a new Listbox `ariaLabelledBy` input. TreeTable: `virtualScrollDelay` is passed to the scroller in lazy mode, as Table does. The three inputs were ignored.
 - Table:
   - virtual scroll: frozen rows stay sticky (#432), the header keeps its background (#281), a runtime scroll height is kept (#365), rows render in a container sized after the first render (#269), one group header per group with expandable row groups (#783);
   - frozen columns: body cells paint above the scrolled content (#232), cells after a frozen cell spanning several header rows are placed correctly (#711);

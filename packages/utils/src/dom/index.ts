@@ -12,10 +12,8 @@ export { default as calculateScrollbarHeight } from './methods/calculateScrollba
 export { default as calculateScrollbarWidth } from './methods/calculateScrollbarWidth';
 export { default as clearSelection } from './methods/clearSelection';
 export { default as createElement } from './methods/createElement';
-export { default as createStyleAsString } from './methods/createStyleAsString';
 export { default as createStyleElement } from './methods/createStyleElement';
 export { default as createStyleMarkup } from './methods/createStyleMarkup';
-export { default as createStyleTag } from './methods/createStyleTag';
 export { default as fadeIn } from './methods/fadeIn';
 export { default as fadeOut } from './methods/fadeOut';
 export { default as find } from './methods/find';

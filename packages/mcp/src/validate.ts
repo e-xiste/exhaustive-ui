@@ -304,6 +304,11 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
         }
     }
 
+    // the attribute directives of this component applied on the element (pButton, pTooltip...)
+    const directiveAttributes = own
+        .flatMap((declaration) => splitSelectors(declaration.selector).map(attributeSelectorName))
+        .filter((attribute): attribute is string => !!attribute && element.attributes.some((candidate) => candidate.name.toLowerCase() === attribute.toLowerCase()));
+    const removedHint = (name: string) => (isOwnElement ? removedInputHint(element.name, name) : directiveAttributes.map((attribute) => removedInputHint(`[${attribute}]`, name)).find(Boolean));
     const allowedProps = [...inputs.keys()].sort().join(', ');
     const allowedEvents = [...outputs].sort().join(', ');
     const supportsForms = own.some((declaration) => declaration.forms);
@@ -323,11 +328,11 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                 const input = inputs.get(lowerName);
 
                 if (!input) {
-                    if (GLOBAL_ATTRIBUTES.has(lowerName) || lowerName.startsWith('aria-') || lowerName.startsWith('data-') || lowerName.startsWith('ng') || (!isOwnElement && NATIVE_ATTRIBUTES.has(lowerName))) {
+                    const removed = removedHint(attribute.name);
+
+                    if (!removed && (GLOBAL_ATTRIBUTES.has(lowerName) || lowerName.startsWith('aria-') || lowerName.startsWith('data-') || lowerName.startsWith('ng') || (!isOwnElement && NATIVE_ATTRIBUTES.has(lowerName)))) {
                         break;
                     }
-
-                    const removed = isOwnElement ? removedInputHint(element.name, attribute.name) : undefined;
 
                     issues.push({
                         kind: 'unknown-prop',
@@ -374,15 +379,16 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
                     break;
                 }
 
-                if (/^on[A-Z]/.test(attribute.name)) {
-                    const removed = isOwnElement ? removedOutputHint(element.name, attribute.name) : undefined;
+                const removed = isOwnElement ? removedOutputHint(element.name, attribute.name) : undefined;
 
+                if (removed || /^on[A-Z]/.test(attribute.name)) {
                     issues.push({
                         kind: 'unknown-output',
                         severity: 'error',
                         name: attribute.name,
                         message: `"${attribute.name}" is not an output of ${label}.${removed ? ` ${removed.message}` : ''}`,
-                        allowedEvents
+                        allowedEvents,
+                        ...(removed?.suggestion ? { suggestion: removed.suggestion } : {})
                     });
                 }
 

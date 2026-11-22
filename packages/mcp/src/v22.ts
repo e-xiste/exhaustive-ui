@@ -3,7 +3,7 @@ import { compact } from './text';
 /**
  * Inputs and outputs removed or renamed in ExhaustiveUI v22, keyed by component tag (`p-` prefix,
  * case and hyphens ignored). Mirrors the `ng update` migrations of @exhaustive-ui/core
- * (styleclass-to-class, renamed-inputs, remove-dead-inputs, remove-dead-outputs) so that
+ * (styleclass-to-class, renamed-inputs, renamed-outputs, remove-dead-inputs, remove-dead-outputs) so that
  * validate_usage can name the replacement instead of only reporting an unknown binding.
  */
 
@@ -11,6 +11,7 @@ export const STYLE_CLASS_REMOVED: readonly string[] = [
     'accordion',
     'autocomplete',
     'avatar',
+    'avatargroup',
     'badge',
     'blockui',
     'card',
@@ -28,6 +29,7 @@ export const STYLE_CLASS_REMOVED: readonly string[] = [
     'image',
     'inplace',
     'inputgroup',
+    'inputgroupaddon',
     'inputicon',
     'inputnumber',
     'knob',
@@ -65,11 +67,19 @@ export const STYLE_CLASS_REMOVED: readonly string[] = [
 ];
 
 export const RENAMED: Record<string, Record<string, string>> = {
-    drawer: { showcloseicon: 'closable' },
+    drawer: { showcloseicon: 'closable', ariacloselabel: 'closeAriaLabel' },
     paginator: { dropdownappendto: 'appendTo' },
+    dialog: { content: 'headerTemplate' },
     autocomplete: { minlength: 'minQueryLength' },
     treeselect: { containerstyleclass: 'class', containerstyle: 'style' },
-    treetable: { virtualrowheight: 'virtualScrollItemSize' }
+    treetable: { virtualrowheight: 'virtualScrollItemSize' },
+    // attribute directives, keyed by their attribute selector
+    pbutton: { ptbuttondirective: 'pButtonPT' },
+    pbuttonlabel: { ptbuttonlabel: 'pButtonLabelPT' },
+    pbuttonicon: { ptbuttonicon: 'pButtonIconPT' },
+    pbadge: { ptbadgedirective: 'pBadgePT', size: 'badgeSize' },
+    pinputtext: { ptinputtext: 'pInputTextPT' },
+    ptooltip: { pttooltip: 'pTooltipPT' }
 };
 
 export const DEAD_INPUTS: Record<string, readonly string[]> = {
@@ -83,7 +93,6 @@ export const DEAD_INPUTS: Record<string, readonly string[]> = {
     panel: ['transitionOptions'],
     accordion: ['transitionOptions'],
     scrolltop: ['showTransitionOptions', 'hideTransitionOptions'],
-    confirmpopup: ['showTransitionOptions', 'hideTransitionOptions'],
     togglebutton: ['inputId'],
     popover: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'],
     image: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'],
@@ -107,8 +116,23 @@ export const DEAD_INPUTS: Record<string, readonly string[]> = {
     treenode: ['rowNode', 'root', 'firstChild', 'lastChild'],
     selectitem: ['visible', 'itemSize'],
     table: ['frozenColumns', 'frozenWidth'],
-    autocomplete: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'],
-    multiselect: ['filterFields']
+    autocomplete: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions', 'autoHighlight'],
+    multiselect: ['filterFields'],
+    stepper: ['transitionOptions'],
+    listbox: ['searchLocale'],
+    dataview: ['gridStyleClass', 'trackBy'],
+    orderlist: ['trackBy', 'header'],
+    picklist: ['trackBy', 'sourceTrackBy', 'targetTrackBy'],
+    toggleswitch: ['size'],
+    selectbutton: ['tabindex'],
+    confirmpopup: ['showTransitionOptions', 'hideTransitionOptions', 'baseZIndex'],
+    treetablesorticon: ['ariaLabelAsc', 'ariaLabelDesc']
+};
+
+export const RENAMED_OUTPUTS: Record<string, Record<string, string>> = {
+    orderlist: { onFilterEvent: 'onFilter' },
+    table: { selectAllChange: 'onSelectAllChange' },
+    multiselect: { onPanelShow: 'onShow', onPanelHide: 'onHide' }
 };
 
 export const DEAD_OUTPUTS: Record<string, readonly string[]> = {
@@ -124,7 +148,10 @@ function has(list: readonly string[] | undefined, name: string): boolean {
     return !!list?.some((entry) => entry.toLowerCase() === name.toLowerCase());
 }
 
-/** Replacement guidance for an input that no longer exists on `tag`, or undefined when it was not removed in v22. */
+/**
+ * Replacement guidance for an input that no longer exists on `tag` (an element name, or an attribute
+ * directive selector such as `[pTooltip]`), or undefined when it was not removed in v22.
+ */
 export function removedInputHint(tag: string, name: string): { message: string; suggestion?: string } | undefined {
     const key = tagKey(tag);
     const lower = name.toLowerCase();
@@ -149,6 +176,11 @@ export function removedInputHint(tag: string, name: string): { message: string; 
 /** Replacement guidance for an output that no longer exists on `tag`, or undefined when it was not removed in v22. */
 export function removedOutputHint(tag: string, name: string): { message: string; suggestion?: string } | undefined {
     const key = tagKey(tag);
+    const renamed = RENAMED_OUTPUTS[key]?.[name];
+
+    if (renamed) {
+        return { message: `${name} was renamed to ${renamed} in v22, with the same event payload (ng update applies the renamed-outputs migration).`, suggestion: renamed };
+    }
 
     if (!has(DEAD_OUTPUTS[key], name)) {
         return undefined;

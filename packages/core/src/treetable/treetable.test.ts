@@ -7,6 +7,7 @@ import { SharedModule, TreeNode } from '@exhaustive-ui/core/api';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { MultiSelect } from '@exhaustive-ui/core/multiselect';
 import { of } from 'rxjs';
+import { Scroller } from '@exhaustive-ui/core/scroller';
 import { TreeTable, TreeTableModule, TreeTableToggler, TTCheckbox, TTEditableColumn, TTReorderableColumn, TTScrollableView } from './treetable';
 
 describe('TreeTable', () => {
@@ -5369,5 +5370,46 @@ describe('TreeTable checkbox rendering cost', () => {
         const checkedRow = (Array.from(fixture.nativeElement.querySelectorAll('tr')) as HTMLElement[]).find((tr) => tr.querySelector('.name')!.textContent!.trim() === 'Node 0.0')!;
         expect(checkedRow.querySelector('p-checkbox')!.getAttribute('data-p-highlight')).toBe('true');
         checkboxRenders.mockRestore();
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [TreeTableModule, SharedModule],
+    template: `
+        <p-treetable [value]="nodes" [columns]="cols" [scrollable]="true" scrollHeight="200px" [virtualScroll]="true" [virtualScrollItemSize]="30" [lazy]="lazy()" [virtualScrollDelay]="delay()">
+            <ng-template #body let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode">
+                    <td>{{ rowData.name }}</td>
+                </tr>
+            </ng-template>
+        </p-treetable>
+    `
+})
+class TreeTableVirtualScrollDelayHostComponent {
+    cols = [{ field: 'name', header: 'Name' }];
+    nodes: TreeNode[] = Array.from({ length: 20 }, (_, i) => ({ key: `${i}`, data: { name: `Node ${i}` } }));
+    lazy = signal(true);
+    delay = signal(400);
+}
+
+describe('TreeTable virtualScrollDelay', () => {
+    it('passes virtualScrollDelay to the scroller in lazy mode, like Table', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [TreeTableVirtualScrollDelayHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(TreeTableVirtualScrollDelayHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const scroller = () => fixture.debugElement.query(By.directive(Scroller)).componentInstance as Scroller;
+        expect(scroller().delay()).toBe(400);
+
+        fixture.componentInstance.lazy.set(false);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(scroller().delay()).toBe(0);
     });
 });

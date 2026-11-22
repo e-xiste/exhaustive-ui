@@ -106,7 +106,7 @@ class TestDirectiveBadgeComponent {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     selector: 'test-directive-size-badge',
-    template: `<button pBadge [value]="value" [size]="size">Button</button>`
+    template: `<button pBadge [value]="value" [badgeSize]="size">Button</button>`
 })
 class TestDirectiveSizeBadgeComponent {
     value: string | number = '1';
@@ -161,17 +161,6 @@ class TestDirectiveStyleBadgeComponent {
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
-    selector: 'test-deprecated-size-badge',
-    template: `<button pBadge [value]="value" [size]="size">Button</button>`
-})
-class TestDeprecatedSizeBadgeComponent {
-    value: string | number = '1';
-    size: 'large' | 'xlarge' | 'small' | null | undefined;
-}
-
-@Component({
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false,
     selector: 'test-dynamic-badge',
     template: ` <p-badge [value]="value" [badgeSize]="badgeSize" [severity]="severity" [badgeDisabled]="disabled" [class]="styleClass"> </p-badge> `
 })
@@ -203,7 +192,6 @@ describe('Badge', () => {
                 TestDirectiveSeverityBadgeComponent,
                 TestDirectiveDisabledBadgeComponent,
                 TestDirectiveStyleBadgeComponent,
-                TestDeprecatedSizeBadgeComponent,
                 TestDynamicBadgeComponent
             ],
             providers: [provideZonelessChangeDetection()]
@@ -617,7 +605,6 @@ describe('Badge', () => {
             it('should expose the inputs and the created badge element as signals', async () => {
                 expect(directive.value()).toBe('5');
                 expect(directive.badgeSize()).toBeUndefined();
-                expect(directive.size()).toBeUndefined();
                 expect(directive.severity()).toBeUndefined();
                 expect(directive.disabled()).toBeUndefined();
                 expect(directive.badgeStyle()).toBeUndefined();
@@ -1478,7 +1465,7 @@ describe('pBadge on a component with its own size input (optimus-ui#715)', () =>
         template: `
             <p-avatar class="large" label="A" pBadge value="4" [size]="largeSize" />
             <p-avatar class="normal" label="B" pBadge value="5" [size]="normalSize" />
-            <span class="plain" pBadge value="6" size="large"></span>
+            <span class="plain" pBadge value="6" badgeSize="large"></span>
         `
     })
     class AvatarSizeHost {
@@ -1499,7 +1486,7 @@ describe('pBadge on a component with its own size input (optimus-ui#715)', () =>
         expect(normal.classList.contains('p-avatar-lg')).toBe(false);
         expect(normal.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(false);
 
-        // on a plain element the deprecated size still sizes the badge
+        // on a plain element badgeSize sizes the badge
         const plain = fixture.nativeElement.querySelector('span.plain') as HTMLElement;
         expect(plain.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(true);
     });

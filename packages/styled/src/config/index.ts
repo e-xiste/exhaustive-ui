@@ -106,12 +106,6 @@ export default {
 
         return ThemeUtils.getPresetC(options);
     },
-    // @deprecated - use getComponent instead
-    getDirective(name = '', params: any) {
-        const options = { name, theme: this.theme, params, defaults: this.defaults, set: { layerNames: this.setLayerNames.bind(this) } };
-
-        return ThemeUtils.getPresetD(options);
-    },
     getCustomPreset(name = '', preset: any, selector: string, params: any) {
         const options = { name, preset, options: this.options, selector, params, defaults: this.defaults, set: { layerNames: this.setLayerNames.bind(this) } };
 

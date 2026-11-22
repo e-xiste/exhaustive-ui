@@ -10,7 +10,6 @@ import {
     inject,
     InjectionToken,
     input,
-    InputSignal,
     InputSignalWithTransform,
     model,
     ModelSignal,
@@ -497,14 +496,6 @@ export class Stepper extends BaseComponent<StepperPassThrough> implements Blocka
     linear: InputSignalWithTransform<any, boolean> = input(false, {
         transform: (v: any | boolean) => transformToBoolean(v)
     });
-    /**
-     * Transition options of the animation.
-     * @defaultValue 400ms cubic-bezier(0.86, 0, 0.07, 1)
-     * @type {InputSignal<string >}
-     * @group Props
-     * @deprecated since v21.0.0, use `motionOptions` instead.
-     */
-    transitionOptions: InputSignal<string> = input<string>('400ms cubic-bezier(0.86, 0, 0.07, 1)');
 
     /**
      * The motion options.

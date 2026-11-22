@@ -2403,6 +2403,9 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
     });
 }
 
+/**
+ * @internal Rendering detail of TreeTable, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: '[pTreeTableBody]',
@@ -2480,6 +2483,9 @@ export class TTBody extends BaseComponent {
     });
 }
 
+/**
+ * @internal Rendering detail of TreeTable, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: '[ttScrollableView]',
@@ -2508,6 +2514,7 @@ export class TTBody extends BaseComponent {
                 [style]="{ height: tt.scrollHeight() !== 'flex' ? tt.scrollHeight() : undefined }"
                 [scrollHeight]="scrollHeight() !== 'flex' ? undefined : '100%'"
                 [itemSize]="tt.virtualScrollItemSize() || 28"
+                [delay]="tt.lazy() ? tt.virtualScrollDelay() : 0"
                 [lazy]="tt.lazy()"
                 (onLazyLoad)="tt.onLazyItemLoad($event)"
                 [options]="tt.virtualScrollOptions()"
@@ -2906,10 +2913,6 @@ export class TTSortIcon extends BaseComponent {
     hostName = 'TreeTable';
 
     readonly field = input<string | undefined>();
-
-    readonly ariaLabelDesc = input<string | undefined>();
-
-    readonly ariaLabelAsc = input<string | undefined>();
 
     subscription: Subscription | undefined;
 

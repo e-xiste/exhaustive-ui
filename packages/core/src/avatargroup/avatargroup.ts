@@ -17,7 +17,7 @@ import { AvatarGroupStyle } from './style/avatargroupstyle';
     encapsulation: ViewEncapsulation.None,
     providers: [AvatarGroupStyle, { provide: PARENT_INSTANCE, useExisting: AvatarGroup }],
     host: {
-        '[class]': "cn(cx('root'), styleClass())",
+        '[class]': "cx('root')",
         '[style]': 'style()'
     },
     hostDirectives: [Bind]
@@ -32,11 +32,6 @@ export class AvatarGroup extends BaseComponent<AvatarGroupPassThrough> {
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
 
-    /**
-     * Style class of the component
-     * @group Props
-     */
-    readonly styleClass = input<string | undefined>();
     /**
      * Inline style of the component.
      * @group Props

@@ -454,7 +454,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
      * Header template.
      * @group Templates
      */
-    headerTemplate = input<TemplateRef<void> | undefined>(undefined, { alias: 'content' });
+    headerTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
      * Content template.
      * @group Templates

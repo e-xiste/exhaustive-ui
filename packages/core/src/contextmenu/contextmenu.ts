@@ -60,6 +60,9 @@ const CONTEXTMENUSUB_INSTANCE = new InjectionToken<ContextMenuSub>('CONTEXTMENUS
 // show() stops the propagation of the trigger event, so a document listener cannot close the other open menus
 const visibleContextMenus = new Set<ContextMenu>();
 
+/**
+ * @internal Rendering detail of ContextMenu, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-contextMenuSub, p-contextmenu-sub',

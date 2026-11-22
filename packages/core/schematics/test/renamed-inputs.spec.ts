@@ -73,4 +73,79 @@ describe('renamed-inputs', () => {
         expect(ts).toContain('p.dropdownAppendTo()');
         expect(logs.some((l) => l.includes('/src/app/app.ts:8'))).toBe(true);
     });
+
+    it('renames filterPlaceHolder, ariaLabelledby and ariaCloseLabel to the spelling the other components use', async () => {
+        const { result } = await run({
+            '/src/app/app.html': [
+                `<p-listbox filterPlaceHolder="Search"></p-listbox>`,
+                `<p-multiselect [filterPlaceHolder]="placeholder"></p-multiselect>`,
+                `<p-select filterPlaceHolder="kept"></p-select>`,
+                `<p-imagecompare ariaLabelledby="label"></p-imagecompare>`,
+                `<p-drawer [ariaCloseLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                `<p-dialog [content]="headerTpl" [contentTemplate]="body"></p-dialog>`,
+                ''
+            ].join('\n')
+        });
+        expect(result.readContent('/src/app/app.html')).toBe(
+            [
+                `<p-listbox filterPlaceholder="Search"></p-listbox>`,
+                `<p-multiselect [filterPlaceholder]="placeholder"></p-multiselect>`,
+                `<p-select filterPlaceHolder="kept"></p-select>`,
+                `<p-imagecompare ariaLabelledBy="label"></p-imagecompare>`,
+                `<p-drawer [closeAriaLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                `<p-dialog [headerTemplate]="headerTpl" [contentTemplate]="body"></p-dialog>`,
+                ''
+            ].join('\n')
+        );
+    });
+
+    it('renames the deprecated pass-through aliases of attribute directives on any element', async () => {
+        const { result } = await run({
+            '/src/app/app.html': [
+                `<button pButton [ptButtonDirective]="pt" pTooltip="Save" [ptTooltip]="tipPt">`,
+                `    <span pButtonLabel [ptButtonLabel]="labelPt">Save</span>`,
+                `    <i pButtonIcon ptButtonIcon="x"></i>`,
+                `</button>`,
+                `<input pInputText [ptInputText]="inputPt" [pTooltip]="tip" />`,
+                `<p-avatar pBadge [ptBadgeDirective]="badgePt" value="2"></p-avatar>`,
+                `<div [ptTooltip]="kept" [ptButtonDirective]="kept"></div>`,
+                ''
+            ].join('\n')
+        });
+        expect(result.readContent('/src/app/app.html')).toBe(
+            [
+                `<button pButton [pButtonPT]="pt" pTooltip="Save" [pTooltipPT]="tipPt">`,
+                `    <span pButtonLabel [pButtonLabelPT]="labelPt">Save</span>`,
+                `    <i pButtonIcon pButtonIconPT="x"></i>`,
+                `</button>`,
+                `<input pInputText [pInputTextPT]="inputPt" [pTooltip]="tip" />`,
+                `<p-avatar pBadge [pBadgePT]="badgePt" value="2"></p-avatar>`,
+                `<div [ptTooltip]="kept" [ptButtonDirective]="kept"></div>`,
+                ''
+            ].join('\n')
+        );
+    });
+
+    it('renames pBadge size to badgeSize on plain elements only', async () => {
+        const { result } = await run({
+            '/src/app/app.html': [
+                `<i class="pi pi-bell" pBadge value="2" size="large"></i>`,
+                `<button [pBadge]="true" [size]="badgeSize"></button>`,
+                `<p-avatar pBadge value="4" size="xlarge"></p-avatar>`,
+                `<input pBadge size="10" />`,
+                `<span size="large"></span>`,
+                ''
+            ].join('\n')
+        });
+        expect(result.readContent('/src/app/app.html')).toBe(
+            [
+                `<i class="pi pi-bell" pBadge value="2" badgeSize="large"></i>`,
+                `<button [pBadge]="true" [badgeSize]="badgeSize"></button>`,
+                `<p-avatar pBadge value="4" size="xlarge"></p-avatar>`,
+                `<input pBadge size="10" />`,
+                `<span size="large"></span>`,
+                ''
+            ].join('\n')
+        );
+    });
 });

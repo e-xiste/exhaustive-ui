@@ -64,7 +64,7 @@ interface Country {
             [resetFilterOnHide]="resetFilterOnHide"
             [dropdownIcon]="dropdownIcon"
             [chipIcon]="chipIcon"
-            [filterPlaceHolder]="filterPlaceHolder"
+            [filterPlaceholder]="filterPlaceholder"
             [emptyMessage]="emptyMessage"
             [emptyFilterMessage]="emptyFilterMessage"
             [tooltip]="tooltip"
@@ -81,8 +81,8 @@ interface Country {
             (onBlur)="onBlur($event)"
             (onClick)="onClick($event)"
             (onClear)="onClear($event)"
-            (onPanelShow)="onPanelShow($event)"
-            (onPanelHide)="onPanelHide($event)"
+            (onShow)="onShow($event)"
+            (onHide)="onHide($event)"
             (onLazyLoad)="onLazyLoad($event)"
             (onRemove)="onRemove($event)"
             (onSelectAllChange)="onSelectAllChange($event)"
@@ -128,7 +128,7 @@ class TestBasicMultiSelectComponent {
     resetFilterOnHide = false;
     dropdownIcon: string | undefined;
     chipIcon: string | undefined;
-    filterPlaceHolder: string | undefined;
+    filterPlaceholder: string | undefined;
     emptyMessage = '';
     emptyFilterMessage = '';
     tooltip = '';
@@ -177,11 +177,11 @@ class TestBasicMultiSelectComponent {
         this.clearEvent = event;
     }
 
-    onPanelShow(event: any) {
+    onShow(event: any) {
         this.panelShowEvent = event;
     }
 
-    onPanelHide(event: any) {
+    onHide(event: any) {
         this.panelHideEvent = event;
     }
 
@@ -3983,7 +3983,6 @@ class TestFormIsolationMultiSelectComponent {
             <ng-template #filter>f</ng-template>
             <ng-template #loadingicon>li</ng-template>
             <ng-template #filtericon>fi</ng-template>
-            <ng-template #removetokenicon>rti</ng-template>
             <ng-template #chipicon>ci</ng-template>
             <ng-template #clearicon>cli</ng-template>
             <ng-template #dropdownicon>di</ng-template>
@@ -4015,7 +4014,6 @@ describe('MultiSelect Signal Query API', () => {
             'filterTemplate',
             'loadingIconTemplate',
             'filterIconTemplate',
-            'removeTokenIconTemplate',
             'chipIconTemplate',
             'clearIconTemplate',
             'dropdownIconTemplate',
@@ -4260,7 +4258,7 @@ describe('MultiSelect Signals API', () => {
         });
 
         it('should re-render the overlay content when the overlay related inputs change', async () => {
-            fixture.componentRef.setInput('filterPlaceHolder', 'Search cities');
+            fixture.componentRef.setInput('filterPlaceholder', 'Search cities');
             fixture.componentRef.setInput('ariaFilterLabel', 'Filter cities');
             fixture.componentRef.setInput('panelStyleClass', 'city-panel');
             fixture.componentRef.setInput('scrollHeight', '120px');

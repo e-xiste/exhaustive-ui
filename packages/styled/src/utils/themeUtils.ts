@@ -153,7 +153,7 @@ export default {
 
         return this.getPreset({ name, preset: cPreset, options, params, set, defaults });
     },
-    // @deprecated - use getPresetC instead
+    // resolves the preset of a `*-directive` style name (components first, then the legacy `directives` key)
     getPresetD({ name = '', theme = {}, params, set, defaults }: any) {
         const dName = name.replace('-directive', '');
         const { preset, options } = theme;

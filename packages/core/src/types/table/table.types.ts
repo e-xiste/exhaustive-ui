@@ -464,7 +464,7 @@ export interface TableHeaderCheckboxToggleEvent {
 }
 /**
  * Custom all selection change event.
- * @see {@link Table.selectAllChange}
+ * @see {@link Table.onSelectAllChange}
  * @group Events
  */
 export interface TableSelectAllChangeEvent {

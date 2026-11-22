@@ -1,3 +1,3 @@
 export * from '@exhaustive-ui/core/types/menu';
-export * from './menu';
+export { Menu, MenuItemContent, MenuModule } from './menu';
 export * from './style/menustyle';

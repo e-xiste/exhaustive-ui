@@ -76,6 +76,9 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Rendering detail of MultiSelect, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'li[pMultiSelectItem]',
@@ -257,14 +260,12 @@ export class MultiSelectItem extends BaseComponent {
                                         (onRemove)="removeOption(item, $event)"
                                         [removeIcon]="chipIcon()"
                                     >
-                                        @if (chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()) {
+                                        @if (chipIconTemplate() || _chipIconTemplate()) {
                                             <ng-template #removeicon>
                                                 @if (!$disabled() && !readonly()) {
-                                                    @if (chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()) {
+                                                    @if (chipIconTemplate() || _chipIconTemplate()) {
                                                         <span [class]="cx('chipIcon')" (click)="removeOption(item, $event)" [attr.aria-hidden]="true" [pBind]="ptm('chipIcon')">
-                                                            <ng-container
-                                                                *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate(); context: { class: 'p-multiselect-chip-icon' }"
-                                                            ></ng-container>
+                                                            <ng-container *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate(); context: { class: 'p-multiselect-chip-icon' }"></ng-container>
                                                         </span>
                                                     }
                                                 }
@@ -410,7 +411,7 @@ export class MultiSelectItem extends BaseComponent {
                                             (blur)="onFilterBlur($event)"
                                             [class]="cx('pcFilter')"
                                             [attr.disabled]="$disabled() ? '' : undefined"
-                                            [attr.placeholder]="filterPlaceHolder()"
+                                            [attr.placeholder]="filterPlaceholder()"
                                             [attr.aria-label]="ariaFilterLabel()"
                                             [unstyled]="unstyled()"
                                         />
@@ -597,7 +598,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * Defines placeholder of the filter input.
      * @group Props
      */
-    filterPlaceHolder = input<string | undefined>();
+    filterPlaceholder = input<string | undefined>();
     /**
      * Locale to use in filtering. The default locale is the host environment's current locale.
      * @group Props
@@ -914,13 +915,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    readonly onPanelShow = output<AnimationEvent>();
+    readonly onShow = output<AnimationEvent>();
     /**
      * Callback to invoke when overlay panel becomes hidden.
      * @param {AnimationEvent} event - Animation event.
      * @group Emits
      */
-    readonly onPanelHide = output<AnimationEvent>();
+    readonly onHide = output<AnimationEvent>();
     /**
      * Callback to invoke in lazy mode to load new data.
      * @param {MultiSelectLazyLoadEvent} event - Lazy load event.
@@ -1037,12 +1038,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     readonly filterIconTemplate = contentChild<TemplateRef<void>>('filtericon', { descendants: false });
 
     /**
-     * Custom remove token icon template.
-     * @group Templates
-     */
-    readonly removeTokenIconTemplate = contentChild<TemplateRef<MultiSelectChipIconTemplateContext>>('removetokenicon', { descendants: false });
-
-    /**
      * Custom chip icon template.
      * @group Templates
      */
@@ -1092,7 +1087,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                             'headercheckboxicon',
                             'loadingicon',
                             'filtericon',
-                            'removetokenicon',
                             'clearicon',
                             'dropdownicon',
                             'itemcheckboxicon',
@@ -1172,13 +1166,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 .at(-1)?.template
     );
 
-    readonly _removeTokenIconTemplate = computed<TemplateRef<MultiSelectChipIconTemplateContext> | undefined>(
-        () =>
-            this.templates()
-                .filter((item) => item.getType() === 'removetokenicon')
-                .at(-1)?.template
-    );
-
     readonly _chipIconTemplate = computed<TemplateRef<MultiSelectChipIconTemplateContext> | undefined>(
         () =>
             this.templates()
@@ -1214,7 +1201,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                 .at(-1)?.template
     );
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
@@ -2083,13 +2070,13 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
             }
         }
 
-        this.onPanelShow.emit(event);
+        this.onShow.emit(event);
     }
 
     onOverlayAfterLeave(event: any) {
         this.itemsWrapper.set(null);
         this.onModelTouched();
-        this.onPanelHide.emit(event);
+        this.onHide.emit(event);
     }
 
     resetFilter() {

@@ -1,3 +1,6 @@
+/**
+ * @internal Pre-signals helper kept for the components; not meant for applications and may be removed in a future major.
+ */
 export class ObjectUtils {
     public static isArray(value, empty = true) {
         return Array.isArray(value) && (empty || value.length !== 0);

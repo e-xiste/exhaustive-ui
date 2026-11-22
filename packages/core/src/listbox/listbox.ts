@@ -98,7 +98,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                         [ngModelOptions]="{ standalone: true }"
                         [disabled]="$disabled()"
                         [tabindex]="-1"
-                        [variant]="config.inputStyle() === 'filled' || config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
+                        [variant]="config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                         [binary]="true"
                         [attr.aria-label]="toggleAllAriaLabel()"
                         [pt]="ptm('pcCheckbox')"
@@ -126,7 +126,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                                 [attr.disabled]="$disabled() ? '' : undefined"
                                 [attr.aria-controls]="_id() + '_list'"
                                 [attr.aria-activedescendant]="focusedOptionId()"
-                                [attr.placeholder]="filterPlaceHolder()"
+                                [attr.placeholder]="filterPlaceholder()"
                                 [attr.aria-label]="ariaFilterLabel()"
                                 [attr.tabindex]="!$disabled() && !focused() ? tabindex() : -1"
                                 (input)="onFilterChange($event)"
@@ -223,6 +223,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                         [style]="scrollerOptions.contentStyle"
                         [attr.aria-activedescendant]="focused() ? focusedOptionId() : undefined"
                         [attr.aria-label]="ariaLabel()"
+                        [attr.aria-labelledby]="ariaLabelledBy()"
                         [attr.aria-disabled]="$disabled()"
                         (focus)="onListFocus($event)"
                         (blur)="onListBlur($event)"
@@ -284,7 +285,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                                             [readonly]="true"
                                             [disabled]="$disabled() || isOptionDisabled(option)"
                                             [tabindex]="-1"
-                                            [variant]="config.inputStyle() === 'filled' || config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
+                                            [variant]="config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                                             [binary]="true"
                                             [ariaLabel]="getOptionLabel(option)"
                                             [pt]="ptm('pcCheckbox')"
@@ -426,15 +427,15 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      */
     readonly ariaLabel = input<string | undefined>();
     /**
+     * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
+     * @group Props
+     */
+    readonly ariaLabelledBy = input<string | undefined>();
+    /**
      * When enabled, the focused option is selected.
      * @group Props
      */
     readonly selectOnFocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
-    /**
-     * Locale to use in searching. The default locale is the host environment's current locale.
-     * @group Props
-     */
-    readonly searchLocale = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * When enabled, the hovered option will be focused.
      * @group Props
@@ -574,7 +575,7 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      * Defines placeholder of the filter input.
      * @group Props
      */
-    readonly filterPlaceHolder = input<string | undefined>();
+    readonly filterPlaceholder = input<string | undefined>();
     /**
      * Text to display when filtering does not return any results.
      * @group Props

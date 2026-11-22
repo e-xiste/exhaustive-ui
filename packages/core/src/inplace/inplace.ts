@@ -9,21 +9,6 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
 import { InplaceContentTemplateContext, InplacePassThrough } from '@exhaustive-ui/core/types/inplace';
 import { InplaceStyle } from './style/inplacestyle';
 
-@Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-inplacedisplay, p-inplaceDisplay',
-    imports: [],
-    template: '<ng-content></ng-content>'
-})
-export class InplaceDisplay extends BaseComponent {}
-
-@Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-inplacecontent, p-inplaceContent',
-    imports: [],
-    template: '<ng-content></ng-content>'
-})
-export class InplaceContent extends BaseComponent {}
 /**
  * Inplace provides an easy to do editing and display at the same time where clicking the output displays the actual content.
  * @group Components
@@ -103,7 +88,7 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
     readonly preventClick = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Icon to display in the close button.
-     * @deprecated since v20.0.0, use `class` instead.
+     * @deprecated since v20.0.0, use the `closeicon` template instead.
      * @group Props
      */
     readonly closeIcon = input<string | undefined>();
@@ -205,7 +190,7 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
 }
 
 @NgModule({
-    imports: [Inplace, InplaceContent, InplaceDisplay, SharedModule],
-    exports: [Inplace, InplaceContent, InplaceDisplay, SharedModule]
+    imports: [Inplace, SharedModule],
+    exports: [Inplace, SharedModule]
 })
 export class InplaceModule {}

@@ -12,7 +12,6 @@ import {
     input,
     isSignal,
     NgModule,
-    numberAttribute,
     Renderer2,
     signal,
     TemplateRef,
@@ -161,11 +160,6 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
      * @group Props
      */
     autoZIndex = input<boolean, unknown>(true, { transform: booleanAttribute });
-    /**
-     * Base zIndex value to use in layering.
-     * @group Props
-     */
-    baseZIndex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * Inline style of the component.
      * @group Props

@@ -235,14 +235,6 @@ describe('remove-dead-inputs', () => {
         expect(result.readContent('/src/app/app.html')).toBe(`<p-panel [(collapsed)]="collapsed"></p-panel>\n`);
     });
 
-    it('does not remove transitionOptions from p-stepper', async () => {
-        const runner = createMigrationRunner();
-        const content = `<p-stepper transitionOptions="200ms ease-in"></p-stepper>\n`;
-        const tree = createAppTree({ '/src/app/app.html': content });
-        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
-        expect(result.readContent('/src/app/app.html')).toBe(content);
-    });
-
     it('removes the deprecated transitionOptions from p-accordion while keeping motionOptions', async () => {
         const runner = createMigrationRunner();
         const tree = createAppTree({
@@ -872,5 +864,44 @@ describe('remove-dead-inputs', () => {
         const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
         expect(result.readContent('/src/app/foo.ts')).toBe(content);
         expect(warnings.join('\n')).not.toContain('/src/app/foo.ts');
+    });
+
+    it('removes the dead inputs found by the 22.0.0 API audit', async () => {
+        const runner = createMigrationRunner();
+        const tree = createAppTree({
+            '/src/app/app.html': [
+                `<p-stepper [(value)]="step" transitionOptions="300ms"></p-stepper>`,
+                `<p-autocomplete [autoHighlight]="true" [suggestions]="items"></p-autocomplete>`,
+                `<p-listbox [options]="items" searchLocale="en"></p-listbox>`,
+                `<p-dataview [value]="items" gridStyleClass="grid" [trackBy]="byId"></p-dataview>`,
+                `<p-orderlist [value]="items" header="Products" [trackBy]="byId" filterBy="name"></p-orderlist>`,
+                `<p-picklist [source]="a" [target]="b" [trackBy]="byId" [sourceTrackBy]="byId" [targetTrackBy]="byId"></p-picklist>`,
+                `<p-toggleswitch [(ngModel)]="on" size="large"></p-toggleswitch>`,
+                `<p-selectbutton [options]="opts" [tabindex]="2"></p-selectbutton>`,
+                `<p-confirmpopup [baseZIndex]="10"></p-confirmpopup>`,
+                `<p-treeTableSortIcon field="name" ariaLabelAsc="up" ariaLabelDesc="down"></p-treeTableSortIcon>`,
+                `<p-button size="large"></p-button>`,
+                `<p-panel header="Products"></p-panel>`,
+                ''
+            ].join('\n')
+        });
+        const result = await runner.runSchematic('remove-dead-inputs', {}, tree);
+        expect(result.readContent('/src/app/app.html')).toBe(
+            [
+                `<p-stepper [(value)]="step"></p-stepper>`,
+                `<p-autocomplete [suggestions]="items"></p-autocomplete>`,
+                `<p-listbox [options]="items"></p-listbox>`,
+                `<p-dataview [value]="items"></p-dataview>`,
+                `<p-orderlist [value]="items" filterBy="name"></p-orderlist>`,
+                `<p-picklist [source]="a" [target]="b"></p-picklist>`,
+                `<p-toggleswitch [(ngModel)]="on"></p-toggleswitch>`,
+                `<p-selectbutton [options]="opts"></p-selectbutton>`,
+                `<p-confirmpopup></p-confirmpopup>`,
+                `<p-treeTableSortIcon field="name"></p-treeTableSortIcon>`,
+                `<p-button size="large"></p-button>`,
+                `<p-panel header="Products"></p-panel>`,
+                ''
+            ].join('\n')
+        );
     });
 });

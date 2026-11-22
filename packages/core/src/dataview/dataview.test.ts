@@ -79,8 +79,6 @@ describe('DataView corners with the Lara preset (optimus-ui#261)', () => {
             [lazyLoadOnInit]="lazyLoadOnInit"
             [emptyMessage]="emptyMessage"
             [class]="styleClass"
-            [gridStyleClass]="gridStyleClass"
-            [trackBy]="trackBy"
             [filterBy]="filterBy"
             [filterLocale]="filterLocale"
             [loading]="loading"
@@ -138,8 +136,6 @@ class TestBasicDataViewComponent {
     lazyLoadOnInit = true;
     emptyMessage = 'No products found';
     styleClass: string | undefined;
-    gridStyleClass = '';
-    trackBy: Function = (index: number, item: any) => item;
     filterBy = 'name,category';
     filterLocale: string | undefined;
     loading = false;
@@ -300,7 +296,6 @@ describe('DataView', () => {
             expect(dataview.showPageLinks()).toBe(true);
             expect(dataview.lazyLoadOnInit()).toBe(true);
             expect(dataview.emptyMessage()).toBe('No products found');
-            expect(dataview.gridStyleClass()).toBe('' as any);
             expect(dataview.first()).toBe(0);
             expect(dataview.layout()).toBe('list');
         });
@@ -1065,15 +1060,6 @@ describe('DataView', () => {
             expect(dataviewElement.nativeElement.classList.contains('custom-dataview-class')).toBe(true);
         });
 
-        it('should apply gridStyleClass', async () => {
-            component.gridStyleClass = 'custom-grid-class';
-            component.layout = 'grid';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            expect(dataview.gridStyleClass()).toBe('custom-grid-class');
-        });
-
         it('should apply correct classes for loading state', async () => {
             component.loading = true;
             fixture.changeDetectorRef.markForCheck();
@@ -1144,25 +1130,6 @@ describe('DataView', () => {
             await new Promise((resolve) => setTimeout(resolve, 0));
 
             expect(lazyDataview.onLazyLoad.emit).toHaveBeenCalled();
-        });
-    });
-
-    describe('TrackBy Function', () => {
-        it('should use default trackBy function', () => {
-            const item = { id: 1, name: 'Test' };
-            const result = dataview.trackBy()(0, item);
-            expect(result).toBe(item);
-        });
-
-        it('should use custom trackBy function', async () => {
-            const customTrackBy = (index: number, item: any) => item.id;
-            component.trackBy = customTrackBy;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            const item = { id: 1, name: 'Test' };
-            const result = dataview.trackBy()(0, item);
-            expect(result).toBe(1);
         });
     });
 
@@ -1375,25 +1342,6 @@ describe('DataView', () => {
             const dataviewElement = fixture.debugElement.query(By.css('p-dataview'));
             expect(dataviewElement.nativeElement.classList.contains('custom-dataview-class')).toBe(true);
             expect(dataviewElement.nativeElement.classList.contains('p-dataview')).toBe(true);
-        });
-
-        it('should handle gridStyleClass property', async () => {
-            expect(dataview.gridStyleClass()).toBe('' as any);
-
-            component.gridStyleClass = 'custom-grid-class';
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            expect(dataview.gridStyleClass()).toBe('custom-grid-class');
-        });
-
-        it('should handle trackBy property', async () => {
-            const customTrackBy = (index: number, item: any) => item.id;
-            component.trackBy = customTrackBy;
-            fixture.changeDetectorRef.markForCheck();
-            await fixture.whenStable();
-
-            expect(dataview.trackBy()).toBe(customTrackBy);
         });
 
         it('should handle filterBy property', async () => {

@@ -8,7 +8,7 @@ import { AvatarGroup, AvatarGroupModule } from './avatargroup';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AvatarGroup, Avatar],
     template: `
-        <p-avatar-group [styleClass]="styleClass()" [style]="style()" [pt]="pt()">
+        <p-avatar-group [class]="styleClass()" [style]="style()" [pt]="pt()">
             <p-avatar label="A"></p-avatar>
             <p-avatar label="B"></p-avatar>
         </p-avatar-group>
@@ -65,7 +65,6 @@ describe('AvatarGroup', () => {
     });
 
     it('should have undefined input defaults', () => {
-        expect(avatarGroup.styleClass()).toBeUndefined();
         expect(avatarGroup.style()).toBeUndefined();
     });
 
@@ -82,10 +81,9 @@ describe('AvatarGroup', () => {
         expect(avatars[1].textContent).toContain('B');
     });
 
-    it('should apply and update styleClass on the host', async () => {
+    it('should apply and update [class] on the host next to the root classes', async () => {
         await update({ styleClass: 'first-class' });
 
-        expect(avatarGroup.styleClass()).toBe('first-class');
         expect(element.classList.contains('first-class')).toBe(true);
         expect(element.classList.contains('p-avatar-group')).toBe(true);
 

@@ -31,7 +31,6 @@ interface Product {
         <p-orderlist
             [value]="products"
             [selection]="selection"
-            [header]="header"
             [listStyle]="listStyle"
             [responsive]="responsive"
             [breakpoint]="breakpoint"
@@ -46,7 +45,6 @@ interface Product {
             [filterPlaceholder]="filterPlaceholder"
             [filterMatchMode]="filterMatchMode"
             [filterLocale]="filterLocale"
-            [trackBy]="trackBy"
             [tabindex]="tabindex"
             [ariaLabel]="ariaLabel"
             [ariaLabelledBy]="ariaLabelledBy"
@@ -60,7 +58,7 @@ interface Product {
             (selectionChange)="onSelectionChange($event)"
             (onReorder)="onReorder($event)"
             (onSelectionChange)="onSelectionChangeEvent($event)"
-            (onFilterEvent)="onFilterEvent($event)"
+            (onFilter)="onFilter($event)"
             (onFocus)="onFocus($event)"
             (onBlur)="onBlur($event)"
         >
@@ -84,7 +82,6 @@ class TestBasicOrderListComponent {
     ];
 
     selection: Product[] = [];
-    header = 'Product List';
     listStyle: { [key: string]: any } = { height: '300px' };
     responsive = false;
     breakpoint = '960px';
@@ -99,7 +96,6 @@ class TestBasicOrderListComponent {
     filterPlaceholder = 'Search products';
     filterMatchMode: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' = 'contains';
     filterLocale: string | undefined;
-    trackBy: Function = (_index: number, item: any) => item.id;
     tabindex: number | undefined;
     ariaLabel = 'Product list';
     ariaLabelledBy: string | undefined;
@@ -132,7 +128,7 @@ class TestBasicOrderListComponent {
         this.selectionChangeEventData = event;
     }
 
-    onFilterEvent(event: any) {
+    onFilter(event: any) {
         this.filterEventData = event;
     }
 
@@ -426,7 +422,6 @@ describe('OrderList', () => {
         });
 
         it('should accept custom values', async () => {
-            component.header = 'Custom Header';
             component.responsive = true;
             component.stripedRows = true;
             component.metaKeySelection = true;
@@ -436,7 +431,6 @@ describe('OrderList', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(orderList.header()).toBe('Custom Header');
             expect(orderList.responsive()).toBe(true);
             expect(orderList.stripedRows()).toBe(true);
             expect(orderList.metaKeySelection()).toBe(true);
@@ -722,10 +716,10 @@ describe('OrderList', () => {
             expect(component.onReorder).toHaveBeenCalledWith(component.selection);
         });
 
-        it('should emit onFilterEvent when filtering', async () => {
+        it('should emit onFilter when filtering', async () => {
             component.filterBy = 'name';
             fixture.detectChanges();
-            vi.spyOn(component, 'onFilterEvent').mockImplementation(() => {});
+            vi.spyOn(component, 'onFilter').mockImplementation(() => {});
 
             const event = new KeyboardEvent('keyup', { key: 'a' });
             Object.defineProperty(event, 'target', {
@@ -736,7 +730,7 @@ describe('OrderList', () => {
             orderList.onFilterKeyup(event);
             await fixture.whenStable();
 
-            expect(component.onFilterEvent).toHaveBeenCalled();
+            expect(component.onFilter).toHaveBeenCalled();
             expect(orderList.filterValue()).toBe('product a');
         });
 
@@ -1547,24 +1541,6 @@ describe('OrderList', () => {
         });
     });
 
-    describe('TrackBy Function', () => {
-        it('should use default trackBy function', () => {
-            const item = { id: '1', name: 'Test' };
-            const result = orderList.trackBy()(0, item);
-            expect(result).toBe(item.id);
-        });
-
-        it('should use custom trackBy function', () => {
-            const customTrackBy = (_index: number, item: any) => item.code;
-            component.trackBy = customTrackBy;
-            fixture.detectChanges();
-
-            const item = { id: '1', code: 'TEST', name: 'Test' };
-            const result = orderList.trackBy()(0, item);
-            expect(result).toBe('TEST');
-        });
-    });
-
     describe('Comprehensive Template and Content Projection Tests', () => {
         let comprehensiveFixture: ComponentFixture<TestComprehensiveTemplatesOrderListComponent>;
         let comprehensiveComponent: TestComprehensiveTemplatesOrderListComponent;
@@ -2214,9 +2190,9 @@ describe('OrderList filter wiring', () => {
         expect(optionEls().map((o) => o.nativeElement.textContent.trim())).toEqual(['Beta', 'Delta']);
     });
 
-    it('syncs filterValue/visibleOptions and emits onFilterEvent when typing', async () => {
+    it('syncs filterValue/visibleOptions and emits onFilter when typing', async () => {
         const emitted: any[] = [];
-        orderList.onFilterEvent.subscribe((event) => emitted.push(event.value));
+        orderList.onFilter.subscribe((event) => emitted.push(event.value));
 
         await type('ta');
 

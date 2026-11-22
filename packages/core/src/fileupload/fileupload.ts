@@ -55,6 +55,9 @@ import { FileUploadStyle } from './style/fileuploadstyle';
 
 const FILEUPLOAD_INSTANCE = new InjectionToken<FileUpload>('FILEUPLOAD_INSTANCE');
 
+/**
+ * @internal Rendering detail of FileUpload, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: '[pFileContent]',
     template: `@for (file of files(); track file?.name + '-' + $index; let index = $index) {

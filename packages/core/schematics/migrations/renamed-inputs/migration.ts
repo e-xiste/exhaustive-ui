@@ -6,6 +6,18 @@ import { renameInputsInHtml, renameInputsInTypeScript, SelectorInputRename } fro
 const AUTOCOMPLETE = ['p-autoComplete', 'p-autocomplete', 'p-auto-complete'];
 const TREESELECT = ['p-treeSelect', 'p-treeselect', 'p-tree-select'];
 const TREETABLE = ['p-treeTable', 'p-treetable', 'p-tree-table'];
+const LISTBOX = ['p-listbox', 'p-listBox', 'p-list-box'];
+const MULTISELECT = ['p-multiSelect', 'p-multiselect', 'p-multi-select'];
+const IMAGECOMPARE = ['p-imageCompare', 'p-imagecompare', 'p-image-compare'];
+
+/**
+ * The deprecated `size` of the pBadge directive only ever sized the badge on a plain element: on a
+ * component (`<p-avatar pBadge size="large">`) the binding belongs to the component, and on
+ * `<input>`/`<select>` it is the native size attribute. Those tags keep their `size`.
+ */
+function isComponentOrSizedElement(tagName: string): boolean {
+    return tagName.includes('-') || /^(input|select)$/i.test(tagName);
+}
 
 /**
  * Deprecated input aliases removed in this version, each replaced by the input (or native
@@ -15,10 +27,27 @@ const TREETABLE = ['p-treeTable', 'p-treetable', 'p-tree-table'];
  * `maxlength`; AutoComplete's `minLength` → `minQueryLength` (the default minimum stays 1);
  * TreeSelect's `containerStyleClass` → `class` and `containerStyle` → `style`; TreeTable's
  * `virtualRowHeight` → `virtualScrollItemSize`.
+ * Inputs renamed to the spelling the other components use: Listbox's and MultiSelect's
+ * `filterPlaceHolder` → `filterPlaceholder` (as on Select, Tree, TreeSelect and OrderList);
+ * ImageCompare's `ariaLabelledby` → `ariaLabelledBy`; Drawer's `ariaCloseLabel` → `closeAriaLabel`
+ * (as on Dialog and Inplace).
+ * Dialog's `headerTemplate` was exposed under the alias `content`, so `[content]` set the header:
+ * the alias is dropped and the binding becomes `[headerTemplate]`, which keeps it in the header.
+ * Deprecated pass-through aliases of attribute directives, matched on any element carrying the
+ * directive: `ptButtonDirective` → `pButtonPT`, `ptButtonLabel` → `pButtonLabelPT`, `ptButtonIcon` →
+ * `pButtonIconPT`, `ptBadgeDirective` → `pBadgePT`, `ptInputText` → `pInputTextPT`, `ptTooltip` →
+ * `pTooltipPT`; and pBadge's `size` → `badgeSize` on plain elements.
  */
 export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
-    { selector: 'p-drawer', renames: [{ from: 'showCloseIcon', to: 'closable' }] },
+    {
+        selector: 'p-drawer',
+        renames: [
+            { from: 'showCloseIcon', to: 'closable' },
+            { from: 'ariaCloseLabel', to: 'closeAriaLabel' }
+        ]
+    },
     { selector: 'p-paginator', renames: [{ from: 'dropdownAppendTo', to: 'appendTo' }] },
+    { selector: 'p-dialog', renames: [{ from: 'content', to: 'headerTemplate' }] },
     { selector: 'p-password', renames: [{ from: 'maxLength', to: 'maxlength' }] },
     ...AUTOCOMPLETE.map((selector) => ({ selector, renames: [{ from: 'minLength', to: 'minQueryLength' }] })),
     ...TREESELECT.map((selector) => ({
@@ -28,7 +57,16 @@ export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
             { from: 'containerStyle', to: 'style' }
         ]
     })),
-    ...TREETABLE.map((selector) => ({ selector, renames: [{ from: 'virtualRowHeight', to: 'virtualScrollItemSize' }] }))
+    ...TREETABLE.map((selector) => ({ selector, renames: [{ from: 'virtualRowHeight', to: 'virtualScrollItemSize' }] })),
+    ...[...LISTBOX, ...MULTISELECT].map((selector) => ({ selector, renames: [{ from: 'filterPlaceHolder', to: 'filterPlaceholder' }] })),
+    ...IMAGECOMPARE.map((selector) => ({ selector, renames: [{ from: 'ariaLabelledby', to: 'ariaLabelledBy' }] })),
+    { selector: '[pButton]', renames: [{ from: 'ptButtonDirective', to: 'pButtonPT' }] },
+    { selector: '[pButtonLabel]', renames: [{ from: 'ptButtonLabel', to: 'pButtonLabelPT' }] },
+    { selector: '[pButtonIcon]', renames: [{ from: 'ptButtonIcon', to: 'pButtonIconPT' }] },
+    { selector: '[pBadge]', renames: [{ from: 'ptBadgeDirective', to: 'pBadgePT' }] },
+    { selector: '[pBadge]', renames: [{ from: 'size', to: 'badgeSize' }], skipTag: isComponentOrSizedElement },
+    { selector: '[pInputText]', renames: [{ from: 'ptInputText', to: 'pInputTextPT' }] },
+    { selector: '[pTooltip]', renames: [{ from: 'ptTooltip', to: 'pTooltipPT' }] }
 ];
 
 /**
@@ -36,7 +74,21 @@ export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
  * queried instance), reported for manual review. `maxLength` and `minLength` are left out: they are
  * common DOM/validator property names and would mostly report unrelated code.
  */
-const LEFTOVER_SCAN_NAMES = ['showCloseIcon', 'dropdownAppendTo', 'containerStyleClass', 'virtualRowHeight'];
+const LEFTOVER_SCAN_NAMES = [
+    'showCloseIcon',
+    'dropdownAppendTo',
+    'containerStyleClass',
+    'virtualRowHeight',
+    'filterPlaceHolder',
+    'ariaLabelledby',
+    'ariaCloseLabel',
+    'ptButtonDirective',
+    'ptButtonLabel',
+    'ptButtonIcon',
+    'ptBadgeDirective',
+    'ptInputText',
+    'ptTooltip'
+];
 
 /**
  * Rewrites template bindings of the removed deprecated input aliases listed in

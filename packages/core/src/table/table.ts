@@ -823,7 +823,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @param {TableSelectAllChangeEvent} event - custom  all selection change event.
      * @group Emits
      */
-    readonly selectAllChange = output<TableSelectAllChangeEvent>();
+    readonly onSelectAllChange = output<TableSelectAllChangeEvent>();
     /**
      * Callback to invoke when a row is selected.
      * @param {TableRowSelectEvent} event - custom select event.
@@ -2124,7 +2124,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     toggleRowsWithCheckbox({ originalEvent }: CheckboxChangeEvent, check: boolean) {
         if (this.selectAll() !== null) {
-            this.selectAllChange.emit({ originalEvent: originalEvent!, checked: check });
+            this.onSelectAllChange.emit({ originalEvent: originalEvent!, checked: check });
         } else {
             const data = this.selectionPageOnly() ? this.dataToRender(this.processedData()) : this.processedData();
             let selection = this.selectionPageOnly() && this.selection() ? this.selection().filter((s: any) => !data.some((d: any) => this.equals(s, d))) : [];
@@ -3345,6 +3345,9 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     });
 }
 
+/**
+ * @internal Rendering detail of Table, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: '[pTableBody]',
     standalone: false,

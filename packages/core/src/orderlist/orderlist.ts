@@ -110,6 +110,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             (onBlur)="onListBlur($event)"
             (onChange)="onChangeSelection($event)"
             [ariaLabel]="ariaLabel()"
+            [ariaLabelledBy]="ariaLabelledBy()"
             [disabled]="disabled()"
             [metaKeySelection]="metaKeySelection()"
             [scrollHeight]="scrollHeight()"
@@ -119,7 +120,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
             [filterBy]="filterBy()"
             [filterLocale]="filterLocale()"
             [filterMatchMode]="filterMatchMode()"
-            [filterPlaceHolder]="filterPlaceholder()"
+            [filterPlaceholder]="filterPlaceholder()"
             [ariaFilterLabel]="ariaFilterLabel()"
             (onFilter)="onFilterKeyup($event.originalEvent)"
             [dragdrop]="dragdrop()"
@@ -178,11 +179,6 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         super();
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
-    /**
-     * Text for the caption.
-     * @group Props
-     */
-    readonly header = input<string | undefined>();
 
     /**
      * Index of the element in tabbing order.
@@ -281,12 +277,6 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
 
     /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly trackBy = input<Function>((index: number, item: any) => item);
-
-    /**
      * Height of the viewport, a scrollbar is defined if height of list exceeds this value.
      * @group Props
      */
@@ -374,7 +364,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @param {OrderListFilterEvent} event - Custom filter event.
      * @group Emits
      */
-    readonly onFilterEvent = output<OrderListFilterEvent>();
+    readonly onFilter = output<OrderListFilterEvent>();
 
     /**
      * Callback to invoke when the list is focused
@@ -571,7 +561,7 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         this.filterValue.set(((<HTMLInputElement>event.target).value.trim() as any).toLocaleLowerCase(this.filterLocale()));
         this.filter();
 
-        this.onFilterEvent.emit({
+        this.onFilter.emit({
             originalEvent: event,
             value: this.visibleOptions() as any[]
         });

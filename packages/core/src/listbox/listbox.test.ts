@@ -2992,7 +2992,7 @@ describe('Listbox Signals API', () => {
         expect(fixture.debugElement.query(By.css('input[pInputText]'))).toBeNull();
 
         fixture.componentRef.setInput('filter', true);
-        fixture.componentRef.setInput('filterPlaceHolder', 'Search fruits');
+        fixture.componentRef.setInput('filterPlaceholder', 'Search fruits');
         fixture.componentRef.setInput('ariaFilterLabel', 'Fruit filter');
         fixture.detectChanges();
 
@@ -3000,7 +3000,7 @@ describe('Listbox Signals API', () => {
         expect(input.getAttribute('placeholder')).toBe('Search fruits');
         expect(input.getAttribute('aria-label')).toBe('Fruit filter');
 
-        fixture.componentRef.setInput('filterPlaceHolder', 'Find');
+        fixture.componentRef.setInput('filterPlaceholder', 'Find');
         fixture.detectChanges();
         expect(input.getAttribute('placeholder')).toBe('Find');
     });

@@ -14,7 +14,7 @@ import { SharedModule } from '@exhaustive-ui/core/api';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-confirmpopup [key]="key" [defaultFocus]="defaultFocus" [autoZIndex]="autoZIndex" [baseZIndex]="baseZIndex" [style]="style" [styleClass]="styleClass" [visible]="visible"> </p-confirmpopup>
+        <p-confirmpopup [key]="key" [defaultFocus]="defaultFocus" [autoZIndex]="autoZIndex" [style]="style" [styleClass]="styleClass" [visible]="visible"> </p-confirmpopup>
         <button #triggerBtn (click)="confirm($event)" class="trigger-btn">Trigger</button>
     `
 })
@@ -24,7 +24,6 @@ class TestBasicConfirmPopupComponent {
     key: string | undefined;
     defaultFocus: string = 'accept';
     autoZIndex: boolean = true;
-    baseZIndex: number = 0;
     style: any = {};
     styleClass: string | undefined;
     visible: boolean | undefined = undefined;
@@ -333,7 +332,6 @@ describe('ConfirmPopup', () => {
         it('should have correct default values', () => {
             expect(confirmPopupInstance.defaultFocus()).toBe('accept');
             expect(confirmPopupInstance.autoZIndex()).toBe(true);
-            expect(confirmPopupInstance.baseZIndex()).toBe(0);
         });
 
         it('should subscribe to confirmation service', async () => {
@@ -367,14 +365,12 @@ describe('ConfirmPopup', () => {
             expect(confirmPopupInstance.defaultFocus()).toBe('reject');
         });
 
-        it('should update autoZIndex and baseZIndex', async () => {
+        it('should update autoZIndex', async () => {
             component.autoZIndex = false;
-            component.baseZIndex = 1000;
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
             expect(confirmPopupInstance.autoZIndex()).toBe(false);
-            expect(confirmPopupInstance.baseZIndex()).toBe(1000);
         });
 
         it('should update style and styleClass', async () => {

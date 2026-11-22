@@ -56,11 +56,6 @@ describe('ToggleSwitch', () => {
             expect(component.readonly()).toBe(true);
             expect(component.tabindex()).toBe(5);
         });
-
-        it('should handle size input', () => {
-            expect(component.size).toBeDefined();
-            expect(typeof component.size).toBe('function');
-        });
     });
 
     describe('Public Methods', () => {

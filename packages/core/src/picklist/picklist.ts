@@ -181,7 +181,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [filterBy]="filterBy()"
                     [filterLocale]="filterLocale()"
                     [filterMatchMode]="filterMatchMode()"
-                    [filterPlaceHolder]="sourceFilterPlaceholder()"
+                    [filterPlaceholder]="sourceFilterPlaceholder()"
+                    [ariaFilterLabel]="ariaSourceFilterLabel()"
                     [dragdrop]="dragdrop()"
                     [dropListData]="source()"
                     (onDrop)="onDrop($event, SOURCE_LIST)"
@@ -344,7 +345,8 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
                     [filterBy]="filterBy()"
                     [filterLocale]="filterLocale()"
                     [filterMatchMode]="filterMatchMode()"
-                    [filterPlaceHolder]="targetFilterPlaceholder()"
+                    [filterPlaceholder]="targetFilterPlaceholder()"
+                    [ariaFilterLabel]="ariaTargetFilterLabel()"
                     [dragdrop]="dragdrop()"
                     [dropListData]="target()"
                     (onDrop)="onDrop($event, TARGET_LIST)"
@@ -591,21 +593,6 @@ export class PickList extends BaseComponent {
      * @group Props
      */
     readonly filterLocale = input<string | undefined>();
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity. Use sourceTrackBy or targetTrackBy in case different algorithms are needed per list.
-     * @group Props
-     */
-    readonly trackBy = input<Function>((index: number, item: any) => item);
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy in source list, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly sourceTrackBy = input<Function | undefined>();
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy in target list, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly targetTrackBy = input<Function | undefined>();
     /**
      * Whether to show filter input for source list when filterBy is enabled.
      * @group Props

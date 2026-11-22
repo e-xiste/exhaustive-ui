@@ -194,13 +194,6 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     /**
      * Used to pass attributes to DOM elements inside the Tooltip component.
      * @defaultValue undefined
-     * @deprecated use pTooltipPT instead.
-     * @group Props
-     */
-    ptTooltip = input<TooltipPassThrough | undefined>();
-    /**
-     * Used to pass attributes to DOM elements inside the Tooltip component.
-     * @defaultValue undefined
      * @group Props
      */
     pTooltipPT = input<TooltipPassThrough | undefined>();
@@ -214,7 +207,7 @@ export class Tooltip extends BaseComponent<TooltipPassThroughOptions> {
     constructor() {
         super();
         effect(() => {
-            const pt = this.ptTooltip() || this.pTooltipPT();
+            const pt = this.pTooltipPT();
             pt && this.directivePT.set(pt);
         });
 

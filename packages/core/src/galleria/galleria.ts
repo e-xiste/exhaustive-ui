@@ -483,6 +483,9 @@ export class Galleria extends BaseComponent<GalleriaPassThrough> {
     }
 }
 
+/**
+ * @internal Rendering detail of Galleria, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'div[pGalleriaContent]',
     standalone: false,
@@ -663,6 +666,9 @@ export class GalleriaContent extends BaseComponent<GalleriaPassThrough> {
     }
 }
 
+/**
+ * @internal Rendering detail of Galleria, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'div[pGalleriaItemSlot]',
     standalone: false,
@@ -723,6 +729,9 @@ export class GalleriaItemSlot extends BaseComponent<GalleriaPassThrough> {
     readonly context = computed<any>(() => (this.type() === 'indicator' ? { $implicit: this.index() } : { $implicit: this.item() }));
 }
 
+/**
+ * @internal Rendering detail of Galleria, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'div[pGalleriaItem]',
     standalone: false,
@@ -969,6 +978,9 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
     }
 }
 
+/**
+ * @internal Rendering detail of Galleria, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'div[pGalleriaThumbnails]',
     standalone: false,

@@ -18,13 +18,6 @@ export class BadgeDirective extends BaseComponent {
     /**
      * Used to pass attributes to DOM elements inside the Badge component.
      * @defaultValue undefined
-     * @deprecated use pBadgePT instead.
-     * @group Props
-     */
-    ptBadgeDirective = input<BadgePassThrough | undefined>();
-    /**
-     * Used to pass attributes to DOM elements inside the Badge component.
-     * @defaultValue undefined
      * @group Props
      */
     pBadgePT = input<BadgePassThrough | undefined>();
@@ -44,16 +37,6 @@ export class BadgeDirective extends BaseComponent {
      * @group Props
      */
     readonly badgeSize = input<'large' | 'xlarge' | 'small' | null | undefined>();
-    /**
-     * Size of the badge, valid options are "large" and "xlarge".
-     * Ignored when the badge is on a component (p-avatar, p-button...): there `size` belongs to the component.
-     * @group Props
-     * @deprecated use badgeSize instead.
-     */
-    readonly size = input<'large' | 'xlarge' | 'small' | 'normal' | null | undefined>();
-
-    /** The deprecated size, unless the host is a component that reads the same `size` binding for itself. */
-    private readonly legacySize = computed(() => (this.el.nativeElement.nodeName.indexOf('-') === -1 ? this.size() : undefined));
     /**
      * Severity type of the badge.
      * @group Props
@@ -98,7 +81,7 @@ export class BadgeDirective extends BaseComponent {
     constructor() {
         super();
         effect(() => {
-            const pt = this.ptBadgeDirective() || this.pBadgePT();
+            const pt = this.pBadgePT();
             pt && this.directivePT.set(pt);
         });
 
@@ -119,14 +102,7 @@ export class BadgeDirective extends BaseComponent {
         });
 
         effect(() => {
-            if (this.legacySize() !== undefined) {
-                console.log('size property is deprecated and will removed in v18, use badgeSize instead.');
-            }
-        });
-
-        effect(() => {
             this.badgeSize();
-            this.legacySize();
             untracked(() => this.setSizeClasses());
         });
 
@@ -186,16 +162,6 @@ export class BadgeDirective extends BaseComponent {
             }
 
             if (this.badgeSize() === 'xlarge') {
-                addClass(badge, 'p-badge-xl');
-                removeClass(badge, 'p-badge-lg');
-            }
-        } else if (this.legacySize() && !this.badgeSize()) {
-            if (this.legacySize() === 'large') {
-                addClass(badge, 'p-badge-lg');
-                removeClass(badge, 'p-badge-xl');
-            }
-
-            if (this.legacySize() === 'xlarge') {
                 addClass(badge, 'p-badge-xl');
                 removeClass(badge, 'p-badge-lg');
             }

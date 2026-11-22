@@ -59,6 +59,9 @@ export const CASCADESELECT_VALUE_ACCESSOR: any = {
     multi: true
 };
 
+/**
+ * @internal Rendering detail of CascadeSelect, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'ul[pCascadeSelectSub]',
     imports: [CommonModule, Ripple, AngleRightIcon, SharedModule, Bind],
@@ -781,7 +784,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
 
     destroyRef = inject(DestroyRef);
 
-    $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+    $variant = computed(() => this.variant() || this.config.inputVariant());
 
     $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 

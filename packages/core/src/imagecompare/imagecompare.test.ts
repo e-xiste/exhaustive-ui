@@ -15,7 +15,7 @@ const mockImages = {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false,
     template: `
-        <p-imagecompare [tabindex]="tabindex" [ariaLabel]="ariaLabel" [ariaLabelledby]="ariaLabelledby">
+        <p-imagecompare [tabindex]="tabindex" [ariaLabel]="ariaLabel" [ariaLabelledBy]="ariaLabelledBy">
             <ng-template #left>
                 <img [src]="leftImage" [alt]="leftImageAlt" class="left-image" />
             </ng-template>
@@ -32,7 +32,7 @@ class TestBasicImageCompareComponent {
     rightImageAlt: string = 'Right Image';
     tabindex: number | undefined = 0;
     ariaLabel: string | undefined = 'Image Compare';
-    ariaLabelledby: string | undefined;
+    ariaLabelledBy: string | undefined;
 }
 
 @Component({
@@ -145,7 +145,7 @@ describe('ImageCompare', () => {
         it('should have default values', () => {
             expect(component.tabindex()).toBeUndefined();
             expect(component.ariaLabel()).toBeUndefined();
-            expect(component.ariaLabelledby()).toBeUndefined();
+            expect(component.ariaLabelledBy()).toBeUndefined();
             expect(component.isRTL()).toBe(false);
         });
 
@@ -312,7 +312,7 @@ describe('ImageCompare', () => {
 
         it('should set aria-labelledby attribute when provided', async () => {
             const testComponent = testFixture.componentInstance;
-            testComponent.ariaLabelledby = 'label-id';
+            testComponent.ariaLabelledBy = 'label-id';
             testFixture.changeDetectorRef.markForCheck();
             await testFixture.whenStable();
 
@@ -341,11 +341,11 @@ describe('ImageCompare', () => {
         });
 
         it('should re-render aria-labelledby attribute when the input changes', () => {
-            fixture.componentRef.setInput('ariaLabelledby', 'first-id');
+            fixture.componentRef.setInput('ariaLabelledBy', 'first-id');
             fixture.detectChanges();
             expect(fixture.nativeElement.getAttribute('aria-labelledby')).toBe('first-id');
 
-            fixture.componentRef.setInput('ariaLabelledby', 'second-id');
+            fixture.componentRef.setInput('ariaLabelledBy', 'second-id');
             fixture.detectChanges();
             expect(fixture.nativeElement.getAttribute('aria-labelledby')).toBe('second-id');
         });
