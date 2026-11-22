@@ -486,7 +486,7 @@ describe('ScrollTop', () => {
             const button = fixture.debugElement.query(By.directive(Button));
             if (button) {
                 expect(button).toBeTruthy();
-                expect(button.nativeElement.getAttribute('aria-label')).toBe(component.buttonAriaLabel);
+                expect(button.nativeElement.querySelector('button').getAttribute('aria-label')).toBe(component.buttonAriaLabel);
             } else {
                 // If button component doesn't render, check component property
                 expect(scrollTop.buttonAriaLabel()).toBe(component.buttonAriaLabel);
@@ -882,15 +882,21 @@ describe('ScrollTop', () => {
             expect(directFixture.debugElement.query(By.css('.pi-angle-up'))).toBeTruthy();
         });
 
+        it('should name the inner button from the aria.scrollTop locale key by default', () => {
+            const button = directFixture.debugElement.query(By.directive(Button));
+            expect(button.nativeElement.hasAttribute('aria-label')).toBe(false);
+            expect(button.nativeElement.querySelector('button').getAttribute('aria-label')).toBe('Scroll Top');
+        });
+
         it('should re-render when buttonAriaLabel changes', () => {
             const button = directFixture.debugElement.query(By.directive(Button));
             directFixture.componentRef.setInput('buttonAriaLabel', 'Back to top');
             directFixture.detectChanges();
-            expect(button.nativeElement.getAttribute('aria-label')).toBe('Back to top');
+            expect(button.nativeElement.querySelector('button').getAttribute('aria-label')).toBe('Back to top');
 
             directFixture.componentRef.setInput('buttonAriaLabel', 'Scroll up');
             directFixture.detectChanges();
-            expect(button.nativeElement.getAttribute('aria-label')).toBe('Scroll up');
+            expect(button.nativeElement.querySelector('button').getAttribute('aria-label')).toBe('Scroll up');
         });
 
         it('should re-render when buttonProps changes', () => {
@@ -1017,7 +1023,7 @@ describe('ScrollTop', () => {
 
             const button = fixture.debugElement.query(By.directive(Button));
             if (button) {
-                expect(button.nativeElement.getAttribute('aria-label')).toBe(component.buttonAriaLabel);
+                expect(button.nativeElement.querySelector('button').getAttribute('aria-label')).toBe(component.buttonAriaLabel);
             } else {
                 expect(scrollTop.buttonAriaLabel()).toBe(component.buttonAriaLabel);
             }

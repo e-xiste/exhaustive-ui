@@ -29,7 +29,7 @@ import { ScrollTopStyle } from './style/scrolltopstyle';
                 (pMotionOnBeforeEnter)="onBeforeEnter($event)"
                 (pMotionOnBeforeLeave)="onBeforeLeave()"
                 (pMotionOnAfterLeave)="onAfterLeave()"
-                [attr.aria-label]="buttonAriaLabel()"
+                [ariaLabel]="buttonAriaLabel() || buttonProps()?.ariaLabel || scrollTopLabel()"
                 (click)="onClick()"
                 [pt]="ptm('pcButton')"
                 [styleClass]="cn(cx('root'), styleClass())"
@@ -115,6 +115,13 @@ export class ScrollTop extends BaseComponent<ScrollTopPassThrough> {
      * @group Props
      */
     readonly buttonAriaLabel = input<string | undefined>();
+
+    /**
+     * Fallback name of the icon-only button, from the aria.scrollTop locale key.
+     */
+    scrollTopLabel(): string | undefined {
+        return this.config.translation.aria?.scrollTop;
+    }
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
      * @group Props

@@ -48,7 +48,7 @@ import { CarouselStyle } from './style/carouselstyle';
                 @if (showNavigators()) {
                     <p-button
                         [class]="cx('pcPrevButton')"
-                        [attr.aria-label]="ariaPrevButtonLabel()"
+                        [ariaLabel]="prevButtonProps()?.ariaLabel || ariaPrevButtonLabel()"
                         (click)="navBackward($event)"
                         [text]="true"
                         [buttonProps]="prevButtonProps()"
@@ -116,7 +116,7 @@ import { CarouselStyle } from './style/carouselstyle';
                         type="button"
                         [class]="cx('pcNextButton')"
                         (click)="navForward($event)"
-                        [attr.aria-label]="ariaNextButtonLabel()"
+                        [ariaLabel]="nextButtonProps()?.ariaLabel || ariaNextButtonLabel()"
                         [buttonProps]="nextButtonProps()"
                         [text]="true"
                         [pt]="ptm('pcNextButton')"

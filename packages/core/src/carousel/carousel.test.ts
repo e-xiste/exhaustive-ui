@@ -1154,11 +1154,11 @@ describe('Carousel', () => {
             expect(nativeElement.getAttribute('id')).toBeTruthy();
         });
 
-        it('should have ARIA labels on navigation buttons', () => {
-            const prevButton = fixture.debugElement.query(By.css('p-button[aria-label]'));
-            if (prevButton) {
-                expect(prevButton.nativeElement.getAttribute('aria-label')).toBeTruthy();
-            }
+        it('should put the navigation labels on the inner buttons, not on the p-button hosts', () => {
+            const buttons = Array.from(fixture.nativeElement.querySelectorAll('p-button button')) as HTMLElement[];
+            expect(buttons.length).toBe(2);
+            buttons.forEach((button) => expect(button.getAttribute('aria-label')).toBeTruthy());
+            expect(fixture.nativeElement.querySelector('p-button[aria-label]')).toBeNull();
         });
 
         it('should have proper ARIA attributes on indicators', () => {
