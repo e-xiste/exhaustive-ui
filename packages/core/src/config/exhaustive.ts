@@ -159,7 +159,11 @@ export class Exhaustive extends ThemeProvider {
             maximizeLabel: 'Maximize',
             minimizeLabel: 'Minimize',
             columnMoved: 'Column moved to position {position} of {total}',
-            rowMoved: 'Row moved to position {position} of {total}'
+            rowMoved: 'Row moved to position {position} of {total}',
+            expandLabel: 'Expand',
+            collapseLabel: 'Collapse',
+            moreOptions: 'More options',
+            otpLabel: 'Please enter one time password character {0}'
         }
     };
 

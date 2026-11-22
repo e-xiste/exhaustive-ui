@@ -139,4 +139,8 @@ export interface Aria {
     minimizeLabel?: string;
     columnMoved?: string;
     rowMoved?: string;
+    expandLabel?: string;
+    collapseLabel?: string;
+    moreOptions?: string;
+    otpLabel?: string;
 }

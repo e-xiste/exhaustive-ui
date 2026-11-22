@@ -3515,6 +3515,20 @@ describe('Tree low bug fixes', () => {
         expect(button.getAttribute('aria-label')).toBe('Toggle row');
     });
 
+    it('names the node toggle button with the locale expand or collapse label when togglerAriaLabel is unset', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            { key: 'a', label: 'A', children: [{ key: 'a-0', label: 'A0' }] },
+            { key: 'b', label: 'B', expanded: true, children: [{ key: 'b-0', label: 'B0' }] }
+        ]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const buttons = Array.from(fixture.nativeElement.querySelectorAll('button[data-pc-section="nodetogglebutton"]')) as HTMLButtonElement[];
+        expect(buttons[0].getAttribute('aria-label')).toBe('Expand');
+        expect(buttons[1].getAttribute('aria-label')).toBe('Collapse');
+    });
+
     it('indents nested node content in virtual scroll so the selection highlight starts at its level (optimus-ui#315)', async () => {
         const fixture = TestBed.createComponent(Tree);
         fixture.componentRef.setInput('value', [{ key: 'a', label: 'A', expanded: true, children: [{ key: 'a-0', label: 'A0' }] }]);

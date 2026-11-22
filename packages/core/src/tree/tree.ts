@@ -115,7 +115,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                     [draggable]="tree.draggableNodes()"
                     [pBind]="getPTOptions('nodeContent')"
                 >
-                    <button type="button" [class]="cx('nodeToggleButton')" (click)="toggle($event)" pRipple tabindex="-1" [attr.aria-label]="tree.togglerAriaLabel()" [pBind]="getPTOptions('nodeToggleButton')">
+                    <button type="button" [class]="cx('nodeToggleButton')" (click)="toggle($event)" pRipple tabindex="-1" [attr.aria-label]="toggleButtonAriaLabel()" [pBind]="getPTOptions('nodeToggleButton')">
                         @if (!tree.togglerIconTemplate() && !tree._togglerIconTemplate()) {
                             @if (!node()!.loading) {
                                 @if (!node()!.expanded) {
@@ -218,6 +218,14 @@ export class UITreeNode extends BaseComponent<TreePassThrough> {
     loadingMode = input<string>();
 
     tree: Tree = inject(forwardRef(() => Tree));
+
+    /**
+     * Name of the node toggle button: togglerAriaLabel when set, otherwise the expand or collapse label of the locale.
+     */
+    toggleButtonAriaLabel() {
+        const aria = this.tree.translation()?.[TranslationKeys.ARIA];
+        return this.tree.togglerAriaLabel() || (this.node()?.expanded ? aria?.collapseLabel : aria?.expandLabel);
+    }
 
     isPrevDropPointHovered = signal<boolean>(false);
 
