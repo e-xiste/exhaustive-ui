@@ -5372,6 +5372,54 @@ export default {
                 description: 'Active font weight of root'
             },
             {
+                name: 'floatlabel.root.sm.positionX',
+                token: 'floatlabel.sm.position.x',
+                variable: '--p-floatlabel-sm-position-x',
+                description: 'Sm position x of root'
+            },
+            {
+                name: 'floatlabel.root.sm.positionY',
+                token: 'floatlabel.sm.position.y',
+                variable: '--p-floatlabel-sm-position-y',
+                description: 'Sm position y of root'
+            },
+            {
+                name: 'floatlabel.root.sm.fontSize',
+                token: 'floatlabel.sm.font.size',
+                variable: '--p-floatlabel-sm-font-size',
+                description: 'Sm font size of root'
+            },
+            {
+                name: 'floatlabel.root.sm.active.fontSize',
+                token: 'floatlabel.sm.active.font.size',
+                variable: '--p-floatlabel-sm-active-font-size',
+                description: 'Sm active font size of root'
+            },
+            {
+                name: 'floatlabel.root.lg.positionX',
+                token: 'floatlabel.lg.position.x',
+                variable: '--p-floatlabel-lg-position-x',
+                description: 'Lg position x of root'
+            },
+            {
+                name: 'floatlabel.root.lg.positionY',
+                token: 'floatlabel.lg.position.y',
+                variable: '--p-floatlabel-lg-position-y',
+                description: 'Lg position y of root'
+            },
+            {
+                name: 'floatlabel.root.lg.fontSize',
+                token: 'floatlabel.lg.font.size',
+                variable: '--p-floatlabel-lg-font-size',
+                description: 'Lg font size of root'
+            },
+            {
+                name: 'floatlabel.root.lg.active.fontSize',
+                token: 'floatlabel.lg.active.font.size',
+                variable: '--p-floatlabel-lg-active-font-size',
+                description: 'Lg active font size of root'
+            },
+            {
                 name: 'floatlabel.over.active.top',
                 token: 'floatlabel.over.active.top',
                 variable: '--p-floatlabel-over-active-top',
@@ -5394,6 +5442,42 @@ export default {
                 token: 'floatlabel.in.active.top',
                 variable: '--p-floatlabel-in-active-top',
                 description: 'Active top of in'
+            },
+            {
+                name: 'floatlabel.in.sm.input.paddingTop',
+                token: 'floatlabel.in.sm.input.padding.top',
+                variable: '--p-floatlabel-in-sm-input-padding-top',
+                description: 'Sm input padding top of in'
+            },
+            {
+                name: 'floatlabel.in.sm.input.paddingBottom',
+                token: 'floatlabel.in.sm.input.padding.bottom',
+                variable: '--p-floatlabel-in-sm-input-padding-bottom',
+                description: 'Sm input padding bottom of in'
+            },
+            {
+                name: 'floatlabel.in.sm.active.top',
+                token: 'floatlabel.in.sm.active.top',
+                variable: '--p-floatlabel-in-sm-active-top',
+                description: 'Sm active top of in'
+            },
+            {
+                name: 'floatlabel.in.lg.input.paddingTop',
+                token: 'floatlabel.in.lg.input.padding.top',
+                variable: '--p-floatlabel-in-lg-input-padding-top',
+                description: 'Lg input padding top of in'
+            },
+            {
+                name: 'floatlabel.in.lg.input.paddingBottom',
+                token: 'floatlabel.in.lg.input.padding.bottom',
+                variable: '--p-floatlabel-in-lg-input-padding-bottom',
+                description: 'Lg input padding bottom of in'
+            },
+            {
+                name: 'floatlabel.in.lg.active.top',
+                token: 'floatlabel.in.lg.active.top',
+                variable: '--p-floatlabel-in-lg-active-top',
+                description: 'Lg active top of in'
             },
             {
                 name: 'floatlabel.on.borderRadius',
@@ -5873,6 +5957,42 @@ export default {
                 description: 'Font weight of root'
             },
             {
+                name: 'iftalabel.root.sm.positionX',
+                token: 'iftalabel.sm.position.x',
+                variable: '--p-iftalabel-sm-position-x',
+                description: 'Sm position x of root'
+            },
+            {
+                name: 'iftalabel.root.sm.top',
+                token: 'iftalabel.sm.top',
+                variable: '--p-iftalabel-sm-top',
+                description: 'Sm top of root'
+            },
+            {
+                name: 'iftalabel.root.sm.fontSize',
+                token: 'iftalabel.sm.font.size',
+                variable: '--p-iftalabel-sm-font-size',
+                description: 'Sm font size of root'
+            },
+            {
+                name: 'iftalabel.root.lg.positionX',
+                token: 'iftalabel.lg.position.x',
+                variable: '--p-iftalabel-lg-position-x',
+                description: 'Lg position x of root'
+            },
+            {
+                name: 'iftalabel.root.lg.top',
+                token: 'iftalabel.lg.top',
+                variable: '--p-iftalabel-lg-top',
+                description: 'Lg top of root'
+            },
+            {
+                name: 'iftalabel.root.lg.fontSize',
+                token: 'iftalabel.lg.font.size',
+                variable: '--p-iftalabel-lg-font-size',
+                description: 'Lg font size of root'
+            },
+            {
                 name: 'iftalabel.input.paddingTop',
                 token: 'iftalabel.input.padding.top',
                 variable: '--p-iftalabel-input-padding-top',
@@ -5883,6 +6003,30 @@ export default {
                 token: 'iftalabel.input.padding.bottom',
                 variable: '--p-iftalabel-input-padding-bottom',
                 description: 'Padding bottom of input'
+            },
+            {
+                name: 'iftalabel.input.sm.paddingTop',
+                token: 'iftalabel.input.sm.padding.top',
+                variable: '--p-iftalabel-input-sm-padding-top',
+                description: 'Sm padding top of input'
+            },
+            {
+                name: 'iftalabel.input.sm.paddingBottom',
+                token: 'iftalabel.input.sm.padding.bottom',
+                variable: '--p-iftalabel-input-sm-padding-bottom',
+                description: 'Sm padding bottom of input'
+            },
+            {
+                name: 'iftalabel.input.lg.paddingTop',
+                token: 'iftalabel.input.lg.padding.top',
+                variable: '--p-iftalabel-input-lg-padding-top',
+                description: 'Lg padding top of input'
+            },
+            {
+                name: 'iftalabel.input.lg.paddingBottom',
+                token: 'iftalabel.input.lg.padding.bottom',
+                variable: '--p-iftalabel-input-lg-padding-bottom',
+                description: 'Lg padding bottom of input'
             }
         ]
     },

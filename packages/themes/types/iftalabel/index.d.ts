@@ -61,6 +61,52 @@ export declare namespace IftaLabelTokenSections {
          * @designToken iftalabel.font.weight
          */
         fontWeight?: string;
+        /**
+         * Sm of root
+         */
+        sm?: {
+            /**
+             * Sm position x of root
+             *
+             * @designToken iftalabel.sm.position.x
+             */
+            positionX?: string;
+            /**
+             * Sm top of root
+             *
+             * @designToken iftalabel.sm.top
+             */
+            top?: string;
+            /**
+             * Sm font size of root
+             *
+             * @designToken iftalabel.sm.font.size
+             */
+            fontSize?: string;
+        };
+        /**
+         * Lg of root
+         */
+        lg?: {
+            /**
+             * Lg position x of root
+             *
+             * @designToken iftalabel.lg.position.x
+             */
+            positionX?: string;
+            /**
+             * Lg top of root
+             *
+             * @designToken iftalabel.lg.top
+             */
+            top?: string;
+            /**
+             * Lg font size of root
+             *
+             * @designToken iftalabel.lg.font.size
+             */
+            fontSize?: string;
+        };
     }
 
     interface Input {
@@ -76,6 +122,40 @@ export declare namespace IftaLabelTokenSections {
          * @designToken iftalabel.input.padding.bottom
          */
         paddingBottom?: string;
+        /**
+         * Sm of input
+         */
+        sm?: {
+            /**
+             * Sm padding top of input
+             *
+             * @designToken iftalabel.input.sm.padding.top
+             */
+            paddingTop?: string;
+            /**
+             * Sm padding bottom of input
+             *
+             * @designToken iftalabel.input.sm.padding.bottom
+             */
+            paddingBottom?: string;
+        };
+        /**
+         * Lg of input
+         */
+        lg?: {
+            /**
+             * Lg padding top of input
+             *
+             * @designToken iftalabel.input.lg.padding.top
+             */
+            paddingTop?: string;
+            /**
+             * Lg padding bottom of input
+             *
+             * @designToken iftalabel.input.lg.padding.bottom
+             */
+            paddingBottom?: string;
+        };
     }
 
     /* Static Sections */

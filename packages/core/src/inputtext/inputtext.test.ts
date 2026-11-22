@@ -158,6 +158,7 @@ describe('InputText', () => {
 
             expect(inputDirective.pSize()).toBe('large');
             expect(inputEl.nativeElement.classList.contains('p-inputtext-lg')).toBe(true);
+            expect(inputEl.nativeElement.classList.contains('p-inputfield-lg')).toBe(true);
             expect(inputEl.nativeElement.getAttribute('data-p')).toContain('large');
 
             component.size = 'small';
@@ -166,6 +167,7 @@ describe('InputText', () => {
 
             expect(inputDirective.pSize()).toBe('small');
             expect(inputEl.nativeElement.classList.contains('p-inputtext-sm')).toBe(true);
+            expect(inputEl.nativeElement.classList.contains('p-inputfield-sm')).toBe(true);
             expect(inputEl.nativeElement.classList.contains('p-inputtext-lg')).toBe(false);
             expect(inputEl.nativeElement.getAttribute('data-p')).toContain('small');
         });
