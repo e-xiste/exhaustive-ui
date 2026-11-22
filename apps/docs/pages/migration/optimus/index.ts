@@ -23,8 +23,8 @@ export class MigrationOptimusDemo {
     docs = [
         { id: 'overview', label: 'Overview', component: OptimusOverviewDoc },
         { id: 'prerequisites', label: 'Before you start', component: OptimusPrerequisitesDoc },
-        { id: 'packages', label: 'Packages', component: OptimusPackagesDoc },
-        { id: 'rename', label: 'Imports and configuration API', component: OptimusRenameDoc },
+        { id: 'steps', label: 'Migration steps', component: OptimusPackagesDoc },
+        { id: 'schematic', label: 'What the schematic changes', component: OptimusRenameDoc },
         { id: 'css-layer', label: 'CSS layer', component: OptimusLayerDoc },
         { id: 'v22', label: 'v22 migrations', component: OptimusV22Doc },
         { id: 'checklist', label: 'Checklist', component: OptimusChecklistDoc }

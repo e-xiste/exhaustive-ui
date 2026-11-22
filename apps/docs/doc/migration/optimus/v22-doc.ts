@@ -10,7 +10,7 @@ import { AppCode } from '@/components/doc/app.code';
     imports: [AppDocSectionText, AppCode, RouterModule],
     template: `
         <app-docsectiontext>
-            <p>Once the project builds against <i>&#64;exhaustive-ui/*</i>, run the v22 migrations. The workspace did not go through <i>ng update</i>, so they are run explicitly, from the version before v22:</p>
+            <p>After <i>migrate-from-optimus</i>, run the v22 migrations. The workspace did not go through <i>ng update</i>, so they are run explicitly, from the version before v22:</p>
             <app-code [code]="code" [hideToggleCode]="true"></app-code>
             <p>
                 They rewrite the templates and code for the inputs, outputs and templates removed or renamed in v22, and for the configuration options that became signals or changed name, such as <i>inputStyle</i>, now <i>inputVariant</i>. They

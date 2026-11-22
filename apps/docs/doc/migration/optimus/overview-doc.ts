@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <i>&#64;openng/icons</i> icons. Moving it across takes two steps:
             </p>
             <ol class="leading-relaxed">
-                <li><b>The rename</b>: the <i>&#64;openng/optimus-ui*</i> packages become <i>&#64;exhaustive-ui/*</i>, and the four names of the configuration API change. There is no schematic for it; it is a find and replace.</li>
+                <li><b>The rename</b>: the <i>&#64;openng/optimus-ui*</i> packages become <i>&#64;exhaustive-ui/*</i>, and the four names of the configuration API change. The <i>migrate-from-optimus</i> schematic does it.</li>
                 <li>
                     <b>The v22 changes</b>: the Signals API everywhere, OnPush and the API cleanup of ExhaustiveUI v22. The <i>ng update</i> migrations do most of it, and the
                     <a [routerLink]="'/migration/v22'" class="doc-link">migration guide to v22</a> covers the rest.

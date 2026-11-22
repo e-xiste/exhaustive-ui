@@ -9,23 +9,31 @@ import { AppCode } from '@/components/doc/app.code';
     imports: [AppDocSectionText, AppCode],
     template: `
         <app-docsectiontext>
-            <p>Then replace these names in the TypeScript sources, stylesheets, <i>angular.json</i> and the Tailwind CSS configuration:</p>
+            <p>The schematic visits every file of the workspace except <i>node_modules</i>, build output and the files your <i>.gitignore</i> excludes.</p>
+            <h3>Dependencies</h3>
+            <p>In every <i>package.json</i> of the workspace, each package is replaced by its counterpart, which has the same content and the same subpaths:</p>
             <ul class="leading-relaxed">
+                <li><i>&#64;openng/optimus-ui</i> becomes <i>&#64;exhaustive-ui/core</i></li>
                 <li>
                     <i>&#64;openng/optimus-ui-themes</i>, <i>-tailwindcss</i>, <i>-locale</i>, <i>-styled</i>, <i>-styles</i>, <i>-utils</i> and <i>-motion</i> become <i>&#64;exhaustive-ui/themes</i>, <i>tailwindcss</i>, <i>locale</i>, <i>styled</i>,
-                    <i>styles</i>, <i>utils</i> and <i>motion</i>, subpaths included.
+                    <i>styles</i>, <i>utils</i> and <i>motion</i>
                 </li>
-                <li><i>&#64;openng/optimus-ui</i> becomes <i>&#64;exhaustive-ui/core</i>, subpaths included: <i>&#64;openng/optimus-ui/button</i> becomes <i>&#64;exhaustive-ui/core/button</i>. Replace the longer names first.</li>
-                <li><i>provideOptimus</i> becomes <i>provideExhaustive</i>.</li>
-                <li>The <i>Optimus</i> configuration service becomes <i>Exhaustive</i>.</li>
-                <li><i>OptimusConfigType</i> becomes <i>ExhaustiveConfigType</i>, and <i>OPTIMUS_CONFIG</i> becomes <i>EXHAUSTIVE_CONFIG</i>.</li>
+                <li><i>&#64;openng/icons</i> stays: ExhaustiveUI uses the same icon set.</li>
             </ul>
-            <app-code [code]="code" [hideToggleCode]="true"></app-code>
+            <h3>TypeScript</h3>
             <p>
-                On Linux, GNU sed can do it in one pass over the files that mention Optimus UI. It replaces whole words only, so a name such as <i>OptimusTheme</i> stays, but a comment that says "Optimus UI" becomes "Exhaustive UI": review the result
-                with <i>git diff</i>.
+                Imports, dynamic imports and <i>require()</i> calls are rewritten, subpaths included (<i>&#64;openng/optimus-ui/button</i> becomes <i>&#64;exhaustive-ui/core/button</i>), and so is the Tailwind CSS configuration file. The
+                configuration API is renamed where it is imported from Optimus UI, along with every use in the file: <i>provideOptimus</i> becomes <i>provideExhaustive</i>, the <i>Optimus</i> service becomes <i>Exhaustive</i>,
+                <i>OptimusConfigType</i> becomes <i>ExhaustiveConfigType</i> and <i>OPTIMUS_CONFIG</i> becomes <i>EXHAUSTIVE_CONFIG</i>. A class of your own that happens to be named <i>Optimus</i> is left alone.
             </p>
-            <app-code [code]="sedCode" [hideToggleCode]="true"></app-code>
+            <app-code [code]="code" [hideToggleCode]="true"></app-code>
+            <h3>Stylesheets and angular.json</h3>
+            <p><i>&#64;import</i>, <i>&#64;use</i>, <i>&#64;plugin</i> and <i>url()</i> references in stylesheets, and the <i>styles</i> and <i>scripts</i> entries of <i>angular.json</i> and <i>project.json</i>, follow the new package names.</p>
+            <h3>The report</h3>
+            <p>
+                The schematic ends with the places that still mention <i>optimus-ui</i>, <i>Optimus</i>, <i>provideOptimus</i>, <i>OptimusConfigType</i> or <i>OPTIMUS_CONFIG</i>, with the file and line: templates, Markdown, comments, or module paths
+                passed to other functions, such as <i>jest.mock()</i>. Lockfiles are left out, since the install regenerates them.
+            </p>
         </app-docsectiontext>
     `
 })
@@ -33,7 +41,7 @@ export class OptimusRenameDoc {
     code: Code = {
         typescript: `// Before
 import { ApplicationConfig } from '@angular/core';
-import { Optimus, provideOptimus } from '@openng/optimus-ui/config';
+import { provideOptimus } from '@openng/optimus-ui/config';
 import Aura from '@openng/optimus-ui-themes/aura';
 
 export const appConfig: ApplicationConfig = {
@@ -42,21 +50,11 @@ export const appConfig: ApplicationConfig = {
 
 // After
 import { ApplicationConfig } from '@angular/core';
-import { Exhaustive, provideExhaustive } from '@exhaustive-ui/core/config';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
 import Aura from '@exhaustive-ui/themes/aura';
 
 export const appConfig: ApplicationConfig = {
     providers: [provideExhaustive({ theme: { preset: Aura } })]
 };`
-    };
-
-    sedCode: Code = {
-        command: `git grep -lE "optimus-ui|Optimus|OPTIMUS_CONFIG" -- src angular.json '*.config.*' | xargs sed -i -E \\
-  -e 's#@openng/optimus-ui-(themes|tailwindcss|locale|styled|styles|utils|motion)#@exhaustive-ui/\\1#g' \\
-  -e 's#@openng/optimus-ui#@exhaustive-ui/core#g' \\
-  -e 's#\\bprovideOptimus\\b#provideExhaustive#g' \\
-  -e 's#\\bOptimusConfigType\\b#ExhaustiveConfigType#g' \\
-  -e 's#\\bOPTIMUS_CONFIG\\b#EXHAUSTIVE_CONFIG#g' \\
-  -e 's#\\bOptimus\\b#Exhaustive#g'`
     };
 }

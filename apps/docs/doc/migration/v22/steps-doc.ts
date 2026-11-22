@@ -25,8 +25,8 @@ import { AppCode } from '@/components/doc/app.code';
             </p>
             <h3>From Optimus UI v2</h3>
             <p>
-                Optimus UI v2 has the PrimeNG v21 API under other package names. Replace its packages with their <i>&#64;exhaustive-ui/*</i> counterparts (<i>&#64;exhaustive-ui/core</i>, <i>&#64;exhaustive-ui/themes</i>...), update the import paths
-                to match, then run the v22 migrations explicitly.
+                Optimus UI v2 has the PrimeNG v21 API under other package names. The <i>migrate-from-optimus</i> schematic swaps its packages for their <i>&#64;exhaustive-ui/*</i> counterparts and renames the imports, the configuration API and the
+                CSS layer; then run the v22 migrations explicitly. The <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI migration guide</a> details each step.
             </p>
             <app-code [code]="migrateOnlyCode" [hideToggleCode]="true"></app-code>
             <h3>Then</h3>
@@ -53,6 +53,8 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0`
     };
 
     migrateOnlyCode: Code = {
-        command: `ng update @exhaustive-ui/core --migrate-only --from=3.0.0`
+        command: `npm install @exhaustive-ui/core@22
+ng generate @exhaustive-ui/core:migrate-from-optimus
+ng update @exhaustive-ui/core --migrate-only --from=3.0.0`
     };
 }

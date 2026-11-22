@@ -93,7 +93,15 @@ The last command applies the [v22 migrations](#what-changes-in-v22) (`styleClass
 
 The [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng) covers the prerequisites, what the schematic changes and the manual checks. `--force` is needed because PrimeNG v21 declares Angular 21 as a peer dependency; the schematic removes it right after. If you are on PrimeNG v20 or older, upgrade to v21 first.
 
-Coming from Optimus UI v2? The [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus) lists the package and configuration names to replace before the same `ng update --migrate-only` step.
+Coming from Optimus UI v2, the `migrate-from-optimus` schematic does the same for the `@openng/optimus-ui*` packages, the imports, the configuration API (`provideOptimus`, `Optimus`...) and the CSS layer:
+
+```bash
+npm install @exhaustive-ui/core
+ng generate @exhaustive-ui/core:migrate-from-optimus
+ng update @exhaustive-ui/core --migrate-only --from=3.0.0
+```
+
+See the [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus).
 
 ## Packages
 

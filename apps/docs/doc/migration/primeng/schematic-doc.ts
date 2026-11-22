@@ -36,8 +36,8 @@ import { AppCode } from '@/components/doc/app.code';
             </p>
             <h3>CSS cascade layer</h3>
             <p>
-                When the theme sets <i>cssLayer</i>, the <i>primeng</i> layer becomes <i>exhaustive</i> in its <i>name</i> and <i>order</i>, <i>primeng-overwrites</i> becomes <i>exhaustive-overwrites</i>, and the matching <i>&#64;layer</i>
-                declarations in your stylesheets are renamed too, so your overrides keep their place in the layer order.
+                When the theme sets <i>cssLayer</i>, the <i>primeng</i> layer becomes <i>exhaustive</i> in its <i>name</i> and <i>order</i>, <i>primeng-overwrites</i> becomes <i>exhaustive-overwrites</i>, and the matching
+                <i>&#64;layer</i> declarations in your stylesheets are renamed too, so your overrides keep their place in the layer order. With <i>cssLayer: true</i>, the configuration does not change, and only the stylesheets are renamed.
             </p>
             <h3>The report</h3>
             <p>

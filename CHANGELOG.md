@@ -6,10 +6,20 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ## Unreleased
 
+### Features
+
+- New `migrate-from-optimus` schematic: `ng generate @exhaustive-ui/core:migrate-from-optimus` moves an Optimus UI v2 workspace to ExhaustiveUI. It swaps the `@openng/optimus-ui*` packages for their `@exhaustive-ui/*` counterparts (`@openng/icons` stays), rewrites imports, dynamic imports, `require()`, stylesheets and `angular.json`, renames `provideOptimus`, `Optimus`, `OptimusConfigType` and `OPTIMUS_CONFIG`, renames the `optimus` CSS layer in the configuration and the stylesheets, and reports what is left with the file and line. It shares its engine with `migrate-from-primeng`.
+- `ng add` refuses an Optimus UI workspace, as it does a PrimeNG one, and points to `migrate-from-optimus`.
+
+### Fixes
+
+- `migrate-from-primeng` and `migrate-from-optimus`: with `cssLayer: true`, or a `cssLayer` without a `name`, the library's default layer (`primeng`, `optimus`) is renamed `exhaustive` in your stylesheets too, as ExhaustiveUI's default layer is.
+- `ng add` no longer tells PrimeNG users to run `@exhaustive-ui/core@1:migrate-from-primeng`, a version that was never published.
+
 ### Documentation
 
 - New [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng): the steps from PrimeNG v21 (including the `--force` the Angular 22 update needs while `primeng` is installed), everything `migrate-from-primeng` changes, the manual checks, and what changes in v22. It replaces the link to Optimus UI's archived guide, on the home page, in the menu and in the installation, FAQ and update pages, and is the page the schematic's report points to.
-- New [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus): the package and configuration API names to replace (`provideOptimus`, `Optimus`, `OptimusConfigType`, `OPTIMUS_CONFIG`), the default CSS layer renamed from `optimus` to `exhaustive`, then the v22 migrations.
+- New [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus): the steps with `migrate-from-optimus`, what it changes (packages, imports, configuration API, CSS layer), then the v22 migrations.
 - Both guides are in the LLM docs (`get_guide("primeng")`, `get_guide("optimus")`) and the agent skill; the `migrate_from_primeng` MCP prompt follows them.
 - Home page: Angular 22, Full Signals, Modern Angular and Tailwind CSS 4 features. The contribution guide and `CONTRIBUTING.md` welcome contributions written with AI coding agents.
 

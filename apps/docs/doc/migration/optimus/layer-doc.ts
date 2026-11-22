@@ -8,11 +8,11 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     template: `
         <app-docsectiontext>
             <p>
-                When the theme enables <i>cssLayer</i> without naming the layer, the styles go to a layer named <i>exhaustive</i> instead of <i>optimus</i>. Rename the layer in your stylesheets, in the ordering statement and in the blocks that
-                override the components, or the overrides fall out of the configured order.
+                Optimus UI puts its styles in a CSS cascade layer named <i>optimus</i> when the theme enables <i>cssLayer</i>; ExhaustiveUI names it <i>exhaustive</i>. The schematic renames the <i>optimus</i> token in the <i>cssLayer</i>
+                <i>name</i> and <i>order</i> of your configuration, then the matching <i>&#64;layer</i> declarations and <i>&#64;import ... layer()</i> clauses in your stylesheets, so your overrides keep their place in the layer order. With
+                <i>cssLayer: true</i>, the configuration does not change, and only the stylesheets are renamed.
             </p>
-            <p>A layer named explicitly in the configuration, with <i>cssLayer: &#123; name: 'optimus', order: '...' &#125;</i>, keeps its name: nothing changes until you rename it on both sides.</p>
-            <p>The CSS classes (<i>p-button</i>...), the design tokens (<i>--p-primary-color</i>...) and the icon classes (<i>pi pi-check</i>...) do not change.</p>
+            <p>A layer of your own, with another name, is left as it is. The CSS classes (<i>p-button</i>...), the design tokens (<i>--p-primary-color</i>...) and the icon classes (<i>pi pi-check</i>...) do not change.</p>
         </app-docsectiontext>
     `
 })

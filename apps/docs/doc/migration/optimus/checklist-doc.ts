@@ -8,7 +8,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     template: `
         <app-docsectiontext>
             <ul class="leading-relaxed">
-                <li>No <i>&#64;openng/optimus-ui*</i> package left in any <i>package.json</i>, and <i>git grep optimus-ui</i> finds nothing in the sources and configuration.</li>
+                <li>No <i>&#64;openng/optimus-ui*</i> package left in any <i>package.json</i>, and the report of <i>migrate-from-optimus</i> handled.</li>
                 <li><i>provideExhaustive</i>, <i>Exhaustive</i>, <i>ExhaustiveConfigType</i> and <i>EXHAUSTIVE_CONFIG</i> in place of the Optimus names.</li>
                 <li>With a CSS layer configured, your overrides still apply.</li>
                 <li>The v22 migrations run and their report handled.</li>
