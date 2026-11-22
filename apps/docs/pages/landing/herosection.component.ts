@@ -56,7 +56,7 @@ import { OverviewApp } from './samples/overviewapp.component';
             <div class="flex flex-col items-center">
                 <h1 class="text-5xl font-bold text-center xl:text-left leading-tight">The Open Source UI Suite for <span class="font-bold text-primary">Angular</span></h1>
                 <p class="text-center mt-0 mb-8 text-surface-500 dark:text-surface-400 font-medium text-xl leading-relaxed lg:px-56">
-                    80+ accessible, customizable Angular components under the MIT license. A community-maintained continuation of PrimeNG v21, built to stay open.
+                    80+ accessible, customizable Angular components under the MIT license. A community-maintained continuation of PrimeNG &amp; Optimus UI, built to stay open.
                 </p>
                 <div class="flex flex-wrap items-center justify-center gap-4">
                     <a [routerLink]="'installation'" class="linkbox linkbox-primary">
