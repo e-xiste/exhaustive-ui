@@ -3515,6 +3515,20 @@ describe('Tree low bug fixes', () => {
         expect(button.getAttribute('aria-label')).toBe('Toggle row');
     });
 
+    it('names each node checkbox with the node label', async () => {
+        const fixture = TestBed.createComponent(Tree);
+        fixture.componentRef.setInput('value', [
+            { key: 'a', label: 'Documents' },
+            { key: 'b', label: 'Pictures' }
+        ]);
+        fixture.componentRef.setInput('selectionMode', 'checkbox');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const inputs = Array.from(fixture.nativeElement.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+        expect(inputs.map((i) => i.getAttribute('aria-label'))).toEqual(['Documents', 'Pictures']);
+    });
+
     it('names the node toggle button with the locale expand or collapse label when togglerAriaLabel is unset', async () => {
         const fixture = TestBed.createComponent(Tree);
         fixture.componentRef.setInput('value', [

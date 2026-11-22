@@ -143,5 +143,6 @@ export interface Aria {
     collapseLabel?: string;
     moreOptions?: string;
     showOptions?: string;
+    filterLabel?: string;
     otpLabel?: string;
 }

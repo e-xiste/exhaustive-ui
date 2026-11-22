@@ -164,6 +164,7 @@ export class Exhaustive extends ThemeProvider {
             collapseLabel: 'Collapse',
             moreOptions: 'More options',
             showOptions: 'Show options',
+            filterLabel: 'Filter',
             otpLabel: 'Please enter one time password character {0}'
         }
     };

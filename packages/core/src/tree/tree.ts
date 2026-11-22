@@ -146,6 +146,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
                             [disabled]="node()!.selectable === false"
                             [variant]="tree?.config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                             [attr.data-p-partialchecked]="partialSelected()"
+                            [ariaLabel]="node()!.label"
                             [tabindex]="-1"
                             (click)="$event.preventDefault()"
                             [pt]="getPTOptions('pcNodeCheckbox')"

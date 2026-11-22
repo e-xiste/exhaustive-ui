@@ -3349,6 +3349,31 @@ describe('Listbox low bug fixes', () => {
         expect(filterInput.getAttribute('aria-controls')).toBe(list.id);
     });
 
+    it('names the generated filter input and select-all checkbox by default', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        fixture.componentRef.setInput('options', [{ name: 'Alpha' }, { name: 'Beta' }]);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.componentRef.setInput('filter', true);
+        fixture.componentRef.setInput('multiple', true);
+        fixture.componentRef.setInput('checkbox', true);
+        fixture.detectChanges();
+
+        const filterInput = fixture.nativeElement.querySelector('input[role="searchbox"]') as HTMLInputElement;
+        expect(filterInput.getAttribute('aria-label')).toBe('Filter');
+
+        const header = fixture.nativeElement.querySelector('[data-pc-section="header"]') as HTMLElement;
+        const toggleAll = header.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        expect(toggleAll.getAttribute('aria-label')).toBeTruthy();
+        expect(header.querySelector('p-checkbox')!.hasAttribute('aria-label')).toBe(false);
+
+        fixture.componentRef.setInput('filterPlaceholder', 'Search');
+        fixture.detectChanges();
+        expect(filterInput.hasAttribute('aria-label')).toBe(false);
+        fixture.componentRef.setInput('ariaFilterLabel', 'Find a city');
+        fixture.detectChanges();
+        expect(filterInput.getAttribute('aria-label')).toBe('Find a city');
+    });
+
     it('drops aria-controls from the filter input while no list is rendered', () => {
         const fixture = TestBed.createComponent(Listbox);
         fixture.componentRef.setInput('options', []);

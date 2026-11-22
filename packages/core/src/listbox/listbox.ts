@@ -25,7 +25,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { equals, findLastIndex, findSingle, focus, getFirstFocusableElement, isEmpty, isFunction, isNotEmpty, isPrintableCharacter, resolveFieldData, uuid } from '@exhaustive-ui/utils';
-import { FilterService, Footer, Header, PrimeTemplate, ScrollerOptions, SharedModule } from '@exhaustive-ui/core/api';
+import { FilterService, Footer, Header, PrimeTemplate, ScrollerOptions, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
 import { PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { BaseEditableHolder } from '@exhaustive-ui/core/baseeditableholder';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -100,7 +100,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                         [tabindex]="-1"
                         [variant]="config.inputVariant() === 'filled' ? 'filled' : 'outlined'"
                         [binary]="true"
-                        [attr.aria-label]="toggleAllAriaLabel()"
+                        [ariaLabel]="toggleAllAriaLabel()"
                         [pt]="ptm('pcCheckbox')"
                         [unstyled]="unstyled()"
                     >
@@ -127,7 +127,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                                 [attr.aria-controls]="isEmpty() ? undefined : _id() + '_list'"
                                 [attr.aria-activedescendant]="focusedOptionId()"
                                 [attr.placeholder]="filterPlaceholder()"
-                                [attr.aria-label]="ariaFilterLabel()"
+                                [attr.aria-label]="filterInputAriaLabel()"
                                 [attr.tabindex]="!$disabled() && !focused() ? tabindex() : -1"
                                 (input)="onFilterChange($event)"
                                 (keydown)="onFilterKeyDown($event)"
@@ -877,6 +877,11 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
     virtualScrollerDisabled = computed(() => !this.virtualScroll());
 
     searchFields = computed(() => this.filterBy()?.split(',') || this.filterFields() || [this.optionLabel()]);
+
+    /**
+     * Name of the filter input: ariaFilterLabel, otherwise the aria.filterLabel locale label when there is no placeholder to name it.
+     */
+    filterInputAriaLabel = computed(() => this.ariaFilterLabel() || (this.filterPlaceholder() ? undefined : this.translation()?.[TranslationKeys.ARIA]?.filterLabel));
 
     toggleAllAriaLabel = computed(() => (this.translation().aria ? this.translation().aria[this.allSelected() ? 'selectAll' : 'unselectAll'] : undefined));
 
