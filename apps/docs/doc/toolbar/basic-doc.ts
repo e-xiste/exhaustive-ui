@@ -23,9 +23,9 @@ import { InputIconModule } from '@exhaustive-ui/core/inputicon';
         <div class="card">
             <p-toolbar>
                 <ng-template #start>
-                    <p-button icon="pi pi-plus" class="mr-2" text severity="secondary" />
-                    <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
-                    <p-button icon="pi pi-upload" text severity="secondary" />
+                    <p-button icon="pi pi-plus" ariaLabel="New" class="mr-2" text severity="secondary" />
+                    <p-button icon="pi pi-print" ariaLabel="Print" class="mr-2" text severity="secondary" />
+                    <p-button icon="pi pi-upload" ariaLabel="Upload" text severity="secondary" />
                 </ng-template>
                 <ng-template #center>
                     <p-icon-field iconPosition="left">

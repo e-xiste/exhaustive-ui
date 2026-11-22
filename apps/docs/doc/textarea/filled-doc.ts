@@ -13,7 +13,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             <p>Specify the <i>variant</i> property as <i>filled</i> to display the component with a higher visual emphasis than the default <i>outlined</i> style.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <textarea [(ngModel)]="value" [variant]="'filled'" rows="5" cols="30" pTextarea></textarea>
+            <textarea [(ngModel)]="value" [variant]="'filled'" rows="5" cols="30" pTextarea aria-label="Message"></textarea>
         </div>
         <app-code></app-code>
     `

@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A doughnut chart is a variant of the pie chart, with a blank center allowing for additional information about the data as a whole to be included.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-chart type="doughnut" [data]="data" [options]="options" class="w-full md:w-120" />
+            <p-chart type="doughnut" ariaLabel="Doughnut chart of categories A, B and C" [data]="data" [options]="options" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

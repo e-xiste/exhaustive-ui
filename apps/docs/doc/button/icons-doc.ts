@@ -13,7 +13,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
             <div class="flex flex-wrap gap-4 justify-center">
-                <p-button icon="pi pi-home" aria-label="Save" />
+                <p-button icon="pi pi-home" ariaLabel="Home" />
                 <p-button label="Profile" icon="pi pi-user" />
                 <p-button label="Save" icon="pi pi-check" iconPos="right" />
             </div>

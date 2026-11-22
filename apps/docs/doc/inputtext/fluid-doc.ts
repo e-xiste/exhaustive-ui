@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <input type="text" pInputText [(ngModel)]="value" fluid />
+            <input type="text" pInputText [(ngModel)]="value" fluid aria-label="Name" />
         </div>
         <app-code></app-code>
     `

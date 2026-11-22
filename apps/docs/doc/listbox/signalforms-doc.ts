@@ -29,7 +29,7 @@ interface City {
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4 sm:w-56">
                 <div class="flex flex-col gap-1">
-                    <p-listbox [options]="cities" [formField]="exampleForm.selectedCity" optionLabel="name" class="w-full md:w-56" />
+                    <p-listbox [options]="cities" [formField]="exampleForm.selectedCity" optionLabel="name" class="w-full md:w-56" ariaLabel="City" />
                     @let selectedCity = exampleForm.selectedCity();
                     @if (selectedCity.invalid() && selectedCity.touched()) {
                         <p-message severity="error" size="small" variant="simple">City is required.</p-message>

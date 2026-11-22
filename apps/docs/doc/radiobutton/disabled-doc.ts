@@ -13,8 +13,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
-            <p-radio-button [(ngModel)]="value" [value]="1" [disabled]="true" />
-            <p-radio-button [(ngModel)]="value" [value]="2" [disabled]="true" />
+            <p-radio-button [(ngModel)]="value" [value]="1" [disabled]="true" ariaLabel="Option 1" />
+            <p-radio-button [(ngModel)]="value" [value]="2" [disabled]="true" ariaLabel="Option 2" />
         </div>
         <app-code></app-code>
     `

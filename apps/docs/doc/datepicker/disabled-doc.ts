@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" [disabled]="true" />
+            <p-date-picker [(ngModel)]="date" [disabled]="true" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>Size of each movement is defined with the <i>step</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-slider [(ngModel)]="value" [step]="20" class="w-56" />
+            <p-slider [(ngModel)]="value" [step]="20" class="w-56" ariaLabel="Volume" />
         </div>
         <app-code></app-code>
     `

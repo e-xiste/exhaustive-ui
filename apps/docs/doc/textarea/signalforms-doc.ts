@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <textarea rows="5" cols="30" pTextarea [formField]="exampleForm.address"></textarea>
+                    <textarea rows="5" cols="30" pTextarea [formField]="exampleForm.address" aria-label="Address"></textarea>
                     @let address = exampleForm.address();
                     @if (address.invalid() && address.touched()) {
                         <p-message severity="error" size="small" variant="simple">Address is required.</p-message>

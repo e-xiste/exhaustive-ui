@@ -13,7 +13,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             <p>InputText has built-in key filtering support to block certain keys, refer to <a href="/keyfilter">keyfilter</a> page for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <textarea pKeyFilter="int" rows="5" cols="30" pTextarea></textarea>
+            <textarea pKeyFilter="int" rows="5" cols="30" pTextarea aria-label="Number"></textarea>
         </div>
         <app-code></app-code>
     `

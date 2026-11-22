@@ -13,8 +13,8 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>The invalid state is applied using the <i>⁠invalid</i> property to indicate failed validation, which can be integrated with Angular Forms.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center gap-4">
-            <p-date-picker [(ngModel)]="date1" [invalid]="!date1" placeholder="Date" />
-            <p-date-picker [(ngModel)]="date2" [invalid]="!date2" variant="filled" placeholder="Date" />
+            <p-date-picker [(ngModel)]="date1" [invalid]="!date1" placeholder="Date" ariaLabel="Date" />
+            <p-date-picker [(ngModel)]="date2" [invalid]="!date2" variant="filled" placeholder="Date" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

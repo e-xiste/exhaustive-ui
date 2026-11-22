@@ -70,7 +70,7 @@ import { RippleModule } from '@exhaustive-ui/core/ripple';
                     </div>
                 </ng-template>
                 <ng-template #end>
-                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" shape="circle" />
                 </ng-template>
             </p-mega-menu>
         </div>

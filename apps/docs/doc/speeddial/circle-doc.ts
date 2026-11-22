@@ -17,7 +17,7 @@ import { RouterModule } from '@angular/router';
         <div class="card">
             <div style="position:relative; height: 500px;" class="flex items-center justify-center">
                 <p-toast />
-                <p-speed-dial [model]="items" [radius]="80" type="circle" [style]="{ position: 'absolute' }" [buttonProps]="{ severity: 'warn', rounded: true }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="circle" [style]="{ position: 'absolute' }" [buttonProps]="{ severity: 'warn', rounded: true }" />
             </div>
         </div>
         <app-code></app-code>

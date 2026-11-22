@@ -20,7 +20,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <p class="text-muted-color block mb-8">Please enter the code sent to your phone.</p>
                 <p-input-otp [(ngModel)]="value" [length]="6">
                     <ng-template #input let-token let-events="events" let-index="index">
-                        <input type="text" [maxLength]="1" (input)="events.input($event)" (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" />
+                        <input type="text" [maxLength]="1" (input)="events.input($event)" (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" [attr.aria-label]="'Digit ' + index" />
                         <div *ngIf="index === 3" class="px-4">
                             <i class="pi pi-minus"></i>
                         </div>

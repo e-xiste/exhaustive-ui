@@ -14,10 +14,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <p-image-compare class="shadow-lg rounded-2xl">
                 <ng-template #left>
-                    <img src="https://exhaustive-ui.com/demo/compare/island1.jpg" />
+                    <img src="https://exhaustive-ui.com/demo/compare/island1.jpg" alt="Island, before" />
                 </ng-template>
                 <ng-template #right>
-                    <img src="https://exhaustive-ui.com/demo/compare/island2.jpg" />
+                    <img src="https://exhaustive-ui.com/demo/compare/island2.jpg" alt="Island, after" />
                 </ng-template>
             </p-image-compare>
         </div>

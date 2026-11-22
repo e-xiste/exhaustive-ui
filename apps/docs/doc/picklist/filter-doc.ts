@@ -26,6 +26,8 @@ import { PickListModule } from '@exhaustive-ui/core/picklist';
                 targetFilterPlaceholder="Search by name"
                 breakpoint="1400px"
                 scrollHeight="20rem"
+                sourceAriaLabel="Available products"
+                targetAriaLabel="Selected products"
             >
                 <ng-template let-option let-selected="selected" #item>
                     <div class="flex flex-wrap p-1 items-center gap-4 w-full">

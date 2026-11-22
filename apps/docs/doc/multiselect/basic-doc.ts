@@ -22,7 +22,7 @@ interface City {
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" class="w-full md:w-80" />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" class="w-full md:w-80" ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

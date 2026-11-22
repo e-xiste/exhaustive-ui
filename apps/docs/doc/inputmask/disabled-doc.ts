@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <input pInputText pInputMask="999-99-9999" [(ngModel)]="value" disabled />
+            <input pInputText pInputMask="999-99-9999" [(ngModel)]="value" disabled aria-label="SSN" />
         </div>
         <app-code></app-code>
     `

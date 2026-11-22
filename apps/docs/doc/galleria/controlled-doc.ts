@@ -16,15 +16,15 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card">
             <div class="mb-4">
-                <p-button type="button" icon="pi pi-minus" (click)="prev()" />
-                <p-button type="button" icon="pi pi-plus" (click)="next()" severity="secondary" styleClass="ml-2" />
+                <p-button type="button" icon="pi pi-minus" ariaLabel="Previous image" (click)="prev()" />
+                <p-button type="button" icon="pi pi-plus" ariaLabel="Next image" (click)="next()" severity="secondary" styleClass="ml-2" />
             </div>
             <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
                 <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" style="width: 100%;" />
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%;" />
                 </ng-template>
                 <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" />
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" />
                 </ng-template>
             </p-galleria>
         </div>

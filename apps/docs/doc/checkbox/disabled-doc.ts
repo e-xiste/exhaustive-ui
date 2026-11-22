@@ -13,8 +13,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
-            <p-checkbox [(ngModel)]="checked1" [binary]="true" [disabled]="true" />
-            <p-checkbox [(ngModel)]="checked2" [binary]="true" [disabled]="true" />
+            <p-checkbox [(ngModel)]="checked1" [binary]="true" ariaLabel="Unchecked option" [disabled]="true" />
+            <p-checkbox [(ngModel)]="checked2" [binary]="true" ariaLabel="Checked option" [disabled]="true" />
         </div>
         <app-code></app-code>
     `

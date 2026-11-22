@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>ProgressBar is used with the <i>value</i> property.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-progress-bar [value]="50" />
+            <p-progress-bar aria-label="Task progress" [value]="50" />
         </div>
         <app-code></app-code>
     `

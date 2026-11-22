@@ -18,7 +18,7 @@ interface City {
             <p>An alternative way to highlight the selected option is displaying a checkmark instead.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [(ngModel)]="selectedCity" [options]="cities" optionLabel="name" [checkmark]="true" [highlightOnSelect]="false" class="w-full md:w-56" />
+            <p-listbox [(ngModel)]="selectedCity" [options]="cities" optionLabel="name" [checkmark]="true" [highlightOnSelect]="false" class="w-full md:w-56" ariaLabel="City" />
         </div>
         <app-code></app-code>
     `

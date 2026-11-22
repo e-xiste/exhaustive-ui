@@ -16,7 +16,7 @@ import { OrderListModule } from '@exhaustive-ui/core/orderlist';
             <p>Filter value is checked against the property of an object configured with the <i>filterBy</i> property</p>
         </app-docsectiontext>
         <div class="card sm:flex sm:justify-center">
-            <p-order-list [value]="products()" filterBy="name" filterPlaceholder="Filter by name" [responsive]="true" breakpoint="575px" scrollHeight="20rem" class="sm:min-w-96">
+            <p-order-list [value]="products()" filterBy="name" filterPlaceholder="Filter by name" [responsive]="true" breakpoint="575px" scrollHeight="20rem" class="sm:min-w-96" ariaLabel="Products">
                 <ng-template let-option let-selected="selected" #item>
                     <div class="flex flex-wrap p-1 items-center gap-4 w-full">
                         <img class="w-12 shrink-0 rounded-sm" src="https://exhaustive-ui.com/demo/product/{{ option.image }}" [alt]="option.name" />

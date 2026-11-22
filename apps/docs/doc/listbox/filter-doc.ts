@@ -18,7 +18,7 @@ interface City {
             <p>ListBox provides built-in filtering that is enabled by adding the <i>filter</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [filter]="true" class="w-full md:w-56" />
+            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [filter]="true" class="w-full md:w-56" ariaLabel="City" />
         </div>
         <app-code></app-code>
     `

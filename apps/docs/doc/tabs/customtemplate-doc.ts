@@ -20,15 +20,15 @@ import { BadgeModule } from '@exhaustive-ui/core/badge';
                         <i class="pi pi-minus"></i>
                     </ng-template>
                     <p-tab value="0" class="flex items-center gap-2!">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Amy Elsner</span>
                     </p-tab>
                     <p-tab value="1" class="flex items-center gap-2!">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" ariaLabel="Onyama Limba" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Onyama Limba</span>
                     </p-tab>
                     <p-tab value="2" class="flex items-center gap-2!">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" ariaLabel="Ioni Bowcher" shape="circle" />
                         <span class="font-bold whitespace-nowrap">Ioni Bowcher</span>
                         <p-badge value="2" />
                     </p-tab>

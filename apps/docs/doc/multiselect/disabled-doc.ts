@@ -18,7 +18,7 @@ interface City {
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" [disabled]="true" optionLabel="name" placeholder="Select Cities" class="w-full md:w-80" />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" [disabled]="true" optionLabel="name" placeholder="Select Cities" class="w-full md:w-80" ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

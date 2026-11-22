@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>3 templates are included to customize the overlay. These are <i>header</i>, <i>content</i> and <i>footer</i>. Note that content overrides the default meter.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" autocomplete="off">
+            <p-password [(ngModel)]="value" autocomplete="off" ariaLabel="Password">
                 <ng-template #header>
                     <div class="font-semibold text-xm mb-4">Reset Password</div>
                 </ng-template>

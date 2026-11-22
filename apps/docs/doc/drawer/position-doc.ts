@@ -42,10 +42,10 @@ import { FormsModule } from '@angular/forms';
                 </p>
             </p-drawer>
             <div class="flex gap-2 justify-center">
-                <p-button type="button" (click)="visible1 = true" icon="pi pi-arrow-right" />
-                <p-button type="button" (click)="visible2 = true" icon="pi pi-arrow-left" />
-                <p-button type="button" (click)="visible3 = true" icon="pi pi-arrow-down" />
-                <p-button type="button" (click)="visible4 = true" icon="pi pi-arrow-up" />
+                <p-button type="button" (click)="visible1 = true" icon="pi pi-arrow-right" ariaLabel="Open left drawer" />
+                <p-button type="button" (click)="visible2 = true" icon="pi pi-arrow-left" ariaLabel="Open right drawer" />
+                <p-button type="button" (click)="visible3 = true" icon="pi pi-arrow-down" ariaLabel="Open top drawer" />
+                <p-button type="button" (click)="visible4 = true" icon="pi pi-arrow-up" ariaLabel="Open bottom drawer" />
             </div>
         </div>
         <app-code></app-code>

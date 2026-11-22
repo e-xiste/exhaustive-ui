@@ -13,7 +13,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             <p>Textarea is applied to an input field with <i>pTextarea</i> directive.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value"></textarea>
+            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" aria-label="Message"></textarea>
         </div>
         <app-code></app-code>
     `

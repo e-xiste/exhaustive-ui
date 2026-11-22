@@ -22,6 +22,7 @@ import { ChipModule } from '@exhaustive-ui/core/chip';
                 [suggestions]="filteredProducts"
                 (completeMethod)="filterProducts($event)"
                 inputId="advanced-chips"
+                ariaLabel="Products"
                 [multiple]="true"
                 [fluid]="true"
                 [typeahead]="false"

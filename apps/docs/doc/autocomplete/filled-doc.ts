@@ -17,7 +17,7 @@ interface AutoCompleteCompleteEvent {
             <p>Specify the <i>variant</i> property as <i>filled</i> to display the component with a higher visual emphasis than the default <i>outlined</i> style.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedItem" [suggestions]="suggestions" (completeMethod)="search($event)" variant="filled" />
+            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Search" [suggestions]="suggestions" (completeMethod)="search($event)" variant="filled" />
         </div>
         <app-code></app-code>`
 })

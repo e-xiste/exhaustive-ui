@@ -28,9 +28,9 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
             <p-fluid>
                 <span class="font-bold mb-2 block">Fluid Container</span>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><input type="text" pInputText /></div>
-                    <div><input type="text" pInputText /></div>
-                    <div class="col-span-full"><input type="text" pInputText /></div>
+                    <div><input type="text" pInputText aria-label="First name" /></div>
+                    <div><input type="text" pInputText aria-label="Last name" /></div>
+                    <div class="col-span-full"><input type="text" pInputText aria-label="Address" /></div>
                     <div><input type="text" pInputText [fluid]="false" placeholder="Non-Fluid" /></div>
                 </div>
             </p-fluid>

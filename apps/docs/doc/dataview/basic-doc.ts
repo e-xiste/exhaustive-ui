@@ -46,7 +46,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     <div class="flex flex-col md:items-end gap-8">
                                         <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <p-button icon="pi pi-heart" [outlined]="true" />
+                                            <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [outlined]="true" />
                                             <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
                                         </div>
                                     </div>

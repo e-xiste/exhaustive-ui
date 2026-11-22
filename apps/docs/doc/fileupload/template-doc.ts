@@ -28,11 +28,11 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                     <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                         <div class="flex gap-2">
-                            <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-images" [rounded]="true" [outlined]="true" />
-                            <p-button (onClick)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" />
-                            <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
+                            <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-images" ariaLabel="Choose files" [rounded]="true" [outlined]="true" />
+                            <p-button (onClick)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" ariaLabel="Upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" />
+                            <p-button (onClick)="clearCallback()" icon="pi pi-times" ariaLabel="Clear" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
                         </div>
-                        <p-progress-bar [value]="totalSizePercent" [showValue]="false" class="w-full" class="md:w-20rem h-1 w-full md:ml-auto">
+                        <p-progress-bar [value]="totalSizePercent" aria-label="Total size" [showValue]="false" class="w-full" class="md:w-20rem h-1 w-full md:ml-auto">
                             <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
                         </p-progress-bar>
                     </div>
@@ -49,7 +49,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                                     <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name }}</span>
                                     <div>{{ formatSize(file.size) }}</div>
                                     <p-badge value="Pending" severity="warn" />
-                                    <p-button icon="pi pi-times" (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)" [outlined]="true" [rounded]="true" severity="danger" />
+                                    <p-button icon="pi pi-times" (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)" [ariaLabel]="'Remove ' + file.name" [outlined]="true" [rounded]="true" severity="danger" />
                                 </div>
                             </div>
                         </div>
@@ -63,7 +63,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                                     <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name }}</span>
                                     <div>{{ formatSize(file.size) }}</div>
                                     <p-badge value="Completed" class="mt-4" severity="success" />
-                                    <p-button icon="pi pi-times" (onClick)="removeUploadedFileCallback(i)" [outlined]="true" [rounded]="true" severity="danger" />
+                                    <p-button icon="pi pi-times" (onClick)="removeUploadedFileCallback(i)" [ariaLabel]="'Remove ' + file.name" [outlined]="true" [rounded]="true" severity="danger" />
                                 </div>
                             </div>
                         </div>

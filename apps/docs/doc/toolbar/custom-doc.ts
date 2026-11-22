@@ -55,7 +55,7 @@ import { AvatarModule } from '@exhaustive-ui/core/avatar';
                 <ng-template #end>
                     <div class="flex items-center gap-2">
                         <p-button label="Share" severity="contrast" size="small" />
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" [style]="{ width: '32px', height: '32px' }" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" [style]="{ width: '32px', height: '32px' }" />
                     </div>
                 </ng-template>
             </p-toolbar>

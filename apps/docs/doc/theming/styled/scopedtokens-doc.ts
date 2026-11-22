@@ -14,8 +14,8 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
             <p>This approach is recommended over the <i>::ng-deep</i> as it offers a cleaner API while avoiding the hassle of CSS rule overrides.</p>
         </app-docsectiontext>
         <div class="card flex gap-2 justify-center items-center">
-            <p-toggle-switch [(ngModel)]="checked1" />
-            <p-toggle-switch [(ngModel)]="checked2" [dt]="amberSwitch" />
+            <p-toggle-switch [(ngModel)]="checked1" ariaLabel="Default switch" />
+            <p-toggle-switch [(ngModel)]="checked2" [dt]="amberSwitch" ariaLabel="Amber switch" />
         </div>
         <app-code [code]="code" [hideToggleCode]="true"></app-code>
     `
@@ -62,8 +62,8 @@ import { ToggleSwitch } from '@exhaustive-ui/core/toggleswitch';
 
 @Component({
     template: \`
-        <p-toggle-switch [(ngModel)]="checked1"/>
-        <p-toggle-switch [(ngModel)]="checked2" [dt]="amberSwitch"/>
+        <p-toggle-switch [(ngModel)]="checked1" ariaLabel="Default switch" />
+        <p-toggle-switch [(ngModel)]="checked2" [dt]="amberSwitch" ariaLabel="Amber switch" />
     \`,
     standalone: true,
     imports: [ToggleSwitch, FormsModule]

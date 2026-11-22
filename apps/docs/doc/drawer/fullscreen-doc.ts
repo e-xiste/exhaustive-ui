@@ -20,7 +20,7 @@ import { DrawerModule } from '@exhaustive-ui/core/drawer';
                     consequat.
                 </p>
             </p-drawer>
-            <p-button (click)="visible = true" icon="pi pi-window-maximize" />
+            <p-button (click)="visible = true" icon="pi pi-window-maximize" ariaLabel="Open full screen drawer" />
         </div>
         <app-code></app-code>
     `

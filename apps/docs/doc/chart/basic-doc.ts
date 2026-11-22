@@ -17,7 +17,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="bar" [data]="basicData" [options]="basicOptions" />
+            <p-chart type="bar" ariaLabel="Bar chart of sales by quarter" [data]="basicData" [options]="basicOptions" />
         </div>
         <app-code></app-code>
     `

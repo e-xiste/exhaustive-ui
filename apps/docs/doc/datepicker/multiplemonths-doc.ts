@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Number of months to display is configured with the <i>numberOfMonths</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" [numberOfMonths]="2" />
+            <p-date-picker [(ngModel)]="date" [numberOfMonths]="2" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

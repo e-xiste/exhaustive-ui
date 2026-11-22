@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
                     consequat.
                 </p>
             </p-drawer>
-            <p-button (click)="visible = true" icon="pi pi-arrow-right" />
+            <p-button (click)="visible = true" icon="pi pi-arrow-right" ariaLabel="Open drawer" />
         </div>
         <app-code></app-code>
     `

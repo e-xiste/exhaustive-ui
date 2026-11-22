@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>MeterGroup provides templating support for labels, meter items, and content around the meters.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-meter-group [value]="value" labelPosition="start">
+            <p-meter-group [value]="value" aria-label="Storage usage" labelPosition="start">
                 <ng-template #label>
                     <div class="flex flex-wrap gap-4">
                         <ng-container *ngFor="let meterItem of value; let index = index">

@@ -21,7 +21,7 @@ interface City {
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [multiple]="true" [metaKeySelection]="false" class="w-full md:w-56" />
+            <p-listbox [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [multiple]="true" [metaKeySelection]="false" class="w-full md:w-56" ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

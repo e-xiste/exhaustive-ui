@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>When <i>range</i> property is present, slider provides two handles to define two values. In range mode, value should be an array instead of a single value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" />
+            <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" ariaLabel="Range" />
         </div>
         <app-code></app-code>
     `

@@ -13,9 +13,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>InputNumber provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-input-number [(ngModel)]="value1" size="small" placeholder="Small" mode="currency" currency="USD" locale="en-US" />
-            <p-input-number [(ngModel)]="value2" placeholder="Normal" mode="currency" currency="USD" locale="en-US" />
-            <p-input-number [(ngModel)]="value3" size="large" placeholder="Large" mode="currency" currency="USD" locale="en-US" />
+            <p-input-number [(ngModel)]="value1" size="small" placeholder="Small" mode="currency" currency="USD" locale="en-US" ariaLabel="Small" />
+            <p-input-number [(ngModel)]="value2" placeholder="Normal" mode="currency" currency="USD" locale="en-US" ariaLabel="Normal" />
+            <p-input-number [(ngModel)]="value3" size="large" placeholder="Large" mode="currency" currency="USD" locale="en-US" ariaLabel="Large" />
         </div>
         <app-code></app-code>
     `

@@ -15,19 +15,19 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
         <div class="card">
             <div class="flex flex-wrap gap-8">
                 <div class="flex-auto">
-                    <h5>Label</h5>
+                    <div class="font-semibold mb-4">Label</div>
                     <p-avatar label="P" class="mr-2" size="xlarge" />
                     <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" />
                     <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" />
                 </div>
                 <div class="flex-auto">
-                    <h5>Circle</h5>
+                    <div class="font-semibold mb-4">Circle</div>
                     <p-avatar label="P" class="mr-2" size="xlarge" shape="circle" />
                     <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />
                     <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" shape="circle" />
                 </div>
                 <div class="flex-auto">
-                    <h5>Badge</h5>
+                    <div class="font-semibold mb-4">Badge</div>
                     <p-overlay-badge value="4" severity="danger" class="inline-flex">
                         <p-avatar label="U" size="xlarge" />
                     </p-overlay-badge>

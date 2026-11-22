@@ -61,7 +61,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                 <ng-template #end>
                     <div class="flex items-center gap-2">
                         <input type="text" pInputText placeholder="Search" class="w-36" />
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" shape="circle" />
                     </div>
                 </ng-template>
             </p-menubar>

@@ -62,18 +62,18 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     leaveClass="animate-leave fade-out-0"
                     class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
                 >
-                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Jenna Thompson</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>
 
                 <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-b-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" ariaLabel="Asiya Javayant" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Isabel Garcia</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>
                 <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" shape="circle" size="xlarge" />
+                    <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" ariaLabel="Onyama Limba" shape="circle" size="xlarge" />
                     <span class="text-2xl font-medium">Xavier Mason</span>
                     <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
                 </div>

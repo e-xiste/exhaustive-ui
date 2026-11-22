@@ -15,7 +15,7 @@ import { OrderListModule } from '@exhaustive-ui/core/orderlist';
             <p>OrderList is used as a controlled input with <i>value</i> property. Content of a list item needs to be defined with the <i>item</i> template that receives an object in the list as parameter.</p>
         </app-docsectiontext>
         <div class="card sm:flex sm:justify-center">
-            <p-order-list [value]="products()" dataKey="id" [responsive]="true" breakpoint="575px">
+            <p-order-list [value]="products()" dataKey="id" [responsive]="true" breakpoint="575px" ariaLabel="Products">
                 <ng-template #item let-option>
                     {{ option.name }}
                 </ng-template>

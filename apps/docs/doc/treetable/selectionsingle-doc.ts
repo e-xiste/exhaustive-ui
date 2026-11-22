@@ -28,8 +28,8 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <div class="flex gap-4 items-center justify-center mb-6">
-                <p-toggle-switch [(ngModel)]="metaKeySelection" />
-                <span>Metakey</span>
+                <p-toggle-switch [(ngModel)]="metaKeySelection" inputId="metakey-single" />
+                <label for="metakey-single">Metakey</label>
             </div>
             <p-deferred-demo (load)="loadDemoData()">
                 <p-tree-table [value]="files" [columns]="cols" selectionMode="single" [metaKeySelection]="metaKeySelection" [(selection)]="selectedNode" dataKey="name" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">

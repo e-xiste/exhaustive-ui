@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>InputText is used as a controlled input with <i>ngModel</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <input type="text" pInputText [(ngModel)]="value" />
+            <input type="text" pInputText [(ngModel)]="value" aria-label="Name" />
         </div>
         <app-code></app-code>
     `

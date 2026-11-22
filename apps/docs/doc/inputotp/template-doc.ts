@@ -14,8 +14,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-input-otp [(ngModel)]="value">
-                <ng-template #input let-token let-events="events">
-                    <input class="custom-otp-input" (keydown)="events.keydown($event)" (input)="events.input($event)" type="text" [attr.value]="token" [maxLength]="1" />
+                <ng-template #input let-token let-events="events" let-index="index">
+                    <input class="custom-otp-input" (keydown)="events.keydown($event)" (input)="events.input($event)" type="text" [attr.value]="token" [maxLength]="1" [attr.aria-label]="'Digit ' + index" />
                 </ng-template>
             </p-input-otp>
         </div>

@@ -25,18 +25,18 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-input-group>
                 <input pInputText placeholder="Keyword" />
                 <p-input-group-addon>
-                    <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="menu.toggle($event)" />
+                    <p-button icon="pi pi-search" ariaLabel="Search options" severity="secondary" variant="text" (click)="menu.toggle($event)" />
                 </p-input-group-addon>
             </p-input-group>
             <p-menu #menu [model]="items" popup styleClass="min-w-fit!" />
 
             <p-input-group>
                 <p-input-group-addon>
-                    <p-button icon="pi pi-check" severity="secondary" />
+                    <p-button icon="pi pi-check" ariaLabel="Vote yes" severity="secondary" />
                 </p-input-group-addon>
                 <input pInputText placeholder="Vote" />
                 <p-input-group-addon>
-                    <p-button icon="pi pi-times" severity="secondary" />
+                    <p-button icon="pi pi-times" ariaLabel="Vote no" severity="secondary" />
                 </p-input-group-addon>
             </p-input-group>
         </div>

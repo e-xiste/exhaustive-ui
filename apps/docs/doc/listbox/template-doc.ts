@@ -18,10 +18,10 @@ interface Country {
             <p>For custom content support define a template named <i>item</i> where the default local template variable refers to an option.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" class="w-full md:w-56">
+            <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" class="w-full md:w-56" ariaLabel="Country">
                 <ng-template #item let-country>
                     <div class="flex items-center gap-2">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" alt="" />
                         <div>{{ country.name }}</div>
                     </div>
                 </ng-template>

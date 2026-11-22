@@ -38,7 +38,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     </div>
                 </ng-template>
             </p-drawer>
-            <button pButton (click)="visible = true">
+            <button pButton (click)="visible = true" aria-label="Open drawer">
                 <i class="pi pi-plus" pButtonIcon></i>
             </button>
         </div>

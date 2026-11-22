@@ -18,7 +18,7 @@ interface City {
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" fluid />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" fluid ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

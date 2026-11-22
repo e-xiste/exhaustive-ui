@@ -18,7 +18,7 @@ interface City {
             <p>Loading state can be used <i>loading</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" [loading]="true" optionLabel="name" placeholder="Loading..." class="w-full md:w-80" />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" [loading]="true" optionLabel="name" placeholder="Loading..." class="w-full md:w-80" ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

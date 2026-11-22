@@ -19,10 +19,10 @@ interface Country {
             <p>Options can be grouped when a nested data structures is provided.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [options]="groupedCities" [group]="true" [(ngModel)]="selectedCountry" class="w-full md:w-56">
+            <p-listbox [options]="groupedCities" [group]="true" [(ngModel)]="selectedCountry" class="w-full md:w-56" ariaLabel="City">
                 <ng-template let-group #group>
                     <div class="flex items-center">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" alt="" />
                         <span>{{ group.label }}</span>
                     </div>
                 </ng-template>

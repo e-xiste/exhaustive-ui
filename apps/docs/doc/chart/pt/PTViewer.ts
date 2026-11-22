@@ -11,7 +11,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
     imports: [CommonModule, AppDocPtViewer, FormsModule, ChartModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-chart type="bar" [data]="basicData" [options]="basicOptions" class="w-full md:w-120" />
+            <p-chart type="bar" ariaLabel="Bar chart of sales by quarter" [data]="basicData" [options]="basicOptions" class="w-full md:w-120" />
         </app-docptviewer>
     `
 })

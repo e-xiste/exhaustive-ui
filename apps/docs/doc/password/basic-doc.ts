@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Two-way value binding is defined using <i>ngModel</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" />
+            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

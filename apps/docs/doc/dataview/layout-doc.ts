@@ -53,7 +53,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                 <div class="flex flex-col md:items-end gap-8">
                                     <span class="text-xl font-semibold">{{ item.price | currency: 'USD' }}</span>
                                     <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <button pButton [outlined]="true">
+                                        <button pButton [outlined]="true" aria-label="Add to favorites">
                                             <i class="pi pi-heart" pButtonIcon></i>
                                         </button>
                                         <button pButton [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto md:flex-initial whitespace-nowrap">
@@ -96,7 +96,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                                 <i class="pi pi-shopping-cart" pButtonIcon></i>
                                                 <span pButtonLabel>Buy Now</span>
                                             </button>
-                                            <button pButton outlined>
+                                            <button pButton outlined aria-label="Add to favorites">
                                                 <i class="pi pi-heart" pButtonIcon></i>
                                             </button>
                                         </div>

@@ -13,9 +13,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Password provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-password [(ngModel)]="value1" size="small" placeholder="Small" />
-            <p-password [(ngModel)]="value2" placeholder="Normal" />
-            <p-password [(ngModel)]="value3" size="large" placeholder="Large" />
+            <p-password [(ngModel)]="value1" size="small" placeholder="Small" ariaLabel="Small" />
+            <p-password [(ngModel)]="value2" placeholder="Normal" ariaLabel="Normal" />
+            <p-password [(ngModel)]="value3" size="large" placeholder="Large" ariaLabel="Large" />
         </div>
         <app-code></app-code>
     `

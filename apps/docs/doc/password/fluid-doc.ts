@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" fluid />
+            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" fluid ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

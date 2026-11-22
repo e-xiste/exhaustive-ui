@@ -10,7 +10,7 @@ import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
     template: `
         <app-docptviewer [docs]="docs">
             <div class="w-full">
-                <p-progress-bar [value]="50"></p-progress-bar>
+                <p-progress-bar aria-label="Task progress" [value]="50"></p-progress-bar>
             </div>
         </app-docptviewer>
     `

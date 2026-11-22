@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Two-way value binding is defined using the standard <i>ngModel</i> directive referencing to a <i>Date</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" />
+            <p-date-picker [(ngModel)]="date" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

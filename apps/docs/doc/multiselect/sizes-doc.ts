@@ -18,9 +18,9 @@ interface City {
             <p>MultiSelect provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-multi-select [(ngModel)]="value1" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" size="small" placeholder="Small" />
-            <p-multi-select [(ngModel)]="value2" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" placeholder="Normal" />
-            <p-multi-select [(ngModel)]="value3" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" size="large" placeholder="Large" />
+            <p-multi-select [(ngModel)]="value1" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" size="small" placeholder="Small" ariaLabel="Small" />
+            <p-multi-select [(ngModel)]="value2" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" placeholder="Normal" ariaLabel="Normal" />
+            <p-multi-select [(ngModel)]="value3" [options]="cities" optionLabel="name" [maxSelectedLabels]="3" class="w-full md:w-80" size="large" placeholder="Large" ariaLabel="Large" />
         </div>
         <app-code></app-code>
     `

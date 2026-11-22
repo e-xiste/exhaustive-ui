@@ -19,19 +19,19 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex flex-col gap-4">
             <div class="flex items-center justify-center">
                 <div>
-                    <p-button icon="pi pi-star" outlined />
+                    <p-button icon="pi pi-star" ariaLabel="Add to favorites" outlined />
                 </div>
                 <div class="flex-1">
                     <p-paginator (onPageChange)="onPageChange1($event)" [first]="first1" [rows]="rows1" [totalRecords]="120" [rowsPerPageOptions]="[10, 20, 30]" [showFirstLastIcon]="false" />
                 </div>
                 <div class="justify-end">
-                    <p-button icon="pi pi-search" />
+                    <p-button icon="pi pi-search" ariaLabel="Search" />
                 </div>
             </div>
             <p-divider />
             <div class="flex items-center justify-end">
                 <span class="mx-1 text-color">Items per page: </span>
-                <p-select [options]="options" optionLabel="label" optionValue="value" [(ngModel)]="rows2" (ngModelChange)="first2 = 0" />
+                <p-select [options]="options" optionLabel="label" optionValue="value" ariaLabel="Items per page" [(ngModel)]="rows2" (ngModelChange)="first2 = 0" />
                 <p-paginator
                     [first]="first2"
                     [rows]="rows2"
@@ -47,7 +47,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <div class="flex items-center justify-start">
                 <div class="flex justify-center items-center gap-4">
                     <span>Items per page: </span>
-                    <p-slider [(ngModel)]="rows3" (ngModelChange)="first3 = 0" [style]="{ width: '10rem' }" [min]="10" [max]="120" [step]="30" />
+                    <p-slider [(ngModel)]="rows3" ariaLabel="Items per page" (ngModelChange)="first3 = 0" [style]="{ width: '10rem' }" [min]="10" [max]="120" [step]="30" />
                 </div>
                 <p-paginator
                     (onPageChange)="onPageChange3($event)"

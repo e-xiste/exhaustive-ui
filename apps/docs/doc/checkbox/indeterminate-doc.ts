@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The <i>indeterminate</i> state indicates that a checkbox is neither "on" or "off".</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-4">
-            <p-checkbox [(ngModel)]="checked" [binary]="true" [indeterminate]="true" />
+            <p-checkbox [(ngModel)]="checked" [binary]="true" [indeterminate]="true" ariaLabel="Select all" />
         </div>
         <app-code></app-code>
     `

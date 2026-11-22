@@ -36,6 +36,7 @@ interface City {
                         [invalid]="city.invalid && (city.touched || exampleForm.submitted)"
                         fluid
                         required
+                        ariaLabel="Cities"
                     />
                     @if (city.invalid && (city.touched || exampleForm.submitted)) {
                         <p-message severity="error" size="small" variant="simple">City is required.</p-message>

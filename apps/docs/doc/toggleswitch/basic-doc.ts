@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Two-way value binding is defined using <i>ngModel</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-toggle-switch [(ngModel)]="checked" />
+            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications" />
         </div>
         <app-code></app-code>
     `

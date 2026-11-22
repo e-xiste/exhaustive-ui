@@ -13,7 +13,7 @@ import { ListboxModule } from '@exhaustive-ui/core/listbox';
             <p>Items can be reordered using drag and drop by enabling <i>dragdrop</i> property. Depends on <i>&#64;angular/cdk</i> package.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [dragdrop]="true" class="w-full md:w-56" />
+            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [dragdrop]="true" class="w-full md:w-56" ariaLabel="City" />
         </div>
         <app-code></app-code>
     `

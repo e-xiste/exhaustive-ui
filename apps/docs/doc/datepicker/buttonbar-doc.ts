@@ -14,8 +14,8 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>When <i>showButtonBar</i> is present, today and clear buttons are displayed at the footer. The content can be fully customized with the <i>buttonbar</i> template as well.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-4 flex-wrap">
-            <p-date-picker [(ngModel)]="date" [showButtonBar]="true" placeholder="Basic" />
-            <p-date-picker [(ngModel)]="dates" [showButtonBar]="true" placeholder="Customized" selectionMode="range" [readonlyInput]="true">
+            <p-date-picker [(ngModel)]="date" [showButtonBar]="true" placeholder="Basic" ariaLabel="Date" />
+            <p-date-picker [(ngModel)]="dates" [showButtonBar]="true" placeholder="Customized" selectionMode="range" [readonlyInput]="true" ariaLabel="Date range">
                 <ng-template #buttonbar let-todayCallback="todayCallback" let-clearCallback="clearCallback">
                     <div class="flex justify-between w-full">
                         <div class="flex gap-2">

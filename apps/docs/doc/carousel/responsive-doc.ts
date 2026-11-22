@@ -35,8 +35,8 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         <div class="flex justify-between items-center">
                             <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
                             <span>
-                                <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
-                                <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" severity="secondary" [outlined]="true" />
+                                <p-button icon="pi pi-shopping-cart" ariaLabel="Add to cart" styleClass="ml-2" />
                             </span>
                         </div>
                     </div>

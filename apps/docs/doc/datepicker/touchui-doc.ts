@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>When <i>touchUI</i> is enabled, overlay is displayed as optimized for touch devices.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" [touchUI]="true" [readonlyInput]="true" />
+            <p-date-picker [(ngModel)]="date" [touchUI]="true" [readonlyInput]="true" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

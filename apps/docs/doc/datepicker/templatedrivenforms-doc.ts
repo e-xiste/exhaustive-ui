@@ -18,7 +18,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         <div class="card flex justify-center">
             <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <p-date-picker name="date" [invalid]="dateModel.invalid && (dateModel.touched || exampleForm.submitted)" #dateModel="ngModel" [(ngModel)]="date" required />
+                    <p-date-picker name="date" [invalid]="dateModel.invalid && (dateModel.touched || exampleForm.submitted)" #dateModel="ngModel" [(ngModel)]="date" required ariaLabel="Date" />
                     @if (dateModel.invalid && (dateModel.touched || exampleForm.submitted)) {
                         <p-message severity="error" size="small" variant="simple">Date is required.</p-message>
                     }

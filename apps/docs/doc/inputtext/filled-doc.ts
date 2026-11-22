@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Specify the <i>variant</i> property as <i>filled</i> to display the component with a higher visual emphasis than the default <i>outlined</i> style.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <input type="text" pInputText [(ngModel)]="value" variant="filled" />
+            <input type="text" pInputText [(ngModel)]="value" variant="filled" aria-label="Name" />
         </div>
         <app-code></app-code>
     `

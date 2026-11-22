@@ -9,7 +9,7 @@ import { ProgressSpinnerModule } from '@exhaustive-ui/core/progressspinner';
     imports: [CommonModule, AppDocPtViewer, ProgressSpinnerModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-progress-spinner />
+            <p-progress-spinner ariaLabel="Loading" />
         </app-docptviewer>
     `
 })

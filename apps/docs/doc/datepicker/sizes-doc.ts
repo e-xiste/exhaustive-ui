@@ -13,9 +13,9 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>DatePicker provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-date-picker [(ngModel)]="value1" size="small" placeholder="Small" showIcon iconDisplay="input" />
-            <p-date-picker [(ngModel)]="value2" placeholder="Normal" showIcon iconDisplay="input" />
-            <p-date-picker [(ngModel)]="value3" size="large" placeholder="Large" showIcon iconDisplay="input" />
+            <p-date-picker [(ngModel)]="value1" size="small" placeholder="Small" showIcon iconDisplay="input" ariaLabel="Small" />
+            <p-date-picker [(ngModel)]="value2" placeholder="Normal" showIcon iconDisplay="input" ariaLabel="Normal" />
+            <p-date-picker [(ngModel)]="value3" size="large" placeholder="Large" showIcon iconDisplay="input" ariaLabel="Large" />
         </div>
         <app-code></app-code>
     `

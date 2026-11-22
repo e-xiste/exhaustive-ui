@@ -22,7 +22,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <input type="text" pInputText placeholder="Search" />
             </p-icon-field>
             <p-icon-field>
-                <input type="text" pInputText />
+                <input type="text" pInputText aria-label="Username" />
                 <p-input-icon class="pi pi-spinner pi-spin" />
             </p-icon-field>
         </div>

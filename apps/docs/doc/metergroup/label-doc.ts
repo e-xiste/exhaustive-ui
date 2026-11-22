@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-meter-group [value]="value" labelPosition="start" labelOrientation="vertical" />
+            <p-meter-group [value]="value" aria-label="Storage usage" labelPosition="start" labelOrientation="vertical" />
         </div>
         <app-code></app-code>
     `

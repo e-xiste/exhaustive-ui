@@ -30,6 +30,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 [maxSelectedLabels]="3"
                 class="w-full md:w-80"
                 #ms
+                ariaLabel="Items"
             >
                 <ng-template #headercheckboxicon let-allSelected="checked" let-partialSelected="partialSelected">
                     <i class="pi pi-check" *ngIf="allSelected"></i>

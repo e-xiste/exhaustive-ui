@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [disabled]="true" placeholder="Disabled" autocomplete="off" />
+            <p-password [(ngModel)]="value" [disabled]="true" placeholder="Disabled" autocomplete="off" ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

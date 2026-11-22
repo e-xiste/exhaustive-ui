@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>Bars can be stacked on top of each other when <i>stacked</i> option of a scale is enabled.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="bar" [data]="data" [options]="options" class="h-120" />
+            <p-chart type="bar" ariaLabel="Stacked bar chart of three datasets from January to July" [data]="data" [options]="options" class="h-120" />
         </div>
         <app-code></app-code>
     `

@@ -19,18 +19,18 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex flex-col md:flex-row gap-4">
             <p-input-group>
                 <input type="text" pInputText placeholder="Price" />
-                <p-input-group-addon><p-radio-button [(ngModel)]="radioValue1" name="rb1" value="rb1" /></p-input-group-addon>
+                <p-input-group-addon><p-radio-button [(ngModel)]="radioValue1" name="rb1" value="rb1" ariaLabel="Select price" /></p-input-group-addon>
             </p-input-group>
 
             <p-input-group>
-                <p-input-group-addon><p-checkbox [(ngModel)]="checked1" [binary]="true" /></p-input-group-addon>
+                <p-input-group-addon><p-checkbox [(ngModel)]="checked1" [binary]="true" ariaLabel="Enable username" /></p-input-group-addon>
                 <input type="text" pInputText placeholder="Username" />
             </p-input-group>
 
             <p-input-group>
-                <p-input-group-addon><p-checkbox [(ngModel)]="checked2" [binary]="true" /></p-input-group-addon>
+                <p-input-group-addon><p-checkbox [(ngModel)]="checked2" [binary]="true" ariaLabel="Enable website" /></p-input-group-addon>
                 <input type="text" pInputText placeholder="Website" />
-                <p-input-group-addon><p-radio-button name="rb2" value="rb2" [(ngModel)]="category" /></p-input-group-addon>
+                <p-input-group-addon><p-radio-button name="rb2" value="rb2" [(ngModel)]="category" ariaLabel="Select website" /></p-input-group-addon>
             </p-input-group>
         </div>
         <app-code></app-code>

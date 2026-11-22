@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Adding more items to the array displays the meters in a group.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-meter-group [value]="value" />
+            <p-meter-group [value]="value" aria-label="Storage usage" />
         </div>
         <app-code></app-code>
     `

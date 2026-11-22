@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <p-date-picker [formField]="exampleForm.selectedDate" />
+                    <p-date-picker [formField]="exampleForm.selectedDate" ariaLabel="Date" />
                     @let selectedDate = exampleForm.selectedDate();
                     @if (selectedDate.invalid() && selectedDate.touched()) {
                         <p-message severity="error" size="small" variant="simple">Date is required.</p-message>

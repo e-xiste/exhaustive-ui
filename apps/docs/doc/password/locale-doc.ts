@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" promptLabel="Choose a password" weakLabel="Too simple" mediumLabel="Average complexity" strongLabel="Complex password" autocomplete="off" />
+            <p-password [(ngModel)]="value" promptLabel="Choose a password" weakLabel="Too simple" mediumLabel="Average complexity" strongLabel="Complex password" autocomplete="off" ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

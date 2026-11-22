@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>DatePicker accepts custom content using <i>header</i> and <i>footer</i> templates.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date">
+            <p-date-picker [(ngModel)]="date" ariaLabel="Date">
                 <ng-template #header>Header</ng-template>
                 <ng-template #footer>Footer</ng-template>
             </p-date-picker>

@@ -35,7 +35,7 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
                 </p-icon-field>
 
                 <div class="flex items-center gap-2">
-                    <p-checkbox id="accept" [(ngModel)]="accept" name="accept" value="Accept" />
+                    <p-checkbox inputId="accept" [(ngModel)]="accept" name="accept" value="Accept" />
                     <label for="accept">I agree to the terms and conditions.</label>
                 </div>
 

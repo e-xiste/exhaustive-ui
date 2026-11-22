@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Month only picker is enabled by specifying <i>view</i> as <i>month</i> in addition to a suitable <i>dateFormat</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true" />
+            <p-date-picker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true" ariaLabel="Month" />
         </div>
         <app-code></app-code>
     `

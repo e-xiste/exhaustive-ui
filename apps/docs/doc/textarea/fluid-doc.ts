@@ -13,7 +13,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" fluid></textarea>
+            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" fluid aria-label="Message"></textarea>
         </div>
         <app-code></app-code>
     `

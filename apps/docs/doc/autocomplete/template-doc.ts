@@ -20,7 +20,7 @@ interface AutoCompleteCompleteEvent {
             <p>AutoComplete offers multiple templates for customization through templating.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedCountryAdvanced" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name">
+            <p-auto-complete [(ngModel)]="selectedCountryAdvanced" ariaLabel="Country" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name">
                 <ng-template let-country #item>
                     <div class="flex items-center gap-2">
                         <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />

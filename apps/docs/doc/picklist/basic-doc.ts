@@ -18,7 +18,7 @@ import { PickListModule } from '@exhaustive-ui/core/picklist';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-pick-list [source]="sourceProducts()" [target]="targetProducts()" [dragdrop]="true" [responsive]="true" breakpoint="1400px">
+            <p-pick-list [source]="sourceProducts()" [target]="targetProducts()" [dragdrop]="true" [responsive]="true" breakpoint="1400px" sourceAriaLabel="Available products" targetAriaLabel="Selected products">
                 <ng-template let-item #item>
                     {{ item.name }}
                 </ng-template>

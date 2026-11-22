@@ -13,49 +13,49 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
         </app-docsectiontext>
         <div class="card">
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                <p-button icon="pi pi-check" />
-                <p-button icon="pi pi-bookmark" severity="secondary" />
-                <p-button icon="pi pi-search" severity="success" />
-                <p-button icon="pi pi-user" severity="info" />
-                <p-button icon="pi pi-bell" severity="warn" />
-                <p-button icon="pi pi-heart" severity="help" />
-                <p-button icon="pi pi-times" severity="danger" />
+                <p-button icon="pi pi-check" ariaLabel="Confirm" />
+                <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" severity="secondary" />
+                <p-button icon="pi pi-search" ariaLabel="Search" severity="success" />
+                <p-button icon="pi pi-user" ariaLabel="Profile" severity="info" />
+                <p-button icon="pi pi-bell" ariaLabel="Notifications" severity="warn" />
+                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" severity="help" />
+                <p-button icon="pi pi-times" ariaLabel="Cancel" severity="danger" />
             </div>
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                <p-button icon="pi pi-check" [rounded]="true" />
-                <p-button icon="pi pi-bookmark" [rounded]="true" severity="secondary" />
-                <p-button icon="pi pi-search" [rounded]="true" severity="success" />
-                <p-button icon="pi pi-user" [rounded]="true" severity="info" />
-                <p-button icon="pi pi-bell" [rounded]="true" severity="warn" />
-                <p-button icon="pi pi-heart" [rounded]="true" severity="help" />
-                <p-button icon="pi pi-times" [rounded]="true" severity="danger" />
+                <p-button icon="pi pi-check" ariaLabel="Confirm" [rounded]="true" />
+                <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" [rounded]="true" severity="secondary" />
+                <p-button icon="pi pi-search" ariaLabel="Search" [rounded]="true" severity="success" />
+                <p-button icon="pi pi-user" ariaLabel="Profile" [rounded]="true" severity="info" />
+                <p-button icon="pi pi-bell" ariaLabel="Notifications" [rounded]="true" severity="warn" />
+                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [rounded]="true" severity="help" />
+                <p-button icon="pi pi-times" ariaLabel="Cancel" [rounded]="true" severity="danger" />
             </div>
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                <p-button icon="pi pi-check" [rounded]="true" [outlined]="true" />
-                <p-button icon="pi pi-bookmark" [rounded]="true" severity="secondary" [outlined]="true" />
-                <p-button icon="pi pi-search" [rounded]="true" severity="success" [outlined]="true" />
-                <p-button icon="pi pi-user" [rounded]="true" severity="info" [outlined]="true" />
-                <p-button icon="pi pi-bell" [rounded]="true" severity="warn" [outlined]="true" />
-                <p-button icon="pi pi-heart" [rounded]="true" severity="help" [outlined]="true" />
-                <p-button icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true" />
+                <p-button icon="pi pi-check" ariaLabel="Confirm" [rounded]="true" [outlined]="true" />
+                <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" [rounded]="true" severity="secondary" [outlined]="true" />
+                <p-button icon="pi pi-search" ariaLabel="Search" [rounded]="true" severity="success" [outlined]="true" />
+                <p-button icon="pi pi-user" ariaLabel="Profile" [rounded]="true" severity="info" [outlined]="true" />
+                <p-button icon="pi pi-bell" ariaLabel="Notifications" [rounded]="true" severity="warn" [outlined]="true" />
+                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [rounded]="true" severity="help" [outlined]="true" />
+                <p-button icon="pi pi-times" ariaLabel="Cancel" [rounded]="true" severity="danger" [outlined]="true" />
             </div>
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                <p-button icon="pi pi-check" [rounded]="true" [text]="true" [raised]="true" />
-                <p-button icon="pi pi-bookmark" [rounded]="true" [text]="true" [raised]="true" severity="secondary" />
-                <p-button icon="pi pi-search" [rounded]="true" [text]="true" [raised]="true" severity="success" />
-                <p-button icon="pi pi-user" [rounded]="true" [text]="true" [raised]="true" severity="info" />
-                <p-button icon="pi pi-bell" [rounded]="true" [text]="true" [raised]="true" severity="warn" />
-                <p-button icon="pi pi-heart" [rounded]="true" [text]="true" [raised]="true" severity="help" />
-                <p-button icon="pi pi-times" [rounded]="true" [text]="true" [raised]="true" severity="danger" />
+                <p-button icon="pi pi-check" ariaLabel="Confirm" [rounded]="true" [text]="true" [raised]="true" />
+                <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" [rounded]="true" [text]="true" [raised]="true" severity="secondary" />
+                <p-button icon="pi pi-search" ariaLabel="Search" [rounded]="true" [text]="true" [raised]="true" severity="success" />
+                <p-button icon="pi pi-user" ariaLabel="Profile" [rounded]="true" [text]="true" [raised]="true" severity="info" />
+                <p-button icon="pi pi-bell" ariaLabel="Notifications" [rounded]="true" [text]="true" [raised]="true" severity="warn" />
+                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [rounded]="true" [text]="true" [raised]="true" severity="help" />
+                <p-button icon="pi pi-times" ariaLabel="Cancel" [rounded]="true" [text]="true" [raised]="true" severity="danger" />
             </div>
             <div class="flex justify-center flex-wrap gap-4 mb-6">
-                <p-button icon="pi pi-check" [rounded]="true" [text]="true" />
-                <p-button icon="pi pi-bookmark" [rounded]="true" [text]="true" severity="secondary" />
-                <p-button icon="pi pi-search" [rounded]="true" [text]="true" severity="success" />
-                <p-button icon="pi pi-user" [rounded]="true" [text]="true" severity="info" />
-                <p-button icon="pi pi-bell" [rounded]="true" [text]="true" severity="warn" />
-                <p-button icon="pi pi-heart" [rounded]="true" [text]="true" severity="help" />
-                <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" />
+                <p-button icon="pi pi-check" ariaLabel="Confirm" [rounded]="true" [text]="true" />
+                <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" [rounded]="true" [text]="true" severity="secondary" />
+                <p-button icon="pi pi-search" ariaLabel="Search" [rounded]="true" [text]="true" severity="success" />
+                <p-button icon="pi pi-user" ariaLabel="Profile" [rounded]="true" [text]="true" severity="info" />
+                <p-button icon="pi pi-bell" ariaLabel="Notifications" [rounded]="true" [text]="true" severity="warn" />
+                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [rounded]="true" [text]="true" severity="help" />
+                <p-button icon="pi pi-times" ariaLabel="Cancel" [rounded]="true" [text]="true" severity="danger" />
             </div>
         </div>
         <app-code></app-code>

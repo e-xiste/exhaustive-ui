@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>toggleMask</i> is present, an icon is displayed to show the value as plain text.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [toggleMask]="true" autocomplete="off" />
+            <p-password [(ngModel)]="value" [toggleMask]="true" autocomplete="off" ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

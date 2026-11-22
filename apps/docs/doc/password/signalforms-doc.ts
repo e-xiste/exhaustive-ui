@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4 sm:w-56">
                 <div class="flex flex-col gap-1">
-                    <p-password [formField]="exampleForm.value" [feedback]="false" autocomplete="off" fluid />
+                    <p-password [formField]="exampleForm.value" [feedback]="false" autocomplete="off" fluid ariaLabel="Password" />
                     @let value = exampleForm.value();
                     @if (value.invalid() && value.touched()) {
                         <p-message severity="error" size="small" variant="simple">Password is required.</p-message>

@@ -23,7 +23,7 @@ import { TableModule } from '@exhaustive-ui/core/table';
                     </tr>
                     <tr>
                         <th *ngFor="let col of columns">
-                            <p-column-filter type="text" [field]="col.field" [matchModeOptions]="matchModeOptions" [matchMode]="'custom-equals'" />
+                            <p-column-filter type="text" [field]="col.field" [matchModeOptions]="matchModeOptions" [matchMode]="'custom-equals'" ariaLabel="Filter by {{ col.header }}" />
                         </th>
                     </tr>
                 </ng-template>

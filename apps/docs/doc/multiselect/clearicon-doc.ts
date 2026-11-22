@@ -18,7 +18,7 @@ interface City {
             <p>When <i>showClear</i> is enabled, a clear icon is displayed to clear the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" class="w-full md:w-80" [showClear]="true" />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" class="w-full md:w-80" [showClear]="true" ariaLabel="Cities" />
         </div>
         <app-code></app-code>
     `

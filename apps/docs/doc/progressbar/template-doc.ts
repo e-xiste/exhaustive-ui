@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p><i>content</i> template allows displaying custom content inside the progressbar.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-progress-bar [value]="50">
+            <p-progress-bar aria-label="Task progress" [value]="50">
                 <ng-template #content let-value>
                     <span>{{ value }}/100</span>
                 </ng-template>

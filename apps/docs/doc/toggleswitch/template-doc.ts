@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The <i>handle</i> template is available to display custom content.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-4">
-            <p-toggle-switch [(ngModel)]="checked">
+            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications">
                 <ng-template #handle let-checked="checked">
                     <i [ngClass]="['text-xs!', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
                 </ng-template>

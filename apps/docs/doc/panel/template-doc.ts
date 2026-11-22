@@ -18,21 +18,21 @@ import { PanelModule } from '@exhaustive-ui/core/panel';
             <p-panel [toggleable]="true">
                 <ng-template #header>
                     <div class="flex items-center gap-2">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" shape="circle" />
                         <span class="font-bold">Amy Elsner</span>
                     </div>
                 </ng-template>
                 <ng-template #footer>
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-2">
-                            <p-button icon="pi pi-user" rounded text></p-button>
-                            <p-button icon="pi pi-bookmark" severity="secondary" rounded text></p-button>
+                            <p-button icon="pi pi-user" ariaLabel="View profile" rounded text></p-button>
+                            <p-button icon="pi pi-bookmark" ariaLabel="Bookmark" severity="secondary" rounded text></p-button>
                         </div>
                         <span class="text-surface-500 dark:text-surface-400">Updated 2 hours ago</span>
                     </div>
                 </ng-template>
                 <ng-template #icons>
-                    <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
+                    <p-button icon="pi pi-cog" ariaLabel="Settings" severity="secondary" rounded text (click)="menu.toggle($event)" />
                     <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
                 </ng-template>
                 <p class="m-0">

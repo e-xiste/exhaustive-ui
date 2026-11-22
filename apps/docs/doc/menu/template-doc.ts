@@ -68,7 +68,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                 </ng-template>
                 <ng-template #end>
                     <button pRipple class="relative overflow-hidden w-full border-0 bg-transparent flex items-start p-2 pl-4 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-none cursor-pointer transition-colors duration-200">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" class="mr-2" shape="circle" />
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" class="mr-2" shape="circle" />
                         <span class="inline-flex flex-col items-start">
                             <span class="font-bold">Amy Elsner</span>
                             <span class="text-sm">Admin</span>

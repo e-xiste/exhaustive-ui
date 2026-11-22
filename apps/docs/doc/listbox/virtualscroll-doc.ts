@@ -32,6 +32,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 scrollHeight="250px"
                 [striped]="true"
                 class="w-full md:w-56"
+                ariaLabel="Item"
             />
         </div>
         <app-code></app-code>

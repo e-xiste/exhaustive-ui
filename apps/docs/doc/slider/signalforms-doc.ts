@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-4">
-                    <p-slider [formField]="exampleForm.value" class="w-56" />
+                    <p-slider [formField]="exampleForm.value" class="w-56" ariaLabel="Volume" />
                     @let value = exampleForm.value();
                     @if (value.invalid() && value.touched()) {
                         <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>

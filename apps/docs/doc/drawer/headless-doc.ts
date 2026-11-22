@@ -55,7 +55,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
                                 <span class="font-semibold text-2xl text-primary">Your Logo</span>
                             </span>
                             <span>
-                                <p-button type="button" (click)="closeCallback($event)" icon="pi pi-times" rounded="true" outlined="true" styleClass="h-8 w-8"></p-button>
+                                <p-button type="button" (click)="closeCallback($event)" icon="pi pi-times" ariaLabel="Close" rounded="true" outlined="true" styleClass="h-8 w-8"></p-button>
                             </span>
                         </div>
                         <div class="overflow-y-auto">
@@ -219,7 +219,7 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
                     </div>
                 </ng-template>
             </p-drawer>
-            <p-button (click)="visible = true" icon="pi pi-bars" />
+            <p-button (click)="visible = true" icon="pi pi-bars" ariaLabel="Open menu" />
         </div>
         <app-code></app-code>
     `

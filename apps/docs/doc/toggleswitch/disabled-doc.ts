@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-toggle-switch [(ngModel)]="checked" [disabled]="true" />
+            <p-toggle-switch [(ngModel)]="checked" [disabled]="true" ariaLabel="Notifications" />
         </div>
         <app-code></app-code>
     `

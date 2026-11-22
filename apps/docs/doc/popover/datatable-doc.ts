@@ -41,7 +41,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                             <img [src]="'https://exhaustive-ui.com/demo/product/' + product.image" [alt]="product.image" class="w-16 shadow-xs" />
                         </td>
                         <td>
-                            <p-button (onClick)="displayProduct($event, product)" icon="pi pi-search" severity="secondary" rounded />
+                            <p-button (onClick)="displayProduct($event, product)" icon="pi pi-search" [ariaLabel]="'View ' + product.name" severity="secondary" rounded />
                         </td>
                     </tr>
                 </ng-template>
@@ -77,7 +77,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     styleClass="w-full whitespace-nowrap"
                                     (onClick)="hidePopover()"
                                 />
-                                <p-button icon="pi pi-heart" outlined (onClick)="hidePopover()" />
+                                <p-button icon="pi pi-heart" ariaLabel="Add to favorites" outlined (onClick)="hidePopover()" />
                             </div>
                         </div>
                     </div>

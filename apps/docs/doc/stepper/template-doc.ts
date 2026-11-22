@@ -22,7 +22,7 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
                 <p-step-list>
                     <p-step [value]="1" class="flex flex-row flex-auto gap-2">
                         <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" aria-label="Account" (click)="activateCallback()">
                                 <span
                                     class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
                                     [ngClass]="{
@@ -38,7 +38,7 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
                     <p-step [value]="2" class="flex flex-row flex-auto gap-2">
                         <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" aria-label="Interests" (click)="activateCallback()">
                                 <span
                                     class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
                                     [ngClass]="{
@@ -54,7 +54,7 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 
                     <p-step [value]="3" class="flex flex-row flex-auto gap-2">
                         <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <button class="bg-transparent border-0 inline-flex flex-col gap-2" aria-label="Confirmation" (click)="activateCallback()">
                                 <span
                                     class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
                                     [ngClass]="{

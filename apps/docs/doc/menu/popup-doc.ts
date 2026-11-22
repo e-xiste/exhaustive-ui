@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-menu #menu [model]="items" [popup]="true" />
-            <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
+            <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" ariaLabel="Show options" />
         </div>
         <app-code></app-code>
     `,

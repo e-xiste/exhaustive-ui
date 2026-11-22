@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>Two-way binding is defined using the standard <i>ngModel</i> directive.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-slider [(ngModel)]="value" class="w-56" />
+            <p-slider [(ngModel)]="value" class="w-56" ariaLabel="Volume" />
         </div>
         <app-code></app-code>
     `

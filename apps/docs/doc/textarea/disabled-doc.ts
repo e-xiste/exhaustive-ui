@@ -12,7 +12,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <textarea rows="5" cols="30" pTextarea [disabled]="true"></textarea>
+            <textarea rows="5" cols="30" pTextarea [disabled]="true" aria-label="Message"></textarea>
         </div>
         <app-code></app-code>
     `

@@ -17,7 +17,7 @@ import { AppCode } from '@/components/doc/app.code';
             <div class="flex flex-col items-center">
                 <img alt="user header" class="w-full md:w-80 rounded-sm mb-6" src="https://exhaustive-ui.com/demo/card-vue.jpg" [style]="filterStyle" />
                 <p-select-button [(ngModel)]="filter" [options]="filterOptions" optionLabel="label" optionValue="value" class="mb-4" />
-                <p-slider [(ngModel)]="filterValues[filter]" class="w-56" [min]="0" [max]="200" />
+                <p-slider [(ngModel)]="filterValues[filter]" class="w-56" [min]="0" [max]="200" ariaLabel="Filter intensity" />
             </div>
         </div>
         <app-code></app-code>

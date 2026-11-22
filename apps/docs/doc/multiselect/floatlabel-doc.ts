@@ -24,17 +24,17 @@ interface City {
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
             <p-float-label class="w-full md:w-80">
-                <p-multi-select id="over_label" [(ngModel)]="value1" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
+                <p-multi-select inputId="over_label" [(ngModel)]="value1" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
                 <label for="over_label">Over Label</label>
             </p-float-label>
 
             <p-float-label class="w-full md:w-80" variant="in">
-                <p-multi-select id="in_label" [(ngModel)]="value2" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
+                <p-multi-select inputId="in_label" [(ngModel)]="value2" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
                 <label for="in_label">In Label</label>
             </p-float-label>
 
             <p-float-label class="w-full md:w-80" variant="on">
-                <p-multi-select id="on_label" [(ngModel)]="value3" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
+                <p-multi-select inputId="on_label" [(ngModel)]="value3" [options]="cities" optionLabel="name" filter [maxSelectedLabels]="3" class="w-full" />
                 <label for="on_label">On Label</label>
             </p-float-label>
         </div>

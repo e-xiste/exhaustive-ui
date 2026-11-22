@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>When <i>showClear</i> is enabled, a clear icon is displayed to clear the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date" [showClear]="true" inputStyleClass="w-56" />
+            <p-date-picker [(ngModel)]="date" [showClear]="true" inputStyleClass="w-56" ariaLabel="Date" />
         </div>
         <app-code></app-code>
     `

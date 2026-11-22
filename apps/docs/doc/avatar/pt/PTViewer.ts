@@ -14,7 +14,7 @@ import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';
                 <p-avatar-group>
                     <p-avatar label="P" size="xlarge" shape="circle"></p-avatar>
                     <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
-                    <p-avatar image="https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp" class="flex items-center justify-center" size="xlarge" shape="circle"></p-avatar>
+                    <p-avatar image="https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp" ariaLabel="User avatar" class="flex items-center justify-center" size="xlarge" shape="circle"></p-avatar>
                 </p-avatar-group>
             </div>
         </app-docptviewer>

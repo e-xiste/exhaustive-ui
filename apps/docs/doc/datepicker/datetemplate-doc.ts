@@ -14,7 +14,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Custom content can be placed inside date cells with the <i>ng-template</i> property that takes a Date as a parameter.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-date-picker [(ngModel)]="date">
+            <p-date-picker [(ngModel)]="date" ariaLabel="Date">
                 <ng-template #date let-date>
                     <strong *ngIf="date.day > 10 && date.day < 15; else elseBlock" style="text-decoration: line-through">{{ date.day }}</strong>
                     <ng-template #elseBlock>{{ date.day }}</ng-template>

@@ -21,7 +21,7 @@ interface AutoCompleteCompleteEvent {
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="value" [suggestions]="items" (completeMethod)="search($event)" />
+            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" />
         </div>
         <app-code></app-code>`
 })

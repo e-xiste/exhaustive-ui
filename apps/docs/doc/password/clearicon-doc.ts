@@ -13,7 +13,7 @@ import { PasswordModule } from '@exhaustive-ui/core/password';
             <p>When <i>showClear</i> is enabled, a clear icon is displayed to clear the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" [showClear]="true" inputStyleClass="w-56" />
+            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" [showClear]="true" inputStyleClass="w-56" ariaLabel="Password" />
         </div>
         <app-code></app-code>
     `

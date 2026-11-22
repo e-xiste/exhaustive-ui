@@ -23,7 +23,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <div>
                         <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2">Share this document</span>
                         <p-input-group>
-                            <input pInputText value="https://exhaustive-ui.com/s/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly class="w-100" />
+                            <input pInputText aria-label="Share link" value="https://exhaustive-ui.com/s/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly class="w-100" />
                             <p-input-group-addon>
                                 <i class="pi pi-copy"></i>
                             </p-input-group-addon>
@@ -33,7 +33,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2">Invite Member</span>
                         <div class="flex">
                             <p-input-group>
-                                <input pInputText disabled />
+                                <input pInputText aria-label="Member email" disabled />
                                 <button pButton>
                                     <i class="pi pi-users" pButtonIcon></i>
                                     <span pButtonLabel>Invite</span>
@@ -46,7 +46,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <ul class="list-none p-0 m-0 flex flex-col gap-4">
                             @for (member of members; track member) {
                                 <li class="flex items-center gap-2">
-                                    <img [src]="'https://exhaustive-ui.com/demo/avatar/' + member.image" style="width: 32px" />
+                                    <img [src]="'https://exhaustive-ui.com/demo/avatar/' + member.image" [alt]="member.name" style="width: 32px" />
                                     <div>
                                         <span class="font-medium">{{ member.name }}</span>
                                         <div class="text-sm text-muted-color">{{ member.email }}</div>

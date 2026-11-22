@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>A pie chart is a circular statistical graphic which is divided into slices to illustrate numerical proportion.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-chart type="pie" [data]="data" [options]="options" class="w-full md:w-120" />
+            <p-chart type="pie" ariaLabel="Pie chart of categories A, B and C" [data]="data" [options]="options" class="w-full md:w-120" />
         </div>
         <app-code></app-code>
     `

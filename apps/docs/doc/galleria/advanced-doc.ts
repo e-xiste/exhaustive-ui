@@ -30,19 +30,31 @@ import { Galleria, GalleriaModule } from '@exhaustive-ui/core/galleria';
                 [pt]="galleriaPT"
             >
                 <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [ngStyle]="{ width: !fullscreen ? '100%' : '', display: !fullscreen ? 'block' : '' }" />
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" [ngStyle]="{ width: !fullscreen ? '100%' : '', display: !fullscreen ? 'block' : '' }" />
                 </ng-template>
                 <ng-template #thumbnail let-item>
                     <div class="grid gap-4 justify-center">
-                        <img [src]="item.thumbnailImageSrc" style="display: block" />
+                        <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="display: block" />
                     </div>
                 </ng-template>
                 <ng-template #footer let-item>
                     <div class="flex items-stretch gap-2 bg-surface-950 text-white h-10">
-                        <button type="button" pButton (click)="onThumbnailButtonClick()" class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3">
+                        <button
+                            type="button"
+                            pButton
+                            (click)="onThumbnailButtonClick()"
+                            aria-label="Toggle thumbnails"
+                            class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
+                        >
                             <i class="pi pi-th-large" pButtonIcon></i>
                         </button>
-                        <button type="button" pButton (click)="toggleAutoSlide()" class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3">
+                        <button
+                            type="button"
+                            pButton
+                            (click)="toggleAutoSlide()"
+                            [attr.aria-label]="isAutoPlay ? 'Pause slideshow' : 'Play slideshow'"
+                            class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
+                        >
                             <i [class]="slideButtonIcon()" pButtonIcon></i>
                         </button>
                         <span *ngIf="images()" class="flex items-center gap-4 ml-3">
@@ -50,7 +62,13 @@ import { Galleria, GalleriaModule } from '@exhaustive-ui/core/galleria';
                             <span class="font-bold text-sm">{{ images()[activeIndex].title }}</span>
                             <span class="text-sm">{{ images()[activeIndex].alt }}</span>
                         </span>
-                        <button type="button" pButton (click)="toggleFullScreen()" class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3 ml-auto">
+                        <button
+                            type="button"
+                            pButton
+                            (click)="toggleFullScreen()"
+                            [attr.aria-label]="fullscreen ? 'Exit full screen' : 'Enter full screen'"
+                            class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3 ml-auto"
+                        >
                             <i [class]="fullScreenIcon()" pButtonIcon></i>
                         </button>
                     </div>

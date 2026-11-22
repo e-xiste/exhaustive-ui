@@ -14,11 +14,11 @@ import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-avatar-group>
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/xuxuefeng.png" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" ariaLabel="Asiya Javayant" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" ariaLabel="Onyama Limba" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" ariaLabel="Ioni Bowcher" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/xuxuefeng.png" ariaLabel="Xuxue Feng" size="large" shape="circle" />
                 <p-avatar label="+2" shape="circle" size="large" />
             </p-avatar-group>
         </div>

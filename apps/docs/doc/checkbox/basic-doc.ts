@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Binary checkbox is used as a controlled input with <i>ngModel</i> and <i>binary</i> properties.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-4">
-            <p-checkbox [(ngModel)]="checked" [binary]="true" />
+            <p-checkbox [(ngModel)]="checked" [binary]="true" ariaLabel="Accept" />
         </div>
         <app-code></app-code>
     `

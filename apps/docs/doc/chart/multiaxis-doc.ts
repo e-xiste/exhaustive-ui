@@ -14,7 +14,7 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
             <p>Multiple axes can be added using the <i>scales</i> option.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-chart type="line" [data]="data" [options]="options" class="h-120" />
+            <p-chart type="line" ariaLabel="Line chart of two datasets on separate axes from January to July" [data]="data" [options]="options" class="h-120" />
         </div>
         <app-code></app-code>
     `

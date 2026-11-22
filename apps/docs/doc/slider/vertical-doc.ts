@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>Default layout of slider is <i>horizontal</i>, use <i>orientation</i> property for the alternative <i>vertical</i> mode.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" />
+            <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" ariaLabel="Volume" />
         </div>
         <app-code></app-code>
     `

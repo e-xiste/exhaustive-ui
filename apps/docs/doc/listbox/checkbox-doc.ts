@@ -18,7 +18,7 @@ interface City {
             <p>Listbox allows item selection using checkboxes.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-listbox [(ngModel)]="selectedCity" [options]="cities" [multiple]="true" [checkbox]="true" optionLabel="name" class="w-full md:w-56" />
+            <p-listbox [(ngModel)]="selectedCity" [options]="cities" [multiple]="true" [checkbox]="true" optionLabel="name" class="w-full md:w-56" ariaLabel="City" />
         </div>
         <app-code></app-code>
     `

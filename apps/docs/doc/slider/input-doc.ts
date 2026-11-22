@@ -15,8 +15,8 @@ import { AppCode } from '@/components/doc/app.code';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <div>
-                <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" />
-                <p-slider [(ngModel)]="value" class="w-full" />
+                <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" aria-label="Volume" />
+                <p-slider [(ngModel)]="value" class="w-full" ariaLabel="Volume" />
             </div>
         </div>
         <app-code></app-code>
