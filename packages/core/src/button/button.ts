@@ -51,6 +51,9 @@ const INTERNAL_BUTTON_CLASSES = {
     labelOnly: 'p-button-loading-label-only'
 } as const;
 
+/**
+ * Label of a pButton: `<span pButtonLabel>Save</span>` inside the button.
+ */
 @Directive({
     selector: '[pButtonLabel]',
     providers: [ButtonStyle, { provide: BUTTON_LABEL_INSTANCE, useExisting: ButtonLabel }, { provide: PARENT_INSTANCE, useExisting: ButtonLabel }],
@@ -94,6 +97,9 @@ export class ButtonLabel extends BaseComponent {
     }
 }
 
+/**
+ * Icon of a pButton: `<i class="pi pi-check" pButtonIcon></i>` inside the button.
+ */
 @Directive({
     selector: '[pButtonIcon]',
     providers: [ButtonStyle, { provide: BUTTON_ICON_INSTANCE, useExisting: ButtonIcon }, { provide: PARENT_INSTANCE, useExisting: ButtonIcon }],

@@ -309,6 +309,9 @@ export class AccordionHeader extends BaseComponent<AccordionHeaderPassThrough> {
     );
 }
 
+/**
+ * Content of an accordion panel, shown while the panel is expanded.
+ */
 @Component({
     selector: 'p-accordion-content, p-accordioncontent',
     imports: [BindModule, MotionModule],
@@ -401,7 +404,7 @@ export class Accordion extends BaseComponent<AccordionPassThrough> implements Bl
      * @defaultValue false
      * @group Props
      */
-    multiple = input(false, { transform: (v: any) => transformToBoolean(v) });
+    multiple = input<boolean, unknown>(false, { transform: (v: unknown) => transformToBoolean(v) });
     /**
      * Icon of a collapsed tab.
      * @group Props
@@ -417,7 +420,7 @@ export class Accordion extends BaseComponent<AccordionPassThrough> implements Bl
      * @defaultValue false
      * @group Props
      */
-    selectOnFocus = input(false, { transform: (v: any) => transformToBoolean(v) });
+    selectOnFocus = input<boolean, unknown>(false, { transform: (v: unknown) => transformToBoolean(v) });
 
     /**
      * The motion options.

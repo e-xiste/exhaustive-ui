@@ -215,7 +215,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
      * Style of the content section.
      * @group Props
      */
-    contentStyle = input<any>();
+    contentStyle = input<{ [key: string]: any } | null | undefined>();
     /**
      * Style class of the content.
      * @group Props
@@ -245,7 +245,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
      * Object literal to define widths per screen size.
      * @group Props
      */
-    breakpoints = input<any>();
+    breakpoints = input<{ [maxWidth: string]: string } | undefined>();
     /**
      * Style class of the component.
      * @group Props
@@ -389,7 +389,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
      * Inline style of the component.
      * @group Props
      */
-    style = input<any>();
+    style = input<{ [key: string]: any } | null | undefined>();
     /**
      * Position of the dialog.
      * @group Props

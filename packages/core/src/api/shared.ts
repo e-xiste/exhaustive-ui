@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Directive, NgModule, TemplateRef, inject, input } from '@angular/core';
 
+/**
+ * Header content projected into the components that have a header slot.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-header',
@@ -9,6 +12,9 @@ import { ChangeDetectionStrategy, Component, Directive, NgModule, TemplateRef, i
 })
 export class Header {}
 
+/**
+ * Footer content projected into the components that have a footer slot.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'p-footer',
@@ -17,6 +23,9 @@ export class Header {}
 })
 export class Footer {}
 
+/**
+ * Legacy way to name a template: `<ng-template pTemplate="header">`. Prefer a template reference, `<ng-template #header>`, which every component reads; Tree and OrganizationChart still use pTemplate to pick a template by node type.
+ */
 @Directive({
     selector: '[pTemplate]'
 })

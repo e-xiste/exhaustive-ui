@@ -3850,6 +3850,9 @@ export class TableBody extends BaseComponent {
     });
 }
 
+/**
+ * Styles a row as a row group header, with rowGroupMode set to subheader, and keeps it in place while scrolling.
+ */
 @Directive({
     selector: '[pRowGroupHeader]',
     standalone: false,
@@ -3869,6 +3872,9 @@ export class RowGroupHeader extends BaseComponent {
     }
 }
 
+/**
+ * Keeps a column in place while the table scrolls horizontally. frozen toggles it and alignFrozen sticks it to the left or the right.
+ */
 @Directive({
     selector: '[pFrozenColumn]',
     standalone: false,
@@ -4092,6 +4098,9 @@ class FrozenColumnTracker {
         }
     }
 }
+/**
+ * Sorts the table by a field when the header cell is clicked or activated with the keyboard: `[pSortableColumn]="'name'"`.
+ */
 @Directive({
     selector: '[pSortableColumn]',
     standalone: false,
@@ -4197,6 +4206,9 @@ export class SortableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Shows the sort state of a column. Place it in a header cell with pSortableColumn, with the same field.
+ */
 @Component({
     selector: 'p-sort-icon, p-sortIcon',
     standalone: false,
@@ -4294,6 +4306,9 @@ export class SortIcon extends BaseComponent {
     }
 }
 
+/**
+ * Selects its row when clicked or activated with the keyboard, according to the selectionMode of the table. Bind the row data: `[pSelectableRow]="rowData"`, with pSelectableRowIndex.
+ */
 @Directive({
     selector: '[pSelectableRow]',
     standalone: false,
@@ -4552,6 +4567,9 @@ export class SelectableRow extends BaseComponent {
     }
 }
 
+/**
+ * Selects its row when double clicked. Bind the row data: `[pSelectableRowDblClick]="rowData"`.
+ */
 @Directive({
     selector: '[pSelectableRowDblClick]',
     standalone: false,
@@ -4613,6 +4631,9 @@ export class SelectableRowDblClick extends BaseComponent {
     }
 }
 
+/**
+ * Opens the context menu of the table when the row is right clicked, and sets the row as contextMenuSelection. Bind the row data: `[pContextMenuRow]="rowData"`.
+ */
 @Directive({
     selector: '[pContextMenuRow]',
     standalone: false,
@@ -4672,6 +4693,9 @@ export class ContextMenuRow extends BaseComponent {
     }
 }
 
+/**
+ * Expands or collapses its row when clicked. Bind the row data: `[pRowToggler]="rowData"`; the table needs a dataKey and an `#expandedrow` template.
+ */
 @Directive({
     selector: '[pRowToggler]',
     standalone: false
@@ -4696,6 +4720,9 @@ export class RowToggler extends BaseComponent {
     }
 }
 
+/**
+ * Adds a resizer to a header cell, with resizableColumns enabled on the table.
+ */
 @Directive({
     selector: '[pResizableColumn]',
     standalone: false,
@@ -4817,6 +4844,9 @@ export class ResizableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Lets a header cell be dragged to reorder the columns, with reorderableColumns enabled on the table.
+ */
 @Directive({
     selector: '[pReorderableColumn]',
     standalone: false,
@@ -4957,6 +4987,9 @@ export class ReorderableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Makes a cell editable with editMode set to cell: clicking it shows the `#input` template of its p-cell-editor. Bind the row data: `[pEditableColumn]="rowData"`, with pEditableColumnField.
+ */
 @Directive({
     selector: '[pEditableColumn]',
     standalone: false,
@@ -5326,6 +5359,9 @@ export class EditableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Marks a row as editable, with editMode set to row. Bind the row data: `[pEditableRow]="rowData"`.
+ */
 @Directive({
     selector: '[pEditableRow]',
     standalone: false
@@ -5340,6 +5376,9 @@ export class EditableRow extends BaseComponent {
     }
 }
 
+/**
+ * Starts the edit of its row when clicked, with editMode set to row. Place it on a button inside a row with pEditableRow.
+ */
 @Directive({
     selector: '[pInitEditableRow]',
     standalone: false,
@@ -5358,6 +5397,9 @@ export class InitEditableRow extends BaseComponent {
     }
 }
 
+/**
+ * Saves the edit of its row when clicked, with editMode set to row. Place it on a button inside a row with pEditableRow.
+ */
 @Directive({
     selector: '[pSaveEditableRow]',
     standalone: false,
@@ -5376,6 +5418,9 @@ export class SaveEditableRow extends BaseComponent {
     }
 }
 
+/**
+ * Cancels the edit of its row when clicked, with editMode set to row. Place it on a button inside a row with pEditableRow.
+ */
 @Directive({
     selector: '[pCancelEditableRow]',
     standalone: false,
@@ -5395,6 +5440,9 @@ export class CancelEditableRow extends BaseComponent {
     }
 }
 
+/**
+ * Content of an editable cell: the `#input` template shows while the cell or the row is edited, the `#output` template otherwise.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-cell-editor, p-cellEditor',
@@ -5451,6 +5499,9 @@ export class CellEditor extends BaseComponent {
     }
 }
 
+/**
+ * Radio button that selects its row, for single selection. Bind the row data: `[value]="rowData"`.
+ */
 @Component({
     selector: 'p-table-radio-button, p-tableRadioButton',
     standalone: false,
@@ -5525,6 +5576,9 @@ export class TableRadioButton extends BaseComponent {
     }
 }
 
+/**
+ * Checkbox that selects its row, for multiple selection. Bind the row data: `[value]="rowData"`.
+ */
 @Component({
     selector: 'p-table-checkbox, p-tableCheckbox',
     standalone: false,
@@ -5603,6 +5657,9 @@ export class TableCheckbox extends BaseComponent {
     }
 }
 
+/**
+ * Checkbox in the header that selects or unselects all the rows.
+ */
 @Component({
     selector: 'p-table-header-checkbox, p-tableHeaderCheckbox',
     standalone: false,
@@ -5706,6 +5763,9 @@ export class TableHeaderCheckbox extends BaseComponent {
     }
 }
 
+/**
+ * Handle that starts dragging its row, inside a row with pReorderableRow.
+ */
 @Directive({
     selector: '[pReorderableRowHandle]',
     standalone: false,
@@ -5750,6 +5810,9 @@ export class ReorderableRowHandle extends BaseComponent {
 // the reorderable row directives by row element, to find the row under a touch pointer
 const reorderableRowElements = new WeakMap<HTMLElement, ReorderableRow>();
 
+/**
+ * Makes a row a drop target when reordering rows. Bind the row index: `[pReorderableRow]="rowIndex"`.
+ */
 @Directive({
     selector: '[pReorderableRow]',
     standalone: false,
@@ -7056,6 +7119,9 @@ export class ColumnFilter extends BaseComponent {
     }
 }
 
+/**
+ * @internal Rendering detail of ColumnFilter, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-column-filter-form-element, p-columnFilterFormElement',

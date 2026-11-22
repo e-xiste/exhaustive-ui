@@ -68,6 +68,9 @@ export interface StepPanelContentTemplateContext {
     active: boolean;
 }
 
+/**
+ * Container of the p-step headers of a stepper.
+ */
 @Component({
     selector: 'p-step-list',
     standalone: true,
@@ -418,6 +421,9 @@ export class StepPanel extends BaseComponent<StepPanelPassThrough> {
     }
 }
 
+/**
+ * Container of the p-step-panel elements of a stepper.
+ */
 @Component({
     selector: 'p-step-panels',
     standalone: true,

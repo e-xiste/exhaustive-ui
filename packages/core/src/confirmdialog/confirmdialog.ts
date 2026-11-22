@@ -278,7 +278,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
      * Object literal to define widths per screen size.
      * @group Props
      */
-    breakpoints = input<any>();
+    breakpoints = input<{ [maxWidth: string]: string } | undefined>();
     /**
      * Defines if background should be blocked when dialog is displayed.
      * @group Props
@@ -289,7 +289,7 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
      * Emits `visibleChange` with the new value when the dialog is shown or hidden.
      * @group Props
      */
-    visible = model<any>(undefined);
+    visible = model<boolean | undefined>(undefined);
     /**
      *  Allows getting the position of the component.
      * @group Props

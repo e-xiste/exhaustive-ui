@@ -94,7 +94,7 @@ function inputLine(input) {
 
 /** @returns {string} the Markdown card of one entry point */
 export function renderCard(entryPoint, component, types) {
-    const declarations = entryPoint.declarations ?? [];
+    const declarations = (entryPoint.declarations ?? []).filter((d) => !d.internal);
     const own = (d) => selectorsOf(d).some((s) => s.replace(/[-[\]]/g, '').toLowerCase() === `p${entryPoint.name}`);
     const main = declarations.find(own) ?? declarations.find((d) => selectorsOf(d).some((s) => /^p-/.test(s))) ?? declarations[0];
     const examples = (component?.sections ?? []).map((s) => s.examples?.typescript).filter(Boolean);

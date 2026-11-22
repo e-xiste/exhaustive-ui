@@ -253,6 +253,8 @@ function describeDeclaration({ entry, symbol, classDecl, meta, checker, sourceIn
         standalone: meta.standalone,
         description: readDocs(symbol, checker).description || apiComponent?.description || undefined,
         deprecated: readDocs(symbol, checker).deprecated,
+        // A rendering detail of another component (`@internal` in its JSDoc): exported, but not written by users
+        internal: readDocs(symbol, checker).internal || undefined,
         inputs: sortByName(inputs),
         outputs: sortByName(outputs),
         templates,
@@ -371,7 +373,7 @@ function readDocs(symbol, checker) {
         const tag = tags.find((t) => t.name === name);
         return tag ? ts.displayPartsToString(tag.text).trim() || true : undefined;
     };
-    return { description, deprecated: tagText('deprecated'), defaultValue: tagText('defaultValue') };
+    return { description, deprecated: tagText('deprecated'), defaultValue: tagText('defaultValue'), internal: tagText('internal') !== undefined };
 }
 
 /**

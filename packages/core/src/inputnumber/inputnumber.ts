@@ -343,7 +343,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
      */
     currency = input<string | undefined>();
     /**
-     * How to display the currency in currency formatting. Possible values are "symbol" to use a localized currency symbol such as €, ü"code" to use the ISO currency code, "name" to use a localized currency name such as "dollar"; the default is "symbol".
+     * How to display the currency in currency formatting. Possible values are "symbol" to use a localized currency symbol such as €, "code" to use the ISO currency code, "name" to use a localized currency name such as "dollar"; the default is "symbol".
      * @group Props
      */
     currencyDisplay = input<string | undefined | any>();

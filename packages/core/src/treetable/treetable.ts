@@ -2918,6 +2918,9 @@ export class TTScrollableView extends BaseComponent {
     }
 }
 
+/**
+ * Sorts the tree table by a field when the header cell is clicked or activated with the keyboard: `[ttSortableColumn]="'name'"`.
+ */
 @Directive({
     selector: '[ttSortableColumn]',
     standalone: false,
@@ -3002,6 +3005,9 @@ export class TTSortableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Shows the sort state of a column. Place it in a header cell with ttSortableColumn, with the same field.
+ */
 @Component({
     selector: 'p-tree-table-sort-icon, p-treeTableSortIcon, p-treetable-sort-icon',
     standalone: false,
@@ -3099,6 +3105,9 @@ export class TTSortIcon extends BaseComponent {
     }
 }
 
+/**
+ * Adds a resizer to a header cell, with resizableColumns enabled on the tree table.
+ */
 @Directive({
     selector: '[ttResizableColumn]',
     standalone: false
@@ -3190,6 +3199,9 @@ export class TTResizableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Lets a header cell be dragged to reorder the columns, with reorderableColumns enabled on the tree table.
+ */
 @Directive({
     selector: '[ttReorderableColumn]',
     standalone: false
@@ -3299,6 +3311,9 @@ export class TTReorderableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Selects its row when clicked or activated with the keyboard, according to the selectionMode of the tree table. Bind the row node: `[ttSelectableRow]="rowNode"`.
+ */
 @Directive({
     selector: '[ttSelectableRow]',
     standalone: false,
@@ -3394,6 +3409,9 @@ export class TTSelectableRow extends BaseComponent {
     }
 }
 
+/**
+ * Selects its row when double clicked. Bind the row node: `[ttSelectableRowDblClick]="rowNode"`.
+ */
 @Directive({
     selector: '[ttSelectableRowDblClick]',
     standalone: false,
@@ -3452,6 +3470,9 @@ export class TTSelectableRowDblClick extends BaseComponent {
     }
 }
 
+/**
+ * Opens the context menu of the tree table when the row is right clicked. Bind the row node: `[ttContextMenuRow]="rowNode"`.
+ */
 @Directive({
     selector: '[ttContextMenuRow]',
     standalone: false,
@@ -3509,6 +3530,9 @@ export class TTContextMenuRow extends BaseComponent {
     }
 }
 
+/**
+ * Checkbox that selects its node, with selectionMode set to checkbox. Bind the row node: `[value]="rowNode"`.
+ */
 @Component({
     selector: 'p-tree-table-checkbox, p-treeTableCheckbox, p-treetable-checkbox',
     standalone: false,
@@ -3627,6 +3651,9 @@ export class TTCheckbox extends BaseComponent {
     }
 }
 
+/**
+ * Checkbox in the header that selects or unselects all the nodes, with selectionMode set to checkbox.
+ */
 @Component({
     selector: 'p-tree-table-header-checkbox, p-treeTableHeaderCheckbox',
     standalone: false,
@@ -3742,6 +3769,9 @@ export class TTHeaderCheckbox extends BaseComponent {
     }
 }
 
+/**
+ * Makes a cell editable: clicking it shows the `#input` template of its p-tree-table-cell-editor.
+ */
 @Directive({
     selector: '[ttEditableColumn]',
     standalone: false
@@ -3935,6 +3965,9 @@ export class TTEditableColumn extends BaseComponent {
     }
 }
 
+/**
+ * Content of an editable cell: the `#input` template shows while the cell is edited, the `#output` template otherwise.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-tree-table-cell-editor, p-treeTableCellEditor, p-treetablecelleditor, p-treetable-cell-editor',
@@ -3992,6 +4025,9 @@ export class TreeTableCellEditor extends BaseComponent {
     }
 }
 
+/**
+ * Gives a row its keyboard navigation and its ARIA attributes (role, level, expanded state). Bind the row node: `[ttRow]="rowNode"`.
+ */
 @Directive({
     selector: '[ttRow]',
     standalone: false,
@@ -4223,6 +4259,9 @@ export class TTRow extends BaseComponent {
     }
 }
 
+/**
+ * Button that expands or collapses a node: `<p-tree-table-toggler [rowNode]="rowNode" />`.
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'p-tree-table-toggler, p-treeTableToggler, p-treetabletoggler, p-treetable-toggler',

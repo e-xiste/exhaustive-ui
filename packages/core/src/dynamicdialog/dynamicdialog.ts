@@ -13,6 +13,9 @@ import { DynamicDialogStyle } from './style/dynamicdialogstyle';
 
 const DYNAMIC_DIALOG_INSTANCE = new InjectionToken<DynamicDialog>('DYNAMIC_DIALOG_INSTANCE');
 
+/**
+ * @internal Rendering detail of DialogService, not part of the public API: it may change or stop being exported in a minor version.
+ */
 @Component({
     selector: 'p-dynamic-dialog, p-dynamicDialog, p-dynamicdialog',
     imports: [CommonModule, SharedModule, DynamicDialogContent, Dialog, BindModule],

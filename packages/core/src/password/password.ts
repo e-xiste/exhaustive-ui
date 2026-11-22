@@ -59,6 +59,9 @@ const DEFAULT_MEDIUM_REGEX = '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9])
 
 const DEFAULT_STRONG_REGEX = '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})';
 
+/**
+ * Adds the password strength meter to a native input: `<input type="password" pPassword />`.
+ */
 @Directive({
     selector: '[pPassword]',
     host: {

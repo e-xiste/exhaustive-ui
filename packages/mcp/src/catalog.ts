@@ -50,7 +50,7 @@ export function buildCatalog(componentsJson: ComponentsJson, manifest: ManifestJ
         .filter((component) => entryPoints.has(component.name) || (!guideNames.has(component.name) && component.sections.some((section) => section.examples?.typescript || section.examples?.html)))
         .map((component) => {
             const entryPoint = entryPoints.get(component.name);
-            const declarations = entryPoint?.declarations ?? [];
+            const declarations = (entryPoint?.declarations ?? []).filter((declaration) => !declaration.internal);
 
             return {
                 kind: 'component',
@@ -77,6 +77,7 @@ export function buildCatalog(componentsJson: ComponentsJson, manifest: ManifestJ
     const componentNames = new Set(components.map((component) => component.name));
     const directives: DirectiveEntry[] = manifest.entryPoints.flatMap((entryPoint) =>
         (entryPoint.declarations ?? [])
+            .filter((declaration) => !declaration.internal)
             .filter((declaration) => declaration.kind === 'directive' && declaration.selector)
             .map((declaration) => ({
                 className: declaration.className,
@@ -91,7 +92,7 @@ export function buildCatalog(componentsJson: ComponentsJson, manifest: ManifestJ
     const parts: ComponentEntry[] = manifest.entryPoints
         .filter((entryPoint) => !componentNames.has(entryPoint.name) && !entryPoint.name.startsWith('icons/') && entryPoint.declarations?.some((declaration) => declaration.selector))
         .map((entryPoint) => {
-            const declarations = entryPoint.declarations ?? [];
+            const declarations = (entryPoint.declarations ?? []).filter((declaration) => !declaration.internal);
             const title = declarations[0]!.className;
 
             return {

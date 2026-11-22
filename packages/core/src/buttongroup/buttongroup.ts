@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, NgModule, ViewEncapsulation
 import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { ButtonGroupStyle } from './style/buttongroupstyle';
 
+/**
+ * Groups buttons side by side, with joined borders.
+ */
 @Component({
     selector: 'p-button-group, p-buttonGroup, p-buttongroup',
     standalone: true,

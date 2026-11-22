@@ -155,6 +155,8 @@ export interface ManifestDeclaration {
     templates?: ManifestTemplate[];
     contentProjection?: string[];
     passThrough?: ManifestPassThrough[];
+    /** A rendering detail of another component (`@internal`): exported, but not used directly in templates. */
+    internal?: boolean;
     /** True when the declaration implements ControlValueAccessor (works with ngModel and reactive forms). */
     forms?: boolean;
     methods?: ManifestMethod[];
