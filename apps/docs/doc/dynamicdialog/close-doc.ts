@@ -39,7 +39,7 @@ export class CloseDoc {
             maximizable: true
         });
 
-        this.ref.onClose.subscribe((product: Product) => {
+        this.ref?.onClose.subscribe((product: Product) => {
             if (product) {
                 this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: product.name });
             }
@@ -79,7 +79,7 @@ export class DynamicDialogDemo {
             maximizable: true
         });
 
-        this.ref.onClose.subscribe((product: Product) => {
+        this.ref?.onClose.subscribe((product: Product) => {
             if (product) {
                 this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: product.name });
             }

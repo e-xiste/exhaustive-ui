@@ -57,7 +57,7 @@ export class ExampleDoc implements OnDestroy {
             }
         });
 
-        this.ref.onClose.subscribe((data: any) => {
+        this.ref?.onClose.subscribe((data: any) => {
             let summary_and_detail;
             if (data) {
                 const buttonType = data?.buttonType;
@@ -68,7 +68,7 @@ export class ExampleDoc implements OnDestroy {
             this.messageService.add({ severity: 'info', ...summary_and_detail, life: 3000 });
         });
 
-        this.ref.onMaximize.subscribe((value) => {
+        this.ref?.onMaximize.subscribe((value) => {
             this.messageService.add({
                 severity: 'info',
                 summary: 'Maximized',

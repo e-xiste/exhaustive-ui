@@ -12,6 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     template: `
         <app-docsectiontext>
             <p>The <i>open</i> method of the <i>DialogService</i> is used to open a Dialog. First parameter is the component to load and second one is the configuration object to customize the Dialog.</p>
+            <p>It returns the <i>DynamicDialogRef</i> of the new dialog, or <i>null</i> when a dialog with the same component is already open, unless <i>duplicate</i> is enabled in the configuration.</p>
         </app-docsectiontext>
         <app-code [code]="code" [hideToggleCode]="true"></app-code>
     `,

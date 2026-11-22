@@ -4,6 +4,23 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **ssr:** server rendering no longer reaches browser-only globals: the `pBadge` directive (used by `pButton` with a badge) built its badge with `document`, Dock read `window.matchMedia` on init, Splitter spread `children` (not iterable on the server), a stateful Table wrote to browser storage when filtered or selected on the server. Overlay alignment, MegaMenu resize, CascadeSelect media query and ConfirmPopup animation frame are guarded too.
+- **dock:** destroying a Dock removes its media query listener; it ran the listener instead and left it registered.
+- **types:** Dialog and ConfirmDialog `breakpoints`, `style` and `contentStyle`, ConfirmDialog `visible` and Accordion `multiple` and `selectOnFocus` are typed instead of `any`.
+- **manifest:** the rendering details of other components (ToastItem, TTBody, GalleriaItem, the menu `*Sub` components...) are marked `@internal`: the cards, `get_component` and `validate_usage` no longer present them as public. Every public directive and part has a description (the Table and TreeTable directives, ButtonIcon, ButtonLabel, StepList...).
+
+### Documentation
+
+- **API tables:** the default of 1424 inputs showed `...` and their type `InputSignal<T>`: the default is read from the source and the type is `T`.
+- **prose:** about 40 sentences named inputs, properties or methods that do not exist (`filterInputProps`, `move*ButtonProps`, `reorderableRows`, `expandableRowGroups`, `virtualScrollerOptions`, `showAll`...). They name the real API or are removed. Overlay `hideOnEscape` and `autoZIndex` had wrong defaults.
+- **examples:** no deprecated markup left in the examples: `pButton` `label`/`icon` become `pButtonLabel`/`pButtonIcon`, Message `text` becomes content, `responsiveLayout` and `pTemplate` are gone (except Tree and OrganizationChart node templates). The frozen rows Table example did not import `ButtonModule`.
+- **dynamicdialog:** the examples crashed (`Cannot read properties of null (reading 'onClose')`) when `open` was called while the same dialog was open: `open` returns `null` then, which the examples now handle and the Open section explains.
+- **cards:** the DynamicDialog card describes `DialogService` and its classes.
+
 ## 22.5.0 (2026-11-22)
 
 A guide for AI coding agents and component cards shipped in the package, and a `check` command for templates.
