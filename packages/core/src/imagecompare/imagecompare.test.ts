@@ -300,14 +300,21 @@ describe('ImageCompare', () => {
             testFixture.detectChanges();
         });
 
+        it('should put the label and tabindex on the range input, not on the generic host', () => {
+            const host = testFixture.debugElement.query(By.directive(ImageCompare)).nativeElement as HTMLElement;
+            expect(host.hasAttribute('aria-label')).toBe(false);
+            expect(host.hasAttribute('tabindex')).toBe(false);
+            expect(host.querySelector('input[type="range"]')!.getAttribute('aria-label')).toBe('Image Compare');
+        });
+
         it('should set tabindex attribute', () => {
             const imageCompareElement = testFixture.debugElement.query(By.directive(ImageCompare));
-            expect(imageCompareElement.nativeElement.getAttribute('tabindex')).toBe('0');
+            expect(imageCompareElement.nativeElement.querySelector('input[type="range"]').getAttribute('tabindex')).toBe('0');
         });
 
         it('should set aria-label attribute', () => {
             const imageCompareElement = testFixture.debugElement.query(By.directive(ImageCompare));
-            expect(imageCompareElement.nativeElement.getAttribute('aria-label')).toBe('Image Compare');
+            expect(imageCompareElement.nativeElement.querySelector('input[type="range"]').getAttribute('aria-label')).toBe('Image Compare');
         });
 
         it('should set aria-labelledby attribute when provided', async () => {
@@ -317,37 +324,37 @@ describe('ImageCompare', () => {
             await testFixture.whenStable();
 
             const imageCompareElement = testFixture.debugElement.query(By.directive(ImageCompare));
-            expect(imageCompareElement.nativeElement.getAttribute('aria-labelledby')).toBe('label-id');
+            expect(imageCompareElement.nativeElement.querySelector('input[type="range"]').getAttribute('aria-labelledby')).toBe('label-id');
         });
 
         it('should re-render tabindex attribute when the input changes', () => {
             fixture.componentRef.setInput('tabindex', 3);
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('tabindex')).toBe('3');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('tabindex')).toBe('3');
 
             fixture.componentRef.setInput('tabindex', 7);
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('tabindex')).toBe('7');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('tabindex')).toBe('7');
         });
 
         it('should re-render aria-label attribute when the input changes', () => {
             fixture.componentRef.setInput('ariaLabel', 'First');
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('aria-label')).toBe('First');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('aria-label')).toBe('First');
 
             fixture.componentRef.setInput('ariaLabel', 'Second');
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('aria-label')).toBe('Second');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('aria-label')).toBe('Second');
         });
 
         it('should re-render aria-labelledby attribute when the input changes', () => {
             fixture.componentRef.setInput('ariaLabelledBy', 'first-id');
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('aria-labelledby')).toBe('first-id');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('aria-labelledby')).toBe('first-id');
 
             fixture.componentRef.setInput('ariaLabelledBy', 'second-id');
             fixture.detectChanges();
-            expect(fixture.nativeElement.getAttribute('aria-labelledby')).toBe('second-id');
+            expect(fixture.nativeElement.querySelector('input[type="range"]').getAttribute('aria-labelledby')).toBe('second-id');
         });
 
         it('should have proper slider accessibility attributes', () => {

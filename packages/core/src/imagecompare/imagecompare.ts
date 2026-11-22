@@ -19,13 +19,10 @@ const IMAGECOMPARE_INSTANCE = new InjectionToken<ImageCompare>('IMAGECOMPARE_INS
         <ng-template *ngTemplateOutlet="leftTemplate() || _leftTemplate()"></ng-template>
         <ng-template *ngTemplateOutlet="rightTemplate() || _rightTemplate()"></ng-template>
 
-        <input type="range" min="0" max="100" value="50" (input)="onSlide($event)" [class]="cx('slider')" [pBind]="ptm('slider')" />
+        <input type="range" min="0" max="100" value="50" [attr.tabindex]="tabindex()" [attr.aria-label]="ariaLabel()" [attr.aria-labelledby]="ariaLabelledBy()" (input)="onSlide($event)" [class]="cx('slider')" [pBind]="ptm('slider')" />
     `,
     host: {
-        '[class]': "cx('root')",
-        '[attr.tabindex]': 'tabindex()',
-        '[attr.aria-labelledby]': 'ariaLabelledBy()',
-        '[attr.aria-label]': 'ariaLabel()'
+        '[class]': "cx('root')"
     },
     hostDirectives: [Bind],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,18 +41,18 @@ export class ImageCompare extends BaseComponent<ImageComparePassThrough> {
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
     /**
-     * Index of the element in tabbing order.
+     * Index of the range input in tabbing order.
      * @defaultValue 0
      * @group Props
      */
     readonly tabindex = input<number | undefined>();
     /**
-     * Defines a string value that labels an interactive element.
+     * Establishes relationships between the range input and label(s) where its value should be one or more element IDs.
      * @group Props
      */
     readonly ariaLabelledBy = input<string | undefined>();
     /**
-     * Identifier of the underlying input element.
+     * Defines a string value that labels the range input.
      * @group Props
      */
     readonly ariaLabel = input<string | undefined>();
