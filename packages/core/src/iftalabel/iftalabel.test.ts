@@ -2,6 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { Base } from '@exhaustive-ui/core/base';
+import { DatePicker } from '@exhaustive-ui/core/datepicker';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { Select } from '@exhaustive-ui/core/select';
+import { Textarea } from '@exhaustive-ui/core/textarea';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { IftaLabel } from './iftalabel';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
 
@@ -285,4 +292,100 @@ describe('IftaLabel PassThrough Tests', () => {
             expect(hooksCalled).toContain('onDestroy');
         });
     });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [IftaLabel, InputText, Select, DatePicker, Textarea, FormsModule],
+    template: `
+        <div style="width: 300px">
+            <p-iftalabel>
+                @switch (family) {
+                    @case ('inputtext') {
+                        <input pInputText id="field" [pSize]="size" [ngModel]="'Value'" />
+                    }
+                    @case ('select') {
+                        <p-select [options]="options" [size]="size" inputId="field" [ngModel]="'Value'" />
+                    }
+                    @case ('datepicker') {
+                        <p-datepicker [size]="size" inputId="field" [ngModel]="date" />
+                    }
+                    @case ('textarea') {
+                        <textarea pTextarea id="field" [pSize]="size" rows="2" [ngModel]="'Value'"></textarea>
+                    }
+                }
+                <label for="field">Label</label>
+            </p-iftalabel>
+        </div>
+    `
+})
+class IftaLabelSizeHostComponent {
+    size: 'small' | 'large' | undefined = undefined;
+    family = 'inputtext';
+    options = ['Value', 'Other'];
+    date = new Date(2026, 0, 15);
+}
+
+describe('IftaLabel sizes (Aura)', () => {
+    // Tests that load a theme preset change the global Theme state and add <style> tags to the document:
+    // reset them so the following tests keep their layout.
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    // Layout of the default size before the size support: it stays pixel-identical.
+    const defaultHeights = { inputtext: 52, select: 52, datepicker: 52, textarea: 70 };
+    const sizes = {
+        small: { labelFontSize: 11, height: 44 },
+        default: { labelFontSize: 12, height: 52 },
+        large: { labelFontSize: 13, height: 60 }
+    };
+
+    for (const size of [undefined, 'small', 'large'] as const) {
+        for (const family of ['inputtext', 'select', 'datepicker', 'textarea'] as const) {
+            it(`${size ?? 'default'} / ${family}: the label follows the size of the field`, async () => {
+                TestBed.resetTestingModule();
+                TestBed.configureTestingModule({
+                    imports: [IftaLabelSizeHostComponent],
+                    providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+                });
+                const fixture = TestBed.createComponent(IftaLabelSizeHostComponent);
+                Object.assign(fixture.componentInstance, { size, family });
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
+
+                const host = fixture.nativeElement as HTMLElement;
+                const field = host.querySelector('.p-select, .p-textarea, .p-inputtext') as HTMLElement;
+                const text = host.querySelector('.p-select-label, textarea, input') as HTMLElement;
+                const label = host.querySelector('label') as HTMLElement;
+                const fieldBox = field.getBoundingClientRect();
+                const textBox = text.getBoundingClientRect();
+                const labelBox = label.getBoundingClientRect();
+                const textStyle = getComputedStyle(text);
+                const textLeft = textBox.left + parseFloat(textStyle.borderLeftWidth) + parseFloat(textStyle.paddingLeft) - fieldBox.left;
+                const textTop = textBox.top + parseFloat(textStyle.borderTopWidth) + parseFloat(textStyle.paddingTop) - fieldBox.top;
+                const expected = sizes[size ?? 'default'];
+
+                expect(Math.abs(labelBox.left - fieldBox.left - textLeft)).toBeLessThanOrEqual(1);
+                expect(parseFloat(getComputedStyle(label).fontSize)).toBe(expected.labelFontSize);
+                expect(labelBox.top).toBeGreaterThan(fieldBox.top);
+                expect(labelBox.bottom - fieldBox.top).toBeLessThanOrEqual(textTop);
+                if (!size) {
+                    expect(fieldBox.height).toBe(defaultHeights[family]);
+                    expect(labelBox.top - fieldBox.top).toBe(8);
+                    expect(labelBox.left - fieldBox.left).toBe(12);
+                } else if (family !== 'textarea') {
+                    expect(fieldBox.height).toBe(expected.height);
+                }
+
+                fixture.destroy();
+            });
+        }
+    }
 });

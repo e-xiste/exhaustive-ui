@@ -46,4 +46,54 @@ export const style = /*css*/ `
         transform: translateY(25%);
         margin-top: 0;
     }
+
+    /* Sizes: the selectors stay more specific than the size rules of the fields (e.g. .p-select-sm .p-select-label) */
+    .p-iftalabel:has(.p-inputfield-sm) label {
+        top: dt('iftalabel.sm.top');
+        font-size: dt('iftalabel.sm.font.size');
+        inset-inline-start: dt('iftalabel.sm.position.x');
+    }
+
+    .p-iftalabel :is(
+        .p-inputtext.p-inputfield-sm,
+        .p-textarea.p-inputfield-sm,
+        .p-inputfield-sm .p-select-label,
+        .p-inputfield-sm .p-multiselect-label,
+        .p-inputfield-sm .p-multiselect-label:has(.p-chip),
+        .p-autocomplete-input-multiple.p-inputfield-sm,
+        .p-inputfield-sm .p-cascadeselect-label,
+        .p-inputfield-sm .p-treeselect-label
+    ) {
+        padding-block-start: dt('iftalabel.input.sm.padding.top');
+        padding-block-end: dt('iftalabel.input.sm.padding.bottom');
+    }
+
+    .p-iftalabel:has(.p-inputfield-sm) .p-inputicon {
+        top: dt('iftalabel.input.sm.padding.top');
+    }
+
+    /* Sizes: the selectors stay more specific than the size rules of the fields (e.g. .p-select-lg .p-select-label) */
+    .p-iftalabel:has(.p-inputfield-lg) label {
+        top: dt('iftalabel.lg.top');
+        font-size: dt('iftalabel.lg.font.size');
+        inset-inline-start: dt('iftalabel.lg.position.x');
+    }
+
+    .p-iftalabel :is(
+        .p-inputtext.p-inputfield-lg,
+        .p-textarea.p-inputfield-lg,
+        .p-inputfield-lg .p-select-label,
+        .p-inputfield-lg .p-multiselect-label,
+        .p-inputfield-lg .p-multiselect-label:has(.p-chip),
+        .p-autocomplete-input-multiple.p-inputfield-lg,
+        .p-inputfield-lg .p-cascadeselect-label,
+        .p-inputfield-lg .p-treeselect-label
+    ) {
+        padding-block-start: dt('iftalabel.input.lg.padding.top');
+        padding-block-end: dt('iftalabel.input.lg.padding.bottom');
+    }
+
+    .p-iftalabel:has(.p-inputfield-lg) .p-inputicon {
+        top: dt('iftalabel.input.lg.padding.top');
+    }
 `;

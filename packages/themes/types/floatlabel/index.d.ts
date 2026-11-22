@@ -78,6 +78,74 @@ export declare namespace FloatLabelTokenSections {
              */
             fontWeight?: string;
         };
+        /**
+         * Sm of root
+         */
+        sm?: {
+            /**
+             * Sm position x of root
+             *
+             * @designToken floatlabel.sm.position.x
+             */
+            positionX?: string;
+            /**
+             * Sm position y of root
+             *
+             * @designToken floatlabel.sm.position.y
+             */
+            positionY?: string;
+            /**
+             * Sm font size of root
+             *
+             * @designToken floatlabel.sm.font.size
+             */
+            fontSize?: string;
+            /**
+             * Sm active of root
+             */
+            active?: {
+                /**
+                 * Sm active font size of root
+                 *
+                 * @designToken floatlabel.sm.active.font.size
+                 */
+                fontSize?: string;
+            };
+        };
+        /**
+         * Lg of root
+         */
+        lg?: {
+            /**
+             * Lg position x of root
+             *
+             * @designToken floatlabel.lg.position.x
+             */
+            positionX?: string;
+            /**
+             * Lg position y of root
+             *
+             * @designToken floatlabel.lg.position.y
+             */
+            positionY?: string;
+            /**
+             * Lg font size of root
+             *
+             * @designToken floatlabel.lg.font.size
+             */
+            fontSize?: string;
+            /**
+             * Lg active of root
+             */
+            active?: {
+                /**
+                 * Lg active font size of root
+                 *
+                 * @designToken floatlabel.lg.active.font.size
+                 */
+                fontSize?: string;
+            };
+        };
     }
 
     interface Over {
@@ -122,6 +190,72 @@ export declare namespace FloatLabelTokenSections {
              * @designToken floatlabel.in.active.top
              */
             top?: string;
+        };
+        /**
+         * Sm of in
+         */
+        sm?: {
+            /**
+             * Sm input of in
+             */
+            input?: {
+                /**
+                 * Sm input padding top of in
+                 *
+                 * @designToken floatlabel.in.sm.input.padding.top
+                 */
+                paddingTop?: string;
+                /**
+                 * Sm input padding bottom of in
+                 *
+                 * @designToken floatlabel.in.sm.input.padding.bottom
+                 */
+                paddingBottom?: string;
+            };
+            /**
+             * Sm active of in
+             */
+            active?: {
+                /**
+                 * Sm active top of in
+                 *
+                 * @designToken floatlabel.in.sm.active.top
+                 */
+                top?: string;
+            };
+        };
+        /**
+         * Lg of in
+         */
+        lg?: {
+            /**
+             * Lg input of in
+             */
+            input?: {
+                /**
+                 * Lg input padding top of in
+                 *
+                 * @designToken floatlabel.in.lg.input.padding.top
+                 */
+                paddingTop?: string;
+                /**
+                 * Lg input padding bottom of in
+                 *
+                 * @designToken floatlabel.in.lg.input.padding.bottom
+                 */
+                paddingBottom?: string;
+            };
+            /**
+             * Lg active of in
+             */
+            active?: {
+                /**
+                 * Lg active top of in
+                 *
+                 * @designToken floatlabel.in.lg.active.top
+                 */
+                top?: string;
+            };
         };
     }
 

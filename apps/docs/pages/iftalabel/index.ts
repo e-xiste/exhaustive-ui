@@ -2,6 +2,7 @@ import { AccessibilityDoc } from '@/doc/iftalabel/accessibility-doc';
 import { BasicDoc } from '@/doc/iftalabel/basic-doc';
 import { ImportDoc } from '@/doc/iftalabel/import-doc';
 import { InvalidDoc } from '@/doc/iftalabel/invalid-doc';
+import { SizesDoc } from '@/doc/iftalabel/sizes-doc';
 import { PTComponent } from '@/doc/iftalabel/pt/PTComponent';
 import { Component } from '@angular/core';
 import { AppDoc } from '@/components/doc/app.doc';
@@ -33,6 +34,11 @@ export class IftaLabelDemo {
             id: 'basic',
             label: 'Basic',
             component: BasicDoc
+        },
+        {
+            id: 'sizes',
+            label: 'Sizes',
+            component: SizesDoc
         },
         {
             id: 'invalid',

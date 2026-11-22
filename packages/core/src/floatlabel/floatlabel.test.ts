@@ -4,8 +4,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { DatePicker } from '@exhaustive-ui/core/datepicker';
+import { IconField } from '@exhaustive-ui/core/iconfield';
+import { InputIcon } from '@exhaustive-ui/core/inputicon';
 import { InputText } from '@exhaustive-ui/core/inputtext';
 import { Select } from '@exhaustive-ui/core/select';
+import { Textarea } from '@exhaustive-ui/core/textarea';
 import Aura from '@exhaustive-ui/themes/aura';
 import { FloatLabel } from './floatlabel';
 import { provideExhaustive } from '@exhaustive-ui/core/config';
@@ -731,5 +735,157 @@ describe('FloatLabel with a select placeholder (optimus-ui#501)', () => {
         expect(host.querySelector('#select .p-placeholder')).toBeTruthy();
         expect(top('select')).toBe(top('input'));
         expect(top('empty')).not.toBe(top('input'));
+    });
+});
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: true,
+    imports: [FloatLabel, InputText, Select, DatePicker, Textarea, IconField, InputIcon, FormsModule],
+    template: `
+        @for (filled of [false, true]; track filled) {
+            <div style="margin: 48px 0; width: 300px" [attr.data-state]="filled ? 'filled' : 'empty'">
+                <p-floatlabel [variant]="variant">
+                    @switch (family) {
+                        @case ('inputtext') {
+                            <input pInputText [id]="'f' + $index" [pSize]="size" [ngModel]="filled ? 'Value' : ''" />
+                        }
+                        @case ('select') {
+                            <p-select [options]="options" [size]="size" [inputId]="'f' + $index" [ngModel]="filled ? 'Value' : null" />
+                        }
+                        @case ('datepicker') {
+                            <p-datepicker [size]="size" [inputId]="'f' + $index" [ngModel]="filled ? date : null" />
+                        }
+                        @case ('textarea') {
+                            <textarea pTextarea [id]="'f' + $index" [pSize]="size" rows="2" [ngModel]="filled ? 'Value' : ''"></textarea>
+                        }
+                        @case ('iconfield') {
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-search" />
+                                <input pInputText [id]="'f' + $index" [pSize]="size" [ngModel]="filled ? 'Value' : ''" />
+                            </p-iconfield>
+                        }
+                    }
+                    <label [for]="'f' + $index">Label</label>
+                </p-floatlabel>
+            </div>
+        }
+    `
+})
+class FloatLabelSizeHostComponent {
+    variant: 'over' | 'in' | 'on' = 'over';
+    size: 'small' | 'large' | undefined = undefined;
+    family = 'inputtext';
+    options = ['Value', 'Other'];
+    date = new Date(2026, 0, 15);
+}
+
+interface LabelLayout {
+    fieldHeight: number;
+    textFontSize: number;
+    textLeft: number;
+    textTop: number;
+    labelFontSize: number;
+    labelLeft: number;
+    labelTop: number;
+    labelBottom: number;
+}
+
+// Positions are relative to the outer box of the field; textLeft/textTop locate the content box of the text.
+function measureLabel(container: HTMLElement): LabelLayout {
+    const field = container.querySelector('.p-select, .p-textarea, .p-inputtext') as HTMLElement;
+    const text = container.querySelector('.p-select-label, textarea, input') as HTMLElement;
+    const label = container.querySelector('label') as HTMLElement;
+    const fieldBox = field.getBoundingClientRect();
+    const textBox = text.getBoundingClientRect();
+    const labelBox = label.getBoundingClientRect();
+    const textStyle = getComputedStyle(text);
+
+    return {
+        fieldHeight: fieldBox.height,
+        textFontSize: parseFloat(textStyle.fontSize),
+        textLeft: textBox.left + parseFloat(textStyle.borderLeftWidth) + parseFloat(textStyle.paddingLeft) - fieldBox.left,
+        textTop: textBox.top + parseFloat(textStyle.borderTopWidth) + parseFloat(textStyle.paddingTop) - fieldBox.top,
+        labelFontSize: parseFloat(getComputedStyle(label).fontSize),
+        labelLeft: labelBox.left - fieldBox.left,
+        labelTop: labelBox.top - fieldBox.top,
+        labelBottom: labelBox.bottom - fieldBox.top
+    };
+}
+
+describe('FloatLabel sizes (Aura)', () => {
+    async function render(variant: 'over' | 'in' | 'on', size: 'small' | 'large' | undefined, family: string) {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [FloatLabelSizeHostComponent],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(FloatLabelSizeHostComponent);
+        Object.assign(fixture.componentInstance, { variant, size, family });
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        // let the label transition (0.2s) end
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const host = fixture.nativeElement as HTMLElement;
+
+        return {
+            fixture,
+            empty: measureLabel(host.querySelector('[data-state="empty"]')!),
+            filled: measureLabel(host.querySelector('[data-state="filled"]')!)
+        };
+    }
+
+    // Layout of the default size before the size support: it stays pixel-identical.
+    const defaults = {
+        over: { inputtext: 36, select: 36, datepicker: 36, textarea: 54, floatedTop: -20 },
+        in: { inputtext: 52, select: 52, datepicker: 52, textarea: 70, floatedTop: 8 },
+        on: { inputtext: 36, select: 36, datepicker: 36, textarea: 54, floatedTop: -6 }
+    };
+    const inHeights = { small: 44, large: 60 };
+    const floatedFontSizes = { small: 11, default: 12, large: 13 };
+
+    for (const variant of ['over', 'in', 'on'] as const) {
+        for (const size of [undefined, 'small', 'large'] as const) {
+            for (const family of ['inputtext', 'select', 'datepicker', 'textarea'] as const) {
+                it(`${variant} / ${size ?? 'default'} / ${family}: the label follows the size of the field`, async () => {
+                    const { fixture, empty, filled } = await render(variant, size, family);
+
+                    for (const layout of [empty, filled]) {
+                        expect(Math.abs(layout.labelLeft - layout.textLeft)).toBeLessThanOrEqual(1);
+                    }
+                    expect(empty.labelFontSize).toBe(empty.textFontSize);
+                    expect(filled.labelFontSize).toBe(floatedFontSizes[size ?? 'default']);
+                    if (variant === 'over') {
+                        expect(filled.labelBottom).toBeLessThanOrEqual(0);
+                    } else {
+                        expect(filled.labelBottom).toBeLessThanOrEqual(filled.textTop);
+                    }
+
+                    if (!size) {
+                        expect(filled.fieldHeight).toBe(defaults[variant][family]);
+                        expect(filled.labelTop).toBe(defaults[variant].floatedTop);
+                        expect(filled.labelLeft).toBe(12);
+                        expect(empty.labelFontSize).toBe(16);
+                    } else if (variant === 'in' && family !== 'textarea') {
+                        expect(filled.fieldHeight).toBe(inHeights[size]);
+                    }
+
+                    fixture.destroy();
+                });
+            }
+        }
+    }
+
+    it('keeps the label after a left icon aligned with the text for every size', async () => {
+        for (const size of [undefined, 'small', 'large'] as const) {
+            const { fixture, empty, filled } = await render('in', size, 'iconfield');
+
+            for (const layout of [empty, filled]) {
+                expect(Math.abs(layout.labelLeft - layout.textLeft)).toBeLessThanOrEqual(1);
+            }
+            expect(filled.labelBottom).toBeLessThanOrEqual(filled.textTop);
+            fixture.destroy();
+        }
     });
 });

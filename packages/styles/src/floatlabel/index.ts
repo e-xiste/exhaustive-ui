@@ -98,6 +98,114 @@ export const style = /*css*/ `
         padding: dt('floatlabel.on.active.padding');
     }
 
+    /* Sizes: the selectors stay more specific than the size rules of the fields (e.g. .p-select-sm .p-select-label) */
+    .p-floatlabel:has(.p-inputfield-sm) label {
+        inset-inline-start: dt('floatlabel.sm.position.x');
+        font-size: dt('floatlabel.sm.font.size');
+    }
+
+    .p-floatlabel:has(.p-textarea):where(:has(.p-inputfield-sm)) label {
+        top: dt('floatlabel.sm.position.y');
+    }
+
+    .p-floatlabel:has(.p-inputfield-sm):is(
+        :has(input:focus),
+        :has(input.p-filled),
+        :has(input:-webkit-autofill),
+        :has(textarea:focus),
+        :has(textarea.p-filled),
+        :has(.p-inputwrapper-focus),
+        :has(.p-inputwrapper-filled),
+        :has(input[placeholder]),
+        :has(textarea[placeholder]),
+        :has(.p-inputwrapper .p-placeholder)
+    ) label {
+        font-size: dt('floatlabel.sm.active.font.size');
+    }
+
+    .p-floatlabel-in :is(
+        .p-inputtext.p-inputfield-sm,
+        .p-textarea.p-inputfield-sm,
+        .p-inputfield-sm .p-select-label,
+        .p-inputfield-sm .p-multiselect-label,
+        .p-inputfield-sm .p-multiselect-label:has(.p-chip),
+        .p-autocomplete-input-multiple.p-inputfield-sm,
+        .p-inputfield-sm .p-cascadeselect-label,
+        .p-inputfield-sm .p-treeselect-label
+    ) {
+        padding-block-start: dt('floatlabel.in.sm.input.padding.top');
+        padding-block-end: dt('floatlabel.in.sm.input.padding.bottom');
+    }
+
+    .p-floatlabel-in:has(.p-inputfield-sm):is(
+        :has(input:focus),
+        :has(input.p-filled),
+        :has(input:-webkit-autofill),
+        :has(textarea:focus),
+        :has(textarea.p-filled),
+        :has(.p-inputwrapper-focus),
+        :has(.p-inputwrapper-filled),
+        :has(input[placeholder]),
+        :has(textarea[placeholder]),
+        :has(.p-inputwrapper .p-placeholder)
+    ) label {
+        top: dt('floatlabel.in.sm.active.top');
+    }
+
+    /* Sizes: the selectors stay more specific than the size rules of the fields (e.g. .p-select-lg .p-select-label) */
+    .p-floatlabel:has(.p-inputfield-lg) label {
+        inset-inline-start: dt('floatlabel.lg.position.x');
+        font-size: dt('floatlabel.lg.font.size');
+    }
+
+    .p-floatlabel:has(.p-textarea):where(:has(.p-inputfield-lg)) label {
+        top: dt('floatlabel.lg.position.y');
+    }
+
+    .p-floatlabel:has(.p-inputfield-lg):is(
+        :has(input:focus),
+        :has(input.p-filled),
+        :has(input:-webkit-autofill),
+        :has(textarea:focus),
+        :has(textarea.p-filled),
+        :has(.p-inputwrapper-focus),
+        :has(.p-inputwrapper-filled),
+        :has(input[placeholder]),
+        :has(textarea[placeholder]),
+        :has(.p-inputwrapper .p-placeholder)
+    ) label {
+        font-size: dt('floatlabel.lg.active.font.size');
+    }
+
+    .p-floatlabel-in :is(
+        .p-inputtext.p-inputfield-lg,
+        .p-textarea.p-inputfield-lg,
+        .p-inputfield-lg .p-select-label,
+        .p-inputfield-lg .p-multiselect-label,
+        .p-inputfield-lg .p-multiselect-label:has(.p-chip),
+        .p-autocomplete-input-multiple.p-inputfield-lg,
+        .p-inputfield-lg .p-cascadeselect-label,
+        .p-inputfield-lg .p-treeselect-label
+    ) {
+        padding-block-start: dt('floatlabel.in.lg.input.padding.top');
+        padding-block-end: dt('floatlabel.in.lg.input.padding.bottom');
+    }
+
+    .p-floatlabel-in:has(.p-inputfield-lg):is(
+        :has(input:focus),
+        :has(input.p-filled),
+        :has(input:-webkit-autofill),
+        :has(textarea:focus),
+        :has(textarea.p-filled),
+        :has(.p-inputwrapper-focus),
+        :has(.p-inputwrapper-filled),
+        :has(input[placeholder]),
+        :has(textarea[placeholder]),
+        :has(.p-inputwrapper .p-placeholder)
+    ) label {
+        top: dt('floatlabel.in.lg.active.top');
+    }
+
     .p-floatlabel:has([class^='p-'][class$='-fluid']) {
         width: 100%;
     }

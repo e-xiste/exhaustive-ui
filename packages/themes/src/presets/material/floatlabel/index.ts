@@ -12,6 +12,22 @@ export const root: FloatLabelTokenSections.Root = {
     active: {
         fontSize: '0.75rem',
         fontWeight: '400'
+    },
+    sm: {
+        positionX: '{form.field.sm.padding.x}',
+        positionY: '{form.field.sm.padding.y}',
+        fontSize: '{form.field.sm.font.size}',
+        active: {
+            fontSize: '0.6875rem'
+        }
+    },
+    lg: {
+        positionX: '{form.field.lg.padding.x}',
+        positionY: '{form.field.lg.padding.y}',
+        fontSize: '{form.field.lg.font.size}',
+        active: {
+            fontSize: '0.8125rem'
+        }
     }
 };
 
@@ -28,6 +44,24 @@ export const inside: FloatLabelTokenSections.In = {
     },
     active: {
         top: '0.5rem'
+    },
+    sm: {
+        input: {
+            paddingTop: '1.25rem',
+            paddingBottom: '0.375rem'
+        },
+        active: {
+            top: '0.375rem'
+        }
+    },
+    lg: {
+        input: {
+            paddingTop: '1.6875rem',
+            paddingBottom: '0.625rem'
+        },
+        active: {
+            top: '0.625rem'
+        }
     }
 };
 

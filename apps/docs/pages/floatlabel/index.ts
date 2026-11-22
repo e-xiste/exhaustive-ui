@@ -2,6 +2,7 @@ import { AccessibilityDoc } from '@/doc/floatlabel/accessibility-doc';
 import { BasicDoc } from '@/doc/floatlabel/basic-doc';
 import { ImportDoc } from '@/doc/floatlabel/import-doc';
 import { InvalidDoc } from '@/doc/floatlabel/invalid-doc';
+import { SizesDoc } from '@/doc/floatlabel/sizes-doc';
 import { VariantsDoc } from '@/doc/floatlabel/variants-doc';
 import { PTComponent } from '@/doc/floatlabel/pt/PTComponent';
 import { Component } from '@angular/core';
@@ -39,6 +40,11 @@ export class FloatLabelDemo {
             id: 'variants',
             label: 'Variants',
             component: VariantsDoc
+        },
+        {
+            id: 'sizes',
+            label: 'Sizes',
+            component: SizesDoc
         },
         {
             id: 'invalid',

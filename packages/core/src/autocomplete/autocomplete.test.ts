@@ -3283,11 +3283,13 @@ describe('AutoComplete medium bug fixes', () => {
         fixture.componentRef.setInput('size', 'large');
         fixture.detectChanges();
         expect(container().classList).toContain('p-autocomplete-input-multiple-lg');
+        expect(container().classList).toContain('p-inputfield-lg');
         expect(input().hasAttribute('size')).toBe(false);
 
         fixture.componentRef.setInput('size', 'small');
         fixture.detectChanges();
         expect(container().classList).toContain('p-autocomplete-input-multiple-sm');
+        expect(container().classList).toContain('p-inputfield-sm');
         expect(container().classList).not.toContain('p-autocomplete-input-multiple-lg');
 
         fixture.componentRef.setInput('inputSize', 12);

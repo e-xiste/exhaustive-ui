@@ -100,6 +100,7 @@ The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that 
 - Password: `mediumRegex` and `strongRegex` on the `pPassword` directive (#953).
 - Tree: `onNodeDrop` reports `dropPosition` (`'before' | 'inside' | 'after'`) (#851).
 - Accordion: `accordion.header.focus.background` token, used by the Material preset (#237).
+- FloatLabel and IftaLabel follow the `small` and `large` sizes of the field they wrap (Select, MultiSelect, CascadeSelect, TreeSelect, DatePicker, InputNumber, AutoComplete, Password, InputMask, Textarea, `pInputText` with `pSize`): the label inset and font size match the text, and the `in` variant and IftaLabel resize their vertical padding. Before, a small Select under `variant="in"` lost the room for its floated label, which then overlapped the value. New `sm`/`lg` tokens in the floatlabel and iftalabel sets of the four presets; InputText and the multiple AutoComplete also set the `p-inputfield-sm`/`p-inputfield-lg` size classes. The default size is unchanged.
 
 ### Fixes
 
