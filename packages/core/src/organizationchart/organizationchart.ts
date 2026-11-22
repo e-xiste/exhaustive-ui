@@ -189,7 +189,6 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
     readonly collapsible = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Whether the space allocated by a node is preserved when hidden.
-     * @deprecated since v20.0.0.
      * @group Props
      */
     readonly preserveSpace = input<boolean, unknown>(true, { transform: booleanAttribute });

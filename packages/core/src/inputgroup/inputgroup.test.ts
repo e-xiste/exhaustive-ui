@@ -47,7 +47,7 @@ class TestStyledInputGroupComponent {
     imports: [InputGroup, InputGroupAddon, FormsModule],
     template: `
         <p-inputgroup>
-            <p-inputgroup-addon [style]="addonStyle" [styleClass]="addonClass"> www </p-inputgroup-addon>
+            <p-inputgroup-addon [style]="addonStyle" [class]="addonClass"> www </p-inputgroup-addon>
             <input type="text" [(ngModel)]="website" placeholder="Website" />
         </p-inputgroup>
     `
@@ -174,11 +174,9 @@ describe('InputGroup', () => {
             expect(addonElement.nativeElement.style.backgroundColor).toBe('rgb(240, 240, 240)');
         });
 
-        it('should apply styleClass to addon', () => {
-            const addonInstance = fixture.debugElement.query(By.directive(InputGroupAddon)).componentInstance;
+        it('should apply [class] to addon', () => {
             const addonElement = fixture.debugElement.query(By.directive(InputGroupAddon));
 
-            expect(addonInstance.styleClass()).toBe('custom-addon');
             expect(addonElement.nativeElement.classList.contains('custom-addon')).toBe(true);
         });
 
@@ -192,7 +190,6 @@ describe('InputGroup', () => {
             const addonElement = fixture.debugElement.query(By.directive(InputGroupAddon));
 
             expect(addonInstance.style()).toEqual({ color: 'red' });
-            expect(addonInstance.styleClass()).toBe('updated-addon');
             expect(addonElement.nativeElement.style.color).toBe('red');
             expect(addonElement.nativeElement.classList.contains('updated-addon')).toBe(true);
         });

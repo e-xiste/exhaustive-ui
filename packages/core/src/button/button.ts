@@ -356,7 +356,7 @@ export class ButtonDirective extends BaseComponent {
 
     /**
      * Used to pass all properties of the ButtonProps to the Button component.
-     * @deprecated assign props directly to the button element.
+     * @deprecated since v20.0.0, set the attributes directly on the button element. (The `buttonProps` input of p-button is not deprecated.)
      * @group Props
      */
     readonly buttonProps = input<ButtonProps>();

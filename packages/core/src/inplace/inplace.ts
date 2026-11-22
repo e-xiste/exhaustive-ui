@@ -88,7 +88,7 @@ export class Inplace extends BaseComponent<InplacePassThrough> {
     readonly preventClick = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
      * Icon to display in the close button.
-     * @deprecated since v20.0.0, use `class` instead.
+     * @deprecated since v20.0.0, use the `closeicon` template instead.
      * @group Props
      */
     readonly closeIcon = input<string | undefined>();

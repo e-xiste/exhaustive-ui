@@ -141,6 +141,8 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
   - No longer exported from their entry point (imports are reported): the `SelectItem` option component of Select (the `SelectItem` interface of `@exhaustive-ui/core/api` is unchanged), Menu's `SafeHtmlPipe` (also dropped from `MenuModule`), `RadioControlRegistry` and `MenubarService`.
   - The sub components that render the inside of a component (`ContextMenuSub`, `TieredMenuSub`, `MenuItemContent`, `MultiSelectItem`, `ToastItem`, `TableBody`, `TTBody`, `UITreeNode`, the Galleria parts...), `PARENT_INSTANCE` and the pre-signals helpers of `@exhaustive-ui/core/utils` are tagged `@internal`: they stay exported in v22 but are not public API.
 
+- AvatarGroup and InputGroupAddon: the `styleClass` input is removed, since `class` already worked on them. The `styleclass-to-class` migration now covers `p-avatar-group`/`p-avatarGroup`/`p-avatargroup` and `p-inputgroup-addon`/`p-inputGroupAddon`.
+
 ### Features
 
 - InputMask: a backslash escapes a mask character, e.g. `+\9 999` (#911).
@@ -150,6 +152,7 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
 
 ### Fixes
 
+- Deprecation notes: OrganizationChart `preserveSpace` is no longer marked deprecated (it works and stays), Inplace `closeIcon` now points to the `closeicon` template instead of `class`, and the pButton directive's `buttonProps` note says that the `buttonProps` of p-button is not deprecated.
 - Message: `[style]` reaches the host element. A `style` input that nothing read captured the binding and dropped it; the input is removed.
 - PickList: `ariaSourceFilterLabel` and `ariaTargetFilterLabel` label the filter inputs. OrderList: `ariaLabelledBy` reaches the list, through a new Listbox `ariaLabelledBy` input. TreeTable: `virtualScrollDelay` is passed to the scroller in lazy mode, as Table does. The three inputs were ignored.
 - Table:
