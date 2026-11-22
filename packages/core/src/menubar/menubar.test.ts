@@ -1948,14 +1948,14 @@ describe('Menubar destroyed while it loses the focus', () => {
         fixture.detectChanges();
         await fixture.whenStable();
         const menubar: Menubar = fixture.debugElement.query(By.directive(Menubar)).componentInstance;
-        const warn = vi.spyOn(console, 'warn');
+        // Angular only warns (NG0953) when a destroyed output emits, so spy on this menubar's own output
+        const emit = vi.spyOn(menubar.onBlur, 'emit');
 
         menubar.onMenuBlur(new FocusEvent('blur'));
         fixture.destroy();
         await new Promise((resolve) => setTimeout(resolve, 10));
 
+        expect(emit).not.toHaveBeenCalled();
         expect(fixture.componentInstance.blurred).toBe(false);
-        expect(warn.mock.calls.some((call) => String(call[0]).includes('NG0953'))).toBe(false);
-        warn.mockRestore();
     });
 });
