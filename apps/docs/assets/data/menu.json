@@ -316,6 +316,10 @@
                     "name": "File",
                     "children": [
                         {
+                            "name": "FileInput",
+                            "routerLink": "/fileinput"
+                        },
+                        {
                             "name": "Upload",
                             "routerLink": "/fileupload"
                         }

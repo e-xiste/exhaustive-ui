@@ -27,6 +27,7 @@ import dock from '@exhaustive-ui/themes/lara/dock';
 import drawer from '@exhaustive-ui/themes/lara/drawer';
 import editor from '@exhaustive-ui/themes/lara/editor';
 import fieldset from '@exhaustive-ui/themes/lara/fieldset';
+import fileinput from '@exhaustive-ui/themes/lara/fileinput';
 import fileupload from '@exhaustive-ui/themes/lara/fileupload';
 import floatlabel from '@exhaustive-ui/themes/lara/floatlabel';
 import galleria from '@exhaustive-ui/themes/lara/galleria';
@@ -119,6 +120,7 @@ export default {
         drawer,
         editor,
         fieldset,
+        fileinput,
         fileupload,
         iftalabel,
         floatlabel,

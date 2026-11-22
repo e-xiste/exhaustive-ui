@@ -30,6 +30,7 @@ import type { DockDesignTokens } from './dock';
 import type { DrawerDesignTokens } from './drawer';
 import type { EditorDesignTokens } from './editor';
 import type { FieldsetDesignTokens } from './fieldset';
+import type { FileInputDesignTokens } from './fileinput';
 import type { FileUploadDesignTokens } from './fileupload';
 import type { FloatLabelDesignTokens } from './floatlabel';
 import type { GalleriaDesignTokens } from './galleria';
@@ -158,6 +159,7 @@ export interface ComponentsDesignTokens {
     drawer?: DrawerDesignTokens;
     editor?: EditorDesignTokens;
     fieldset?: FieldsetDesignTokens;
+    fileinput?: FileInputDesignTokens;
     fileupload?: FileUploadDesignTokens;
     floatlabel?: FloatLabelDesignTokens;
     galleria?: GalleriaDesignTokens;

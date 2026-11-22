@@ -27,6 +27,7 @@ import dock from '@exhaustive-ui/themes/nora/dock';
 import drawer from '@exhaustive-ui/themes/nora/drawer';
 import editor from '@exhaustive-ui/themes/nora/editor';
 import fieldset from '@exhaustive-ui/themes/nora/fieldset';
+import fileinput from '@exhaustive-ui/themes/nora/fileinput';
 import fileupload from '@exhaustive-ui/themes/nora/fileupload';
 import floatlabel from '@exhaustive-ui/themes/nora/floatlabel';
 import galleria from '@exhaustive-ui/themes/nora/galleria';
@@ -119,6 +120,7 @@ export default {
         drawer,
         editor,
         fieldset,
+        fileinput,
         fileupload,
         iftalabel,
         floatlabel,

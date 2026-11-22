@@ -35,6 +35,7 @@ export interface Tokens {
     drawer: TokenMetaData;
     editor: TokenMetaData;
     fieldset: TokenMetaData;
+    fileinput: TokenMetaData;
     fileupload: TokenMetaData;
     floatlabel: TokenMetaData;
     galleria: TokenMetaData;
@@ -5168,6 +5169,479 @@ export default {
                 token: 'fieldset.content.padding',
                 variable: '--p-fieldset-content-padding',
                 description: 'Padding of content'
+            }
+        ]
+    },
+    fileinput: {
+        description: 'FileInput Design Tokens',
+        tokens: [
+            {
+                name: 'fileinput.root.gap',
+                token: 'fileinput.gap',
+                variable: '--p-fileinput-gap',
+                description: 'Gap between the dropzone, the summary and the file list'
+            },
+            {
+                name: 'fileinput.root.transitionDuration',
+                token: 'fileinput.transition.duration',
+                variable: '--p-fileinput-transition-duration',
+                description: 'Transition duration'
+            },
+            {
+                name: 'fileinput.dropzone.background',
+                token: 'fileinput.dropzone.background',
+                variable: '--p-fileinput-dropzone-background',
+                description: 'Background'
+            },
+            {
+                name: 'fileinput.dropzone.borderColor',
+                token: 'fileinput.dropzone.border.color',
+                variable: '--p-fileinput-dropzone-border-color',
+                description: 'Border color'
+            },
+            {
+                name: 'fileinput.dropzone.hoverBorderColor',
+                token: 'fileinput.dropzone.hover.border.color',
+                variable: '--p-fileinput-dropzone-hover-border-color',
+                description: 'Border color while hovered'
+            },
+            {
+                name: 'fileinput.dropzone.activeBorderColor',
+                token: 'fileinput.dropzone.active.border.color',
+                variable: '--p-fileinput-dropzone-active-border-color',
+                description: 'Border color while files are dragged over'
+            },
+            {
+                name: 'fileinput.dropzone.activeBackground',
+                token: 'fileinput.dropzone.active.background',
+                variable: '--p-fileinput-dropzone-active-background',
+                description: 'Background while files are dragged over'
+            },
+            {
+                name: 'fileinput.dropzone.color',
+                token: 'fileinput.dropzone.color',
+                variable: '--p-fileinput-dropzone-color',
+                description: 'Text color'
+            },
+            {
+                name: 'fileinput.dropzone.invalidBorderColor',
+                token: 'fileinput.dropzone.invalid.border.color',
+                variable: '--p-fileinput-dropzone-invalid-border-color',
+                description: 'Border color in invalid state'
+            },
+            {
+                name: 'fileinput.dropzone.disabledBackground',
+                token: 'fileinput.dropzone.disabled.background',
+                variable: '--p-fileinput-dropzone-disabled-background',
+                description: 'Background in disabled state'
+            },
+            {
+                name: 'fileinput.dropzone.disabledColor',
+                token: 'fileinput.dropzone.disabled.color',
+                variable: '--p-fileinput-dropzone-disabled-color',
+                description: 'Text color in disabled state'
+            },
+            {
+                name: 'fileinput.dropzone.borderRadius',
+                token: 'fileinput.dropzone.border.radius',
+                variable: '--p-fileinput-dropzone-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'fileinput.dropzone.padding',
+                token: 'fileinput.dropzone.padding',
+                variable: '--p-fileinput-dropzone-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'fileinput.dropzone.gap',
+                token: 'fileinput.dropzone.gap',
+                variable: '--p-fileinput-dropzone-gap',
+                description: 'Gap between the icon, the label and the hint'
+            },
+            {
+                name: 'fileinput.dropzone.fontWeight',
+                token: 'fileinput.dropzone.font.weight',
+                variable: '--p-fileinput-dropzone-font-weight',
+                description: 'Font weight of the label'
+            },
+            {
+                name: 'fileinput.dropzone.focusRing.width',
+                token: 'fileinput.dropzone.focus.ring.width',
+                variable: '--p-fileinput-dropzone-focus-ring-width',
+                description: 'Focus ring width of the dropzone'
+            },
+            {
+                name: 'fileinput.dropzone.focusRing.style',
+                token: 'fileinput.dropzone.focus.ring.style',
+                variable: '--p-fileinput-dropzone-focus-ring-style',
+                description: 'Focus ring style of the dropzone'
+            },
+            {
+                name: 'fileinput.dropzone.focusRing.color',
+                token: 'fileinput.dropzone.focus.ring.color',
+                variable: '--p-fileinput-dropzone-focus-ring-color',
+                description: 'Focus ring color of the dropzone'
+            },
+            {
+                name: 'fileinput.dropzone.focusRing.offset',
+                token: 'fileinput.dropzone.focus.ring.offset',
+                variable: '--p-fileinput-dropzone-focus-ring-offset',
+                description: 'Focus ring offset of the dropzone'
+            },
+            {
+                name: 'fileinput.dropzone.focusRing.shadow',
+                token: 'fileinput.dropzone.focus.ring.shadow',
+                variable: '--p-fileinput-dropzone-focus-ring-shadow',
+                description: 'Focus ring shadow of the dropzone'
+            },
+            {
+                name: 'fileinput.dropzone.sm.padding',
+                token: 'fileinput.dropzone.sm.padding',
+                variable: '--p-fileinput-dropzone-sm-padding',
+                description: 'Padding of the small size'
+            },
+            {
+                name: 'fileinput.dropzone.sm.fontSize',
+                token: 'fileinput.dropzone.sm.font.size',
+                variable: '--p-fileinput-dropzone-sm-font-size',
+                description: 'Font size of the small size'
+            },
+            {
+                name: 'fileinput.dropzone.lg.padding',
+                token: 'fileinput.dropzone.lg.padding',
+                variable: '--p-fileinput-dropzone-lg-padding',
+                description: 'Padding of the large size'
+            },
+            {
+                name: 'fileinput.dropzone.lg.fontSize',
+                token: 'fileinput.dropzone.lg.font.size',
+                variable: '--p-fileinput-dropzone-lg-font-size',
+                description: 'Font size of the large size'
+            },
+            {
+                name: 'fileinput.icon.color',
+                token: 'fileinput.icon.color',
+                variable: '--p-fileinput-icon-color',
+                description: 'Color of the dropzone icon'
+            },
+            {
+                name: 'fileinput.icon.size',
+                token: 'fileinput.icon.size',
+                variable: '--p-fileinput-icon-size',
+                description: 'Size of the dropzone icon'
+            },
+            {
+                name: 'fileinput.hint.color',
+                token: 'fileinput.hint.color',
+                variable: '--p-fileinput-hint-color',
+                description: 'Color of the hint'
+            },
+            {
+                name: 'fileinput.hint.fontSize',
+                token: 'fileinput.hint.font.size',
+                variable: '--p-fileinput-hint-font-size',
+                description: 'Font size of the hint'
+            },
+            {
+                name: 'fileinput.list.borderColor',
+                token: 'fileinput.list.border.color',
+                variable: '--p-fileinput-list-border-color',
+                description: 'Border color of the file list'
+            },
+            {
+                name: 'fileinput.list.borderRadius',
+                token: 'fileinput.list.border.radius',
+                variable: '--p-fileinput-list-border-radius',
+                description: 'Border radius of the file list'
+            },
+            {
+                name: 'fileinput.item.padding',
+                token: 'fileinput.item.padding',
+                variable: '--p-fileinput-item-padding',
+                description: 'Padding of a file row'
+            },
+            {
+                name: 'fileinput.item.gap',
+                token: 'fileinput.item.gap',
+                variable: '--p-fileinput-item-gap',
+                description: 'Gap inside a file row'
+            },
+            {
+                name: 'fileinput.item.borderColor',
+                token: 'fileinput.item.border.color',
+                variable: '--p-fileinput-item-border-color',
+                description: 'Separator color between rows'
+            },
+            {
+                name: 'fileinput.item.errorBackground',
+                token: 'fileinput.item.error.background',
+                variable: '--p-fileinput-item-error-background',
+                description: 'Background of a row in error'
+            },
+            {
+                name: 'fileinput.thumbnail.size',
+                token: 'fileinput.thumbnail.size',
+                variable: '--p-fileinput-thumbnail-size',
+                description: 'Size of a thumbnail'
+            },
+            {
+                name: 'fileinput.thumbnail.borderRadius',
+                token: 'fileinput.thumbnail.border.radius',
+                variable: '--p-fileinput-thumbnail-border-radius',
+                description: 'Border radius of a thumbnail'
+            },
+            {
+                name: 'fileinput.thumbnail.background',
+                token: 'fileinput.thumbnail.background',
+                variable: '--p-fileinput-thumbnail-background',
+                description: 'Background of a thumbnail'
+            },
+            {
+                name: 'fileinput.thumbnail.color',
+                token: 'fileinput.thumbnail.color',
+                variable: '--p-fileinput-thumbnail-color',
+                description: 'Color of the file extension shown in a thumbnail'
+            },
+            {
+                name: 'fileinput.meta.color',
+                token: 'fileinput.meta.color',
+                variable: '--p-fileinput-meta-color',
+                description: 'Color of the size and status line'
+            },
+            {
+                name: 'fileinput.meta.fontSize',
+                token: 'fileinput.meta.font.size',
+                variable: '--p-fileinput-meta-font-size',
+                description: 'Font size of the size and status line'
+            },
+            {
+                name: 'fileinput.meta.gap',
+                token: 'fileinput.meta.gap',
+                variable: '--p-fileinput-meta-gap',
+                description: 'Gap inside the size and status line'
+            },
+            {
+                name: 'fileinput.progress.height',
+                token: 'fileinput.progress.height',
+                variable: '--p-fileinput-progress-height',
+                description: 'Height of a progress bar'
+            },
+            {
+                name: 'fileinput.progress.borderRadius',
+                token: 'fileinput.progress.border.radius',
+                variable: '--p-fileinput-progress-border-radius',
+                description: 'Border radius of a progress bar'
+            },
+            {
+                name: 'fileinput.progress.background',
+                token: 'fileinput.progress.background',
+                variable: '--p-fileinput-progress-background',
+                description: 'Track color of a progress bar'
+            },
+            {
+                name: 'fileinput.progress.valueBackground',
+                token: 'fileinput.progress.value.background',
+                variable: '--p-fileinput-progress-value-background',
+                description: 'Value color of a progress bar'
+            },
+            {
+                name: 'fileinput.status.successColor',
+                token: 'fileinput.status.success.color',
+                variable: '--p-fileinput-status-success-color',
+                description: 'Color of the uploaded status'
+            },
+            {
+                name: 'fileinput.status.errorColor',
+                token: 'fileinput.status.error.color',
+                variable: '--p-fileinput-status-error-color',
+                description: 'Color of error messages'
+            },
+            {
+                name: 'fileinput.action.size',
+                token: 'fileinput.action.size',
+                variable: '--p-fileinput-action-size',
+                description: 'Size of a row action button'
+            },
+            {
+                name: 'fileinput.action.borderRadius',
+                token: 'fileinput.action.border.radius',
+                variable: '--p-fileinput-action-border-radius',
+                description: 'Border radius of a row action button'
+            },
+            {
+                name: 'fileinput.action.color',
+                token: 'fileinput.action.color',
+                variable: '--p-fileinput-action-color',
+                description: 'Color of a row action button'
+            },
+            {
+                name: 'fileinput.action.hoverColor',
+                token: 'fileinput.action.hover.color',
+                variable: '--p-fileinput-action-hover-color',
+                description: 'Color of a hovered row action button'
+            },
+            {
+                name: 'fileinput.action.hoverBackground',
+                token: 'fileinput.action.hover.background',
+                variable: '--p-fileinput-action-hover-background',
+                description: 'Background of a hovered row action button'
+            },
+            {
+                name: 'fileinput.action.focusRing.width',
+                token: 'fileinput.action.focus.ring.width',
+                variable: '--p-fileinput-action-focus-ring-width',
+                description: 'Focus ring width of the action'
+            },
+            {
+                name: 'fileinput.action.focusRing.style',
+                token: 'fileinput.action.focus.ring.style',
+                variable: '--p-fileinput-action-focus-ring-style',
+                description: 'Focus ring style of the action'
+            },
+            {
+                name: 'fileinput.action.focusRing.color',
+                token: 'fileinput.action.focus.ring.color',
+                variable: '--p-fileinput-action-focus-ring-color',
+                description: 'Focus ring color of the action'
+            },
+            {
+                name: 'fileinput.action.focusRing.offset',
+                token: 'fileinput.action.focus.ring.offset',
+                variable: '--p-fileinput-action-focus-ring-offset',
+                description: 'Focus ring offset of the action'
+            },
+            {
+                name: 'fileinput.action.focusRing.shadow',
+                token: 'fileinput.action.focus.ring.shadow',
+                variable: '--p-fileinput-action-focus-ring-shadow',
+                description: 'Focus ring shadow of the action'
+            },
+            {
+                name: 'fileinput.summary.gap',
+                token: 'fileinput.summary.gap',
+                variable: '--p-fileinput-summary-gap',
+                description: 'Gap inside the upload summary'
+            },
+            {
+                name: 'fileinput.summary.color',
+                token: 'fileinput.summary.color',
+                variable: '--p-fileinput-summary-color',
+                description: 'Color of the upload summary'
+            },
+            {
+                name: 'fileinput.summary.fontSize',
+                token: 'fileinput.summary.font.size',
+                variable: '--p-fileinput-summary-font-size',
+                description: 'Font size of the upload summary'
+            },
+            {
+                name: 'fileinput.grid.gap',
+                token: 'fileinput.grid.gap',
+                variable: '--p-fileinput-grid-gap',
+                description: 'Gap between image tiles'
+            },
+            {
+                name: 'fileinput.grid.itemMinWidth',
+                token: 'fileinput.grid.item.min.width',
+                variable: '--p-fileinput-grid-item-min-width',
+                description: 'Minimum width of an image tile'
+            },
+            {
+                name: 'fileinput.tile.borderRadius',
+                token: 'fileinput.tile.border.radius',
+                variable: '--p-fileinput-tile-border-radius',
+                description: 'Border radius of an image tile'
+            },
+            {
+                name: 'fileinput.tile.borderColor',
+                token: 'fileinput.tile.border.color',
+                variable: '--p-fileinput-tile-border-color',
+                description: 'Border color of an image tile'
+            },
+            {
+                name: 'fileinput.tile.errorBorderColor',
+                token: 'fileinput.tile.error.border.color',
+                variable: '--p-fileinput-tile-error-border-color',
+                description: 'Border color of an image tile in error'
+            },
+            {
+                name: 'fileinput.tile.background',
+                token: 'fileinput.tile.background',
+                variable: '--p-fileinput-tile-background',
+                description: 'Background of an image tile'
+            },
+            {
+                name: 'fileinput.tile.overlayBackground',
+                token: 'fileinput.tile.overlay.background',
+                variable: '--p-fileinput-tile-overlay-background',
+                description: 'Background of the progress overlay'
+            },
+            {
+                name: 'fileinput.tile.overlayColor',
+                token: 'fileinput.tile.overlay.color',
+                variable: '--p-fileinput-tile-overlay-color',
+                description: 'Text color of the overlays'
+            },
+            {
+                name: 'fileinput.tile.errorOverlayBackground',
+                token: 'fileinput.tile.error.overlay.background',
+                variable: '--p-fileinput-tile-error-overlay-background',
+                description: 'Background of the error overlay'
+            },
+            {
+                name: 'fileinput.tile.actionBackground',
+                token: 'fileinput.tile.action.background',
+                variable: '--p-fileinput-tile-action-background',
+                description: 'Background of the tile action buttons and badge'
+            },
+            {
+                name: 'fileinput.tile.actionColor',
+                token: 'fileinput.tile.action.color',
+                variable: '--p-fileinput-tile-action-color',
+                description: 'Color of the tile action buttons and badge'
+            },
+            {
+                name: 'fileinput.avatar.size',
+                token: 'fileinput.avatar.size',
+                variable: '--p-fileinput-avatar-size',
+                description: 'Size of the avatar'
+            },
+            {
+                name: 'fileinput.avatar.background',
+                token: 'fileinput.avatar.background',
+                variable: '--p-fileinput-avatar-background',
+                description: 'Background of the avatar'
+            },
+            {
+                name: 'fileinput.avatar.borderColor',
+                token: 'fileinput.avatar.border.color',
+                variable: '--p-fileinput-avatar-border-color',
+                description: 'Border color of the avatar'
+            },
+            {
+                name: 'fileinput.avatar.color',
+                token: 'fileinput.avatar.color',
+                variable: '--p-fileinput-avatar-color',
+                description: 'Icon color of an empty avatar'
+            },
+            {
+                name: 'fileinput.avatar.squareBorderRadius',
+                token: 'fileinput.avatar.square.border.radius',
+                variable: '--p-fileinput-avatar-square-border-radius',
+                description: 'Border radius of the square avatar'
+            },
+            {
+                name: 'fileinput.avatar.overlayBackground',
+                token: 'fileinput.avatar.overlay.background',
+                variable: '--p-fileinput-avatar-overlay-background',
+                description: 'Background of the avatar overlay'
+            },
+            {
+                name: 'fileinput.avatar.overlayColor',
+                token: 'fileinput.avatar.overlay.color',
+                variable: '--p-fileinput-avatar-overlay-color',
+                description: 'Text color of the avatar overlay'
             }
         ]
     },

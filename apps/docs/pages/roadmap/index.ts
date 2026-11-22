@@ -83,13 +83,15 @@ export class RoadmapDemo {
                     'Public API frozen for the v22 line: minor releases add features without breaking changes',
                     'Migration guide to v22, from an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI',
                     'Nine ng update migrations, each reporting what it leaves for review',
-                    'Migration guides and schematics from PrimeNG v21 and from Optimus UI v2 (22.0.1)'
+                    'Migration guides and schematics from PrimeNG v21 and from Optimus UI v2 (22.0.1)',
+                    'Simpler SelectButton and ToggleButton design (22.1.0)'
                 ],
                 link: 'https://github.com/e-xiste/exhaustive-ui/releases/tag/v22.0.0'
             },
             {
                 title: 'v22 minor releases',
                 features: [
+                    'FileInput, a new component to select, validate and upload files, with list, images and avatar variants',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

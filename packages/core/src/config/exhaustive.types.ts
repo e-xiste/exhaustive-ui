@@ -22,6 +22,7 @@ import type { DockPassThrough } from '@exhaustive-ui/core/types/dock';
 import type { DrawerPassThrough } from '@exhaustive-ui/core/types/drawer';
 import type { EditorPassThrough } from '@exhaustive-ui/core/types/editor';
 import type { FieldsetPassThrough } from '@exhaustive-ui/core/types/fieldset';
+import type { FileInputPassThrough } from '@exhaustive-ui/core/types/fileinput';
 import type { FileUploadPassThrough } from '@exhaustive-ui/core/types/fileupload';
 import type { FloatLabelPassThrough } from '@exhaustive-ui/core/types/floatlabel';
 import type { FluidPassThrough } from '@exhaustive-ui/core/types/fluid';
@@ -119,6 +120,7 @@ export interface GlobalPassThrough {
     megaMenu?: MegaMenuPassThrough;
     drawer?: DrawerPassThrough;
     editor?: EditorPassThrough;
+    fileInput?: FileInputPassThrough;
     fileUpload?: FileUploadPassThrough;
     floatLabel?: FloatLabelPassThrough;
     menu?: MenuPassThrough;

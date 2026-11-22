@@ -283,6 +283,7 @@ function toHyphenatedName(name) {
         confirmdialog: 'confirm-dialog',
         confirmpopup: 'confirm-popup',
         dynamicdialog: 'dynamic-dialog',
+        fileinput: 'file-input',
         fileupload: 'file-upload',
         progressbar: 'progress-bar',
         progressspinner: 'progress-spinner',

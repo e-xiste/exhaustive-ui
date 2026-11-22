@@ -82,6 +82,9 @@ export * as EditorStyle from '@exhaustive-ui/styles/editor';
 // Fieldset
 export * as FieldsetStyle from '@exhaustive-ui/styles/fieldset';
 
+// FileInput
+export * as FileInputStyle from '@exhaustive-ui/styles/fileinput';
+
 // FileUpload
 export * as FileUploadStyle from '@exhaustive-ui/styles/fileupload';
 

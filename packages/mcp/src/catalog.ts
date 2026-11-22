@@ -11,6 +11,7 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     'data-table': 'table',
     datatable: 'table',
     dropdown: 'select',
+    'file-input': 'fileinput',
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
     overlaypanel: 'popover',

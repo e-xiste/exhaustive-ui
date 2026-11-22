@@ -28,6 +28,7 @@ import dock from '@exhaustive-ui/themes/aura/dock';
 import drawer from '@exhaustive-ui/themes/aura/drawer';
 import editor from '@exhaustive-ui/themes/aura/editor';
 import fieldset from '@exhaustive-ui/themes/aura/fieldset';
+import fileinput from '@exhaustive-ui/themes/aura/fileinput';
 import fileupload from '@exhaustive-ui/themes/aura/fileupload';
 import floatlabel from '@exhaustive-ui/themes/aura/floatlabel';
 import galleria from '@exhaustive-ui/themes/aura/galleria';
@@ -120,6 +121,7 @@ export default {
         drawer,
         editor,
         fieldset,
+        fileinput,
         fileupload,
         floatlabel,
         galleria,

@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **fileinput:** new `FileInput` component (`p-file`), next to `FileUpload`, which stays available. Files are added from the file picker, by drag and drop, folders included, or by pasting them. Each file is validated (`accept`, `minFileSize`, `maxFileSize`, `maxFiles`, `maxTotalSize`) and uploaded in its own request with its own progress, to an `url` or through an `uploadHandler`, at most `concurrency` at a time, with cancel and retry. Three variants: `list`, `images` (a grid of thumbnails with a cover) and `avatar`. It works with template-driven forms, reactive forms and Signal Forms, shows the files already on the server (`existing`), has `small` and `large` sizes, `dropzone` and `item` templates, replaceable texts through `labels`, and announces changes to screen readers. Theming through the new `fileinput` design tokens in the four presets.
+
+### Documentation
+
+- **fileinput:** documentation page with 16 sections, the API reference and the pass-through options. The API generator now handles function type aliases.
+
 ## 22.1.0 (2026-11-22)
 
 A simpler design for SelectButton and ToggleButton.

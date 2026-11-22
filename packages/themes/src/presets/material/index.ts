@@ -27,6 +27,7 @@ import dock from '@exhaustive-ui/themes/material/dock';
 import drawer from '@exhaustive-ui/themes/material/drawer';
 import editor from '@exhaustive-ui/themes/material/editor';
 import fieldset from '@exhaustive-ui/themes/material/fieldset';
+import fileinput from '@exhaustive-ui/themes/material/fileinput';
 import fileupload from '@exhaustive-ui/themes/material/fileupload';
 import floatlabel from '@exhaustive-ui/themes/material/floatlabel';
 import galleria from '@exhaustive-ui/themes/material/galleria';
@@ -119,6 +120,7 @@ export default {
         drawer,
         editor,
         fieldset,
+        fileinput,
         fileupload,
         iftalabel,
         floatlabel,

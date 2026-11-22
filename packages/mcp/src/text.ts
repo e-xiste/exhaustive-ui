@@ -39,7 +39,10 @@ const SYNONYMS: Record<string, string[]> = {
     datatable: ['table'],
     dialog: ['modal', 'popup'],
     dropdown: ['select'],
+    dropzone: ['fileinput', 'upload'],
     error: ['danger', 'severity', 'invalid'],
+    file: ['fileinput', 'fileupload', 'upload'],
+    files: ['file'],
     filter: ['filtering', 'filters', 'filtered', 'search'],
     filtering: ['filter'],
     filters: ['filter'],
@@ -85,6 +88,7 @@ const SYNONYMS: Record<string, string[]> = {
     token: ['tokens', 'theming'],
     tokens: ['token', 'theming'],
     tooltip: ['tooltips'],
+    upload: ['fileinput', 'fileupload', 'file'],
     validation: ['invalid', 'forms'],
     virtual: ['scroller', 'virtualscroll', 'lazy']
 };

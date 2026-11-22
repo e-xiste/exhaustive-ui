@@ -102,6 +102,7 @@ export const routes: Routes = [
                 path: 'fieldset',
                 loadChildren: () => import('@/pages/fieldset/routes')
             },
+            { path: 'fileinput', loadChildren: () => import('@/pages/fileinput/routes') },
             {
                 path: 'fileupload',
                 loadChildren: () => import('@/pages/fileupload/routes')

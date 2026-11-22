@@ -687,6 +687,9 @@ const getTypesValue = (typeobj) => {
             return type.toString();
         }
         if (type.type === 'reflection' && type.declaration) {
+            if (!type.declaration.children) {
+                return type.toString();
+            }
             let values = type.declaration.children.map((child) => ({
                 [child.name]: child.type.toString()
             }));

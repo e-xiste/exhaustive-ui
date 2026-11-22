@@ -147,6 +147,7 @@ const SELECTOR_TO_MODULE = {
     'p-dynamicdialog': 'DynamicDialogModule',
     'p-editor': 'EditorModule',
     'p-fieldset': 'FieldsetModule',
+    'p-file': 'FileInputModule',
     'p-fileupload': 'FileUploadModule',
     'p-floatlabel': 'FloatLabelModule',
     'p-galleria': 'GalleriaModule',
