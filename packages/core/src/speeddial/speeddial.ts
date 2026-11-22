@@ -23,7 +23,8 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { find, findSingle, focus, hasClass, uuid } from '@exhaustive-ui/utils';
-import { MenuItem, PrimeTemplate, SharedModule, TooltipOptions } from '@exhaustive-ui/core/api';
+import { MenuItem, PrimeTemplate, SharedModule, TooltipOptions, TranslationKeys } from '@exhaustive-ui/core/api';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
 import { ButtonModule, ButtonProps } from '@exhaustive-ui/core/button';
@@ -55,7 +56,7 @@ import { SpeedDialStyle } from './style/speeddialstyle';
                     [attr.aria-expanded]="visible()"
                     [attr.aria-haspopup]="true"
                     [attr.aria-controls]="_id() + '_list'"
-                    [attr.aria-label]="ariaLabel()"
+                    [attr.aria-label]="buttonAriaLabel()"
                     [attr.aria-labelledby]="ariaLabelledBy()"
                     (click)="onButtonClick($event)"
                     (keydown)="onTogglerKeydown($event)"
@@ -81,7 +82,7 @@ import { SpeedDialStyle } from './style/speeddialstyle';
                 (focus)="onFocus($event)"
                 (focusout)="onBlur($event)"
                 (keydown)="onKeyDown($event)"
-                [attr.aria-activedescendant]="focused() ? focusedOptionId() : undefined"
+                [attr.aria-activedescendant]="focused() && focusedOptionId() ? activeDescendantId() : undefined"
                 [tabindex]="-1"
                 [ngStyle]="sx('list')"
             >
@@ -94,8 +95,7 @@ import { SpeedDialStyle } from './style/speeddialstyle';
                         [pTooltipUnstyled]="unstyled()"
                         [tooltipOptions]="item.tooltipOptions || getTooltipOptions(item)"
                         [id]="_id() + '_' + i"
-                        [attr.aria-controls]="_id() + '_item'"
-                        role="menuitem"
+                        [attr.role]="itemTemplate() || _itemTemplate() ? 'menuitem' : 'none'"
                         [attr.data-p-active]="isItemActive(_id() + '_' + i)"
                     >
                         @if (itemTemplate() || _itemTemplate()) {
@@ -111,10 +111,11 @@ import { SpeedDialStyle } from './style/speeddialstyle';
                                 [rounded]="true"
                                 size="small"
                                 role="menuitem"
+                                [attr.id]="_id() + '_' + i + '_action'"
                                 (click)="onItemClick($event, item)"
                                 [disabled]="item?.disabled"
                                 (keydown.enter)="onItemClick($event, item)"
-                                [attr.aria-label]="item.label"
+                                [attr.aria-label]="getItemAriaLabel(item)"
                                 [attr.tabindex]="item.disabled || !visible() ? null : item.tabindex ? item.tabindex : '0'"
                                 [pt]="getPTOptions(_id() + '_' + i, 'pcAction')"
                                 [unstyled]="unstyled()"
@@ -367,6 +368,25 @@ export class SpeedDial extends BaseComponent<SpeedDialPassThrough> {
     _componentStyle = inject(SpeedDialStyle);
 
     readonly focusedOptionId = computed(() => (this.focusedOptionIndex() !== -1 ? this.focusedOptionIndex() : null));
+
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
+
+    /**
+     * Name of the toggle button: ariaLabel, or the locale moreOptions label unless ariaLabelledBy names it.
+     */
+    readonly buttonAriaLabel = computed(() => this.ariaLabel() || (this.ariaLabelledBy() ? undefined : this.translation()?.[TranslationKeys.ARIA]?.moreOptions));
+
+    /**
+     * The element that is a menuitem: the li itself with an item template, otherwise the action button inside it.
+     */
+    activeDescendantId() {
+        const id = this.focusedOptionId();
+        return this.itemTemplate() || this._itemTemplate() ? id : `${id}_action`;
+    }
+
+    getItemAriaLabel(item: MenuItem) {
+        return item.label || item.tooltipOptions?.tooltipLabel || item.title;
+    }
 
     getTooltipOptions(item: MenuItem) {
         return { ...this.tooltipOptions(), tooltipLabel: item.label, disabled: !this.tooltipOptions() };

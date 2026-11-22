@@ -444,7 +444,7 @@ describe('SpeedDial', () => {
             fixture.detectChanges();
 
             expect(speedDialInstance.model()).toEqual(newModel);
-            expect(fixture.debugElement.queryAll(By.css('li[role="menuitem"]')).length).toBe(1);
+            expect(fixture.debugElement.queryAll(By.css('li[data-pc-section="item"]')).length).toBe(1);
         });
 
         it('should update visible property', async () => {
@@ -487,7 +487,7 @@ describe('SpeedDial', () => {
             fixture.detectChanges();
 
             expect(speedDialInstance.transitionDelay()).toBe(50);
-            const firstItem = fixture.debugElement.query(By.css('li[role="menuitem"]'));
+            const firstItem = fixture.debugElement.query(By.css('li[data-pc-section="item"]'));
             expect(firstItem.nativeElement.style.transitionDelay).toBe('200ms');
         });
 
@@ -1187,6 +1187,55 @@ describe('SpeedDial', () => {
             expect(button.nativeElement.hasAttribute('aria-controls')).toBe(true);
         });
 
+        it('should name the toggle button from the locale when neither ariaLabel nor ariaLabelledBy is set', async () => {
+            const button = fixture.debugElement.query(By.css('button[pButton]'));
+            expect(button.nativeElement.getAttribute('aria-label')).toBe('More options');
+
+            component.ariaLabelledBy = 'external-label';
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+            expect(button.nativeElement.hasAttribute('aria-label')).toBe(false);
+        });
+
+        it('should not nest menuitems: the li is presentational and the action button is the menuitem', () => {
+            const items = fixture.debugElement.queryAll(By.css('li[data-pc-section="item"]'));
+            items.forEach((item) => {
+                expect(item.nativeElement.getAttribute('role')).toBe('none');
+                expect(item.nativeElement.hasAttribute('aria-controls')).toBe(false);
+                const action = item.nativeElement.querySelector('button');
+                expect(action.getAttribute('role')).toBe('menuitem');
+                expect(action.closest('[role="menu"]')).toBeTruthy();
+            });
+        });
+
+        it('should name an icon-only action from its tooltip label when it has no label', async () => {
+            component.model = [
+                { icon: 'pi pi-pencil', tooltipOptions: { tooltipLabel: 'Edit' } },
+                { icon: 'pi pi-trash', title: 'Delete' },
+                { label: 'Add', icon: 'pi pi-plus' }
+            ];
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            const actions = fixture.debugElement.queryAll(By.css('li[data-pc-section="item"] button'));
+            expect(actions.map((a) => a.nativeElement.getAttribute('aria-label'))).toEqual(['Edit', 'Delete', 'Add']);
+        });
+
+        it('should point aria-activedescendant at the focused menuitem', async () => {
+            const list = fixture.debugElement.query(By.css('ul[role="menu"]'));
+            speedDialInstance.focused.set(true);
+            speedDialInstance.changeFocusedOptionIndex(0);
+            fixture.changeDetectorRef.markForCheck();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            const target = document.getElementById(list.nativeElement.getAttribute('aria-activedescendant'));
+            expect(target).toBeTruthy();
+            expect(target!.getAttribute('role')).toBe('menuitem');
+        });
+
         it('should update aria-expanded based on visibility', async () => {
             const button = fixture.debugElement.query(By.css('button[pButton]'));
 
@@ -1216,10 +1265,10 @@ describe('SpeedDial', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            const menuItems = fixture.debugElement.queryAll(By.css('li[role="menuitem"]'));
+            const menuItems = fixture.debugElement.queryAll(By.css('li[data-pc-section="item"]'));
 
             menuItems.forEach((item) => {
-                expect(item.nativeElement.getAttribute('role')).toBe('menuitem');
+                expect(item.nativeElement.getAttribute('role')).toBe('none');
                 expect(item.nativeElement.hasAttribute('id')).toBe(true);
             });
         });
@@ -1627,7 +1676,7 @@ describe('SpeedDial', () => {
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 await ptFixture.whenStable();
 
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
                 itemElements.forEach((item: HTMLElement) => {
                     expect(item?.className).toContain('ITEM_CLASS');
                 });
@@ -1713,7 +1762,7 @@ describe('SpeedDial', () => {
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 await ptFixture.whenStable();
 
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
                 itemElements.forEach((item: HTMLElement) => {
                     expect(item?.className).toContain('item-custom');
                     expect(item?.style.margin).toBe('5px');
@@ -1774,7 +1823,7 @@ describe('SpeedDial', () => {
                 await ptFixture.whenStable();
 
                 const buttonElement = ptFixture.nativeElement.querySelector('[data-pc-name="pcbutton"]');
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
 
                 expect(buttonElement?.className).toContain('BUTTON_STRING_CLASS');
                 itemElements.forEach((item: HTMLElement) => {
@@ -1872,7 +1921,7 @@ describe('SpeedDial', () => {
                 expect(capturedInstance).toBeDefined();
                 expect(capturedInstance.type()).toBe('linear');
 
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
                 expect(itemElements.length).toBeGreaterThan(0);
                 itemElements.forEach((item: HTMLElement) => {
                     expect(item?.getAttribute('data-type')).toBe('linear');
@@ -2070,7 +2119,7 @@ describe('SpeedDial', () => {
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 await ptFixture.whenStable();
 
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
                 expect(itemElements.length).toBeGreaterThan(0);
 
                 // Verify context was captured
@@ -2147,7 +2196,7 @@ describe('SpeedDial', () => {
                 const rootElement = ptFixture.nativeElement.querySelector('[data-pc-name="speeddial"]');
                 const buttonElement = ptFixture.nativeElement.querySelector('[data-pc-name="pcbutton"]');
                 const listElement = ptFixture.nativeElement.querySelector('ul[role="menu"]');
-                const itemElements = ptFixture.nativeElement.querySelectorAll('li[role="menuitem"]');
+                const itemElements = ptFixture.nativeElement.querySelectorAll('li[data-pc-section="item"]');
 
                 expect(hostElement?.className).toContain('HOST_ALL');
                 expect(rootElement?.className).toContain('ROOT_ALL');
