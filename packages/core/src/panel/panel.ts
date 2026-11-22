@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, model, NgModule, TemplateRef, ViewEncapsulation, contentChild, viewChild, contentChildren, output } from '@angular/core';
 import { MotionEvent, MotionOptions } from '@exhaustive-ui/motion';
 import { uuid } from '@exhaustive-ui/utils';
-import { BlockableUI, Footer, PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
+import { BlockableUI, Footer, PrimeTemplate, SharedModule, TranslationKeys } from '@exhaustive-ui/core/api';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { ButtonModule } from '@exhaustive-ui/core/button';
@@ -30,7 +31,7 @@ import { PanelStyle } from './style/panelstyle';
                     <ng-template *ngTemplateOutlet="iconsTemplate() || _iconsTemplate()"></ng-template>
                     @if (toggleable()) {
                         <p-button
-                            [attr.id]="id() + '_header'"
+                            [attr.id]="id() + '_toggle'"
                             severity="secondary"
                             [text]="true"
                             [rounded]="true"
@@ -69,7 +70,7 @@ import { PanelStyle } from './style/panelstyle';
             [class]="cx('contentContainer')"
             [id]="id() + '_content'"
             role="region"
-            [attr.aria-labelledby]="id() + '_header'"
+            [attr.aria-labelledby]="_header() ? id() + '_header' : undefined"
             [attr.aria-hidden]="collapsed()"
             [attr.tabindex]="collapsed() ? '-1' : undefined"
             (pMotionOnAfterEnter)="onToggleDone($event)"
@@ -270,7 +271,15 @@ export class Panel extends BaseComponent<PanelPassThrough> implements BlockableU
 
     readonly contentWrapperViewChild = viewChild.required<ElementRef>('contentWrapper');
 
-    readonly buttonAriaLabel = computed(() => this._header());
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
+
+    /**
+     * Name of the toggle button: the header text, otherwise the expand or collapse label of the locale (a header template gives no text).
+     */
+    readonly buttonAriaLabel = computed(() => {
+        const aria = this.translation()?.[TranslationKeys.ARIA];
+        return this._header() || (this.collapsed() ? aria?.expandLabel : aria?.collapseLabel);
+    });
 
     onHeaderClick(event: MouseEvent) {
         if (this.toggler() === 'header') {

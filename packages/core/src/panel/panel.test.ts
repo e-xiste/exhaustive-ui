@@ -507,6 +507,21 @@ describe('Panel', () => {
             expect(contentContainer.nativeElement.getAttribute('aria-labelledby')).toBeTruthy();
         });
 
+        it('should name the toggle button from the locale when there is no header text, without duplicating ids', async () => {
+            testComponent.toggleable = true;
+            testComponent.header = undefined as any;
+            testFixture.changeDetectorRef.markForCheck();
+            await testFixture.whenStable();
+            testFixture.detectChanges();
+
+            const toggleButton = testFixture.debugElement.query(By.css('p-button button')).nativeElement as HTMLElement;
+            expect(toggleButton.getAttribute('aria-label')).toBe(panelInstance.collapsed() ? 'Expand' : 'Collapse');
+            const ids = Array.from(testFixture.nativeElement.querySelectorAll('[id]')).map((el: any) => el.id);
+            expect(new Set(ids).size).toBe(ids.length);
+            const labelledBy = testFixture.debugElement.query(By.css('.p-panel-content-container')).nativeElement.getAttribute('aria-labelledby');
+            if (labelledBy) expect(document.getElementById(labelledBy)).toBeTruthy();
+        });
+
         it('should not put ARIA attributes on the p-button host', async () => {
             testComponent.toggleable = true;
             testFixture.changeDetectorRef.markForCheck();
