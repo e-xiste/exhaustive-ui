@@ -1245,7 +1245,7 @@ export class MegaMenu extends BaseComponent<MegaMenuPassThrough> {
     }
 
     bindResizeListener() {
-        if (!this.resizeListener()) {
+        if (isPlatformBrowser(this.platformId) && !this.resizeListener()) {
             const resizeListener = (event) => {
                 if (!isTouchDevice()) {
                     this.hide(event, true);

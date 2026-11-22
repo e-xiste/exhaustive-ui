@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, ElementRef, input, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, ElementRef, input, PLATFORM_ID, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SharedModule } from '@exhaustive-ui/core/api';
@@ -1489,5 +1489,27 @@ describe('pBadge on a component with its own size input (optimus-ui#715)', () =>
         // on a plain element badgeSize sizes the badge
         const plain = fixture.nativeElement.querySelector('span.plain') as HTMLElement;
         expect(plain.querySelector('.p-badge')!.classList.contains('p-badge-lg')).toBe(true);
+    });
+});
+
+describe('Badge server-side rendering', () => {
+    @Component({
+        changeDetection: ChangeDetectionStrategy.Eager,
+        imports: [BadgeModule],
+        template: `<button pBadge value="5">Button</button>`
+    })
+    class ServerBadgeHost {}
+
+    it('does not create the badge element of the directive on the server platform', async () => {
+        TestBed.resetTestingModule();
+        const fixture = TestBed.configureTestingModule({ imports: [ServerBadgeHost], providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'server' }] }).createComponent(ServerBadgeHost);
+
+        // the badge is built with the global document (createElement of @exhaustive-ui/utils), which does not exist on the server
+        expect(() => fixture.detectChanges()).not.toThrow();
+        await fixture.whenStable();
+
+        const button = fixture.nativeElement.querySelector('button') as HTMLElement;
+        expect(button.querySelector('.p-badge')).toBeNull();
+        expect(button.classList.contains('p-overlay-badge')).toBe(false);
     });
 });

@@ -93,7 +93,7 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
                 const panels = this.panels();
 
                 if (this.el && this.el.nativeElement && panels.length > 0) {
-                    let children = [...this.el.nativeElement.children].filter((child) => child.getAttribute('data-pc-section') === 'panel');
+                    let children = Array.from<HTMLElement>(this.el.nativeElement.children).filter((child) => child.getAttribute('data-pc-section') === 'panel');
 
                     children.forEach((child, i) => {
                         let panelInitialSize = panelSizes.length - 1 >= i ? panelSizes[i] : null;
@@ -114,7 +114,7 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
                 }
 
                 if (!initialized) {
-                    let children = [...this.el.nativeElement.children].filter((child) => child.getAttribute('data-pc-section') === 'panel');
+                    let children = Array.from<HTMLElement>(this.el.nativeElement.children).filter((child) => child.getAttribute('data-pc-section') === 'panel');
                     let _panelSizes: any = [];
                     const panelSizes = this.panelSizes();
 
@@ -562,7 +562,7 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
         if (stateString) {
             const _panelSizes = JSON.parse(stateString);
             this._panelSizes.set(_panelSizes);
-            let children = [...(this.el as ElementRef).nativeElement.children].filter((child) => child.getAttribute('data-pc-section') === 'panel');
+            let children = Array.from<HTMLElement>((this.el as ElementRef).nativeElement.children).filter((child) => child.getAttribute('data-pc-section') === 'panel');
             children.forEach((child, i) => {
                 child.style.flexBasis = 'calc(' + _panelSizes[i] + '% - ' + (this.panels().length - 1) * this.gutterSize() + 'px)';
             });

@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -286,7 +286,7 @@ export class ConfirmPopup extends BaseComponent<ConfirmPopupPassThrough> {
                 return;
             }
 
-            if (this.computedVisible()) {
+            if (this.computedVisible() && isPlatformBrowser(this.platformId)) {
                 requestAnimationFrame(() => {
                     this.alignOverlay();
                     this.alignArrow();

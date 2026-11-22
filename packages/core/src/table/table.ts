@@ -3173,6 +3173,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
     }
 
     saveState() {
+        // the browser storage does not exist on the server (getStorage throws there): a filter or a selection applied while rendering on the server is not saved
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
         const storage = this.getStorage();
         let state: TableState = {};
 

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
     afterNextRender,
     booleanAttribute,
@@ -1497,7 +1497,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
     }
 
     bindMatchMediaListener() {
-        if (!this.matchMediaListener()) {
+        if (isPlatformBrowser(this.platformId) && !this.matchMediaListener()) {
             const window: Window | null = this.document.defaultView;
             if (window && window.matchMedia) {
                 const query = window.matchMedia(`(max-width: ${this.breakpoint()})`);

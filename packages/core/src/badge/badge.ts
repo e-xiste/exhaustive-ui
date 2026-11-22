@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, Directive, effect, inject, input, NgModule, signal, untracked, ViewEncapsulation } from '@angular/core';
 import { addClass, createElement, hasClass, removeClass, uuid } from '@exhaustive-ui/utils';
 import { SharedModule } from '@exhaustive-ui/core/api';
@@ -172,7 +173,8 @@ export class BadgeDirective extends BaseComponent {
     }
 
     private renderBadgeContent(): void {
-        if (this.disabled()) {
+        // the badge element is created with the global document (createElement): it is only added in the browser
+        if (this.disabled() || !isPlatformBrowser(this.platformId)) {
             return;
         }
 

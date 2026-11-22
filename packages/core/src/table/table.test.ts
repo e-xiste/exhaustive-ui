@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, PLATFORM_ID, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -3738,6 +3738,49 @@ describe('Table stateful selection', () => {
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(JSON.parse(window.sessionStorage.getItem(stateKey)!).selection).toEqual([{ id: 2 }]);
         window.sessionStorage.removeItem(stateKey);
+    });
+});
+
+describe('Table stateful on the server platform', () => {
+    const stateKey = 'ssr-table-state';
+
+    async function createServerTable() {
+        window.sessionStorage.removeItem(stateKey);
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({ imports: [TableModule], providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'server' }] }).compileComponents();
+        const fixture = TestBed.createComponent(Table);
+        fixture.componentRef.setInput('stateKey', stateKey);
+        fixture.componentRef.setInput('dataKey', 'id');
+        return fixture;
+    }
+
+    afterEach(() => window.sessionStorage.removeItem(stateKey));
+
+    it('does not save the state of a filtered table rendered on the server', async () => {
+        const fixture = await createServerTable();
+        fixture.componentRef.setInput('filters', { name: { value: 'A', matchMode: 'startsWith' } });
+        fixture.componentRef.setInput('value', [
+            { id: 1, name: 'Anna' },
+            { id: 2, name: 'Bob' }
+        ]);
+
+        // the browser storage does not exist on the server: getStorage() throws there
+        await expect(fixture.whenStable()).resolves.not.toThrow();
+
+        expect(fixture.componentInstance.filteredValue()).toEqual([{ id: 1, name: 'Anna' }]);
+        expect(window.sessionStorage.getItem(stateKey)).toBeNull();
+    });
+
+    it('does not save the state when the selection changes on the server', async () => {
+        const fixture = await createServerTable();
+        fixture.componentRef.setInput('selectionMode', 'multiple');
+        fixture.componentRef.setInput('value', [{ id: 1 }, { id: 2 }]);
+        await fixture.whenStable();
+
+        fixture.componentRef.setInput('selection', [{ id: 2 }]);
+        await expect(fixture.whenStable()).resolves.not.toThrow();
+
+        expect(window.sessionStorage.getItem(stateKey)).toBeNull();
     });
 });
 

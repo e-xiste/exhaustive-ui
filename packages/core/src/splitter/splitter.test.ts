@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, Input, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Input, PLATFORM_ID, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -1355,5 +1355,41 @@ describe('Splitter OnPush Rendering', () => {
         expect(splitterInstance.gutterElement()).toBeNull();
         expect(hostEl.classList.contains('p-splitter-resizing')).toBe(false);
         expect(splitterInstance._panelSizes()).toEqual([prev, next]);
+    });
+});
+
+describe('Splitter server-side rendering', () => {
+    it('sizes the panels with the HTMLCollection of the server DOM, which is not iterable', async () => {
+        TestBed.configureTestingModule({
+            imports: [Splitter],
+            declarations: [TestSplitterComponent],
+            providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'server' }]
+        });
+
+        // domino (the DOM of Angular SSR) has no Symbol.iterator on HTMLCollection: emulate it while rendering
+        const childrenDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'children')!;
+        Object.defineProperty(Element.prototype, 'children', {
+            configurable: true,
+            get(this: Element) {
+                const collection: HTMLCollection = childrenDescriptor.get!.call(this);
+                const arrayLike: Record<number, Element> & { length: number; item: (index: number) => Element | null } = { length: collection.length, item: (index) => collection.item(index) };
+                for (let i = 0; i < collection.length; i++) arrayLike[i] = collection[i];
+                return arrayLike;
+            }
+        });
+
+        try {
+            const fixture = TestBed.createComponent(TestSplitterComponent);
+            fixture.componentInstance.panelSizes = [30, 70];
+            expect(() => fixture.detectChanges()).not.toThrow();
+            await fixture.whenStable();
+
+            const panels = fixture.nativeElement.querySelectorAll('[data-pc-section="panel"]') as NodeListOf<HTMLElement>;
+            expect(panels.length).toBe(2);
+            expect(panels[0].style.flexBasis).toContain('30%');
+            expect(panels[1].style.flexBasis).toContain('70%');
+        } finally {
+            Object.defineProperty(Element.prototype, 'children', childrenDescriptor);
+        }
     });
 });

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, viewChild, contentChild, contentChildren, output } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { find, findSingle, resolve, uuid } from '@exhaustive-ui/utils';
@@ -383,17 +383,19 @@ export class Dock extends BaseComponent<DockPassThrough> {
     }
 
     bindMatchMediaListener() {
-        if (!this.matchMediaListener()) {
-            const query = window.matchMedia(`(max-width: ${this.breakpoint()})`);
-            this.query.set(query);
-            this.queryMatches.set(query.matches);
-
-            this.matchMediaListener.set(() => {
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.matchMediaListener()) {
+                const query = window.matchMedia(`(max-width: ${this.breakpoint()})`);
+                this.query.set(query);
                 this.queryMatches.set(query.matches);
-                this.mobileActive.set(false);
-            });
 
-            this.renderer.listen(this.query(), 'change', this.matchMediaListener().bind(this));
+                this.matchMediaListener.set(() => {
+                    this.queryMatches.set(query.matches);
+                    this.mobileActive.set(false);
+                });
+
+                this.renderer.listen(this.query(), 'change', this.matchMediaListener().bind(this));
+            }
         }
     }
 

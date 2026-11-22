@@ -437,7 +437,8 @@ export class Overlay extends BaseComponent {
     }
 
     alignOverlay() {
-        if (!this.modal) {
+        // measuring and positioning need the browser layout (getViewport, getComputedStyle...)
+        if (isPlatformBrowser(this.platformId) && !this.modal) {
             if (this.overlayEl() && this.targetEl) {
                 this.overlayEl().style.minWidth = getOuterWidth(this.targetEl) + 'px';
                 if (this.$appendTo() === 'self') {

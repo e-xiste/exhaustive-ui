@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DebugElement, NO_ERRORS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, NO_ERRORS_SCHEMA, PLATFORM_ID, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -1014,6 +1014,29 @@ describe('Dock', () => {
             dockInstance.ngOnDestroy();
 
             expect(dockInstance.unbindMatchMediaListener).toHaveBeenCalled();
+        });
+
+        it('should not use window.matchMedia on the server platform', async () => {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                declarations: [TestBasicDockComponent],
+                imports: [Dock, SharedModule, RouterTestingModule],
+                providers: [provideZonelessChangeDetection(), { provide: PLATFORM_ID, useValue: 'server' }],
+                schemas: [NO_ERRORS_SCHEMA]
+            });
+            // window does not exist on the server: onInit must not reach it
+            const matchMediaSpy = vi.spyOn(window, 'matchMedia');
+
+            const serverFixture = TestBed.createComponent(TestBasicDockComponent);
+            expect(() => serverFixture.detectChanges()).not.toThrow();
+            await serverFixture.whenStable();
+
+            const serverDock = serverFixture.debugElement.query(By.directive(Dock)).componentInstance as Dock;
+            expect(matchMediaSpy).not.toHaveBeenCalled();
+            expect(serverDock.queryMatches()).toBe(false);
+            expect(() => serverFixture.destroy()).not.toThrow();
+
+            matchMediaSpy.mockRestore();
         });
     });
 
