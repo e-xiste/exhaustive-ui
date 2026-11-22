@@ -3257,6 +3257,15 @@ describe('Listbox medium bug fixes', () => {
         }).compileComponents();
     });
 
+    it('lets the content of an item template name the option instead of an aria-label', () => {
+        const hostFixture = TestBed.createComponent(ListboxItemInputHostComponent);
+        hostFixture.detectChanges();
+
+        const options = Array.from(hostFixture.nativeElement.querySelectorAll('li[role="option"]')) as HTMLElement[];
+        expect(options.length).toBe(2);
+        options.forEach((o) => expect(o.hasAttribute('aria-label')).toBe(false));
+    });
+
     it('lets Space and Enter through to an input inside an item template (optimus-ui#737)', async () => {
         const hostFixture = TestBed.createComponent(ListboxItemInputHostComponent);
         hostFixture.detectChanges();
@@ -3338,6 +3347,29 @@ describe('Listbox low bug fixes', () => {
         const list = fixture.nativeElement.querySelector('ul[role="listbox"]') as HTMLElement;
         expect(filterInput.hasAttribute('aria-owns')).toBe(false);
         expect(filterInput.getAttribute('aria-controls')).toBe(list.id);
+    });
+
+    it('drops aria-controls from the filter input while no list is rendered', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        fixture.componentRef.setInput('options', []);
+        fixture.componentRef.setInput('filter', true);
+        fixture.detectChanges();
+
+        const filterInput = fixture.nativeElement.querySelector('input[role="searchbox"]') as HTMLInputElement;
+        expect(fixture.nativeElement.querySelector('ul[role="listbox"]')).toBeNull();
+        expect(filterInput.hasAttribute('aria-controls')).toBe(false);
+    });
+
+    it('names options from their label without a template and renders aria-posinset', () => {
+        const fixture = TestBed.createComponent(Listbox);
+        fixture.componentRef.setInput('options', [{ name: 'Alpha' }, { name: 'Beta' }]);
+        fixture.componentRef.setInput('optionLabel', 'name');
+        fixture.detectChanges();
+
+        const options = Array.from(fixture.nativeElement.querySelectorAll('li[role="option"]')) as HTMLElement[];
+        expect(options.map((o) => o.getAttribute('aria-label'))).toEqual(['Alpha', 'Beta']);
+        expect(options.map((o) => o.getAttribute('aria-posinset'))).toEqual(['1', '2']);
+        expect(options[0].hasAttribute('ariaposinset')).toBe(false);
     });
 
     it('gives each option checkbox an accessible name (optimus-ui#389)', () => {

@@ -2599,6 +2599,19 @@ describe('PickList r22 regressions', () => {
         fixture = TestBed.createComponent(PickList);
     });
 
+    it('points each filter input at a list that exists, and none while the list is empty', async () => {
+        fixture.componentRef.setInput('source', items());
+        fixture.componentRef.setInput('target', []);
+        fixture.componentRef.setInput('filterBy', 'name');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const sourceFilter = fixture.nativeElement.querySelector('.p-picklist-source-list-container input[role="searchbox"]') as HTMLInputElement;
+        const targetFilter = fixture.nativeElement.querySelector('.p-picklist-target-list-container input[role="searchbox"]') as HTMLInputElement;
+        expect(document.getElementById(sourceFilter.getAttribute('aria-controls')!)?.getAttribute('role')).toBe('listbox');
+        expect(targetFilter.hasAttribute('aria-controls')).toBe(false);
+    });
+
     it('removes a moved item from the filtered source list (optimus-ui#133)', async () => {
         const source = items();
         fixture.componentRef.setInput('source', source);

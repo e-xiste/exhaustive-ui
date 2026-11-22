@@ -2273,6 +2273,48 @@ describe('OrderList medium bug fixes', () => {
     });
 });
 
+@Component({
+    standalone: true,
+    imports: [OrderList],
+    template: `
+        <p-orderlist [value]="products" dataKey="id">
+            <ng-template #item let-product>
+                <span>{{ product.name }}</span>
+                <span>{{ product.category }}</span>
+            </ng-template>
+        </p-orderlist>
+    `
+})
+class OrderListDataKeyTemplateHostComponent {
+    products = [
+        { id: '1000', name: 'Bamboo Watch', category: 'Accessories' },
+        { id: '1001', name: 'Black Watch', category: 'Accessories' }
+    ];
+}
+
+describe('OrderList option names', () => {
+    beforeEach(async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [OrderListDataKeyTemplateHostComponent],
+            providers: [provideZonelessChangeDetection(), provideNoopAnimations()]
+        }).compileComponents();
+    });
+
+    it('does not name templated options with their dataKey value', async () => {
+        const fixture = TestBed.createComponent(OrderListDataKeyTemplateHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const options = Array.from(fixture.nativeElement.querySelectorAll('li[role="option"]')) as HTMLElement[];
+        expect(options.length).toBe(2);
+        options.forEach((o) => {
+            expect(o.getAttribute('aria-label')).toBeNull();
+            expect(o.textContent).toContain('Watch');
+        });
+    });
+});
+
 describe('OrderList r22 regressions', () => {
     let fixture: ComponentFixture<OrderList>;
 
