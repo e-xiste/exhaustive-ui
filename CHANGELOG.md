@@ -28,6 +28,7 @@ ng update @exhaustive-ui/core --next
   - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
   - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
   - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+  - Dialog: `content`, the old public name of the header template, becomes `headerTemplate`.
   - pButton, pButtonLabel, pButtonIcon, pBadge, pInputText, pTooltip (on any element): the `pt*` pass-through aliases become `p*PT`, and pBadge `size` becomes `badgeSize`.
 - `renamed-outputs`: renames outputs to the name the other components use. The payloads are unchanged.
   - OrderList: `onFilterEvent` becomes `onFilter`.
@@ -130,6 +131,8 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
 - Directives: the deprecated pass-through aliases `ptButtonDirective`, `ptButtonLabel`, `ptButtonIcon`, `ptBadgeDirective`, `ptInputText` and `ptTooltip` are removed, use `pButtonPT`, `pButtonLabelPT`, `pButtonIconPT`, `pBadgePT`, `pInputTextPT` and `pTooltipPT`. pBadge's deprecated `size` is removed, use `badgeSize`. `renamed-inputs` now also matches attribute directives on any element and renames these bindings (`size` only on plain elements, where it sized the badge).
 
 - MultiSelect: the deprecated `removetokenicon` template is removed, use `chipicon` (same context). The new `renamed-templates` migration renames `#removetokenicon` and `pTemplate="removetokenicon"` inside `p-multiselect`.
+
+- Dialog: the header template input is public as `headerTemplate`, like `contentTemplate` and `footerTemplate`. It was exposed under the name `content`, so `[content]` set the header. `renamed-inputs` turns a `[content]` binding on `p-dialog` into `[headerTemplate]`.
 
 ### Features
 

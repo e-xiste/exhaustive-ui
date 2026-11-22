@@ -82,6 +82,7 @@ describe('renamed-inputs', () => {
                 `<p-select filterPlaceHolder="kept"></p-select>`,
                 `<p-imagecompare ariaLabelledby="label"></p-imagecompare>`,
                 `<p-drawer [ariaCloseLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                `<p-dialog [content]="headerTpl" [contentTemplate]="body"></p-dialog>`,
                 ''
             ].join('\n')
         });
@@ -92,6 +93,7 @@ describe('renamed-inputs', () => {
                 `<p-select filterPlaceHolder="kept"></p-select>`,
                 `<p-imagecompare ariaLabelledBy="label"></p-imagecompare>`,
                 `<p-drawer [closeAriaLabel]="closeLabel" [(visible)]="open"></p-drawer>`,
+                `<p-dialog [headerTemplate]="headerTpl" [contentTemplate]="body"></p-dialog>`,
                 ''
             ].join('\n')
         );

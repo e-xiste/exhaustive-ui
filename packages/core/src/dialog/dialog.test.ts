@@ -2397,3 +2397,32 @@ describe('Dialog destroyed while open', () => {
         expect(document.body.classList.contains('p-overflow-hidden')).toBe(false);
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [Dialog],
+    template: `
+        <ng-template #headerTpl><span class="custom-header">Custom header</span></ng-template>
+        <ng-template #contentTpl><span class="custom-content">Custom content</span></ng-template>
+        <p-dialog [(visible)]="visible" [headerTemplate]="headerTpl" [contentTemplate]="contentTpl"></p-dialog>
+    `
+})
+class DialogTemplateInputsHostComponent {
+    visible = true;
+}
+
+describe('Dialog template inputs', () => {
+    it('renders [headerTemplate] in the header and [contentTemplate] in the content', async () => {
+        TestBed.configureTestingModule({ imports: [DialogTemplateInputsHostComponent], providers: [provideZonelessChangeDetection(), provideNoopAnimations()] });
+        const fixture = TestBed.createComponent(DialogTemplateInputsHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        const dialog = fixture.debugElement.query(By.directive(Dialog)).componentInstance as Dialog;
+        expect(dialog.headerTemplate()).toBeInstanceOf(TemplateRef);
+        expect(document.querySelector('.p-dialog-header .custom-header')).not.toBeNull();
+        expect(document.querySelector('.p-dialog-content .custom-content')).not.toBeNull();
+        expect(document.querySelector('.p-dialog-header .custom-content')).toBeNull();
+        fixture.destroy();
+    });
+});

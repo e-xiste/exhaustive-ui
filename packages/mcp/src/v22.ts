@@ -67,6 +67,7 @@ export const STYLE_CLASS_REMOVED: readonly string[] = [
 export const RENAMED: Record<string, Record<string, string>> = {
     drawer: { showcloseicon: 'closable', ariacloselabel: 'closeAriaLabel' },
     paginator: { dropdownappendto: 'appendTo' },
+    dialog: { content: 'headerTemplate' },
     autocomplete: { minlength: 'minQueryLength' },
     treeselect: { containerstyleclass: 'class', containerstyle: 'style' },
     treetable: { virtualrowheight: 'virtualScrollItemSize' },

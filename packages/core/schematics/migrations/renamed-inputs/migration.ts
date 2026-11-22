@@ -31,6 +31,8 @@ function isComponentOrSizedElement(tagName: string): boolean {
  * `filterPlaceHolder` → `filterPlaceholder` (as on Select, Tree, TreeSelect and OrderList);
  * ImageCompare's `ariaLabelledby` → `ariaLabelledBy`; Drawer's `ariaCloseLabel` → `closeAriaLabel`
  * (as on Dialog and Inplace).
+ * Dialog's `headerTemplate` was exposed under the alias `content`, so `[content]` set the header:
+ * the alias is dropped and the binding becomes `[headerTemplate]`, which keeps it in the header.
  * Deprecated pass-through aliases of attribute directives, matched on any element carrying the
  * directive: `ptButtonDirective` → `pButtonPT`, `ptButtonLabel` → `pButtonLabelPT`, `ptButtonIcon` →
  * `pButtonIconPT`, `ptBadgeDirective` → `pBadgePT`, `ptInputText` → `pInputTextPT`, `ptTooltip` →
@@ -45,6 +47,7 @@ export const RENAMED_INPUT_GROUPS: readonly SelectorInputRename[] = [
         ]
     },
     { selector: 'p-paginator', renames: [{ from: 'dropdownAppendTo', to: 'appendTo' }] },
+    { selector: 'p-dialog', renames: [{ from: 'content', to: 'headerTemplate' }] },
     { selector: 'p-password', renames: [{ from: 'maxLength', to: 'maxlength' }] },
     ...AUTOCOMPLETE.map((selector) => ({ selector, renames: [{ from: 'minLength', to: 'minQueryLength' }] })),
     ...TREESELECT.map((selector) => ({
