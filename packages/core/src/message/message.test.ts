@@ -658,19 +658,13 @@ describe('Message', () => {
             expect(messageEl.nativeElement.classList.contains('custom-message-class')).toBe(true);
         });
 
-        it('should apply custom styles', () => {
+        it('binds [style] to the host element', () => {
             component.style = { border: '2px solid red', padding: '10px' };
             fixture.detectChanges();
 
-            const messageEl = fixture.debugElement.query(By.css('p-message'));
-            const messageInstance = messageEl.componentInstance as Message;
-
-            expect(messageInstance.style()).toEqual({ border: '2px solid red', padding: '10px' });
-
-            // Verify component received the style input
-            expect(messageInstance.style()).toBeTruthy();
-            expect(Object.keys(messageInstance.style()!)).toContain('border');
-            expect(Object.keys(messageInstance.style()!)).toContain('padding');
+            const host = fixture.debugElement.query(By.css('p-message')).nativeElement as HTMLElement;
+            expect(host.style.border).toBe('2px solid red');
+            expect(host.style.padding).toBe('10px');
         });
 
         it('should apply size classes', async () => {

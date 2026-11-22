@@ -112,11 +112,6 @@ export class Message extends BaseComponent<MessagePassThrough> {
      */
     escape = input(true, { transform: booleanAttribute });
     /**
-     * Inline style of the component.
-     * @group Props
-     */
-    style = input<{ [klass: string]: any } | null | undefined>();
-    /**
      * Whether the message can be closed manually using the close icon.
      * @group Props
      * @defaultValue false
