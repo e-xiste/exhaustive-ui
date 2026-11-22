@@ -4,6 +4,12 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Theming
+
+- **selectbutton, togglebutton:** a simpler design in all four presets. Options sit in a single outlined group, like the other form fields, and the selected option is filled with the primary color. Aura drops its grey track and raised thumb; Lara, Nora and Material replace the tinted highlight. Inside a SelectButton, the selected option now shows its border on both sides. To keep the previous look, override the `togglebutton` tokens in your preset (`checkedBackground`, `checkedColor`, `checkedBorderColor`).
+
 ## 22.0.1 (2026-11-22)
 
 New `migrate-from-optimus` schematic, and migration guides from PrimeNG and from Optimus UI.

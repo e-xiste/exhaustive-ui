@@ -9,9 +9,9 @@ export const root: ToggleButtonTokenSections.Root = {
     borderColor: '{form.field.border.color}',
     color: '{form.field.color}',
     hoverColor: '{form.field.color}',
-    checkedBackground: '{highlight.background}',
-    checkedColor: '{highlight.color}',
-    checkedBorderColor: '{form.field.border.color}',
+    checkedBackground: '{primary.color}',
+    checkedColor: '{primary.contrast.color}',
+    checkedBorderColor: '{primary.color}',
     disabledBackground: '{form.field.disabled.background}',
     disabledBorderColor: '{form.field.disabled.background}',
     disabledColor: '{form.field.disabled.color}',
@@ -37,7 +37,7 @@ export const root: ToggleButtonTokenSections.Root = {
 export const icon: ToggleButtonTokenSections.Icon = {
     color: '{text.muted.color}',
     hoverColor: '{text.muted.color}',
-    checkedColor: '{highlight.color}',
+    checkedColor: '{primary.contrast.color}',
     disabledColor: '{form.field.disabled.color}'
 };
 

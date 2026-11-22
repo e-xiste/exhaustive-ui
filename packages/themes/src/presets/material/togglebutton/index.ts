@@ -9,8 +9,9 @@ export const root: ToggleButtonTokenSections.Root = {
     borderColor: '{form.field.border.color}',
     color: '{form.field.color}',
     hoverColor: '{form.field.color}',
-    checkedColor: '{form.field.color}',
-    checkedBorderColor: '{form.field.border.color}',
+    checkedBackground: '{primary.color}',
+    checkedColor: '{primary.contrast.color}',
+    checkedBorderColor: '{primary.color}',
     disabledBackground: '{form.field.disabled.background}',
     disabledBorderColor: '{form.field.disabled.background}',
     disabledColor: '{form.field.disabled.color}',
@@ -36,7 +37,7 @@ export const root: ToggleButtonTokenSections.Root = {
 export const icon: ToggleButtonTokenSections.Icon = {
     color: '{text.muted.color}',
     hoverColor: '{text.muted.color}',
-    checkedColor: '{text.muted.color}',
+    checkedColor: '{primary.contrast.color}',
     disabledColor: '{form.field.disabled.color}'
 };
 
@@ -56,20 +57,18 @@ export const content: ToggleButtonTokenSections.Content = {
 export const colorScheme: ToggleButtonTokenSections.ColorScheme = {
     light: {
         root: {
-            hoverBackground: '{surface.100}',
-            checkedBackground: '{surface.200}'
+            hoverBackground: '{surface.100}'
         }
     },
     dark: {
         root: {
-            hoverBackground: '{surface.800}',
-            checkedBackground: '{surface.700}'
+            hoverBackground: '{surface.800}'
         }
     }
 };
 
 export const css: ToggleButtonTokenSections.CSS = /*css*/ `
-.p-togglebutton:focus-visible {
+.p-togglebutton:not(.p-togglebutton-checked):focus-visible {
     background: dt('togglebutton.hover.background');
 }
 `;

@@ -10,16 +10,22 @@ export const style = /*css*/ `
     .p-selectbutton .p-togglebutton {
         border-radius: 0;
         border-width: 1px;
-        border-inline-start-width: 0;
+    }
+
+    .p-selectbutton .p-togglebutton + .p-togglebutton {
+        margin-inline-start: -1px;
+    }
+
+    .p-selectbutton .p-togglebutton-checked {
+        z-index: 1;
     }
 
     .p-selectbutton .p-togglebutton:focus-visible {
         position: relative;
-        z-index: 1;
+        z-index: 2;
     }
 
     .p-selectbutton .p-togglebutton:first-child {
-        border-inline-start-width: 1px;
         border-start-start-radius: dt('selectbutton.border.radius');
         border-end-start-radius: dt('selectbutton.border.radius');
     }
