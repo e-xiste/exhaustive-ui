@@ -63,7 +63,7 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
 export class FormDoc implements OnInit {
     countries: any[] | undefined;
 
-    selectedCountry: string | undefined;
+    selectedCountry: any | undefined;
 
     ngOnInit() {
         this.countries = [

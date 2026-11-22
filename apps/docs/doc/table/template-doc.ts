@@ -4,7 +4,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Product } from '@/domain/product';
 import { ProductService } from '@/service/productservice';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { RatingModule } from '@exhaustive-ui/core/rating';
 import { TableModule } from '@exhaustive-ui/core/table';
 import { TagModule } from '@exhaustive-ui/core/tag';
@@ -17,7 +19,7 @@ interface Column {
 @Component({
     selector: 'template-doc',
     standalone: true,
-    imports: [CommonModule, TableModule, AppDocSectionText, AppCode, DeferredDemo, RatingModule, TagModule],
+    imports: [CommonModule, FormsModule, ButtonModule, TableModule, AppDocSectionText, AppCode, DeferredDemo, RatingModule, TagModule],
     template: ` <app-docsectiontext>
             <p>Custom content at <i>header</i>, <i>body</i> and <i>footer</i> sections are supported via templating.</p>
         </app-docsectiontext>

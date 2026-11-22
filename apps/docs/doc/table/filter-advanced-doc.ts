@@ -57,7 +57,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     Agent
                                     <p-column-filter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-multi-select [(ngModel)]="value" [options]="representatives()" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
+                                            <p-multi-select [ngModel]="value" [options]="representatives()" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
                                                 <ng-template let-option #item>
                                                     <div class="flex items-center gap-2">
                                                         <img [alt]="option.label" src="https://exhaustive-ui.com/demo/avatar/{{ option.image }}" style="width: 32px" />
@@ -86,7 +86,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     Status
                                     <p-column-filter field="status" matchMode="equals" display="menu">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-select [(ngModel)]="value" [options]="statuses()" (onChange)="filter($event.value)" placeholder="Select One" class="w-full">
+                                            <p-select [ngModel]="value" [options]="statuses()" (onChange)="filter($event.value)" placeholder="Select One" class="w-full">
                                                 <ng-template let-option #item>
                                                     <p-tag [value]="option.value" [severity]="getSeverity(option.value)"></p-tag>
                                                 </ng-template>
@@ -100,7 +100,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     Activity
                                     <p-column-filter field="activity" matchMode="between" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-slider [(ngModel)]="value" [range]="true" class="m-4" (onSlideEnd)="filter($event.values)" />
+                                            <p-slider [ngModel]="value" [range]="true" class="m-4" (onSlideEnd)="filter($event.values)" />
                                             <div class="flex items-center px-2">
                                                 <span *ngIf="!value">0</span>
                                                 <span *ngIf="value">{{ value[0] }} - {{ value[1] }}</span>

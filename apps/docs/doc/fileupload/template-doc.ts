@@ -49,7 +49,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                                     <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name }}</span>
                                     <div>{{ formatSize(file.size) }}</div>
                                     <p-badge value="Pending" severity="warn" />
-                                    <p-button icon="pi pi-times" (click)="onRemoveTemplatingFile($event, file, removeFileCallback, index)" [outlined]="true" [rounded]="true" severity="danger" />
+                                    <p-button icon="pi pi-times" (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)" [outlined]="true" [rounded]="true" severity="danger" />
                                 </div>
                             </div>
                         </div>
@@ -63,7 +63,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                                     <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name }}</span>
                                     <div>{{ formatSize(file.size) }}</div>
                                     <p-badge value="Completed" class="mt-4" severity="success" />
-                                    <p-button icon="pi pi-times" (onClick)="removeUploadedFileCallback(index)" [outlined]="true" [rounded]="true" severity="danger" />
+                                    <p-button icon="pi pi-times" (onClick)="removeUploadedFileCallback(i)" [outlined]="true" [rounded]="true" severity="danger" />
                                 </div>
                             </div>
                         </div>

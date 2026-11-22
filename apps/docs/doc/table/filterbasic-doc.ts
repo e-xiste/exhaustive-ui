@@ -66,7 +66,7 @@ import { DeferredDemo } from '@/components/demo/deferreddemo';
                             <th>
                                 <p-column-filter field="representative" matchMode="in" [showMenu]="false">
                                     <ng-template #filter let-value let-filter="filterCallback">
-                                        <p-multi-select [(ngModel)]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
+                                        <p-multi-select [ngModel]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" style="min-width: 14rem" [panelStyle]="{ minWidth: '16rem' }">
                                             <ng-template let-option #item>
                                                 <div class="flex items-center gap-2">
                                                     <img [alt]="option.label" src="https://exhaustive-ui.com/demo/avatar/{{ option.image }}" style="width: 32px" />
@@ -80,7 +80,7 @@ import { DeferredDemo } from '@/components/demo/deferreddemo';
                             <th>
                                 <p-column-filter field="status" matchMode="equals" [showMenu]="false">
                                     <ng-template #filter let-value let-filter="filterCallback">
-                                        <p-select [(ngModel)]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Select One" [showClear]="true" style="min-width: 12rem">
+                                        <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Select One" [showClear]="true" style="min-width: 12rem">
                                             <ng-template let-option #item>
                                                 <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
                                             </ng-template>

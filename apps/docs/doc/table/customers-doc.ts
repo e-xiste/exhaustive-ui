@@ -77,7 +77,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     <p-sort-icon field="representative.name" />
                                     <p-column-filter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-multi-select [filter]="false" [(ngModel)]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-full">
+                                            <p-multi-select [filter]="false" [ngModel]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-full">
                                                 <ng-template let-option #item>
                                                     <div class="flex items-center gap-2">
                                                         <img [alt]="option.label" src="https://exhaustive-ui.com/demo/avatar/{{ option.image }}" style="width: 32px" />
@@ -109,7 +109,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                     <p-sort-icon field="status" />
                                     <p-column-filter field="status" matchMode="equals" display="menu" class="ml-auto">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-select [(ngModel)]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Any">
+                                            <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Any">
                                                 <ng-template let-option #item>
                                                     <p-tag [value]="option.label" [severity]="getSeverity(option.label)" />
                                                 </ng-template>

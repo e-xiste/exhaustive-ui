@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
 export class FilterDoc implements OnInit {
     countries: any[] | undefined;
 
-    selectedCountry: string | undefined;
+    selectedCountry: any | undefined;
 
     ngOnInit() {
         this.countries = [

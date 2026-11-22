@@ -269,12 +269,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         <p-auto-complete [(ngModel)]="filesTag" class="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
                     </div>
                     <div class="flex items-center gap-2">
-                        <label
-                            *ngFor="let permission of permissions"
-                            [key]="permission.key"
-                            [for]="permission.key"
-                            class="cursor-pointer flex-1 flex items-center gap-1 p-2 rounded-border border border-surface hover:bg-emphasis transition-all select-none"
-                        >
+                        <label *ngFor="let permission of permissions" [for]="permission.key" class="cursor-pointer flex-1 flex items-center gap-1 p-2 rounded-border border border-surface hover:bg-emphasis transition-all select-none">
                             <i class="text-color" [ngClass]="permission.icon"></i>
                             <div class="flex-1 text-sm leading-5 text-color">{{ permission.name }}</div>
                             <p-radio-button [(ngModel)]="selectedPermission" [inputId]="permission.key" variant="filled" name="dynamic" [value]="permission.name" />
