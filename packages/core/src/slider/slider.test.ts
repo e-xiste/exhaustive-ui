@@ -419,6 +419,29 @@ describe('Slider', () => {
 
             expect(rangeFormComponent.componentInstance.form.value.rangeValue).toEqual([30, 70]);
         });
+
+        it('should give each range handle its own aria-valuenow, and the minimum before a value is set', async () => {
+            const ranged = TestBed.createComponent(Slider);
+            ranged.componentRef.setInput('range', true);
+            ranged.componentInstance.writeValue([10, 90]);
+            ranged.detectChanges();
+            await ranged.whenStable();
+
+            let handles = Array.from(ranged.nativeElement.querySelectorAll('[role="slider"]')) as HTMLElement[];
+            expect(handles.map((h) => h.getAttribute('aria-valuenow'))).toEqual(['10', '90']);
+
+            const empty = TestBed.createComponent(Slider);
+            empty.componentRef.setInput('range', true);
+            empty.componentRef.setInput('min', 5);
+            empty.detectChanges();
+            handles = Array.from(empty.nativeElement.querySelectorAll('[role="slider"]')) as HTMLElement[];
+            expect(handles.length).toBe(2);
+            handles.forEach((h) => expect(h.getAttribute('aria-valuenow')).toBe('5'));
+
+            const single = TestBed.createComponent(Slider);
+            single.detectChanges();
+            expect(single.nativeElement.querySelector('[role="slider"]').getAttribute('aria-valuenow')).toBe('0');
+        });
     });
 
     describe('Accessibility', () => {
