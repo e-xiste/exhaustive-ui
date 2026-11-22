@@ -77,11 +77,27 @@ export class RoadmapDemo {
             },
             {
                 title: 'v22 stable',
-                features: ['Feedback from the release candidates', 'API frozen for the v22 line', 'Documentation code modernization']
+                shipped: true,
+                features: [
+                    'ExhaustiveUI 22.0.0, the first stable release of the fork',
+                    'Public API frozen for the v22 line: minor releases add features without breaking changes',
+                    'Migration guide to v22, from an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI',
+                    'Nine ng update migrations, each reporting what it leaves for review'
+                ],
+                link: 'https://github.com/e-xiste/exhaustive-ui/releases/tag/v22.0.0'
             },
             {
-                title: 'Next',
-                features: ['Feature requests', 'A matching major for each new Angular major']
+                title: 'v22 minor releases',
+                features: [
+                    'Signal Forms: no invalid style before the user interacts with a field',
+                    'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
+                    'Feedback and bug reports on 22.0.0',
+                    'Documentation code modernization'
+                ]
+            },
+            {
+                title: 'v23',
+                features: ['A matching major for Angular 23, with ng update migrations', 'Feature requests triaged with the community']
             }
         ];
     }

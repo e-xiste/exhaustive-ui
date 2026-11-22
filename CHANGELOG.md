@@ -4,16 +4,24 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## 22.0.0 (in progress)
+## 22.0.0 (2026-11-22)
 
-ExhaustiveUI v22 is the first major of the fork. It requires Angular 22 and moves the whole library to the Angular Signals API. The alphas and release candidates below lead up to it. This section sums them up.
+ExhaustiveUI v22 is the first major of the fork, and its first stable release. It requires Angular 22 and moves the whole library to the Angular Signals API. The public API is frozen for the v22 line: minor releases add features and fixes without breaking changes. The alphas and release candidates below lead up to it. This section sums them up.
+
+### Since 22.0.0-rc.3
+
+- New [migration guide to v22](https://exhaustive-ui.com/migration/v22): update steps from an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI, every migration and the cases it reports, code that uses a component instance, OnPush, the removed API, and the behavior and type changes. It is also published in the LLM docs (`get_guide("v22")` in the MCP server) and bundled in the agent skill, and the `update_to_v22` MCP prompt follows it.
+- `migrate-from-primeng` no longer warns that it is deprecated and tells you to install `@exhaustive-ui/core@1`, a version that was never published. The schematic is maintained on this line.
+- LLM docs: guide pages keep their headings, lists, links and every code example, in the order of the documentation site.
 
 ### Upgrade
 
 ```bash
 ng update @angular/core@22 @angular/cli@22
-ng update @exhaustive-ui/core --next
+ng update @exhaustive-ui/core@22
 ```
+
+The [migration guide to v22](https://exhaustive-ui.com/migration/v22) walks through the whole update.
 
 `ng update` rewrites your templates and code with nine migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
