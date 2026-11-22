@@ -1011,19 +1011,14 @@ export class GalleriaItem extends BaseComponent<GalleriaPassThrough> {
                     role="tablist"
                 >
                     @for (item of value(); track item; let index = $index) {
-                        <div
-                            [pBind]="ptm('thumbnailItem')"
-                            [class]="cx('thumbnailItem', { index, activeIndex: _activeIndex() })"
-                            [attr.aria-selected]="_activeIndex() === index"
-                            [attr.aria-controls]="containerId() + '_item_' + index"
-                            (keydown)="onThumbnailKeydown($event, index)"
-                            [attr.data-p-active]="_activeIndex() === index"
-                        >
+                        <div [pBind]="ptm('thumbnailItem')" [class]="cx('thumbnailItem', { index, activeIndex: _activeIndex() })" (keydown)="onThumbnailKeydown($event, index)" [attr.data-p-active]="_activeIndex() === index">
                             <div
                                 [pBind]="ptm('thumbnail')"
                                 [class]="cx('thumbnail')"
+                                role="tab"
                                 [attr.tabindex]="_activeIndex() === index ? 0 : -1"
-                                [attr.aria-current]="_activeIndex() === index ? 'page' : undefined"
+                                [attr.aria-selected]="_activeIndex() === index"
+                                [attr.aria-controls]="_activeIndex() === index ? containerId() + '_item_' + index : undefined"
                                 [attr.aria-label]="ariaPageLabel(index + 1)"
                                 (click)="onItemClick(index)"
                                 (touchend)="onThumbnailTouchEnd($event, index)"

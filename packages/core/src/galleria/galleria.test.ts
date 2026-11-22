@@ -1516,7 +1516,8 @@ describe('Galleria id', () => {
         const content = fixture.debugElement.query(By.directive(GalleriaContent));
         expect(content.componentInstance.id).toBe('my-galleria');
         expect(content.nativeElement.getAttribute('id')).toBe('my-galleria');
-        expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnailitem"]').getAttribute('aria-controls')).toBe('my-galleria_item_0');
+        expect(fixture.nativeElement.querySelector('[data-pc-section="thumbnail"][role="tab"]').getAttribute('aria-controls')).toBe('my-galleria_item_0');
+        expect(document.getElementById('my-galleria_item_0')).toBeTruthy();
     });
 });
 
@@ -1837,6 +1838,32 @@ describe('GalleriaThumbnails', () => {
         const items = fixture.nativeElement.querySelectorAll('[data-pc-section="thumbnailitem"][data-p-active]');
         expect(items[3].getAttribute('data-p-active')).toBe('true');
         expect(items[0].getAttribute('data-p-active')).toBe('false');
+    });
+
+    it('should expose the thumbnails as tabs owned by the tablist, with the selection on the tab', () => {
+        const fixture = createFixture();
+        fixture.componentRef.setInput('value', mockImages);
+        fixture.componentRef.setInput('containerId', 'gal');
+        fixture.componentRef.setInput('activeIndex', 1);
+        fixture.detectChanges();
+
+        const tablist = fixture.nativeElement.querySelector('[role="tablist"]') as HTMLElement;
+        const tabs = Array.from(tablist.querySelectorAll('[role="tab"]')) as HTMLElement[];
+        expect(tabs.length).toBe(mockImages.length);
+        tabs.forEach((tab, i) => {
+            expect(tab.getAttribute('data-pc-section')).toBe('thumbnail');
+            expect(tab.getAttribute('aria-selected')).toBe(String(i === 1));
+            expect(tab.hasAttribute('aria-current')).toBe(false);
+        });
+        expect(tabs[1].getAttribute('aria-controls')).toBe('gal_item_1');
+        expect(tabs[0].hasAttribute('aria-controls')).toBe(false);
+
+        const items = Array.from(tablist.querySelectorAll('[data-pc-section="thumbnailitem"][data-p-active]')) as HTMLElement[];
+        items.forEach((item) => {
+            expect(item.hasAttribute('role')).toBe(false);
+            expect(item.hasAttribute('aria-selected')).toBe(false);
+            expect(item.hasAttribute('aria-controls')).toBe(false);
+        });
     });
 
     it('should re-render when isVertical, contentHeight and showThumbnailNavigators change', () => {
