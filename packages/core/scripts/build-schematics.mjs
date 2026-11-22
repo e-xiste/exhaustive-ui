@@ -62,14 +62,14 @@ fs.copySync(path.join(schematicsDir, 'utils/versions.json'), path.join(outDir, '
 // tsc does not emit imported .json files, so copy the PrimeFlex -> Tailwind dictionary that
 // utils/primeflex.ts requires at runtime.
 fs.copySync(path.join(schematicsDir, 'utils/primeflex-translations.json'), path.join(outDir, 'utils/primeflex-translations.json'));
-for (const name of ['ng-add', 'migrate-from-primeng', 'migrate-from-primeflex']) {
+for (const name of ['ng-add', 'migrate-from-primeng', 'migrate-from-optimus', 'migrate-from-primeflex']) {
     fs.copySync(path.join(schematicsDir, name, 'schema.json'), path.join(outDir, name, 'schema.json'));
 }
 
 // Every package the migration maps to must have a version to install with.
 const require = createRequire(import.meta.url);
-const { MODULE_MAP, VERSIONS } = require(path.join(outDir, 'utils/mappings.js'));
-for (const target of MODULE_MAP.values()) {
+const { MODULE_MAP, OPTIMUS_MODULE_MAP, VERSIONS } = require(path.join(outDir, 'utils/mappings.js'));
+for (const target of [...MODULE_MAP.values(), ...OPTIMUS_MODULE_MAP.values()]) {
     if (!VERSIONS[target]) {
         throw new Error(`No version generated for ${target} — is it missing from packages/ and the workspace catalog?`);
     }

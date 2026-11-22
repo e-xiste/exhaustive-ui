@@ -11,6 +11,11 @@
             "factory": "./migrate-from-primeng/index#migrateFromPrimeng",
             "schema": "./migrate-from-primeng/schema.json"
         },
+        "migrate-from-optimus": {
+            "description": "Migrate an Optimus UI v2 project to ExhaustiveUI: @openng/optimus-ui* packages, imports, configuration API and CSS layer name.",
+            "factory": "./migrate-from-optimus/index#migrateFromOptimus",
+            "schema": "./migrate-from-optimus/schema.json"
+        },
         "migrate-from-primeflex": {
             "description": "Translate PrimeFlex utility classes to their Tailwind CSS equivalents across Angular templates.",
             "factory": "./migrate-from-primeflex/index#migrateFromPrimeflex",

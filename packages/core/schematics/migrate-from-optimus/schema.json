@@ -1,0 +1,19 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "$id": "ExhaustiveUiMigrateFromOptimus",
+    "title": "Migrate an Optimus UI v2 project to ExhaustiveUI",
+    "description": "Migrate an Optimus UI v2 workspace to ExhaustiveUI: dependencies, imports, configuration API and CSS layer name.",
+    "type": "object",
+    "properties": {
+        "skipInstall": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip scheduling the package install task."
+        },
+        "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Run the migration even if the installed @openng/optimus-ui version is unsupported."
+        }
+    }
+}

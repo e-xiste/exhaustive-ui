@@ -108,6 +108,20 @@ describe('ng-add', () => {
         expect(tree.readContent('/src/app/app.config.ts')).toBe(appConfig);
     });
 
+    it('Optimus UI project: refuses and points to migrate-from-optimus', async () => {
+        const runner = createRunner();
+        const tree = createAppTree({}, { ...DEFAULT_PKG, dependencies: { '@angular/core': '^22.1.2', '@openng/optimus-ui': '^2.0.2' } });
+
+        const error = await runner.runSchematic('ng-add', { skipInstall: true }, tree).then(
+            () => null,
+            (err: Error) => err
+        );
+
+        expect(error).toBeInstanceOf(SchematicsException);
+        expect(error!.message).toContain('@openng/optimus-ui detected');
+        expect(error!.message).toContain('ng generate @exhaustive-ui/core:migrate-from-optimus');
+    });
+
     it('primeng project: the failure explains the state the CLI left behind (#1447)', async () => {
         const runner = createRunner();
         const tree = createAppTree({}, { ...DEFAULT_PKG, dependencies: { '@angular/core': '^21.0.0', primeng: '^21.0.2' } });
@@ -120,7 +134,7 @@ describe('ng-add', () => {
         expect(error).toBeInstanceOf(SchematicsException);
         expect(error!.message).toContain('primeng detected');
         expect(error!.message).toContain('no changes were made');
-        expect(error!.message).toContain('ng generate @exhaustive-ui/core@1:migrate-from-primeng');
+        expect(error!.message).toContain('ng generate @exhaustive-ui/core:migrate-from-primeng');
         expect(error!.message).toContain('already added @exhaustive-ui/core to your dependencies');
     });
 
@@ -235,7 +249,7 @@ describe('ng-add', () => {
         expect(result.readContent('/src/app/app.config.ts')).toBe(primengConfig);
         const log = logs.join('\n');
         expect(log).toContain('Found a providePrimeNG call in /src/app/app.config.ts');
-        expect(log).toContain('ng generate @exhaustive-ui/core@1:migrate-from-primeng');
+        expect(log).toContain('ng generate @exhaustive-ui/core:migrate-from-primeng');
         expect(log).toContain('provideExhaustive({ theme: { preset: Aura } })');
         expect(log).not.toContain('Added provideExhaustive');
     });

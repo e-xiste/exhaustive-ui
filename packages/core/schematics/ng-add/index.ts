@@ -9,7 +9,7 @@ import { Schema, Theme } from './schema';
 
 const THEMES_PACKAGE = '@exhaustive-ui/themes';
 const DEFAULT_THEME: Theme = 'Aura';
-const MIGRATE_COMMAND = 'ng generate @exhaustive-ui/core@1:migrate-from-primeng';
+const MIGRATE_COMMAND = 'ng generate @exhaustive-ui/core:migrate-from-primeng';
 
 function projectNotFound(name: string): string {
     return `Project "${name}" was not found in the workspace.`;
@@ -21,9 +21,9 @@ function projectNotFound(name: string): string {
  * factory runs (`ng-add.save` is `"dependencies"`, and the CLI only cleans the entry up when
  * `save` is `false`), so the message has to account for it rather than pretend nothing happened.
  */
-function primengBailMessage(): string {
-    return `primeng detected — ng add only sets up ExhaustiveUI in new projects, so no changes were made and the theme preset was not configured.
-To migrate this workspace, run: ${MIGRATE_COMMAND}
+function primengBailMessage(library = 'primeng', command = MIGRATE_COMMAND): string {
+    return `${library} detected — ng add only sets up ExhaustiveUI in new projects, so no changes were made and the theme preset was not configured.
+To migrate this workspace, run: ${command}
 The Angular CLI has already added @exhaustive-ui/core to your dependencies. The migration schematic needs it there, so keep it — or remove it with your package manager if you did not mean to add ExhaustiveUI to this workspace.`;
 }
 
@@ -47,7 +47,8 @@ function manualInstructions(theme: Theme): string {
 /**
  * Sets up ExhaustiveUI in a fresh (non-PrimeNG) project. Migrating an existing PrimeNG workspace is
  * a separate concern handled by the `migrate-from-primeng` schematic
- * (`ng generate @exhaustive-ui/core@1:migrate-from-primeng`) — when primeng is detected, ng-add
+ * (`ng generate @exhaustive-ui/core:migrate-from-primeng`), and an Optimus UI workspace by
+ * `migrate-from-optimus` — when primeng is detected, ng-add
  * makes no changes and throws, so the CLI reports the refusal as a failure (#1447). A warning was
  * not enough: the command exited 0 after asking for a theme preset it then discarded, which reads
  * as a successful setup, and the freshly-installed dependency in package.json reinforces that.
@@ -62,6 +63,9 @@ export function ngAdd(options: Schema): Rule {
         await assertProjectExists(tree, options);
         if (hasPrimeng(tree)) {
             throw new SchematicsException(primengBailMessage());
+        }
+        if (hasPrimeng(tree, '@openng/optimus-ui')) {
+            throw new SchematicsException(primengBailMessage('@openng/optimus-ui', 'ng generate @exhaustive-ui/core:migrate-from-optimus'));
         }
         return freshSetup(options);
     };

@@ -13,14 +13,14 @@ export interface SwapResult {
     removed: string[];
 }
 
-export function swapDependencies(pkg: Record<string, any>): SwapResult {
+export function swapDependencies(pkg: Record<string, any>, moduleMap: ReadonlyMap<string, string> = MODULE_MAP): SwapResult {
     const result: SwapResult = { changed: false, added: [], removed: [] };
     for (const section of DIRECT_DEPENDENCY_SECTIONS) {
         const deps = pkg[section];
         if (!deps) {
             continue;
         }
-        for (const [from, to] of MODULE_MAP) {
+        for (const [from, to] of moduleMap) {
             if (!(from in deps)) {
                 continue;
             }
@@ -115,17 +115,17 @@ export function declaresPackage(pkg: Record<string, any>, name: string): boolean
  * sections plus resolutions/overrides/pnpm.overrides — or null when primeng is absent or no
  * declared range contains a parseable major (e.g. `"latest"` or a tag).
  */
-export function getPrimengMajor(pkg: Record<string, any>): number | null {
+export function getPrimengMajor(pkg: Record<string, any>, name = 'primeng'): number | null {
     const ranges: string[] = [];
     for (const section of DIRECT_DEPENDENCY_SECTIONS) {
         const deps = pkg[section];
-        const range = isRecord(deps) ? deps['primeng'] : undefined;
+        const range = isRecord(deps) ? deps[name] : undefined;
         if (typeof range === 'string') {
             ranges.push(range);
         }
     }
     for (const section of overrideSections(pkg)) {
-        collectOverrideRanges(section, 'primeng', ranges);
+        collectOverrideRanges(section, name, ranges);
     }
     let max: number | null = null;
     for (const range of ranges) {
@@ -145,10 +145,10 @@ export function getPrimengMajor(pkg: Record<string, any>): number | null {
  * Scans every package.json in the workspace tree (skipping node_modules/dist/.angular/.git/out-tsc)
  * and returns the highest primeng major found across all of them, or null if primeng is nowhere.
  */
-export function findPrimengMajor(tree: Tree): number | null {
+export function findPrimengMajor(tree: Tree, name = 'primeng'): number | null {
     let max: number | null = null;
     visitWorkspacePackageJsons(tree, (pkg) => {
-        const major = getPrimengMajor(pkg);
+        const major = getPrimengMajor(pkg, name);
         if (major !== null && (max === null || major > max)) {
             max = major;
         }
@@ -162,13 +162,13 @@ export function findPrimengMajor(tree: Tree): number | null {
  * resolutions/overrides/pnpm.overrides — regardless of whether its version spec is parseable
  * (e.g. `"latest"`, a tag, a git URL, …).
  */
-export function hasPrimeng(tree: Tree): boolean {
+export function hasPrimeng(tree: Tree, name = 'primeng'): boolean {
     let found = false;
     visitWorkspacePackageJsons(tree, (pkg) => {
         if (found) {
             return;
         }
-        if (declaresPackage(pkg, 'primeng')) {
+        if (declaresPackage(pkg, name)) {
             found = true;
         }
     });

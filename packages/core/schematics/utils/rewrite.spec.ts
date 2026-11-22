@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { OPTIMUS_SOURCE } from './mappings';
 import { renameStylesheetLayers, rewriteSource } from './rewrite';
 
 const rw = (text: string) => rewriteSource('/src/test.ts', text);
@@ -179,6 +180,25 @@ describe('rewriteSource — cssLayer names', () => {
         expect(layerRenames.get('primeng')).toBe('exhaustive');
         expect(layerRenames.get('primeng-overwrites')).toBe('exhaustive-overwrites');
         expect(layerRenames.size).toBe(2);
+    });
+
+    it('collects the default layer rename when cssLayer is true, without editing the config', () => {
+        const { changed, layerRenames } = rw(`const c = { cssLayer: true };\n`);
+        expect(changed).toBe(false);
+        expect(layerRenames.get('primeng')).toBe('exhaustive');
+    });
+
+    it('collects the default layer rename when cssLayer only sets the order', () => {
+        const { text, layerRenames } = rw(`const c = { cssLayer: { order: 'theme, base, primeng' } };\n`);
+        expect(text).toContain(`order: 'theme, base, exhaustive'`);
+        expect(layerRenames.get('primeng')).toBe('exhaustive');
+    });
+
+    it('rewrites the optimus layer token with the Optimus UI source', () => {
+        const { text, layerRenames } = rewriteSource('/src/test.ts', `const c = { cssLayer: { name: 'optimus', order: 'theme, base, optimus, primeng' } };\n`, OPTIMUS_SOURCE);
+        expect(text).toContain(`name: 'exhaustive', order: 'theme, base, exhaustive, primeng'`);
+        expect(layerRenames.get('optimus')).toBe('exhaustive');
+        expect(layerRenames.has('primeng')).toBe(false);
     });
 
     it('collects no layer renames when cssLayer holds no primeng token', () => {

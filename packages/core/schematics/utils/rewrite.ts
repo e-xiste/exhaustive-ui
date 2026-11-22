@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { IDENTIFIER_RENAMES, mapModuleSpecifier } from './mappings';
+import { mapModuleSpecifier, MigrationSource, PRIMENG_SOURCE } from './mappings';
 
 interface Edit {
     start: number;
@@ -19,7 +19,7 @@ export interface RewriteResult {
     layerRenames: Map<string, string>;
 }
 
-export function rewriteSource(fileName: string, text: string): RewriteResult {
+export function rewriteSource(fileName: string, text: string, source: MigrationSource = PRIMENG_SOURCE): RewriteResult {
     const sourceFile = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true);
     const edits: Edit[] = [];
     const layerRenames = new Map<string, string>();
@@ -30,7 +30,7 @@ export function rewriteSource(fileName: string, text: string): RewriteResult {
     const declaredNames = collectDeclaredNames(sourceFile);
 
     const editSpecifier = (literal: ts.StringLiteralLike): boolean => {
-        const mapped = mapModuleSpecifier(literal.text);
+        const mapped = mapModuleSpecifier(literal.text, source);
         if (mapped === null) {
             return false;
         }
@@ -42,7 +42,7 @@ export function rewriteSource(fileName: string, text: string): RewriteResult {
     const renameBindings = (elements: ts.NodeArray<ts.ImportSpecifier | ts.ExportSpecifier>, trackLocals: boolean) => {
         for (const spec of elements) {
             const original = spec.propertyName ?? spec.name;
-            const newName = IDENTIFIER_RENAMES.get(original.text);
+            const newName = source.identifierRenames.get(original.text);
             if (!newName) {
                 continue;
             }
@@ -100,7 +100,7 @@ export function rewriteSource(fileName: string, text: string): RewriteResult {
         visitUsages(sourceFile);
     }
 
-    rewriteCssLayerNames(sourceFile, text, edits, layerRenames);
+    rewriteCssLayerNames(sourceFile, text, edits, layerRenames, source.layerName);
 
     if (edits.length === 0) {
         return { text, changed: false, layerRenames };
@@ -189,13 +189,21 @@ function usageReplacement(node: ts.Identifier, newName: string): string | null {
     return newName;
 }
 
-// PrimeNG's default CSS cascade layer is named `primeng`. Users who enable the theme's cssLayer
-// option with an explicit name/order carry that token into their app config, e.g.
+// PrimeNG's default CSS cascade layer is named `primeng` (Optimus UI's `optimus`). Users who enable
+// the theme's cssLayer option with an explicit name/order carry that token into their app config, e.g.
 //   cssLayer: { name: 'primeng', order: 'theme, base, primeng' }
-const CSS_LAYER_TOKEN_RE = /\bprimeng\b/g;
-
-function rewriteCssLayerNames(sourceFile: ts.SourceFile, text: string, edits: Edit[], layerRenames: Map<string, string>): void {
+// Without a name (`cssLayer: true`, or an object with no `name`), the library used its default
+// layer, which becomes `exhaustive`: stylesheets that declare that layer follow it.
+function rewriteCssLayerNames(sourceFile: ts.SourceFile, text: string, edits: Edit[], layerRenames: Map<string, string>, layerName: string): void {
+    const CSS_LAYER_TOKEN_RE = new RegExp(`\\b${layerName}\\b`, 'g');
     const visit = (node: ts.Node): void => {
+        if (ts.isPropertyAssignment(node) && propertyKeyText(node.name) === 'cssLayer') {
+            const initializer = node.initializer;
+            const usesDefaultName = initializer.kind === ts.SyntaxKind.TrueKeyword || (ts.isObjectLiteralExpression(initializer) && !initializer.properties.some((prop) => prop.name !== undefined && propertyKeyText(prop.name) === 'name'));
+            if (usesDefaultName) {
+                layerRenames.set(layerName, 'exhaustive');
+            }
+        }
         if (ts.isPropertyAssignment(node) && propertyKeyText(node.name) === 'cssLayer' && ts.isObjectLiteralExpression(node.initializer)) {
             for (const prop of node.initializer.properties) {
                 if (!ts.isPropertyAssignment(prop) || !ts.isStringLiteralLike(prop.initializer)) {
