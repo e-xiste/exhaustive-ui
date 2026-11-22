@@ -15,10 +15,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel class="w-full md:w-56">
-                <p-cascadeselect [(ngModel)]="selectedCity" inputId="cs_city" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
+            <p-ifta-label class="w-full md:w-56">
+                <p-cascade-select [(ngModel)]="selectedCity" inputId="cs_city" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
                 <label for="cs_city">City</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
 
         <app-code></app-code>

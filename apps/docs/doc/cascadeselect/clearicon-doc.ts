@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>showClear</i> is enabled, a clear icon is displayed to clear the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-cascadeselect [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" placeholder="Select a City" [style]="{ minWidth: '14rem' }" [showClear]="true" />
+            <p-cascade-select [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" placeholder="Select a City" [style]="{ minWidth: '14rem' }" [showClear]="true" />
         </div>
         <app-code></app-code>
     `

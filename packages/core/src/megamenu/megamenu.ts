@@ -43,7 +43,7 @@ const MEGAMENU_SUB_INSTANCE = new InjectionToken<MegaMenuSub>('MEGAMENU_SUB_INST
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-megaMenuSub, p-megamenu-sub, ul[pMegaMenuSub]',
+    selector: 'p-mega-menu-sub, p-megaMenuSub, p-megamenu-sub, ul[pMegaMenuSub]',
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, Bind],
     template: `
         @if (submenu()) {
@@ -391,7 +391,7 @@ export class MegaMenuSub extends BaseComponent<MegaMenuPassThrough> {
  * @group Components
  */
 @Component({
-    selector: 'p-megaMenu, p-megamenu, p-mega-menu',
+    selector: 'p-mega-menu, p-megaMenu, p-megamenu',
     imports: [CommonModule, RouterModule, MegaMenuSub, TooltipModule, BarsIcon, BadgeModule, SharedModule, Bind],
     template: `
         @if (startTemplate() || _startTemplate()) {

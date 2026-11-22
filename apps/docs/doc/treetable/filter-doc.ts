@@ -30,16 +30,16 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <div class="flex justify-center mb-6">
-                <p-selectbutton [options]="filterModes" [(ngModel)]="filterMode" optionLabel="label" optionValue="value" />
+                <p-select-button [options]="filterModes" [(ngModel)]="filterMode" optionLabel="label" optionValue="value" />
             </div>
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable #tt [value]="files" [columns]="cols" [filterMode]="filterMode" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table #tt [value]="files" [columns]="cols" [filterMode]="filterMode" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #caption>
                         <div class="flex justify-end items-center">
-                            <p-iconfield>
-                                <p-inputicon class="pi pi-search" />
+                            <p-icon-field>
+                                <p-input-icon class="pi pi-search" />
                                 <input type="text" pInputText placeholder="Global Search" (input)="tt.filterGlobal($event.target.value, 'contains')" />
-                            </p-iconfield>
+                            </p-icon-field>
                         </div>
                     </ng-template>
                     <ng-template #header let-columns>
@@ -64,7 +64,7 @@ interface Column {
                                 <td>
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            <p-tree-table-toggler [rowNode]="rowNode"></p-tree-table-toggler>
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else {
@@ -79,7 +79,7 @@ interface Column {
                             <td [attr.colspan]="cols?.length">No data found.</td>
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

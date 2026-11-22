@@ -17,15 +17,15 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputgroup class="md:w-80!">
-                <p-inputgroup-addon>
+            <p-input-group class="md:w-80!">
+                <p-input-group-addon>
                     <i class="pi pi-shopping-cart"></i>
-                </p-inputgroup-addon>
-                <p-iftalabel>
-                    <p-inputnumber [(ngModel)]="value" inputId="price" mode="currency" currency="USD" locale="en-US" />
+                </p-input-group-addon>
+                <p-ifta-label>
+                    <p-input-number [(ngModel)]="value" inputId="price" mode="currency" currency="USD" locale="en-US" />
                     <label for="price">Price</label>
-                </p-iftalabel>
-            </p-inputgroup>
+                </p-ifta-label>
+            </p-input-group>
         </div>
         <app-code></app-code>
     `

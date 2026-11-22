@@ -11,10 +11,10 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [CommonModule, FormsModule, AppDocPtViewer, FloatLabelModule, InputTextModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-floatlabel>
+            <p-float-label>
                 <input pInputText id="username" [(ngModel)]="value" autocomplete="off" />
                 <label for="username">Username</label>
-            </p-floatlabel>
+            </p-float-label>
         </app-docptviewer>
     `
 })

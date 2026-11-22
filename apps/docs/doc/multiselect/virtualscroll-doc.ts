@@ -17,7 +17,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multiselect
+            <p-multi-select
                 [options]="items"
                 [showToggleAll]="true"
                 [selectAll]="selectAll"
@@ -35,7 +35,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <i class="pi pi-check" *ngIf="allSelected"></i>
                     <i class="pi pi-minus" *ngIf="partialSelected" [ngStyle]="{ color: 'var(--text-color)' }"></i>
                 </ng-template>
-            </p-multiselect>
+            </p-multi-select>
         </div>
         <app-code></app-code>
     `

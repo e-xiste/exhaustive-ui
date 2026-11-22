@@ -11,7 +11,7 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
     imports: [CommonModule, AppDocPtViewer, ToggleSwitchModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-toggleswitch [(ngModel)]="checked"></p-toggleswitch>
+            <p-toggle-switch [(ngModel)]="checked"></p-toggle-switch>
         </app-docptviewer>
     `
 })

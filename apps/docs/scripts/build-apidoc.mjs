@@ -4,6 +4,7 @@ import { dirname } from 'path';
 import * as TypeDoc from 'typedoc';
 import { fileURLToPath } from 'url';
 import { templateContextType, templateRefType } from './apidoc/template-type.mjs';
+import { readTemplateNames } from './apidoc/template-names.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,6 +22,11 @@ if (!fs.existsSync(outputFile)) {
     fs.mkdirSync(outputPath, { recursive: true });
     fs.writeFileSync(outputFile, '{}', 'utf-8');
 }
+
+// The name users write in <ng-template #name>, read from each contentChild('name') call,
+// per class and property. Deriving it from the property name gave wrong names
+// (disabledDateTemplate is #disabledDate, checkboxIconTemplate is #icon).
+const templateNames = readTemplateNames(path.resolve(__dirname, '../../../packages/core/src'));
 
 const staticMessages = {
     methods: "Defines methods that can be accessed by the component's reference.",
@@ -283,11 +289,16 @@ async function main() {
                                     };
 
                                     component_templates_group.children.forEach((template) => {
+                                        const templateName = templateNames.get(componentName)?.get(template.name);
+                                        if (!templateName) {
+                                            // A template input or a computed alias, not something written as <ng-template #name>
+                                            return;
+                                        }
                                         const templateType = templateRefType(template.type && template.type.toString());
                                         const contextType = templateContextType(templateType);
 
                                         templates.values.push({
-                                            name: template.name.replace(/Template$/, '').toLowerCase(),
+                                            name: templateName,
                                             description: template.comment && template.comment.summary.map((s) => s.text || '').join(' '),
                                             type: templateType,
                                             parameters: parameters(template).map((param) => (param.name === 'context' ? { ...param, type: contextType } : param)),

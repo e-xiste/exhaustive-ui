@@ -15,10 +15,10 @@ import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel>
-                <p-datepicker [(ngModel)]="value" inputId="date" showIcon iconDisplay="input" />
+            <p-ifta-label>
+                <p-date-picker [(ngModel)]="value" inputId="date" showIcon iconDisplay="input" />
                 <label for="date">Date</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
         <app-code></app-code>
     `

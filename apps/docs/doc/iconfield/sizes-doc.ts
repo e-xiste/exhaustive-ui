@@ -15,21 +15,21 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IconField is compatible with the pSize setting of the input field.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-iconfield>
-                <p-inputicon class="pi pi-search" />
+            <p-icon-field>
+                <p-input-icon class="pi pi-search" />
                 <input pInputText [(ngModel)]="value1" placeholder="Small" pSize="small" />
-            </p-iconfield>
+            </p-icon-field>
 
-            <p-iconfield>
+            <p-icon-field>
                 <input pInputText [(ngModel)]="value2" placeholder="Normal" />
-                <p-inputicon class="pi pi-user" />
-            </p-iconfield>
+                <p-input-icon class="pi pi-user" />
+            </p-icon-field>
 
-            <p-iconfield>
-                <p-inputicon class="pi pi-lock" />
+            <p-icon-field>
+                <p-input-icon class="pi pi-lock" />
                 <input pInputText [(ngModel)]="value3" placeholder="Large" pSize="large" />
-                <p-inputicon class="pi pi-spin pi-spinner" />
-            </p-iconfield>
+                <p-input-icon class="pi pi-spin pi-spinner" />
+            </p-icon-field>
         </div>
         <app-code></app-code>
     `

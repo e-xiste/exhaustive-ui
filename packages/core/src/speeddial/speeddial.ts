@@ -39,7 +39,7 @@ import { SpeedDialStyle } from './style/speeddialstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-speeddial, p-speedDial, p-speed-dial',
+    selector: 'p-speed-dial, p-speeddial, p-speedDial',
     imports: [CommonModule, ButtonModule, Ripple, TooltipModule, RouterModule, PlusIcon, SharedModule, Bind],
     template: `
         <div #container [pBind]="ptm('root')" [class]="cn(cx('root'), className())" [style]="style()" [ngStyle]="sx('root')">

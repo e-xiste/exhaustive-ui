@@ -17,14 +17,14 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center gap-4">
-            <p-iconfield>
-                <p-inputicon class="pi pi-search" />
+            <p-icon-field>
+                <p-input-icon class="pi pi-search" />
                 <input type="text" pInputText placeholder="Search" />
-            </p-iconfield>
-            <p-iconfield>
+            </p-icon-field>
+            <p-icon-field>
                 <input type="text" pInputText />
-                <p-inputicon class="pi pi-spinner pi-spin" />
-            </p-iconfield>
+                <p-input-icon class="pi pi-spinner pi-spin" />
+            </p-icon-field>
         </div>
         <app-code></app-code>
     `

@@ -18,7 +18,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" [filter]="true" [filterInputAutoFocus]="true" />
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" [filter]="true" [filterInputAutoFocus]="true" />
         </div>
         <app-code></app-code>
     `

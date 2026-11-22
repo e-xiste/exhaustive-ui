@@ -68,19 +68,19 @@ export interface PrimaryColor {
 
             <div class="config-panel-settings">
                 <span class="config-panel-label">Presets</span>
-                <p-selectbutton [options]="presets" [ngModel]="selectedPreset()" (ngModelChange)="onPresetChange($event)" [allowEmpty]="false" size="small" />
+                <p-select-button [options]="presets" [ngModel]="selectedPreset()" (ngModelChange)="onPresetChange($event)" [allowEmpty]="false" size="small" />
             </div>
             <div class="flex">
                 <div class="flex-1">
                     <div class="config-panel-settings">
                         <span class="config-panel-label">Ripple</span>
-                        <p-toggleswitch [(ngModel)]="ripple" />
+                        <p-toggle-switch [(ngModel)]="ripple" />
                     </div>
                 </div>
                 <div class="flex-1">
                     <div class="config-panel-settings items-end">
                         <span class="config-panel-label">RTL</span>
-                        <p-toggleswitch [ngModel]="isRTL" (ngModelChange)="onRTLChange($event)" />
+                        <p-toggle-switch [ngModel]="isRTL" (ngModelChange)="onRTLChange($event)" />
                     </div>
                 </div>
             </div>

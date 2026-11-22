@@ -20,10 +20,10 @@ interface City {
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel class="w-full md:w-80">
-                <p-multiselect [(ngModel)]="selectedCities" inputId="ms_cities" [options]="cities" optionLabel="name" [filter]="true" [maxSelectedLabels]="3" class="w-full" />
+            <p-ifta-label class="w-full md:w-80">
+                <p-multi-select [(ngModel)]="selectedCities" inputId="ms_cities" [options]="cities" optionLabel="name" [filter]="true" [maxSelectedLabels]="3" class="w-full" />
                 <label for="ms_cities">Cities</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
         <app-code></app-code>
     `

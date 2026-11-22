@@ -2,7 +2,7 @@ import { TemplateRef } from '@angular/core';
 import type { FilterMetadata, LazyLoadMeta, PassThrough, PassThroughOption } from '@exhaustive-ui/core/api';
 import type { ButtonPassThrough, ButtonProps } from '@exhaustive-ui/core/types/button';
 import type { CheckboxPassThrough } from '@exhaustive-ui/core/types/checkbox';
-import type { PaginatorPassThrough } from '@exhaustive-ui/core/types/paginator';
+import type { PaginatorDropdownItemTemplateContext, PaginatorPassThrough, PaginatorTemplateContext } from '@exhaustive-ui/core/types/paginator';
 import type { VirtualScrollerPassThrough } from '@exhaustive-ui/core/types/scroller';
 import type { InputTextPassThrough } from '@exhaustive-ui/core/types/inputtext';
 import type { SelectPassThrough } from '@exhaustive-ui/core/types/select';
@@ -538,314 +538,386 @@ export interface ExportCSVOptions {
     allValues?: boolean;
 }
 /**
+ * Context of the templates that receive the columns: header, headergrouped, footer, footergrouped and colgroup.
+ * @group Interface
+ */
+export interface TableColumnsTemplateContext {
+    /**
+     * Columns of the table, the value of the columns property.
+     */
+    $implicit: any[] | undefined;
+}
+
+/**
+ * Context of the body, frozenbody, groupheader and groupfooter templates, rendered once per row.
+ * @group Interface
+ */
+export interface TableBodyTemplateContext<T = any> {
+    /**
+     * Data of the row.
+     */
+    $implicit: T;
+    /**
+     * Index of the row in the whole data set, including the rows of the previous pages.
+     */
+    rowIndex: number;
+    /**
+     * Columns of the table.
+     */
+    columns: any[] | undefined;
+    /**
+     * Whether the row is being edited, with editMode set to row.
+     */
+    editing: boolean;
+    /**
+     * Whether the row belongs to the frozen part of the table.
+     */
+    frozen: boolean;
+    /**
+     * Whether the row is expanded. Only passed when an expandedrow template is defined.
+     */
+    expanded?: boolean;
+    /**
+     * Whether this row starts a group. Only passed with rowGroupMode set to rowspan.
+     */
+    rowgroup?: boolean;
+    /**
+     * Number of rows of the group this row starts. Only passed with rowGroupMode set to rowspan.
+     */
+    rowspan?: number;
+}
+
+/**
+ * Context of the expandedrow and frozenexpandedrow templates.
+ * @group Interface
+ */
+export interface TableExpandedRowTemplateContext<T = any> {
+    /**
+     * Data of the expanded row.
+     */
+    $implicit: T;
+    /**
+     * Index of the row in the whole data set.
+     */
+    rowIndex: number;
+    /**
+     * Columns of the table.
+     */
+    columns: any[] | undefined;
+    /**
+     * Whether the row belongs to the frozen part of the table.
+     */
+    frozen: boolean;
+}
+
+/**
+ * Context of the loadingbody template. While the table is loading, the template is rendered once with the columns as $implicit.
+ * With lazy virtual scrolling, it is also rendered for each row not loaded yet, with the same context as the body template and an undefined $implicit.
+ * @group Interface
+ */
+export interface TableLoadingBodyTemplateContext {
+    /**
+     * Columns while the table is loading, undefined for a row not loaded yet.
+     */
+    $implicit: any;
+    /**
+     * Whether the rows belong to the frozen part of the table.
+     */
+    frozen: boolean;
+    /**
+     * Index of the row not loaded yet.
+     */
+    rowIndex?: number;
+    /**
+     * Columns of the table, for a row not loaded yet.
+     */
+    columns?: any[];
+    /**
+     * Always false for a row not loaded yet.
+     */
+    editing?: boolean;
+    /**
+     * Whether the row is expanded.
+     */
+    expanded?: boolean;
+    /**
+     * Whether this row starts a group, with rowGroupMode set to rowspan.
+     */
+    rowgroup?: boolean;
+    /**
+     * Size of the group, with rowGroupMode set to rowspan.
+     */
+    rowspan?: number;
+}
+
+/**
+ * Context of the emptymessage template.
+ * @group Interface
+ */
+export interface TableEmptyMessageTemplateContext {
+    /**
+     * Columns of the table.
+     */
+    $implicit: any[] | undefined;
+    /**
+     * Whether the message is rendered in the frozen part of the table.
+     */
+    frozen: boolean;
+}
+
+/**
+ * Context of the sorticon template.
+ * @group Interface
+ */
+export interface TableSortIconTemplateContext {
+    /**
+     * Sort order of the column: 1 ascending, -1 descending, 0 unsorted.
+     */
+    $implicit: number;
+}
+
+/**
+ * Context of the checkboxicon and headercheckboxicon templates.
+ * @group Interface
+ */
+export interface TableCheckboxIconTemplateContext {
+    /**
+     * Whether the checkbox is checked.
+     */
+    $implicit: boolean;
+}
+
+/**
+ * Context of the header and footer templates of a column filter.
+ * @group Interface
+ */
+export interface ColumnFilterFieldTemplateContext {
+    /**
+     * Field of the column.
+     */
+    $implicit: string | undefined;
+}
+
+/**
+ * Context of the filter template of a column filter.
+ * @group Interface
+ */
+export interface ColumnFilterTemplateContext {
+    /**
+     * Current value of the filter constraint.
+     */
+    $implicit: any;
+    /**
+     * Applies a new value to the filter: call it with the value.
+     */
+    filterCallback: (value: any) => void;
+    /**
+     * Type of the filter: text, numeric, date or boolean.
+     */
+    type: string | undefined;
+    /**
+     * Field of the column.
+     */
+    field: string | undefined;
+    /**
+     * Filter constraint being edited.
+     */
+    filterConstraint: FilterMetadata | undefined;
+    /**
+     * Placeholder of the filter.
+     */
+    placeholder: string | undefined;
+    /**
+     * Minimum fraction digits of a numeric filter.
+     */
+    minFractionDigits: number | undefined;
+    /**
+     * Maximum fraction digits of a numeric filter.
+     */
+    maxFractionDigits: number | undefined;
+    /**
+     * Prefix of a numeric filter.
+     */
+    prefix: string | undefined;
+    /**
+     * Suffix of a numeric filter.
+     */
+    suffix: string | undefined;
+    /**
+     * Locale of a numeric filter.
+     */
+    locale: string | undefined;
+    /**
+     * Locale matching algorithm of a numeric filter.
+     */
+    localeMatcher: any;
+    /**
+     * Currency of a numeric filter.
+     */
+    currency: string | undefined;
+    /**
+     * Currency display of a numeric filter.
+     */
+    currencyDisplay: string | undefined;
+    /**
+     * Whether a numeric filter uses grouping separators.
+     */
+    useGrouping: boolean;
+    /**
+     * Whether a numeric filter shows buttons.
+     */
+    showButtons: boolean;
+}
+
+/**
+ * Context of the filtericon template of a column filter.
+ * @group Interface
+ */
+export interface ColumnFilterIconTemplateContext {
+    /**
+     * Whether the column has an active filter.
+     */
+    hasFilter: boolean;
+}
+
+/**
  * Defines valid templates in Table.
  * @group Templates
  */
 export interface TableTemplates {
     /**
-     * Custom caption template.
+     * Custom caption, rendered above the table.
      */
-    caption(): TemplateRef<any>;
+    caption(): TemplateRef<void>;
     /**
-     * Custom grouped header template.
-     * @param {Object} context - row data.
+     * Custom header rows, rendered in the thead.
+     * @param {Object} context - header template context.
      */
-    headergrouped(context: {
-        /**
-         * Row data.
-         */
-        $implicit?: any;
-        /**
-         * Row index.
-         */
-        rowIndex?: number;
-        /**
-         * Columns.
-         */
-        columns?: any[];
-        /**
-         * Editing state.
-         */
-        editing?: boolean;
-        /**
-         * Frozen state.
-         */
-        frozen?: boolean;
-    }): TemplateRef<any>;
+    header(context: TableColumnsTemplateContext): TemplateRef<TableColumnsTemplateContext>;
     /**
-     * Custom grouped header template.
-     * @param {Object} context - header data.
+     * Custom grouped header rows, used in place of the header template.
+     * @param {Object} context - headergrouped template context.
      */
-    header(context: {
-        /**
-         * Field.
-         */
-        $implicit: string;
-    }): TemplateRef<{ $implicit: string }>;
+    headergrouped(context: TableColumnsTemplateContext): TemplateRef<TableColumnsTemplateContext>;
     /**
-     * Custom body template.
-     * @param {Object} context - body data.
+     * Custom row, rendered for each row of data.
+     * @param {Object} context - body template context.
      */
-    body(context: {
-        /**
-         * Columns.
-         */
-        $implicit: any;
-        /**
-         * Frozen state.
-         */
-        frozen: boolean;
-    }): TemplateRef<{ $implicit: any; frozen: boolean }>;
+    body(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
     /**
-     * Custom loading body template.
-     * @param {Object} context - loading body data.
+     * Custom content while the table is loading, and for each row not loaded yet with lazy virtual scrolling.
+     * @param {Object} context - loadingbody template context.
      */
-    loadingbody(context: {
-        /**
-         * Row span.
-         */
-        rowspan?: number;
-        /**
-         * Row group.
-         */
-        rowgroup?: number;
-    }): TemplateRef<any>;
+    loadingbody(context: TableLoadingBodyTemplateContext): TemplateRef<TableLoadingBodyTemplateContext>;
     /**
-     * Custom footer template.
-     * @param {Object} context - footer data.
+     * Custom footer rows, rendered in the tfoot.
+     * @param {Object} context - footer template context.
      */
-    footer(context: {
-        /**
-         * Field.
-         */
-        $implicit: string;
-    }): TemplateRef<{ $implicit: string }>;
+    footer(context: TableColumnsTemplateContext): TemplateRef<TableColumnsTemplateContext>;
     /**
-     * Custom footer template.
-     * @param {Object} context - footer data.
+     * Custom grouped footer rows, used in place of the footer template.
+     * @param {Object} context - footergrouped template context.
      */
-    footergrouped(context: {
-        /**
-         * Columns.
-         */
-        $implicit: any[];
-    }): TemplateRef<any[]>;
+    footergrouped(context: TableColumnsTemplateContext): TemplateRef<TableColumnsTemplateContext>;
     /**
-     * Custom column group template.
-     * @param {Object} context - columns data.
+     * Custom colgroup element.
+     * @param {Object} context - colgroup template context.
      */
-    colgroup(context: {
-        /**
-         * Columns.
-         */
-        $implicit: any[];
-    }): TemplateRef<any[]>;
+    colgroup(context: TableColumnsTemplateContext): TemplateRef<TableColumnsTemplateContext>;
     /**
-     * Custom summary template.
+     * Custom summary, rendered below the table.
      */
-    summary(): TemplateRef<any>;
+    summary(): TemplateRef<void>;
     /**
-     * Custom expanded row template.
-     * @param {Object} context - expanded row data.
+     * Custom content of an expanded row.
+     * @param {Object} context - expandedrow template context.
      */
-    expandedrow(context: {
-        /**
-         * Row span.
-         */
-        rowspan?: number;
-        /**
-         * Row group.
-         */
-        rowgroup?: number;
-        /**
-         * Expanded state.
-         */
-        expanded: boolean;
-    }): TemplateRef<any>;
+    expandedrow(context: TableExpandedRowTemplateContext): TemplateRef<TableExpandedRowTemplateContext>;
     /**
-     * Custom group header template.
-     * @param {Object} context - row data.
+     * Custom row group header, with rowGroupMode set to subheader.
+     * @param {Object} context - groupheader template context.
      */
-    groupheader(context: {
-        /**
-         * Row data.
-         */
-        $implicit?: any;
-        /**
-         * Row index.
-         */
-        rowIndex?: number;
-        /**
-         * Columns.
-         */
-        columns?: any[];
-        /**
-         * Editing state.
-         */
-        editing?: boolean;
-        /**
-         * Frozen state.
-         */
-        frozen?: boolean;
-    }): TemplateRef<any>;
+    groupheader(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
     /**
-     * Custom group footer template.
-     * @param {TableRowContext} context - row data.
+     * Custom row group footer, with rowGroupMode set to subheader.
+     * @param {Object} context - groupfooter template context.
      */
-    groupfooter(context: {
-        /**
-         * Row data.
-         */
-        $implicit?: any;
-        /**
-         * Row index.
-         */
-        rowIndex?: number;
-        /**
-         * Columns.
-         */
-        columns?: any[];
-        /**
-         * Editing state.
-         */
-        editing?: boolean;
-        /**
-         * Frozen state.
-         */
-        frozen?: boolean;
-    }): TemplateRef<any>;
+    groupfooter(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
     /**
-     * Custom frozen body template.
-     * @param {Object} context - row data.
+     * Custom row of the frozen rows.
+     * @param {Object} context - frozenbody template context.
      */
-    frozenbody(context: {
-        /**
-         * Row data.
-         */
-        $implicit?: any;
-        /**
-         * Row index.
-         */
-        rowIndex?: number;
-        /**
-         * Columns.
-         */
-        columns?: any[];
-        /**
-         * Editing state.
-         */
-        editing?: boolean;
-        /**
-         * Frozen state.
-         */
-        frozen?: boolean;
-    }): TemplateRef<any>;
+    frozenbody(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
     /**
-     * Custom frozen expanded row template.
-     * @param {Object} context - row data.
+     * Custom content of an expanded frozen row.
+     * @param {Object} context - frozenexpandedrow template context.
      */
-    frozenexpandedrow(context: {
-        /**
-         * Row span.
-         */
-        rowspan?: number;
-        /**
-         * Row group.
-         */
-        rowgroup?: number;
-        /**
-         * Expanded state.
-         */
-        expanded: boolean;
-    }): TemplateRef<any>;
+    frozenexpandedrow(context: TableExpandedRowTemplateContext): TemplateRef<TableExpandedRowTemplateContext>;
     /**
-     * Custom empty message template.
+     * Custom content when there is no data.
+     * @param {Object} context - emptymessage template context.
      */
-    emptymessage(context: {
-        /**
-         * Columns
-         */
-        $implicit: any[];
-        /**
-         * Frozen state.
-         */
-        frozen: boolean;
-    }): TemplateRef<{ $implicit: any[]; frozen: boolean }>;
+    emptymessage(context: TableEmptyMessageTemplateContext): TemplateRef<TableEmptyMessageTemplateContext>;
     /**
-     * Custom paginator left template.
+     * Custom content on the left of the paginator.
+     * @param {Object} context - paginatorleft template context.
      */
-    paginatorleft(): TemplateRef<any>;
+    paginatorleft(context: PaginatorTemplateContext): TemplateRef<PaginatorTemplateContext>;
     /**
-     * Custom paginator right template.
+     * Custom content on the right of the paginator.
+     * @param {Object} context - paginatorright template context.
      */
-    paginatorright(): TemplateRef<any>;
+    paginatorright(context: PaginatorTemplateContext): TemplateRef<PaginatorTemplateContext>;
     /**
-     * Custom paginator dropdown trigger icon template.
+     * Custom item of the rows per page dropdown of the paginator.
+     * @param {Object} context - paginatordropdownitem template context.
      */
-    paginatordropdownicon(): TemplateRef<any>;
+    paginatordropdownitem(context: PaginatorDropdownItemTemplateContext): TemplateRef<PaginatorDropdownItemTemplateContext>;
     /**
-     * Custom paginator dropdown item template.
+     * Custom loading icon.
      */
-    paginatordropdownitem(): TemplateRef<any>;
+    loadingicon(): TemplateRef<void>;
     /**
-     * Custom paginator first page link icon template.
+     * Custom icon of the upper column reorder indicator.
      */
-    paginatorfirstpagelinkicon(): TemplateRef<any>;
+    reorderindicatorupicon(): TemplateRef<void>;
     /**
-     * Custom paginator last page link icon template.
+     * Custom icon of the lower column reorder indicator.
      */
-    paginatorlastpagelinkicon(): TemplateRef<any>;
+    reorderindicatordownicon(): TemplateRef<void>;
     /**
-     * Custom paginator previous page link icon template.
+     * Custom sort icon of a sortable column.
+     * @param {Object} context - sorticon template context.
      */
-    paginatorpreviouspagelinkicon(): TemplateRef<any>;
+    sorticon(context: TableSortIconTemplateContext): TemplateRef<TableSortIconTemplateContext>;
     /**
-     * Custom paginator next page link icon template.
+     * Custom icon of the row checkboxes.
+     * @param {Object} context - checkboxicon template context.
      */
-    paginatornextpagelinkicon(): TemplateRef<any>;
+    checkboxicon(context: TableCheckboxIconTemplateContext): TemplateRef<TableCheckboxIconTemplateContext>;
     /**
-     * Custom loading icon template.
+     * Custom icon of the header checkbox.
+     * @param {Object} context - headercheckboxicon template context.
      */
-    loadingicon(): TemplateRef<any>;
+    headercheckboxicon(context: TableCheckboxIconTemplateContext): TemplateRef<TableCheckboxIconTemplateContext>;
     /**
-     * Custom reorder indicator up icon template.
+     * Custom dropdown icon of the paginator.
      */
-    reorderindicatorupicon(): TemplateRef<any>;
+    paginatordropdownicon(): TemplateRef<void>;
     /**
-     * Custom reorder indicator down icon template.
+     * Custom icon of the first page button of the paginator.
      */
-    reorderindicatordownicon(): TemplateRef<any>;
+    paginatorfirstpagelinkicon(): TemplateRef<void>;
     /**
-     * Custom sort icon template.
+     * Custom icon of the last page button of the paginator.
      */
-    sorticon(context: {
-        /**
-         * Sort order.
-         */
-        $implicit: number;
-    }): TemplateRef<{ $implicit: number }>;
+    paginatorlastpagelinkicon(): TemplateRef<void>;
     /**
-     * Custom checkbox icon template.
-     * @param {Object} context - checkbox data.
+     * Custom icon of the previous page button of the paginator.
      */
-    checkboxicon(context: {
-        /**
-         * Checkbox state.
-         */
-        $implicit: boolean;
-        /**
-         * Partial selection state of row node.
-         */
-        partialSelected: boolean;
-    }): TemplateRef<{ $implicit: boolean; partialSelected: boolean }>;
+    paginatorpreviouspagelinkicon(): TemplateRef<void>;
     /**
-     * Custom header checkbox icon template.
-     * @param {Object} context - checkbox data.
+     * Custom icon of the next page button of the paginator.
      */
-    headercheckboxicon(context: {
-        /**
-         * Checked state.
-         */
-        $implicit: boolean;
-    }): TemplateRef<{ $implicit: boolean }>;
+    paginatornextpagelinkicon(): TemplateRef<void>;
 }

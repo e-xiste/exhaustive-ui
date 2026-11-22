@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-selectbutton [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" fluid />
+            <p-select-button [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" fluid />
         </div>
         <app-code></app-code>
     `

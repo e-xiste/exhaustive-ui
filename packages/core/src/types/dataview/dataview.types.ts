@@ -252,12 +252,4 @@ export interface DataViewTemplates<T = any> {
      * Custom loading icon template.
      */
     loadingicon(): TemplateRef<void>;
-    /**
-     * Custom list icon template.
-     */
-    listicon(): TemplateRef<void>;
-    /**
-     * Custom grid icon template.
-     */
-    gridicon(): TemplateRef<void>;
 }

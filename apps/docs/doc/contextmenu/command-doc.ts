@@ -38,7 +38,7 @@ interface Users {
                 </li>
             </ul>
 
-            <p-contextmenu #cm [model]="items" (onHide)="onHide()" />
+            <p-context-menu #cm [model]="items" (onHide)="onHide()" />
         </div>
 
         <app-code></app-code>

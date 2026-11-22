@@ -74,7 +74,7 @@ const TREENODE_INSTANCE = new InjectionToken<UITreeNode>('TREENODE_INSTANCE');
  * @internal Rendering detail of Tree, not part of the public API: it may change or stop being exported in a minor version.
  */
 @Component({
-    selector: 'p-treeNode',
+    selector: 'p-tree-node, p-treeNode',
     imports: [CommonModule, Ripple, Checkbox, FormsModule, ChevronRightIcon, ChevronDownIcon, SpinnerIcon, SharedModule, BindModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `

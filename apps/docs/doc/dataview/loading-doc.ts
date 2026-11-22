@@ -20,14 +20,14 @@ import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
             <p>While data is being loaded. <a routerLink="/skeleton">Skeleton</a> component may be used to indicate the busy state.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-dataview #dv [value]="products()" [layout]="layout">
+            <p-data-view #dv [value]="products()" [layout]="layout">
                 <ng-template #header>
                     <div class="flex justify-end">
-                        <p-selectbutton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
+                        <p-select-button [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
                             <ng-template #item let-option>
                                 <i [class]="option === 'list' ? 'pi pi-bars' : 'pi pi-table'"></i>
                             </ng-template>
-                        </p-selectbutton>
+                        </p-select-button>
                     </div>
                 </ng-template>
                 <ng-template #list let-items>
@@ -75,7 +75,7 @@ import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

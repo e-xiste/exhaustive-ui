@@ -19,20 +19,20 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
 
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel class="w-full md:w-56">
-                <p-cascadeselect [(ngModel)]="value1" inputId="over_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
+            <p-float-label class="w-full md:w-56">
+                <p-cascade-select [(ngModel)]="value1" inputId="over_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel class="w-full md:w-56" variant="in">
-                <p-cascadeselect [(ngModel)]="value2" inputId="in_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
+            <p-float-label class="w-full md:w-56" variant="in">
+                <p-cascade-select [(ngModel)]="value2" inputId="in_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel class="w-full md:w-56" variant="on">
-                <p-cascadeselect [(ngModel)]="value3" inputId="on_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
+            <p-float-label class="w-full md:w-56" variant="on">
+                <p-cascade-select [(ngModel)]="value3" inputId="on_label" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" class="w-full" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
 
         <app-code></app-code>

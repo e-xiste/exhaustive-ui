@@ -10,7 +10,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
     imports: [CommonModule, AppDocPtViewer, DatePickerModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-datepicker [(ngModel)]="date" [showTime]="true" [showButtonBar]="true" [showIcon]="true" [iconDisplay]="'button'" placeholder="Select a date" class="w-full md:w-80" />
+            <p-date-picker [(ngModel)]="date" [showTime]="true" [showButtonBar]="true" [showIcon]="true" [iconDisplay]="'button'" placeholder="Select a date" class="w-full md:w-80" />
         </app-docptviewer>
     `
 })

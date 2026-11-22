@@ -14,20 +14,20 @@ import { TabsModule } from '@exhaustive-ui/core/tabs';
         </app-docsectiontext>
         <div class="card">
             <p-tabs value="0" scrollable>
-                <p-tablist>
+                <p-tab-list>
                     @for (tab of scrollableTabs; track tab.value) {
                         <p-tab [value]="tab.value">
                             {{ tab.title }}
                         </p-tab>
                     }
-                </p-tablist>
-                <p-tabpanels>
+                </p-tab-list>
+                <p-tab-panels>
                     @for (tab of scrollableTabs; track tab.value) {
-                        <p-tabpanel [value]="tab.value">
+                        <p-tab-panel [value]="tab.value">
                             <p class="m-0">{{ tab.content }}</p>
-                        </p-tabpanel>
+                        </p-tab-panel>
                     }
-                </p-tabpanels>
+                </p-tab-panels>
             </p-tabs>
         </div>
         <app-code></app-code>

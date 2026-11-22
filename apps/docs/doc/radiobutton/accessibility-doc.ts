@@ -66,11 +66,11 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<label for="rb1">One</label>
-<p-radiobutton inputId="rb1" />
+<p-radio-button inputId="rb1" />
 
 <span id="rb2">Two</span>
-<p-radiobutton ariaLabelledBy="rb2" />
+<p-radio-button ariaLabelledBy="rb2" />
 
-<p-radiobutton ariaLabel="Three" />`
+<p-radio-button ariaLabel="Three" />`
     };
 }

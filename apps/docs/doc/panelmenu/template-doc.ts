@@ -16,7 +16,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
             <p>PanelMenu requires a collection of menuitems as its <i>model</i>.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center">
-            <p-panelmenu [model]="items" class="w-full md:w-80">
+            <p-panel-menu [model]="items" class="w-full md:w-80">
                 <ng-template #item let-item>
                     <a pRipple class="flex items-center px-4 py-2 cursor-pointer group">
                         <i [class]="item.icon + ' text-primary group-hover:text-inherit'"></i>
@@ -25,7 +25,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                         <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded-sm bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
                     </a>
                 </ng-template>
-            </p-panelmenu>
+            </p-panel-menu>
         </div>
         <app-code></app-code>
     `

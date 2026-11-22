@@ -18,7 +18,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-cascadeselect [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" [style]="{ minWidth: '14rem' }" placeholder="Select a City">
+            <p-cascade-select [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" [style]="{ minWidth: '14rem' }" placeholder="Select a City">
                 <ng-template #option let-option>
                     <div class="flex items-center">
                         <img *ngIf="option.states" src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + option.code.toLowerCase()" style="width: 18px" />
@@ -39,7 +39,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <p-button label="Add New" fluid severity="secondary" text size="small" icon="pi pi-plus" />
                     </div>
                 </ng-template>
-            </p-cascadeselect>
+            </p-cascade-select>
         </div>
         <app-code></app-code>
     `

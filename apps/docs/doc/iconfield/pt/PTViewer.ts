@@ -12,10 +12,10 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [CommonModule, FormsModule, AppDocPtViewer, IconFieldModule, InputIconModule, InputTextModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-iconfield>
-                <p-inputicon class="pi pi-search" />
+            <p-icon-field>
+                <p-input-icon class="pi pi-search" />
                 <input pInputText [(ngModel)]="value" placeholder="Search" />
-            </p-iconfield>
+            </p-icon-field>
         </app-docptviewer>
     `
 })

@@ -26,59 +26,59 @@ import { Tag } from '@exhaustive-ui/core/tag';
                         <ng-template #caption>
                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                                 <span class="text-xl font-bold">Customers</span>
-                                <p-iconfield class="mt-4 sm:mt-0 w-full sm:w-auto">
-                                    <p-inputicon>
+                                <p-icon-field class="mt-4 sm:mt-0 w-full sm:w-auto">
+                                    <p-input-icon>
                                         <i class="pi pi-search"></i>
-                                    </p-inputicon>
+                                    </p-input-icon>
                                     <input class="w-full" pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
-                                </p-iconfield>
+                                </p-icon-field>
                             </div>
                         </ng-template>
                         <ng-template #header>
                             <tr>
                                 <th style="width: 3rem">
-                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                    <p-table-header-checkbox></p-table-header-checkbox>
                                 </th>
                                 <th pSortableColumn="name">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Name
-                                        <p-sortIcon field="name"></p-sortIcon>
+                                        <p-sort-icon field="name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="country.name">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Country
-                                        <p-sortIcon field="country.name"></p-sortIcon>
+                                        <p-sort-icon field="country.name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="representative.name">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Agent
-                                        <p-sortIcon field="representative.name"></p-sortIcon>
+                                        <p-sort-icon field="representative.name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="date">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Date
-                                        <p-sortIcon field="date"></p-sortIcon>
+                                        <p-sort-icon field="date"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="balance">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Balance
-                                        <p-sortIcon field="balance"></p-sortIcon>
+                                        <p-sort-icon field="balance"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="status">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Status
-                                        <p-sortIcon field="status"></p-sortIcon>
+                                        <p-sort-icon field="status"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="activity">
                                     <div class="flex justify-content-between align-items-center gap-2">
                                         Activity
-                                        <p-sortIcon field="activity"></p-sortIcon>
+                                        <p-sort-icon field="activity"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th style="width: 8rem"></th>
@@ -87,7 +87,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                         <ng-template #body let-customer>
                             <tr class="p-selectable-row">
                                 <td>
-                                    <p-tableCheckbox [value]="customer"></p-tableCheckbox>
+                                    <p-table-checkbox [value]="customer"></p-table-checkbox>
                                 </td>
                                 <td style="width: 14%; min-width: 14rem">
                                     {{ customer.name }}
@@ -114,7 +114,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                                     <p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" class="text-sm font-bold"></p-tag>
                                 </td>
                                 <td style="width: 14%; min-width: 6rem">
-                                    <p-progressbar [value]="customer.activity" [showValue]="false" [style]="{ height: '6px' }"></p-progressbar>
+                                    <p-progress-bar [value]="customer.activity" [showValue]="false" [style]="{ height: '6px' }"></p-progress-bar>
                                 </td>
                                 <td style="text-align: center">
                                     <button pButton type="button" class="p-button-text p-button-icon-only" icon="pi pi-cog"></button>

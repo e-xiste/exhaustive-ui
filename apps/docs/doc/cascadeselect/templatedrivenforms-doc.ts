@@ -19,7 +19,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <p-cascadeselect
+                    <p-cascade-select
                         #city="ngModel"
                         [(ngModel)]="selectedCity"
                         [options]="countries"

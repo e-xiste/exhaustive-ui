@@ -23,7 +23,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
-                <p-contextmenu #cm [model]="items" (onHide)="selectedProduct = null" />
+                <p-context-menu #cm [model]="items" (onHide)="selectedProduct = null" />
                 <p-table [value]="products" [(contextMenuSelection)]="selectedProduct" [contextMenu]="cm" dataKey="code" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #header>
                         <tr>

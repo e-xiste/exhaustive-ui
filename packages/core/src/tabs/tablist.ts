@@ -17,7 +17,7 @@ const TABLIST_INSTANCE = new InjectionToken<TabList>('TABLIST_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-tablist',
+    selector: 'p-tab-list, p-tablist',
     standalone: true,
     imports: [CommonModule, ChevronLeftIcon, ChevronRightIcon, RippleModule, SharedModule, BindModule],
     template: `

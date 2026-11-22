@@ -14,7 +14,7 @@ import { DynamicDialogStyle } from './style/dynamicdialogstyle';
 const DYNAMIC_DIALOG_INSTANCE = new InjectionToken<DynamicDialog>('DYNAMIC_DIALOG_INSTANCE');
 
 @Component({
-    selector: 'p-dynamicDialog, p-dynamicdialog, p-dynamic-dialog',
+    selector: 'p-dynamic-dialog, p-dynamicDialog, p-dynamicdialog',
     imports: [CommonModule, SharedModule, DynamicDialogContent, Dialog, BindModule],
     template: `
         <p-dialog

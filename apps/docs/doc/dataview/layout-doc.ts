@@ -20,14 +20,14 @@ import { TagModule } from '@exhaustive-ui/core/tag';
             <p>DataView supports <i>list</i> and <i>grid</i> display modes defined with the <i>layout</i> property. The <i>grid</i> mode is not built-in for flexibility purposes and requires a library with CSS grid features like Tailwind.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-dataview #dv [value]="products()" [layout]="layout">
+            <p-data-view #dv [value]="products()" [layout]="layout">
                 <ng-template #header>
                     <div class="flex justify-end">
-                        <p-selectbutton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
+                        <p-select-button [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
                             <ng-template #item let-item>
                                 <i class="pi " [ngClass]="{ 'pi-bars': item === 'list', 'pi-table': item === 'grid' }"></i>
                             </ng-template>
-                        </p-selectbutton>
+                        </p-select-button>
                     </div>
                 </ng-template>
                 <ng-template #list let-items>
@@ -96,7 +96,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

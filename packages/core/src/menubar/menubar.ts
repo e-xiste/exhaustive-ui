@@ -59,7 +59,7 @@ export class MenubarService {
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-menubarSub, p-menubarsub, [pMenubarSub]',
+    selector: 'p-menubar-sub, p-menubarSub, p-menubarsub, [pMenubarSub]',
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleDownIcon, AngleRightIcon, BadgeModule, SharedModule, BindModule],
     template: `
         @for (processedItem of items(); track processedItem.key; let index = $index) {

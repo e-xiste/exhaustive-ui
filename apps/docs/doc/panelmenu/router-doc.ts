@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-panelmenu [model]="items" class="w-full md:w-80" />
+            <p-panel-menu [model]="items" class="w-full md:w-80" />
         </div>
         <app-code></app-code>
     `,

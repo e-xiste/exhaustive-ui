@@ -11,7 +11,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
     imports: [CommonModule, AppDocPtViewer, TreeTableModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-treetable [value]="nodes" [tableStyle]="{ 'min-width': '50rem' }">
+            <p-tree-table [value]="nodes" [tableStyle]="{ 'min-width': '50rem' }">
                 <ng-template #header>
                     <tr>
                         <th>Name</th>
@@ -22,14 +22,14 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                 <ng-template #body let-rowNode let-rowData="rowData">
                     <tr [ttRow]="rowNode">
                         <td>
-                            <p-treetable-toggler [rowNode]="rowNode" />
+                            <p-tree-table-toggler [rowNode]="rowNode" />
                             {{ rowData.name }}
                         </td>
                         <td>{{ rowData.size }}</td>
                         <td>{{ rowData.type }}</td>
                     </tr>
                 </ng-template>
-            </p-treetable>
+            </p-tree-table>
         </app-docptviewer>
     `
 })

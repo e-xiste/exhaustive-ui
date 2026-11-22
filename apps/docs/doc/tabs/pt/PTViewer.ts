@@ -10,22 +10,22 @@ import { TabsModule } from '@exhaustive-ui/core/tabs';
     template: `
         <app-docptviewer [docs]="docs">
             <p-tabs [value]="0">
-                <p-tablist>
+                <p-tab-list>
                     <p-tab [value]="0">Header I</p-tab>
                     <p-tab [value]="1">Header II</p-tab>
                     <p-tab [value]="2">Header III</p-tab>
-                </p-tablist>
-                <p-tabpanels>
-                    <p-tabpanel [value]="0">
+                </p-tab-list>
+                <p-tab-panels>
+                    <p-tab-panel [value]="0">
                         <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                    </p-tabpanel>
-                    <p-tabpanel [value]="1">
+                    </p-tab-panel>
+                    <p-tab-panel [value]="1">
                         <p class="m-0">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto.</p>
-                    </p-tabpanel>
-                    <p-tabpanel [value]="2">
+                    </p-tab-panel>
+                    <p-tab-panel [value]="2">
                         <p class="m-0">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate.</p>
-                    </p-tabpanel>
-                </p-tabpanels>
+                    </p-tab-panel>
+                </p-tab-panels>
             </p-tabs>
         </app-docptviewer>
     `

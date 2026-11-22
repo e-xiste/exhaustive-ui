@@ -43,7 +43,7 @@ const ORDERLIST_INSTANCE = new InjectionToken<OrderList>('ORDERLIST_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-orderList, p-orderlist, p-order-list',
+    selector: 'p-order-list, p-orderList, p-orderlist',
     imports: [CommonModule, ButtonModule, Ripple, DragDropModule, AngleDoubleDownIcon, AngleDoubleUpIcon, AngleUpIcon, AngleDownIcon, Listbox, FormsModule, SharedModule, Bind],
     template: `
         <div [pBind]="ptm('controls')" [class]="cx('controls')">

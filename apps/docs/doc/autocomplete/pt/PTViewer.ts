@@ -10,7 +10,7 @@ import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
     imports: [CommonModule, AppDocPtViewer, AutoCompleteModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-autocomplete [(ngModel)]="value" [dropdown]="true" [suggestions]="items" (completeMethod)="search($event)" appendTo="self" />
+            <p-auto-complete [(ngModel)]="value" [dropdown]="true" [suggestions]="items" (completeMethod)="search($event)" appendTo="self" />
         </app-docptviewer>
     `
 })

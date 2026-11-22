@@ -16,7 +16,7 @@ import { OrderListModule } from '@exhaustive-ui/core/orderlist';
             <p>For custom content support define an <i>item</i> template that gets the item instance as a parameter. In addition <i>header</i> template is provided for further customization.</p>
         </app-docsectiontext>
         <div class="card sm:flex sm:justify-center">
-            <p-orderlist [value]="products()" dataKey="id" [responsive]="true" breakpoint="575px" scrollHeight="20rem">
+            <p-order-list [value]="products()" dataKey="id" [responsive]="true" breakpoint="575px" scrollHeight="20rem">
                 <ng-template let-option let-selected="selected" #item>
                     <div class="flex flex-wrap p-1 items-center gap-4 w-full">
                         <img class="w-12 shrink-0 rounded-sm" src="https://exhaustive-ui.com/demo/product/{{ option.image }}" [alt]="option.name" />
@@ -35,7 +35,7 @@ import { OrderListModule } from '@exhaustive-ui/core/orderlist';
                         <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
                     </div>
                 </ng-template>
-            </p-orderlist>
+            </p-order-list>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

@@ -10,7 +10,7 @@ import { FloatLabelStyle } from './style/floatlabelstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-floatlabel, p-floatLabel, p-float-label',
+    selector: 'p-float-label, p-floatlabel, p-floatLabel',
     imports: [SharedModule, BindModule],
     template: ` <ng-content></ng-content> `,
     changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,7 +13,7 @@ import { NodeService } from '@/service/nodeservice';
     providers: [NodeService],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-treeselect [(ngModel)]="selectedNodes" [options]="nodes" selectionMode="checkbox" [filter]="true" [showClear]="true" placeholder="Select Item" class="md:w-80 w-full"> </p-treeselect>
+            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" selectionMode="checkbox" [filter]="true" [showClear]="true" placeholder="Select Item" class="md:w-80 w-full"> </p-tree-select>
         </app-docptviewer>
     `
 })

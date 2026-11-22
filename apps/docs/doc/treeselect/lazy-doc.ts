@@ -17,7 +17,7 @@ import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect
+            <p-tree-select
                 class="w-full md:w-80"
                 [(ngModel)]="selectedNodes"
                 (onNodeExpand)="onNodeExpand($event)"

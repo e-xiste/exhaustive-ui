@@ -126,7 +126,7 @@ export class FileContent extends BaseComponent {
  * @group Components
  */
 @Component({
-    selector: 'p-fileupload, p-fileUpload',
+    selector: 'p-file-upload, p-fileupload, p-fileUpload',
     imports: [CommonModule, Button, ProgressBar, Message, PlusIcon, UploadIcon, TimesIcon, SharedModule, FileContent, Bind],
     template: `
         @if (mode() === 'advanced') {

@@ -16,7 +16,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-tieredmenu [model]="items" />
+            <p-tiered-menu [model]="items" />
         </div>
         <app-code></app-code>
     `

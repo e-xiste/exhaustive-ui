@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p-toast />
             <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
                 <div class="flex flex-col items-center gap-2">
-                    <p-colorpicker formControlName="color" defaultColor="989898" />
+                    <p-color-picker formControlName="color" defaultColor="989898" />
                     @if (isInvalid('color')) {
                         <p-message severity="error" size="small" variant="simple">Color is required.</p-message>
                     }

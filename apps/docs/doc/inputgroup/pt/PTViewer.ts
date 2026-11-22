@@ -12,12 +12,12 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [CommonModule, AppDocPtViewer, InputGroupModule, InputGroupAddonModule, InputTextModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-inputgroup>
-                <p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>
                     <i class="pi pi-user"></i>
-                </p-inputgroup-addon>
+                </p-input-group-addon>
                 <input pInputText [(ngModel)]="value" placeholder="Username" />
-            </p-inputgroup>
+            </p-input-group>
         </app-docptviewer>
     `
 })

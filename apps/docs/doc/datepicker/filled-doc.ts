@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Specify the <i>variant</i> property as <i>filled</i> to display the component with a higher visual emphasis than the default <i>outlined</i> style.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="date" variant="filled" />
+            <p-date-picker [(ngModel)]="date" variant="filled" />
         </div>
         <app-code></app-code>
     `

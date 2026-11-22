@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-datepicker [(ngModel)]="date" fluid />
+            <p-date-picker [(ngModel)]="date" fluid />
         </div>
         <app-code></app-code>
     `

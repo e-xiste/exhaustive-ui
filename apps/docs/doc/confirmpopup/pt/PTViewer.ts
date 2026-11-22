@@ -12,7 +12,7 @@ import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
     providers: [ConfirmationService],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-confirmpopup />
+            <p-confirm-popup />
             <p-button (onClick)="confirm($event)" label="Open Popup" outlined></p-button>
         </app-docptviewer>
     `

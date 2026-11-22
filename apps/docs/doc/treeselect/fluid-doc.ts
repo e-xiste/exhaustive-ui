@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-treeselect [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" fluid />
+            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" fluid />
         </div>
         <app-code></app-code>
     `

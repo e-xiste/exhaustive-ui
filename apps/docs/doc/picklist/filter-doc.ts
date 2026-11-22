@@ -16,7 +16,7 @@ import { PickListModule } from '@exhaustive-ui/core/picklist';
             <p>Filter value is checked against the property of an object configured with the <i>filterBy</i> property.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-picklist
+            <p-pick-list
                 [source]="sourceProducts()"
                 [target]="targetProducts()"
                 [dragdrop]="true"
@@ -44,7 +44,7 @@ import { PickListModule } from '@exhaustive-ui/core/picklist';
                         <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
                     </div>
                 </ng-template>
-            </p-picklist>
+            </p-pick-list>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

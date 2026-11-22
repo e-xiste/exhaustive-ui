@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Two-way binding to a boolean property is defined using the standard <i>ngModel</i> directive.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-togglebutton [(ngModel)]="checked" onLabel="On" offLabel="Off" class="w-24" />
+            <p-toggle-button [(ngModel)]="checked" onLabel="On" offLabel="Off" class="w-24" />
         </div>
         <app-code></app-code>
     `

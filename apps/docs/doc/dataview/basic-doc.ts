@@ -18,7 +18,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
             <p>DataView requires a value to display along with a <i>list</i> template that receives an object in the collection to return content.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-dataview #dv [value]="products()">
+            <p-data-view #dv [value]="products()">
                 <ng-template #list let-items>
                     <div class="grid grid-cols-12 gap-4 grid-nogutter">
                         <div class="col-span-12" *ngFor="let item of items; let first = first">
@@ -55,7 +55,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

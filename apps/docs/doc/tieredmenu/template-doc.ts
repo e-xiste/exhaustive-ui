@@ -16,7 +16,7 @@ import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
             <p>TieredMenu offers item customization with the <i>item</i> template that receives the menuitem instance from the model as a parameter.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-tieredmenu [model]="items">
+            <p-tiered-menu [model]="items">
                 <ng-template #item let-item let-hasSubmenu="hasSubmenu">
                     <a pRipple class="flex items-center px-4 py-3 cursor-pointer">
                         <span [class]="item.icon"></span>
@@ -26,7 +26,7 @@ import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
                         <i *ngIf="hasSubmenu" class="pi pi-angle-right ms-auto rotate-90 lg:rotate-0"></i>
                     </a>
                 </ng-template>
-            </p-tieredmenu>
+            </p-tiered-menu>
         </div>
         <app-code></app-code>
     `

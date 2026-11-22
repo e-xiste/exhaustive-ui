@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-inputnumber [(ngModel)]="value" inputId="price_input" mode="currency" currency="USD" locale="en-US" fluid />
+            <p-input-number [(ngModel)]="value" inputId="price_input" mode="currency" currency="USD" locale="en-US" fluid />
         </div>
         <app-code></app-code>
     `

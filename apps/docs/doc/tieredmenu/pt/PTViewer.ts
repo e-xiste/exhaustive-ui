@@ -9,7 +9,7 @@ import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
     imports: [CommonModule, AppDocPtViewer, TieredMenuModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-tieredmenu [model]="items" />
+            <p-tiered-menu [model]="items" />
         </app-docptviewer>
     `
 })

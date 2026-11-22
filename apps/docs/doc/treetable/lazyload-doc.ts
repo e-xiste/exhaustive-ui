@@ -28,7 +28,7 @@ interface Column {
             <p>In addition, only the root elements should be loaded, children can be loaded on demand using <i>onNodeExpand</i> callback.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-treetable
+            <p-tree-table
                 [value]="files"
                 [columns]="cols"
                 [paginator]="true"
@@ -56,7 +56,7 @@ interface Column {
                             <td>
                                 @if (first) {
                                     <div class="flex items-center gap-2">
-                                        <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                        <p-tree-table-toggler [rowNode]="rowNode"></p-tree-table-toggler>
                                         <span>{{ rowData[col.field] }}</span>
                                     </div>
                                 } @else {
@@ -66,7 +66,7 @@ interface Column {
                         }
                     </tr>
                 </ng-template>
-            </p-treetable>
+            </p-tree-table>
         </div>
         <app-code></app-code>
     `,

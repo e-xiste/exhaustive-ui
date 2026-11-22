@@ -87,12 +87,12 @@ import { OverviewApp } from './samples/overviewapp.component';
                     />
                 </div>
                 <div class="w-full flex lg:hidden items-center justify-center mt-16 mb-4">
-                    <p-selectbutton [(ngModel)]="selectedSampleOption" [options]="sampleOptions" optionLabel="title" styleClass="dark:border dark:border-white/20">
+                    <p-select-button [(ngModel)]="selectedSampleOption" [options]="sampleOptions" optionLabel="title" styleClass="dark:border dark:border-white/20">
                         <ng-template let-item pTemplate="item">
                             <i [class]="item.icon"></i>
                             <div class="hidden sm:flex flex-1 text-sm font-medium leading-5">{{ item.title }}</div>
                         </ng-template>
-                    </p-selectbutton>
+                    </p-select-button>
                 </div>
                 <div class="bg-surface-0 border border-black/10 dark:border-white/20 dark:bg-surface-950 w-full rounded-3xl p-0 flex lg:hidden items-start gap-6 overflow-hidden">
                     <ng-container *ngFor="let sampleOption of sampleOptions">
@@ -229,11 +229,11 @@ import { OverviewApp } from './samples/overviewapp.component';
                                 </div>
                                 <p-button (onClick)="dashboardSidebarVisible = false" icon="pi pi-sign-out" text rounded severity="secondary" />
                             </div>
-                            <p-selectbutton [(ngModel)]="selectedSidebarOption" [options]="sidebarOptions" class="w-full px-6 py-3" styleClass="flex-1 w-full py-2.5">
+                            <p-select-button [(ngModel)]="selectedSidebarOption" [options]="sidebarOptions" class="w-full px-6 py-3" styleClass="flex-1 w-full py-2.5">
                                 <ng-template pTemplate="item" let-item>
                                     <span class="text-sm">{{ item }}</span>
                                 </ng-template>
-                            </p-selectbutton>
+                            </p-select-button>
                         </div>
                         <div *ngIf="selectedSidebarOption === 'Interaction Logs'" class="h-[calc(100%-172px)] flex flex-col gap-4 p-6">
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
@@ -243,9 +243,9 @@ import { OverviewApp } from './samples/overviewapp.component';
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
                                     <div *ngFor="let data of callLogs" class="flex items-center gap-3 p-2">
-                                        <p-overlayBadge severity="success" styleClass="w-fit">
+                                        <p-overlay-badge severity="success" styleClass="w-fit">
                                             <p-avatar [image]="data.image" size="normal" class="rounded-md w-10 h-10 overflow-hidden flex" />
-                                        </p-overlayBadge>
+                                        </p-overlay-badge>
 
                                         <div class="flex-1">
                                             <div class="text-sm leading-5 font-medium text-color">{{ data.name }}</div>
@@ -262,9 +262,9 @@ import { OverviewApp } from './samples/overviewapp.component';
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
                                     <div *ngFor="let data of emailRecords" class="flex items-center gap-3 p-2">
-                                        <p-overlayBadge severity="danger" styleClass="w-fit">
+                                        <p-overlay-badge severity="danger" styleClass="w-fit">
                                             <p-avatar [image]="data.image" size="normal" class="rounded-md overflow-hidden w-10 h-10 flex" />
-                                        </p-overlayBadge>
+                                        </p-overlay-badge>
 
                                         <div class="w-1/5 text-sm leading-5 font-medium text-color">{{ data.name }}</div>
                                         <div class="flex-1">
@@ -317,7 +317,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <div *ngFor="let pref of data.prefs" class="flex items-center gap-2">
                                         <i class="text-lg text-color" [class]="pref.icon"></i>
                                         <div class="font-medium text-color flex-1">{{ pref.title }}</div>
-                                        <p-toggleswitch [(ngModel)]="pref.checked" />
+                                        <p-toggle-switch [(ngModel)]="pref.checked" />
                                     </div>
                                 </div>
                             </div>

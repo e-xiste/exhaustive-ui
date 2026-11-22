@@ -11,7 +11,7 @@ import { ProgressBarStyle } from './style/progressbarstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-progressBar, p-progressbar, p-progress-bar',
+    selector: 'p-progress-bar, p-progressBar, p-progressbar',
     imports: [CommonModule, SharedModule, Bind],
     template: `
         @if (mode() === 'determinate') {

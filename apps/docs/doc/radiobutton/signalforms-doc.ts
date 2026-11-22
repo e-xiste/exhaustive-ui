@@ -31,7 +31,7 @@ interface Category {
                 <div class="flex flex-wrap gap-4">
                     @for (category of categories; track category.key) {
                         <div class="flex items-center gap-2">
-                            <p-radiobutton [formField]="exampleForm.selectedCategory" [inputId]="category.key" [value]="category" />
+                            <p-radio-button [formField]="exampleForm.selectedCategory" [inputId]="category.key" [value]="category" />
                             <label [for]="category.key"> {{ category.name }} </label>
                         </div>
                     }

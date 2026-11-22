@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-file accept=".csv,.xlsx">
+            <p-file-input accept=".csv,.xlsx">
                 <ng-template #dropzone let-active="active">
                     <i class="pi pi-file-excel !text-3xl text-muted-color"></i>
                     <span class="font-semibold">{{ active ? 'Release to import' : 'Import a spreadsheet' }}</span>
@@ -27,7 +27,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <span class="flex-1 truncate">{{ item.name }}</span>
                     <p-button icon="pi pi-times" severity="secondary" text rounded [ariaLabel]="'Remove ' + item.name" (onClick)="remove()" />
                 </ng-template>
-            </p-file>
+            </p-file-input>
         </div>
         <app-code></app-code>
     `

@@ -25,7 +25,7 @@ export const COLORPICKER_VALUE_ACCESSOR: any = {
  * @group Components
  */
 @Component({
-    selector: 'p-colorPicker, p-colorpicker, p-color-picker',
+    selector: 'p-color-picker, p-colorPicker, p-colorpicker',
     imports: [AutoFocusModule, SharedModule, Bind, MotionModule, OverlayModule],
     hostDirectives: [Bind],
     template: `

@@ -19,7 +19,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
             <p>Pagination is enabled with the <i>paginator</i> and <i>rows</i> properties. Refer to the <a routerLink="/paginator">Paginator</a> for more information about customizing the paginator.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-dataview #dv [value]="products()" [rows]="5" [paginator]="true">
+            <p-data-view #dv [value]="products()" [rows]="5" [paginator]="true">
                 <ng-template #list let-items>
                     <div class="grid grid-cols-12 gap-4 grid-nogutter">
                         <div class="col-span-12" *ngFor="let item of items; let first = first">
@@ -56,7 +56,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

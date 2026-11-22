@@ -19,14 +19,14 @@ interface AutoCompleteCompleteEvent {
             <p>Option grouping is enabled when <i>group</i> property is set to <i>true</i>. <i>group</i> template is available to customize the option groups. All templates get the option instance as the default local template variable.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-autocomplete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups" (completeMethod)="filterGroupedCity($event)" placeholder="Hint: type 'a'">
+            <p-auto-complete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups" (completeMethod)="filterGroupedCity($event)" placeholder="Hint: type 'a'">
                 <ng-template let-group #group>
                     <div class="flex items-center">
                         <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
                         <span>{{ group.label }}</span>
                     </div>
                 </ng-template>
-            </p-autocomplete>
+            </p-auto-complete>
         </div>
         <app-code></app-code>`
 })

@@ -236,10 +236,6 @@ export interface TreeSelectTemplates {
      */
     filtericon(): TemplateRef<void>;
     /**
-     * Custom close icon template.
-     */
-    closeicon(): TemplateRef<void>;
-    /**
      * Custom item toggler icon template.
      * @param {TreeSelectItemTogglerIconTemplateContext} context - toggler icon context.
      */

@@ -10,7 +10,7 @@ import { AvatarGroupStyle } from './style/avatargroupstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-avatarGroup, p-avatar-group, p-avatargroup',
+    selector: 'p-avatar-group, p-avatarGroup, p-avatargroup',
     imports: [SharedModule],
     template: ` <ng-content></ng-content> `,
     changeDetection: ChangeDetectionStrategy.OnPush,

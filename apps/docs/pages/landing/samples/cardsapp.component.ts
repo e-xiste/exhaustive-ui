@@ -60,9 +60,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
             <div class="flex-1 flex flex-col gap-6">
                 <div class="border border-surface rounded-3xl p-6 flex flex-col gap-6">
                     <div class="flex items-center gap-3">
-                        <p-overlayBadge severity="danger" styleClass="w-fit">
+                        <p-overlay-badge severity="danger" styleClass="w-fit">
                             <p-avatar image="/demo/landing/apps/main-avatar.png" class="rounded-lg overflow-hidden flex" />
-                        </p-overlayBadge>
+                        </p-overlay-badge>
 
                         <div>
                             <div class="font-medium text-color leading-6">Jacob Jones</div>
@@ -76,21 +76,21 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <p class="text-sm text-muted-color leading-5 mb-0">Meet Jacob Jones, the whimsical adventurer on a quest for life's quirks. From sock mysteries to subway adventures, join him for a laughter-filled journey!</p>
                     <div class="flex items-center justify-between gap-2">
                         <div class="text-sm leading-5 text-color font-medium">Mutual Friends</div>
-                        <p-avatarGroup>
+                        <p-avatar-group>
                             <p-avatar image="/demo/landing/apps/avatar1.png" class="rounded-lg overflow-hidden" />
                             <p-avatar image="/demo/landing/apps/avatar9.jpg" class="rounded-lg overflow-hidden" />
                             <p-avatar image="/demo/landing/apps/avatar11.jpg" class="rounded-lg overflow-hidden" />
                             <p-avatar image="/demo/landing/apps/avatar13.jpg" class="rounded-lg overflow-hidden" />
                             <p-avatar image="/demo/landing/apps/avatar5.png" class="rounded-lg overflow-hidden" />
                             <p-avatar label="+99" class="rounded-lg overflow-hidden text-xs" />
-                        </p-avatarGroup>
+                        </p-avatar-group>
                     </div>
-                    <p-selectbutton [(ngModel)]="selectedUserSelectButtonOption" [options]="userSelectButtonOptions" />
+                    <p-select-button [(ngModel)]="selectedUserSelectButtonOption" [options]="userSelectButtonOptions" />
                     <div class="flex flex-col gap-4">
                         <div class="p-2 rounded-2xl flex items-center gap-3 bg-emphasis">
-                            <p-overlayBadge severity="danger" class="w-fit">
+                            <p-overlay-badge severity="danger" class="w-fit">
                                 <p-avatar image="/demo/landing/apps/main-avatar.png" class="rounded-lg overflow-hidden w-10 h-10 block" />
-                            </p-overlayBadge>
+                            </p-overlay-badge>
 
                             <div class="flex-1">
                                 <div class="text-color text-sm font-medium leading-5">Jacob Jones</div>
@@ -99,9 +99,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             <p-button label="Join" />
                         </div>
                         <div class="p-2 rounded-2xl flex items-center gap-3 bg-emphasis">
-                            <p-overlayBadge severity="danger" class="w-fit">
+                            <p-overlay-badge severity="danger" class="w-fit">
                                 <p-avatar image="/demo/landing/apps/avatar9.jpg" class="rounded-lg overflow-hidden w-10 h-10 flex" />
-                            </p-overlayBadge>
+                            </p-overlay-badge>
 
                             <div class="flex-1">
                                 <div class="text-color text-sm font-medium leading-5">Courtney Henry</div>
@@ -148,7 +148,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             }"
                         ></i>
                         <div class="font-medium leading-normal flex-1 text-left">Switch to {{ darkMode ? 'Light' : 'Dark' }}</div>
-                        <p-toggleswitch [(ngModel)]="darkMode" />
+                        <p-toggle-switch [(ngModel)]="darkMode" />
                     </div>
                 </div>
                 <div class="border border-surface rounded-3xl">
@@ -211,7 +211,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     </div>
                     <div>
                         <label class="text-color font-medium leading-6">Upload Files</label>
-                        <p-fileupload name="demo[]" url="/api/upload" (onUpload)="onTemplatedUpload($event)" accept="image/*" [maxFileSize]="1000000" styleClass="mt-2" (onSelect)="onSelectedFiles($event)">
+                        <p-file-upload name="demo[]" url="/api/upload" (onUpload)="onTemplatedUpload($event)" accept="image/*" [maxFileSize]="1000000" styleClass="mt-2" (onSelect)="onSelectedFiles($event)">
                             <ng-template #header let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                                 <div *ngIf="files.length > 0 || uploadedFiles.length > 0" class="flex w-full flex-wrap justify-between items-center flex-1 gap-4 border-b border-surface pb-4">
                                     <div class="flex gap-2">
@@ -262,11 +262,11 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     </div>
                                 </div>
                             </ng-template>
-                        </p-fileupload>
+                        </p-file-upload>
                     </div>
                     <div>
                         <label class="text-color font-medium leading-6">Tag (Optional)</label>
-                        <p-autocomplete [(ngModel)]="filesTag" class="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
+                        <p-auto-complete [(ngModel)]="filesTag" class="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
                     </div>
                     <div class="flex items-center gap-2">
                         <label
@@ -277,7 +277,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         >
                             <i class="text-color" :class="permission.icon"></i>
                             <div class="flex-1 text-sm leading-5 text-color">{{ permission.name }}</div>
-                            <p-radiobutton [(ngModel)]="selectedPermission" [inputId]="permission.key" variant="filled" name="dynamic" [value]="permission.name" />
+                            <p-radio-button [(ngModel)]="selectedPermission" [inputId]="permission.key" variant="filled" name="dynamic" [value]="permission.name" />
                         </label>
                     </div>
                     <div class="flex items-center gap-2">
@@ -313,7 +313,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div>
                         <div class="text-muted-color leading-6">Email</div>
                         <div class="flex items-start gap-3 mt-2">
-                            <p-autocomplete [(ngModel)]="emailChips" inputId="multiple-ac-2" class="flex-1 w-full" multiple (onSelect)="search($event)" [typeahead]="false" />
+                            <p-auto-complete [(ngModel)]="emailChips" inputId="multiple-ac-2" class="flex-1 w-full" multiple (onSelect)="search($event)" [typeahead]="false" />
                             <p-button label="Invite" />
                         </div>
                     </div>
@@ -358,37 +358,37 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
             <div class="flex-1 flex flex-wrap gap-6">
                 <div class="flex-1 border border-surface rounded-3xl p-6">
                     <div class="text-color font-medium leading-6 mb-4">User Profiles</div>
-                    <p-selectbutton [(ngModel)]="userProfiles" [options]="userProfilesOptions" class="w-full" styleClass="flex-1 w-full" />
+                    <p-select-button [(ngModel)]="userProfiles" [options]="userProfilesOptions" class="w-full" styleClass="flex-1 w-full" />
                     <div class="flex flex-col gap-4 mt-6">
                         <div class="flex items-center gap-3">
                             <i class="pi pi-volume-down text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Sound</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[0]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[0]" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-wifi text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Wi-Fi</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[1]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[1]" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-moon text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Dark Mode</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[2]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[2]" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-map-marker text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Location Services</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[3]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[3]" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-shield text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Privacy Settings</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[4]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[4]" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-sync text-color text-xl"></i>
                             <div class="leading-6 text-color flex-1">Auto Update</div>
-                            <p-toggleswitch [(ngModel)]="userProfilesValues[5]" />
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[5]" />
                         </div>
                     </div>
                 </div>
@@ -405,7 +405,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         <p-button label="Resend" text />
                     </div>
                     <div class="flex items-center justify-center">
-                        <p-inputotp [(ngModel)]="forgotPasswordOTP" [length]="6" [integerOnly]="true" class="w-full *:flex-1 *:min-h-14 *:text-2xl" />
+                        <p-input-otp [(ngModel)]="forgotPasswordOTP" [length]="6" [integerOnly]="true" class="w-full *:flex-1 *:min-h-14 *:text-2xl" />
                     </div>
                     <button pButton label="Change password" class="w-full"></button>
                 </div>
@@ -417,11 +417,11 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div class="mt-4 flex gap-2">
                         <div class="flex-1">
                             <label for="price-min-val" class="leading-6 text-color">Min Value</label>
-                            <p-inputnumber [(ngModel)]="priceRange[0]" [min]="0" inputId="price-min-val" mode="currency" currency="USD" locale="en-US" class="w-full" />
+                            <p-input-number [(ngModel)]="priceRange[0]" [min]="0" inputId="price-min-val" mode="currency" currency="USD" locale="en-US" class="w-full" />
                         </div>
                         <div class="flex-1">
                             <label for="price-max-val" class="leading-6 text-color">Max Value</label>
-                            <p-inputnumber [(ngModel)]="priceRange[1]" inputId="price-max-val" mode="currency" currency="USD" locale="en-US" class="w-full" />
+                            <p-input-number [(ngModel)]="priceRange[1]" inputId="price-max-val" mode="currency" currency="USD" locale="en-US" class="w-full" />
                         </div>
                     </div>
                     <div class="mt-4">

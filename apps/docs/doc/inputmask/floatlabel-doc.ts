@@ -16,20 +16,20 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>FloatLabel visually integrates a label with its form element. Visit <a routerLink="/floatlabel">FloatLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel>
+            <p-float-label>
                 <input pInputText id="over_label" [(ngModel)]="value1" pInputMask="999-99-9999" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
+            <p-float-label variant="in">
                 <input pInputText id="in_label" [(ngModel)]="value2" pInputMask="999-99-9999" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
+            <p-float-label variant="on">
                 <input pInputText id="on_label" [(ngModel)]="value3" pInputMask="999-99-9999" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

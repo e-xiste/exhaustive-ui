@@ -21,7 +21,7 @@ import { Code } from '@/domain/code';
         </app-docsectiontext>
         <p-toast />
         <div class="card">
-            <p-file [uploadHandler]="upload" (onUpload)="onUpload($event)" />
+            <p-file-input [uploadHandler]="upload" (onUpload)="onUpload($event)" />
         </div>
         <app-code></app-code>
         <app-docsectiontext>
@@ -55,6 +55,6 @@ export class UploadDoc {
     }
 
     urlCode: Code = {
-        html: `<p-file url="/api/upload" fieldName="document" [headers]="headers" withCredentials />`
+        html: `<p-file-input url="/api/upload" fieldName="document" [headers]="headers" withCredentials />`
     };
 }

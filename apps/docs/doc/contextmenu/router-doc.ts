@@ -40,7 +40,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <path d="M11.4013 8.27235L8.00893 7.94938L10.2705 5.68861H12.5321L11.4013 8.27235Z" fill="var(--ground-background)" />
                 </svg>
             </span>
-            <p-contextmenu [target]="span" [model]="items" />
+            <p-context-menu [target]="span" [model]="items" />
         </div>
         <app-code></app-code>
     `

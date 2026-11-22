@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>For progresses with no value to track, set the <i>mode</i> property to <i>indeterminate</i>.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-progressbar mode="indeterminate" [style]="{ height: '6px' }" />
+            <p-progress-bar mode="indeterminate" [style]="{ height: '6px' }" />
         </div>
         <app-code></app-code>
     `

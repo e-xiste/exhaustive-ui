@@ -12,11 +12,11 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     imports: [ConfirmDialogModule, ToastModule, ButtonModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>ConfirmDialog is defined using <i>p-confirmdialog</i> tag and an instance of <i>ConfirmationService</i> is required to display it bycalling confirm method.</p>
+            <p>ConfirmDialog is defined using <i>p-confirm-dialog</i> tag and an instance of <i>ConfirmationService</i> is required to display it bycalling confirm method.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
             <p-toast />
-            <p-confirmdialog />
+            <p-confirm-dialog />
             <p-button (click)="confirm1($event)" label="Save" [outlined]="true" />
             <p-button (click)="confirm2($event)" label="Delete" severity="danger" [outlined]="true" />
         </div>

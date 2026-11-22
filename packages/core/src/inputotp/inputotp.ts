@@ -24,7 +24,7 @@ export { InputOtpChangeEvent, InputOtpInputTemplateContext, InputOtpTemplateEven
  * @group Components
  */
 @Component({
-    selector: 'p-inputOtp, p-inputotp, p-input-otp',
+    selector: 'p-input-otp, p-inputOtp, p-inputotp',
     imports: [CommonModule, InputText, AutoFocus, SharedModule, BindModule],
     template: `
         @for (i of getRange(length()); track trackByFn($index)) {

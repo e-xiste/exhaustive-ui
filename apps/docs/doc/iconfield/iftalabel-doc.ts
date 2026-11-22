@@ -17,13 +17,13 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel>
-                <p-iconfield>
-                    <p-inputicon class="pi pi-user" />
+            <p-ifta-label>
+                <p-icon-field>
+                    <p-input-icon class="pi pi-user" />
                     <input pInputText id="username" [(ngModel)]="value" autocomplete="off" />
-                </p-iconfield>
+                </p-icon-field>
                 <label for="username">Username</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
         <app-code></app-code>
     `

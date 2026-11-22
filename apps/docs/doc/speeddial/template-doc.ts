@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
         <div class="card">
             <div class="flex items-end justify-center" style="position: 'relative'; height: '400px'">
                 <p-toast />
-                <p-speeddial [model]="items" direction="up" [transitionDelay]="80" style="position: 'absolute'">
+                <p-speed-dial [model]="items" direction="up" [transitionDelay]="80" style="position: 'absolute'">
                     <ng-template #button let-toggleCallback="toggleCallback">
                         <p-button outlined styleClass="border" (click)="toggleCallback($event)">
                             <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +64,7 @@ import { CommonModule } from '@angular/common';
                             </span>
                         </div>
                     </ng-template>
-                </p-speeddial>
+                </p-speed-dial>
             </div>
         </div>
         <app-code></app-code>

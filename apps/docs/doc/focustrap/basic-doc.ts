@@ -20,19 +20,19 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <div pFocusTrap class="w-full sm:w-80 flex flex-col gap-6">
-                <p-iconfield>
-                    <p-inputicon>
+                <p-icon-field>
+                    <p-input-icon>
                         <i class="pi pi-user"></i>
-                    </p-inputicon>
+                    </p-input-icon>
                     <input type="text" pInputText id="input" [(ngModel)]="name" type="text" placeholder="Name" [pAutoFocus]="true" [fluid]="true" />
-                </p-iconfield>
+                </p-icon-field>
 
-                <p-iconfield>
-                    <p-inputicon>
+                <p-icon-field>
+                    <p-input-icon>
                         <i class="pi pi-envelope"> </i>
-                    </p-inputicon>
+                    </p-input-icon>
                     <input type="text" pInputText id="email" [(ngModel)]="email" type="email" placeholder="Email" [fluid]="true" />
-                </p-iconfield>
+                </p-icon-field>
 
                 <div class="flex items-center gap-2">
                     <p-checkbox id="accept" [(ngModel)]="accept" name="accept" value="Accept" />

@@ -25,7 +25,7 @@ import { MessageModule } from '@exhaustive-ui/core/message';
                     }
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p-inputmask mask="(999) 999-9999" [(ngModel)]="phone" placeholder="Phone" [invalid]="!phone" />
+                    <p-input-mask mask="(999) 999-9999" [(ngModel)]="phone" placeholder="Phone" [invalid]="!phone" />
                     @if (!phone) {
                         <p-message severity="error" variant="simple" size="small">Phone number is required</p-message>
                     }

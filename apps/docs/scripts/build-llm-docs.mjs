@@ -142,6 +142,12 @@ const GUIDE_PAGES = [
         description: 'Built-in CSS animations for ExhaustiveUI components.'
     },
     {
+        route: 'guides/naming',
+        docPath: 'guides/naming',
+        title: 'Naming Conventions',
+        description: 'How ExhaustiveUI components, directives and templates are named.'
+    },
+    {
         route: 'guides/rtl',
         docPath: 'guides/rtl',
         title: 'RTL',

@@ -16,8 +16,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center gap-12">
-            <p-file variant="avatar" accept="image/*" capture="user" ariaLabel="Profile picture" [(ngModel)]="photo" />
-            <p-file variant="avatar" avatarShape="square" accept="image/*" ariaLabel="Company logo" [(ngModel)]="logo" />
+            <p-file-input variant="avatar" accept="image/*" capture="user" ariaLabel="Profile picture" [(ngModel)]="photo" />
+            <p-file-input variant="avatar" avatarShape="square" accept="image/*" ariaLabel="Company logo" [(ngModel)]="logo" />
         </div>
         <app-code></app-code>
     `

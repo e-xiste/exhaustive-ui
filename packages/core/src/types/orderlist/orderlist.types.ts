@@ -152,10 +152,6 @@ export interface OrderListTemplates {
      */
     empty(): TemplateRef<void>;
     /**
-     * Custom clear icon template.
-     */
-    clearicon(): TemplateRef<void>;
-    /**
      * Custom filter icon template.
      */
     filtericon(): TemplateRef<void>;

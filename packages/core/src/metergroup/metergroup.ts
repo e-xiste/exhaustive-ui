@@ -12,7 +12,7 @@ import { MeterGroupStyle } from './style/metergroupstyle';
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-meterGroupLabel, p-metergrouplabel',
+    selector: 'p-meter-group-label, p-meterGroupLabel, p-metergrouplabel',
     imports: [CommonModule, SharedModule, Bind],
     template: `
         <ol [class]="cx('labelList')" [pBind]="ptm('labelList')" [attr.data-p]="dataP()">
@@ -61,7 +61,7 @@ export class MeterGroupLabel extends BaseComponent<MeterGroupPassThrough> {
  * @group Components
  */
 @Component({
-    selector: 'p-meterGroup, p-metergroup, p-meter-group',
+    selector: 'p-meter-group, p-meterGroup, p-metergroup',
     imports: [CommonModule, MeterGroupLabel, SharedModule, Bind],
     template: `
         @if (labelPosition() === 'start') {

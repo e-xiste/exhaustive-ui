@@ -36,7 +36,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                 </li>
             </ul>
 
-            <p-contextmenu #cm [model]="items" (onHide)="onHide()">
+            <p-context-menu #cm [model]="items" (onHide)="onHide()">
                 <ng-template #item let-item>
                     <a pRipple class="flex items-center px-4 py-3 cursor-pointer">
                         <span [class]="item.icon"></span>
@@ -46,7 +46,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
                         <i *ngIf="item.items" class="pi pi-angle-right ms-auto rotate-90 lg:rotate-0"></i>
                     </a>
                 </ng-template>
-            </p-contextmenu>
+            </p-context-menu>
         </div>
 
         <app-code></app-code>

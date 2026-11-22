@@ -22,7 +22,7 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [columns]="scrollableCols" [frozenColumns]="frozenCols" [scrollable]="true" scrollHeight="250px" frozenWidth="200px" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table [value]="files" [columns]="scrollableCols" [frozenColumns]="frozenCols" [scrollable]="true" scrollHeight="250px" frozenWidth="200px" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #colgroup let-columns>
                         <colgroup>
                             @for (col of columns; track col) {
@@ -52,13 +52,13 @@ interface Column {
                         <tr [ttRow]="rowNode" style="height: 57px">
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
+                                    <p-tree-table-toggler [rowNode]="rowNode" />
                                     <span class="font-bold">{{ rowData.name }}</span>
                                 </div>
                             </td>
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

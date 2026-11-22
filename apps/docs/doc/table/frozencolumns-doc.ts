@@ -18,7 +18,7 @@ import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
         </app-docsectiontext>
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
-                <p-togglebutton [(ngModel)]="balanceFrozen" [onIcon]="'pi pi-lock'" offIcon="pi pi-lock-open" [onLabel]="'Balance'" offLabel="Balance" />
+                <p-toggle-button [(ngModel)]="balanceFrozen" [onIcon]="'pi pi-lock'" offIcon="pi pi-lock-open" [onLabel]="'Balance'" offLabel="Balance" />
 
                 <p-table [value]="customers" [scrollable]="true" scrollHeight="400px" class="mt-4">
                     <ng-template #header>

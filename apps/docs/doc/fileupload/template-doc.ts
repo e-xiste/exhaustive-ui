@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         >
         <div class="card">
             <p-toast />
-            <p-fileupload name="myfile[]" url="https://exhaustive-ui.com/api/upload" [multiple]="true" accept="image/*" maxFileSize="1000000" (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
+            <p-file-upload name="myfile[]" url="https://exhaustive-ui.com/api/upload" [multiple]="true" accept="image/*" maxFileSize="1000000" (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
                 <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                     <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                         <div class="flex gap-2">
@@ -32,9 +32,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                             <p-button (onClick)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" />
                             <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
                         </div>
-                        <p-progressbar [value]="totalSizePercent" [showValue]="false" class="w-full" class="md:w-20rem h-1 w-full md:ml-auto">
+                        <p-progress-bar [value]="totalSizePercent" [showValue]="false" class="w-full" class="md:w-20rem h-1 w-full md:ml-auto">
                             <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
-                        </p-progressbar>
+                        </p-progress-bar>
                     </div>
                 </ng-template>
                 <ng-template #content let-files let-uploadedFiles="uploadedFiles" let-removeFileCallback="removeFileCallback" let-removeUploadedFileCallback="removeUploadedFileCallback">
@@ -76,7 +76,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
                     </div>
                 </ng-template>
-            </p-fileupload>
+            </p-file-upload>
         </div>
         <app-code></app-code>
     `,

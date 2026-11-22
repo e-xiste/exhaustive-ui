@@ -10,7 +10,7 @@ import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
     imports: [CommonModule, FormsModule, AppDocPtViewer, SelectButtonModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-selectbutton [(ngModel)]="value" [options]="options" />
+            <p-select-button [(ngModel)]="value" [options]="options" />
         </app-docptviewer>
     `
 })

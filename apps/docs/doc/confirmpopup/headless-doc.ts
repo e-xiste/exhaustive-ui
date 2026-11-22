@@ -17,7 +17,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-confirmpopup #cp>
+            <p-confirm-popup #cp>
                 <ng-template #headless let-message>
                     <div class="rounded-sm p-4">
                         <span>{{ message.message }}</span>
@@ -27,7 +27,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
                         </div>
                     </div>
                 </ng-template>
-            </p-confirmpopup>
+            </p-confirm-popup>
             <p-button (onClick)="confirm($event)" label="Save" />
         </div>
         <app-code></app-code>

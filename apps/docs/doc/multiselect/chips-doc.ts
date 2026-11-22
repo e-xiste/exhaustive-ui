@@ -18,7 +18,7 @@ interface City {
             <p>Selected values are displayed as a comma separated list by default, setting <i>display</i> as <i>chip</i> displays them as chips.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-multiselect [options]="cities" [(ngModel)]="selectedCities" placeholder="Select Cities" optionLabel="name" display="chip" class="w-full md:w-80" />
+            <p-multi-select [options]="cities" [(ngModel)]="selectedCities" placeholder="Select Cities" optionLabel="name" display="chip" class="w-full md:w-80" />
         </div>
         <app-code></app-code>
     `

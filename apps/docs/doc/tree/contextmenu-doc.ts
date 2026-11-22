@@ -18,7 +18,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
         <div class="card">
             <p-toast [style]="{ marginTop: '80px' }" />
             <p-tree [value]="files()" class="w-full md:w-80" selectionMode="single" [(selection)]="selectedNode" [(contextMenuSelection)]="contextMenuNode" [contextMenu]="cm" contextMenuSelectionMode="separate" />
-            <p-contextmenu #cm [model]="items" />
+            <p-context-menu #cm [model]="items" />
         </div>
         <app-code></app-code>
     `,

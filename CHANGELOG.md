@@ -4,6 +4,20 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **naming:** every component element now has a kebab case name, `p-` followed by the name of the component with a hyphen between words (`p-date-picker`, `p-input-icon`, `p-tree-table`, `p-tab-list`, `p-sort-icon`…), listed first in its selector. The other spellings (`p-datePicker`, `p-datepicker`…) keep working. The new Naming Conventions guide states the rules for components, directives and templates.
+
+### Documentation
+
+- **api:** the Templates section of the API reference now lists the name written in `<ng-template #name>`, read from the code. It was derived from the property name, which gave wrong names (`disableddate` for `#disabledDate` on DatePicker, `checkboxicon` for `#icon` on Checkbox, `sourceheader` for `#sourceHeader` on PickList, `template` for `#message` on Toast…).
+- **table, treetable:** their 29 and 26 templates are documented, with typed contexts (`TableBodyTemplateContext`, `TableColumnsTemplateContext`, `TableExpandedRowTemplateContext`…). Splitter `#panel`, OrganizationChart `#togglericon` and the CellEditor `#input` and `#output` templates are documented too.
+- **types:** the `<Component>Templates` interfaces no longer list templates the components do not read (Chip `content`, DataView `gridicon` and `listicon`, MegaMenu `menuicon`, OrderList `clearicon`, TreeSelect `closeicon`), and Table `#headergrouped` now works as an `ng-template` reference, not only as `pTemplate`.
+- **examples:** all the examples use the kebab case element names. This fixed three demos that rendered nothing: the DatePicker template demo used `p-calendar`, and two TreeTable demos misspelled `p-treeTableSortIcon` and `p-treeTableCellEditor`.
+- **tests:** the CI now checks that every template of every component is documented under its real name, and that component and directive names follow the conventions.
+
 ## 22.2.0 (2026-11-22)
 
 A new FileInput component to select, validate and upload files.

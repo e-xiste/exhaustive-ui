@@ -16,14 +16,14 @@ import { RouterModule } from '@angular/router';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-splitbutton label="Save" (onClick)="save()" severity="contrast" [model]="items">
+            <p-split-button label="Save" (onClick)="save()" severity="contrast" [model]="items">
                 <ng-template #content>
                     <span class="flex items-center font-bold">
                         <img alt="logo" src="logo-icon.svg" style="height: 1rem; margin-right: 0.5rem" />
                         <span>ExhaustiveUI</span>
                     </span>
                 </ng-template>
-            </p-splitbutton>
+            </p-split-button>
         </div>
         <app-code></app-code>
     `,

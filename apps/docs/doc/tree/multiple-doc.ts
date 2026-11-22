@@ -21,7 +21,7 @@ import { TreeModule } from '@exhaustive-ui/core/tree';
         </app-docsectiontext>
         <div class="card">
             <div class="flex items-center mb-6 gap-2">
-                <p-toggleswitch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
+                <p-toggle-switch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
                 <label for="input-metakey">MetaKey</label>
             </div>
             <p-tree [metaKeySelection]="metaKeySelection" [value]="files()" class="w-full md:w-120" selectionMode="multiple" [(selection)]="selectedFiles" />

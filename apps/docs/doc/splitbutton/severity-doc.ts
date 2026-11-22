@@ -16,14 +16,14 @@ import { RouterModule } from '@angular/router';
         </app-docsectiontext>
         <div class="card flex justify-center flex-wrap gap-4">
             <p-toast />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="secondary" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="success" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="info" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="warn" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="help" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="danger" />
-            <p-splitbutton label="Save" (onClick)="save()" [model]="items" severity="contrast" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="secondary" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="success" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="info" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="warn" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="help" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="danger" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="contrast" />
         </div>
         <app-code></app-code>
     `,

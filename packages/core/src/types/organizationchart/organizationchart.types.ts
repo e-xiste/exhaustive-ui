@@ -117,6 +117,16 @@ export interface OrganizationChartNodeExpandEvent extends OrganizationChartNodeS
  */
 export interface OrganizationChartNodeCollapseEvent extends OrganizationChartNodeSelectEvent {}
 /**
+ * Context of the togglericon template.
+ * @group Interface
+ */
+export interface OrganizationChartTogglerIconTemplateContext {
+    /**
+     * Whether the node is expanded.
+     */
+    $implicit: boolean | undefined;
+}
+/**
  * Defines valid templates in OrganizationChart.
  * @group Templates
  */

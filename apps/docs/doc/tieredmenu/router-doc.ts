@@ -14,7 +14,7 @@ import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
             <p>Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-tieredmenu [model]="items" />
+            <p-tiered-menu [model]="items" />
         </div>
         <app-code></app-code>
     `

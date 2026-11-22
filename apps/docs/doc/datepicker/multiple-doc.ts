@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>In order to choose multiple dates, set <i>selectionMode</i> as <i>multiple</i>. In this mode, the value binding should be an array.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="dates" selectionMode="multiple" [readonlyInput]="true" />
+            <p-date-picker [(ngModel)]="dates" selectionMode="multiple" [readonlyInput]="true" />
         </div>
         <app-code></app-code>
     `

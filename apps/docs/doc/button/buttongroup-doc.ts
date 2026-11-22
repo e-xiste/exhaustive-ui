@@ -13,11 +13,11 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
             <p>Multiple buttons are grouped when wrapped inside an element with <i>ButtonGroup</i> component.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-buttongroup>
+            <p-button-group>
                 <p-button label="Save" icon="pi pi-check" />
                 <p-button label="Delete" icon="pi pi-trash" />
                 <p-button label="Cancel" icon="pi pi-times" />
-            </p-buttongroup>
+            </p-button-group>
         </div>
         <app-code></app-code>
     `

@@ -15,7 +15,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
         </app-docsectiontext>
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
-                <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [loading]="true">
+                <p-tree-table [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [loading]="true">
                     <ng-template #header>
                         <tr>
                             <th>Name</th>
@@ -27,7 +27,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                         <tr [ttRow]="rowNode">
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
+                                    <p-tree-table-toggler [rowNode]="rowNode" />
                                     <span>{{ rowData.name }}</span>
                                 </div>
                             </td>
@@ -35,7 +35,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                             <td>{{ rowData.type }}</td>
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </div>
         </p-deferred-demo>
         <app-code></app-code>`,

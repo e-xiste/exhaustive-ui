@@ -32,7 +32,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             </ul>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="date" dateFormat="dd.mm.yy" />
+            <p-date-picker [(ngModel)]="date" dateFormat="dd.mm.yy" />
         </div>
         <app-code></app-code>
     `

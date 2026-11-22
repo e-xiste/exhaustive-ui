@@ -59,7 +59,7 @@ const TREESELECT_INSTANCE = new InjectionToken<TreeSelect>('TREESELECT_INSTANCE'
  * @group Components
  */
 @Component({
-    selector: 'p-treeSelect, p-treeselect, p-tree-select',
+    selector: 'p-tree-select, p-treeSelect, p-treeselect',
     imports: [CommonModule, Overlay, SharedModule, Tree, AutoFocus, TimesIcon, ChevronDownIcon, Chip, Bind],
     hostDirectives: [Bind],
     template: `

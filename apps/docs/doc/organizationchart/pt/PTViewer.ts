@@ -9,11 +9,11 @@ import { OrganizationChartModule } from '@exhaustive-ui/core/organizationchart';
     imports: [CommonModule, AppDocPtViewer, OrganizationChartModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-organizationchart [value]="data" [collapsible]="true">
+            <p-organization-chart [value]="data" [collapsible]="true">
                 <ng-template let-node pTemplate="default">
                     <span>{{ node.label }}</span>
                 </ng-template>
-            </p-organizationchart>
+            </p-organization-chart>
         </app-docptviewer>
     `
 })

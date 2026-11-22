@@ -14,20 +14,20 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
             <p>When the form element is invalid, the label is also highlighted.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel>
+            <p-float-label>
                 <input pInputText id="value1" [(ngModel)]="value1" [invalid]="!value1" autocomplete="off" />
                 <label for="value1">Username</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
+            <p-float-label variant="in">
                 <input pInputText id="value2" [(ngModel)]="value2" [invalid]="!value2" autocomplete="off" />
                 <label for="value2">Username</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
+            <p-float-label variant="on">
                 <input pInputText id="value3" [(ngModel)]="value3" [invalid]="!value3" autocomplete="off" />
                 <label for="value3">Username</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

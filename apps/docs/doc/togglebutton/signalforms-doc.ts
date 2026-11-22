@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col items-center gap-4">
                 <div class="flex flex-col items-center gap-1">
-                    <p-togglebutton [formField]="exampleForm.checked" onLabel="Accept All" offLabel="Reject All" class="min-w-40" />
+                    <p-toggle-button [formField]="exampleForm.checked" onLabel="Accept All" offLabel="Reject All" class="min-w-40" />
                     @let checked = exampleForm.checked();
                     @if (checked.invalid() && checked.touched()) {
                         <p-message severity="error" size="small" variant="simple">Consent is mandatory.</p-message>

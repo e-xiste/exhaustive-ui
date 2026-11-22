@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card text-center">
             <p class="mb-0">Right-Click anywhere on this page to view the global ContextMenu.</p>
-            <p-contextmenu [model]="items" [global]="true" />
+            <p-context-menu [model]="items" [global]="true" />
         </div>
         <app-code></app-code>
     `

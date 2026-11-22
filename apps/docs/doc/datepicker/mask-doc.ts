@@ -14,7 +14,7 @@ import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
             <p>DatePicker can be used with the <i>pInputMask</i> directive to enforce a specific input format.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="date" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="99/99/9999" />
+            <p-date-picker [(ngModel)]="date" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="99/99/9999" />
         </div>
         <app-code></app-code>
     `

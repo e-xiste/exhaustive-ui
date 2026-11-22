@@ -13,11 +13,11 @@ import { AppCode } from '@/components/doc/app.code';
             <p>For custom content support define a template named <i>item</i> where the default local template variable refers to an option.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-selectbutton [options]="justifyOptions" [(ngModel)]="value" optionLabel="justify">
+            <p-select-button [options]="justifyOptions" [(ngModel)]="value" optionLabel="justify">
                 <ng-template #item let-item>
                     <i [class]="item.icon"></i>
                 </ng-template>
-            </p-selectbutton>
+            </p-select-button>
         </div>
         <app-code></app-code>
     `

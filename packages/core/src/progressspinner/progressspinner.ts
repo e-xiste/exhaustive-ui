@@ -10,7 +10,7 @@ import { ProgressSpinnerStyle } from './style/progressspinnerstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-progressSpinner, p-progress-spinner, p-progressspinner',
+    selector: 'p-progress-spinner, p-progressSpinner, p-progressspinner',
     imports: [SharedModule, Bind],
     template: `
         <svg [class]="cx('spin')" [pBind]="ptm('spin')" viewBox="25 25 50 50" [style.animation-duration]="animationDuration()">

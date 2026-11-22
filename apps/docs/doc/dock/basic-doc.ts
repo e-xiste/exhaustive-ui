@@ -22,7 +22,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card">
             <div class="flex flex-wrap gap-4 mb-8">
                 <div *ngFor="let pos of positionOptions" class="flex items-center">
-                    <p-radiobutton name="dock" [value]="pos.value" [label]="pos.label" [(ngModel)]="position" [inputId]="pos.label" />
+                    <p-radio-button name="dock" [value]="pos.value" [label]="pos.label" [(ngModel)]="position" [inputId]="pos.label" />
                     <label [for]="pos.label" class="ml-2"> {{ pos.label }} </label>
                 </div>
             </div>

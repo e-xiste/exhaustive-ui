@@ -16,9 +16,9 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-center gap-4">
             <p-toast />
-            <p-splitbutton label="Small" [model]="items" (onClick)="save('info')" size="small" />
-            <p-splitbutton label="Normal" [model]="items" (onClick)="save('info')" />
-            <p-splitbutton label="Large" [model]="items" (onClick)="save('info')" size="large" />
+            <p-split-button label="Small" [model]="items" (onClick)="save('info')" size="small" />
+            <p-split-button label="Normal" [model]="items" (onClick)="save('info')" />
+            <p-split-button label="Large" [model]="items" (onClick)="save('info')" size="large" />
         </div>
         <app-code></app-code>
     `,

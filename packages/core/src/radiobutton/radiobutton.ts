@@ -64,7 +64,7 @@ export class RadioControlRegistry {
  * @group Components
  */
 @Component({
-    selector: 'p-radioButton, p-radiobutton, p-radio-button',
+    selector: 'p-radio-button, p-radioButton, p-radiobutton',
     imports: [AutoFocus, SharedModule, BindModule],
     template: `
         <input

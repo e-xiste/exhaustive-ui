@@ -451,38 +451,38 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     readonly footerViewChild = viewChild<Nullable<ElementRef>>('footer');
     /**
-     * Header template.
-     * @group Templates
+     * Header template passed as an input, for a template defined outside the dialog. A <ng-template #header> inside the dialog takes precedence.
+     * @group Props
      */
     headerTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Content template.
-     * @group Templates
+     * Content template passed as an input, for a template defined outside the dialog. A <ng-template #content> inside the dialog takes precedence.
+     * @group Props
      */
     contentTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Footer template.
-     * @group Templates
+     * Footer template passed as an input, for a template defined outside the dialog. A <ng-template #footer> inside the dialog takes precedence.
+     * @group Props
      */
     footerTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Close icon template.
-     * @group Templates
+     * Close icon template passed as an input, for a template defined outside the dialog. A <ng-template #closeicon> inside the dialog takes precedence.
+     * @group Props
      */
     closeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Maximize icon template.
-     * @group Templates
+     * Maximize icon template passed as an input, for a template defined outside the dialog. A <ng-template #maximizeicon> inside the dialog takes precedence.
+     * @group Props
      */
     maximizeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Minimize icon template.
-     * @group Templates
+     * Minimize icon template passed as an input, for a template defined outside the dialog. A <ng-template #minimizeicon> inside the dialog takes precedence.
+     * @group Props
      */
     minimizeIconTemplate = input<TemplateRef<void> | undefined>(undefined);
     /**
-     * Headless template.
-     * @group Templates
+     * Headless template passed as an input, for a template defined outside the dialog. A <ng-template #headless> inside the dialog takes precedence.
+     * @group Props
      */
     headlessTemplate = input<TemplateRef<void> | undefined>(undefined);
 

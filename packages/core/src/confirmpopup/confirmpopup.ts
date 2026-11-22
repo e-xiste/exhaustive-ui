@@ -44,7 +44,7 @@ const CONFIRMPOPUP_INSTANCE = new InjectionToken<ConfirmPopup>('CONFIRMPOPUP_INS
  * @group Components
  */
 @Component({
-    selector: 'p-confirmpopup',
+    selector: 'p-confirm-popup, p-confirmpopup',
     imports: [CommonModule, SharedModule, ButtonModule, FocusTrap, Bind, MotionModule],
     providers: [ConfirmPopupStyle, { provide: CONFIRMPOPUP_INSTANCE, useExisting: ConfirmPopup }, { provide: PARENT_INSTANCE, useExisting: ConfirmPopup }],
     hostDirectives: [Bind],

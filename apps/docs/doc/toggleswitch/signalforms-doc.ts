@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4 w-48">
                 <div class="flex flex-col items-center gap-2">
-                    <p-toggleswitch [formField]="exampleForm.activation" />
+                    <p-toggle-switch [formField]="exampleForm.activation" />
                     @let activation = exampleForm.activation();
                     @if (activation.invalid() && activation.touched()) {
                         <p-message severity="error" size="small" variant="simple">Activation is required.</p-message>

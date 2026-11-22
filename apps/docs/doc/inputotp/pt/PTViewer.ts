@@ -10,7 +10,7 @@ import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
     imports: [CommonModule, FormsModule, AppDocPtViewer, InputOtpModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-inputotp [(ngModel)]="value" />
+            <p-input-otp [(ngModel)]="value" />
         </app-docptviewer>
     `
 })

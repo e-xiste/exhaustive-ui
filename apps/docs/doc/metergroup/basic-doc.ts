@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>MeterGroup requires a <i>value</i> as the data to display where each item in the collection should be a type of <i>MeterItem</i>.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-metergroup [value]="value" />
+            <p-meter-group [value]="value" />
         </div>
         <app-code></app-code>
     `

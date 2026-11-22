@@ -18,20 +18,20 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-stretch gap-4">
-            <p-floatlabel>
+            <p-float-label>
                 <textarea pTextarea id="over_label" [(ngModel)]="value1" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
+            <p-float-label variant="in">
                 <textarea pTextarea id="in_label" [(ngModel)]="value2" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
+            <p-float-label variant="on">
                 <textarea pTextarea id="on_label" [(ngModel)]="value3" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

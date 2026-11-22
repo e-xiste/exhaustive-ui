@@ -22,7 +22,7 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #header let-columns>
                         <tr>
                             @for (col of columns; track col) {
@@ -38,7 +38,7 @@ interface Column {
                                 <td [class]="{ 'line-through': col.field === 'size' && rowData.size.endsWith('kb') }">
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            <p-tree-table-toggler [rowNode]="rowNode"></p-tree-table-toggler>
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else {
@@ -48,7 +48,7 @@ interface Column {
                             }
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

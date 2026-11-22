@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-file [labels]="labels" [maxFileSize]="2000000" hint="2 Mo maximum par fichier" />
+            <p-file-input [labels]="labels" [maxFileSize]="2000000" hint="2 Mo maximum par fichier" />
         </div>
         <app-code></app-code>
     `

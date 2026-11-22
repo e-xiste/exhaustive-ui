@@ -12,9 +12,9 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
         <app-docptviewer [docs]="docs">
             <div class="flex flex-wrap gap-8">
                 <p-badge value="2"></p-badge>
-                <p-overlaybadge value="3">
+                <p-overlay-badge value="3">
                     <i class="pi pi-bell" style="font-size: 2rem"></i>
-                </p-overlaybadge>
+                </p-overlay-badge>
             </div>
         </app-docptviewer>
     `

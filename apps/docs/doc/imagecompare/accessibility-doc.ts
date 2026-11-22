@@ -69,12 +69,12 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<span id="image_label">Compare Images</span>
-<p-imagecompare class="shadow-lg rounded-2xl" aria-labelledby="image-label">
+<p-image-compare class="shadow-lg rounded-2xl" aria-labelledby="image-label">
     ...
-</p-imagecompare>
+</p-image-compare>
 
-<p-imagecompare class="shadow-lg rounded-2xl" aria-label="Compare Images">
+<p-image-compare class="shadow-lg rounded-2xl" aria-label="Compare Images">
     ...
-</p-imagecompare>`
+</p-image-compare>`
     };
 }

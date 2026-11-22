@@ -398,12 +398,12 @@ export interface PrimaryColor {
                     <div class="flex-col justify-start items-start gap-2 inline-flex w-full">
                         <span class="text-sm font-medium">Preset</span>
                         <div class="inline-flex p-[0.28rem] items-start gap-[0.28rem] rounded-[0.71rem] border border-[#00000003] w-full">
-                            <p-selectbutton [options]="presets" [ngModel]="selectedPreset()" (ngModelChange)="onPresetChange($event)" [unselectable]="false" size="small" />
+                            <p-select-button [options]="presets" [ngModel]="selectedPreset()" (ngModelChange)="onPresetChange($event)" [unselectable]="false" size="small" />
                         </div>
                     </div>
                     <div class="inline-flex flex-col justify-start items-start gap-2 w-full pt-4 pb-2">
                         <span class="text-sm font-medium m-0">Ripple Effect</span>
-                        <p-toggleswitch [(ngModel)]="ripple" />
+                        <p-toggle-switch [(ngModel)]="ripple" />
                     </div>
                 </div>
             </li>

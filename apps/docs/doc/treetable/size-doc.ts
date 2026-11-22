@@ -19,10 +19,10 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
         </app-docsectiontext>
         <div class="card">
             <div class="flex justify-center mb-4">
-                <p-selectbutton [options]="sizes" [(ngModel)]="selectedSize" [multiple]="false" optionLabel="name" optionValue="class" />
+                <p-select-button [options]="sizes" [(ngModel)]="selectedSize" [multiple]="false" optionLabel="name" optionValue="class" />
             </div>
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [class]="selectedSize">
+                <p-tree-table [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [class]="selectedSize">
                     <ng-template #header>
                         <tr>
                             <th>Name</th>
@@ -34,7 +34,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                         <tr [ttRow]="rowNode">
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
+                                    <p-tree-table-toggler [rowNode]="rowNode" />
                                     <span>{{ rowData.name }}</span>
                                 </div>
                             </td>
@@ -42,7 +42,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                             <td>{{ rowData.type }}</td>
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

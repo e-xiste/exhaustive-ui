@@ -18,20 +18,20 @@ import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel>
-                <p-datepicker [(ngModel)]="value1" inputId="over_label" showIcon iconDisplay="input" />
+            <p-float-label>
+                <p-date-picker [(ngModel)]="value1" inputId="over_label" showIcon iconDisplay="input" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
-                <p-datepicker [(ngModel)]="value2" inputId="in_label" showIcon iconDisplay="input" />
+            <p-float-label variant="in">
+                <p-date-picker [(ngModel)]="value2" inputId="in_label" showIcon iconDisplay="input" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
-                <p-datepicker [(ngModel)]="value3" inputId="on_label" showIcon iconDisplay="input" />
+            <p-float-label variant="on">
+                <p-date-picker [(ngModel)]="value3" inputId="on_label" showIcon iconDisplay="input" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

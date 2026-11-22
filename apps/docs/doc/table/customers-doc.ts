@@ -44,70 +44,70 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                     <ng-template #caption>
                         <div class="flex justify-between">
                             <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" (click)="clear(dt)" />
-                            <p-iconField iconPosition="left">
-                                <p-inputIcon>
+                            <p-icon-field iconPosition="left">
+                                <p-input-icon>
                                     <i class="pi pi-search"></i>
-                                </p-inputIcon>
+                                </p-input-icon>
                                 <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Keyboard Search" />
-                            </p-iconField>
+                            </p-icon-field>
                         </div>
                     </ng-template>
                     <ng-template #header>
                         <tr>
                             <th style="width: 4rem">
-                                <p-tableHeaderCheckbox />
+                                <p-table-header-checkbox />
                             </th>
                             <th pSortableColumn="name" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Name
-                                    <p-sortIcon field="name" />
-                                    <p-columnFilter type="text" field="name" display="menu" class="ml-auto" />
+                                    <p-sort-icon field="name" />
+                                    <p-column-filter type="text" field="name" display="menu" class="ml-auto" />
                                 </div>
                             </th>
                             <th pSortableColumn="country.name" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Country
-                                    <p-sortIcon field="country.name" />
-                                    <p-columnFilter type="text" field="country.name" display="menu" class="ml-auto" />
+                                    <p-sort-icon field="country.name" />
+                                    <p-column-filter type="text" field="country.name" display="menu" class="ml-auto" />
                                 </div>
                             </th>
                             <th pSortableColumn="representative.name" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Agent
-                                    <p-sortIcon field="representative.name" />
-                                    <p-columnFilter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                                    <p-sort-icon field="representative.name" />
+                                    <p-column-filter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
                                         <ng-template #filter let-value let-filter="filterCallback">
-                                            <p-multiselect [filter]="false" [(ngModel)]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-full">
+                                            <p-multi-select [filter]="false" [(ngModel)]="value" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-full">
                                                 <ng-template let-option #item>
                                                     <div class="flex items-center gap-2">
                                                         <img [alt]="option.label" src="https://exhaustive-ui.com/demo/avatar/{{ option.image }}" style="width: 32px" />
                                                         <span>{{ option.name }}</span>
                                                     </div>
                                                 </ng-template>
-                                            </p-multiselect>
+                                            </p-multi-select>
                                         </ng-template>
-                                    </p-columnFilter>
+                                    </p-column-filter>
                                 </div>
                             </th>
                             <th pSortableColumn="date" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Date
-                                    <p-sortIcon field="date" />
-                                    <p-columnFilter type="date" field="date" display="menu" class="ml-auto" />
+                                    <p-sort-icon field="date" />
+                                    <p-column-filter type="date" field="date" display="menu" class="ml-auto" />
                                 </div>
                             </th>
                             <th pSortableColumn="balance" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Balance
-                                    <p-sortIcon field="balance" />
-                                    <p-columnFilter type="numeric" field="balance" display="menu" currency="USD" class="ml-auto" />
+                                    <p-sort-icon field="balance" />
+                                    <p-column-filter type="numeric" field="balance" display="menu" currency="USD" class="ml-auto" />
                                 </div>
                             </th>
                             <th pSortableColumn="status" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Status
-                                    <p-sortIcon field="status" />
-                                    <p-columnFilter field="status" matchMode="equals" display="menu" class="ml-auto">
+                                    <p-sort-icon field="status" />
+                                    <p-column-filter field="status" matchMode="equals" display="menu" class="ml-auto">
                                         <ng-template #filter let-value let-filter="filterCallback">
                                             <p-select [(ngModel)]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Any">
                                                 <ng-template let-option #item>
@@ -115,14 +115,14 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                                 </ng-template>
                                             </p-select>
                                         </ng-template>
-                                    </p-columnFilter>
+                                    </p-column-filter>
                                 </div>
                             </th>
                             <th pSortableColumn="activity" style="min-width: 14rem">
                                 <div class="flex justify-between items-center gap-2">
                                     Activity
-                                    <p-sortIcon field="activity" />
-                                    <p-columnFilter field="activity" matchMode="between" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                                    <p-sort-icon field="activity" />
+                                    <p-column-filter field="activity" matchMode="between" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
                                         <ng-template #filter let-filter="filterCallback">
                                             <p-slider [(ngModel)]="activityValues" [range]="true" (onSlideEnd)="filter($event.values)" class="m-4"></p-slider>
                                             <div class="flex items-center justify-between px-2">
@@ -130,7 +130,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                                 <span>{{ activityValues[1] }}</span>
                                             </div>
                                         </ng-template>
-                                    </p-columnFilter>
+                                    </p-column-filter>
                                 </div>
                             </th>
                             <th style="width: 5rem"></th>
@@ -139,7 +139,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                     <ng-template #body let-customer>
                         <tr class="p-selectable-row">
                             <td>
-                                <p-tableCheckbox [value]="customer" />
+                                <p-table-checkbox [value]="customer" />
                             </td>
                             <td>
                                 {{ customer.name }}
@@ -166,7 +166,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                                 <p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" />
                             </td>
                             <td>
-                                <p-progressBar [value]="customer.activity" [showValue]="false" />
+                                <p-progress-bar [value]="customer.activity" [showValue]="false" />
                             </td>
                             <td style="text-align: center">
                                 <p-button rounded icon="pi pi-cog" />

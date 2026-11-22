@@ -11,7 +11,7 @@ import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
     imports: [CommonModule, AppDocPtViewer, ToggleButtonModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-togglebutton [(ngModel)]="checked" onLabel="Yes" offLabel="No" onIcon="pi pi-check" offIcon="pi pi-times"></p-togglebutton>
+            <p-toggle-button [(ngModel)]="checked" onLabel="Yes" offLabel="No" onIcon="pi pi-check" offIcon="pi pi-times"></p-toggle-button>
         </app-docptviewer>
     `
 })

@@ -25,7 +25,7 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
                 <div class="flex justify-center items-center mb-6 gap-2">
-                    <p-toggleswitch [(ngModel)]="metaKey" inputId="input-metakey" />
+                    <p-toggle-switch [(ngModel)]="metaKey" inputId="input-metakey" />
                     <label for="input-metakey">MetaKey</label>
                 </div>
                 <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" [metaKeySelection]="metaKey" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }">

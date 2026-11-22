@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>SelectButton requires a value to bind and a collection of options.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-selectbutton [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" aria-labelledby="basic" />
+            <p-select-button [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" aria-labelledby="basic" />
         </div>
         <app-code></app-code>
     `

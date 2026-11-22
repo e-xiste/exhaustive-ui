@@ -12,7 +12,7 @@ import { OverlayBadgeStyle } from './style/overlaybadgestyle';
  * @group Components
  */
 @Component({
-    selector: 'p-overlayBadge, p-overlay-badge, p-overlaybadge',
+    selector: 'p-overlay-badge, p-overlayBadge, p-overlaybadge',
     imports: [BadgeModule, SharedModule, Bind],
     template: `
         <div [class]="cx('root')" [pBind]="ptm('root')">

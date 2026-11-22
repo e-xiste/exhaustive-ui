@@ -19,7 +19,7 @@ import { RouterModule } from '@angular/router';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-splitbutton label="Save" icon="pi pi-plus" (onClick)="save('info')" [model]="items" [disabled]="true" />
+            <p-split-button label="Save" icon="pi pi-plus" (onClick)="save('info')" [model]="items" [disabled]="true" />
         </div>
         <app-code></app-code>
     `,

@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card">
             <p-toast />
-            <p-progressbar [value]="value" />
+            <p-progress-bar [value]="value" />
         </div>
         <app-code></app-code>
     `

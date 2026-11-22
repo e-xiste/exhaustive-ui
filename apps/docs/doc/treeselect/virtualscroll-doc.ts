@@ -16,7 +16,7 @@ import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect
+            <p-tree-select
                 class="w-full md:w-80"
                 [(ngModel)]="selectedNodes"
                 [options]="nodes"
@@ -27,7 +27,7 @@ import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="35"
                 [virtualScrollOptions]="{ scrollHeight: '200px' }"
-            ></p-treeselect>
+            ></p-tree-select>
         </div>
         <app-code></app-code>`
 })

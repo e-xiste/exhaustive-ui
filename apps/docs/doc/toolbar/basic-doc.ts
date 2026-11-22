@@ -28,13 +28,13 @@ import { InputIconModule } from '@exhaustive-ui/core/inputicon';
                     <p-button icon="pi pi-upload" text severity="secondary" />
                 </ng-template>
                 <ng-template #center>
-                    <p-iconfield iconPosition="left">
-                        <p-inputicon class="pi pi-search" />
+                    <p-icon-field iconPosition="left">
+                        <p-input-icon class="pi pi-search" />
                         <input type="text" pInputText placeholder="Search" />
-                    </p-iconfield>
+                    </p-icon-field>
                 </ng-template>
                 <ng-template #end>
-                    <p-splitbutton label="Save" [model]="items" />
+                    <p-split-button label="Save" [model]="items" />
                 </ng-template>
             </p-toolbar>
         </div>

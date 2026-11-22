@@ -15,16 +15,16 @@ import { CommonModule } from '@angular/common';
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center gap-4">
             <div>
-                <p-virtualscroller [items]="items" [itemSize]="50" [showLoader]="true" [delay]="250" styleClass="border border-surface" [style]="{ width: '200px', height: '200px' }">
+                <p-scroller [items]="items" [itemSize]="50" [showLoader]="true" [delay]="250" styleClass="border border-surface" [style]="{ width: '200px', height: '200px' }">
                     <ng-template #item let-item let-options="options">
                         <div class="flex items-center p-2" [ngClass]="{ 'bg-surface-100 dark:bg-surface-700': options.odd }" style="height: 50px;">
                             {{ item }}
                         </div>
                     </ng-template>
-                </p-virtualscroller>
+                </p-scroller>
             </div>
             <div>
-                <p-virtualscroller [items]="items" [itemSize]="50" [showLoader]="true" [delay]="250" styleClass="border border-surface" [style]="{ width: '200px', height: '200px' }">
+                <p-scroller [items]="items" [itemSize]="50" [showLoader]="true" [delay]="250" styleClass="border border-surface" [style]="{ width: '200px', height: '200px' }">
                     <ng-template #item let-item let-options="options">
                         <div class="flex items-center p-2" [ngClass]="{ 'bg-surface-100 dark:bg-surface-700': options.odd }" style="height: 50px;">
                             {{ item }}
@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
                             <p-skeleton [width]="options.even ? '60%' : '50%'" height="1.3rem"></p-skeleton>
                         </div>
                     </ng-template>
-                </p-virtualscroller>
+                </p-scroller>
             </div>
         </div>
         <app-code></app-code>

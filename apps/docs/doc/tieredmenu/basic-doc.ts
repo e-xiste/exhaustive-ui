@@ -13,7 +13,7 @@ import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
             <p>TieredMenu requires a collection of menuitems as its <i>model</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-tieredmenu [model]="items" />
+            <p-tiered-menu [model]="items" />
         </div>
         <app-code></app-code>
     `

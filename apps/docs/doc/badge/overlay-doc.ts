@@ -12,15 +12,15 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>A badge can be added to any element by encapsulating the content with the <i>OverlayBadge</i> component.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center gap-6">
-            <p-overlaybadge value="2">
+            <p-overlay-badge value="2">
                 <i class="pi pi-bell" style="font-size: 2rem"></i>
-            </p-overlaybadge>
-            <p-overlaybadge value="4" severity="danger">
+            </p-overlay-badge>
+            <p-overlay-badge value="4" severity="danger">
                 <i class="pi pi-calendar" style="font-size: 2rem"></i>
-            </p-overlaybadge>
-            <p-overlaybadge severity="danger">
+            </p-overlay-badge>
+            <p-overlay-badge severity="danger">
                 <i class="pi pi-envelope" style="font-size: 2rem"></i>
-            </p-overlaybadge>
+            </p-overlay-badge>
         </div>
         <app-code></app-code>
     `

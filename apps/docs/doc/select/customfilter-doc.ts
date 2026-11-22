@@ -27,10 +27,10 @@ interface City {
             <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
                 <ng-template pTemplate="filter" let-options="options">
                     <div class="flex gap-1">
-                        <p-inputgroup (click)="$event.stopPropagation()">
-                            <p-inputgroup-addon><i class="pi pi-search"></i></p-inputgroup-addon>
+                        <p-input-group (click)="$event.stopPropagation()">
+                            <p-input-group-addon><i class="pi pi-search"></i></p-input-group-addon>
                             <input type="text" pInputText placeholder="Filter" [(ngModel)]="filterValue" (keyup)="customFilterFunction($event, options)" />
-                        </p-inputgroup>
+                        </p-input-group>
                         <p-button icon="pi pi-times" (click)="resetFunction(options)" severity="secondary" />
                     </div>
                 </ng-template>

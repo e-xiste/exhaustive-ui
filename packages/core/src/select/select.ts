@@ -71,7 +71,7 @@ export const SELECT_VALUE_ACCESSOR: any = {
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-selectItem',
+    selector: 'p-select-item, p-selectItem',
     imports: [CommonModule, SharedModule, Ripple, CheckIcon, BlankIcon, BindModule],
     template: `
         <li

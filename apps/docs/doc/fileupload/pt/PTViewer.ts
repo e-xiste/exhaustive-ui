@@ -10,11 +10,11 @@ import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
     template: `
         <app-docptviewer [docs]="docs">
             <div class="w-full">
-                <p-fileupload name="demo[]" url="https://exhaustive-ui.com/api/upload" [multiple]="true" accept="image/*" [maxFileSize]="1000000">
+                <p-file-upload name="demo[]" url="https://exhaustive-ui.com/api/upload" [multiple]="true" accept="image/*" [maxFileSize]="1000000">
                     <ng-template #empty>
                         <span>Drag and drop files to here to upload.</span>
                     </ng-template>
-                </p-fileupload>
+                </p-file-upload>
             </div>
         </app-docptviewer>
     `

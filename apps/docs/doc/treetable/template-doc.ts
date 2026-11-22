@@ -23,7 +23,7 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [columns]="cols" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table [value]="files" [columns]="cols" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #caption><div class="text-xl font-bold">File Viewer</div> </ng-template>
                     <ng-template #header let-columns>
                         <tr>
@@ -40,7 +40,7 @@ interface Column {
                                 <td>
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode" />
+                                            <p-tree-table-toggler [rowNode]="rowNode" />
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else if (last) {
@@ -60,7 +60,7 @@ interface Column {
                             <p-button icon="pi pi-refresh" label="Reload" severity="warn" />
                         </div>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

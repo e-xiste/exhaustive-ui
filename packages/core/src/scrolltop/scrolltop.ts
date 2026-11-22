@@ -17,7 +17,7 @@ import { ScrollTopStyle } from './style/scrolltopstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-scrollTop, p-scrolltop, p-scroll-top',
+    selector: 'p-scroll-top, p-scrollTop, p-scrolltop',
     imports: [CommonModule, ChevronUpIcon, Button, SharedModule, MotionDirective],
     template: `
         @if (render()) {

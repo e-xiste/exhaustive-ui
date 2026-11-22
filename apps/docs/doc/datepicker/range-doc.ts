@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>A range of dates can be selected by defining <i>selectionMode</i> as <i>range</i>, in this case the bound value would be an array with two values where first date is the start of the range and second date is the end.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" />
+            <p-date-picker [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" />
         </div>
         <app-code></app-code>
     `

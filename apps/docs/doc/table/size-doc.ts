@@ -19,7 +19,7 @@ import { TableModule } from '@exhaustive-ui/core/table';
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
                 <div class="flex justify-center mb-4">
-                    <p-selectbutton [options]="sizes" [(ngModel)]="selectedSize" [multiple]="false" optionLabel="name" optionValue="value" />
+                    <p-select-button [options]="sizes" [(ngModel)]="selectedSize" [multiple]="false" optionLabel="name" optionValue="value" />
                 </div>
                 <p-table [value]="products" [tableStyle]="{ 'min-width': '50rem' }" [size]="selectedSize">
                     <ng-template #header>

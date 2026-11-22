@@ -24,10 +24,10 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [columns]="selectedColumns" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table [value]="files" [columns]="selectedColumns" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #caption>
                         <div style="text-align:left">
-                            <p-multiselect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="{0} columns selected" [style]="{ width: '20em' }" placeholder="Choose Columns" display="chip" />
+                            <p-multi-select [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="{0} columns selected" [style]="{ width: '20em' }" placeholder="Choose Columns" display="chip" />
                         </div>
                     </ng-template>
                     <ng-template #header let-columns>
@@ -45,7 +45,7 @@ interface Column {
                                 <td>
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            <p-tree-table-toggler [rowNode]="rowNode"></p-tree-table-toggler>
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else {
@@ -55,7 +55,7 @@ interface Column {
                             }
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

@@ -29,7 +29,7 @@ interface NodeEvent {
         <div class="card">
             <p-toast />
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable
+                <p-tree-table
                     [value]="files"
                     [columns]="cols"
                     selectionMode="single"
@@ -55,7 +55,7 @@ interface NodeEvent {
                                 <td>
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            <p-tree-table-toggler [rowNode]="rowNode"></p-tree-table-toggler>
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else {
@@ -65,7 +65,7 @@ interface NodeEvent {
                             }
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

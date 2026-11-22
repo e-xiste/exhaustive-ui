@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>showClear</i> is enabled, a clear icon is displayed to clear the value.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" class="md:w-80 w-full" [showClear]="true" />
+            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" class="md:w-80 w-full" [showClear]="true" />
         </div>
         <app-code></app-code>
     `

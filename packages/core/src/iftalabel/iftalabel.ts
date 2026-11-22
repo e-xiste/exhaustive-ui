@@ -14,7 +14,7 @@ const IFTALABEL_INSTANCE = new InjectionToken<IftaLabel>('IFTALABEL_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-iftalabel, p-iftaLabel, p-ifta-label',
+    selector: 'p-ifta-label, p-iftalabel, p-iftaLabel',
     standalone: true,
     imports: [BindModule],
     template: ` <ng-content></ng-content> `,

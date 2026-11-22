@@ -70,7 +70,7 @@ const DATEPICKER_INSTANCE = new InjectionToken<DatePicker>('DATEPICKER_INSTANCE'
  * @group Components
  */
 @Component({
-    selector: 'p-datePicker, p-datepicker, p-date-picker',
+    selector: 'p-date-picker, p-datePicker, p-datepicker',
     imports: [CommonModule, Button, Ripple, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, TimesIcon, CalendarIcon, AutoFocus, InputText, SharedModule, BindModule, MotionModule],
     hostDirectives: [Bind],
     template: `

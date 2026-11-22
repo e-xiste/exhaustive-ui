@@ -10,7 +10,7 @@ import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
     imports: [CommonModule, AppDocPtViewer, RadioButtonModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-radiobutton name="pt-demo" value="1" [(ngModel)]="value"></p-radiobutton>
+            <p-radio-button name="pt-demo" value="1" [(ngModel)]="value"></p-radio-button>
         </app-docptviewer>
     `
 })

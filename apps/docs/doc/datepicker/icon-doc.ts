@@ -16,21 +16,21 @@ import { FluidModule } from '@exhaustive-ui/core/fluid';
         <p-fluid class="card flex flex-wrap gap-4">
             <div class="flex-auto">
                 <label for="buttondisplay" class="font-bold block mb-2"> Button </label>
-                <p-datepicker [(ngModel)]="date1" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" />
+                <p-date-picker [(ngModel)]="date1" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" />
             </div>
 
             <div class="flex-auto">
                 <label for="icondisplay" class="font-bold block mb-2"> Default Icon </label>
-                <p-datepicker [(ngModel)]="date2" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" />
+                <p-date-picker [(ngModel)]="date2" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" />
             </div>
 
             <div class="flex-auto">
                 <label for="templatedisplay" class="font-bold block mb-2"> Custom Icon </label>
-                <p-datepicker [(ngModel)]="date3" [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="templatedisplay">
+                <p-date-picker [(ngModel)]="date3" [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="templatedisplay">
                     <ng-template #inputicon let-clickCallBack="clickCallBack">
                         <i class="pi pi-clock" (click)="clickCallBack($event)"></i>
                     </ng-template>
-                </p-datepicker>
+                </p-date-picker>
             </div>
         </p-fluid>
         <app-code></app-code>

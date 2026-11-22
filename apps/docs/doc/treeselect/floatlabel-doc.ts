@@ -19,20 +19,20 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel class="w-full md:w-80">
-                <p-treeselect [(ngModel)]="value1" inputId="over_label" [options]="nodes" class="w-full" />
+            <p-float-label class="w-full md:w-80">
+                <p-tree-select [(ngModel)]="value1" inputId="over_label" [options]="nodes" class="w-full" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel class="w-full md:w-80" variant="in">
-                <p-treeselect [(ngModel)]="value2" inputId="in_label" [options]="nodes" class="w-full" />
+            <p-float-label class="w-full md:w-80" variant="in">
+                <p-tree-select [(ngModel)]="value2" inputId="in_label" [options]="nodes" class="w-full" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel class="w-full md:w-80" variant="on">
-                <p-treeselect [(ngModel)]="value3" inputId="on_label" [options]="nodes" class="w-full" />
+            <p-float-label class="w-full md:w-80" variant="on">
+                <p-tree-select [(ngModel)]="value3" inputId="on_label" [options]="nodes" class="w-full" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

@@ -17,7 +17,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <img #img src="https://exhaustive-ui.com/demo/nature/nature2.jpg" alt="Logo" aria-haspopup="true" class="w-full md:w-120 rounded-sm shadow-lg" />
-            <p-contextmenu [target]="img" [model]="items" />
+            <p-context-menu [target]="img" [model]="items" />
         </div>
         <app-code></app-code>
     `

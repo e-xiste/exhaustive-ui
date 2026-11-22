@@ -12,7 +12,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     template: `
         <app-docptviewer [docs]="docs">
             <p-toast />
-            <p-splitbutton label="Save" icon="pi pi-check" dropdownIcon="pi pi-cog" [model]="items" />
+            <p-split-button label="Save" icon="pi pi-check" dropdownIcon="pi pi-cog" [model]="items" />
         </app-docptviewer>
     `
 })

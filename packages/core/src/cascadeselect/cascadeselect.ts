@@ -269,7 +269,7 @@ export class CascadeSelectSub extends BaseComponent {
  * @group Components
  */
 @Component({
-    selector: 'p-cascadeSelect, p-cascadeselect, p-cascade-select',
+    selector: 'p-cascade-select, p-cascadeSelect, p-cascadeselect',
     imports: [CommonModule, Overlay, AutoFocus, CascadeSelectSub, ChevronDownIcon, SpinnerIcon, TimesIcon, SharedModule, Bind],
     template: `
         <div class="p-hidden-accessible" [pBind]="ptm('hiddenInputWrapper')">

@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col items-center gap-2">
-                    <p-colorpicker [formField]="exampleForm.color" defaultColor="989898" />
+                    <p-color-picker [formField]="exampleForm.color" defaultColor="989898" />
                     @let color = exampleForm.color();
                     @if (color.invalid() && color.touched()) {
                         <p-message severity="error" size="small" variant="simple">Color is required.</p-message>

@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label id="receipts-label" class="font-medium">Receipts</label>
-                    <p-file #model="ngModel" [(ngModel)]="receipts" name="receipts" ariaLabelledBy="receipts-label" size="small" accept="image/*,.pdf" [invalid]="model.invalid && exampleForm.submitted" required />
+                    <p-file-input #model="ngModel" [(ngModel)]="receipts" name="receipts" ariaLabelledBy="receipts-label" size="small" accept="image/*,.pdf" [invalid]="model.invalid && exampleForm.submitted" required />
                     @if (model.invalid && exampleForm.submitted) {
                         <p-message severity="error" size="small" variant="simple">At least one receipt is required.</p-message>
                     }

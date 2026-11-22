@@ -50,8 +50,8 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<span id="attachments">Attachments</span>
-<p-file ariaLabelledBy="attachments" hint="PDF only, 5 MB maximum" />
+<p-file-input ariaLabelledBy="attachments" hint="PDF only, 5 MB maximum" />
 
-<p-file variant="avatar" ariaLabel="Profile picture" />`
+<p-file-input variant="avatar" ariaLabel="Profile picture" />`
     };
 }

@@ -16,7 +16,7 @@ import { PanelModule } from '@exhaustive-ui/core/panel';
         <div class="card">
             <p-button label="Block" (click)="blockedPanel = true" class="me-2" severity="secondary" />
             <p-button label="Unblock" (click)="blockedPanel = false" severity="secondary" />
-            <p-blockui [target]="pnl" [blocked]="blockedPanel" />
+            <p-block-ui [target]="pnl" [blocked]="blockedPanel" />
             <p-panel #pnl header="Header" class="mt-6">
                 <p class="m-0">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

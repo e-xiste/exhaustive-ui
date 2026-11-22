@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The invalid state is applied using the <i>invalid</i> property to indicate failed validation.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-file [invalid]="files.length === 0" (onSelect)="files = $event.items" />
+            <p-file-input [invalid]="files.length === 0" (onSelect)="files = $event.items" />
         </div>
         <app-code></app-code>
     `

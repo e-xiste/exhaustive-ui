@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label id="photos-label" class="font-medium">Photos</label>
-                    <p-file [formField]="listingForm.photos" variant="images" accept="image/*" [maxFiles]="4" ariaLabelledBy="photos-label" />
+                    <p-file-input [formField]="listingForm.photos" variant="images" accept="image/*" [maxFiles]="4" ariaLabelledBy="photos-label" />
                     @let photos = listingForm.photos();
                     @if (photos.invalid() && photos.touched()) {
                         <p-message severity="error" size="small" variant="simple">Add at least one photo.</p-message>

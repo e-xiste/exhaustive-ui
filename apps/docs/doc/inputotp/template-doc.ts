@@ -13,11 +13,11 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Define a template with your own UI elements with bindings to the provided events and attributes to replace the default design.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputotp [(ngModel)]="value">
+            <p-input-otp [(ngModel)]="value">
                 <ng-template #input let-token let-events="events">
                     <input class="custom-otp-input" (keydown)="events.keydown($event)" (input)="events.input($event)" type="text" [attr.value]="token" [maxLength]="1" />
                 </ng-template>
-            </p-inputotp>
+            </p-input-otp>
         </div>
         <app-code></app-code>
     `,

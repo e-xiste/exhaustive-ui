@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, files can no longer be added or removed.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-file disabled />
+            <p-file-input disabled />
         </div>
         <app-code></app-code>
     `

@@ -17,7 +17,8 @@ import {
     untracked,
     ViewEncapsulation,
     contentChildren,
-    output
+    output,
+    TemplateRef
 } from '@angular/core';
 import { addClass, getHeight, getOuterHeight, getOuterWidth, getWidth, isRTL, removeClass } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -197,7 +198,11 @@ export class Splitter extends BaseComponent<SplitterPassThrough> {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    readonly panelChildren = contentChildren<ElementRef>('panel');
+    /**
+     * Content of a panel. Define one <ng-template #panel> per panel, in order.
+     * @group Templates
+     */
+    readonly panelChildren = contentChildren<TemplateRef<void>>('panel');
 
     splitter = contentChild(forwardRef(() => Splitter));
 

@@ -59,7 +59,7 @@ const PICKLIST_INSTANCE = new InjectionToken<PickList>('PICKLIST_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-pickList, p-picklist, p-pick-list',
+    selector: 'p-pick-list, p-pickList, p-picklist',
     imports: [
         CommonModule,
         ButtonModule,

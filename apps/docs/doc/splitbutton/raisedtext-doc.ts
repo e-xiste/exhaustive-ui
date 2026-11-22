@@ -16,14 +16,14 @@ import { RouterModule } from '@angular/router';
         </app-docsectiontext>
         <div class="card flex justify-center flex-wrap gap-4">
             <p-toast />
-            <p-splitbutton label="Primary" [model]="items" (onClick)="save('info')" raised text />
-            <p-splitbutton label="Secondary" [model]="items" (onClick)="save('info')" raised text severity="secondary" />
-            <p-splitbutton label="Success" [model]="items" (onClick)="save('info')" raised text severity="success" />
-            <p-splitbutton label="Info" [model]="items" (onClick)="save('info')" raised text severity="info" />
-            <p-splitbutton label="Warning" [model]="items" (onClick)="save('info')" raised text severity="warn" />
-            <p-splitbutton label="Help" [model]="items" (onClick)="save('info')" raised text severity="help" />
-            <p-splitbutton label="Danger" [model]="items" (onClick)="save('info')" raised text severity="danger" />
-            <p-splitbutton label="Contrast" [model]="items" (onClick)="save('info')" raised text severity="contrast" />
+            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" raised text />
+            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" raised text severity="secondary" />
+            <p-split-button label="Success" [model]="items" (onClick)="save('info')" raised text severity="success" />
+            <p-split-button label="Info" [model]="items" (onClick)="save('info')" raised text severity="info" />
+            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" raised text severity="warn" />
+            <p-split-button label="Help" [model]="items" (onClick)="save('info')" raised text severity="help" />
+            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" raised text severity="danger" />
+            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" raised text severity="contrast" />
         </div>
         <app-code></app-code>
     `,

@@ -20,16 +20,16 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
     imports: [CommonModule, RouterModule, SelectButton, FormsModule, AvatarModule, TooltipModule, IconField, InputIcon, ButtonModule, InputTextModule, ProgressBar, Carousel, OverlayBadgeModule],
     template: `
         <div class="flex flex-wrap gap-4 items-center justify-between">
-            <p-selectbutton [(ngModel)]="value" [options]="options" aria-labelledby="basic" />
+            <p-select-button [(ngModel)]="value" [options]="options" aria-labelledby="basic" />
             <div class="flex gap-2.5 items-center">
-                <p-iconfield iconPosition="left">
-                    <p-inputicon class="pi pi-search"></p-inputicon>
+                <p-icon-field iconPosition="left">
+                    <p-input-icon class="pi pi-search"></p-input-icon>
                     <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
-                </p-iconfield>
+                </p-icon-field>
                 <p-button severity="secondary" outlined>
-                    <p-overlayBadge severity="danger" badgeSize="small" styleClass="min-w-0! w-2.5! h-2.5!">
+                    <p-overlay-badge severity="danger" badgeSize="small" styleClass="min-w-0! w-2.5! h-2.5!">
                         <i class="pi pi-bell"></i>
-                    </p-overlayBadge>
+                    </p-overlay-badge>
                 </p-button>
                 <p-avatar image="/demo/landing/apps/avatar11.jpg" shape="circle" class="w-9 h-9 cursor-pointer" />
             </div>
@@ -55,7 +55,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                                 {{ item.point }}
                             </div>
                             <div class="absolute z-10 bottom-2 inset-x-2">
-                                <p-progressbar
+                                <p-progress-bar
                                     [value]="item.watchedPercent"
                                     [showValue]="false"
                                     class="h-1.5! bg-surface-950! dark:bg-surface-50! rounded-full!"

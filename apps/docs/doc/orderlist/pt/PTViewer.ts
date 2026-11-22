@@ -23,11 +23,11 @@ interface Product {
     imports: [CommonModule, AppDocPtViewer, OrderListModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-orderlist [value]="products()" dataKey="id">
+            <p-order-list [value]="products()" dataKey="id">
                 <ng-template #item let-option>
                     {{ option.name }}
                 </ng-template>
-            </p-orderlist>
+            </p-order-list>
         </app-docptviewer>
     `,
     providers: [ProductService]

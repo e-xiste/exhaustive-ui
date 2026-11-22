@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>DatePicker is displayed as a popup by default, add <i>inline</i> property to customize this behavior.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker class="max-w-full" [(ngModel)]="date" [inline]="true" [showWeek]="true" />
+            <p-date-picker class="max-w-full" [(ngModel)]="date" [inline]="true" [showWeek]="true" />
         </div>
         <app-code></app-code>
     `

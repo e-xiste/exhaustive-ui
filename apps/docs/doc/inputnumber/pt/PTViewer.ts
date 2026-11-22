@@ -10,7 +10,7 @@ import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
     imports: [CommonModule, AppDocPtViewer, InputNumberModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-inputnumber [(ngModel)]="value" inputId="stacked-buttons" [showButtons]="true" mode="currency" currency="USD" />
+            <p-input-number [(ngModel)]="value" inputId="stacked-buttons" [showButtons]="true" mode="currency" currency="USD" />
         </app-docptviewer>
     `
 })

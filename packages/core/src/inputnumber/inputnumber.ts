@@ -45,7 +45,7 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
  * @group Components
  */
 @Component({
-    selector: 'p-inputNumber, p-inputnumber, p-input-number',
+    selector: 'p-input-number, p-inputNumber, p-inputnumber',
     imports: [CommonModule, InputText, AutoFocus, TimesIcon, AngleUpIcon, AngleDownIcon, SharedModule, BindModule],
     template: `
         <input

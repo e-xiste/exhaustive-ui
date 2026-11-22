@@ -9,7 +9,7 @@ import { FileInputExistingFile, FileInputModule } from '@exhaustive-ui/core/file
     imports: [AppDocPtViewer, FileInputModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-file class="w-full" hint="Any file, 5 MB maximum" [existing]="existing" />
+            <p-file-input class="w-full" hint="Any file, 5 MB maximum" [existing]="existing" />
         </app-docptviewer>
     `
 })

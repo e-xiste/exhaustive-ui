@@ -18,10 +18,10 @@ interface AutoCompleteCompleteEvent {
         </app-docsectiontext>
         <div class="card">
             <label for="multiple-ac-1" class="font-bold mb-2 block">With Typeahead</label>
-            <p-autocomplete [(ngModel)]="value1" inputId="multiple-ac-1" multiple fluid [suggestions]="items" (completeMethod)="search($event)" />
+            <p-auto-complete [(ngModel)]="value1" inputId="multiple-ac-1" multiple fluid [suggestions]="items" (completeMethod)="search($event)" />
 
             <label for="multiple-ac-2" class="font-bold mt-8 mb-2 block">Without Typeahead</label>
-            <p-autocomplete [(ngModel)]="value2" inputId="multiple-ac-2" multiple fluid (completeMethod)="search($event)" [typeahead]="false" />
+            <p-auto-complete [(ngModel)]="value2" inputId="multiple-ac-2" multiple fluid (completeMethod)="search($event)" [typeahead]="false" />
         </div>
         <app-code></app-code>`
 })

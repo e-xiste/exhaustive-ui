@@ -11,7 +11,7 @@ import { InputGroupAddonStyle } from './style/inputgroupaddonstyle';
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-inputgroup-addon, p-inputGroupAddon',
+    selector: 'p-input-group-addon, p-inputgroup-addon, p-inputGroupAddon',
     template: ` <ng-content></ng-content> `,
     imports: [BindModule],
     host: {

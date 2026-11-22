@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>ColorPicker is displayed as a popup by default, add <i>inline</i> property to customize this behavior.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-colorpicker [(ngModel)]="color" [inline]="true" />
+            <p-color-picker [(ngModel)]="color" [inline]="true" />
         </div>
         <app-code></app-code>
     `

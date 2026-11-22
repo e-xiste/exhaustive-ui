@@ -25,7 +25,7 @@ interface City {
         <div class="card flex justify-center">
             <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 w-full md:w-80">
                 <div class="flex flex-col gap-1">
-                    <p-multiselect
+                    <p-multi-select
                         #city="ngModel"
                         [(ngModel)]="selectedCity"
                         [options]="cities"

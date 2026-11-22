@@ -13,7 +13,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
             <p>Specifying <i>view</i> as <i>year</i> in addition to a suitable <i>dateFormat</i> enables the year picker.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-datepicker [(ngModel)]="date" view="year" dateFormat="yy" />
+            <p-date-picker [(ngModel)]="date" view="year" dateFormat="yy" />
         </div>
         <app-code></app-code>
     `

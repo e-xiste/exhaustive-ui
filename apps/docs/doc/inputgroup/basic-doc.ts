@@ -18,33 +18,33 @@ interface City {
     imports: [AppDocSectionText, AppCodeModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, InputNumberModule, SelectModule],
     template: `
         <app-docsectiontext>
-            <p>A group is created by wrapping the input and add-ons with the <i>p-inputgroup</i> component. Each add-on element is defined as a child of <i>p-inputgroup-addon</i> component.</p>
+            <p>A group is created by wrapping the input and add-ons with the <i>p-input-group</i> component. Each add-on element is defined as a child of <i>p-input-group-addon</i> component.</p>
         </app-docsectiontext>
         <div class="card grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p-inputgroup>
-                <p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>
                     <i class="pi pi-user"></i>
-                </p-inputgroup-addon>
+                </p-input-group-addon>
                 <input pInputText [(ngModel)]="text1" placeholder="Username" />
-            </p-inputgroup>
+            </p-input-group>
 
-            <p-inputgroup>
-                <p-inputgroup-addon>$</p-inputgroup-addon>
-                <p-inputnumber [(ngModel)]="number" placeholder="Price" />
-                <p-inputgroup-addon>.00</p-inputgroup-addon>
-            </p-inputgroup>
+            <p-input-group>
+                <p-input-group-addon>$</p-input-group-addon>
+                <p-input-number [(ngModel)]="number" placeholder="Price" />
+                <p-input-group-addon>.00</p-input-group-addon>
+            </p-input-group>
 
-            <p-inputgroup>
-                <p-inputgroup-addon>www</p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>www</p-input-group-addon>
                 <input pInputText [(ngModel)]="text2" placeholder="Website" />
-            </p-inputgroup>
+            </p-input-group>
 
-            <p-inputgroup>
-                <p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>
                     <i class="pi pi-map"></i>
-                </p-inputgroup-addon>
+                </p-input-group-addon>
                 <p-select [(ngModel)]="selectedCity" [options]="cities" optionLabel="name" placeholder="City" />
-            </p-inputgroup>
+            </p-input-group>
         </div>
         <app-code></app-code>
     `

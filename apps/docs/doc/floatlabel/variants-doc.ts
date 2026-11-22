@@ -14,15 +14,15 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
             <p>The <i>variant</i> property defines the position of the label. Default value is <i>over</i>, whereas <i>in</i> and <i>on</i> are the alternatives.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel variant="in">
+            <p-float-label variant="in">
                 <input pInputText id="in_label" [(ngModel)]="value1" autocomplete="off" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
+            <p-float-label variant="on">
                 <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

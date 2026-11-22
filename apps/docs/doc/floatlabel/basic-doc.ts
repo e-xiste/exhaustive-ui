@@ -14,10 +14,10 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
             <p>FloatLabel is used by wrapping the input and its label.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-floatlabel>
+            <p-float-label>
                 <input id="username" pInputText [(ngModel)]="value" autocomplete="off" />
                 <label for="username">Username</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

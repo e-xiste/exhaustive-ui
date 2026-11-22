@@ -17,7 +17,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-confirmdialog #cd>
+            <p-confirm-dialog #cd>
                 <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
                     @if (message) {
                         <div class="flex flex-col items-center p-8 bg-surface-0 dark:bg-surface-900 rounded-sm">
@@ -33,7 +33,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
                         </div>
                     }
                 </ng-template>
-            </p-confirmdialog>
+            </p-confirm-dialog>
             <p-button (click)="confirm()" label="Save" />
         </div>
         <app-code></app-code>

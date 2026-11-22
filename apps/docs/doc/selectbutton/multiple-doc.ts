@@ -13,7 +13,7 @@ import { AppCode } from '@/components/doc/app.code';
             <p>SelectButton allows selecting only one item by default and setting <i>multiple</i> option enables choosing more than one item. In multiple case, model property should be an array.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-selectbutton [options]="paymentOptions" [(ngModel)]="value" [multiple]="true" optionLabel="name" optionValue="value" />
+            <p-select-button [options]="paymentOptions" [(ngModel)]="value" [multiple]="true" optionLabel="name" optionValue="value" />
         </div>
         <app-code></app-code>
     `

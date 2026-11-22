@@ -22,11 +22,11 @@ interface Product {
     imports: [CommonModule, AppDocPtViewer, PickListModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-picklist [source]="products[0]" [target]="products[1]" dataKey="id" [breakpoint]="'1400px'" [sourceStyle]="{ width: '200px' }" [targetStyle]="{ width: '200px' }">
+            <p-pick-list [source]="products[0]" [target]="products[1]" dataKey="id" [breakpoint]="'1400px'" [sourceStyle]="{ width: '200px' }" [targetStyle]="{ width: '200px' }">
                 <ng-template #item let-item>
                     {{ item.name }}
                 </ng-template>
-            </p-picklist>
+            </p-pick-list>
         </app-docptviewer>
     `
 })

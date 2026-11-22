@@ -22,7 +22,7 @@ interface Column {
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable
+                <p-tree-table
                     #tt
                     [value]="files"
                     (sortFunction)="customSort($event)"
@@ -39,19 +39,19 @@ interface Column {
                         <tr>
                             <th *ngFor="let col of columns" [ttSortableColumn]="col.field">
                                 {{ col.header }}
-                                <p-treetableSortIcon [field]="col.field" />
+                                <p-tree-table-sort-icon [field]="col.field" />
                             </th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
                         <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
                             <td *ngFor="let col of columns; let i = index">
-                                <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0" />
+                                <p-tree-table-toggler [rowNode]="rowNode" *ngIf="i === 0" />
                                 {{ rowData[col.field] }}
                             </td>
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

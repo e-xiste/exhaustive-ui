@@ -12,9 +12,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>FileInput provides <i>small</i> and <i>large</i> sizes as alternatives to the default, like the other form fields.</p>
         </app-docsectiontext>
         <div class="card flex flex-col gap-4">
-            <p-file size="small" />
-            <p-file />
-            <p-file size="large" />
+            <p-file-input size="small" />
+            <p-file-input />
+            <p-file-input size="large" />
         </div>
         <app-code></app-code>
     `

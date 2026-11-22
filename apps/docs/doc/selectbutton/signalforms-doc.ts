@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <p-selectbutton [options]="stateOptions" [formField]="exampleForm.value" optionLabel="label" optionValue="value" />
+                    <p-select-button [options]="stateOptions" [formField]="exampleForm.value" optionLabel="label" optionValue="value" />
                     @let value = exampleForm.value();
                     @if (value.invalid() && value.touched()) {
                         <p-message severity="error" size="small" variant="simple">Selection is required</p-message>

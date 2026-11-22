@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
             <p-toast />
-            <p-confirmpopup />
+            <p-confirm-popup />
             <p-button (onClick)="confirm1($event)" label="Save" [outlined]="true" />
             <p-button (onClick)="confirm2($event)" label="Delete" severity="danger" [outlined]="true" />
         </div>

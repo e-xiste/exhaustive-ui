@@ -15,7 +15,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-button label="Toggle" (click)="menu.toggle($event)" />
-            <p-tieredmenu #menu [model]="items" [popup]="true" />
+            <p-tiered-menu #menu [model]="items" [popup]="true" />
         </div>
         <app-code></app-code>
     `

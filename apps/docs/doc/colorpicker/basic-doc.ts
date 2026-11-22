@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>ColorPicker is used as a controlled input with <i>ngModel</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-colorpicker [(ngModel)]="color" />
+            <p-color-picker [(ngModel)]="color" />
         </div>
         <app-code></app-code>
     `

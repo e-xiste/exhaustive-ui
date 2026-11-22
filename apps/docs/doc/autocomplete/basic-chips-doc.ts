@@ -13,16 +13,16 @@ import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
         </app-docsectiontext>
         <div class="card">
             <label for="chips-blur" class="font-bold mb-2 block">With Add On Blur</label>
-            <p-autocomplete [(ngModel)]="valueBlur" inputId="chips-blur" multiple fluid [typeahead]="false" [addOnBlur]="true" placeholder="Type and click outside to add..." />
+            <p-auto-complete [(ngModel)]="valueBlur" inputId="chips-blur" multiple fluid [typeahead]="false" [addOnBlur]="true" placeholder="Type and click outside to add..." />
 
             <label for="chips-tab" class="font-bold mt-8 mb-2 block">With Add On Tab</label>
-            <p-autocomplete [(ngModel)]="valueTab" inputId="chips-tab" multiple fluid [typeahead]="false" [addOnTab]="true" placeholder="Type and press Tab to add..." />
+            <p-auto-complete [(ngModel)]="valueTab" inputId="chips-tab" multiple fluid [typeahead]="false" [addOnTab]="true" placeholder="Type and press Tab to add..." />
 
             <label for="chips-separator" class="font-bold mt-8 mb-2 block">With Separator (Comma)</label>
-            <p-autocomplete [(ngModel)]="valueSeparator" inputId="chips-separator" multiple fluid [typeahead]="false" separator="," placeholder="Type items separated by comma..." />
+            <p-auto-complete [(ngModel)]="valueSeparator" inputId="chips-separator" multiple fluid [typeahead]="false" separator="," placeholder="Type items separated by comma..." />
 
             <label for="chips-combined" class="font-bold mt-8 mb-2 block">Combined Features</label>
-            <p-autocomplete [(ngModel)]="valueCombined" inputId="chips-combined" multiple fluid [typeahead]="false" [addOnBlur]="true" [addOnTab]="true" separator="," placeholder="Use Tab, Blur, or Comma to add items..." />
+            <p-auto-complete [(ngModel)]="valueCombined" inputId="chips-combined" multiple fluid [typeahead]="false" [addOnBlur]="true" [addOnTab]="true" separator="," placeholder="Use Tab, Blur, or Comma to add items..." />
         </div>
         <app-code></app-code>`
 })

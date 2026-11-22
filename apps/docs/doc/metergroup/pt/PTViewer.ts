@@ -9,7 +9,7 @@ import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
     imports: [CommonModule, AppDocPtViewer, MeterGroupModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-metergroup [value]="value" />
+            <p-meter-group [value]="value" />
         </app-docptviewer>
     `
 })

@@ -14,17 +14,17 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Multiple add-ons can be placed inside the same group.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputgroup class="w-full md:w-120!">
-                <p-inputgroup-addon>
+            <p-input-group class="w-full md:w-120!">
+                <p-input-group-addon>
                     <i class="pi pi-clock"></i>
-                </p-inputgroup-addon>
-                <p-inputgroup-addon>
+                </p-input-group-addon>
+                <p-input-group-addon>
                     <i class="pi pi-star-fill"></i>
-                </p-inputgroup-addon>
+                </p-input-group-addon>
                 <input type="text" pInputText placeholder="Price" />
-                <p-inputgroup-addon>$</p-inputgroup-addon>
-                <p-inputgroup-addon>.00</p-inputgroup-addon>
-            </p-inputgroup>
+                <p-input-group-addon>$</p-input-group-addon>
+                <p-input-group-addon>.00</p-input-group-addon>
+            </p-input-group>
         </div>
         <app-code></app-code>
     `

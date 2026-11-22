@@ -13,7 +13,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     providers: [MessageService],
     template: `
         <p-toast position="top-right" />
-        <p-splitbutton label="Copy Markdown" icon="pi pi-copy" severity="secondary" outlined [model]="menuItems" (onClick)="copyMarkdown()" appendTo="body" [menuStyleClass]="'min-w-56'" />
+        <p-split-button label="Copy Markdown" icon="pi pi-copy" severity="secondary" outlined [model]="menuItems" (onClick)="copyMarkdown()" appendTo="body" [menuStyleClass]="'min-w-56'" />
     `
 })
 export class AppDocCopyMarkdown implements OnInit {

@@ -77,7 +77,7 @@ const format = (text: string, ...values: (string | number)[]) => values.reduce<s
  * @group Components
  */
 @Component({
-    selector: 'p-file, p-fileinput, p-file-input',
+    selector: 'p-file-input, p-file, p-fileinput',
     standalone: true,
     imports: [NgTemplateOutlet, SharedModule, BindModule, UploadIcon, TimesIcon, RefreshIcon, TrashIcon, ArrowDownIcon, BanIcon, CheckIcon],
     template: `

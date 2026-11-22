@@ -19,7 +19,7 @@ import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
         </app-docsectiontext>
         <app-code [code]="exampleCode" [hideToggleCode]="true"></app-code>
         <div class="card flex justify-center">
-            <p-treeselect class="w-full md:w-80" [(ngModel)]="selectedNodes" [options]="nodes" [metaKeySelection]="false" selectionMode="multiple" placeholder="Select Item" />
+            <p-tree-select class="w-full md:w-80" [(ngModel)]="selectedNodes" [options]="nodes" [metaKeySelection]="false" selectionMode="multiple" placeholder="Select Item" />
         </div>
         <app-code></app-code>
     `

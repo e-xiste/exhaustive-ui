@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
             <p-button label="Toggle All" [text]="true" (onClick)="toggleAll()" />
-            <p-panelmenu [model]="items" class="w-full md:w-80" />
+            <p-panel-menu [model]="items" class="w-full md:w-80" />
         </div>
         <app-code></app-code>
     `

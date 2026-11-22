@@ -20,32 +20,32 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-col md:items-end md:flex-row gap-4">
-            <p-inputgroup>
-                <p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>
                     <i class="pi pi-user"></i>
-                </p-inputgroup-addon>
-                <p-floatlabel>
+                </p-input-group-addon>
+                <p-float-label>
                     <input pInputText id="over_label" [(ngModel)]="value1" />
                     <label for="over_label">Over Label</label>
-                </p-floatlabel>
-            </p-inputgroup>
+                </p-float-label>
+            </p-input-group>
 
-            <p-inputgroup>
-                <p-inputgroup-addon>$</p-inputgroup-addon>
-                <p-floatlabel variant="in">
+            <p-input-group>
+                <p-input-group-addon>$</p-input-group-addon>
+                <p-float-label variant="in">
                     <input pInputText id="in_label" [(ngModel)]="value2" />
                     <label for="in_label">In Label</label>
-                </p-floatlabel>
-                <p-inputgroup-addon>.00</p-inputgroup-addon>
-            </p-inputgroup>
+                </p-float-label>
+                <p-input-group-addon>.00</p-input-group-addon>
+            </p-input-group>
 
-            <p-inputgroup>
-                <p-inputgroup-addon>www</p-inputgroup-addon>
-                <p-floatlabel variant="on">
+            <p-input-group>
+                <p-input-group-addon>www</p-input-group-addon>
+                <p-float-label variant="on">
                     <input pInputText id="on_label" [(ngModel)]="value3" />
                     <label for="on_label">On Label</label>
-                </p-floatlabel>
-            </p-inputgroup>
+                </p-float-label>
+            </p-input-group>
         </div>
         <app-code></app-code>
     `

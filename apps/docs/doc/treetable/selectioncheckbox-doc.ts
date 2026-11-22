@@ -27,7 +27,7 @@ interface Column {
         <app-code [code]="code2" [hideToggleCode]="true"></app-code>
         <div class="card mt-4">
             <p-deferred-demo (load)="loadDemoData()">
-                <p-treetable [value]="files" [columns]="cols" selectionMode="checkbox" [(selectionKeys)]="selectionKeys" dataKey="key" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <p-tree-table [value]="files" [columns]="cols" selectionMode="checkbox" [(selectionKeys)]="selectionKeys" dataKey="key" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template #header let-columns>
                         <tr>
                             @for (col of columns; track col) {
@@ -43,8 +43,8 @@ interface Column {
                                 <td>
                                     @if (first) {
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode" />
-                                            <p-treetable-checkbox [value]="rowNode" />
+                                            <p-tree-table-toggler [rowNode]="rowNode" />
+                                            <p-tree-table-checkbox [value]="rowNode" />
                                             <span>{{ rowData[col.field] }}</span>
                                         </div>
                                     } @else {
@@ -54,7 +54,7 @@ interface Column {
                             }
                         </tr>
                     </ng-template>
-                </p-treetable>
+                </p-tree-table>
             </p-deferred-demo>
         </div>
         <app-code></app-code>

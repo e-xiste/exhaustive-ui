@@ -9,7 +9,7 @@ import { IconFieldStyle } from './style/iconfieldstyle';
  * @group Components
  */
 @Component({
-    selector: 'p-iconfield, p-iconField, p-icon-field',
+    selector: 'p-icon-field, p-iconfield, p-iconField',
     imports: [BindModule],
     template: ` <ng-content></ng-content>`,
     providers: [IconFieldStyle, { provide: PARENT_INSTANCE, useExisting: IconField }],

@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>In single selection mode, value binding should be the <i>key</i> value of a node.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" />
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" />
         </div>
         <app-code></app-code>
     `

@@ -11,7 +11,7 @@ import { InputGroupStyle } from './style/inputgroupstyle';
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-inputgroup, p-inputGroup, p-input-group',
+    selector: 'p-input-group, p-inputgroup, p-inputGroup',
     imports: [BindModule],
     template: ` <ng-content></ng-content> `,
     providers: [InputGroupStyle, { provide: PARENT_INSTANCE, useExisting: InputGroup }],

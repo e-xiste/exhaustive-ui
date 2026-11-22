@@ -15,7 +15,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast></p-toast>
-            <p-fileupload name="myfile[]" [customUpload]="true" (uploadHandler)="customUploader($event)"></p-fileupload>
+            <p-file-upload name="myfile[]" [customUpload]="true" (uploadHandler)="customUploader($event)"></p-file-upload>
         </div>
         <app-code></app-code>
     `,

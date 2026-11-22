@@ -36,7 +36,7 @@ const CONFIRMDIALOG_INSTANCE = new InjectionToken<ConfirmDialog>('CONFIRMDIALOG_
  * @group Components
  */
 @Component({
-    selector: 'p-confirmDialog, p-confirmdialog, p-confirm-dialog',
+    selector: 'p-confirm-dialog, p-confirmDialog, p-confirmdialog',
     imports: [CommonModule, Button, Dialog, SharedModule, Bind],
     template: `
         <p-dialog

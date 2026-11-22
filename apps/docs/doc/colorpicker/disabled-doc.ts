@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>disabled</i> is present, the element cannot be edited and focused.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-colorpicker [(ngModel)]="color" [disabled]="true" />
+            <p-color-picker [(ngModel)]="color" [disabled]="true" />
         </div>
         <app-code></app-code>
     `

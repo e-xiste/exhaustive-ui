@@ -10,7 +10,7 @@ import { ColorPickerModule } from '@exhaustive-ui/core/colorpicker';
     imports: [CommonModule, AppDocPtViewer, ColorPickerModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-colorpicker [(ngModel)]="color" [inline]="true"></p-colorpicker>
+            <p-color-picker [(ngModel)]="color" [inline]="true"></p-color-picker>
         </app-docptviewer>
     `
 })

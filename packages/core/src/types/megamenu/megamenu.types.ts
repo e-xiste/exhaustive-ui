@@ -132,8 +132,4 @@ export interface MegaMenuTemplates {
      * Custom menu button icon template on responsive mode.
      */
     buttonicon(): TemplateRef<void>;
-    /**
-     * Custom menu icon template.
-     */
-    menuicon(): TemplateRef<void>;
 }

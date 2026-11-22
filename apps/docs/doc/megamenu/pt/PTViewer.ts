@@ -9,7 +9,7 @@ import { MegaMenuModule } from '@exhaustive-ui/core/megamenu';
     imports: [CommonModule, AppDocPtViewer, MegaMenuModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-megamenu [model]="items" />
+            <p-mega-menu [model]="items" />
         </app-docptviewer>
     `
 })

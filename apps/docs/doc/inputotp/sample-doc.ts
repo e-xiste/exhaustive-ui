@@ -18,14 +18,14 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <div class="flex flex-col items-center">
                 <div class="font-bold text-xl mb-2">Authenticate Your Account</div>
                 <p class="text-muted-color block mb-8">Please enter the code sent to your phone.</p>
-                <p-inputotp [(ngModel)]="value" [length]="6">
+                <p-input-otp [(ngModel)]="value" [length]="6">
                     <ng-template #input let-token let-events="events" let-index="index">
                         <input type="text" [maxLength]="1" (input)="events.input($event)" (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" />
                         <div *ngIf="index === 3" class="px-4">
                             <i class="pi pi-minus"></i>
                         </div>
                     </ng-template>
-                </p-inputotp>
+                </p-input-otp>
                 <div class="flex justify-between mt-8 self-stretch">
                     <p-button label="Resend Code" [link]="true" class="p-0" />
                     <p-button label="Submit Code" />

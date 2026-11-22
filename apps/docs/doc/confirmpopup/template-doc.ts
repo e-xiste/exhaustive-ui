@@ -17,14 +17,14 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-confirmpopup>
+            <p-confirm-popup>
                 <ng-template #content let-message>
                     <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700 p-4 mb-4 pb-0">
                         <i [class]="message.icon" class="text-6xl! text-primary-500"></i>
                         <p>{{ message.message }}</p>
                     </div>
                 </ng-template>
-            </p-confirmpopup>
+            </p-confirm-popup>
             <p-button (click)="confirm($event)" label="Save" />
         </div>
         <app-code></app-code>

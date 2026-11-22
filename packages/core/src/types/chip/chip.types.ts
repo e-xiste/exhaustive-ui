@@ -49,10 +49,6 @@ export type ChipPassThrough<I = unknown> = PassThrough<I, ChipPassThroughOptions
  */
 export interface ChipTemplates {
     /**
-     * Custom content template.
-     */
-    content(): TemplateRef<void>;
-    /**
      * Custom remove icon template.
      */
     removeicon(): TemplateRef<void>;

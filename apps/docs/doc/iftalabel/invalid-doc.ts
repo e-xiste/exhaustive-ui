@@ -14,10 +14,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When the form element is invalid, the label is also highlighted.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel>
+            <p-ifta-label>
                 <input pInputText id="username" [(ngModel)]="value" [invalid]="!value" autocomplete="off" />
                 <label for="username">Username</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
         <app-code></app-code>
     `

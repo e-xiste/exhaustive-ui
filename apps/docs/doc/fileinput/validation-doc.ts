@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-file accept="image/*,.pdf" [maxFileSize]="5000000" [maxFiles]="5" [maxTotalSize]="15000000" hint="Images and PDF · 5 MB per file · 5 files and 15 MB in total" />
+            <p-file-input accept="image/*,.pdf" [maxFileSize]="5000000" [maxFiles]="5" [maxTotalSize]="15000000" hint="Images and PDF · 5 MB per file · 5 files and 15 MB in total" />
         </div>
         <app-code></app-code>
     `

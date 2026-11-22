@@ -59,6 +59,8 @@ import { Checkbox } from '@exhaustive-ui/core/checkbox';
 import { DomHandler } from '@exhaustive-ui/core/dom';
 import { ArrowDownIcon, ArrowUpIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, SortAltIcon, SortAmountDownIcon, SortAmountUpAltIcon, SpinnerIcon } from '@exhaustive-ui/core/icons';
 import { PaginatorModule } from '@exhaustive-ui/core/paginator';
+import type { PaginatorDropdownItemTemplateContext, PaginatorTemplateContext } from '@exhaustive-ui/core/types/paginator';
+import type { ScrollerLoaderTemplateContext } from '@exhaustive-ui/core/types/scroller';
 import { Ripple } from '@exhaustive-ui/core/ripple';
 import { Scroller } from '@exhaustive-ui/core/scroller';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
@@ -140,7 +142,7 @@ export class TreeTableService {
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-treeTable, p-treetable, p-tree-table',
+    selector: 'p-tree-table, p-treeTable, p-treetable',
     standalone: false,
     template: `
         @if (loading() && showLoader()) {
@@ -786,6 +788,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
 
     filterTimeout = signal<any>(undefined);
 
+    /**
+     * Custom colgroup element.
+     * @param context - colgroup template context.
+     * @group Templates
+     */
     readonly _colGroupTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('colgroup', { descendants: false });
     readonly colGroupTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -794,6 +801,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom caption, rendered above the table.
+     * @group Templates
+     */
     readonly _captionTemplate = contentChild<Nullable<TemplateRef<void>>>('caption', { descendants: false });
     readonly captionTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -802,6 +813,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom header rows, rendered in the thead.
+     * @param context - header template context.
+     * @group Templates
+     */
     readonly _headerTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('header', { descendants: false });
     readonly headerTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -810,6 +826,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom row, rendered for each visible node.
+     * @param context - body template context.
+     * @group Templates
+     */
     readonly _bodyTemplate = contentChild<Nullable<TemplateRef<TreeTableBodyTemplateContext>>>('body', { descendants: false });
     readonly bodyTemplate = computed<Nullable<TemplateRef<TreeTableBodyTemplateContext>>>(
         () =>
@@ -818,6 +839,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom footer rows, rendered in the tfoot.
+     * @param context - footer template context.
+     * @group Templates
+     */
     readonly _footerTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('footer', { descendants: false });
     readonly footerTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -826,6 +852,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom summary, rendered below the table.
+     * @group Templates
+     */
     readonly _summaryTemplate = contentChild<Nullable<TemplateRef<void>>>('summary', { descendants: false });
     readonly summaryTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -834,6 +864,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom content when there is no data.
+     * @param context - emptymessage template context.
+     * @group Templates
+     */
     readonly _emptyMessageTemplate = contentChild<Nullable<TemplateRef<TreeTableEmptyMessageTemplateContext>>>('emptymessage', { descendants: false });
     readonly emptyMessageTemplate = computed<Nullable<TemplateRef<TreeTableEmptyMessageTemplateContext>>>(
         () =>
@@ -842,7 +877,12 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
-    readonly _paginatorLeftTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatorleft', { descendants: false });
+    /**
+     * Custom content on the left of the paginator.
+     * @param context - paginatorleft template context.
+     * @group Templates
+     */
+    readonly _paginatorLeftTemplate = contentChild<Nullable<TemplateRef<PaginatorTemplateContext>>>('paginatorleft', { descendants: false });
     readonly paginatorLeftTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
             this.templates()
@@ -850,7 +890,12 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
-    readonly _paginatorRightTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatorright', { descendants: false });
+    /**
+     * Custom content on the right of the paginator.
+     * @param context - paginatorright template context.
+     * @group Templates
+     */
+    readonly _paginatorRightTemplate = contentChild<Nullable<TemplateRef<PaginatorTemplateContext>>>('paginatorright', { descendants: false });
     readonly paginatorRightTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
             this.templates()
@@ -858,7 +903,12 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
-    readonly _paginatorDropdownItemTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatordropdownitem', { descendants: false });
+    /**
+     * Custom item of the rows per page dropdown of the paginator.
+     * @param context - paginatordropdownitem template context.
+     * @group Templates
+     */
+    readonly _paginatorDropdownItemTemplate = contentChild<Nullable<TemplateRef<PaginatorDropdownItemTemplateContext>>>('paginatordropdownitem', { descendants: false });
     readonly paginatorDropdownItemTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
             this.templates()
@@ -866,6 +916,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom header rows of the frozen columns.
+     * @param context - frozenheader template context.
+     * @group Templates
+     */
     readonly _frozenHeaderTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('frozenheader', { descendants: false });
     readonly frozenHeaderTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -874,7 +929,12 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
-    readonly _frozenBodyTemplate = contentChild<Nullable<TemplateRef<void>>>('frozenbody', { descendants: false });
+    /**
+     * Custom row of the frozen columns.
+     * @param context - frozenbody template context.
+     * @group Templates
+     */
+    readonly _frozenBodyTemplate = contentChild<Nullable<TemplateRef<TreeTableBodyTemplateContext>>>('frozenbody', { descendants: false });
     readonly frozenBodyTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
             this.templates()
@@ -882,6 +942,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom footer rows of the frozen columns.
+     * @param context - frozenfooter template context.
+     * @group Templates
+     */
     readonly _frozenFooterTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('frozenfooter', { descendants: false });
     readonly frozenFooterTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -890,6 +955,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom colgroup element of the frozen columns.
+     * @param context - frozencolgroup template context.
+     * @group Templates
+     */
     readonly _frozenColGroupTemplate = contentChild<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>('frozencolgroup', { descendants: false });
     readonly frozenColGroupTemplate = computed<Nullable<TemplateRef<TreeTableColumnsTemplateContext>>>(
         () =>
@@ -898,6 +968,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom loading icon.
+     * @group Templates
+     */
     readonly _loadingIconTemplate = contentChild<Nullable<TemplateRef<void>>>('loadingicon', { descendants: false });
     readonly loadingIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -906,6 +980,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the upper column reorder indicator.
+     * @group Templates
+     */
     readonly _reorderIndicatorUpIconTemplate = contentChild<Nullable<TemplateRef<void>>>('reorderindicatorupicon', { descendants: false });
     readonly reorderIndicatorUpIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -914,6 +992,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the lower column reorder indicator.
+     * @group Templates
+     */
     readonly _reorderIndicatorDownIconTemplate = contentChild<Nullable<TemplateRef<void>>>('reorderindicatordownicon', { descendants: false });
     readonly reorderIndicatorDownIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -922,6 +1004,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom sort icon of a sortable column.
+     * @param context - sorticon template context.
+     * @group Templates
+     */
     readonly _sortIconTemplate = contentChild<Nullable<TemplateRef<TreeTableSortIconTemplateContext>>>('sorticon', { descendants: false });
     readonly sortIconTemplate = computed<Nullable<TemplateRef<TreeTableSortIconTemplateContext>>>(
         () =>
@@ -930,6 +1017,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the node checkboxes.
+     * @param context - checkboxicon template context.
+     * @group Templates
+     */
     readonly _checkboxIconTemplate = contentChild<Nullable<TemplateRef<TreeTableCheckboxIconTemplateContext>>>('checkboxicon', { descendants: false });
     readonly checkboxIconTemplate = computed<Nullable<TemplateRef<TreeTableCheckboxIconTemplateContext>>>(
         () =>
@@ -938,6 +1030,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the header checkbox.
+     * @param context - headercheckboxicon template context.
+     * @group Templates
+     */
     readonly _headerCheckboxIconTemplate = contentChild<Nullable<TemplateRef<TreeTableHeaderCheckboxIconTemplateContext>>>('headercheckboxicon', { descendants: false });
     readonly headerCheckboxIconTemplate = computed<Nullable<TemplateRef<TreeTableHeaderCheckboxIconTemplateContext>>>(
         () =>
@@ -946,6 +1043,11 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the node toggler.
+     * @param context - togglericon template context.
+     * @group Templates
+     */
     readonly _togglerIconTemplate = contentChild<Nullable<TemplateRef<TreeTableTogglerIconTemplateContext>>>('togglericon', { descendants: false });
     readonly togglerIconTemplate = computed<Nullable<TemplateRef<TreeTableTogglerIconTemplateContext>>>(
         () =>
@@ -954,6 +1056,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the first page button of the paginator.
+     * @group Templates
+     */
     readonly _paginatorFirstPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatorfirstpagelinkicon', { descendants: false });
     readonly paginatorFirstPageLinkIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -962,6 +1068,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the last page button of the paginator.
+     * @group Templates
+     */
     readonly _paginatorLastPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatorlastpagelinkicon', { descendants: false });
     readonly paginatorLastPageLinkIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -970,6 +1080,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the previous page button of the paginator.
+     * @group Templates
+     */
     readonly _paginatorPreviousPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatorpreviouspagelinkicon', { descendants: false });
     readonly paginatorPreviousPageLinkIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -978,6 +1092,10 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
+    /**
+     * Custom icon of the next page button of the paginator.
+     * @group Templates
+     */
     readonly _paginatorNextPageLinkIconTemplate = contentChild<Nullable<TemplateRef<void>>>('paginatornextpagelinkicon', { descendants: false });
     readonly paginatorNextPageLinkIconTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
@@ -986,7 +1104,12 @@ export class TreeTable extends BaseComponent<TreeTablePassThrough> implements Bl
                 .at(-1)?.template
     );
 
-    readonly _loaderTemplate = contentChild<Nullable<TemplateRef<void>>>('loader', { descendants: false });
+    /**
+     * Custom row of a node being loaded with lazy virtual scrolling.
+     * @param context - loader template context.
+     * @group Templates
+     */
+    readonly _loaderTemplate = contentChild<Nullable<TemplateRef<ScrollerLoaderTemplateContext>>>('loader', { descendants: false });
     readonly loaderTemplate = computed<Nullable<TemplateRef<void>>>(
         () =>
             this.templates()
@@ -2880,7 +3003,7 @@ export class TTSortableColumn extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-treeTableSortIcon, p-treetable-sort-icon, p-tree-table-sort-icon',
+    selector: 'p-tree-table-sort-icon, p-treeTableSortIcon, p-treetable-sort-icon',
     standalone: false,
     template: `
         @if (!tt.sortIconTemplate() && !tt._sortIconTemplate()) {
@@ -3387,7 +3510,7 @@ export class TTContextMenuRow extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-treeTableCheckbox, p-treetable-checkbox, p-tree-table-checkbox',
+    selector: 'p-tree-table-checkbox, p-treeTableCheckbox, p-treetable-checkbox',
     standalone: false,
     template: `
         <p-checkbox
@@ -3505,7 +3628,7 @@ export class TTCheckbox extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-treeTableHeaderCheckbox',
+    selector: 'p-tree-table-header-checkbox, p-treeTableHeaderCheckbox',
     standalone: false,
     template: `
         <p-checkbox
@@ -3814,7 +3937,7 @@ export class TTEditableColumn extends BaseComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-treeTableCellEditor, p-treetablecelleditor, p-treetable-cell-editor',
+    selector: 'p-tree-table-cell-editor, p-treeTableCellEditor, p-treetablecelleditor, p-treetable-cell-editor',
     standalone: false,
     template: `
         @if (tt.editingCell() === editableColumn.el.nativeElement) {
@@ -3837,9 +3960,17 @@ export class TreeTableCellEditor extends BaseComponent {
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    readonly _inputTemplate = contentChild<TemplateRef<any>>('input');
+    /**
+     * Content of the cell in edit mode, usually an input.
+     * @group Templates
+     */
+    readonly _inputTemplate = contentChild<TemplateRef<void>>('input');
 
-    readonly _outputTemplate = contentChild<TemplateRef<any>>('output');
+    /**
+     * Content of the cell when it is not edited.
+     * @group Templates
+     */
+    readonly _outputTemplate = contentChild<TemplateRef<void>>('output');
 
     readonly inputTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
@@ -4094,7 +4225,7 @@ export class TTRow extends BaseComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-treeTableToggler, p-treetabletoggler, p-treetable-toggler',
+    selector: 'p-tree-table-toggler, p-treeTableToggler, p-treetabletoggler, p-treetable-toggler',
     standalone: false,
     template: `
         <button

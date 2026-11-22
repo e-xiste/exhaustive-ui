@@ -13,9 +13,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>ToggleButton provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-togglebutton [(ngModel)]="value1" onLabel="On" offLabel="Off" size="small" class="min-w-16" />
-            <p-togglebutton [(ngModel)]="value2" onLabel="On" offLabel="Off" class="min-w-20" />
-            <p-togglebutton [(ngModel)]="value3" onLabel="On" offLabel="Off" size="large" class="min-w-24" />
+            <p-toggle-button [(ngModel)]="value1" onLabel="On" offLabel="Off" size="small" class="min-w-16" />
+            <p-toggle-button [(ngModel)]="value2" onLabel="On" offLabel="Off" class="min-w-20" />
+            <p-toggle-button [(ngModel)]="value3" onLabel="On" offLabel="Off" size="large" class="min-w-24" />
         </div>
         <app-code></app-code>
     `

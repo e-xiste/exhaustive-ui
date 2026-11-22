@@ -31,7 +31,7 @@ import { BlockUiStyle } from './style/blockuistyle';
  * @group Components
  */
 @Component({
-    selector: 'p-blockUI, p-blockui, p-block-ui',
+    selector: 'p-block-ui, p-blockUI, p-blockui',
     imports: [CommonModule, SharedModule],
     template: `
         <ng-content></ng-content>

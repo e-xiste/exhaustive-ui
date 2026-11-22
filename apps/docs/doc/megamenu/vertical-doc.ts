@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Layout of the MegaMenu is changed with the <i>orientation</i> property that accepts <i>horizontal</i> and <i>vertical</i> as options.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-megamenu [model]="items" orientation="vertical" />
+            <p-mega-menu [model]="items" orientation="vertical" />
         </div>
         <app-code></app-code>
     `

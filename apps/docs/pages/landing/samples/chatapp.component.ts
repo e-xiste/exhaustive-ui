@@ -28,13 +28,13 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                 </div>
             </div>
             <div class="px-5">
-                <p-iconField iconPosition="left">
-                    <p-inputIcon class="pi pi-search"> </p-inputIcon>
+                <p-icon-field iconPosition="left">
+                    <p-input-icon class="pi pi-search"> </p-input-icon>
                     <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
-                </p-iconField>
+                </p-icon-field>
             </div>
             <div class="w-full px-5">
-                <p-selectButton [(ngModel)]="value" [options]="options" aria-labelledby="basic" class="w-full" styleClass="w-full" />
+                <p-select-button [(ngModel)]="value" [options]="options" aria-labelledby="basic" class="w-full" styleClass="w-full" />
             </div>
             <div class="flex-1 flex flex-col">
                 <div
@@ -160,17 +160,17 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                 <div class="flex items-center gap-2">
                     <i class="pi pi-bell text-color"></i>
                     <div class="leading-6 font-medium text-color flex-1">Notification</div>
-                    <p-toggleswitch [(ngModel)]="notification" />
+                    <p-toggle-switch [(ngModel)]="notification" />
                 </div>
                 <div class="flex items-center gap-2">
                     <i class="pi pi-volume-down text-color"></i>
                     <div class="leading-6 font-medium text-color flex-1">Sound</div>
-                    <p-toggleswitch [(ngModel)]="sound" />
+                    <p-toggle-switch [(ngModel)]="sound" />
                 </div>
                 <div class="flex items-center gap-2">
                     <i class="pi pi-download text-color"></i>
                     <div class="leading-6 font-medium text-color flex-1">Save to downloads</div>
-                    <p-toggleswitch [(ngModel)]="download" />
+                    <p-toggle-switch [(ngModel)]="download" />
                 </div>
             </div>
             <div class="mt-6">
@@ -198,7 +198,7 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                 </div>
             </div>
             <div class="mt-5">
-                <p-selectbutton [(ngModel)]="media" [options]="mediaOptions" class="w-full" styleClass="flex-1 w-full" />
+                <p-select-button [(ngModel)]="media" [options]="mediaOptions" class="w-full" styleClass="flex-1 w-full" />
 
                 <div class="mt-3 mb-5 grid grid-cols-3 gap-2">
                     <div *ngFor="let media of chatMedia" class="bg-emphasis hover:opacity-70 transition-all flex-1 aspect-square rounded-lg border border-surface cursor-pointer">

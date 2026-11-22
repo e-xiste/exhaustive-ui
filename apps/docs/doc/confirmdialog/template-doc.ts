@@ -14,7 +14,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     template: `
         <app-docsectiontext>
             <p>
-                Properties of the dialog are defined in two ways, <i>message</i>, <i>icon</i>, <i>header</i> properties can either be defined using confirm method or declaratively on p-confirmDialog ng-template by <i>header</i>, <i>message</i>,
+                Properties of the dialog are defined in two ways, <i>message</i>, <i>icon</i>, <i>header</i> properties can either be defined using confirm method or declaratively on p-confirm-dialog ng-template by <i>header</i>, <i>message</i>,
                 <i>icon</i> and <i>footer</i> templates. If these values are unlikely to change then declarative approach would be useful, still properties defined in a ng-template can be overridden with confirm method call.
             </p>
             <p>
@@ -24,7 +24,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-confirmdialog>
+            <p-confirm-dialog>
                 <ng-template #message let-message>
                     @if (message) {
                         <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
@@ -33,7 +33,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
                         </div>
                     }
                 </ng-template>
-            </p-confirmdialog>
+            </p-confirm-dialog>
             <p-button (click)="confirm()" label="Save" />
         </div>
         <app-code></app-code>

@@ -74,7 +74,7 @@ interface ExportColumn {
                     </ng-template>
 
                     <ng-template #end>
-                        <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" auto customUpload class="mr-2 inline-block" [chooseButtonProps]="{ severity: 'secondary' }" />
+                        <p-file-upload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" auto customUpload class="mr-2 inline-block" [chooseButtonProps]="{ severity: 'secondary' }" />
                         <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV($event)" />
                     </ng-template>
                 </p-toolbar>
@@ -96,47 +96,47 @@ interface ExportColumn {
                     <ng-template #caption>
                         <div class="flex items-center justify-between">
                             <h5 class="m-0">Manage Products</h5>
-                            <p-iconfield>
-                                <p-inputicon class="pi pi-search" />
+                            <p-icon-field>
+                                <p-input-icon class="pi pi-search" />
                                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
-                            </p-iconfield>
+                            </p-icon-field>
                         </div>
                     </ng-template>
                     <ng-template #header>
                         <tr>
                             <th style="width: 3rem">
-                                <p-tableHeaderCheckbox />
+                                <p-table-header-checkbox />
                             </th>
                             <th style="min-width: 16rem">Code</th>
                             <th pSortableColumn="name" style="min-width:16rem">
                                 <div class="flex items-center gap-2">
                                     Name
-                                    <p-sortIcon field="name" />
+                                    <p-sort-icon field="name" />
                                 </div>
                             </th>
                             <th>Image</th>
                             <th pSortableColumn="price" style="min-width: 8rem">
                                 <div class="flex items-center gap-2">
                                     Price
-                                    <p-sortIcon field="price" />
+                                    <p-sort-icon field="price" />
                                 </div>
                             </th>
                             <th pSortableColumn="category" style="min-width:10rem">
                                 <div class="flex items-center gap-2">
                                     Category
-                                    <p-sortIcon field="category" />
+                                    <p-sort-icon field="category" />
                                 </div>
                             </th>
                             <th pSortableColumn="rating" style="min-width: 12rem">
                                 <div class="flex items-center gap-2">
                                     Reviews
-                                    <p-sortIcon field="rating" />
+                                    <p-sort-icon field="rating" />
                                 </div>
                             </th>
                             <th pSortableColumn="inventoryStatus" style="min-width: 12rem">
                                 <div class="flex items-center gap-2">
                                     Status
-                                    <p-sortIcon field="inventoryStatus" />
+                                    <p-sort-icon field="inventoryStatus" />
                                 </div>
                             </th>
                             <th style="min-width: 12rem"></th>
@@ -145,7 +145,7 @@ interface ExportColumn {
                     <ng-template #body let-product>
                         <tr>
                             <td style="width: 3rem">
-                                <p-tableCheckbox [value]="product" />
+                                <p-table-checkbox [value]="product" />
                             </td>
                             <td style="min-width: 12rem">{{ product.code }}</td>
                             <td style="min-width: 16rem">{{ product.name }}</td>
@@ -191,19 +191,19 @@ interface ExportColumn {
                                 <span class="block font-bold mb-4">Category</span>
                                 <div class="grid grid-cols-12 gap-4">
                                     <div class="flex items-center gap-2 col-span-6">
-                                        <p-radiobutton id="category1" name="category" value="Accessories" [(ngModel)]="product.category" />
+                                        <p-radio-button id="category1" name="category" value="Accessories" [(ngModel)]="product.category" />
                                         <label for="category1">Accessories</label>
                                     </div>
                                     <div class="flex items-center gap-2 col-span-6">
-                                        <p-radiobutton id="category2" name="category" value="Clothing" [(ngModel)]="product.category" />
+                                        <p-radio-button id="category2" name="category" value="Clothing" [(ngModel)]="product.category" />
                                         <label for="category2">Clothing</label>
                                     </div>
                                     <div class="flex items-center gap-2 col-span-6">
-                                        <p-radiobutton id="category3" name="category" value="Electronics" [(ngModel)]="product.category" />
+                                        <p-radio-button id="category3" name="category" value="Electronics" [(ngModel)]="product.category" />
                                         <label for="category3">Electronics</label>
                                     </div>
                                     <div class="flex items-center gap-2 col-span-6">
-                                        <p-radiobutton id="category4" name="category" value="Fitness" [(ngModel)]="product.category" />
+                                        <p-radio-button id="category4" name="category" value="Fitness" [(ngModel)]="product.category" />
                                         <label for="category4">Fitness</label>
                                     </div>
                                 </div>
@@ -212,11 +212,11 @@ interface ExportColumn {
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-6">
                                     <label for="price" class="block font-bold mb-3">Price</label>
-                                    <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency" currency="USD" locale="en-US" fluid />
+                                    <p-input-number id="price" [(ngModel)]="product.price" mode="currency" currency="USD" locale="en-US" fluid />
                                 </div>
                                 <div class="col-span-6">
                                     <label for="quantity" class="block font-bold mb-3">Quantity</label>
-                                    <p-inputnumber id="quantity" [(ngModel)]="product.quantity" fluid />
+                                    <p-input-number id="quantity" [(ngModel)]="product.quantity" fluid />
                                 </div>
                             </div>
                         </div>
@@ -228,7 +228,7 @@ interface ExportColumn {
                     </ng-template>
                 </p-dialog>
 
-                <p-confirmdialog [style]="{ width: '450px' }" />
+                <p-confirm-dialog [style]="{ width: '450px' }" />
             </div>
         </p-deferred-demo>
         <app-code [extFiles]="['Product']"></app-code>`,

@@ -29,7 +29,7 @@ interface City {
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex justify-center flex-col gap-4 w-full md:w-80">
                 <div class="flex flex-col gap-1">
-                    <p-multiselect [options]="cities" [formField]="exampleForm.city" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" [fluid]="true" />
+                    <p-multi-select [options]="cities" [formField]="exampleForm.city" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" [fluid]="true" />
                     @let city = exampleForm.city();
                     @if (city.invalid() && city.touched()) {
                         <p-message severity="error" size="small" variant="simple">City is required.</p-message>

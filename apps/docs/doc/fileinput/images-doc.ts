@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-file variant="images" accept="image/*" [maxFiles]="6" [maxFileSize]="5000000" [uploadHandler]="upload" [(ngModel)]="photos" />
+            <p-file-input variant="images" accept="image/*" [maxFiles]="6" [maxFileSize]="5000000" [uploadHandler]="upload" [(ngModel)]="photos" />
         </div>
         <app-code></app-code>
     `

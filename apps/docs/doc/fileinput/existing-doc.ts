@@ -18,7 +18,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <p-toast />
         <div class="card">
-            <p-file [existing]="attachments" (onRemoveExisting)="onRemoveExisting($event)" />
+            <p-file-input [existing]="attachments" (onRemoveExisting)="onRemoveExisting($event)" />
         </div>
         <app-code></app-code>
     `

@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Loading state can be used <i>loading</i> property.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-cascadeselect [loading]="true" [style]="{ minWidth: '14rem' }" placeholder="Loading..." />
+            <p-cascade-select [loading]="true" [style]="{ minWidth: '14rem' }" placeholder="Loading..." />
         </div>
         <app-code></app-code>
     `

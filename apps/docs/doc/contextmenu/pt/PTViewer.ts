@@ -10,7 +10,7 @@ import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
     template: `
         <app-docptviewer [docs]="docs">
             <img #image src="https://exhaustive-ui.com/demo/nature/nature2.jpg" alt="Logo" aria-haspopup="true" class="w-full md:w-80 rounded-sm shadow-lg" (contextmenu)="cm.show($event)" />
-            <p-contextMenu #cm [target]="image" [model]="items" />
+            <p-context-menu #cm [target]="image" [model]="items" />
         </app-docptviewer>
     `
 })

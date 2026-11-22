@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>If the target element is not specified, BlockUI blocks the document by default.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-blockui [blocked]="blockedDocument" />
+            <p-block-ui [blocked]="blockedDocument" />
             <p-button label="Block" (click)="blockDocument()" />
         </div>
         <app-code></app-code>

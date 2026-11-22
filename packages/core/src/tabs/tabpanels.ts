@@ -11,7 +11,7 @@ const TABPANELS_INSTANCE = new InjectionToken<TabPanels>('TABPANELS_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-tabpanels',
+    selector: 'p-tab-panels, p-tabpanels',
     standalone: true,
     imports: [BindModule],
     template: ` <ng-content></ng-content>`,

@@ -10,7 +10,7 @@ import { CascadeSelectModule } from '@exhaustive-ui/core/cascadeselect';
     imports: [CommonModule, AppDocPtViewer, CascadeSelectModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-cascadeselect [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" [style]="{ 'min-width': '14rem' }" placeholder="Select a City" />
+            <p-cascade-select [(ngModel)]="selectedCity" [options]="countries" optionLabel="cname" optionGroupLabel="name" [optionGroupChildren]="['states', 'cities']" [style]="{ 'min-width': '14rem' }" placeholder="Select a City" />
         </app-docptviewer>
     `
 })

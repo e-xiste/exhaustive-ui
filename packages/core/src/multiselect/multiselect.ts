@@ -196,7 +196,7 @@ export class MultiSelectItem extends BaseComponent {
  * @group Components
  */
 @Component({
-    selector: 'p-multiSelect, p-multiselect, p-multi-select',
+    selector: 'p-multi-select, p-multiSelect, p-multiselect',
     imports: [CommonModule, MultiSelectItem, Overlay, SharedModule, Tooltip, Scroller, AutoFocus, CheckIcon, SearchIcon, SpinnerIcon, TimesIcon, ChevronDownIcon, IconField, InputIcon, InputText, Chip, Checkbox, FormsModule, BindModule],
     hostDirectives: [Bind],
     template: `

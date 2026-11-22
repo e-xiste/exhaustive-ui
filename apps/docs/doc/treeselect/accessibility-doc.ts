@@ -186,8 +186,8 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<span id="dd1">Options</span>
-<p-treeselect ariaLabelledBy="dd1" />
+<p-tree-select ariaLabelledBy="dd1" />
 
-<p-treeselect ariaLabel="Options" />`
+<p-tree-select ariaLabel="Options" />`
     };
 }

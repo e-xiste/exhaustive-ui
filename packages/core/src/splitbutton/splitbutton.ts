@@ -41,7 +41,7 @@ type SplitButtonIconPosition = 'left' | 'right';
  * @group Components
  */
 @Component({
-    selector: 'p-splitbutton, p-splitButton, p-split-button',
+    selector: 'p-split-button, p-splitbutton, p-splitButton',
     imports: [CommonModule, ButtonDirective, TieredMenu, AutoFocus, ChevronDownIcon, Ripple, TooltipModule, SharedModule],
     template: `
         @if (contentTemplate() || _contentTemplate()) {

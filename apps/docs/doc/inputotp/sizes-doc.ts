@@ -13,9 +13,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>InputOtp provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-inputotp [(ngModel)]="value1" size="small" />
-            <p-inputotp [(ngModel)]="value2" />
-            <p-inputotp [(ngModel)]="value3" size="large" />
+            <p-input-otp [(ngModel)]="value1" size="small" />
+            <p-input-otp [(ngModel)]="value2" />
+            <p-input-otp [(ngModel)]="value3" size="large" />
         </div>
         <app-code></app-code>
     `

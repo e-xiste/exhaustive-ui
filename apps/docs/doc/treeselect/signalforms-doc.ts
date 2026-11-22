@@ -25,7 +25,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4 w-full md:w-80">
                 <div class="flex flex-col gap-1">
-                    <p-treeselect class="md:w-80 w-full" [formField]="exampleForm.selectedNodes" [options]="nodes" placeholder="Select Item" />
+                    <p-tree-select class="md:w-80 w-full" [formField]="exampleForm.selectedNodes" [options]="nodes" placeholder="Select Item" />
                     @let selectedNodes = exampleForm.selectedNodes();
                     @if (selectedNodes.invalid() && selectedNodes.touched()) {
                         <p-message severity="error" size="small" variant="simple">Selection is required.</p-message>

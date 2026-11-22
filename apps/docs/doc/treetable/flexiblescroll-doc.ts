@@ -23,7 +23,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                 <p-button label="Show" icon="pi pi-external-link" (onClick)="dialogVisible = true" />
                 <p-dialog [(visible)]="dialogVisible" header="Flex Scroll" [style]="{ width: '75vw' }" maximizable modal [contentStyle]="{ height: '300px' }">
                     <ng-template #content>
-                        <p-treetable [value]="files" [scrollable]="true" scrollHeight="flex" [tableStyle]="{ 'min-width': '50rem' }">
+                        <p-tree-table [value]="files" [scrollable]="true" scrollHeight="flex" [tableStyle]="{ 'min-width': '50rem' }">
                             <ng-template #header>
                                 <tr>
                                     <th>Name</th>
@@ -35,7 +35,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                                 <tr [ttRow]="rowNode">
                                     <td>
                                         <div class="flex items-center gap-2">
-                                            <p-treetable-toggler [rowNode]="rowNode" />
+                                            <p-tree-table-toggler [rowNode]="rowNode" />
                                             <span>{{ rowData.name }}</span>
                                         </div>
                                     </td>
@@ -43,7 +43,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
                                     <td>{{ rowData.type }}</td>
                                 </tr>
                             </ng-template>
-                        </p-treetable>
+                        </p-tree-table>
                     </ng-template>
                     <ng-template #footer>
                         <p-button label="Ok" icon="pi pi-check" (onClick)="dialogVisible = false" />

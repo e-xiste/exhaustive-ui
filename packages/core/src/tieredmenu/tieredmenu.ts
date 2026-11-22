@@ -66,7 +66,7 @@ const TIEREDMENUSUB_INSTANCE = new InjectionToken<TieredMenuSub>('TIEREDMENUSUB_
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-tieredMenuSub, p-tieredmenusub',
+    selector: 'p-tiered-menu-sub, p-tieredMenuSub, p-tieredmenusub',
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @if (render()) {
@@ -482,7 +482,7 @@ export class TieredMenuSub extends BaseComponent<TieredMenuPassThrough> {
  * @group Components
  */
 @Component({
-    selector: 'p-tieredMenu, p-tieredmenu, p-tiered-menu',
+    selector: 'p-tiered-menu, p-tieredMenu, p-tieredmenu',
     imports: [CommonModule, TieredMenuSub, RouterModule, TooltipModule, SharedModule, BindModule, MotionModule],
     template: `
         @if (render() || !popup()) {

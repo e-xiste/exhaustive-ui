@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Enable the <i>mask</i> option to hide the values in the input fields.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputotp [(ngModel)]="value" [mask]="true" />
+            <p-input-otp [(ngModel)]="value" [mask]="true" />
         </div>
         <app-code></app-code>
     `

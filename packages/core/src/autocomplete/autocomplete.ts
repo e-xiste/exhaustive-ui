@@ -69,7 +69,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
  * @group Components
  */
 @Component({
-    selector: 'p-autoComplete, p-autocomplete, p-auto-complete',
+    selector: 'p-auto-complete, p-autoComplete, p-autocomplete',
     imports: [CommonModule, Overlay, InputText, Ripple, Scroller, AutoFocus, TimesCircleIcon, SpinnerIcon, ChevronDownIcon, Chip, SharedModule, TimesIcon, BindModule],
     template: `
         @if (!multiple()) {

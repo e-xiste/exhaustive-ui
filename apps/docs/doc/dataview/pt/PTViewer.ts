@@ -25,7 +25,7 @@ interface Product {
     imports: [CommonModule, AppDocPtViewer, DataViewModule, TagModule, ButtonModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-dataview [value]="products()">
+            <p-data-view [value]="products()">
                 <ng-template #list let-items>
                     <div class="flex flex-col">
                         <div *ngFor="let item of items; let i = index">
@@ -69,7 +69,7 @@ interface Product {
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </app-docptviewer>
     `,
     providers: [ProductService]

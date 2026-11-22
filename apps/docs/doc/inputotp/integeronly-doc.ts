@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>When <i>integerOnly</i> is present, only integers can be accepted as input.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputotp [(ngModel)]="value" [integerOnly]="true" />
+            <p-input-otp [(ngModel)]="value" [integerOnly]="true" />
         </div>
         <app-code></app-code>
     `

@@ -17,7 +17,7 @@ import { RouterModule } from '@angular/router';
         <div class="card p-4">
             <div [style]="{ position: 'relative', height: '350px' }">
                 <p-toast />
-                <p-speeddial [model]="items" direction="up" mask [style]="{ position: 'absolute', right: '1rem', bottom: '1rem' }" />
+                <p-speed-dial [model]="items" direction="up" mask [style]="{ position: 'absolute', right: '1rem', bottom: '1rem' }" />
             </div>
         </div>
         <app-code></app-code>

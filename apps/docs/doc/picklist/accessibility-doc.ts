@@ -113,8 +113,8 @@ import { RouterModule } from '@angular/router';
 export class AccessibilityDoc {
     code: Code = {
         html: `<span id="lb">Options</span>
-<p-picklist ariaLabelledBy="lb" />
+<p-pick-list ariaLabelledBy="lb" />
 
-<p-picklist ariaLabel="City" />`
+<p-pick-list ariaLabel="City" />`
     };
 }

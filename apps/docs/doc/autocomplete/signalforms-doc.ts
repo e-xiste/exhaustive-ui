@@ -29,7 +29,7 @@ interface AutoCompleteCompleteEvent {
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex justify-center flex-col gap-4 md:w-56">
                 <div class="flex flex-col gap-1">
-                    <p-autocomplete [formField]="exampleForm.value" [suggestions]="items" (completeMethod)="search($event)" fluid />
+                    <p-auto-complete [formField]="exampleForm.value" [suggestions]="items" (completeMethod)="search($event)" fluid />
                     @let value = exampleForm.value();
                     @if (value.invalid() && value.touched()) {
                         <p-message severity="error" size="small" variant="simple">Value is required.</p-message>

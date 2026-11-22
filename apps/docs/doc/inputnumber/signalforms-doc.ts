@@ -24,7 +24,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <div class="card flex justify-center">
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <p-inputnumber inputId="integeronly" [formField]="exampleForm.value" />
+                    <p-input-number inputId="integeronly" [formField]="exampleForm.value" />
                     @let value = exampleForm.value();
                     @if (value.invalid() && value.touched()) {
                         <p-message severity="error" size="small" variant="simple">Number is required.</p-message>

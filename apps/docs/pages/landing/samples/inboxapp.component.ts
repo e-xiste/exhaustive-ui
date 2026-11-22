@@ -48,11 +48,11 @@ import { Tag } from '@exhaustive-ui/core/tag';
                 <div>
                     <div class="border border-surface rounded-border px-4 pb-4 pt-3 mb-4">
                         <div class="font-medium text-color mb-4">Free Version</div>
-                        <p-progressbar [value]="75">
+                        <p-progress-bar [value]="75">
                             <ng-template #content let-value>
                                 <span class="w-full text-center text-sm font-normal text-primary-contrast leading-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">4 days left</span>
                             </ng-template>
-                        </p-progressbar>
+                        </p-progress-bar>
                     </div>
                     <p-button label="Upgrade to PRO 🚀" outlined styleClass="w-full" />
                 </div>
@@ -71,10 +71,10 @@ import { Tag } from '@exhaustive-ui/core/tag';
                             <p-button icon="pi pi-trash" label="Trash" outlined severity="secondary" />
                         </div>
                         <div class="flex items-center gap-2">
-                            <p-iconfield iconPosition="left" class="w-6/12 xl:max-w-36">
-                                <p-inputicon class="pi pi-search"></p-inputicon>
+                            <p-icon-field iconPosition="left" class="w-6/12 xl:max-w-36">
+                                <p-input-icon class="pi pi-search"></p-input-icon>
                                 <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
-                            </p-iconfield>
+                            </p-icon-field>
                             <p-button icon="pi pi-filter" outlined severity="secondary" />
                             <p-divider layout="vertical" class="m-0" />
                             <p-button icon="pi pi-refresh" outlined severity="secondary" />
@@ -87,7 +87,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                 <ng-template #body let-data>
                     <tr>
                         <td style="width: 1rem">
-                            <p-tableCheckbox [value]="data" />
+                            <p-table-checkbox [value]="data" />
                         </td>
 
                         <td style="width: 1rem; padding: 0.5rem">
@@ -97,7 +97,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                         </td>
                         <td>
                             <div class="flex items-center">
-                                <p-overlayBadge severity="danger" styleClass="w-fit">
+                                <p-overlay-badge severity="danger" styleClass="w-fit">
                                     <p-avatar
                                         [image]="data.image"
                                         [label]="!data.image ? data.capName : ''"
@@ -106,7 +106,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                                             'rounded-md overflow-hidden flex': true
                                         }"
                                     />
-                                </p-overlayBadge>
+                                </p-overlay-badge>
 
                                 <div class="ml-4 leading-6 text-color font-medium">{{ data.name }}</div>
                             </div>

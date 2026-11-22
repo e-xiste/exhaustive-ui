@@ -54,24 +54,34 @@ import { InputNumberModule } from '@exhaustive-ui/core/inputnumber';
 import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { MotionModule } from '@exhaustive-ui/core/motion';
 import { PaginatorModule } from '@exhaustive-ui/core/paginator';
+import type { PaginatorDropdownItemTemplateContext, PaginatorTemplateContext } from '@exhaustive-ui/core/types/paginator';
 import { RadioButton, RadioButtonClickEvent, RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 import { Scroller, ScrollerModule } from '@exhaustive-ui/core/scroller';
 import { SelectModule } from '@exhaustive-ui/core/select';
 import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
 import {
+    ColumnFilterFieldTemplateContext,
+    ColumnFilterIconTemplateContext,
     ColumnFilterPassThrough,
+    ColumnFilterTemplateContext,
     ExportCSVOptions,
+    TableBodyTemplateContext,
+    TableCheckboxIconTemplateContext,
     TableColResizeEvent,
     TableColumnReorderEvent,
+    TableColumnsTemplateContext,
     TableContextMenuSelectEvent,
     TableEditCancelEvent,
     TableEditCompleteEvent,
     TableEditInitEvent,
+    TableEmptyMessageTemplateContext,
+    TableExpandedRowTemplateContext,
     TableFilterButtonPropsOptions,
     TableFilterEvent,
     TableHeaderCheckboxToggleEvent,
     TableLazyLoadEvent,
+    TableLoadingBodyTemplateContext,
     TablePageEvent,
     TablePassThrough,
     TableRowCollapseEvent,
@@ -79,7 +89,8 @@ import {
     TableRowReorderEvent,
     TableRowSelectEvent,
     TableRowUnSelectEvent,
-    TableSelectAllChangeEvent
+    TableSelectAllChangeEvent,
+    TableSortIconTemplateContext
 } from '@exhaustive-ui/core/types/table';
 import { ObjectUtils, UniqueComponentId, ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { Subject, Subscription } from 'rxjs';
@@ -258,7 +269,7 @@ export class TableService {
                     <thead role="rowgroup" #thead [class]="cx('thead')" [ngStyle]="sx('thead')" [pBind]="ptm('thead')">
                         <ng-container
                             *ngTemplateOutlet="
-                                headerGroupedTemplate() || headerTemplate() || _headerTemplate();
+                                headerGroupedTemplate() || _headerGroupedTemplate() || headerTemplate() || _headerTemplate();
                                 context: {
                                     $implicit: scrollerOptions.columns
                                 }
@@ -979,8 +990,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
 
     filteredValue = signal<any[] | undefined | null>(undefined);
 
-    // @todo will be refactored later
-    readonly _headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
+    /**
+     * Custom header rows, rendered in the thead.
+     * @param context - header template context.
+     * @group Templates
+     */
+    readonly _headerTemplate = contentChild<TemplateRef<TableColumnsTemplateContext>>('header', { descendants: false });
     readonly headerTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -988,6 +1003,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
+    /**
+     * Custom grouped header rows, used in place of the header template.
+     * @param context - headergrouped template context.
+     * @group Templates
+     */
+    readonly _headerGroupedTemplate = contentChild<TemplateRef<TableColumnsTemplateContext>>('headergrouped', { descendants: false });
     readonly headerGroupedTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -995,7 +1016,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _bodyTemplate = contentChild<TemplateRef<any>>('body', { descendants: false });
+    /**
+     * Custom row, rendered for each row of data.
+     * @param context - body template context.
+     * @group Templates
+     */
+    readonly _bodyTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('body', { descendants: false });
     readonly bodyTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1003,7 +1029,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _loadingBodyTemplate = contentChild<TemplateRef<any>>('loadingbody', { descendants: false });
+    /**
+     * Custom content while the table is loading, and for each row not loaded yet with lazy virtual scrolling.
+     * @param context - loadingbody template context.
+     * @group Templates
+     */
+    readonly _loadingBodyTemplate = contentChild<TemplateRef<TableLoadingBodyTemplateContext>>('loadingbody', { descendants: false });
     readonly loadingBodyTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1011,7 +1042,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _captionTemplate = contentChild<TemplateRef<any>>('caption', { descendants: false });
+    /**
+     * Custom caption, rendered above the table.
+     * @group Templates
+     */
+    readonly _captionTemplate = contentChild<TemplateRef<void>>('caption', { descendants: false });
     readonly captionTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1019,7 +1054,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
+    /**
+     * Custom footer rows, rendered in the tfoot.
+     * @param context - footer template context.
+     * @group Templates
+     */
+    readonly _footerTemplate = contentChild<TemplateRef<TableColumnsTemplateContext>>('footer', { descendants: false });
     readonly footerTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1027,7 +1067,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _footerGroupedTemplate = contentChild<TemplateRef<any>>('footergrouped', { descendants: false });
+    /**
+     * Custom grouped footer rows, used in place of the footer template.
+     * @param context - footergrouped template context.
+     * @group Templates
+     */
+    readonly _footerGroupedTemplate = contentChild<TemplateRef<TableColumnsTemplateContext>>('footergrouped', { descendants: false });
     readonly footerGroupedTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1035,7 +1080,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _summaryTemplate = contentChild<TemplateRef<any>>('summary', { descendants: false });
+    /**
+     * Custom summary, rendered below the table.
+     * @group Templates
+     */
+    readonly _summaryTemplate = contentChild<TemplateRef<void>>('summary', { descendants: false });
     readonly summaryTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1043,7 +1092,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _colGroupTemplate = contentChild<TemplateRef<any>>('colgroup', { descendants: false });
+    /**
+     * Custom colgroup element.
+     * @param context - colgroup template context.
+     * @group Templates
+     */
+    readonly _colGroupTemplate = contentChild<TemplateRef<TableColumnsTemplateContext>>('colgroup', { descendants: false });
     readonly colGroupTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1051,7 +1105,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _expandedRowTemplate = contentChild<TemplateRef<any>>('expandedrow', { descendants: false });
+    /**
+     * Custom content of an expanded row.
+     * @param context - expandedrow template context.
+     * @group Templates
+     */
+    readonly _expandedRowTemplate = contentChild<TemplateRef<TableExpandedRowTemplateContext>>('expandedrow', { descendants: false });
     readonly expandedRowTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1059,7 +1118,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _groupHeaderTemplate = contentChild<TemplateRef<any>>('groupheader', { descendants: false });
+    /**
+     * Custom row group header, with rowGroupMode set to subheader.
+     * @param context - groupheader template context.
+     * @group Templates
+     */
+    readonly _groupHeaderTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('groupheader', { descendants: false });
     readonly groupHeaderTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1067,7 +1131,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _groupFooterTemplate = contentChild<TemplateRef<any>>('groupfooter', { descendants: false });
+    /**
+     * Custom row group footer, with rowGroupMode set to subheader.
+     * @param context - groupfooter template context.
+     * @group Templates
+     */
+    readonly _groupFooterTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('groupfooter', { descendants: false });
     readonly groupFooterTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1075,7 +1144,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _frozenExpandedRowTemplate = contentChild<TemplateRef<any>>('frozenexpandedrow', { descendants: false });
+    /**
+     * Custom content of an expanded frozen row.
+     * @param context - frozenexpandedrow template context.
+     * @group Templates
+     */
+    readonly _frozenExpandedRowTemplate = contentChild<TemplateRef<TableExpandedRowTemplateContext>>('frozenexpandedrow', { descendants: false });
     readonly frozenExpandedRowTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1083,7 +1157,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _frozenBodyTemplate = contentChild<TemplateRef<any>>('frozenbody', { descendants: false });
+    /**
+     * Custom row of the frozen rows.
+     * @param context - frozenbody template context.
+     * @group Templates
+     */
+    readonly _frozenBodyTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('frozenbody', { descendants: false });
     readonly frozenBodyTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1091,7 +1170,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _emptyMessageTemplate = contentChild<TemplateRef<any>>('emptymessage', { descendants: false });
+    /**
+     * Custom content when there is no data.
+     * @param context - emptymessage template context.
+     * @group Templates
+     */
+    readonly _emptyMessageTemplate = contentChild<TemplateRef<TableEmptyMessageTemplateContext>>('emptymessage', { descendants: false });
     readonly emptyMessageTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1099,7 +1183,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorLeftTemplate = contentChild<TemplateRef<any>>('paginatorleft', { descendants: false });
+    /**
+     * Custom content on the left of the paginator.
+     * @param context - paginatorleft template context.
+     * @group Templates
+     */
+    readonly _paginatorLeftTemplate = contentChild<TemplateRef<PaginatorTemplateContext>>('paginatorleft', { descendants: false });
     readonly paginatorLeftTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1107,7 +1196,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorRightTemplate = contentChild<TemplateRef<any>>('paginatorright', { descendants: false });
+    /**
+     * Custom content on the right of the paginator.
+     * @param context - paginatorright template context.
+     * @group Templates
+     */
+    readonly _paginatorRightTemplate = contentChild<TemplateRef<PaginatorTemplateContext>>('paginatorright', { descendants: false });
     readonly paginatorRightTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1115,7 +1209,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorDropdownItemTemplate = contentChild<TemplateRef<any>>('paginatordropdownitem', { descendants: false });
+    /**
+     * Custom item of the rows per page dropdown of the paginator.
+     * @param context - paginatordropdownitem template context.
+     * @group Templates
+     */
+    readonly _paginatorDropdownItemTemplate = contentChild<TemplateRef<PaginatorDropdownItemTemplateContext>>('paginatordropdownitem', { descendants: false });
     readonly paginatorDropdownItemTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1123,7 +1222,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _loadingIconTemplate = contentChild<TemplateRef<any>>('loadingicon', { descendants: false });
+    /**
+     * Custom loading icon.
+     * @group Templates
+     */
+    readonly _loadingIconTemplate = contentChild<TemplateRef<void>>('loadingicon', { descendants: false });
     readonly loadingIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1131,7 +1234,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _reorderIndicatorUpIconTemplate = contentChild<TemplateRef<any>>('reorderindicatorupicon', { descendants: false });
+    /**
+     * Custom icon of the upper column reorder indicator.
+     * @group Templates
+     */
+    readonly _reorderIndicatorUpIconTemplate = contentChild<TemplateRef<void>>('reorderindicatorupicon', { descendants: false });
     readonly reorderIndicatorUpIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1139,7 +1246,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _reorderIndicatorDownIconTemplate = contentChild<TemplateRef<any>>('reorderindicatordownicon', { descendants: false });
+    /**
+     * Custom icon of the lower column reorder indicator.
+     * @group Templates
+     */
+    readonly _reorderIndicatorDownIconTemplate = contentChild<TemplateRef<void>>('reorderindicatordownicon', { descendants: false });
     readonly reorderIndicatorDownIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1147,7 +1258,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _sortIconTemplate = contentChild<TemplateRef<any>>('sorticon', { descendants: false });
+    /**
+     * Custom sort icon of a sortable column.
+     * @param context - sorticon template context.
+     * @group Templates
+     */
+    readonly _sortIconTemplate = contentChild<TemplateRef<TableSortIconTemplateContext>>('sorticon', { descendants: false });
     readonly sortIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1155,7 +1271,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _checkboxIconTemplate = contentChild<TemplateRef<any>>('checkboxicon', { descendants: false });
+    /**
+     * Custom icon of the row checkboxes.
+     * @param context - checkboxicon template context.
+     * @group Templates
+     */
+    readonly _checkboxIconTemplate = contentChild<TemplateRef<TableCheckboxIconTemplateContext>>('checkboxicon', { descendants: false });
     readonly checkboxIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1163,7 +1284,12 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _headerCheckboxIconTemplate = contentChild<TemplateRef<any>>('headercheckboxicon', { descendants: false });
+    /**
+     * Custom icon of the header checkbox.
+     * @param context - headercheckboxicon template context.
+     * @group Templates
+     */
+    readonly _headerCheckboxIconTemplate = contentChild<TemplateRef<TableCheckboxIconTemplateContext>>('headercheckboxicon', { descendants: false });
     readonly headerCheckboxIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1171,7 +1297,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorDropdownIconTemplate = contentChild<TemplateRef<any>>('paginatordropdownicon', { descendants: false });
+    /**
+     * Custom dropdown icon of the paginator.
+     * @group Templates
+     */
+    readonly _paginatorDropdownIconTemplate = contentChild<TemplateRef<void>>('paginatordropdownicon', { descendants: false });
     readonly paginatorDropdownIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1179,7 +1309,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorFirstPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorfirstpagelinkicon', { descendants: false });
+    /**
+     * Custom icon of the first page button of the paginator.
+     * @group Templates
+     */
+    readonly _paginatorFirstPageLinkIconTemplate = contentChild<TemplateRef<void>>('paginatorfirstpagelinkicon', { descendants: false });
     readonly paginatorFirstPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1187,7 +1321,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorLastPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorlastpagelinkicon', { descendants: false });
+    /**
+     * Custom icon of the last page button of the paginator.
+     * @group Templates
+     */
+    readonly _paginatorLastPageLinkIconTemplate = contentChild<TemplateRef<void>>('paginatorlastpagelinkicon', { descendants: false });
     readonly paginatorLastPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1195,7 +1333,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorPreviousPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatorpreviouspagelinkicon', { descendants: false });
+    /**
+     * Custom icon of the previous page button of the paginator.
+     * @group Templates
+     */
+    readonly _paginatorPreviousPageLinkIconTemplate = contentChild<TemplateRef<void>>('paginatorpreviouspagelinkicon', { descendants: false });
     readonly paginatorPreviousPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1203,7 +1345,11 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
                 .at(-1)?.template
     );
 
-    readonly _paginatorNextPageLinkIconTemplate = contentChild<TemplateRef<any>>('paginatornextpagelinkicon', { descendants: false });
+    /**
+     * Custom icon of the next page button of the paginator.
+     * @group Templates
+     */
+    readonly _paginatorNextPageLinkIconTemplate = contentChild<TemplateRef<void>>('paginatornextpagelinkicon', { descendants: false });
     readonly paginatorNextPageLinkIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -4051,7 +4197,7 @@ export class SortableColumn extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-sortIcon',
+    selector: 'p-sort-icon, p-sortIcon',
     standalone: false,
     template: `
         @if (!(dataTable.sortIconTemplate() || dataTable._sortIconTemplate())) {
@@ -5250,7 +5396,7 @@ export class CancelEditableRow extends BaseComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-cellEditor',
+    selector: 'p-cell-editor, p-cellEditor',
     standalone: false,
     template: `
         @if (editing) {
@@ -5269,9 +5415,17 @@ export class CellEditor extends BaseComponent {
 
     readonly _templates = contentChildren(PrimeTemplate);
 
-    readonly _inputTemplate = contentChild<TemplateRef<any>>('input');
+    /**
+     * Content of the cell in edit mode, usually an input.
+     * @group Templates
+     */
+    readonly _inputTemplate = contentChild<TemplateRef<void>>('input');
 
-    readonly _outputTemplate = contentChild<TemplateRef<any>>('output');
+    /**
+     * Content of the cell when it is not edited.
+     * @group Templates
+     */
+    readonly _outputTemplate = contentChild<TemplateRef<void>>('output');
 
     readonly inputTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
@@ -5297,7 +5451,7 @@ export class CellEditor extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-tableRadioButton',
+    selector: 'p-table-radio-button, p-tableRadioButton',
     standalone: false,
     template: `<p-radioButton
         #rb
@@ -5371,7 +5525,7 @@ export class TableRadioButton extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-tableCheckbox',
+    selector: 'p-table-checkbox, p-tableCheckbox',
     standalone: false,
     template: `
         <p-checkbox
@@ -5449,7 +5603,7 @@ export class TableCheckbox extends BaseComponent {
 }
 
 @Component({
-    selector: 'p-tableHeaderCheckbox',
+    selector: 'p-table-header-checkbox, p-tableHeaderCheckbox',
     standalone: false,
     template: `
         <p-checkbox
@@ -5804,7 +5958,7 @@ export class ReorderableRow extends BaseComponent {
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-columnFilter, p-column-filter, p-columnfilter',
+    selector: 'p-column-filter, p-columnFilter, p-columnfilter',
     standalone: false,
     template: `
         <div [class]="cx('filter')">
@@ -6289,10 +6443,11 @@ export class ColumnFilter extends BaseComponent {
     renderOverlay = signal<boolean>(false);
 
     /**
-     * Custom header template.
+     * Custom header of the filter overlay.
+     * @param context - header template context.
      * @group Templates
      */
-    readonly headerTemplate = contentChild<TemplateRef<any>>('header', { descendants: false });
+    readonly headerTemplate = contentChild<TemplateRef<ColumnFilterFieldTemplateContext>>('header', { descendants: false });
     readonly _headerTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6301,10 +6456,11 @@ export class ColumnFilter extends BaseComponent {
     );
 
     /**
-     * Custom filter template.
+     * Custom filter input.
+     * @param context - filter template context.
      * @group Templates
      */
-    readonly filterTemplate = contentChild<TemplateRef<any>>('filter', { descendants: false });
+    readonly filterTemplate = contentChild<TemplateRef<ColumnFilterTemplateContext>>('filter', { descendants: false });
     readonly _filterTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6313,10 +6469,11 @@ export class ColumnFilter extends BaseComponent {
     );
 
     /**
-     * Custom footer template.
+     * Custom footer of the filter overlay.
+     * @param context - footer template context.
      * @group Templates
      */
-    readonly footerTemplate = contentChild<TemplateRef<any>>('footer', { descendants: false });
+    readonly footerTemplate = contentChild<TemplateRef<ColumnFilterFieldTemplateContext>>('footer', { descendants: false });
     readonly _footerTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6324,10 +6481,11 @@ export class ColumnFilter extends BaseComponent {
                 .at(-1)?.template
     );
     /**
-     * Custom filter icon template.
+     * Custom filter icon.
+     * @param context - filtericon template context.
      * @group Templates
      */
-    readonly filterIconTemplate = contentChild<TemplateRef<any>>('filtericon', { descendants: false });
+    readonly filterIconTemplate = contentChild<TemplateRef<ColumnFilterIconTemplateContext>>('filtericon', { descendants: false });
     readonly _filterIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6336,10 +6494,10 @@ export class ColumnFilter extends BaseComponent {
     );
 
     /**
-     * Custom remove rule button icon template.
+     * Custom icon of the remove rule button.
      * @group Templates
      */
-    readonly removeRuleIconTemplate = contentChild<TemplateRef<any>>('removeruleicon', { descendants: false });
+    readonly removeRuleIconTemplate = contentChild<TemplateRef<void>>('removeruleicon', { descendants: false });
     readonly _removeRuleIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6348,10 +6506,10 @@ export class ColumnFilter extends BaseComponent {
     );
 
     /**
-     * Custom add rule button icon template.
+     * Custom icon of the add rule button.
      * @group Templates
      */
-    readonly addRuleIconTemplate = contentChild<TemplateRef<any>>('addruleicon', { descendants: false });
+    readonly addRuleIconTemplate = contentChild<TemplateRef<void>>('addruleicon', { descendants: false });
     readonly _addRuleIconTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -6899,7 +7057,7 @@ export class ColumnFilter extends BaseComponent {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.Eager,
-    selector: 'p-columnFilterFormElement',
+    selector: 'p-column-filter-form-element, p-columnFilterFormElement',
     standalone: false,
     template: `
         @if (filterTemplate()) {

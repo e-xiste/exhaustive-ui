@@ -10,7 +10,7 @@ import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
     template: `
         <app-docptviewer [docs]="docs">
             <div class="w-full">
-                <p-progressbar [value]="50"></p-progressbar>
+                <p-progress-bar [value]="50"></p-progress-bar>
             </div>
         </app-docptviewer>
     `

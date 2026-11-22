@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>MegaMenu requires a collection of menuitems as its <i>model</i>.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-megamenu [model]="items" />
+            <p-mega-menu [model]="items" />
         </div>
         <app-code></app-code>
     `

@@ -18,20 +18,20 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel>
+            <p-float-label>
                 <p-password [(ngModel)]="value1" inputId="over_label" autocomplete="off" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
+            <p-float-label variant="in">
                 <p-password [(ngModel)]="value2" inputId="in_label" autocomplete="off" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
+            <p-float-label variant="on">
                 <p-password [(ngModel)]="value3" inputId="on_label" autocomplete="off" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

@@ -20,7 +20,7 @@ interface UploadEvent {
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />
-            <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="Browse" />
+            <p-file-upload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="Browse" />
         </div>
         <app-code></app-code>
     `,

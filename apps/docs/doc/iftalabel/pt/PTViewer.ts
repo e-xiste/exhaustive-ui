@@ -11,10 +11,10 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [CommonModule, FormsModule, AppDocPtViewer, IftaLabelModule, InputTextModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-iftalabel>
+            <p-ifta-label>
                 <input type="text" pInputText [(ngModel)]="value" />
                 <label>Username</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </app-docptviewer>
     `
 })

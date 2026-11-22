@@ -66,14 +66,14 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<label for="price">Price</label>
-<p-inputnumber inputId="price" />
+<p-input-number inputId="price" />
 
 <span id="label_number">Number</span>
-<p-inputnumber ariaLabelledBy="label_number" />
+<p-input-number ariaLabelledBy="label_number" />
 
-<p-inputnumber ariaLabel="Number" />
+<p-input-number ariaLabel="Number" />
 
-<p-inputnumber ariaDescribedBy="describe" />
+<p-input-number ariaDescribedBy="describe" />
 <small id="describe">Information</small>`
     };
 }

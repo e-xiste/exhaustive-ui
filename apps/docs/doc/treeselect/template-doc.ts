@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>TreeSelect offers multiple templates for customization through templating.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-treeselect class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item">
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item">
                 <ng-template #dropdownicon>
                     <i class="pi pi-search"></i>
                 </ng-template>
@@ -28,7 +28,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         <p-button label="Remove All" severity="danger" text size="small" icon="pi pi-plus" />
                     </div>
                 </ng-template>
-            </p-treeselect>
+            </p-tree-select>
         </div>
         <app-code></app-code>
     `

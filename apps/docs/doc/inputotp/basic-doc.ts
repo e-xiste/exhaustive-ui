@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Two-way value binding is defined using <i>ngModel</i>. The number of characters is defined with the <i>length</i> property, which is set to 4 by default.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputotp [(ngModel)]="value" />
+            <p-input-otp [(ngModel)]="value" />
         </div>
         <app-code></app-code>
     `

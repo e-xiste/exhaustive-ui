@@ -21,7 +21,7 @@ export const SELECTBUTTON_VALUE_ACCESSOR: any = {
  * @group Components
  */
 @Component({
-    selector: 'p-selectButton, p-selectbutton, p-select-button',
+    selector: 'p-select-button, p-selectButton, p-selectbutton',
     imports: [ToggleButton, FormsModule, CommonModule, SharedModule, BindModule],
     template: `
         @for (option of options(); track $index; let i = $index) {

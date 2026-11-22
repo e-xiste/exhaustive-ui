@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Icons can be displayed next to the labels instead of the default marker.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-metergroup [value]="value" />
+            <p-meter-group [value]="value" />
         </div>
         <app-code></app-code>
     `

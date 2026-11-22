@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card">
-            <p-file [(ngModel)]="files" />
+            <p-file-input [(ngModel)]="files" />
         </div>
         <app-code></app-code>
     `

@@ -17,28 +17,28 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Buttons can be placed at either side of an input element.</p>
         </app-docsectiontext>
         <div class="card flex flex-col md:flex-row gap-4">
-            <p-inputgroup>
+            <p-input-group>
                 <p-button label="Search" />
                 <input pInputText placeholder="Keyword" />
-            </p-inputgroup>
+            </p-input-group>
 
-            <p-inputgroup>
+            <p-input-group>
                 <input pInputText placeholder="Keyword" />
-                <p-inputgroup-addon>
+                <p-input-group-addon>
                     <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="menu.toggle($event)" />
-                </p-inputgroup-addon>
-            </p-inputgroup>
+                </p-input-group-addon>
+            </p-input-group>
             <p-menu #menu [model]="items" popup styleClass="min-w-fit!" />
 
-            <p-inputgroup>
-                <p-inputgroup-addon>
+            <p-input-group>
+                <p-input-group-addon>
                     <p-button icon="pi pi-check" severity="secondary" />
-                </p-inputgroup-addon>
+                </p-input-group-addon>
                 <input pInputText placeholder="Vote" />
-                <p-inputgroup-addon>
+                <p-input-group-addon>
                     <p-button icon="pi pi-times" severity="secondary" />
-                </p-inputgroup-addon>
-            </p-inputgroup>
+                </p-input-group-addon>
+            </p-input-group>
         </div>
         <app-code></app-code>
     `

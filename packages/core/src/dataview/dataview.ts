@@ -50,7 +50,7 @@ const DATAVIEW_INSTANCE = new InjectionToken<DataView>('DATAVIEW_INSTANCE');
  * @group Components
  */
 @Component({
-    selector: 'p-dataView, p-dataview, p-data-view',
+    selector: 'p-data-view, p-dataView, p-dataview',
     imports: [CommonModule, PaginatorModule, SpinnerIcon, SharedModule, Bind],
     template: `
         @if (loading()) {

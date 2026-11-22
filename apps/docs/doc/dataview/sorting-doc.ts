@@ -21,7 +21,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
             <p>Built-in sorting is controlled by bindings <i>sortField</i> and <i>sortOrder</i> properties from a custom UI.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-dataview #dv [value]="products()" [sortField]="sortField" [sortOrder]="sortOrder">
+            <p-data-view #dv [value]="products()" [sortField]="sortField" [sortOrder]="sortOrder">
                 <ng-template #header>
                     <div class="flex flex-col md:flex-row md:justify-between">
                         <p-select [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By Price" (onChange)="onSortChange($event)" class="mb-2 md:mb-0" />
@@ -63,7 +63,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         </div>
                     </div>
                 </ng-template>
-            </p-dataview>
+            </p-data-view>
         </div>
         <app-code [extFiles]="['Product']"></app-code>
     `

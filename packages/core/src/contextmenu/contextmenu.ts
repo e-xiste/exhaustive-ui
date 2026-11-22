@@ -65,7 +65,7 @@ const visibleContextMenus = new Set<ContextMenu>();
  */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'p-contextMenuSub, p-contextmenu-sub',
+    selector: 'p-context-menu-sub, p-contextMenuSub, p-contextmenu-sub',
     imports: [CommonModule, RouterModule, Ripple, TooltipModule, AngleRightIcon, BadgeModule, SharedModule, BindModule, MotionModule],
     template: `
         @if (render()) {
@@ -422,7 +422,7 @@ export class ContextMenuSub extends BaseComponent<ContextMenuPassThrough> {
  * @group Components
  */
 @Component({
-    selector: 'p-contextMenu, p-contextmenu, p-context-menu',
+    selector: 'p-context-menu, p-contextMenu, p-contextmenu',
     imports: [CommonModule, ContextMenuSub, RouterModule, TooltipModule, BadgeModule, SharedModule, BindModule, MotionModule],
     template: `
         @if (render()) {

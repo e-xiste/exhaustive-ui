@@ -13,7 +13,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
         <app-docptviewer [docs]="docs">
             <div style="height: 500px; position: relative;">
                 <p-toast />
-                <p-speeddial [model]="items" direction="up" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', bottom: 0 }" />
+                <p-speed-dial [model]="items" direction="up" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', bottom: 0 }" />
             </div>
         </app-docptviewer>
     `,

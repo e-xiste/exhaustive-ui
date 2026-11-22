@@ -37,37 +37,37 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                     stateKey="statedemo-session"
                 >
                     <ng-template #caption>
-                        <p-iconfield iconPosition="left">
-                            <p-inputicon>
+                        <p-icon-field iconPosition="left">
+                            <p-input-icon>
                                 <i class="pi pi-search"></i>
-                            </p-inputicon>
+                            </p-input-icon>
                             <input pInputText type="text" [value]="dt1._filters()['global']?.value" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
-                        </p-iconfield>
+                        </p-icon-field>
                     </ng-template>
                     <ng-template #header>
                         <tr>
                             <th pSortableColumn="name" style="width:25%">
                                 <div class="flex items-center gap-2">
                                     Name
-                                    <p-sortIcon field="name" />
+                                    <p-sort-icon field="name" />
                                 </div>
                             </th>
                             <th pSortableColumn="country.name" style="width:25%">
                                 <div class="flex items-center gap-2">
                                     Country
-                                    <p-sortIcon field="country.name" />
+                                    <p-sort-icon field="country.name" />
                                 </div>
                             </th>
                             <th pSortableColumn="representative.name" style="width:25%">
                                 <div class="flex items-center gap-2">
                                     Representative
-                                    <p-sortIcon field="representative.name" />
+                                    <p-sort-icon field="representative.name" />
                                 </div>
                             </th>
                             <th pSortableColumn="status" style="width:25%">
                                 <div class="flex items-center gap-2">
                                     Status
-                                    <p-sortIcon field="status" />
+                                    <p-sort-icon field="status" />
                                 </div>
                             </th>
                         </tr>

@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label id="documents-label" class="font-medium">Documents</label>
-                    <p-file formControlName="documents" ariaLabelledBy="documents-label" size="small" [maxFiles]="3" [invalid]="isInvalid('documents')" />
+                    <p-file-input formControlName="documents" ariaLabelledBy="documents-label" size="small" [maxFiles]="3" [invalid]="isInvalid('documents')" />
                     @if (isInvalid('documents')) {
                         <p-message severity="error" size="small" variant="simple">At least one document is required.</p-message>
                     }

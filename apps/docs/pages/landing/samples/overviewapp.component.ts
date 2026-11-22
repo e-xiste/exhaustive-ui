@@ -50,22 +50,22 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div class="text-color text-3xl font-semibold leading-normal">Welcome to ExhaustiveUI</div>
                 </div>
                 <div class="flex gap-2 whitespace-nowrap flex-nowrap">
-                    <p-iconfield iconPosition="left">
-                        <p-inputicon class="pi pi-search"></p-inputicon>
+                    <p-icon-field iconPosition="left">
+                        <p-input-icon class="pi pi-search"></p-input-icon>
                         <input type="text" pInputText placeholder="Search" />
-                    </p-iconfield>
+                    </p-icon-field>
                     <p-button severity="secondary" outlined>
-                        <p-overlayBadge severity="danger" styleClass="min-w-0! w-2.5! h-2.5!">
+                        <p-overlay-badge severity="danger" styleClass="min-w-0! w-2.5! h-2.5!">
                             <i class="pi pi-bell"></i>
-                        </p-overlayBadge>
+                        </p-overlay-badge>
                     </p-button>
                 </div>
             </div>
             <div class="mt-4 flex flex-wrap gap-6 items-center justify-between p-1">
-                <p-selectbutton [(ngModel)]="selectedTime" [options]="timeOptions" aria-labelledby="basic" [allowEmpty]="false" (onChange)="changeSelect()" />
+                <p-select-button [(ngModel)]="selectedTime" [options]="timeOptions" aria-labelledby="basic" [allowEmpty]="false" (onChange)="changeSelect()" />
                 <div class="flex items-center gap-2">
                     <p-button label="Download" icon="pi pi-download" iconPos="right" />
-                    <p-datepicker [(ngModel)]="dates" appendTo="body" dateFormat="dd.mm.yy" selectionMode="range" showIcon iconDisplay="input" placeholder="06/11/2024 - 06/22/2024" />
+                    <p-date-picker [(ngModel)]="dates" appendTo="body" dateFormat="dd.mm.yy" selectionMode="range" showIcon iconDisplay="input" placeholder="06/11/2024 - 06/22/2024" />
                 </div>
             </div>
             <div class="flex flex-col gap-6 mt-6">
@@ -153,7 +153,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
                                 <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" styleClass="ml-6" />
                             </div>
-                            <p-metergroup [value]="metersData" labelPosition="end">
+                            <p-meter-group [value]="metersData" labelPosition="end">
                                 <ng-template #label>
                                     <div class="flex flex-col gap-6 mt-4">
                                         <ng-container *ngFor="let val of metersData; let index = index">
@@ -168,7 +168,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                         </ng-container>
                                     </div>
                                 </ng-template>
-                            </p-metergroup>
+                            </p-meter-group>
                         </div>
                         <p-button label="Show All" outlined styleClass="w-full" />
                     </div>

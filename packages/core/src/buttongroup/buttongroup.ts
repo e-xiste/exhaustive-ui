@@ -3,7 +3,7 @@ import { BaseComponent } from '@exhaustive-ui/core/basecomponent';
 import { ButtonGroupStyle } from './style/buttongroupstyle';
 
 @Component({
-    selector: 'p-buttonGroup, p-buttongroup, p-button-group',
+    selector: 'p-button-group, p-buttonGroup, p-buttongroup',
     standalone: true,
     imports: [],
     template: `

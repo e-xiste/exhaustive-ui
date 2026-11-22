@@ -10,7 +10,7 @@ import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
     imports: [CommonModule, AppDocPtViewer, MultiSelectModule, FormsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-multiselect
+            <p-multi-select
                 [(ngModel)]="selectedCities"
                 [options]="groupedCities"
                 optionLabel="label"
@@ -28,7 +28,7 @@ import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
                         <div>{{ group.label }}</div>
                     </div>
                 </ng-template>
-            </p-multiselect>
+            </p-multi-select>
         </app-docptviewer>
     `
 })

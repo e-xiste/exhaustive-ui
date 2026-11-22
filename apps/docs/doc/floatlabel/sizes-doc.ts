@@ -16,32 +16,32 @@ import { SelectModule } from '@exhaustive-ui/core/select';
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-6">
             <div class="flex flex-wrap justify-center items-end gap-4">
-                <p-floatlabel variant="in">
+                <p-float-label variant="in">
                     <input pInputText id="small_input" pSize="small" [(ngModel)]="value1" autocomplete="off" />
                     <label for="small_input">Small</label>
-                </p-floatlabel>
-                <p-floatlabel variant="in">
+                </p-float-label>
+                <p-float-label variant="in">
                     <input pInputText id="normal_input" [(ngModel)]="value2" autocomplete="off" />
                     <label for="normal_input">Normal</label>
-                </p-floatlabel>
-                <p-floatlabel variant="in">
+                </p-float-label>
+                <p-float-label variant="in">
                     <input pInputText id="large_input" pSize="large" [(ngModel)]="value3" autocomplete="off" />
                     <label for="large_input">Large</label>
-                </p-floatlabel>
+                </p-float-label>
             </div>
             <div class="flex flex-wrap justify-center items-end gap-4">
-                <p-floatlabel variant="on">
+                <p-float-label variant="on">
                     <p-select [(ngModel)]="city1" inputId="small_select" [options]="cities" size="small" class="w-56" />
                     <label for="small_select">Small</label>
-                </p-floatlabel>
-                <p-floatlabel variant="on">
+                </p-float-label>
+                <p-float-label variant="on">
                     <p-select [(ngModel)]="city2" inputId="normal_select" [options]="cities" class="w-56" />
                     <label for="normal_select">Normal</label>
-                </p-floatlabel>
-                <p-floatlabel variant="on">
+                </p-float-label>
+                <p-float-label variant="on">
                     <p-select [(ngModel)]="city3" inputId="large_select" [options]="cities" size="large" class="w-56" />
                     <label for="large_select">Large</label>
-                </p-floatlabel>
+                </p-float-label>
             </div>
         </div>
         <app-code></app-code>

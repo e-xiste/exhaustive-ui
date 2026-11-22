@@ -6,7 +6,14 @@ import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponen
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
 import { ChevronDownIcon, ChevronUpIcon } from '@exhaustive-ui/core/icons';
 import { Nullable } from '@exhaustive-ui/core/ts-helpers';
-import { OrganizationChartNodeCollapseEvent, OrganizationChartNodeExpandEvent, OrganizationChartNodeSelectEvent, OrganizationChartNodeUnSelectEvent, OrganizationChartPassThrough } from '@exhaustive-ui/core/types/organizationchart';
+import {
+    OrganizationChartNodeCollapseEvent,
+    OrganizationChartNodeExpandEvent,
+    OrganizationChartNodeSelectEvent,
+    OrganizationChartNodeUnSelectEvent,
+    OrganizationChartPassThrough,
+    OrganizationChartTogglerIconTemplateContext
+} from '@exhaustive-ui/core/types/organizationchart';
 import { OrganizationChartStyle } from './style/organizationchartstyle';
 
 /**
@@ -155,7 +162,7 @@ export class OrganizationChartNode extends BaseComponent {
  * @group Components
  */
 @Component({
-    selector: 'p-organizationChart, p-organization-chart, p-organizationchart',
+    selector: 'p-organization-chart, p-organizationChart, p-organizationchart',
     imports: [CommonModule, OrganizationChartNode, SharedModule, BindModule],
     template: `
         @if (root(); as root) {
@@ -225,7 +232,12 @@ export class OrganizationChart extends BaseComponent<OrganizationChartPassThroug
 
     readonly templates = contentChildren(PrimeTemplate);
 
-    readonly togglerIconTemplate = contentChild<TemplateRef<any>>('togglericon', { descendants: false });
+    /**
+     * Custom icon of the button that expands and collapses a node.
+     * @param context - togglericon template context.
+     * @group Templates
+     */
+    readonly togglerIconTemplate = contentChild<TemplateRef<OrganizationChartTogglerIconTemplateContext>>('togglericon', { descendants: false });
 
     readonly templateMap = computed<any>(() => {
         const templates = this.templates();

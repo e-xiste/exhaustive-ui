@@ -12,14 +12,14 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>Images are defined using templating with <i>left</i> and <i>right</i> templates. Use the <i>style</i> or <i>class</i> properties to define the size of the container.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-imagecompare class="shadow-lg rounded-2xl">
+            <p-image-compare class="shadow-lg rounded-2xl">
                 <ng-template #left>
                     <img src="https://exhaustive-ui.com/demo/compare/island1.jpg" />
                 </ng-template>
                 <ng-template #right>
                     <img src="https://exhaustive-ui.com/demo/compare/island2.jpg" />
                 </ng-template>
-            </p-imagecompare>
+            </p-image-compare>
         </div>
         <app-code></app-code>
     `

@@ -49,10 +49,10 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
             <p-button icon="pi pi-circle-fill text-green-500" label="950 Active User" outlined severity="secondary" />
         </div>
         <div class="mt-10 mb-4 flex items-center justify-between">
-            <p-iconfield iconPosition="left">
-                <p-inputicon class="pi pi-search"> </p-inputicon>
+            <p-icon-field iconPosition="left">
+                <p-input-icon class="pi pi-search"> </p-input-icon>
                 <input pInputText type="text" [(ngModel)]="search" placeholder="Search" />
-            </p-iconfield>
+            </p-icon-field>
             <div class="flex items-center gap-3">
                 <p-button icon="pi pi-filter" outlined severity="secondary" />
                 <p-divider layout="vertical" class="m-0 p-0" />
@@ -67,7 +67,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <ng-template #header>
                     <tr>
                         <th style="width: 1rem">
-                            <p-tableHeaderCheckbox />
+                            <p-table-header-checkbox />
                         </th>
                         <th>Name</th>
                         <th>Title</th>
@@ -81,11 +81,11 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <ng-template #body let-data>
                     <tr>
                         <td style="width: 1rem">
-                            <p-tableCheckbox [value]="data" />
+                            <p-table-checkbox [value]="data" />
                         </td>
                         <td>
                             <div class="flex items-center">
-                                <p-overlayBadge [severity]="data.active === undefined ? 'contrast' : data.active ? 'success' : 'danger'" styleClass="w-fit">
+                                <p-overlay-badge [severity]="data.active === undefined ? 'contrast' : data.active ? 'success' : 'danger'" styleClass="w-fit">
                                     <p-avatar
                                         [image]="data.image"
                                         [label]="!data.image ? data.capName : ''"
@@ -94,7 +94,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                             'rounded-md overflow-hidden flex': true
                                         }"
                                     />
-                                </p-overlayBadge>
+                                </p-overlay-badge>
 
                                 <div class="ml-4 leading-6 text-color font-medium">{{ data.name }}</div>
                             </div>

@@ -810,7 +810,7 @@ export class PanelMenuList extends BaseComponent {
  * @group Components
  */
 @Component({
-    selector: 'p-panelMenu, p-panelmenu, p-panel-menu',
+    selector: 'p-panel-menu, p-panelMenu, p-panelmenu',
     imports: [CommonModule, PanelMenuList, RouterModule, Ripple, TooltipModule, ChevronDownIcon, ChevronRightIcon, SharedModule, BindModule, MotionModule],
     template: `
         @for (item of model(); track $index; let f = $first; let l = $last; let i = $index) {
