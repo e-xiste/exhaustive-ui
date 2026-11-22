@@ -552,7 +552,11 @@
             "children": [
                 {
                     "name": "From PrimeNG",
-                    "href": "https://v1.optimus.openng.org/migration/primeng"
+                    "routerLink": "/migration/primeng"
+                },
+                {
+                    "name": "From Optimus UI",
+                    "routerLink": "/migration/optimus"
                 },
                 {
                     "name": "Update ExhaustiveUI",

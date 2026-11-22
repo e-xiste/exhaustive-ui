@@ -83,7 +83,7 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 `ng add` does not migrate an existing workspace. It sets up new projects only, and when it detects a `primeng` dependency it leaves your code untouched and fails with an error rather than reporting success. Use the `migrate-from-primeng` schematic instead: install the package so the Angular CLI can resolve it, then run the schematic. Packages are swapped, imports are rewritten, and you get a report of anything it could not handle automatically, with file and line numbers.
 
 ```bash
-ng update @angular/core@22 @angular/cli@22
+ng update @angular/core@22 @angular/cli@22 --force
 npm install @exhaustive-ui/core
 ng generate @exhaustive-ui/core:migrate-from-primeng
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0
@@ -91,7 +91,9 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 
 The last command applies the [v22 migrations](#what-changes-in-v22) (`styleClass` to `class`, renamed and removed inputs) to the migrated templates.
 
-Optimus UI's [migration guide](https://v1.optimus.openng.org/migration/primeng) covers the prerequisites and the manual cases; it applies as-is, with `@openng/optimus-ui` read as `@exhaustive-ui/core`. If you are on PrimeNG v20 or older, upgrade to v21 first. ExhaustiveUI v22 requires Angular v22, so update Angular before running the schematic.
+The [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng) covers the prerequisites, what the schematic changes and the manual checks. `--force` is needed because PrimeNG v21 declares Angular 21 as a peer dependency; the schematic removes it right after. If you are on PrimeNG v20 or older, upgrade to v21 first.
+
+Coming from Optimus UI v2? The [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus) lists the package and configuration names to replace before the same `ng update --migrate-only` step.
 
 ## Packages
 

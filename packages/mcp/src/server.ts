@@ -374,8 +374,8 @@ const PROMPTS: Record<(typeof PROMPT_NAMES)[number], { title: string; descriptio
         title: 'Migrate from PrimeNG',
         description: 'Plan the migration of PrimeNG (or Optimus UI) code to ExhaustiveUI.',
         steps: [
-            'ExhaustiveUI v22 requires Angular v22: the workspace must be on PrimeNG v21, then updated to Angular v22, before running `ng generate @exhaustive-ui/core:migrate-from-primeng`.',
-            'Call get_guide for "faq" (migration notes) and get_setup for "angular-cli".',
+            'Call get_guide for "primeng" (from PrimeNG v21) or "optimus" (from Optimus UI v2), and follow its steps.',
+            'From PrimeNG: update Angular to v22 with --force while primeng is installed, then run `ng generate @exhaustive-ui/core:migrate-from-primeng`. From Optimus UI: swap the @openng/optimus-ui* packages and rename the imports and the configuration API as the guide lists. Then run `ng update @exhaustive-ui/core --migrate-only --from=3.0.0` and follow get_guide "v22".',
             'For each PrimeNG component used, call get_component with the PrimeNG name: renamed components (dropdown, calendar, sidebar, overlaypanel, inputswitch, tabview...) resolve to their ExhaustiveUI equivalent.',
             'Replace `primeng/<name>` imports with `@exhaustive-ui/core/<name>` and call validate_usage on each migrated template.'
         ]

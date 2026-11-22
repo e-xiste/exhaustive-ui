@@ -1,10 +1,11 @@
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'prerequisites-doc',
     standalone: true,
-    imports: [AppDocSectionText],
+    imports: [AppDocSectionText, RouterModule],
     template: `
         <app-docsectiontext>
             <p>ExhaustiveUI v22 targets Angular v22. Any workspace created with the Angular CLI works, standalone or NgModule based.</p>
@@ -16,8 +17,8 @@ import { Component } from '@angular/core';
                 <li>A package manager of your choice — npm, yarn or pnpm</li>
             </ul>
             <p>
-                Already using PrimeNG? Do not follow this page. The <a href="https://v1.optimus.openng.org/migration/primeng" target="_blank" rel="noopener noreferrer" class="doc-link">migration guide</a> covers moving an existing PrimeNG v21
-                workspace, once updated to Angular v22, across with the <i>migrate-from-primeng</i> schematic, which is a separate command from the <i>ng add</i> below.
+                Already using PrimeNG? Do not follow this page. The <a [routerLink]="'/migration/primeng'" class="doc-link">migration guide</a> covers moving an existing PrimeNG v21 workspace, once updated to Angular v22, across with the
+                <i>migrate-from-primeng</i> schematic, which is a separate command from the <i>ng add</i> below.
             </p>
         </app-docsectiontext>
     `

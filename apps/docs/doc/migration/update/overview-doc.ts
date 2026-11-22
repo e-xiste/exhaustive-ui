@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 
 @Component({
     selector: 'update-overview-doc',
     standalone: true,
-    imports: [AppDocSectionText],
+    imports: [AppDocSectionText, RouterModule],
     template: `
         <app-docsectiontext>
             <p>
@@ -13,8 +14,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
             <p>Major versions follow Angular's: when a new Angular major ships, a matching ExhaustiveUI major is released for it. Minor and patch releases stay within the same Angular major and are drop-in updates.</p>
             <p>
-                This page is about updating a project that already uses ExhaustiveUI. To move an existing PrimeNG workspace across, see the
-                <a href="https://v1.optimus.openng.org/migration/primeng" target="_blank" rel="noopener noreferrer" class="doc-link">migration guide</a> instead.
+                This page is about updating a project that already uses ExhaustiveUI. To move an existing workspace across, see the guides for
+                <a [routerLink]="'/migration/primeng'" class="doc-link">PrimeNG</a> and <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI</a> instead.
             </p>
         </app-docsectiontext>
     `

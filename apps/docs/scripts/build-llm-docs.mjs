@@ -172,6 +172,18 @@ const GUIDE_PAGES = [
         description: 'Updating with ng update, Angular version compatibility, and a summary of what changes in v22.'
     },
     {
+        route: 'migration/primeng',
+        docPath: 'migration/primeng',
+        title: 'Migrating from PrimeNG',
+        description: 'Moving a PrimeNG v21 application to ExhaustiveUI: the migrate-from-primeng schematic, what it changes (packages, imports, configuration API, icons, CSS layer), the manual checks and the v22 migrations.'
+    },
+    {
+        route: 'migration/optimus',
+        docPath: 'migration/optimus',
+        title: 'Migrating from Optimus UI',
+        description: 'Moving an Optimus UI v2 application to ExhaustiveUI: package and configuration API renames, the CSS layer name, then the v22 migrations.'
+    },
+    {
         route: 'migration/v22',
         docPath: 'migration/v22',
         title: 'Migrating to v22',
@@ -1168,11 +1180,16 @@ function extractNamedCodeBlocks(content) {
             ['scss', 'scss']
         ]) {
             const m = body.match(new RegExp(key + ':\\s*`([\\s\\S]*?)`'));
-            if (m) fences.push('```' + lang + '\n' + m[1].trim() + '\n```');
+            if (m) fences.push('```' + lang + '\n' + unescapeTemplateLiteral(m[1]).trim() + '\n```');
         }
         if (fences.length) blocks[match[1]] = fences.join('\n\n');
     }
     return blocks;
+}
+
+/** The raw text of a template literal as written in the source, turned into the string it evaluates to. */
+function unescapeTemplateLiteral(raw) {
+    return raw.replace(/\\([\\`$])/g, '$1');
 }
 
 function decodeEntities(text) {

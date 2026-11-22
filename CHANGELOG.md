@@ -4,6 +4,15 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Documentation
+
+- New [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng): the steps from PrimeNG v21 (including the `--force` the Angular 22 update needs while `primeng` is installed), everything `migrate-from-primeng` changes, the manual checks, and what changes in v22. It replaces the link to Optimus UI's archived guide, on the home page, in the menu and in the installation, FAQ and update pages, and is the page the schematic's report points to.
+- New [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus): the package and configuration API names to replace (`provideOptimus`, `Optimus`, `OptimusConfigType`, `OPTIMUS_CONFIG`), the default CSS layer renamed from `optimus` to `exhaustive`, then the v22 migrations.
+- Both guides are in the LLM docs (`get_guide("primeng")`, `get_guide("optimus")`) and the agent skill; the `migrate_from_primeng` MCP prompt follows them.
+- Home page: Angular 22, Full Signals, Modern Angular and Tailwind CSS 4 features. The contribution guide and `CONTRIBUTING.md` welcome contributions written with AI coding agents.
+
 ## 22.0.0 (2026-11-22)
 
 ExhaustiveUI v22 is the first major of the fork, and its first stable release. It requires Angular 22 and moves the whole library to the Angular Signals API. The public API is frozen for the v22 line: minor releases add features and fixes without breaking changes. The alphas and release candidates below lead up to it. This section sums them up.

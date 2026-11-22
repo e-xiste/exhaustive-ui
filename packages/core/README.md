@@ -54,7 +54,7 @@ TypeScript imports (`primeng/button` → `@exhaustive-ui/core/button`, `@primeui
 `PrimeNG` → `Exhaustive`, `PrimeNGConfigType` → `ExhaustiveConfigType`). Anything it cannot migrate is
 listed as a warning for manual review.
 
-Projects on PrimeNG v20 or older: upgrade to PrimeNG v21 first, then migrate.
+Projects on PrimeNG v20 or older: upgrade to PrimeNG v21 first, then migrate. The [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng) covers each step; Optimus UI v2 projects follow the [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus).
 
 ## Updating to v22
 

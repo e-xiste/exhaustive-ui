@@ -9,7 +9,7 @@ const SITE_URL = 'https://exhaustive-ui.com';
 const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 const SKILL_DESCRIPTION =
-    'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility, PrimeNG-migration and update guides, and the migration guide to v22. ' +
+    'Local, offline copy of the official ExhaustiveUI (@exhaustive-ui/core) documentation — usage examples, full API (props, events, templates), pass-through options, CSS classes and design tokens for all 80+ Angular components, plus the installation, configuration, theming (styled/unstyled), icons, Tailwind, pass-through, accessibility, update guide, the migration guides from PrimeNG and from Optimus UI, and the migration guide to v22. ' +
     'Use this skill whenever writing, reviewing, debugging or answering questions about Angular code that uses ExhaustiveUI — any `p-*` element or `p*` directive (p-button, p-table, p-select, p-dialog, pTooltip, ...), imports from `@exhaustive-ui/core` or `@exhaustive-ui/themes`, theming/design tokens, migrating from PrimeNG, or updating to ExhaustiveUI v22 — and prefer it over fetching exhaustive-ui.com pages.';
 
 /**
@@ -114,7 +114,7 @@ Check the guides when in doubt; these are here so simple tasks don't need a look
 
 - Packages: \`@exhaustive-ui/core\` (one secondary entry point per component, such as \`@exhaustive-ui/core/button\`) and \`@exhaustive-ui/themes\` (theme presets).
 - Components are imported per entry point (\`import { ButtonModule } from '@exhaustive-ui/core/button'\`) into standalone components. The docs examples show the exact symbol to import, so copy it from there.
-- App-wide setup (theme preset, ripple, z-index, locale and so on) goes through \`provideExhaustive({...})\` from \`@exhaustive-ui/core/config\`; see \`references/guides/configuration.md\`. New projects can use \`ng add @exhaustive-ui/core\`. Existing PrimeNG v21 apps, once updated to Angular v22, use the \`migrate-from-primeng\` schematic instead (see \`references/guides/installation.md\` and \`references/guides/faq.md\`).
+- App-wide setup (theme preset, ripple, z-index, locale and so on) goes through \`provideExhaustive({...})\` from \`@exhaustive-ui/core/config\`; see \`references/guides/configuration.md\`. New projects can use \`ng add @exhaustive-ui/core\`. Existing PrimeNG v21 apps, once updated to Angular v22, use the \`migrate-from-primeng\` schematic instead (see \`references/guides/primeng.md\`); Optimus UI v2 apps follow \`references/guides/optimus.md\`.
 - Selectors use the \`p-\` prefix (\`<p-button>\`, \`<p-table>\`) and directives the \`p\` prefix (\`pButton\`, \`pTooltip\`, \`pInputText\`).
 - Since v22 the library is on the Angular Signals API. Templates bind as usual (\`[name]\`, \`[(name)]\`, \`(name)\`), but code holding a component instance (\`viewChild\`, \`@ViewChild\`) reads inputs as signals (\`table.selection()\`), writes two-way properties with \`.set()\` (\`drawer.visible.set(true)\`) and calls queries; it never assigns inputs.
 - Components use \`OnPush\` change detection, except Table, TreeTable and DynamicDialog: give them new arrays and objects (or signals) instead of mutating bound data in place.

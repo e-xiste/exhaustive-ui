@@ -163,11 +163,6 @@ export function app(): express.Express {
         });
     });
 
-    // The PrimeNG migration guide moved to the v1 docs archive — redirect rather than 404.
-    server.get('/migration/primeng', (req, res) => {
-        res.redirect(301, 'https://v1.optimus.openng.org/migration/primeng');
-    });
-
     // Agent skills discovery index for `npx skills add`. Mounted separately because express.static
     // ignores dot-folders, and with a short cache so `npx skills update` sees new docs builds.
     server.use(
