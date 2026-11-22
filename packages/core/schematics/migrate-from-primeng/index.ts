@@ -27,15 +27,11 @@ const MIN_PRIMENG_MAJOR = 21;
 const LOCKFILE_NAMES = new Set(['package-lock.json', 'npm-shrinkwrap.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock']);
 
 /**
- * Migrates a PrimeNG v21 workspace to ExhaustiveUI.
- *
- * @deprecated This schematic is only maintained on the `release/1.x` line (the `@exhaustive-ui/core@1`
- * package, published to v1.optimus.openng.org). It is not actively maintained on `main` going forward.
- * Run it via `ng generate @exhaustive-ui/core@1:migrate-from-primeng` rather than an unpinned install.
+ * Migrates a PrimeNG v21 workspace to ExhaustiveUI. The v22 `ng update` migrations then run with
+ * `ng update @exhaustive-ui/core --migrate-only --from=3.0.0`.
  */
 export function migrateFromPrimeng(options: Schema): Rule {
     return (tree: Tree, context: SchematicContext) => {
-        warnDeprecated(context);
         checkVersionGate(tree, options);
         const isIgnored = createIgnoreMatcher(tree);
 
@@ -89,19 +85,6 @@ export function migrateFromPrimeng(options: Schema): Rule {
         }
         return tree;
     };
-}
-
-/**
- * This schematic is deprecated on `main` — it is only maintained on the `release/1.x` line. Printed
- * once, up front, so CLI users see it even though they will never read the JSDoc above.
- */
-function warnDeprecated(context: SchematicContext): void {
-    context.logger.warn(
-        'migrate-from-primeng is deprecated on this line of @exhaustive-ui/core and is only maintained on release/1.x. ' +
-            'Run it via the pinned v1 package instead:\n' +
-            '  npm install @exhaustive-ui/core@1\n' +
-            '  ng generate @exhaustive-ui/core@1:migrate-from-primeng'
-    );
 }
 
 /**

@@ -2,8 +2,7 @@
     "$schema": "http://json-schema.org/schema",
     "$id": "ExhaustiveUiMigrateFromPrimeng",
     "title": "Migrate a PrimeNG v21 project to ExhaustiveUI",
-    "description": "Deprecated on this line \u2014 only maintained on release/1.x. Run via @exhaustive-ui/core@1.",
-    "deprecated": true,
+    "description": "Migrate a PrimeNG v21 workspace, updated to Angular 22, to ExhaustiveUI: dependencies, imports, configuration API and PrimeIcons.",
     "type": "object",
     "properties": {
         "skipInstall": {
