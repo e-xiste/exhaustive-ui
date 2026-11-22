@@ -9,6 +9,7 @@ import { InvalidDoc } from '@/doc/password/invalid-doc';
 import { LocaleDoc } from '@/doc/password/locale-doc';
 import { MeterDoc } from '@/doc/password/meter-doc';
 import { ReactiveFormsDoc } from '@/doc/password/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/password/signalforms-doc';
 import { SizesDoc } from '@/doc/password/sizes-doc';
 import { TemplateDoc } from '@/doc/password/template-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/password/templatedrivenforms-doc';
@@ -111,7 +112,8 @@ export class PasswordDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

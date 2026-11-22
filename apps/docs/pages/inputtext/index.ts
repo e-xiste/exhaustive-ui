@@ -9,6 +9,7 @@ import { ImportDoc } from '@/doc/inputtext/import-doc';
 import { InvalidDoc } from '@/doc/inputtext/invalid-doc';
 import { PTComponent } from '@/doc/inputtext/pt/PTComponent';
 import { ReactiveFormsDoc } from '@/doc/inputtext/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/inputtext/signalforms-doc';
 import { SizesDoc } from '@/doc/inputtext/sizes-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/inputtext/templatedrivenforms-doc';
 import { FluidDoc } from '@/doc/inputtext/fluid-doc';
@@ -87,7 +88,8 @@ export class InputTextDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

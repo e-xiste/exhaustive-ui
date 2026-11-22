@@ -7,6 +7,7 @@ import { MinMaxDoc } from '@/doc/knob/minmax-doc';
 import { PTComponent } from '@/doc/knob/pt/PTComponent';
 import { ReactiveDoc } from '@/doc/knob/reactive-doc';
 import { ReactiveFormsDoc } from '@/doc/knob/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/knob/signalforms-doc';
 import { ReadonlyDoc } from '@/doc/knob/readonly-doc';
 import { SizeDoc } from '@/doc/knob/size-doc';
 import { StepDoc } from '@/doc/knob/step-doc';
@@ -86,7 +87,8 @@ export class KnobDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactiveforms', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactiveforms', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

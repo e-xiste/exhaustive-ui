@@ -18,6 +18,7 @@ import { MultipleDoc } from '@/doc/autocomplete/multiple-doc';
 import { ObjectsDoc } from '@/doc/autocomplete/objects-doc';
 import { PTComponent } from '@/doc/autocomplete/pt/PTComponent';
 import { ReactiveFormsDoc } from '@/doc/autocomplete/reactive-forms-doc';
+import { SignalFormsDoc } from '@/doc/autocomplete/signalforms-doc';
 import { SizesDoc } from '@/doc/autocomplete/sizes-doc';
 import { TemplateDoc } from '@/doc/autocomplete/template-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/autocomplete/template-driven-forms-doc';
@@ -148,7 +149,8 @@ export class AutoCompleteDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

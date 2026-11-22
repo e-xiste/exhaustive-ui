@@ -8,6 +8,7 @@ import { ImportDoc } from '@/doc/cascadeselect/import-doc';
 import { InvalidDoc } from '@/doc/cascadeselect/invalid-doc';
 import { LoadingDoc } from '@/doc/cascadeselect/loading-doc';
 import { ReactiveFormsDoc } from '@/doc/cascadeselect/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/cascadeselect/signalforms-doc';
 import { SizesDoc } from '@/doc/cascadeselect/sizes-doc';
 import { TemplateDoc } from '@/doc/cascadeselect/template-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/cascadeselect/templatedrivenforms-doc';
@@ -101,7 +102,8 @@ export class CascadeSelectDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

@@ -5,6 +5,7 @@ import { ImportDoc } from '@/doc/editor/import-doc';
 import { PTComponent } from '@/doc/editor/pt/PTComponent';
 import { QuillDoc } from '@/doc/editor/quill-doc';
 import { ReactiveFormsDoc } from '@/doc/editor/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/editor/signalforms-doc';
 import { ReadOnlyDoc } from '@/doc/editor/readonly-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/editor/templatedrivenforms-doc';
 import { Component } from '@angular/core';
@@ -48,7 +49,8 @@ export class EditorDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {
