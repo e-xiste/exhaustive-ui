@@ -1,4 +1,4 @@
-import type { PassThrough, PassThroughOption } from '@exhaustive-ui/core/api';
+import type { PassThrough, PassThroughOption, SelectItem } from '@exhaustive-ui/core/api';
 import { TemplateRef } from '@angular/core';
 import { PaginatorPassThrough } from '@exhaustive-ui/core/types/paginator';
 
@@ -81,6 +81,10 @@ export interface DataViewPaginatorState {
      * Page count.
      */
     pageCount?: number;
+    /**
+     * Total number of records.
+     */
+    totalRecords?: number;
 }
 
 /**
@@ -201,9 +205,9 @@ export interface DataViewPaginatorRightTemplateContext {
  */
 export interface DataViewPaginatorDropdownItemTemplateContext {
     /**
-     * Dropdown item instance (rows per page option).
+     * Option of the rows per page dropdown: its label and its value, the number of rows.
      */
-    $implicit: number;
+    $implicit: SelectItem;
 }
 
 /**

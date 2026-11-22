@@ -72,6 +72,17 @@ export interface DialogPassThroughOptions<I = unknown> {
 export type DialogPassThrough<I = unknown> = PassThrough<I, DialogPassThroughOptions<I>>;
 
 /**
+ * Context of the header template.
+ * @group Interface
+ */
+export interface DialogHeaderTemplateContext {
+    /**
+     * Id of the element that labels the dialog: put it on your title so that screen readers announce it.
+     */
+    ariaLabelledBy: string | null | undefined;
+}
+
+/**
  * Defines valid templates in Dialog.
  * @group Templates
  */
@@ -79,7 +90,7 @@ export interface DialogTemplates {
     /**
      * Custom template of header.
      */
-    header(): TemplateRef<void>;
+    header(context: DialogHeaderTemplateContext): TemplateRef<DialogHeaderTemplateContext>;
     /**
      * Custom template of content.
      */

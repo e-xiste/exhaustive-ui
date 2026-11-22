@@ -49,6 +49,7 @@ import {
     FileUploadHandlerEvent,
     FileUploadHeaderTemplateContext,
     FileUploadPassThrough,
+    FileUploadFileTemplateContext,
     RemoveUploadedFileEvent
 } from '@exhaustive-ui/core/types/fileupload';
 import { FileUploadStyle } from './style/fileuploadstyle';
@@ -700,9 +701,10 @@ export class FileUpload extends BaseComponent<FileUploadPassThrough> implements 
 
     /**
      * Custom file template.
+     * @param context - file template context.
      * @group Templates
      */
-    readonly fileTemplate = contentChild<TemplateRef<void>>('file', { descendants: false });
+    readonly fileTemplate = contentChild<TemplateRef<FileUploadFileTemplateContext>>('file', { descendants: false });
 
     /**
      * Custom header template.

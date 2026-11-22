@@ -110,6 +110,17 @@ export interface ConfirmDialogMessageTemplateContext {
 }
 
 /**
+ * Context of the header template.
+ * @group Interface
+ */
+export interface ConfirmDialogHeaderTemplateContext {
+    /**
+     * Id of the element that labels the dialog: put it on your title so that screen readers announce it.
+     */
+    ariaLabelledBy: string | null | undefined;
+}
+
+/**
  * Defines valid templates in ConfirmDialog.
  * @group Templates
  */
@@ -117,7 +128,7 @@ export interface ConfirmDialogTemplates {
     /**
      * Custom header template.
      */
-    header(): TemplateRef<void>;
+    header(context: ConfirmDialogHeaderTemplateContext): TemplateRef<ConfirmDialogHeaderTemplateContext>;
     /**
      * Custom footer template.
      */

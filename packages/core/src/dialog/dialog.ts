@@ -32,7 +32,7 @@ import { FocusTrap } from '@exhaustive-ui/core/focustrap';
 import { TimesIcon, WindowMaximizeIcon, WindowMinimizeIcon } from '@exhaustive-ui/core/icons';
 import { MotionModule } from '@exhaustive-ui/core/motion';
 import { Nullable, VoidListener } from '@exhaustive-ui/core/ts-helpers';
-import { DialogPassThrough } from '@exhaustive-ui/core/types/dialog';
+import { DialogHeaderTemplateContext, DialogPassThrough } from '@exhaustive-ui/core/types/dialog';
 import { ZIndexUtils } from '@exhaustive-ui/core/utils';
 import { DialogStyle } from './style/dialogstyle';
 
@@ -454,7 +454,7 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
      * Header template passed as an input, for a template defined outside the dialog. A <ng-template #header> inside the dialog takes precedence.
      * @group Props
      */
-    headerTemplate = input<TemplateRef<void> | undefined>(undefined);
+    headerTemplate = input<TemplateRef<DialogHeaderTemplateContext> | undefined>(undefined);
     /**
      * Content template passed as an input, for a template defined outside the dialog. A <ng-template #content> inside the dialog takes precedence.
      * @group Props
@@ -488,9 +488,10 @@ export class Dialog extends BaseComponent<DialogPassThrough> {
 
     /**
      * Custom header template.
+     * @param context - header template context.
      * @group Templates
      */
-    readonly _headerTemplate = contentChild<TemplateRef<void>>('header', { descendants: false });
+    readonly _headerTemplate = contentChild<TemplateRef<DialogHeaderTemplateContext>>('header', { descendants: false });
 
     /**
      * Custom content template.

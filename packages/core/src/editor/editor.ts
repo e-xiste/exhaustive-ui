@@ -182,7 +182,7 @@ export class Editor extends BaseEditableHolder<EditorPassThrough> {
      * Custom item template.
      * @group Templates
      */
-    readonly headerTemplate = contentChild<Nullable<TemplateRef<any>>>('header', { descendants: false });
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<void>>>('header', { descendants: false });
 
     readonly templates = contentChildren(PrimeTemplate);
 

@@ -4,6 +4,19 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Documentation
+
+- **templates:** the context of every template is checked against what the component passes. Fixed:
+    - Dialog and ConfirmDialog `#header` receive `ariaLabelledBy`, the id to put on your title (`DialogHeaderTemplateContext`, `ConfirmDialogHeaderTemplateContext`).
+    - FileUpload `#file` receives the file with `index`, `count`, `first`, `last`, `even` and `odd` (`FileUploadFileTemplateContext`).
+    - TreeTable `#body` receives the row node as `$implicit` (`TreeTableRowNode`: `node`, `parent`, `level`, `visible`), not the tree node; `#frozenbody`, `#loader` and the paginator templates have their contexts.
+    - The `#paginatordropdownitem` templates of Table, TreeTable and DataView receive the dropdown option (`label` and `value`), not a number, and the DataView paginator state includes `totalRecords`.
+    - Table `#groupheader` and `#groupfooter` have their own context (`TableRowGroupTemplateContext`), without `rowgroup` and `rowspan`.
+    - BlockUI `#content`, Editor `#header`, Tabs `#previcon` and `#nexticon` and TabPanel `#content` receive no context (`void` instead of `any`).
+- **tests:** a new CI test compares, for each template, the keys the component passes with its context type.
+
 ## 22.3.0 (2026-11-22)
 
 Kebab case names for every component, and a template API reference read from the code.

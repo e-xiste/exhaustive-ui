@@ -105,7 +105,7 @@ export class BlockUI extends BaseComponent<BlockUIPassThrough> {
      * template of the content
      * @group Templates
      */
-    readonly contentTemplate = contentChild<TemplateRef<any>>('content', { descendants: false });
+    readonly contentTemplate = contentChild<TemplateRef<void>>('content', { descendants: false });
 
     _blocked = signal<boolean>(false);
 

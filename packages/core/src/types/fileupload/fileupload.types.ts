@@ -317,6 +317,45 @@ export interface FileUploadFileLabelTemplateContext {
 }
 
 /**
+ * Context of the file template, rendered for each file of the list.
+ * @group Interface
+ */
+export interface FileUploadFileTemplateContext {
+    /**
+     * The file.
+     */
+    $implicit: File;
+    /**
+     * All the files of the list.
+     */
+    ngForOf: File[];
+    /**
+     * Index of the file in the list.
+     */
+    index: number;
+    /**
+     * Number of files in the list.
+     */
+    count: number;
+    /**
+     * Whether it is the first file.
+     */
+    first: boolean;
+    /**
+     * Whether it is the last file.
+     */
+    last: boolean;
+    /**
+     * Whether the index is even.
+     */
+    even: boolean;
+    /**
+     * Whether the index is odd.
+     */
+    odd: boolean;
+}
+
+/**
  * Defines valid templates in FileUpload.
  * @group Templates
  */
@@ -324,7 +363,7 @@ export interface FileUploadTemplates {
     /**
      * Custom file template.
      */
-    file(): TemplateRef<void>;
+    file(context: FileUploadFileTemplateContext): TemplateRef<FileUploadFileTemplateContext>;
     /**
      * Custom file label template.
      * @param {Object} context - file label template context.

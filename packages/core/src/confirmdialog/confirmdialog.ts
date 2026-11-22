@@ -25,7 +25,7 @@ import { Bind } from '@exhaustive-ui/core/bind';
 import { Button, ButtonProps } from '@exhaustive-ui/core/button';
 import { Dialog } from '@exhaustive-ui/core/dialog';
 import { Nullable } from '@exhaustive-ui/core/ts-helpers';
-import { ConfirmDialogHeadlessTemplateContext, ConfirmDialogMessageTemplateContext, ConfirmDialogPassThrough } from '@exhaustive-ui/core/types/confirmdialog';
+import { ConfirmDialogHeaderTemplateContext, ConfirmDialogHeadlessTemplateContext, ConfirmDialogMessageTemplateContext, ConfirmDialogPassThrough } from '@exhaustive-ui/core/types/confirmdialog';
 import { Subject, Subscription } from 'rxjs';
 import { ConfirmDialogStyle } from './style/confirmdialogstyle';
 
@@ -311,9 +311,10 @@ export class ConfirmDialog extends BaseComponent<ConfirmDialogPassThrough> {
 
     /**
      * Custom header template.
+     * @param context - header template context.
      * @group Templates
      */
-    readonly headerTemplate = contentChild<Nullable<TemplateRef<void>>>('header', { descendants: false });
+    readonly headerTemplate = contentChild<Nullable<TemplateRef<ConfirmDialogHeaderTemplateContext>>>('header', { descendants: false });
 
     /**
      * Custom footer template.

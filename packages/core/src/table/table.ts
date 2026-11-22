@@ -82,6 +82,7 @@ import {
     TableHeaderCheckboxToggleEvent,
     TableLazyLoadEvent,
     TableLoadingBodyTemplateContext,
+    TableRowGroupTemplateContext,
     TablePageEvent,
     TablePassThrough,
     TableRowCollapseEvent,
@@ -1123,7 +1124,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @param context - groupheader template context.
      * @group Templates
      */
-    readonly _groupHeaderTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('groupheader', { descendants: false });
+    readonly _groupHeaderTemplate = contentChild<TemplateRef<TableRowGroupTemplateContext>>('groupheader', { descendants: false });
     readonly groupHeaderTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()
@@ -1136,7 +1137,7 @@ export class Table<RowData = any> extends BaseComponent<TablePassThrough> implem
      * @param context - groupfooter template context.
      * @group Templates
      */
-    readonly _groupFooterTemplate = contentChild<TemplateRef<TableBodyTemplateContext>>('groupfooter', { descendants: false });
+    readonly _groupFooterTemplate = contentChild<TemplateRef<TableRowGroupTemplateContext>>('groupfooter', { descendants: false });
     readonly groupFooterTemplate = computed<Nullable<TemplateRef<any>>>(
         () =>
             this._templates()

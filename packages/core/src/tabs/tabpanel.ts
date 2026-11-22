@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, forwardRef, inject, InjectionToken, input, model, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, forwardRef, inject, InjectionToken, input, model, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { equals } from '@exhaustive-ui/utils';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -69,7 +69,7 @@ export class TabPanel extends BaseComponent<TabPanelPassThrough> {
      * Template for initializing complex content when lazy is enabled.
      * @group Templates
      */
-    content = contentChild('content', { descendants: false });
+    content = contentChild<TemplateRef<void>>('content', { descendants: false });
 
     id = computed(() => `${this.pcTabs.id()}_tabpanel_${this.value()}`);
 

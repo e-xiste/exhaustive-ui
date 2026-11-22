@@ -549,7 +549,7 @@ export interface TableColumnsTemplateContext {
 }
 
 /**
- * Context of the body, frozenbody, groupheader and groupfooter templates, rendered once per row.
+ * Context of the body and frozenbody templates, rendered once per row.
  * @group Interface
  */
 export interface TableBodyTemplateContext<T = any> {
@@ -585,6 +585,37 @@ export interface TableBodyTemplateContext<T = any> {
      * Number of rows of the group this row starts. Only passed with rowGroupMode set to rowspan.
      */
     rowspan?: number;
+}
+
+/**
+ * Context of the groupheader and groupfooter templates, with rowGroupMode set to subheader.
+ * @group Interface
+ */
+export interface TableRowGroupTemplateContext<T = any> {
+    /**
+     * Data of the first row of the group for a header, of the last row for a footer.
+     */
+    $implicit: T;
+    /**
+     * Index of that row in the whole data set.
+     */
+    rowIndex: number;
+    /**
+     * Columns of the table.
+     */
+    columns: any[] | undefined;
+    /**
+     * Whether that row is being edited, with editMode set to row.
+     */
+    editing: boolean;
+    /**
+     * Whether the group belongs to the frozen part of the table.
+     */
+    frozen: boolean;
+    /**
+     * Whether that row is expanded. Only passed when an expandedrow template is defined.
+     */
+    expanded?: boolean;
 }
 
 /**
@@ -837,12 +868,12 @@ export interface TableTemplates {
      * Custom row group header, with rowGroupMode set to subheader.
      * @param {Object} context - groupheader template context.
      */
-    groupheader(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
+    groupheader(context: TableRowGroupTemplateContext): TemplateRef<TableRowGroupTemplateContext>;
     /**
      * Custom row group footer, with rowGroupMode set to subheader.
      * @param {Object} context - groupfooter template context.
      */
-    groupfooter(context: TableBodyTemplateContext): TemplateRef<TableBodyTemplateContext>;
+    groupfooter(context: TableRowGroupTemplateContext): TemplateRef<TableRowGroupTemplateContext>;
     /**
      * Custom row of the frozen rows.
      * @param {Object} context - frozenbody template context.

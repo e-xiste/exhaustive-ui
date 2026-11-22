@@ -1,5 +1,5 @@
 import { TemplateRef } from '@angular/core';
-import type { PassThrough, PassThroughOption } from '@exhaustive-ui/core/api';
+import type { PassThrough, PassThroughOption, SelectItem } from '@exhaustive-ui/core/api';
 import { InputNumberPassThrough } from '@exhaustive-ui/core/types/inputnumber';
 import { SelectPassThrough } from '@exhaustive-ui/core/types/select';
 
@@ -137,9 +137,9 @@ export interface PaginatorTemplateContext {
  */
 export interface PaginatorDropdownItemTemplateContext {
     /**
-     * Dropdown item instance.
+     * Option of the rows per page dropdown: its label and its value, the number of rows.
      */
-    $implicit: any;
+    $implicit: SelectItem;
 }
 
 /**

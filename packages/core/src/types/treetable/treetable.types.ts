@@ -2,8 +2,8 @@ import { TemplateRef } from '@angular/core';
 import type { FilterMetadata, LazyLoadMeta, PassThrough, PassThroughOption, SortMeta, TreeNode, TreeTableNode } from '@exhaustive-ui/core/api';
 import type { BadgePassThrough } from '@exhaustive-ui/core/types/badge';
 import type { CheckboxPassThrough } from '@exhaustive-ui/core/types/checkbox';
-import type { PaginatorPassThrough } from '@exhaustive-ui/core/types/paginator';
-import type { VirtualScrollerPassThrough } from '@exhaustive-ui/core/types/scroller';
+import type { PaginatorDropdownItemTemplateContext, PaginatorPassThrough, PaginatorTemplateContext } from '@exhaustive-ui/core/types/paginator';
+import type { ScrollerLoaderTemplateContext, VirtualScrollerPassThrough } from '@exhaustive-ui/core/types/scroller';
 
 /**
  * Custom pass-through(pt) options.
@@ -423,16 +423,39 @@ export interface TreeTableColumnsTemplateContext {
 }
 
 /**
+ * A row of the TreeTable: a visible node with its parent and its depth.
+ * @group Interface
+ */
+export interface TreeTableRowNode<T = any> {
+    /**
+     * The node.
+     */
+    node: TreeNode<T>;
+    /**
+     * Parent of the node, null for a root node.
+     */
+    parent: TreeNode<T> | null | undefined;
+    /**
+     * Depth of the node, 0 for a root node.
+     */
+    level: number;
+    /**
+     * Whether the row is shown, that is whether all its ancestors are expanded.
+     */
+    visible: boolean;
+}
+
+/**
  * Custom body template context.
  * @group Interface
  */
 export interface TreeTableBodyTemplateContext {
     /**
-     * Node instance.
+     * Row of the node: pass it to ttRow, p-tree-table-toggler and p-tree-table-checkbox.
      */
-    $implicit: TreeNode;
+    $implicit: TreeTableRowNode;
     /**
-     * Serialized node.
+     * The node.
      */
     node: TreeNode;
     /**
@@ -549,15 +572,15 @@ export interface TreeTableTemplates {
     /**
      * Custom paginator left section template.
      */
-    paginatorleft(): TemplateRef<void>;
+    paginatorleft(context: PaginatorTemplateContext): TemplateRef<PaginatorTemplateContext>;
     /**
      * Custom paginator right section template.
      */
-    paginatorright(): TemplateRef<void>;
+    paginatorright(context: PaginatorTemplateContext): TemplateRef<PaginatorTemplateContext>;
     /**
      * Custom paginator dropdown item template.
      */
-    paginatordropdownitem(): TemplateRef<void>;
+    paginatordropdownitem(context: PaginatorDropdownItemTemplateContext): TemplateRef<PaginatorDropdownItemTemplateContext>;
     /**
      * Custom frozen header template.
      * @param {TreeTableColumnsTemplateContext} context - frozen header context.
@@ -566,7 +589,7 @@ export interface TreeTableTemplates {
     /**
      * Custom frozen body template.
      */
-    frozenbody(): TemplateRef<void>;
+    frozenbody(context: TreeTableBodyTemplateContext): TemplateRef<TreeTableBodyTemplateContext>;
     /**
      * Custom frozen footer template.
      * @param {TreeTableColumnsTemplateContext} context - frozen footer context.
@@ -628,5 +651,5 @@ export interface TreeTableTemplates {
     /**
      * Custom loader template.
      */
-    loader(): TemplateRef<void>;
+    loader(context: ScrollerLoaderTemplateContext): TemplateRef<ScrollerLoaderTemplateContext>;
 }
