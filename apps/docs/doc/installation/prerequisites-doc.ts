@@ -18,7 +18,8 @@ import { RouterModule } from '@angular/router';
             </ul>
             <p>
                 Already using PrimeNG? Do not follow this page. The <a [routerLink]="'/migration/primeng'" class="doc-link">migration guide</a> covers moving an existing PrimeNG v21 workspace, once updated to Angular v22, across with the
-                <i>migrate-from-primeng</i> schematic, which is a separate command from the <i>ng add</i> below.
+                <i>migrate-from-primeng</i> schematic, which is a separate command from the <i>ng add</i> below. On Optimus UI v2, follow the <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI migration guide</a> and its
+                <i>migrate-from-optimus</i> schematic instead.
             </p>
         </app-docsectiontext>
     `

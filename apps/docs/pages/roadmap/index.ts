@@ -82,7 +82,8 @@ export class RoadmapDemo {
                     'ExhaustiveUI 22.0.0, the first stable release of the fork',
                     'Public API frozen for the v22 line: minor releases add features without breaking changes',
                     'Migration guide to v22, from an ExhaustiveUI prerelease, PrimeNG v21 or Optimus UI',
-                    'Nine ng update migrations, each reporting what it leaves for review'
+                    'Nine ng update migrations, each reporting what it leaves for review',
+                    'Migration guides and schematics from PrimeNG v21 and from Optimus UI v2 (22.0.1)'
                 ],
                 link: 'https://github.com/e-xiste/exhaustive-ui/releases/tag/v22.0.0'
             },

@@ -4,7 +4,9 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.0.1 (2026-11-22)
+
+New `migrate-from-optimus` schematic, and migration guides from PrimeNG and from Optimus UI.
 
 ### Features
 
@@ -21,7 +23,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 - New [PrimeNG migration guide](https://exhaustive-ui.com/migration/primeng): the steps from PrimeNG v21 (including the `--force` the Angular 22 update needs while `primeng` is installed), everything `migrate-from-primeng` changes, the manual checks, and what changes in v22. It replaces the link to Optimus UI's archived guide, on the home page, in the menu and in the installation, FAQ and update pages, and is the page the schematic's report points to.
 - New [Optimus UI migration guide](https://exhaustive-ui.com/migration/optimus): the steps with `migrate-from-optimus`, what it changes (packages, imports, configuration API, CSS layer), then the v22 migrations.
 - Both guides are in the LLM docs (`get_guide("primeng")`, `get_guide("optimus")`) and the agent skill; the `migrate_from_primeng` MCP prompt follows them.
-- Home page: Angular 22, Full Signals, Modern Angular and Tailwind CSS 4 features. The contribution guide and `CONTRIBUTING.md` welcome contributions written with AI coding agents.
+- Home page: Angular 22, Full Signals, Modern Angular and Tailwind CSS 4 features, and a "Migrate from Optimus UI" link next to "Migrate from PrimeNG". The installation and FAQ pages cover Optimus UI. The contribution guide and `CONTRIBUTING.md` welcome contributions written with AI coding agents.
 
 ## 22.0.0 (2026-11-22)
 

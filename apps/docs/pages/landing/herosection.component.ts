@@ -58,13 +58,17 @@ import { OverviewApp } from './samples/overviewapp.component';
                 <p class="text-center mt-0 mb-8 text-surface-500 dark:text-surface-400 font-medium text-xl leading-relaxed lg:px-56">
                     80+ accessible, customizable Angular components under the MIT license. A community-maintained continuation of PrimeNG v21, built to stay open.
                 </p>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center justify-center gap-4">
                     <a [routerLink]="'installation'" class="linkbox linkbox-primary">
                         <span>Get Started</span>
                         <i class="pi pi-arrow-right ms-4"></i>
                     </a>
                     <a [routerLink]="'/migration/primeng'" class="linkbox">
                         <span>Migrate from PrimeNG</span>
+                        <i class="pi pi-arrow-right-arrow-left ms-4"></i>
+                    </a>
+                    <a [routerLink]="'/migration/optimus'" class="linkbox">
+                        <span>Migrate from Optimus UI</span>
                         <i class="pi pi-arrow-right-arrow-left ms-4"></i>
                     </a>
                 </div>

@@ -24,6 +24,12 @@ import { RouterModule } from '@angular/router';
             <h3>I am on PrimeNG v20 or older. Can I migrate directly?</h3>
             <p>No. Upgrade to PrimeNG v21 first, using PrimeNG's own migration guides, then update Angular to v22 and run the schematic. The schematic checks the version and refuses rather than producing a half-migrated workspace.</p>
 
+            <h3>I use Optimus UI. Can I switch?</h3>
+            <p>
+                Yes. ExhaustiveUI is a fork of Optimus UI, with the same components. On Optimus UI v2, run <i>ng generate &#64;exhaustive-ui/core:migrate-from-optimus</i>: packages swapped, imports and configuration API renamed, CSS layer renamed,
+                dependencies installed. The <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI migration guide</a> covers the steps and the v22 migrations that follow.
+            </p>
+
             <h3>What happens to my PrimeNG license?</h3>
             <p>
                 Nothing — it is unrelated. A PrimeNG v22 commercial license covers PrimeNG. ExhaustiveUI needs no license at all. If you hold a PrimeTek subscription for their templates or theme designer, those remain their products and do not carry

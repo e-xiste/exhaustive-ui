@@ -21,9 +21,10 @@ import { RouterModule } from '@angular/router';
             <p>Pass the preset up front to skip the prompt, or skip the install step if you want to run it yourself:</p>
             <app-code [code]="flagsCode" [hideToggleCode]="true"></app-code>
             <p>
-                If the schematic cannot find a providers array to update it prints the three manual steps instead of guessing, so nothing in your workspace is rewritten unexpectedly. If it detects an existing <i>primeng</i> dependency it changes
-                nothing and fails with an error rather than reporting success, and points you at the <a [routerLink]="'/migration/primeng'" class="doc-link">migration guide</a>, which covers the <i>migrate-from-primeng</i> schematic. It does not run
-                that schematic for you. The Angular CLI installs <i>&#64;exhaustive-ui/core</i> before the schematic runs, so the dependency stays in your <i>package.json</i> — the migration schematic needs it there.
+                If the schematic cannot find a providers array to update it prints the three manual steps instead of guessing, so nothing in your workspace is rewritten unexpectedly. If it detects an existing <i>primeng</i> or
+                <i>&#64;openng/optimus-ui</i> dependency it changes nothing and fails with an error rather than reporting success, and points you at the <i>migrate-from-primeng</i> or <i>migrate-from-optimus</i> schematic, described in the
+                <a [routerLink]="'/migration/primeng'" class="doc-link">PrimeNG</a> and <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI</a> migration guides. It does not run that schematic for you. The Angular CLI installs
+                <i>&#64;exhaustive-ui/core</i> before the schematic runs, so the dependency stays in your <i>package.json</i> — the migration schematic needs it there.
             </p>
         </app-docsectiontext>
     `
