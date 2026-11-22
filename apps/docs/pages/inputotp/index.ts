@@ -4,6 +4,7 @@ import { ImportDoc } from '@/doc/inputotp/import-doc';
 import { IntegerOnlyDoc } from '@/doc/inputotp/integeronly-doc';
 import { MaskDoc } from '@/doc/inputotp/mask-doc';
 import { ReactiveFormsDoc } from '@/doc/inputotp/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/inputotp/signalforms-doc';
 import { SampleDoc } from '@/doc/inputotp/sample-doc';
 import { SizesDoc } from '@/doc/inputotp/sizes-doc';
 import { TemplateDoc } from '@/doc/inputotp/template-doc';
@@ -58,7 +59,8 @@ export class InputOtpDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

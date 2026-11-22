@@ -1,0 +1,69 @@
+import { Component, inject, signal } from '@angular/core';
+import { form, FormField, minLength, submit } from '@angular/forms/signals';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { MultiSelectModule } from '@exhaustive-ui/core/multiselect';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { AppCode } from '@/components/doc/app.code';
+import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
+
+interface City {
+    name: string;
+    code: string;
+}
+
+@Component({
+    selector: 'signalforms-doc',
+    standalone: true,
+    imports: [FormField, MultiSelectModule, ButtonModule, ToastModule, MessageModule, AppCode, AppDocSectionText],
+    template: `
+        <app-docsectiontext>
+            <p>
+                MultiSelect can also be used with <a href="https://angular.dev/guide/forms/signals/overview" target="_blank" rel="noopener noreferrer" class="doc-link">Angular Signal Forms</a>, the <i>&#64;angular/forms/signals</i> API of Angular 21
+                and newer. The form model is a signal, <i>form()</i> declares its validators and the <i>[formField]</i> directive binds the component to a field. The field also sets the <i>invalid</i> state of the component, so the component is
+                styled as invalid before any interaction, while the messages below appear once the field is touched or the form is submitted.
+            </p>
+        </app-docsectiontext>
+        <p-toast />
+        <div class="card flex justify-center">
+            <form novalidate (submit)="onSubmit($event)" class="flex justify-center flex-col gap-4 w-full md:w-80">
+                <div class="flex flex-col gap-1">
+                    <p-multiselect [options]="cities" [formField]="exampleForm.city" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" [fluid]="true" />
+                    @let city = exampleForm.city();
+                    @if (city.invalid() && city.touched()) {
+                        <p-message severity="error" size="small" variant="simple">City is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+        <app-code></app-code>
+    `
+})
+export class SignalFormsDoc {
+    messageService = inject(MessageService);
+
+    cities: City[] = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' },
+        { name: 'London', code: 'LDN' },
+        { name: 'Istanbul', code: 'IST' },
+        { name: 'Paris', code: 'PRS' }
+    ];
+
+    model = signal<{ city: City[] }>({ city: [] });
+
+    exampleForm = form(this.model, (f) => {
+        // required() accepts an empty array, minLength() asks for one city at least
+        minLength(f.city, 1);
+    });
+
+    onSubmit(event: Event) {
+        event.preventDefault();
+        submit(this.exampleForm, async () => {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            this.exampleForm().reset({ city: [] });
+        });
+    }
+}

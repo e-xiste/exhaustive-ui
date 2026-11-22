@@ -285,7 +285,26 @@ function extractClassProperties(content) {
     // Match property declarations at class level (4 spaces indentation)
     const lines = propertiesSection.split('\n');
 
-    for (const line of lines) {
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        const line = lines[lineIndex];
+
+        // Signal Forms: name = form(this.model, (f) => { ... }); spans several lines, keep it whole
+        const formMatch = line.match(/^    ([\w]+)\s*=\s*(form\(.*)$/);
+        if (formMatch) {
+            const exprLines = [formMatch[2]];
+            const depth = (text) => (text.match(/[({[]/g) || []).length - (text.match(/[)}\]]/g) || []).length;
+            let balance = depth(formMatch[2]);
+            while (balance > 0 && lineIndex + 1 < lines.length) {
+                lineIndex++;
+                exprLines.push(lines[lineIndex]);
+                balance += depth(lines[lineIndex]);
+            }
+            if (!seen.has(formMatch[1])) {
+                seen.add(formMatch[1]);
+                properties.push({ name: formMatch[1], optional: '', type: '__signal__', defaultValue: exprLines.join('\n').trim().replace(/;$/, '') });
+            }
+            continue;
+        }
         // Match lines that start with exactly 4 spaces and a word character (property declaration)
         // Pattern 1: With type annotation - name: Type = value;
         let propMatch = line.match(/^    ([\w]+)([!?]?):\s*([A-Za-z][\w<>\[\]|, ]*(?:\s*\|\s*[\w\[\]]+)*)(?:\s*=\s*(.+))?;?\s*$/);
@@ -1030,6 +1049,11 @@ function detectExhaustiveModules(template) {
         modules.add('ReactiveFormsModule');
     }
 
+    // Check for formField (Angular Signal Forms, needs FormField)
+    if (/\[formField\]/.test(template)) {
+        modules.add('FormField');
+    }
+
     // Check for *ngFor, *ngIf (needs CommonModule)
     if (/\*ngFor|\*ngIf|ngClass|ngStyle|\[ngClass\]|\[ngStyle\]/.test(template)) {
         modules.add('CommonModule');
@@ -1079,8 +1103,20 @@ function generateTypescript(componentName, template, services = [], fileContent 
         importStatements += `import { ReactiveFormsModule } from '@angular/forms';\n`;
     }
 
+    // Add the Angular Signal Forms API used by the demo (form(), validators, submit()) if needed
+    if (exhaustiveModules.includes('FormField')) {
+        const signalFormsImport = fileContent.match(/import\s*\{([^}]+)\}\s*from\s*['"]@angular\/forms\/signals['"]/);
+        const signalFormsNames = signalFormsImport
+            ? signalFormsImport[1]
+                  .split(',')
+                  .map((n) => n.trim())
+                  .filter(Boolean)
+            : ['FormField'];
+        importStatements += `import { ${signalFormsNames.join(', ')} } from '@angular/forms/signals';\n`;
+    }
+
     // Add ExhaustiveUI modules (will be modified below to include named exports)
-    const exhaustiveImports = exhaustiveModules.filter((m) => !['CommonModule', 'FormsModule', 'ReactiveFormsModule'].includes(m));
+    const exhaustiveImports = exhaustiveModules.filter((m) => !['CommonModule', 'FormsModule', 'ReactiveFormsModule', 'FormField'].includes(m));
 
     // Detect ExhaustiveUI named exports early so we can combine them with module imports
     const exhaustiveNamedExportsEarly = detectExhaustiveNamedExports(fileContent);

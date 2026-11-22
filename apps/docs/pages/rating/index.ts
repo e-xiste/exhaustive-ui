@@ -4,6 +4,7 @@ import { DisabledDoc } from '@/doc/rating/disabled-doc';
 import { ImportDoc } from '@/doc/rating/import-doc';
 import { NumberOfStarsDoc } from '@/doc/rating/numberofstars-doc';
 import { ReactiveFormsDoc } from '@/doc/rating/reactiveforms-doc';
+import { SignalFormsDoc } from '@/doc/rating/signalforms-doc';
 import { ReadOnlyDoc } from '@/doc/rating/readonly-doc';
 import { TemplateDoc } from '@/doc/rating/template-doc';
 import { TemplateDrivenFormsDoc } from '@/doc/rating/templatedrivenforms-doc';
@@ -55,7 +56,8 @@ export class RatingDemo {
             label: 'Forms',
             children: [
                 { id: 'templatedriven', label: 'Template Driven', component: TemplateDrivenFormsDoc },
-                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc }
+                { id: 'reactive', label: 'Reactive Forms', component: ReactiveFormsDoc },
+                { id: 'signalforms', label: 'Signal Forms', component: SignalFormsDoc }
             ]
         },
         {

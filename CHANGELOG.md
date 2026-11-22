@@ -142,6 +142,7 @@ The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that 
 
 - `/templates`, the removed Templates page, now redirects permanently to the home page.
 - Import sections show standalone imports (#353).
+- The 23 form component pages have a Signal Forms example next to the Template Driven and Reactive Forms ones: the same form written with `form()`, the validators of `@angular/forms/signals` and `[formField]`, with its messages shown once the field is touched or the form submitted. The code shown and opened in StackBlitz imports the Signal Forms API.
 
 ### Tests
 
