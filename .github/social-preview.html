@@ -1,0 +1,60 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1280px;height:640px;overflow:hidden}
+body{font-family:Inter,sans-serif;background:#f8fafc;color:#0a0a0a;position:relative}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#e5e7eb 1px,transparent 1px),linear-gradient(90deg,#e5e7eb 1px,transparent 1px);background-size:40px 40px;opacity:.55;mask-image:radial-gradient(ellipse at 30% 40%,#000 20%,transparent 75%)}
+.wrap{position:absolute;inset:64px 64px 72px 72px;display:flex;gap:40px}
+.left{flex:1;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:16px}
+.brand svg{width:64px;height:64px}
+.brand span{font-size:34px;font-weight:700;letter-spacing:-.5px}
+.brand span b{font-weight:400}
+h1{margin-top:44px;font-size:56px;line-height:1.05;font-weight:800;letter-spacing:-1.8px}
+h1 em{font-style:normal;color:#dd0031}
+p.sub{margin-top:22px;font-size:23px;line-height:1.4;color:#475569;font-weight:500;max-width:700px}
+.chips{margin-top:auto;display:flex;flex-wrap:nowrap;gap:8px}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid #e2e8f0;font-size:17px;font-weight:600;color:#0f172a;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.chip.dark{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
+.right{width:380px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;box-shadow:0 12px 32px -12px rgba(15,23,42,.18)}
+.label{font-size:14px;color:#64748b;font-weight:600;margin-bottom:8px}
+.input{height:46px;border:1px solid #cbd5e1;border-radius:10px;display:flex;align-items:center;padding:0 14px;font-size:17px;color:#0f172a;justify-content:space-between}
+.row{display:flex;gap:12px;align-items:center;margin-top:16px}
+.btn{height:46px;padding:0 20px;border-radius:10px;background:#0a0a0a;color:#fff;font-weight:600;font-size:17px;display:flex;align-items:center}
+.btn.o{background:#fff;color:#0a0a0a;border:1px solid #cbd5e1}
+.toggle{width:52px;height:30px;border-radius:999px;background:#0a0a0a;position:relative;margin-left:auto}
+.toggle:after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:4px;right:4px}
+.code{font-family:'JetBrains Mono',monospace;font-size:17px;background:#0a0a0a;color:#e2e8f0;border-radius:14px;padding:18px 20px}
+.code .s{color:#4ade80}.code .k{color:#f472b6}.code .m{color:#94a3b8}
+.url{position:absolute;right:72px;bottom:30px;font-size:17px;font-weight:600;color:#64748b}
+</style></head><body>
+<div class="grid"></div>
+<div class="wrap">
+  <div class="left">
+    <div class="brand">
+      <svg viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="14" fill="#010101"/><rect x="16" y="15" width="32" height="7" rx="3.5" fill="#fff"/><rect x="16" y="28.5" width="24" height="7" rx="3.5" fill="#fff"/><rect x="16" y="42" width="32" height="7" rx="3.5" fill="#fff"/></svg>
+      <span>Exhaustive<b>UI</b></span>
+    </div>
+    <h1>The open source UI suite<br>for <em>Angular</em></h1>
+    <p class="sub">80+ accessible components, MIT licensed. The continuation<br>of PrimeNG &amp; Optimus UI, rebuilt on Signals.</p>
+    <div class="chips">
+      <span class="chip dark">Angular 22</span>
+      <span class="chip">Full Signals</span>
+            <span class="chip">Tailwind CSS 4</span>
+      <span class="chip">MIT forever</span>
+    </div>
+  </div>
+  <div class="right">
+    <div class="card">
+      <div class="label">Framework</div>
+      <div class="input"><span>Angular 22</span><span style="color:#94a3b8">▾</span></div>
+      <div class="row"><div class="btn">Save</div><div class="btn o">Cancel</div><div class="toggle"></div></div>
+    </div>
+    <div class="code"><span class="m">$</span> ng add <span class="s">@exhaustive-ui/core</span><br><span class="m">$</span> ng g <span class="k">migrate-from-primeng</span></div>
+  </div>
+</div>
+<div class="url">exhaustive-ui.com · github.com/e-xiste/exhaustive-ui</div>
+</body></html>
