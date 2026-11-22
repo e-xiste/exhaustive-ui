@@ -120,6 +120,7 @@ The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that 
   - `scrollToIndex` reaches its index when called before the spacer or the viewport is laid out (#22);
   - items not loaded yet no longer log NG0955; a destroyed scroller no longer throws NG0205.
 - Select, MultiSelect, Listbox: PageUp/PageDown move the focus by a page (#721, and the keys were swapped in Listbox); a selected option with a `null` value fills the Select (#156); MultiSelect option checkboxes leave the focus order (#382) and a group label click keeps the list scroll (#842); a Listbox flex list stays inside the listbox with a header (#72).
+- CascadeSelect: `value` accepts any option value, not only strings, so a whole option object can be bound with strict templates and Signal Forms.
 - CascadeSelect: a sublist opens on the left when it would leave the viewport (#328).
 - AutoComplete: hovering an option no longer scrolls the list (#320); keys from virtual keyboards that send no code work (#369, #454).
 - Angular Signal Forms: `[formField]` compiles with strict templates on every form component (#155); Slider marks the field touched on blur (#175).

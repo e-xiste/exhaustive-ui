@@ -499,7 +499,7 @@ export class CascadeSelect extends BaseEditableHolder<CascadeSelectPassThrough> 
      * Selected value of the component.
      * @group Props
      */
-    value = model<string | undefined | null>();
+    value = model<any>();
     /**
      * A property to uniquely identify an option.
      * @group Props
