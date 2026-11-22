@@ -87,6 +87,10 @@ A change that is visible to users updates, in the same PR:
 5. Follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages (`fix:`, `feat:`, `chore:`, ...) — this is enforced via commitlint.
 6. Open a PR describing the change and, if it fixes a bug, the steps to reproduce it.
 
+### AI-assisted contributions
+
+Contributions written with AI coding agents are welcome, on the same terms as any other: the pull request is yours. Understand the change and be ready to answer questions about it in review, keep it scoped to one problem, and add tests that fail without the fix. Agents can use the `@exhaustive-ui/mcp` server, the `exhaustive-ui` agent skill (`npx skills add https://exhaustive-ui.com`) and the LLM docs.
+
 ## Releases
 
 Releases are cut by the maintainers from `main` with the **Release** GitHub workflow: every `@exhaustive-ui/*` package is published together under one version, through npm trusted publishing (no token, provenance attestations), and gets a GitHub release with its notes. Versions follow Angular's major: `22.x.y` targets Angular 22. Contributors never need npm credentials.

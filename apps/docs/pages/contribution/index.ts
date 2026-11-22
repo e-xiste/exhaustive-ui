@@ -3,6 +3,7 @@ import { BenefitsDoc } from '@/doc/contribution/benefits-doc';
 import { IntroductionDoc } from '@/doc/contribution/introduction-doc';
 import { HelpNeededDoc } from '@/doc/contribution/helpneeded-doc';
 import { PathwayDoc } from '@/doc/contribution/pathway-doc';
+import { AiContributionsDoc } from '@/doc/contribution/ai-doc';
 import { AppDoc } from '@/components/doc/app.doc';
 
 @Component({
@@ -21,6 +22,11 @@ export class ContributionDemo {
             id: 'helpneeded',
             label: 'Help Needed',
             component: HelpNeededDoc
+        },
+        {
+            id: 'ai',
+            label: 'AI Contributions',
+            component: AiContributionsDoc
         },
         {
             id: 'pathway',
