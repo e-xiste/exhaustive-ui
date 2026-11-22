@@ -1100,6 +1100,10 @@ describe('SplitButton', () => {
             expect(dropdownButton.getAttribute('aria-expanded')).toBe('true');
         });
 
+        it('should name the dropdown button from the locale when no aria label is given', () => {
+            expect(dropdownButton.getAttribute('aria-label')).toBe('More options');
+        });
+
         it('should handle expandAriaLabel', async () => {
             component.expandAriaLabel = 'Show additional actions';
             fixture.changeDetectorRef.markForCheck();

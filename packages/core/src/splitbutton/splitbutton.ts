@@ -20,7 +20,8 @@ import {
 } from '@angular/core';
 import { MotionOptions } from '@exhaustive-ui/motion';
 import { uuid } from '@exhaustive-ui/utils';
-import { MenuItem, PrimeTemplate, SharedModule, TooltipOptions } from '@exhaustive-ui/core/api';
+import { MenuItem, PrimeTemplate, SharedModule, TooltipOptions, TranslationKeys } from '@exhaustive-ui/core/api';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AutoFocus } from '@exhaustive-ui/core/autofocus';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind } from '@exhaustive-ui/core/bind';
@@ -108,7 +109,7 @@ type SplitButtonIconPosition = 'left' | 'right';
             (click)="onDropdownButtonClick($event)"
             (keydown)="onDropdownButtonKeydown($event)"
             [disabled]="$menuButtonDisabled()"
-            [attr.aria-label]="menuButtonProps()?.['ariaLabel'] || expandAriaLabel()"
+            [attr.aria-label]="menuButtonProps()?.['ariaLabel'] || expandAriaLabel() || moreOptionsLabel()"
             [attr.aria-haspopup]="menuButtonProps()?.['ariaHasPopup'] || true"
             [attr.aria-expanded]="menuButtonProps()?.['ariaExpanded'] || isExpanded()"
             [attr.aria-controls]="menuButtonProps()?.['ariaControls'] || ariaId"
@@ -245,6 +246,13 @@ export class SplitButton extends BaseComponent<SplitButtonPassThrough> {
      * @group Props
      */
     readonly expandAriaLabel = input<string | undefined>();
+
+    translation = toSignal(this.config.translationObserver, { initialValue: this.config.translation });
+
+    /**
+     * Fallback name of the dropdown button when neither menuButtonProps.ariaLabel nor expandAriaLabel is set.
+     */
+    moreOptionsLabel = computed<string | undefined>(() => this.translation()?.[TranslationKeys.ARIA]?.moreOptions);
     /**
      * The motion options.
      * @group Props
