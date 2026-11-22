@@ -1016,6 +1016,24 @@ describe('Dock', () => {
             expect(dockInstance.unbindMatchMediaListener).toHaveBeenCalled();
         });
 
+        it('should remove its media query listener on destroy, without running it', () => {
+            const unbound = Object.assign(new EventTarget(), { matches: false, media: '' }) as unknown as MediaQueryList;
+            const removeSpy = vi.spyOn(unbound, 'removeEventListener');
+            dockInstance.unbindMatchMediaListener();
+            vi.spyOn(window, 'matchMedia').mockReturnValue(unbound);
+
+            dockInstance.bindMatchMediaListener();
+            const listener = dockInstance.matchMediaListener();
+            dockInstance.mobileActive.set(true);
+            dockInstance.unbindMatchMediaListener();
+
+            expect(removeSpy).toHaveBeenCalledWith('change', listener);
+            expect(dockInstance.mobileActive()).toBe(true);
+            expect(dockInstance.matchMediaListener()).toBeNull();
+
+            vi.mocked(window.matchMedia).mockRestore();
+        });
+
         it('should not use window.matchMedia on the server platform', async () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({

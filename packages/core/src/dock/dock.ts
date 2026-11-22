@@ -389,19 +389,21 @@ export class Dock extends BaseComponent<DockPassThrough> {
                 this.query.set(query);
                 this.queryMatches.set(query.matches);
 
-                this.matchMediaListener.set(() => {
+                const matchMediaListener = () => {
                     this.queryMatches.set(query.matches);
                     this.mobileActive.set(false);
-                });
+                };
+                this.matchMediaListener.set(matchMediaListener);
 
-                this.renderer.listen(this.query(), 'change', this.matchMediaListener().bind(this));
+                query.addEventListener('change', matchMediaListener);
             }
         }
     }
 
     unbindMatchMediaListener() {
-        if (this.matchMediaListener()) {
-            this.matchMediaListener()();
+        const matchMediaListener = this.matchMediaListener();
+        if (matchMediaListener) {
+            this.query()?.removeEventListener('change', matchMediaListener);
             this.matchMediaListener.set(null);
             this.query.set(null);
         }
