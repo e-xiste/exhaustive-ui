@@ -221,7 +221,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                 <ng-template #headless>
                     <div class="flex flex-col h-screen overflow-auto">
                         <div class="">
-                            <div class="flex align-items-center gap-3 p-6">
+                            <div class="flex items-center gap-3 p-6">
                                 <p-avatar image="/demo/landing/apps/avatar11.jpg" size="large" class="rounded-xl overflow-hidden" />
                                 <div class="flex-1">
                                     <div class="leading-6 text-color font-medium">Brook Simmons</div>

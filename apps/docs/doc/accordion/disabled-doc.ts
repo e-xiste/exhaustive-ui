@@ -11,7 +11,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>Enabling <i>disabled</i> property of an AccordionPanel prevents user interaction.</p>
         </app-docsectiontext>
-        <div class="card flex justify-content-center">
+        <div class="card flex justify-center">
             <p-accordion [value]="['0']" [multiple]="true">
                 <p-accordion-panel value="0">
                     <p-accordion-header>Header I</p-accordion-header>

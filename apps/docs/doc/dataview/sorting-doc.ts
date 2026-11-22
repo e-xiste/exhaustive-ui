@@ -71,6 +71,8 @@ import { TagModule } from '@exhaustive-ui/core/tag';
 export class SortingDoc {
     sortOptions!: SelectItem[];
 
+    sortKey!: string;
+
     sortOrder!: number;
 
     sortField!: string;

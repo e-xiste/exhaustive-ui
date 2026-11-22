@@ -26,8 +26,8 @@ interface Users {
             <ul class="m-0 list-none border border-surface rounded-sm p-4 flex flex-col gap-2 w-full sm:w-96">
                 <li
                     *ngFor="let user of users"
-                    class="p-2 hover:bg-emphasis rounded-sm border border-transparent transition-all duration-200 flex items-center justify-content-between"
-                    [ngClass]="{ 'border-primary': selectedId === user.id }"
+                    class="p-2 hover:bg-emphasis rounded-sm border border-transparent transition-all duration-200 flex items-center justify-between"
+                    [ngClass]="{ 'border-primary': selectedUser?.id === user.id }"
                     (contextmenu)="onContextMenu($event, user)"
                 >
                     <div class="flex flex-1 items-center gap-2">

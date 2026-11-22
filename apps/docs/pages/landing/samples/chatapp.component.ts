@@ -127,7 +127,7 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                         <p [ngClass]="message.type === 'received' ? 'text-color leading-6 mb-0' : 'text-primary-contrast leading-6 mb-0'">
                             {{ message.message }}
                         </p>
-                        <div *ngIf="message.attachment" :class="message.type === 'received' ? 'bg-surface-200 dark:bg-surface-700' : 'bg-primary-emphasis'" class="mt-2 w-full rounded-lg mb-0.5 hover:opacity-75 transition-all">
+                        <div *ngIf="message.attachment" [ngClass]="message.type === 'received' ? 'bg-surface-200 dark:bg-surface-700' : 'bg-primary-emphasis'" class="mt-2 w-full rounded-lg mb-0.5 hover:opacity-75 transition-all">
                             <img class="w-full h-auto block cursor-pointer" [src]="message.attachment" alt="Message Image" />
                         </div>
                     </div>

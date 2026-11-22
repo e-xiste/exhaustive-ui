@@ -42,7 +42,7 @@ import { ChipModule } from '@exhaustive-ui/core/chip';
                 </ng-template>
                 <ng-template let-value #selecteditem>
                     @if (value.price) {
-                        <div class="flex align-items-center gap-2">
+                        <div class="flex items-center gap-2">
                             <span class="font-semibold">{{ value.name }}</span>
                             <span class="text-primary text-sm font-bold">\${{ value.price }}</span>
                         </div>

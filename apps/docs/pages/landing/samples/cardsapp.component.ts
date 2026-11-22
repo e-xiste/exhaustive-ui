@@ -231,7 +231,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <div *ngIf="files.length > 0" class="px-4 py-0">
                                     <h5 class="m-0 mb-2">Pending</h5>
                                     <div class="flex flex-wrap gap-2 grow overflow-auto max-h-[210px]">
-                                        <div *ngFor="let file of files; let i = index" class="card max-w-[120px] p-2! m-0 flex flex-col border surface-border items-center gap-2 text-center">
+                                        <div *ngFor="let file of files; let i = index" class="card max-w-[120px] p-2! m-0 flex flex-col border border-surface items-center gap-2 text-center">
                                             <div>
                                                 <img role="presentation" [alt]="file.name" [src]="file.objectURL" width="100" height="50" />
                                             </div>
@@ -248,9 +248,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <div *ngIf="uploadedFiles.length > 0" class="px-4 py-0">
                                     <h5 class="m-0 mb-2">Completed</h5>
                                     <div class="flex flex-wrap gap-2">
-                                        <div *ngFor="let file of uploadedFiles" :key="file.name + file.type + file.size" class="card max-w-[120px] p-2! m-0 flex flex-col border surface-border items-center gap-2 text-center">
+                                        <div *ngFor="let file of uploadedFiles" class="card max-w-[120px] p-2! m-0 flex flex-col border border-surface items-center gap-2 text-center">
                                             <div>
-                                                <img role="presentation" [alt]="file.name" :src="file.objectURL" width="100" height="50" />
+                                                <img role="presentation" [alt]="file.name" [src]="file.objectURL" width="100" height="50" />
                                             </div>
                                             <span class="font-semibold max-w-[100px] text-ellipsis whitespace-nowrap overflow-hidden">{{ file.name }}</span>
                                             <span class="text-sm text-muted-color">{{ formatSize(file.size) }}</span>
@@ -275,7 +275,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             [for]="permission.key"
                             class="cursor-pointer flex-1 flex items-center gap-1 p-2 rounded-border border border-surface hover:bg-emphasis transition-all select-none"
                         >
-                            <i class="text-color" :class="permission.icon"></i>
+                            <i class="text-color" [ngClass]="permission.icon"></i>
                             <div class="flex-1 text-sm leading-5 text-color">{{ permission.name }}</div>
                             <p-radio-button [(ngModel)]="selectedPermission" [inputId]="permission.key" variant="filled" name="dynamic" [value]="permission.name" />
                         </label>
@@ -433,7 +433,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div class="mt-4">
                         <div class="text-color font-medium leading-6 mb-6">Popular specs</div>
                         <div class="flex items-center gap-4 flex-wrap">
-                            <div *ngFor="let data of priceRangePopularSpecs" class="flex align-items-center">
+                            <div *ngFor="let data of priceRangePopularSpecs" class="flex items-center">
                                 <p-checkbox [(ngModel)]="priceRangePopularSpecsChecked" [inputId]="data.value" [name]="data.value" [value]="data.value" />
                                 <label [for]="data.value" class="ml-2">{{ data.value }}</label>
                             </div>

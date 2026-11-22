@@ -40,43 +40,43 @@ import { Tag } from '@exhaustive-ui/core/tag';
                                     <p-table-header-checkbox></p-table-header-checkbox>
                                 </th>
                                 <th pSortableColumn="name">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Name
                                         <p-sort-icon field="name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="country.name">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Country
                                         <p-sort-icon field="country.name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="representative.name">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Agent
                                         <p-sort-icon field="representative.name"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="date">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Date
                                         <p-sort-icon field="date"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="balance">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Balance
                                         <p-sort-icon field="balance"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="status">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Status
                                         <p-sort-icon field="status"></p-sort-icon>
                                     </div>
                                 </th>
                                 <th pSortableColumn="activity">
-                                    <div class="flex justify-content-between align-items-center gap-2">
+                                    <div class="flex justify-between items-center gap-2">
                                         Activity
                                         <p-sort-icon field="activity"></p-sort-icon>
                                     </div>

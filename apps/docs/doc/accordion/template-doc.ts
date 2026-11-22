@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>Accordion is customized with <i>toggleicon</i> template.</p>
         </app-docsectiontext>
-        <div class="card flex justify-content-center">
+        <div class="card flex justify-center">
             <p-accordion value="0">
                 <p-accordion-panel value="0">
                     <p-accordion-header>

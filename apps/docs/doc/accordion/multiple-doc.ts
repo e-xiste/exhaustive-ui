@@ -11,7 +11,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>Only one tab at a time can be active by default, enabling <i>multiple</i> property changes this behavior to allow multiple tabs. In this case <i>value</i> needs to be an array.</p>
         </app-docsectiontext>
-        <div class="card flex justify-content-center">
+        <div class="card flex justify-center">
             <p-accordion [value]="['0']" [multiple]="true">
                 <p-accordion-panel value="0">
                     <p-accordion-header>Header I</p-accordion-header>
