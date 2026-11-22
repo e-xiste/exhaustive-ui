@@ -354,9 +354,18 @@ describe('Avatar', () => {
             expect(imageElement.nativeElement.src).toBe(TEST_IMAGE_2);
         });
 
-        it('should set aria-label on image', () => {
+        it('should use ariaLabel as the alt text of the image', () => {
             const imageElement = fixture.debugElement.query(By.css('img'));
-            expect(imageElement.nativeElement.getAttribute('aria-label')).toBe('User Avatar');
+            expect(imageElement.nativeElement.getAttribute('alt')).toBe('User Avatar');
+            expect(imageElement.nativeElement.hasAttribute('aria-label')).toBe(false);
+        });
+
+        it('should mark the image decorative with an empty alt when ariaLabel is unset', async () => {
+            const direct = TestBed.createComponent(Avatar);
+            direct.componentRef.setInput('image', TEST_IMAGE_2);
+            direct.detectChanges();
+            await direct.whenStable();
+            expect(direct.nativeElement.querySelector('img').getAttribute('alt')).toBe('');
         });
 
         it('should handle image error event', async () => {

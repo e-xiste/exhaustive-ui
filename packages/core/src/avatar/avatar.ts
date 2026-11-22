@@ -22,7 +22,7 @@ import { AvatarStyle } from './style/avatarstyle';
                 <span [pBind]="ptm('icon')" [class]="icon()" [ngClass]="cx('icon')" [attr.data-p]="dataP()"></span>
             } @else {
                 @if (image()) {
-                    <img [pBind]="ptm('image')" [src]="image()" (error)="imageError($event)" [attr.aria-label]="ariaLabel()" [attr.data-p]="dataP()" />
+                    <img [pBind]="ptm('image')" [src]="image()" (error)="imageError($event)" [attr.alt]="ariaLabel() ?? ''" [attr.data-p]="dataP()" />
                 }
             }
         }
