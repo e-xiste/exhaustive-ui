@@ -65,13 +65,6 @@ export class ButtonLabel extends BaseComponent {
     /**
      * Used to pass attributes to DOM elements inside the pButtonLabel.
      * @defaultValue undefined
-     * @deprecated use pButtonLabelPT instead.
-     * @group Props
-     */
-    ptButtonLabel = input<any>();
-    /**
-     * Used to pass attributes to DOM elements inside the pButtonLabel.
-     * @defaultValue undefined
      * @group Props
      */
     pButtonLabelPT = input<any>();
@@ -89,7 +82,7 @@ export class ButtonLabel extends BaseComponent {
     constructor() {
         super();
         effect(() => {
-            const pt = this.ptButtonLabel() || this.pButtonLabelPT();
+            const pt = this.pButtonLabelPT();
             pt && this.directivePT.set(pt);
         });
 
@@ -115,13 +108,6 @@ export class ButtonIcon extends BaseComponent {
     /**
      * Used to pass attributes to DOM elements inside the pButtonIcon.
      * @defaultValue undefined
-     * @deprecated use pButtonIconPT instead.
-     * @group Props
-     */
-    ptButtonIcon = input<any>();
-    /**
-     * Used to pass attributes to DOM elements inside the pButtonIcon.
-     * @defaultValue undefined
      * @group Props
      */
     pButtonIconPT = input<any>();
@@ -139,7 +125,7 @@ export class ButtonIcon extends BaseComponent {
     constructor() {
         super();
         effect(() => {
-            const pt = this.ptButtonIcon() || this.pButtonIconPT();
+            const pt = this.pButtonIconPT();
             pt && this.directivePT.set(pt);
         });
 
@@ -175,13 +161,6 @@ export class ButtonDirective extends BaseComponent {
     /**
      * Used to pass attributes to DOM elements inside the Button component.
      * @defaultValue undefined
-     * @deprecated use pButtonPT instead.
-     * @group Props
-     */
-    ptButtonDirective = input<ButtonPassThrough>();
-    /**
-     * Used to pass attributes to DOM elements inside the Button component.
-     * @defaultValue undefined
      * @group Props
      */
     pButtonPT = input<ButtonPassThrough>();
@@ -197,7 +176,7 @@ export class ButtonDirective extends BaseComponent {
     constructor() {
         super();
         effect(() => {
-            const pt = this.ptButtonDirective() || this.pButtonPT();
+            const pt = this.pButtonPT();
             pt && this.directivePT.set(pt);
         });
 

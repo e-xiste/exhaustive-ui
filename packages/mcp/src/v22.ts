@@ -69,7 +69,14 @@ export const RENAMED: Record<string, Record<string, string>> = {
     paginator: { dropdownappendto: 'appendTo' },
     autocomplete: { minlength: 'minQueryLength' },
     treeselect: { containerstyleclass: 'class', containerstyle: 'style' },
-    treetable: { virtualrowheight: 'virtualScrollItemSize' }
+    treetable: { virtualrowheight: 'virtualScrollItemSize' },
+    // attribute directives, keyed by their attribute selector
+    pbutton: { ptbuttondirective: 'pButtonPT' },
+    pbuttonlabel: { ptbuttonlabel: 'pButtonLabelPT' },
+    pbuttonicon: { ptbuttonicon: 'pButtonIconPT' },
+    pbadge: { ptbadgedirective: 'pBadgePT', size: 'badgeSize' },
+    pinputtext: { ptinputtext: 'pInputTextPT' },
+    ptooltip: { pttooltip: 'pTooltipPT' }
 };
 
 export const DEAD_INPUTS: Record<string, readonly string[]> = {
@@ -138,7 +145,10 @@ function has(list: readonly string[] | undefined, name: string): boolean {
     return !!list?.some((entry) => entry.toLowerCase() === name.toLowerCase());
 }
 
-/** Replacement guidance for an input that no longer exists on `tag`, or undefined when it was not removed in v22. */
+/**
+ * Replacement guidance for an input that no longer exists on `tag` (an element name, or an attribute
+ * directive selector such as `[pTooltip]`), or undefined when it was not removed in v22.
+ */
 export function removedInputHint(tag: string, name: string): { message: string; suggestion?: string } | undefined {
     const key = tagKey(tag);
     const lower = name.toLowerCase();

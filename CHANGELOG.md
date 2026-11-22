@@ -28,6 +28,7 @@ ng update @exhaustive-ui/core --next
   - Listbox, MultiSelect: `filterPlaceHolder` becomes `filterPlaceholder`.
   - ImageCompare: `ariaLabelledby` becomes `ariaLabelledBy`.
   - Drawer: `ariaCloseLabel` becomes `closeAriaLabel`.
+  - pButton, pButtonLabel, pButtonIcon, pBadge, pInputText, pTooltip (on any element): the `pt*` pass-through aliases become `p*PT`, and pBadge `size` becomes `badgeSize`.
 - `renamed-outputs`: renames outputs to the name the other components use. The payloads are unchanged.
   - OrderList: `onFilterEvent` becomes `onFilter`.
   - Table: `selectAllChange` becomes `onSelectAllChange`.
@@ -124,6 +125,8 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
   - `OverlayOptions.showTransitionOptions`/`hideTransitionOptions` and `DynamicDialogConfig.rtl`/`transitionOptions`: nothing read them. Use `motionOptions`.
   - `@exhaustive-ui/utils`: `classNames` (use `cn`), `createStyleAsString` (use `createStyleMarkup`), `createStyleTag` (use `createStyleElement`), `mergeKeys` (use `deepMerge`).
   - `@exhaustive-ui/styled`: `getDirective` on the theme service (use `getComponent`).
+
+- Directives: the deprecated pass-through aliases `ptButtonDirective`, `ptButtonLabel`, `ptButtonIcon`, `ptBadgeDirective`, `ptInputText` and `ptTooltip` are removed, use `pButtonPT`, `pButtonLabelPT`, `pButtonIconPT`, `pBadgePT`, `pInputTextPT` and `pTooltipPT`. pBadge's deprecated `size` is removed, use `badgeSize`. `renamed-inputs` now also matches attribute directives on any element and renames these bindings (`size` only on plain elements, where it sized the badge).
 
 ### Features
 

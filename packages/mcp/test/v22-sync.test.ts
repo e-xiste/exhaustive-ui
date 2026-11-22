@@ -6,7 +6,11 @@ import { RENAMED_OUTPUT_GROUPS } from '../../core/schematics/migrations/renamed-
 import { MIGRATED_SELECTORS } from '../../core/schematics/migrations/styleclass-to-class/migration';
 import { DEAD_INPUTS, DEAD_OUTPUTS, RENAMED, RENAMED_OUTPUTS, STYLE_CLASS_REMOVED } from '../src/v22';
 
-const key = (selector: string) => selector.toLowerCase().replace(/^p-/, '').replace(/-/g, '');
+const key = (selector: string) =>
+    selector
+        .toLowerCase()
+        .replace(/^p-/, '')
+        .replace(/[-[\]]/g, '');
 
 /** The validator hints must stay in step with the ng update migrations shipped in @exhaustive-ui/core. */
 describe('v22 data matches the ng update migrations', () => {

@@ -16,9 +16,14 @@ export interface InputRename {
 }
 
 export interface SelectorInputRename {
-    /** The element selector these renames apply to, e.g. 'p-drawer'. */
+    /**
+     * The selector these renames apply to: an element name, e.g. 'p-drawer', or an attribute
+     * directive selector, e.g. '[pTooltip]', matching any element that carries the attribute.
+     */
     selector: string;
     renames: readonly InputRename[];
+    /** Tag names (as written in the template) on which these renames must not be applied. */
+    skipTag?: (tagName: string) => boolean;
 }
 
 export interface InputRenameResult {
@@ -124,22 +129,34 @@ function applyEdits(text: string, edits: Edit[]): string {
  * file or the body of an inline component template).
  */
 export function renameInputsInHtml(html: string, groups: readonly SelectorInputRename[]): InputRenameResult {
-    const edits: Edit[] = [];
+    // keyed by tag start: several groups can match the same tag (an element carrying both pButton and
+    // pTooltip, or two groups of the same directive), so their renames are applied one after the other
+    const tags = new Map<number, { end: number; text: string; conflict: boolean }>();
     const renamed: string[] = [];
-    const conflictLines: number[] = [];
 
     for (const group of groups) {
         for (const tag of findOpeningTags(html, group.selector)) {
-            const result = renameOnTag(html.slice(tag.start, tag.end), group.renames);
-            if (result.renamed.length > 0) {
-                edits.push({ start: tag.start, end: tag.end, replacement: result.text });
-                renamed.push(...result.renamed);
+            if (group.skipTag?.(tag.name)) {
+                continue;
             }
-            if (result.conflict) {
-                conflictLines.push(lineOf(html, tag.start));
-            }
+            const current = tags.get(tag.start) ?? { end: tag.end, text: html.slice(tag.start, tag.end), conflict: false };
+            const result = renameOnTag(current.text, group.renames);
+            renamed.push(...result.renamed);
+            tags.set(tag.start, { end: tag.end, text: result.text, conflict: current.conflict || result.conflict });
         }
     }
+
+    const edits: Edit[] = [];
+    const conflictLines: number[] = [];
+    for (const [start, tag] of tags) {
+        if (tag.text !== html.slice(start, tag.end)) {
+            edits.push({ start, end: tag.end, replacement: tag.text });
+        }
+        if (tag.conflict) {
+            conflictLines.push(lineOf(html, start));
+        }
+    }
+    conflictLines.sort((a, b) => a - b);
 
     if (edits.length === 0) {
         return { text: html, changed: false, renamed, conflictLines };
