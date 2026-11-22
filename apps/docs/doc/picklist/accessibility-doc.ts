@@ -11,13 +11,14 @@ import { RouterModule } from '@angular/router';
     template: ` <app-docsectiontext>
         <h3>Screen Reader</h3>
         <p>
-            Value to describe the source listbox and target listbox can be provided with <i>ariaLabelledBy</i> or <i>ariaLabel</i> props. The list elements has a <i>listbox</i> role with the <i>aria-multiselectable</i> attribute. Each list item has
-            an <i>option</i> role with <i>aria-selected</i> and <i>aria-disabled</i> as their attributes.
+            Value to describe the source listbox and target listbox can be provided with <i>sourceAriaLabel</i> and <i>targetAriaLabel</i> props, which default to <i>sourceHeader</i> and <i>targetHeader</i>. The list elements has a
+            <i>listbox</i> role with the <i>aria-multiselectable</i> attribute. Each list item has an <i>option</i> role with <i>aria-selected</i> and <i>aria-disabled</i> as their attributes.
         </p>
         <p>
-            Controls buttons are <i>button</i> elements with an <i>aria-label</i> that refers to the <i>aria.moveTop</i>, <i>aria.moveUp</i>, <i>aria.moveDown</i>, <i>aria.moveBottom</i>,<i>aria.moveTo</i>, <i>aria.moveAllTo</i>,
-            <i>aria.moveFrom</i> and <i>aria.moveAllFrom</i> properties of the <a href="/configuration/#locale">locale</a> API by default, alternatively you may use<i>moveTopButtonProps</i>, <i>moveUpButtonProps</i>, <i>moveDownButtonProps</i>,
-            <i>moveToButtonProps</i>, <i>moveAllToButtonProps</i>, <i>moveFromButtonProps</i>, <i>moveFromButtonProps</i> and <i>moveAllFromButtonProps</i> to customize the buttons like overriding the default <i>aria-label</i> attributes.
+            Controls buttons are <i>button</i> elements with an <i>aria-label</i> that refers to the <i>aria.moveTop</i>, <i>aria.moveUp</i>, <i>aria.moveDown</i>, <i>aria.moveBottom</i>, <i>aria.moveToTarget</i>, <i>aria.moveAllToTarget</i>,
+            <i>aria.moveToSource</i> and <i>aria.moveAllToSource</i> properties of the <a href="/configuration/#locale">locale</a> API by default. They can be overridden with <i>topButtonAriaLabel</i>, <i>upButtonAriaLabel</i>,
+            <i>downButtonAriaLabel</i>, <i>bottomButtonAriaLabel</i>, <i>rightButtonAriaLabel</i>, <i>allRightButtonAriaLabel</i>, <i>leftButtonAriaLabel</i> and <i>allLeftButtonAriaLabel</i>. The buttons can be customized with <i>buttonProps</i>,
+            <i>moveTopButtonProps</i>, <i>moveUpButtonProps</i>, <i>moveDownButtonProps</i>, <i>moveBottomButtonProps</i>, <i>moveToTargetProps</i>, <i>moveAllToTargetProps</i>, <i>moveToSourceProps</i> and <i>moveAllToSourceProps</i>.
         </p>
 
         <app-code [code]="code" [hideToggleCode]="true"></app-code>
@@ -112,9 +113,6 @@ import { RouterModule } from '@angular/router';
 })
 export class AccessibilityDoc {
     code: Code = {
-        html: `<span id="lb">Options</span>
-<p-pick-list ariaLabelledBy="lb" />
-
-<p-pick-list ariaLabel="City" />`
+        html: `<p-pick-list sourceAriaLabel="Available cities" targetAriaLabel="Selected cities" />`
     };
 }

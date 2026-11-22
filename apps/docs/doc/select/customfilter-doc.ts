@@ -21,11 +21,11 @@ interface City {
     imports: [CommonModule, AppDocSectionText, AppCode, FormsModule, SelectModule, InputGroupModule, InputGroupAddonModule, ButtonModule, InputTextModule],
     template: `
         <app-docsectiontext>
-            <p>Custom filter can be applied with the <i>filterTemplate</i>.</p>
+            <p>Custom filter can be applied with the <i>filter</i> template.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
-                <ng-template pTemplate="filter" let-options="options">
+                <ng-template #filter let-options="options">
                     <div class="flex gap-1">
                         <p-input-group (click)="$event.stopPropagation()">
                             <p-input-group-addon><i class="pi pi-search"></i></p-input-group-addon>
@@ -34,13 +34,13 @@ interface City {
                         <p-button icon="pi pi-times" (click)="resetFunction(options)" severity="secondary" />
                     </div>
                 </ng-template>
-                <ng-template pTemplate="selectedItem" let-selectedOption>
+                <ng-template #selectedItem let-selectedOption>
                     <div class="flex items-center gap-2">
                         <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
                         <div>{{ selectedOption.name }}</div>
                     </div>
                 </ng-template>
-                <ng-template let-country pTemplate="item">
+                <ng-template let-country #item>
                     <div class="flex items-center gap-2">
                         <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
                         <div>{{ country.name }}</div>

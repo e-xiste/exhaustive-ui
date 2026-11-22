@@ -20,7 +20,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </div>
             <div class="flex flex-col">
                 @for (message of messages(); track message.severity; let first = $first) {
-                    <p-message [severity]="message.severity" [text]="message.content" [ngClass]="{ 'mt-4': !first }" [closable]="message?.closable" />
+                    <p-message [severity]="message.severity" [ngClass]="{ 'mt-4': !first }" [closable]="message?.closable">{{ message.content }}</p-message>
                 }
             </div>
         </div>

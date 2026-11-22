@@ -19,8 +19,12 @@ import { CardModule } from '@exhaustive-ui/core/card';
                 </p>
                 <ng-template #footer>
                     <div class="flex gap-4 mt-1">
-                        <button pButton label="Cancel" severity="secondary" [outlined]="true" class="w-full"></button>
-                        <button pButton label="Save" class="w-full"></button>
+                        <button pButton severity="secondary" [outlined]="true" class="w-full">
+                            <span pButtonLabel>Cancel</span>
+                        </button>
+                        <button pButton class="w-full">
+                            <span pButtonLabel>Save</span>
+                        </button>
                     </div>
                 </ng-template>
             </p-card>

@@ -12,7 +12,7 @@ import { Ripple } from '@exhaustive-ui/core/ripple';
     imports: [AppDocSectionText, AppCode, ToastModule, ButtonModule, Ripple],
     template: `
         <app-docsectiontext>
-            <p>Multiple toasts are displayed by passing an array to the <i>showAll</i> method of the <i>messageService</i>.</p>
+            <p>Multiple toasts are displayed by passing an array to the <i>addAll</i> method of the <i>messageService</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-toast />

@@ -13,9 +13,18 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <span class="p-buttonset">
-                <button pButton pRipple label="Save" icon="pi pi-check"></button>
-                <button pButton pRipple label="Delete" icon="pi pi-trash"></button>
-                <button pButton pRipple label="Cancel" icon="pi pi-times"></button>
+                <button pButton pRipple>
+                    <i class="pi pi-check" pButtonIcon></i>
+                    <span pButtonLabel>Save</span>
+                </button>
+                <button pButton pRipple>
+                    <i class="pi pi-trash" pButtonIcon></i>
+                    <span pButtonLabel>Delete</span>
+                </button>
+                <button pButton pRipple>
+                    <i class="pi pi-times" pButtonIcon></i>
+                    <span pButtonLabel>Cancel</span>
+                </button>
             </span>
         </div>
         <app-code></app-code>

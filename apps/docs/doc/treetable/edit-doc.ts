@@ -20,27 +20,27 @@ interface Column {
     imports: [CommonModule, FormsModule, TreeTableModule, InputTextModule, AppCodeComponent, AppDocSectionTextComponent, DeferredDemo],
     template: `
         <app-docsectiontext>
-            <p>Incell editing is enabled by defining input elements with <i>treeTableCellEditor</i>.</p>
+            <p>Incell editing is enabled by adding <i>ttEditableColumn</i> to a cell and defining input elements with <i>p-tree-table-cell-editor</i>.</p>
         </app-docsectiontext>
         <div class="card">
             <p-deferred-demo (load)="loadDemoData()">
                 <p-tree-table [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-                    <ng-template pTemplate="header" let-columns>
+                    <ng-template #header let-columns>
                         <tr>
                             <th *ngFor="let col of columns">
                                 {{ col.header }}
                             </th>
                         </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                    <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
                         <tr [ttRow]="rowNode">
                             <td *ngFor="let col of columns; let i = index" ttEditableColumn [ttEditableColumnDisabled]="i == 0" [ngClass]="{ 'p-toggler-column': i === 0 }">
                                 <p-tree-table-toggler [rowNode]="rowNode" *ngIf="i === 0" />
                                 <p-tree-table-cell-editor>
-                                    <ng-template pTemplate="input">
+                                    <ng-template #input>
                                         <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
                                     </ng-template>
-                                    <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
+                                    <ng-template #output>{{ rowData[col.field] }}</ng-template>
                                 </p-tree-table-cell-editor>
                             </td>
                         </tr>

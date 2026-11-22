@@ -12,7 +12,7 @@ import { TreeTableModule } from '@exhaustive-ui/core/treetable';
     standalone: true,
     imports: [TreeTableModule, ButtonModule, AppCode, AppDocSectionText, DeferredDemo],
     template: ` <app-docsectiontext>
-            <p>Expansion state is controlled with <i>expandedKeys</i> property.</p>
+            <p>Expansion state is controlled with the <i>expanded</i> property of the nodes.</p>
         </app-docsectiontext>
         <div class="card">
             <p-button (click)="toggleApplications()" label="Toggle Applications" class="block mb-4" />

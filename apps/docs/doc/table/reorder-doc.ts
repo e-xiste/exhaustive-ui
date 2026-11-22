@@ -22,8 +22,8 @@ interface Column {
                 <i>reorderableColumns</i> property.
             </p>
             <p>
-                Similarly, adding <i>reorderableRows</i> property enables draggable rows. For the drag handle a column needs to have <i>rowReorder</i> property and <i>onRowReorder</i> callback is required to control the state of the rows after
-                reorder completes.
+                Similarly, rows become draggable by adding the <i>pReorderableRow</i> directive with the row index to the row element. For the drag handle an element needs the <i>pReorderableRowHandle</i> directive and <i>onRowReorder</i> is emitted
+                after reorder completes.
             </p>
         </app-docsectiontext>
         <p-deferred-demo (load)="loadDemoData()">

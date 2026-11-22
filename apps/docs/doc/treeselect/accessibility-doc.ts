@@ -20,8 +20,6 @@ import { Component } from '@angular/core';
                 <i>treeitem</i> role and attributes are used instead for readers and keyboard support. The container element of a treenode has the <i>group</i> role. The <i>aria-setsize</i>, <i>aria-posinset</i> and <i>aria-level</i> attributes are
                 calculated implicitly and added to each treeitem.
             </p>
-
-            <p>If filtering is enabled, <i>filterInputProps</i> can be defined to give <i>aria-*</i> props to the filter input element.</p>
         </app-docsectiontext>
 
         <app-code [code]="code" [hideToggleCode]="true" [hideCodeSandbox]="true" [hideStackBlitz]="true"></app-code>

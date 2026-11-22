@@ -117,7 +117,9 @@ import { Tag } from '@exhaustive-ui/core/tag';
                                     <p-progress-bar [value]="customer.activity" [showValue]="false" [style]="{ height: '6px' }"></p-progress-bar>
                                 </td>
                                 <td style="text-align: center">
-                                    <button pButton type="button" class="p-button-text p-button-icon-only" icon="pi pi-cog"></button>
+                                    <button pButton type="button" class="p-button-text p-button-icon-only">
+                                        <i class="pi pi-cog" pButtonIcon></i>
+                                    </button>
                                 </td>
                             </tr>
                         </ng-template>

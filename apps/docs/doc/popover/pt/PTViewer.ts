@@ -37,7 +37,10 @@ interface Member {
                         <div class="flex">
                             <p-input-group>
                                 <input pInputText disabled />
-                                <button pButton label="Invite" icon="pi pi-users"></button>
+                                <button pButton>
+                                    <i class="pi pi-users" pButtonIcon></i>
+                                    <span pButtonLabel>Invite</span>
+                                </button>
                             </p-input-group>
                         </div>
                     </div>

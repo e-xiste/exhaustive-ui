@@ -17,7 +17,7 @@ import { TableModule } from '@exhaustive-ui/core/table';
         </app-docsectiontext>
         <div class="card">
             <p-table #dt [columns]="cols" [value]="cars" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '75rem' }">
-                <ng-template pTemplate="header" let-columns>
+                <ng-template #header let-columns>
                     <tr>
                         <th *ngFor="let col of columns" [style.width]="'25%'">{{ col.header }}</th>
                     </tr>
@@ -27,7 +27,7 @@ import { TableModule } from '@exhaustive-ui/core/table';
                         </th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <ng-template #body let-rowData let-columns="columns">
                     <tr [pSelectableRow]="rowData">
                         <td *ngFor="let col of columns">{{ rowData[col.field] }}</td>
                     </tr>

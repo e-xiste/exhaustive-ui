@@ -25,7 +25,7 @@ interface Column {
         <app-docsectiontext>
             <p>
                 The <i>filterMode</i> specifies the filtering strategy, in <i>lenient</i> mode when the query matches a node, children of the node are not searched further as all descendants of the node are included. On the other hand, in
-                <i>strict</i> mode when the query matches a node, filtering continues on all descendants. A general filled called <i>filterGlobal</i> is also provided to search all columns that support filtering.
+                <i>strict</i> mode when the query matches a node, filtering continues on all descendants. A method called <i>filterGlobal</i> is also provided to search all columns that support filtering.
             </p>
         </app-docsectiontext>
         <div class="card">

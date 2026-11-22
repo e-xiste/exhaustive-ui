@@ -15,7 +15,10 @@ import { TagModule } from '@exhaustive-ui/core/tag';
     standalone: true,
     imports: [CommonModule, TableModule, ButtonModule, RippleModule, TagModule, AppDocSectionText, AppCode, DeferredDemo],
     template: ` <app-docsectiontext>
-            <p>When <i>expandableRowGroups</i> is present in subheader based row grouping, groups can be expanded and collapsed. State of the expansions are controlled using the <i>expandedRows</i> and <i>onRowToggle</i> properties.</p>
+            <p>
+                In subheader based row grouping, groups can be expanded and collapsed by placing a <i>pRowToggler</i> in the <i>groupheader</i> template and rendering the rows in the <i>expandedrow</i> template, with <i>dataKey</i> set to the
+                <i>groupRowsBy</i> field. State of the expansions is held in <i>expandedRowKeys</i>, changes are reported with the <i>onRowExpand</i> and <i>onRowCollapse</i> events.
+            </p>
         </app-docsectiontext>
         <p-deferred-demo (load)="loadDemoData()">
             <div class="card">
@@ -32,7 +35,9 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                     <ng-template #groupheader let-customer let-rowIndex="rowIndex" let-expanded="expanded">
                         <tr>
                             <td colspan="5">
-                                <button type="button" pButton pRipple [pRowToggler]="customer" text rounded plain class="mr-2" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                <button type="button" pButton pRipple [pRowToggler]="customer" text rounded plain class="mr-2">
+                                    <i [class]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" pButtonIcon></i>
+                                </button>
                                 <img [alt]="customer.representative.name" src="https://exhaustive-ui.com/demo/avatar/{{ customer.representative.image }}" width="32" style="vertical-align: middle; display: inline-block" />
                                 <span class="font-bold ml-2">{{ customer.representative.name }}</span>
                             </td>

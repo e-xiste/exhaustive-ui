@@ -6,7 +6,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     standalone: true,
     imports: [AppDocSectionText],
     template: ` <app-docsectiontext>
-        <p>The <i>autoZIndex</i> determines whether to automatically manage layering. Its default value is 'false'.</p>
+        <p>The <i>autoZIndex</i> determines whether to automatically manage layering. Its default value is 'true'.</p>
     </app-docsectiontext>`
 })
 export class AutoZIndexDoc {}

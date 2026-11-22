@@ -16,8 +16,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             item. Inactive slides are hidden from the readers with <i>aria-hidden</i>.
         </p>
         <p>
-            Next and Previous navigators are button elements with <i>aria-label</i> attributes referring to the <i>aria.nextPageLabel</i> and <i>aria.firstPageLabel</i> properties of the <a href="/configuration/#locale">locale</a> API by default
-            respectively, you may still use your own aria roles and attributes as any valid attribute is passed to the button elements implicitly by using <i>nextButtonProps</i> and <i>prevButtonProps</i>.
+            Next and Previous navigators of the thumbnails are button elements with <i>aria-label</i> attributes referring to the <i>aria.nextPageLabel</i> and <i>aria.prevPageLabel</i> properties of the
+            <a href="/configuration/#locale">locale</a> API respectively.
         </p>
         <p>
             Quick navigation elements and thumnbails follow the tab pattern. They are placed inside an element with a <i>tablist</i> role whereas each item has a <i>tab</i> role with <i>aria-selected</i> and <i>aria-controls</i> attributes. The

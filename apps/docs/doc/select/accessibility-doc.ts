@@ -20,7 +20,7 @@ import { Component } from '@angular/core';
                 <i>aria-activedescendant</i> of the input element along with <i>aria-label</i>, <i>aria-selected</i> and <i>aria-disabled</i> attributes.
             </p>
 
-            <p>If filtering is enabled, <i>filterInputProps</i> can be defined to give <i>aria-*</i> props to the filter input element.</p>
+            <p>If filtering is enabled, <i>ariaFilterLabel</i> can be defined to give an <i>aria-label</i> to the filter input element.</p>
         </app-docsectiontext>
 
         <app-code [code]="code" [hideToggleCode]="true" [hideCodeSandbox]="true" [hideStackBlitz]="true"></app-code>

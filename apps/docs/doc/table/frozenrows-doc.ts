@@ -4,12 +4,14 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { Customer } from '@/domain/customer';
 import { CustomerService } from '@/service/customerservice';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
 import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     selector: 'frozenrows-doc',
     standalone: true,
-    imports: [TableModule, AppDocSectionText, AppCode, DeferredDemo],
+    imports: [TableModule, ButtonModule, RippleModule, AppDocSectionText, AppCode, DeferredDemo],
     template: ` <app-docsectiontext>
             <p>Frozen rows are used to fix certain rows while scrolling, this data is defined with the <i>frozenValue</i> property.</p>
         </app-docsectiontext>
@@ -32,7 +34,9 @@ import { TableModule } from '@exhaustive-ui/core/table';
                             <td>{{ customer.company }}</td>
                             <td>{{ customer.representative.name }}</td>
                             <td>
-                                <button pButton pRipple type="button" [icon]="'pi pi-lock-open'" (click)="toggleLock(customer, true, index)" size="small" text></button>
+                                <button pButton pRipple type="button" (click)="toggleLock(customer, true, index)" size="small" text>
+                                    <i class="pi pi-lock-open" pButtonIcon></i>
+                                </button>
                             </td>
                         </tr>
                     </ng-template>
@@ -43,7 +47,9 @@ import { TableModule } from '@exhaustive-ui/core/table';
                             <td>{{ customer.company }}</td>
                             <td>{{ customer.representative.name }}</td>
                             <td>
-                                <button pButton pRipple type="button" [icon]="'pi pi-lock'" [disabled]="lockedCustomers.length >= 2" (click)="toggleLock(customer, false, index)" size="small" text></button>
+                                <button pButton pRipple type="button" [disabled]="lockedCustomers.length >= 2" (click)="toggleLock(customer, false, index)" size="small" text>
+                                    <i class="pi pi-lock" pButtonIcon></i>
+                                </button>
                             </td>
                         </tr>
                     </ng-template>

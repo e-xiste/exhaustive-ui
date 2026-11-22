@@ -36,13 +36,13 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
                     <div class="flex-1">
                         <label for="country" class="block font-semibold mb-2">Country</label>
                         <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [showClear]="true" placeholder="Select a Country">
-                            <ng-template pTemplate="selectedItem">
+                            <ng-template #selectedItem>
                                 <div class="flex items-center gap-2" *ngIf="selectedCountry">
                                     <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
                                     <div>{{ selectedCountry.name }}</div>
                                 </div>
                             </ng-template>
-                            <ng-template let-country pTemplate="item">
+                            <ng-template let-country #item>
                                 <div class="flex items-center gap-2">
                                     <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
                                     <div>{{ country.name }}</div>

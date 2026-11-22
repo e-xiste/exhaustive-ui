@@ -10,7 +10,7 @@ import { CardModule } from '@exhaustive-ui/core/card';
     imports: [AppCode, AppDocSectionText, ButtonModule, CardModule],
     template: `
         <app-docsectiontext>
-            <p>Card content can be customized further with <i>subHeader</i>, <i>header</i> and <i>footer</i> properties.</p>
+            <p>Card content can be customized further with the <i>header</i>, <i>title</i>, <i>subtitle</i> and <i>footer</i> templates.</p>
         </app-docsectiontext>
         <div class="mb-4 p-8 flex items-center justify-center">
             <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
