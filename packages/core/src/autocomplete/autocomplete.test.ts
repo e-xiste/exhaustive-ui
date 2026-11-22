@@ -3266,6 +3266,7 @@ describe('AutoComplete medium bug fixes', () => {
 
         const container = fixture.nativeElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
         expect(container.getAttribute('role')).toBe('none');
+        expect(container.hasAttribute('tabindex')).toBe(false);
         expect(container.hasAttribute('aria-label')).toBe(false);
         expect(container.hasAttribute('aria-orientation')).toBe(false);
         expect(input().getAttribute('aria-label')).toBe('Tags');
@@ -3273,6 +3274,7 @@ describe('AutoComplete medium bug fixes', () => {
         autocomplete.writeValue(['Alpha']);
         fixture.detectChanges();
         expect(container.getAttribute('role')).toBe('listbox');
+        expect(container.getAttribute('tabindex')).toBe('-1');
         expect(container.getAttribute('aria-label')).toBe('Tags');
     });
 
