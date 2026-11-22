@@ -31,7 +31,6 @@ interface Product {
         <p-orderlist
             [value]="products"
             [selection]="selection"
-            [header]="header"
             [listStyle]="listStyle"
             [responsive]="responsive"
             [breakpoint]="breakpoint"
@@ -46,7 +45,6 @@ interface Product {
             [filterPlaceholder]="filterPlaceholder"
             [filterMatchMode]="filterMatchMode"
             [filterLocale]="filterLocale"
-            [trackBy]="trackBy"
             [tabindex]="tabindex"
             [ariaLabel]="ariaLabel"
             [ariaLabelledBy]="ariaLabelledBy"
@@ -84,7 +82,6 @@ class TestBasicOrderListComponent {
     ];
 
     selection: Product[] = [];
-    header = 'Product List';
     listStyle: { [key: string]: any } = { height: '300px' };
     responsive = false;
     breakpoint = '960px';
@@ -99,7 +96,6 @@ class TestBasicOrderListComponent {
     filterPlaceholder = 'Search products';
     filterMatchMode: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' = 'contains';
     filterLocale: string | undefined;
-    trackBy: Function = (_index: number, item: any) => item.id;
     tabindex: number | undefined;
     ariaLabel = 'Product list';
     ariaLabelledBy: string | undefined;
@@ -426,7 +422,6 @@ describe('OrderList', () => {
         });
 
         it('should accept custom values', async () => {
-            component.header = 'Custom Header';
             component.responsive = true;
             component.stripedRows = true;
             component.metaKeySelection = true;
@@ -436,7 +431,6 @@ describe('OrderList', () => {
             fixture.changeDetectorRef.markForCheck();
             await fixture.whenStable();
 
-            expect(orderList.header()).toBe('Custom Header');
             expect(orderList.responsive()).toBe(true);
             expect(orderList.stripedRows()).toBe(true);
             expect(orderList.metaKeySelection()).toBe(true);
@@ -1544,24 +1538,6 @@ describe('OrderList', () => {
             fixture.detectChanges();
 
             expect(orderList.value()).toEqual(newProducts);
-        });
-    });
-
-    describe('TrackBy Function', () => {
-        it('should use default trackBy function', () => {
-            const item = { id: '1', name: 'Test' };
-            const result = orderList.trackBy()(0, item);
-            expect(result).toBe(item.id);
-        });
-
-        it('should use custom trackBy function', () => {
-            const customTrackBy = (_index: number, item: any) => item.code;
-            component.trackBy = customTrackBy;
-            fixture.detectChanges();
-
-            const item = { id: '1', code: 'TEST', name: 'Test' };
-            const result = orderList.trackBy()(0, item);
-            expect(result).toBe('TEST');
         });
     });
 

@@ -79,6 +79,16 @@ import { removeDeadInputsInHtml, removeDeadInputsInTypeScript, SelectorInputRemo
  * were stored but never read or forwarded to its overlay, whose layering and animation come from `overlayOptions`/`motionOptions`.
  * `filterFields` on MultiSelect was stored but never read: the filter searches `filterBy`, else `optionLabel`
  * (kept out of the leftover scan, Select and Listbox still read it).
+ * The deprecated `transitionOptions` on Stepper was stored but never read: its panel animation is driven by `motionOptions`.
+ * `autoHighlight` on AutoComplete was never read: `autoOptionFocus` is the input that focuses the first option.
+ * `searchLocale` on Listbox was never read (AutoComplete and CascadeSelect, which do use it, keep it).
+ * `gridStyleClass`/`trackBy` on DataView, `trackBy`/`header` on OrderList and `trackBy`/`sourceTrackBy`/`targetTrackBy`
+ * on PickList were never read: the lists render with `@for` and their own track expression, and OrderList's caption
+ * is the `header` template.
+ * `size` on ToggleSwitch was never read: no style or class used it.
+ * `tabindex` on SelectButton was never read: the options manage their own roving tabindex.
+ * `baseZIndex` on ConfirmPopup was never read: its layering uses the configured `zIndex.overlay`.
+ * `ariaLabelAsc`/`ariaLabelDesc` on the TreeTable sort icon were never read.
  */
 export const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-toast', names: ['showTransformOptions', 'hideTransformOptions', 'showTransitionOptions', 'hideTransitionOptions'] },
@@ -139,12 +149,35 @@ export const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
     { selector: 'p-treeNode', names: ['rowNode', 'root', 'firstChild', 'lastChild'] },
     { selector: 'p-selectItem', names: ['visible', 'itemSize'] },
     { selector: 'p-table', names: ['frozenColumns', 'frozenWidth'] },
-    { selector: 'p-autoComplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-autocomplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] },
-    { selector: 'p-auto-complete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'] },
+    { selector: 'p-autoComplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions', 'autoHighlight'] },
+    { selector: 'p-autocomplete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions', 'autoHighlight'] },
+    { selector: 'p-auto-complete', names: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions', 'autoHighlight'] },
     { selector: 'p-multiSelect', names: ['filterFields'] },
     { selector: 'p-multiselect', names: ['filterFields'] },
-    { selector: 'p-multi-select', names: ['filterFields'] }
+    { selector: 'p-multi-select', names: ['filterFields'] },
+    { selector: 'p-stepper', names: ['transitionOptions'] },
+    { selector: 'p-listbox', names: ['searchLocale'] },
+    { selector: 'p-listBox', names: ['searchLocale'] },
+    { selector: 'p-list-box', names: ['searchLocale'] },
+    { selector: 'p-dataView', names: ['gridStyleClass', 'trackBy'] },
+    { selector: 'p-dataview', names: ['gridStyleClass', 'trackBy'] },
+    { selector: 'p-data-view', names: ['gridStyleClass', 'trackBy'] },
+    { selector: 'p-orderList', names: ['trackBy', 'header'] },
+    { selector: 'p-orderlist', names: ['trackBy', 'header'] },
+    { selector: 'p-order-list', names: ['trackBy', 'header'] },
+    { selector: 'p-pickList', names: ['trackBy', 'sourceTrackBy', 'targetTrackBy'] },
+    { selector: 'p-picklist', names: ['trackBy', 'sourceTrackBy', 'targetTrackBy'] },
+    { selector: 'p-pick-list', names: ['trackBy', 'sourceTrackBy', 'targetTrackBy'] },
+    { selector: 'p-toggleswitch', names: ['size'] },
+    { selector: 'p-toggleSwitch', names: ['size'] },
+    { selector: 'p-toggle-switch', names: ['size'] },
+    { selector: 'p-selectButton', names: ['tabindex'] },
+    { selector: 'p-selectbutton', names: ['tabindex'] },
+    { selector: 'p-select-button', names: ['tabindex'] },
+    { selector: 'p-confirmpopup', names: ['baseZIndex'] },
+    { selector: 'p-treeTableSortIcon', names: ['ariaLabelAsc', 'ariaLabelDesc'] },
+    { selector: 'p-treetable-sort-icon', names: ['ariaLabelAsc', 'ariaLabelDesc'] },
+    { selector: 'p-tree-table-sort-icon', names: ['ariaLabelAsc', 'ariaLabelDesc'] }
 ];
 
 /**
@@ -170,6 +203,8 @@ export const REMOVED_INPUT_GROUPS: readonly SelectorInputRemoval[] = [
  * SelectItem's `visible` and `itemSize` are left out as well: Dialog, Overlay and many others still expose
  * `visible`, and Scroller still exposes `itemSize`.
  * Table's `frozenColumns`/`frozenWidth` are left out too: TreeTable still exposes working inputs of the same names.
+ * `trackBy`, `header`, `size` and `searchLocale` (DataView, OrderList, PickList, ToggleSwitch, Listbox) are left out
+ * as well: they are common names that Table, Panel, Button, AutoComplete and many others still expose.
  */
 const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_GROUPS.flatMap((group) => group.names))).filter(
     (name) =>
@@ -200,7 +235,11 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
             'itemSize',
             'frozenColumns',
             'frozenWidth',
-            'filterFields'
+            'filterFields',
+            'trackBy',
+            'header',
+            'size',
+            'searchLocale'
         ].includes(name)
 );
 
@@ -237,7 +276,7 @@ const LEFTOVER_SCAN_NAMES: readonly string[] = Array.from(new Set(REMOVED_INPUT_
  * removeStyleClass, never read (the remove buttons are styled through PassThrough); CascadeSelect's
  * inputLabel and emptyMessage, never read; DatePicker's deprecated
  * showTransitionOptions/hideTransitionOptions (motionOptions drives the overlay animation); Dialog's deprecated transitionOptions and never-read rtl; ConfirmDialog's closeAriaLabel,
- * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; the internal TreeNode's rowNode, root, firstChild and lastChild, never read; SelectItem's visible and itemSize, never read; Table's frozenColumns and frozenWidth, never read (frozen columns use pFrozenColumn); AutoComplete's autoZIndex, baseZIndex, showTransitionOptions and hideTransitionOptions, never read; and MultiSelect's filterFields, never read.
+ * acceptAriaLabel, rejectAriaLabel, rtl, transitionOptions, focusTrap and defaultFocus, never read; the internal TreeNode's rowNode, root, firstChild and lastChild, never read; SelectItem's visible and itemSize, never read; Table's frozenColumns and frozenWidth, never read (frozen columns use pFrozenColumn); AutoComplete's autoZIndex, baseZIndex, showTransitionOptions and hideTransitionOptions, never read; MultiSelect's filterFields, never read; Stepper's deprecated transitionOptions; AutoComplete's autoHighlight; Listbox's searchLocale; DataView's gridStyleClass and trackBy; OrderList's trackBy and header; PickList's trackBy, sourceTrackBy and targetTrackBy; ToggleSwitch's size; SelectButton's tabindex; ConfirmPopup's baseZIndex; and the TreeTable sort icon's ariaLabelAsc and ariaLabelDesc, all never read.
  *
  * `name="..."`/`[name]="..."` template bindings on those selectors are removed automatically —
  * safe to delete outright, since the values they passed were already unused.

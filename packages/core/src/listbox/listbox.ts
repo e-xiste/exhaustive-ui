@@ -431,11 +431,6 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
      */
     readonly selectOnFocus = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
     /**
-     * Locale to use in searching. The default locale is the host environment's current locale.
-     * @group Props
-     */
-    readonly searchLocale = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
-    /**
      * When enabled, the hovered option will be focused.
      * @group Props
      */

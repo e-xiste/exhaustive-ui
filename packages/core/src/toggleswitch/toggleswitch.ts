@@ -120,12 +120,6 @@ export class ToggleSwitch extends BaseEditableHolder<ToggleSwitchPassThrough> {
      */
     readonly ariaLabel = input<string | undefined>();
     /**
-     * Specifies the size of the component.
-     * @defaultValue undefined
-     * @group Props
-     */
-    size = input<'large' | 'small' | undefined>();
-    /**
      * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
      * @group Props
      */

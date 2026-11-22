@@ -2907,10 +2907,6 @@ export class TTSortIcon extends BaseComponent {
 
     readonly field = input<string | undefined>();
 
-    readonly ariaLabelDesc = input<string | undefined>();
-
-    readonly ariaLabelAsc = input<string | undefined>();
-
     subscription: Subscription | undefined;
 
     readonly sortOrder = signal<number | undefined>(undefined);

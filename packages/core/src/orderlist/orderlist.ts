@@ -178,11 +178,6 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
         super();
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
     }
-    /**
-     * Text for the caption.
-     * @group Props
-     */
-    readonly header = input<string | undefined>();
 
     /**
      * Index of the element in tabbing order.
@@ -279,12 +274,6 @@ export class OrderList extends BaseComponent<OrderListPassThrough> {
      * @group Props
      */
     readonly disabled = input<boolean | undefined, unknown>(undefined, { transform: booleanAttribute });
-
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly trackBy = input<Function>((index: number, item: any) => item);
 
     /**
      * Height of the viewport, a scrollbar is defined if height of list exceeds this value.

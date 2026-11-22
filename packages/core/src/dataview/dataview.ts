@@ -301,16 +301,6 @@ export class DataView extends BaseComponent<DataViewPassThrough> implements Bloc
      */
     readonly emptyMessage = input<string>('');
     /**
-     * Style class of the grid.
-     * @group Props
-     */
-    readonly gridStyleClass = input<string>('');
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly trackBy = input<Function>((index: number, item: any) => item);
-    /**
      * Comma separated list of fields in the object graph to search against.
      * @group Props
      */

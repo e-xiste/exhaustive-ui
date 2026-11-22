@@ -592,21 +592,6 @@ export class PickList extends BaseComponent {
      */
     readonly filterLocale = input<string | undefined>();
     /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy, default algorithm checks for object identity. Use sourceTrackBy or targetTrackBy in case different algorithms are needed per list.
-     * @group Props
-     */
-    readonly trackBy = input<Function>((index: number, item: any) => item);
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy in source list, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly sourceTrackBy = input<Function | undefined>();
-    /**
-     * Function to optimize the dom operations by delegating to ngForTrackBy in target list, default algorithm checks for object identity.
-     * @group Props
-     */
-    readonly targetTrackBy = input<Function | undefined>();
-    /**
      * Whether to show filter input for source list when filterBy is enabled.
      * @group Props
      */

@@ -40,7 +40,6 @@ const mockItems = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
             [delay]="delay"
             [showClear]="showClear"
             [dropdown]="dropdown"
-            [autoHighlight]="autoHighlight"
             [forceSelection]="forceSelection"
             [completeOnFocus]="completeOnFocus"
             [autofocus]="autofocus"
@@ -123,7 +122,6 @@ class TestAutocompleteComponent {
     delay: number = 300;
     showClear: boolean = false;
     dropdown: boolean = false;
-    autoHighlight: boolean = false;
     forceSelection: boolean = false;
     completeOnFocus: boolean = false;
     autofocus: boolean = false;
@@ -1694,21 +1692,6 @@ describe('AutoComplete', () => {
             await testFixture.whenStable();
 
             expect(inputElement.nativeElement.value).toBe('' as any);
-        });
-
-        it('should handle autoHighlight feature', async () => {
-            testComponent.autoHighlight = true;
-            testComponent.suggestions = mockItems;
-            testFixture.changeDetectorRef.markForCheck();
-            await testFixture.whenStable();
-
-            const inputElement = testFixture.debugElement.query(By.css('input'));
-            inputElement.nativeElement.value = 'Item';
-            inputElement.nativeElement.dispatchEvent(new Event('input'));
-            await testFixture.whenStable();
-
-            const autocompleteInstance = testFixture.debugElement.query(By.directive(AutoComplete)).componentInstance;
-            expect(autocompleteInstance.autoHighlight()).toBe(true);
         });
 
         it('should handle completeOnFocus feature', async () => {

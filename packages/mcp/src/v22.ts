@@ -83,7 +83,6 @@ export const DEAD_INPUTS: Record<string, readonly string[]> = {
     panel: ['transitionOptions'],
     accordion: ['transitionOptions'],
     scrolltop: ['showTransitionOptions', 'hideTransitionOptions'],
-    confirmpopup: ['showTransitionOptions', 'hideTransitionOptions'],
     togglebutton: ['inputId'],
     popover: ['showTransitionOptions', 'hideTransitionOptions', 'ariaCloseLabel'],
     image: ['showTransitionOptions', 'hideTransitionOptions', 'modalEnterAnimation', 'modalLeaveAnimation'],
@@ -107,8 +106,17 @@ export const DEAD_INPUTS: Record<string, readonly string[]> = {
     treenode: ['rowNode', 'root', 'firstChild', 'lastChild'],
     selectitem: ['visible', 'itemSize'],
     table: ['frozenColumns', 'frozenWidth'],
-    autocomplete: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions'],
-    multiselect: ['filterFields']
+    autocomplete: ['autoZIndex', 'baseZIndex', 'showTransitionOptions', 'hideTransitionOptions', 'autoHighlight'],
+    multiselect: ['filterFields'],
+    stepper: ['transitionOptions'],
+    listbox: ['searchLocale'],
+    dataview: ['gridStyleClass', 'trackBy'],
+    orderlist: ['trackBy', 'header'],
+    picklist: ['trackBy', 'sourceTrackBy', 'targetTrackBy'],
+    toggleswitch: ['size'],
+    selectbutton: ['tabindex'],
+    confirmpopup: ['showTransitionOptions', 'hideTransitionOptions', 'baseZIndex'],
+    treetablesorticon: ['ariaLabelAsc', 'ariaLabelDesc']
 };
 
 export const DEAD_OUTPUTS: Record<string, readonly string[]> = {

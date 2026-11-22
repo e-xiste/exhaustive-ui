@@ -25,7 +25,7 @@ ng update @exhaustive-ui/core --next
   - AutoComplete: `minLength` becomes `minQueryLength`.
   - TreeSelect: `containerStyleClass` and `containerStyle` become `class` and `style`.
   - TreeTable: `virtualRowHeight` becomes `virtualScrollItemSize`.
-- `remove-dead-inputs`: removes bindings of about sixty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth` and the ConfirmDialog aria labels.
+- `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
 
@@ -93,6 +93,12 @@ ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 ## Unreleased
 
 The 194 [Optimus UI](https://github.com/openng-org/optimus-ui/issues) bugs that could not be confirmed by reading the code, and the 50 remaining low-severity ones, were each turned into a test in a real browser. About 85 were still present and are fixed below; about 100 already worked and most keep their test as a regression test. The others are feature requests, need a browser or a screen reader the tests cannot drive (Firefox, Edge, iOS, NVDA, VoiceOver), or need a redesign: virtual lists taller than the browser's maximum element height (#176, #336), row heights of a TreeTable with frozen columns (#933, #731), the overlay width with virtual scroll (#158), Signal Forms showing invalid before interaction (#162, #202) and ToggleSwitch sizes (#86). The issue numbers are Optimus UI's.
+
+### Breaking changes
+
+API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named below.
+
+- Removed inputs that did nothing (`remove-dead-inputs` deletes their bindings): Stepper `transitionOptions`, AutoComplete `autoHighlight`, Listbox `searchLocale`, DataView `gridStyleClass` and `trackBy`, OrderList `trackBy` and `header` (use the `header` template), PickList `trackBy`, `sourceTrackBy` and `targetTrackBy`, ToggleSwitch `size`, SelectButton `tabindex`, ConfirmPopup `baseZIndex`, and the TreeTable sort icon's `ariaLabelAsc`/`ariaLabelDesc`.
 
 ### Features
 

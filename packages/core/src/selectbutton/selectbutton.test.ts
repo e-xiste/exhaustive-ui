@@ -35,7 +35,6 @@ describe('SelectButton', () => {
         it('should have default values', () => {
             expect(component.multiple()).toBeUndefined();
             expect(component.allowEmpty()).toBe(true);
-            expect(component.tabindex()).toBe(0);
             expect(component.focusedIndex()).toBe(0);
             expect(component.unselectable()).toBe(false);
         });

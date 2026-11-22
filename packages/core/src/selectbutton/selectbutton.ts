@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, numberAttribute, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, NgModule, signal, TemplateRef, ViewEncapsulation, contentChild, contentChildren, output } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { equals, resolveFieldData } from '@exhaustive-ui/utils';
 import { PrimeTemplate, SharedModule } from '@exhaustive-ui/core/api';
@@ -87,11 +87,6 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> {
      * @group Props
      */
     readonly unselectable = input<boolean, unknown>(false, { transform: booleanAttribute });
-    /**
-     * Index of the element in tabbing order.
-     * @group Props
-     */
-    readonly tabindex = input<number, unknown>(0, { transform: numberAttribute });
     /**
      * When specified, allows selecting multiple values.
      * @group Props
