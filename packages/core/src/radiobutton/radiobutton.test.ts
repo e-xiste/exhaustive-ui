@@ -438,8 +438,8 @@ describe('RadioButton', () => {
             expect(radioInstances[0].checked()).toBe(false);
             expect(radioInstances[1].checked()).toBe(true);
             expect(radioInstances[2].checked()).toBe(false);
-            expect(inputs[0].nativeElement.getAttribute('aria-checked')).toBe('false');
-            expect(inputs[1].nativeElement.getAttribute('aria-checked')).toBe('true');
+            expect(inputs[0].nativeElement.checked).toBe(false);
+            expect(inputs[1].nativeElement.checked).toBe(true);
         });
 
         it('should reset form correctly', async () => {
@@ -635,7 +635,6 @@ describe('RadioButton', () => {
             expect(rootElement.getAttribute('data-p-checked')).toBe('true');
             expect(rootElement.getAttribute('data-p')).toContain('checked');
             expect(inputElement.checked).toBe(true);
-            expect(inputElement.getAttribute('aria-checked')).toBe('true');
 
             component.control.setValue('other');
             await fixture.whenStable();
@@ -644,7 +643,6 @@ describe('RadioButton', () => {
             expect(rootElement.getAttribute('data-p-checked')).toBe('false');
             expect(rootElement.getAttribute('data-p')).not.toContain('checked');
             expect(inputElement.checked).toBe(false);
-            expect(inputElement.getAttribute('aria-checked')).toBe('false');
         });
 
         it('should render inputId changes', async () => {
@@ -737,10 +735,11 @@ describe('RadioButton', () => {
 
             expect(inputElement.nativeElement.getAttribute('aria-label')).toBe('Test Radio');
             expect(inputElement.nativeElement.getAttribute('aria-labelledby')).toBe('test-label');
-            expect(inputElement.nativeElement.getAttribute('aria-checked')).toBe('false');
+            expect(inputElement.nativeElement.hasAttribute('aria-checked')).toBe(false);
+            expect(inputElement.nativeElement.checked).toBe(false);
         });
 
-        it('should update aria-checked when state changes', async () => {
+        it('should expose the state through the native checked state, without aria-checked', async () => {
             const inputElement = fixture.debugElement.query(By.css('input'));
 
             inputElement.nativeElement.click();
@@ -748,7 +747,8 @@ describe('RadioButton', () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             await fixture.whenStable();
 
-            expect(inputElement.nativeElement.getAttribute('aria-checked')).toBe('true');
+            expect(inputElement.nativeElement.checked).toBe(true);
+            expect(inputElement.nativeElement.hasAttribute('aria-checked')).toBe(false);
         });
 
         it('should support keyboard navigation', () => {
