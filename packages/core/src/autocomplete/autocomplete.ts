@@ -136,11 +136,11 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 [class]="cx('inputMultiple')"
                 [attr.data-p]="inputMultipleDataP()"
                 [tabindex]="-1"
-                role="listbox"
-                [attr.aria-label]="ariaLabel()"
-                [attr.aria-labelledby]="ariaLabelledBy()"
-                [attr.aria-orientation]="'horizontal'"
-                [attr.aria-activedescendant]="focused() ? focusedMultipleOptionId() : undefined"
+                [attr.role]="hasChips() ? 'listbox' : 'none'"
+                [attr.aria-label]="hasChips() ? ariaLabel() : undefined"
+                [attr.aria-labelledby]="hasChips() ? ariaLabelledBy() : undefined"
+                [attr.aria-orientation]="hasChips() ? 'horizontal' : undefined"
+                [attr.aria-activedescendant]="hasChips() && focused() ? focusedMultipleOptionId() : undefined"
                 (focus)="onMultipleContainerFocus($event)"
                 (blur)="onMultipleContainerBlur($event)"
                 (keydown)="onMultipleContainerKeyDown($event)"
@@ -235,7 +235,17 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
             }
         }
         @if (dropdown()) {
-            <button #ddBtn type="button" [pBind]="ptm('dropdown')" [attr.aria-label]="dropdownAriaLabel()" [class]="cx('dropdown')" [disabled]="$disabled()" pRipple (click)="handleDropdownClick($event)" [attr.tabindex]="tabindex()">
+            <button
+                #ddBtn
+                type="button"
+                [pBind]="ptm('dropdown')"
+                [attr.aria-label]="dropdownAriaLabel() || showOptionsLabel()"
+                [class]="cx('dropdown')"
+                [disabled]="$disabled()"
+                pRipple
+                (click)="handleDropdownClick($event)"
+                [attr.tabindex]="tabindex()"
+            >
                 @if (dropdownIcon()) {
                     <span [ngClass]="dropdownIcon()" [attr.aria-hidden]="true"></span>
                 }
@@ -971,6 +981,16 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
     ariaSetSize = computed(() => this.visibleOptions().filter((option) => !this.isOptionGroup(option)).length);
 
     listLabel = computed<string>(() => this.translation()[TranslationKeys.ARIA]['listLabel']);
+
+    /**
+     * Fallback name of the icon-only dropdown button when dropdownAriaLabel is unset.
+     */
+    showOptionsLabel = computed<string | undefined>(() => this.translation()?.[TranslationKeys.ARIA]?.showOptions);
+
+    /**
+     * The chips container is a listbox only while it holds selected chips; empty, it has no option to own.
+     */
+    hasChips = computed(() => (this.modelValue()?.length ?? 0) > 0);
 
     virtualScrollerDisabled = computed(() => !this.virtualScroll());
 

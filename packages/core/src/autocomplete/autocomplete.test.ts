@@ -2488,7 +2488,7 @@ describe('AutoComplete', () => {
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
 
-                const inputMultiple = autocompleteElement.querySelector('ul[role="listbox"]') as HTMLElement;
+                const inputMultiple = autocompleteElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
                 expect(inputMultiple?.classList.contains('INPUT_MULTIPLE_CLASS')).toBe(true);
             });
 
@@ -2533,7 +2533,7 @@ describe('AutoComplete', () => {
                 fixture.changeDetectorRef.markForCheck();
                 await fixture.whenStable();
 
-                const inputMultiple = autocompleteElement.querySelector('ul[role="listbox"]') as HTMLElement;
+                const inputMultiple = autocompleteElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
                 expect(inputMultiple?.classList.contains('MULTI_OBJECT_CLASS')).toBe(true);
                 expect(inputMultiple?.getAttribute('data-test-id')).toBe('multiple-container');
             });
@@ -2747,7 +2747,7 @@ describe('AutoComplete', () => {
                 const dropdownButton = autocompleteElement.querySelector('button') as HTMLButtonElement;
                 expect(dropdownButton?.classList.contains('DROPDOWN_MULTI')).toBe(true);
 
-                const inputMultiple = autocompleteElement.querySelector('ul[role="listbox"]') as HTMLElement;
+                const inputMultiple = autocompleteElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
                 expect(inputMultiple?.classList.contains('MULTIPLE_MULTI')).toBe(true);
             });
 
@@ -3258,6 +3258,33 @@ describe('AutoComplete medium bug fixes', () => {
         fixture.componentRef.setInput('ariaLabelledBy', 'tags-label');
         fixture.detectChanges();
         expect(listbox.getAttribute('aria-labelledby')).toBe('tags-label');
+    });
+
+    it('does not expose the empty chip container as a listbox, which would own no option', () => {
+        fixture.componentRef.setInput('ariaLabel', 'Tags');
+        fixture.detectChanges();
+
+        const container = fixture.nativeElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
+        expect(container.getAttribute('role')).toBe('none');
+        expect(container.hasAttribute('aria-label')).toBe(false);
+        expect(container.hasAttribute('aria-orientation')).toBe(false);
+        expect(input().getAttribute('aria-label')).toBe('Tags');
+
+        autocomplete.writeValue(['Alpha']);
+        fixture.detectChanges();
+        expect(container.getAttribute('role')).toBe('listbox');
+        expect(container.getAttribute('aria-label')).toBe('Tags');
+    });
+
+    it('names the dropdown button from the locale when dropdownAriaLabel is unset', () => {
+        fixture.componentRef.setInput('dropdown', true);
+        fixture.detectChanges();
+        const button = fixture.nativeElement.querySelector('button[data-pc-section="dropdown"]') as HTMLButtonElement;
+        expect(button.getAttribute('aria-label')).toBe('Show options');
+
+        fixture.componentRef.setInput('dropdownAriaLabel', 'Open fruits');
+        fixture.detectChanges();
+        expect(button.getAttribute('aria-label')).toBe('Open fruits');
     });
 
     it('applies size to the multiple container instead of the native size attribute (optimus-ui#559)', () => {
