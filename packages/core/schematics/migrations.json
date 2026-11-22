@@ -31,6 +31,11 @@
             "factory": "./migrations/config-input-style-to-variant/migration",
             "description": "Rename the global inputStyle option, removed in this version, to inputVariant (same values): the inputStyle key of provideExhaustive()/setConfig() config objects, and reads and writes of Exhaustive.inputStyle. Config objects that set both names, receivers that cannot be proven to be the Exhaustive service and template reads are reported for manual review."
         },
+        "renamed-templates": {
+            "version": "22.0.0",
+            "factory": "./migrations/renamed-templates/migration",
+            "description": "Rename templates removed in this version to their replacement inside the elements that project them: the removetokenicon template (#removetokenicon or pTemplate=\"removetokenicon\") becomes chipicon in p-multiSelect/p-multiselect/p-multi-select; both receive the same context. An element that already projects a chipicon template is reported for manual review."
+        },
         "renamed-inputs": {
             "version": "22.0.0",
             "factory": "./migrations/renamed-inputs/migration",

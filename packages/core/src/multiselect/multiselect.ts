@@ -257,14 +257,12 @@ export class MultiSelectItem extends BaseComponent {
                                         (onRemove)="removeOption(item, $event)"
                                         [removeIcon]="chipIcon()"
                                     >
-                                        @if (chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()) {
+                                        @if (chipIconTemplate() || _chipIconTemplate()) {
                                             <ng-template #removeicon>
                                                 @if (!$disabled() && !readonly()) {
-                                                    @if (chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate()) {
+                                                    @if (chipIconTemplate() || _chipIconTemplate()) {
                                                         <span [class]="cx('chipIcon')" (click)="removeOption(item, $event)" [attr.aria-hidden]="true" [pBind]="ptm('chipIcon')">
-                                                            <ng-container
-                                                                *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate() || removeTokenIconTemplate() || _removeTokenIconTemplate(); context: { class: 'p-multiselect-chip-icon' }"
-                                                            ></ng-container>
+                                                            <ng-container *ngTemplateOutlet="chipIconTemplate() || _chipIconTemplate(); context: { class: 'p-multiselect-chip-icon' }"></ng-container>
                                                         </span>
                                                     }
                                                 }
@@ -1037,12 +1035,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
     readonly filterIconTemplate = contentChild<TemplateRef<void>>('filtericon', { descendants: false });
 
     /**
-     * Custom remove token icon template.
-     * @group Templates
-     */
-    readonly removeTokenIconTemplate = contentChild<TemplateRef<MultiSelectChipIconTemplateContext>>('removetokenicon', { descendants: false });
-
-    /**
      * Custom chip icon template.
      * @group Templates
      */
@@ -1092,7 +1084,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
                             'headercheckboxicon',
                             'loadingicon',
                             'filtericon',
-                            'removetokenicon',
                             'clearicon',
                             'dropdownicon',
                             'itemcheckboxicon',
@@ -1169,13 +1160,6 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
         () =>
             this.templates()
                 .filter((item) => item.getType() === 'filtericon')
-                .at(-1)?.template
-    );
-
-    readonly _removeTokenIconTemplate = computed<TemplateRef<MultiSelectChipIconTemplateContext> | undefined>(
-        () =>
-            this.templates()
-                .filter((item) => item.getType() === 'removetokenicon')
                 .at(-1)?.template
     );
 

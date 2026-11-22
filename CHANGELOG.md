@@ -15,7 +15,7 @@ ng update @angular/core@22 @angular/cli@22
 ng update @exhaustive-ui/core --next
 ```
 
-`ng update` rewrites your templates and code with seven migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
+`ng update` rewrites your templates and code with eight migrations. It reports anything it cannot rewrite safely, such as programmatic access or conflicting bindings, with the file and line.
 
 - `styleclass-to-class`: `styleClass`/`[styleClass]` becomes `class`/`[class]` on the ~60 components whose deprecated `styleClass` was removed. These include Tag, Card, Select, Table, DatePicker and Panel.
 - `renamed-inputs`: renames deprecated input aliases.
@@ -33,6 +33,7 @@ ng update @exhaustive-ui/core --next
   - OrderList: `onFilterEvent` becomes `onFilter`.
   - Table: `selectAllChange` becomes `onSelectAllChange`.
   - MultiSelect: `onPanelShow`/`onPanelHide` become `onShow`/`onHide`.
+- `renamed-templates`: the MultiSelect `removetokenicon` template becomes `chipicon`.
 - `remove-dead-inputs`: removes bindings of about eighty inputs that had already stopped doing anything. Examples are the old `*TransitionOptions`, `autoZIndex`/`baseZIndex` on sub menus, Table `frozenColumns`/`frozenWidth`, the ConfirmDialog aria labels and the `trackBy` inputs of DataView, OrderList and PickList.
 - `remove-dead-outputs`: removes Overlay `onAnimationStart`/`onAnimationDone` and MenubarSub `menuFocus`/`menuBlur`/`menuKeydown`.
 - `config-overlay-options-signal`: `Exhaustive.overlayOptions` is a signal. Assignments become `.set()` and reads become calls.
@@ -127,6 +128,8 @@ API cleanup before the 22.0.0 freeze. `ng update` applies the migrations named b
   - `@exhaustive-ui/styled`: `getDirective` on the theme service (use `getComponent`).
 
 - Directives: the deprecated pass-through aliases `ptButtonDirective`, `ptButtonLabel`, `ptButtonIcon`, `ptBadgeDirective`, `ptInputText` and `ptTooltip` are removed, use `pButtonPT`, `pButtonLabelPT`, `pButtonIconPT`, `pBadgePT`, `pInputTextPT` and `pTooltipPT`. pBadge's deprecated `size` is removed, use `badgeSize`. `renamed-inputs` now also matches attribute directives on any element and renames these bindings (`size` only on plain elements, where it sized the badge).
+
+- MultiSelect: the deprecated `removetokenicon` template is removed, use `chipicon` (same context). The new `renamed-templates` migration renames `#removetokenicon` and `pTemplate="removetokenicon"` inside `p-multiselect`.
 
 ### Features
 

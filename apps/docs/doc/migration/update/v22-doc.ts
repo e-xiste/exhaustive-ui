@@ -32,6 +32,7 @@ import { AppCode } from '@/components/doc/app.code';
                     <b>renamed-outputs</b>: outputs are renamed to the name the other components use, with the same event payload: <i>onFilterEvent</i> to <i>onFilter</i> on OrderList, <i>selectAllChange</i> to <i>onSelectAllChange</i> on Table,
                     <i>onPanelShow</i>/<i>onPanelHide</i> to <i>onShow</i>/<i>onHide</i> on MultiSelect.
                 </li>
+                <li><b>renamed-templates</b>: the <i>removetokenicon</i> template of MultiSelect becomes <i>chipicon</i>.</li>
                 <li><b>remove-dead-inputs</b> and <b>remove-dead-outputs</b>: bindings of inputs and outputs that already had no effect are removed.</li>
                 <li><b>config-overlay-options-signal</b>: <i>overlayOptions</i> on the global configuration is a signal; assignments become <i>.set()</i> and reads become calls.</li>
                 <li><b>config-input-style-to-variant</b>: the global <i>inputStyle</i> option, deprecated since v20, becomes <i>inputVariant</i> in <i>provideExhaustive()</i> and on the configuration service.</li>

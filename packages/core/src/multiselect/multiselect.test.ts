@@ -3983,7 +3983,6 @@ class TestFormIsolationMultiSelectComponent {
             <ng-template #filter>f</ng-template>
             <ng-template #loadingicon>li</ng-template>
             <ng-template #filtericon>fi</ng-template>
-            <ng-template #removetokenicon>rti</ng-template>
             <ng-template #chipicon>ci</ng-template>
             <ng-template #clearicon>cli</ng-template>
             <ng-template #dropdownicon>di</ng-template>
@@ -4015,7 +4014,6 @@ describe('MultiSelect Signal Query API', () => {
             'filterTemplate',
             'loadingIconTemplate',
             'filterIconTemplate',
-            'removeTokenIconTemplate',
             'chipIconTemplate',
             'clearIconTemplate',
             'dropdownIconTemplate',
