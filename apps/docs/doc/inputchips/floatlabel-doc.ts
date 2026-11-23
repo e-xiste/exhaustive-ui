@@ -16,17 +16,17 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
             <p-float-label>
-                <p-input-chips [(ngModel)]="value1" inputId="over_label" />
+                <p-input-chips [(ngModel)]="value1" inputId="over_label" class="w-60" />
                 <label for="over_label">Over Label</label>
             </p-float-label>
 
             <p-float-label variant="in">
-                <p-input-chips [(ngModel)]="value2" inputId="in_label" />
+                <p-input-chips [(ngModel)]="value2" inputId="in_label" class="w-60" />
                 <label for="in_label">In Label</label>
             </p-float-label>
 
             <p-float-label variant="on">
-                <p-input-chips [(ngModel)]="value3" inputId="on_label" />
+                <p-input-chips [(ngModel)]="value3" inputId="on_label" class="w-60" />
                 <label for="on_label">On Label</label>
             </p-float-label>
         </div>

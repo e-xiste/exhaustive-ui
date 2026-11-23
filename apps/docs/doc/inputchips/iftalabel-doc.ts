@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-ifta-label>
-                <p-input-chips [(ngModel)]="value" inputId="skills" />
+                <p-input-chips [(ngModel)]="value" inputId="skills" class="w-72" />
                 <label for="skills">Skills</label>
             </p-ifta-label>
         </div>
