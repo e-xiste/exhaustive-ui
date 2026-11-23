@@ -161,9 +161,10 @@ describe('Kanban', () => {
     });
 
     describe('Accessibility', () => {
-        it('should render columns as labelled regions with a list of cards', () => {
+        it('should render columns as labelled groups, not landmarks, with a list of cards', () => {
             const column = columnEls()[0];
-            expect(column.getAttribute('role')).toBe('region');
+            // a region landmark per column would repeat landmarks such as "To do" when a page holds two boards
+            expect(column.getAttribute('role')).toBe('group');
             const title = host.querySelector('#' + column.getAttribute('aria-labelledby'));
             expect(title!.textContent).toContain('To do');
             const list = column.querySelector('[role="list"]')!;
@@ -551,6 +552,75 @@ describe('Kanban', () => {
             collapsedToggle.click();
             await render();
             expect(cards(0).length).toBe(3);
+        });
+
+        it('should expand a collapsed column when its strip is clicked, but not toggle it twice from its button', async () => {
+            const spy = vi.fn();
+            component.onColumnToggle.subscribe(spy);
+            const columns = board();
+            columns[0].collapsed = true;
+            fixture.componentRef.setInput('columns', columns);
+            fixture.componentRef.setInput('collapsible', true);
+            await render();
+            expect(host.classList).toContain('p-kanban-collapsible');
+            // the button toggles once, the click bubbling to the strip does not toggle again
+            columnEls()[0].querySelector<HTMLButtonElement>('.p-kanban-column-toggle')!.click();
+            await render();
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(component.columns()[0].collapsed).toBe(false);
+            // an expanded column ignores clicks
+            columnEls()[0].querySelector<HTMLElement>('.p-kanban-column-header')!.click();
+            await render();
+            expect(component.columns()[0].collapsed).toBe(false);
+            columnEls()[0].querySelector<HTMLButtonElement>('.p-kanban-column-toggle')!.click();
+            await render();
+            expect(component.columns()[0].collapsed).toBe(true);
+            // the vertical title may be cut with an ellipsis: the full title shows on hover
+            expect(columnEls()[0].querySelector('.p-kanban-column-title')!.getAttribute('title')).toBe('To do');
+            columnEls()[0].querySelector<HTMLElement>('.p-kanban-column-title')!.click();
+            await render();
+            expect(component.columns()[0].collapsed).toBe(false);
+            expect(columnEls()[0].querySelector('.p-kanban-column-title')!.hasAttribute('title')).toBe(false);
+            expect(spy).toHaveBeenCalledTimes(3);
+        });
+
+        it('should not expand a collapsed column on click when the board is not collapsible', async () => {
+            const columns = board();
+            columns[0].collapsed = true;
+            fixture.componentRef.setInput('columns', columns);
+            await render();
+            columnEls()[0].click();
+            await render();
+            expect(component.columns()[0].collapsed).toBe(true);
+        });
+
+        it('should mark the sides of the board that hide columns', async () => {
+            const boardEl = host.querySelector<HTMLElement>('.p-kanban-board')!;
+            const metrics = { scrollWidth: 1000, clientWidth: 400, scrollLeft: 0 };
+            for (const name of Object.keys(metrics) as (keyof typeof metrics)[]) {
+                Object.defineProperty(boardEl, name, { configurable: true, get: () => metrics[name] });
+            }
+            const scrollTo = async (left: number) => {
+                metrics.scrollLeft = left;
+                boardEl.dispatchEvent(new Event('scroll'));
+                await render();
+            };
+            const sides = () => [boardEl.classList.contains('p-kanban-board-overflow-left'), boardEl.classList.contains('p-kanban-board-overflow-right')];
+            await scrollTo(0);
+            expect(sides()).toEqual([false, true]);
+            await scrollTo(300);
+            expect(sides()).toEqual([true, true]);
+            await scrollTo(600);
+            expect(sides()).toEqual([true, false]);
+            // right-to-left: scrollLeft goes negative and the start is on the right
+            boardEl.style.direction = 'rtl';
+            await scrollTo(0);
+            expect(sides()).toEqual([true, false]);
+            await scrollTo(-600);
+            expect(sides()).toEqual([false, true]);
+            metrics.scrollWidth = 400;
+            await scrollTo(0);
+            expect(sides()).toEqual([false, false]);
         });
 
         it('should show the add card button and emit onAddCard', async () => {

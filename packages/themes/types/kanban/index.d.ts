@@ -109,6 +109,12 @@ export declare namespace KanbanTokenSections {
          * @designToken kanban.column.drop.target.background
          */
         dropTargetBackground?: string;
+        /**
+         * Background of a collapsed column on hover
+         *
+         * @designToken kanban.column.collapsed.hover.background
+         */
+        collapsedHoverBackground?: string;
     }
 
     interface ColumnHeader {

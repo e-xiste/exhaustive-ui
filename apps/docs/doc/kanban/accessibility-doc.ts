@@ -11,9 +11,9 @@ import { Component } from '@angular/core';
         <app-docsectiontext>
             <h3>Screen Reader</h3>
             <p>
-                Every column is a region named by its title, holding a list whose label also gives the count, such as "In progress, 2 of 3 cards", or a group with the same label when the column is empty. Each card is a list item holding a focusable
-                element with the <i>button</i> role, described with <i>aria-describedby</i> by the instructions to move it, and with <i>aria-pressed</i> true while it is picked up. The count of a column reads "2 of 3 cards" instead of "2 / 3", and
-                "over the limit" when it is exceeded.
+                Every column is a group named by its title, rather than a landmark, so that two boards on a page never repeat landmarks such as "To do". It holds a list whose label also gives the count, such as "In progress, 2 of 3 cards", or a group
+                with the same label when the column is empty. Each card is a list item holding a focusable element with the <i>button</i> role, described with <i>aria-describedby</i> by the instructions to move it, and with <i>aria-pressed</i> true
+                while it is picked up. The count of a column reads "2 of 3 cards" instead of "2 / 3", and "over the limit" when it is exceeded.
             </p>
             <p>
                 A card can be moved with the keyboard alone, and an assertive live region announces each step: "Picked up Task A, position 2 of 5 in To do", "Moved to In progress, position 1 of 3", "Dropped Task A in In progress, position 1 of 3" or
