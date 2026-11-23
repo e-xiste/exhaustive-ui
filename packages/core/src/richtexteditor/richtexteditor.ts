@@ -101,6 +101,8 @@ interface ToolbarEntry {
 
 const TOGGLES = new Set<string>(['bold', 'italic', 'underline', 'strike', 'code', 'heading1', 'heading2', 'heading3', 'bulletList', 'orderedList', 'blockquote', 'codeBlock', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']);
 
+const BUTTONS = new Set<string>([...TOGGLES, 'link', 'undo', 'redo', 'clear']);
+
 const GLYPHS: Partial<Record<ButtonName, string>> = {
     bold: 'B',
     italic: 'I',
@@ -255,7 +257,7 @@ export function normalizeRichTextEditorLink(value: string): string | null {
                     aria-busy="true"
                     [attr.aria-label]="ariaLabel()"
                     [attr.aria-labelledby]="ariaLabelledBy()"
-                    [attr.data-placeholder]="placeholder()"
+                    [attr.data-placeholder]="$filled() ? undefined : placeholder()"
                 ></div>
             }
         </div>
@@ -429,7 +431,7 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
     /******************** Outputs ********************/
 
     /**
-     * Callback to invoke once Tiptap is loaded and the editor is created.
+     * Callback to invoke once Tiptap is loaded and the editor is created, bound as `(onInit)`.
      * @param {RichTextEditorInitEvent} event - Custom init event.
      * @group Emits
      */
@@ -542,7 +544,7 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
                 }
             } else if (item === 'textAlign') {
                 (['alignLeft', 'alignCenter', 'alignRight', 'alignJustify'] as ButtonName[]).forEach(push);
-            } else if (item in RICHTEXTEDITOR_DEFAULT_LABELS) {
+            } else if (BUTTONS.has(item)) {
                 push(item);
             }
         });
@@ -914,7 +916,7 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
         const editor = this.editor();
         if (editor && !editor.isDestroyed && !this.sameAsLast(normalized)) {
             this.lastValue = normalized;
-            editor.commands.setContent(normalized ?? '', { emitUpdate: false });
+            this.replaceContent(editor, normalized);
             this.syncState(editor);
         }
     }
@@ -1021,6 +1023,17 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
         return false;
     }
 
+    /**
+     * Replaces the content with a value written by the form, out of the undo history, so that undo cannot bring back the previous value.
+     */
+    private replaceContent(editor: TiptapEditor, value: any) {
+        editor
+            .chain()
+            .setMeta('addToHistory', false)
+            .setContent(value ?? '', { emitUpdate: false })
+            .run();
+    }
+
     private currentValue(editor: TiptapEditor): any {
         if (editor.isEmpty) {
             return null;
@@ -1052,7 +1065,7 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
         try {
             modules = await Promise.all([import('@tiptap/core'), import('@tiptap/starter-kit'), import('@tiptap/extension-text-align'), import('@tiptap/pm/state'), import('@tiptap/pm/view')]);
         } catch (error: any) {
-            console.error(`RichTextEditor needs @tiptap/core, @tiptap/pm, @tiptap/starter-kit and @tiptap/extension-text-align: ${error?.message ?? error}`);
+            console.error(`RichTextEditor could not load Tiptap. Install its optional peer dependencies, all MIT licensed: npm install @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-text-align (${error?.message ?? error})`);
             return;
         }
         const element = this.contentEl()?.nativeElement;
@@ -1114,9 +1127,22 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
                                 return true;
                             }
                             if (transaction.getMeta('paste') || transaction.getMeta('uiEvent') === 'paste') {
-                                const over = size - limit;
-                                const pos = transaction.selection.$head.pos;
-                                transaction.deleteRange(Math.max(0, pos - over), pos);
+                                // Cut the end of the pasted content, block boundaries included, until the text fits.
+                                const start = transaction.mapping.map(state.selection.from, -1);
+                                let extra = 0;
+                                for (let guard = 0; guard < 200; guard++) {
+                                    const count = countOf(transaction.doc);
+                                    if (count <= limit) {
+                                        break;
+                                    }
+                                    const end = transaction.selection.$head.pos;
+                                    const from = Math.max(start, end - (count - limit) - extra);
+                                    if (from >= end) {
+                                        break;
+                                    }
+                                    transaction.deleteRange(from, end);
+                                    extra = countOf(transaction.doc) < count ? 0 : extra + 1;
+                                }
                                 if (countOf(transaction.doc) <= limit) {
                                     component.limitReached(limit);
                                     return true;
@@ -1193,7 +1219,7 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
         // A value written while Tiptap was loading.
         if (!this.sameAsLast(this.pendingValue)) {
             this.lastValue = this.pendingValue;
-            editor.commands.setContent(this.pendingValue ?? '', { emitUpdate: false });
+            this.replaceContent(editor, this.pendingValue);
         }
 
         this.editor.set(editor);

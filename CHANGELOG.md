@@ -4,6 +4,21 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **richtexteditor:** a paste over `maxLength` that spans several paragraphs is now cut to the limit instead of being dropped.
+- **richtexteditor:** a value written by the form, such as a reset, no longer goes into the undo history, so undo cannot bring back the previous content.
+- **richtexteditor:** the placeholder is no longer shown over a value while Tiptap loads or during server-side rendering.
+- **richtexteditor:** the toolbar separators and dividers stay visible in the disabled state.
+- **richtexteditor:** `toolbar` ignores names that are not buttons, such as label keys, instead of rendering empty buttons.
+- **richtexteditor:** the error logged when Tiptap is missing gives the install command.
+
+### Documentation
+
+- **richtexteditor:** the "Editor vs RichTextEditor" section lists what RichTextEditor adds and warns that Quill and Tiptap do not write the same HTML; the API names the `onInit` binding of `onEditorInit`.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.
