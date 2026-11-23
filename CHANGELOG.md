@@ -14,6 +14,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 - **scheduler:** moving or resizing an event with Alt and the arrow keys keeps it within the visible hours, like a drag.
 - **scheduler:** Escape on the second day of an overnight event returns to a slot of that day.
 - **scheduler:** events of one slot or less show their title and time on one line instead of a line cut in half, and the agenda times no longer wrap on small screens.
+- **scheduler:** the agenda is a named group instead of a region landmark, so several schedulers on a page no longer repeat landmarks.
 - **kanban:** a collapsed column is now a strip as tall as the board, with its toggle at the top, its count horizontal under it and only its title written vertically, cut with an ellipsis when too long; the count no longer overflows the strip, the strip has a hover state and a click anywhere on it expands the column.
 - **kanban:** columns are named groups instead of region landmarks, so two boards on a page no longer repeat landmarks such as "To do" (axe `landmark-unique`).
 - **kanban:** columns shrink to their min width before the board scrolls, and the edges of a board that scrolls fade out, so a column cut by the edge reads as more to scroll.
@@ -45,6 +46,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 - **mention:** the Accessibility section describes what screen readers get from the textarea, which is not a combobox.
 - **inputchips:** the Float Label and Ifta Label demos keep a fixed width as chips are added, a shorter placeholder fits phones, and the Signal Forms section explains that `maxLength` validates the number of chips while `max` stops adding them.
 - **tour:** the Controlled section lists the `finish()` method.
+- **docs:** keyboard keys and inline code are readable in dark mode (WCAG AA contrast).
 
 ## 22.8.0 (2026-11-23)
 
