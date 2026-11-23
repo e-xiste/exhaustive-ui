@@ -46,6 +46,15 @@ export const style = /*css*/ `
         color: dt('richtexteditor.disabled.color');
     }
 
+    .p-richtexteditor.p-disabled .p-richtexteditor-toolbar,
+    .p-richtexteditor.p-disabled .p-richtexteditor-footer {
+        border-color: dt('richtexteditor.border.color');
+    }
+
+    .p-richtexteditor.p-disabled .p-richtexteditor-separator {
+        background: dt('richtexteditor.border.color');
+    }
+
     .p-richtexteditor-fluid {
         width: 100%;
     }

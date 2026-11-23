@@ -4,6 +4,7 @@ import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { form, FormField, required } from '@angular/forms/signals';
 import { Extension } from '@tiptap/core';
 import type { Editor } from '@tiptap/core';
+import { style } from '@exhaustive-ui/styles/richtexteditor';
 import { normalizeRichTextEditorLink, RICHTEXTEDITOR_DEFAULT_TOOLBAR, RichTextEditor } from './richtexteditor';
 
 const flush = () => new Promise((resolve) => setTimeout(resolve));
@@ -116,6 +117,17 @@ describe('RichTextEditor', () => {
             expect(preview.getAttribute('role')).toBe('textbox');
             expect(preview.getAttribute('aria-busy')).toBe('true');
             expect(preview.getAttribute('aria-readonly')).toBe('true');
+        });
+
+        it('shows the placeholder before Tiptap is loaded only while there is no value', async () => {
+            fixture.componentRef.setInput('placeholder', 'Write here');
+            fixture.detectChanges();
+            const preview = () => host.querySelector('.p-richtexteditor-editor')!;
+            expect(preview().getAttribute('data-placeholder')).toBe('Write here');
+            component.writeValue('<p>Saved</p>');
+            fixture.detectChanges();
+            expect(component.ready()).toBe(false);
+            expect(preview().hasAttribute('data-placeholder')).toBe(false);
         });
 
         it('creates the Tiptap editor and emits onInit', async () => {
@@ -241,6 +253,21 @@ describe('RichTextEditor', () => {
             component.registerOnChange(change);
             await ready();
             component.writeValue('<p>From the form</p>');
+            expect(change).not.toHaveBeenCalled();
+        });
+
+        it('keeps a value written by the form out of the undo history', async () => {
+            const change = vi.fn();
+            component.registerOnChange(change);
+            const editor = await ready();
+            editor.commands.insertContent('Typed');
+            // Past the delay that groups the changes of the undo history.
+            await new Promise((resolve) => setTimeout(resolve, 600));
+            change.mockClear();
+            component.writeValue(null);
+            expect(editor.isEmpty).toBe(true);
+            editor.commands.undo();
+            expect(editor.isEmpty).toBe(true);
             expect(change).not.toHaveBeenCalled();
         });
 
@@ -385,6 +412,12 @@ describe('RichTextEditor', () => {
             await ready();
             expect(buttons().map((b) => b.dataset['item'])).toEqual(['bold', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']);
             expect(host.querySelectorAll('[role="separator"]').length).toBe(1);
+        });
+
+        it('ignores names that are not buttons, such as label keys', async () => {
+            fixture.componentRef.setInput('toolbar', ['bold', 'linkUrl', 'toolbar', 'constructor', 'italic'] as any);
+            await ready();
+            expect(buttons().map((b) => b.dataset['item'])).toEqual(['bold', 'italic']);
         });
 
         it('hides the toolbar with an empty list', async () => {
@@ -659,6 +692,13 @@ describe('RichTextEditor', () => {
             expect(component.linkOpen()).toBe(false);
         });
 
+        it('keeps the toolbar divider and separators visible when disabled', () => {
+            // The disabled background has the color of the separators, they take the border color instead.
+            const css = String(style).replace(/\s+/g, ' ');
+            expect(css).toContain(".p-richtexteditor.p-disabled .p-richtexteditor-separator { background: dt('richtexteditor.border.color'); }");
+            expect(css).toContain(".p-richtexteditor.p-disabled .p-richtexteditor-toolbar, .p-richtexteditor.p-disabled .p-richtexteditor-footer { border-color: dt('richtexteditor.border.color'); }");
+        });
+
         it('becomes editable again', async () => {
             fixture.componentRef.setInput('disabled', true);
             const editor = await ready();
@@ -717,6 +757,16 @@ describe('RichTextEditor', () => {
             const editor = await ready();
             editor.view.dispatch(editor.state.tr.insertText('123456').setMeta('paste', true));
             expect(editor.getText()).toBe('1234');
+        });
+
+        it('trims a paste of several paragraphs to the limit', async () => {
+            fixture.componentRef.setInput('maxLength', 8);
+            const editor = await ready();
+            editor.commands.insertContent('abc');
+            editor.view.pasteHTML('<p>one</p><p>two</p><p>three</p>');
+            const text = editor.state.doc.textBetween(0, editor.state.doc.content.size, undefined, ' ');
+            expect(text.length).toBe(8);
+            expect(text.startsWith('abc')).toBe(true);
         });
 
         it('lets the form write a longer value and allows deleting', async () => {
