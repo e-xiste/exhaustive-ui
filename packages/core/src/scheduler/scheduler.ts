@@ -275,7 +275,7 @@ const AUTOSCROLL_EDGE = 40;
                 </div>
             }
             @case ('agenda') {
-                <div [class]="cx('agenda')" [attr.aria-labelledby]="hasTitle() ? titleId : undefined" [attr.aria-label]="hasTitle() ? undefined : title()" role="region" (keydown)="onListKeydown($event)" [pBind]="ptm('agenda')">
+                <div [class]="cx('agenda')" [attr.aria-labelledby]="hasTitle() ? titleId : undefined" [attr.aria-label]="hasTitle() ? undefined : title()" role="group" (keydown)="onListKeydown($event)" [pBind]="ptm('agenda')">
                     @for (group of agendaGroups(); track group.key) {
                         <div [class]="cx('agendaDay', { day: group.day })" [pBind]="ptm('agendaDay')">
                             <div [class]="cx('agendaDate', { day: group.day })" [attr.id]="group.day.headerId" [pBind]="ptm('agendaDate')">{{ group.day.label }}</div>

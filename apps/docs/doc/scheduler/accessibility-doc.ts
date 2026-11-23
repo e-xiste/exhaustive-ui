@@ -12,10 +12,10 @@ import { Component } from '@angular/core';
             <h3>Screen Reader</h3>
             <p>
                 The month view is an ARIA <i>grid</i> labelled by the title, with a <i>columnheader</i> per weekday and a <i>gridcell</i> per day. A cell is named by its full date and its number of events, the current date has
-                <i>aria-current="date"</i> and the focused or selected days <i>aria-selected</i>. In the week and day views, each day column is a group labelled by its column header and each slot a button named by its date and hours, such as
-                "Thursday, 3 December 2026, 10:00 – 10:30". Events are buttons named by their title and time, "Review, Thu 3 Dec 10:00 – 11:00", and editable events are described by how to move them with the keyboard. The "+N more" button names the
-                number of hidden events and their day, and opens a dialog that lists them all. A polite live region announces the new range after a navigation, "December 2026" or "Week of 29 Nov 2026", and every moved or resized event. Set
-                <i>ariaLabel</i> to make the component a labelled region.
+                <i>aria-current="date"</i> and the focused or selected days <i>aria-selected</i>. The agenda is a group labelled by the title, so several schedulers on a page do not add landmarks. In the week and day views, each day column is a group
+                labelled by its column header and each slot a button named by its date and hours, such as "Thursday, 3 December 2026, 10:00 – 10:30". Events are buttons named by their title and time, "Review, Thu 3 Dec 10:00 – 11:00", and editable
+                events are described by how to move them with the keyboard. The "+N more" button names the number of hidden events and their day, and opens a dialog that lists them all. A polite live region announces the new range after a navigation,
+                "December 2026" or "Week of 29 Nov 2026", and every moved or resized event. Set <i>ariaLabel</i> to make the component a labelled region.
             </p>
         </app-docsectiontext>
 

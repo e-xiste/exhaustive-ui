@@ -777,6 +777,14 @@ describe('Scheduler', () => {
             await setView('agenda');
         });
 
+        it('should be a group named by the title, not a landmark', async () => {
+            await setEvents([{ id: 1, title: 'Review', start: at(3, 10), end: at(3, 11) }]);
+            const agenda = host.querySelector('.p-scheduler-agenda') as HTMLElement;
+            expect(agenda.getAttribute('role')).toBe('group');
+            expect(agenda.getAttribute('aria-labelledby') || agenda.getAttribute('aria-label')).toBeTruthy();
+            expect(host.querySelector('[role="region"]')).toBeNull();
+        });
+
         it('should group the upcoming events by day', async () => {
             await setEvents([
                 { id: 1, title: 'Review', start: at(3, 10), end: at(3, 11) },
