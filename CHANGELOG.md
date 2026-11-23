@@ -4,6 +4,12 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **inputchips:** new `InputChips` component (`p-inputchips`, `p-input-chips`) to type free-text values, such as tags or email addresses, each shown as a removable chip, without the suggestions of AutoComplete. Enter adds a chip; a `separator` (a string or a RegExp) splits typed and pasted text, and pasting several lines adds one chip per line. `addOnBlur`, `addOnTab`, `allowDuplicate`, a `max` number of chips, a `maxChipLength`, a `transform` (to lowercase, for example) and a `validate` function, with an `onReject` event telling why a value was not added. It works with template-driven forms, reactive forms and Signal Forms (`maxLength` on the field limits the number of chips), FloatLabel, IftaLabel and IconField, has `small` and `large` sizes, the `filled` variant, `fluid`, `readonly`, `chip` and `removeicon` templates and replaceable texts through `labels`. The chips are a listbox: arrows, Home, End, Backspace and Delete move between and remove chips, mirrored in right-to-left layouts, and a live region announces the changes. Theming through the `inputchips` design tokens of the four presets, which gain `filledHoverBackground`, `invalidPlaceholderColor` and `chip.focusColor` (the unused `chip.color` is deprecated).
+
 ## 22.7.0 (2026-11-23)
 
 Contrast: text in the four theme presets meets WCAG AA in light and dark mode.

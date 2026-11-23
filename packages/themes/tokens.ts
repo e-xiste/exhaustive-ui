@@ -7024,6 +7024,12 @@ export default {
                 description: 'Filled background of root'
             },
             {
+                name: 'inputchips.root.filledHoverBackground',
+                token: 'inputchips.filled.hover.background',
+                variable: '--p-inputchips-filled-hover-background',
+                description: 'Filled hover background of root'
+            },
+            {
                 name: 'inputchips.root.filledFocusBackground',
                 token: 'inputchips.filled.focus.background',
                 variable: '--p-inputchips-filled-focus-background',
@@ -7070,6 +7076,12 @@ export default {
                 token: 'inputchips.placeholder.color',
                 variable: '--p-inputchips-placeholder-color',
                 description: 'Placeholder color of root'
+            },
+            {
+                name: 'inputchips.root.invalidPlaceholderColor',
+                token: 'inputchips.invalid.placeholder.color',
+                variable: '--p-inputchips-invalid-placeholder-color',
+                description: 'Invalid placeholder color of root'
             },
             {
                 name: 'inputchips.root.shadow',
@@ -7144,10 +7156,17 @@ export default {
                 description: 'Focus background of chip'
             },
             {
+                name: 'inputchips.chip.focusColor',
+                token: 'inputchips.chip.focus.color',
+                variable: '--p-inputchips-chip-focus-color',
+                description: 'Focus color of chip'
+            },
+            {
                 name: 'inputchips.chip.color',
                 token: 'inputchips.chip.color',
                 variable: '--p-inputchips-chip-color',
-                description: 'Color of chip'
+                description: 'Color of chip',
+                deprecated: 'since v22.8.0. Not used by any style; use focusColor.'
             }
         ]
     },

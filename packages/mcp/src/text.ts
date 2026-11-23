@@ -33,7 +33,7 @@ export function tokenize(value: string): string[] {
 const SYNONYMS: Record<string, string[]> = {
     busy: ['loading', 'spinner'],
     calendar: ['datepicker', 'date'],
-    chips: ['autocomplete', 'multiple'],
+    chips: ['inputchips', 'autocomplete', 'multiple'],
     danger: ['severity', 'error'],
     date: ['datepicker', 'calendar'],
     datatable: ['table'],

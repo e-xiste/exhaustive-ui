@@ -7,7 +7,9 @@ import type { Catalog, CodeLanguage, ComponentEntry, ComponentsJson, DirectiveEn
 /** Names PrimeNG users (and older ExhaustiveUI versions) may still use for a component. */
 export const COMPONENT_ALIASES: Record<string, string> = {
     calendar: 'datepicker',
-    chips: 'autocomplete',
+    chips: 'inputchips',
+    'input-chips': 'inputchips',
+    tagsinput: 'inputchips',
     'data-table': 'table',
     datatable: 'table',
     dropdown: 'select',

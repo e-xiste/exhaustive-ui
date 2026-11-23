@@ -62,6 +62,7 @@ export const style = /*css*/ `
     .p-floatlabel-in .p-multiselect-label,
     .p-floatlabel-in .p-multiselect-label:has(.p-chip),
     .p-floatlabel-in .p-autocomplete-input-multiple,
+    .p-floatlabel-in .p-inputchips-input,
     .p-floatlabel-in .p-cascadeselect-label,
     .p-floatlabel-in .p-treeselect-label {
         padding-block-start: dt('floatlabel.in.input.padding.top');
@@ -130,6 +131,7 @@ export const style = /*css*/ `
         .p-inputfield-sm .p-multiselect-label,
         .p-inputfield-sm .p-multiselect-label:has(.p-chip),
         .p-autocomplete-input-multiple.p-inputfield-sm,
+        .p-inputchips-input.p-inputfield-sm,
         .p-inputfield-sm .p-cascadeselect-label,
         .p-inputfield-sm .p-treeselect-label
     ) {
@@ -184,6 +186,7 @@ export const style = /*css*/ `
         .p-inputfield-lg .p-multiselect-label,
         .p-inputfield-lg .p-multiselect-label:has(.p-chip),
         .p-autocomplete-input-multiple.p-inputfield-lg,
+        .p-inputchips-input.p-inputfield-lg,
         .p-inputfield-lg .p-cascadeselect-label,
         .p-inputfield-lg .p-treeselect-label
     ) {

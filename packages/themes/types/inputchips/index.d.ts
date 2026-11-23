@@ -32,6 +32,12 @@ export declare namespace InputChipsTokenSections {
          */
         filledBackground?: string;
         /**
+         * Filled hover background of root
+         *
+         * @designToken inputchips.filled.hover.background
+         */
+        filledHoverBackground?: string;
+        /**
          * Filled focus background of root
          *
          * @designToken inputchips.filled.focus.background
@@ -79,6 +85,12 @@ export declare namespace InputChipsTokenSections {
          * @designToken inputchips.placeholder.color
          */
         placeholderColor?: string;
+        /**
+         * Invalid placeholder color of root
+         *
+         * @designToken inputchips.invalid.placeholder.color
+         */
+        invalidPlaceholderColor?: string;
         /**
          * Shadow of root
          *
@@ -160,9 +172,16 @@ export declare namespace InputChipsTokenSections {
          */
         focusBackground?: string;
         /**
+         * Focus color of chip
+         *
+         * @designToken inputchips.chip.focus.color
+         */
+        focusColor?: string;
+        /**
          * Color of chip
          *
          * @designToken inputchips.chip.color
+         * @deprecated since v22.8.0. Not used by any style; use focusColor.
          */
         color?: string;
     }
