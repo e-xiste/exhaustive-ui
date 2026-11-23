@@ -8,10 +8,17 @@ const classes = {
         {
             'p-kanban-disabled': instance.disabled(),
             'p-kanban-dragging': instance.dragging(),
-            'p-kanban-scrollable': !!instance.scrollHeight()
+            'p-kanban-scrollable': !!instance.scrollHeight(),
+            'p-kanban-collapsible': instance.collapsible()
         }
     ],
-    board: 'p-kanban-board',
+    board: ({ instance }) => [
+        'p-kanban-board',
+        {
+            'p-kanban-board-overflow-left': instance.overflow().left,
+            'p-kanban-board-overflow-right': instance.overflow().right
+        }
+    ],
     column: ({ instance, column }) => [
         'p-kanban-column',
         {

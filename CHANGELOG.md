@@ -4,6 +4,18 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **kanban:** a collapsed column is now a strip as tall as the board, with its toggle at the top, its count horizontal under it and only its title written vertically, cut with an ellipsis when too long; the count no longer overflows the strip, the strip has a hover state and a click anywhere on it expands the column.
+- **kanban:** columns are named groups instead of region landmarks, so two boards on a page no longer repeat landmarks such as "To do" (axe `landmark-unique`).
+- **kanban:** columns shrink to their min width before the board scrolls, and the edges of a board that scrolls fade out, so a column cut by the edge reads as more to scroll.
+
+### Documentation
+
+- **kanban:** the Collapsible Columns demo shows two folded columns and a limit, and the Accessibility section describes columns as groups, and the Scroll section the shrinking columns and the faded edges.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.

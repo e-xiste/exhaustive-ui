@@ -108,7 +108,8 @@ export const colorScheme: KanbanTokenSections.ColorScheme = {
             overLimitBorderColor: '{red.500}',
             overLimitBackground: '{red.50}',
             refusedBorderColor: '{red.600}',
-            dropTargetBackground: '{surface.200}'
+            dropTargetBackground: '{surface.200}',
+            collapsedHoverBackground: '{surface.50}'
         },
         columnCount: {
             background: '{surface.200}',
@@ -140,7 +141,8 @@ export const colorScheme: KanbanTokenSections.ColorScheme = {
             overLimitBorderColor: '{red.400}',
             overLimitBackground: 'color-mix(in srgb, {red.400}, transparent 90%)',
             refusedBorderColor: '{red.400}',
-            dropTargetBackground: '{surface.800}'
+            dropTargetBackground: '{surface.800}',
+            collapsedHoverBackground: '{surface.900}'
         },
         columnCount: {
             background: '{surface.800}',

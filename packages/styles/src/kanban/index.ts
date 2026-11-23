@@ -22,6 +22,19 @@ export const style = /*css*/ `
         overscroll-behavior-x: contain;
     }
 
+    /* the edges of a board that scrolls fade out, so that a column cut by the edge reads as more to scroll */
+    .p-kanban-board-overflow-left {
+        mask-image: linear-gradient(to right, transparent, #000 2.5rem);
+    }
+
+    .p-kanban-board-overflow-right {
+        mask-image: linear-gradient(to left, transparent, #000 2.5rem);
+    }
+
+    .p-kanban-board-overflow-left.p-kanban-board-overflow-right {
+        mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+    }
+
     .p-kanban-scrollable .p-kanban-board {
         align-items: stretch;
     }
@@ -29,7 +42,8 @@ export const style = /*css*/ `
     .p-kanban-column {
         display: flex;
         flex-direction: column;
-        flex: 0 0 dt('kanban.column.width');
+        /* columns shrink to their min width before the board scrolls */
+        flex: 0 1 dt('kanban.column.width');
         min-width: dt('kanban.column.min.width');
         max-height: 100%;
         box-sizing: border-box;
@@ -54,10 +68,27 @@ export const style = /*css*/ `
     }
 
     .p-kanban-column-collapsed {
-        flex: 0 0 dt('kanban.column.collapsed.width');
-        min-width: dt('kanban.column.collapsed.width');
-        padding-inline: 0;
+        flex: 0 0 auto;
+        width: dt('kanban.column.collapsed.width');
+        /* grows when the count, such as "12 / 15", is wider than the strip */
+        min-width: min-content;
+        /* as tall as the other columns of the board */
+        align-self: stretch;
+        padding-inline: 0.25rem;
         align-items: center;
+    }
+
+    .p-kanban-collapsible .p-kanban-column-collapsed {
+        cursor: pointer;
+    }
+
+    .p-kanban-collapsible .p-kanban-column-collapsed:hover {
+        background: dt('kanban.column.collapsed.hover.background');
+    }
+
+    .p-kanban-collapsible .p-kanban-column-collapsed:hover .p-kanban-column-toggle {
+        background: dt('kanban.column.action.hover.background');
+        color: dt('kanban.column.action.hover.color');
     }
 
     .p-kanban-column-header {
@@ -72,6 +103,9 @@ export const style = /*css*/ `
 
     .p-kanban-column-collapsed .p-kanban-column-header {
         flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
         padding: 0;
     }
 
@@ -85,7 +119,23 @@ export const style = /*css*/ `
 
     .p-kanban-column-collapsed .p-kanban-column-heading {
         flex-direction: column;
+        min-height: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    /* only the title is written vertically: the count stays horizontal, above it */
+    .p-kanban-column-collapsed .p-kanban-column-title {
         writing-mode: vertical-rl;
+        /* takes the height left in the strip, without making it taller than the other columns */
+        flex: 1 1 0;
+        min-height: 4rem;
+        max-height: 100%;
+    }
+
+    /* in right-to-left layouts the vertical title starts at the bottom: keep it under the count */
+    .p-kanban-column-collapsed .p-kanban-column-title:dir(rtl) {
+        text-align: end;
     }
 
     .p-kanban-column-title {
@@ -110,8 +160,13 @@ export const style = /*css*/ `
     }
 
     .p-kanban-column-collapsed .p-kanban-column-count {
-        padding: dt('kanban.column.count.padding');
-        padding-block: 0.5rem;
+        order: -1;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .p-kanban-column-collapsed .p-kanban-column-toggle svg:dir(rtl) {
+        transform: scaleX(-1);
     }
 
     .p-kanban-column-count-full {
@@ -356,8 +411,11 @@ export const style = /*css*/ `
         }
 
         .p-kanban-column {
-            flex-basis: min(85%, dt('kanban.column.width'));
             scroll-snap-align: start;
+        }
+
+        .p-kanban-column:not(.p-kanban-column-collapsed) {
+            flex-basis: min(85%, dt('kanban.column.width'));
         }
 
         .p-kanban-dragging .p-kanban-board {
@@ -365,7 +423,26 @@ export const style = /*css*/ `
         }
     }
 
+    @keyframes p-kanban-fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+
+    /* folding and unfolding a column fades its new content in */
+    .p-kanban-column-collapsed > .p-kanban-column-header,
+    .p-kanban-column-content,
+    .p-kanban-column-footer {
+        animation: p-kanban-fade-in dt('kanban.transition.duration') ease-out;
+    }
+
     @media (prefers-reduced-motion: reduce) {
+        .p-kanban-column-collapsed > .p-kanban-column-header,
+        .p-kanban-column-content,
+        .p-kanban-column-footer {
+            animation: none;
+        }
+
         .p-kanban-card,
         .p-kanban-card-grabbed,
         .p-kanban-card-preview .p-kanban-card {

@@ -1,7 +1,26 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragMove, CdkDropList, DragStartDelay } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgTemplateOutlet } from '@angular/common';
-import { afterNextRender, booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, inject, input, linkedSignal, model, NgModule, output, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
+import {
+    afterNextRender,
+    afterRenderEffect,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    contentChild,
+    ElementRef,
+    inject,
+    input,
+    linkedSignal,
+    model,
+    NgModule,
+    output,
+    signal,
+    TemplateRef,
+    viewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { SharedModule } from '@exhaustive-ui/core/api';
 import { BaseComponent, PARENT_INSTANCE } from '@exhaustive-ui/core/basecomponent';
 import { Bind, BindModule } from '@exhaustive-ui/core/bind';
@@ -65,6 +84,7 @@ type ColumnGrab = { kind: 'column'; columnId: string; originIndex: number };
     imports: [NgTemplateOutlet, SharedModule, BindModule, CdkDropList, CdkDrag, CdkDragHandle, CdkScrollable, PlusIcon, BarsIcon, ChevronDownIcon, ChevronRightIcon],
     template: `
         <div
+            #board
             [class]="cx('board')"
             cdkScrollable
             cdkDropList
@@ -78,7 +98,7 @@ type ColumnGrab = { kind: 'column'; columnId: string; originIndex: number };
             @for (column of view(); track column.id; let columnIndex = $index) {
                 <section
                     [class]="cx('column', { column })"
-                    role="region"
+                    role="group"
                     [attr.aria-labelledby]="columnDomId(column) + '_title'"
                     [attr.data-p-column-id]="column.id"
                     [attr.data-p-collapsed]="!!column.collapsed"
@@ -90,6 +110,7 @@ type ColumnGrab = { kind: 'column'; columnId: string; originIndex: number };
                     cdkDragPreviewClass="p-kanban-column-preview"
                     (cdkDragStarted)="onDragStarted()"
                     (cdkDragEnded)="onDragEnded()"
+                    (click)="onColumnClick($event, column)"
                     [pBind]="ptm('column')"
                 >
                     <div [class]="cx('columnHeader')" [pBind]="ptm('columnHeader')">
@@ -131,7 +152,7 @@ type ColumnGrab = { kind: 'column'; columnId: string; originIndex: number };
                             @if (columnHeaderTemplate()) {
                                 <ng-container *ngTemplateOutlet="columnHeaderTemplate()!; context: columnContext(column)" />
                             } @else {
-                                <span [class]="cx('columnTitle')" [pBind]="ptm('columnTitle')">{{ column.title }}</span>
+                                <span [class]="cx('columnTitle')" [attr.title]="column.collapsed ? column.title : undefined" [pBind]="ptm('columnTitle')">{{ column.title }}</span>
                                 <span [class]="cx('columnCount', { column })" [pBind]="ptm('columnCount')">
                                     <span aria-hidden="true">{{ column.limit != null ? column.items.length + ' / ' + column.limit : column.items.length }}</span>
                                     <span class="p-hidden-accessible">{{ countText(column) }}</span>
@@ -252,6 +273,33 @@ export class Kanban<T = any> extends BaseComponent<KanbanPassThrough> {
     constructor() {
         super();
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
+        // the columns change the scroll width of the board: measure again after they render (browser only)
+        afterRenderEffect({
+            read: () => {
+                this.view();
+                this.updateOverflow();
+            }
+        });
+    }
+
+    onAfterViewInit() {
+        const board = this.boardViewChild()?.nativeElement;
+        if (!board || !isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        // listened outside the template, so that scrolling only renders again when a faded edge changes
+        this.scrollListener = this.renderer.listen(board, 'scroll', () => this.updateOverflow());
+        if (typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.updateOverflow());
+            this.resizeObserver.observe(board);
+        }
+    }
+
+    onDestroy() {
+        this.scrollListener?.();
+        this.scrollListener = undefined;
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = undefined;
     }
 
     /******************** Inputs ********************/
@@ -403,6 +451,17 @@ export class Kanban<T = any> extends BaseComponent<KanbanPassThrough> {
     readonly dragging = signal(false);
 
     readonly refusedColumnId = signal<string | null>(null);
+
+    /**
+     * Physical sides of the board that hide columns, faded out to show that the board scrolls.
+     */
+    readonly overflow = signal<{ left: boolean; right: boolean }>({ left: false, right: false });
+
+    readonly boardViewChild = viewChild<ElementRef<HTMLElement>>('board');
+
+    private resizeObserver?: ResizeObserver;
+
+    private scrollListener?: () => void;
 
     readonly uid = uuid('pn_id_');
 
@@ -761,6 +820,41 @@ export class Kanban<T = any> extends BaseComponent<KanbanPassThrough> {
     onGrabBlur() {
         if (this.grab() && !this.refocusing) {
             this.cancelGrab(true, false);
+        }
+    }
+
+    /**
+     * A click anywhere on a collapsed strip expands it; its toggle button stays the accessible way to do it.
+     */
+    onColumnClick(event: MouseEvent, column: KanbanColumn<T>) {
+        if (!column.collapsed || !this.collapsible() || Date.now() - this.lastDragEnd < 100) {
+            return;
+        }
+        const target = event.target as HTMLElement | null;
+        if (target?.closest?.('button, a, input, select, textarea, [role="button"]')) {
+            return;
+        }
+        this.toggleColumn(column);
+    }
+
+    updateOverflow() {
+        const board = this.boardViewChild()?.nativeElement;
+        if (!board) return;
+        const max = board.scrollWidth - board.clientWidth;
+        let left = false;
+        let right = false;
+        if (max > 1) {
+            // scrollLeft goes from 0 to max in left-to-right layouts, and from 0 to -max in right-to-left ones
+            const scrolled = Math.abs(board.scrollLeft);
+            const rtl = board.scrollLeft < 0 || (typeof getComputedStyle === 'function' && getComputedStyle(board).direction === 'rtl');
+            const towardsStart = scrolled > 1;
+            const towardsEnd = scrolled < max - 1;
+            left = rtl ? towardsEnd : towardsStart;
+            right = rtl ? towardsStart : towardsEnd;
+        }
+        const current = this.overflow();
+        if (current.left !== left || current.right !== right) {
+            this.overflow.set({ left, right });
         }
     }
 

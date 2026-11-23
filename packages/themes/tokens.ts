@@ -7601,6 +7601,12 @@ export default {
                 description: 'Background of the card list while a card is dragged over it'
             },
             {
+                name: 'kanban.column.collapsedHoverBackground',
+                token: 'kanban.column.collapsed.hover.background',
+                variable: '--p-kanban-column-collapsed-hover-background',
+                description: 'Background of a collapsed column on hover'
+            },
+            {
                 name: 'kanban.columnHeader.padding',
                 token: 'kanban.column.header.padding',
                 variable: '--p-kanban-column-header-padding',
