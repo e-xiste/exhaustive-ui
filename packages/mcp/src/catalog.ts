@@ -12,12 +12,14 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     datatable: 'table',
     dropdown: 'select',
     'file-input': 'fileinput',
+    'guided-tour': 'tour',
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
     overlaypanel: 'popover',
     sidebar: 'drawer',
     tabview: 'tabs',
-    virtualscroller: 'scroller'
+    virtualscroller: 'scroller',
+    walkthrough: 'tour'
 };
 
 export interface BuildCatalogOptions {

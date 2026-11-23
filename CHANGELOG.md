@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **tour:** new `Tour` component (`p-tour`) for guided onboarding tours. Each step highlights its `target`, a CSS selector, an element or a function, with a spotlight cut out of the mask that follows the target on scroll and resize, and explains it in a card with a title, a text, a step counter, progress dots and back, next, done and close buttons. Steps without target are centered; a missing target is centered or skipped (`missingTarget`) with a warning. The card is placed on the `top`, `right`, `bottom` or `left` of the target, or `auto`, flips when there is no room, has an arrow and is RTL aware. `visible` and `activeIndex` are two-way, with `onStepChange`, `onFinish` and `onClose` and the `start()`, `next()`, `prev()`, `goTo()` and `close()` methods. It has `mask`, `dismissableMask`, `closeOnEscape`, `disableInteraction`, spotlight padding and radius, `step`, `header`, `content` and `footer` templates and replaceable texts through `labels`. The card is a dialog, modal with the mask, that takes the focus, keeps it while the mask is displayed, gives it back at the end, supports the arrow keys and announces each step; transitions follow `prefers-reduced-motion` and nothing is rendered on the server. Theming through the new `tour` design tokens in the four presets.
+
+### Documentation
+
+- **tour:** documentation page with 10 sections, the API reference and the pass-through options.
+
 ## 22.7.0 (2026-11-23)
 
 Contrast: text in the four theme presets meets WCAG AA in light and dark mode.

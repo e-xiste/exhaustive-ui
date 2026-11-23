@@ -87,6 +87,7 @@ import togglebutton from '@exhaustive-ui/themes/lara/togglebutton';
 import toggleswitch from '@exhaustive-ui/themes/lara/toggleswitch';
 import toolbar from '@exhaustive-ui/themes/lara/toolbar';
 import tooltip from '@exhaustive-ui/themes/lara/tooltip';
+import tour from '@exhaustive-ui/themes/lara/tour';
 import tree from '@exhaustive-ui/themes/lara/tree';
 import treeselect from '@exhaustive-ui/themes/lara/treeselect';
 import treetable from '@exhaustive-ui/themes/lara/treetable';
@@ -183,6 +184,7 @@ export default {
         toast,
         toolbar,
         tooltip,
+        tour,
         virtualscroller
     }
 } satisfies Preset<LaraBaseDesignTokens>;

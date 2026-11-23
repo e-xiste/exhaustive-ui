@@ -57,6 +57,7 @@ const SYNONYMS: Record<string, string[]> = {
     menu: ['menubar', 'tieredmenu', 'contextmenu', 'panelmenu'],
     modal: ['dialog'],
     notification: ['toast', 'message'],
+    onboarding: ['tour', 'walkthrough'],
     overlaypanel: ['popover'],
     page: ['paginator', 'pagination', 'pages'],
     pages: ['paginator', 'pagination'],
@@ -75,6 +76,7 @@ const SYNONYMS: Record<string, string[]> = {
     sortable: ['sort'],
     sorting: ['sort'],
     spinner: ['loading', 'progressspinner'],
+    spotlight: ['tour'],
     switch: ['toggleswitch'],
     tab: ['tabs'],
     tabview: ['tabs'],
@@ -88,9 +90,11 @@ const SYNONYMS: Record<string, string[]> = {
     token: ['tokens', 'theming'],
     tokens: ['token', 'theming'],
     tooltip: ['tooltips'],
+    tour: ['onboarding', 'walkthrough'],
     upload: ['fileinput', 'fileupload', 'file'],
     validation: ['invalid', 'forms'],
-    virtual: ['scroller', 'virtualscroll', 'lazy']
+    virtual: ['scroller', 'virtualscroll', 'lazy'],
+    walkthrough: ['tour', 'onboarding']
 };
 
 /** Crude English stemmer, good enough to match "sorting" against "sortable". */

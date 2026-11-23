@@ -87,6 +87,7 @@ import togglebutton from '@exhaustive-ui/themes/material/togglebutton';
 import toggleswitch from '@exhaustive-ui/themes/material/toggleswitch';
 import toolbar from '@exhaustive-ui/themes/material/toolbar';
 import tooltip from '@exhaustive-ui/themes/material/tooltip';
+import tour from '@exhaustive-ui/themes/material/tour';
 import tree from '@exhaustive-ui/themes/material/tree';
 import treeselect from '@exhaustive-ui/themes/material/treeselect';
 import treetable from '@exhaustive-ui/themes/material/treetable';
@@ -183,6 +184,7 @@ export default {
         toast,
         toolbar,
         tooltip,
+        tour,
         virtualscroller
     }
 } satisfies Preset<MaterialBaseDesignTokens>;

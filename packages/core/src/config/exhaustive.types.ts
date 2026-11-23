@@ -76,6 +76,7 @@ import type { ToastPassThrough } from '@exhaustive-ui/core/types/toast';
 import type { ToggleButtonPassThrough } from '@exhaustive-ui/core/types/togglebutton';
 import type { ToggleSwitchPassThrough } from '@exhaustive-ui/core/types/toggleswitch';
 import type { ToolbarPassThrough } from '@exhaustive-ui/core/types/toolbar';
+import type { TourPassThrough } from '@exhaustive-ui/core/types/tour';
 import type { TreePassThrough } from '@exhaustive-ui/core/types/tree';
 import type { TreeSelectPassThrough } from '@exhaustive-ui/core/types/treeselect';
 import type { TreeTablePassThrough } from '@exhaustive-ui/core/types/treetable';
@@ -175,6 +176,7 @@ export interface GlobalPassThrough {
     toggleButton?: ToggleButtonPassThrough;
     toggleSwitch?: ToggleSwitchPassThrough;
     toolbar?: ToolbarPassThrough;
+    tour?: TourPassThrough;
     tree?: TreePassThrough;
     treeSelect?: TreeSelectPassThrough;
     treeTable?: TreeTablePassThrough;

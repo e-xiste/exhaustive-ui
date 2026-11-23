@@ -88,6 +88,7 @@ import togglebutton from '@exhaustive-ui/themes/aura/togglebutton';
 import toggleswitch from '@exhaustive-ui/themes/aura/toggleswitch';
 import toolbar from '@exhaustive-ui/themes/aura/toolbar';
 import tooltip from '@exhaustive-ui/themes/aura/tooltip';
+import tour from '@exhaustive-ui/themes/aura/tour';
 import tree from '@exhaustive-ui/themes/aura/tree';
 import treeselect from '@exhaustive-ui/themes/aura/treeselect';
 import treetable from '@exhaustive-ui/themes/aura/treetable';
@@ -181,6 +182,7 @@ export default {
         toggleswitch,
         toolbar,
         tooltip,
+        tour,
         tree,
         treeselect,
         treetable,

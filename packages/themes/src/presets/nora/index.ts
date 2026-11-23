@@ -87,6 +87,7 @@ import togglebutton from '@exhaustive-ui/themes/nora/togglebutton';
 import toggleswitch from '@exhaustive-ui/themes/nora/toggleswitch';
 import toolbar from '@exhaustive-ui/themes/nora/toolbar';
 import tooltip from '@exhaustive-ui/themes/nora/tooltip';
+import tour from '@exhaustive-ui/themes/nora/tour';
 import tree from '@exhaustive-ui/themes/nora/tree';
 import treeselect from '@exhaustive-ui/themes/nora/treeselect';
 import treetable from '@exhaustive-ui/themes/nora/treetable';
@@ -183,6 +184,7 @@ export default {
         toast,
         toolbar,
         tooltip,
+        tour,
         virtualscroller
     }
 } satisfies Preset<NoraBaseDesignTokens>;

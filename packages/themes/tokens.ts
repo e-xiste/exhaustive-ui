@@ -96,6 +96,7 @@ export interface Tokens {
     toggleswitch: TokenMetaData;
     toolbar: TokenMetaData;
     tooltip: TokenMetaData;
+    tour: TokenMetaData;
     tree: TokenMetaData;
     treeselect: TokenMetaData;
     treetable: TokenMetaData;
@@ -13549,6 +13550,179 @@ export default {
                 token: 'tooltip.color',
                 variable: '--p-tooltip-color',
                 description: 'Color of root'
+            }
+        ]
+    },
+    tour: {
+        description: 'Tour Design Tokens',
+        tokens: [
+            {
+                name: 'tour.root.transitionDuration',
+                token: 'tour.transition.duration',
+                variable: '--p-tour-transition-duration',
+                description: 'Transition duration of root'
+            },
+            {
+                name: 'tour.mask.background',
+                token: 'tour.mask.background',
+                variable: '--p-tour-mask-background',
+                description: 'Background of mask'
+            },
+            {
+                name: 'tour.spotlight.shadow',
+                token: 'tour.spotlight.shadow',
+                variable: '--p-tour-spotlight-shadow',
+                description: 'Shadow of spotlight'
+            },
+            {
+                name: 'tour.card.background',
+                token: 'tour.card.background',
+                variable: '--p-tour-card-background',
+                description: 'Background of card'
+            },
+            {
+                name: 'tour.card.borderColor',
+                token: 'tour.card.border.color',
+                variable: '--p-tour-card-border-color',
+                description: 'Border color of card'
+            },
+            {
+                name: 'tour.card.color',
+                token: 'tour.card.color',
+                variable: '--p-tour-card-color',
+                description: 'Color of card'
+            },
+            {
+                name: 'tour.card.borderRadius',
+                token: 'tour.card.border.radius',
+                variable: '--p-tour-card-border-radius',
+                description: 'Border radius of card'
+            },
+            {
+                name: 'tour.card.shadow',
+                token: 'tour.card.shadow',
+                variable: '--p-tour-card-shadow',
+                description: 'Shadow of card'
+            },
+            {
+                name: 'tour.card.padding',
+                token: 'tour.card.padding',
+                variable: '--p-tour-card-padding',
+                description: 'Padding of card'
+            },
+            {
+                name: 'tour.card.width',
+                token: 'tour.card.width',
+                variable: '--p-tour-card-width',
+                description: 'Width of card'
+            },
+            {
+                name: 'tour.card.gap',
+                token: 'tour.card.gap',
+                variable: '--p-tour-card-gap',
+                description: 'Gap of card'
+            },
+            {
+                name: 'tour.card.focusRing.width',
+                token: 'tour.card.focus.ring.width',
+                variable: '--p-tour-card-focus-ring-width',
+                description: 'Focus ring width of card'
+            },
+            {
+                name: 'tour.card.focusRing.style',
+                token: 'tour.card.focus.ring.style',
+                variable: '--p-tour-card-focus-ring-style',
+                description: 'Focus ring style of card'
+            },
+            {
+                name: 'tour.card.focusRing.color',
+                token: 'tour.card.focus.ring.color',
+                variable: '--p-tour-card-focus-ring-color',
+                description: 'Focus ring color of card'
+            },
+            {
+                name: 'tour.card.focusRing.offset',
+                token: 'tour.card.focus.ring.offset',
+                variable: '--p-tour-card-focus-ring-offset',
+                description: 'Focus ring offset of card'
+            },
+            {
+                name: 'tour.arrow.size',
+                token: 'tour.arrow.size',
+                variable: '--p-tour-arrow-size',
+                description: 'Size of arrow'
+            },
+            {
+                name: 'tour.header.gap',
+                token: 'tour.header.gap',
+                variable: '--p-tour-header-gap',
+                description: 'Gap of header'
+            },
+            {
+                name: 'tour.title.fontSize',
+                token: 'tour.title.font.size',
+                variable: '--p-tour-title-font-size',
+                description: 'Font size of title'
+            },
+            {
+                name: 'tour.title.fontWeight',
+                token: 'tour.title.font.weight',
+                variable: '--p-tour-title-font-weight',
+                description: 'Font weight of title'
+            },
+            {
+                name: 'tour.footer.gap',
+                token: 'tour.footer.gap',
+                variable: '--p-tour-footer-gap',
+                description: 'Gap of footer'
+            },
+            {
+                name: 'tour.counter.color',
+                token: 'tour.counter.color',
+                variable: '--p-tour-counter-color',
+                description: 'Color of counter'
+            },
+            {
+                name: 'tour.counter.fontSize',
+                token: 'tour.counter.font.size',
+                variable: '--p-tour-counter-font-size',
+                description: 'Font size of counter'
+            },
+            {
+                name: 'tour.dot.size',
+                token: 'tour.dot.size',
+                variable: '--p-tour-dot-size',
+                description: 'Size of dot'
+            },
+            {
+                name: 'tour.dot.gap',
+                token: 'tour.dot.gap',
+                variable: '--p-tour-dot-gap',
+                description: 'Gap of dot'
+            },
+            {
+                name: 'tour.dot.background',
+                token: 'tour.dot.background',
+                variable: '--p-tour-dot-background',
+                description: 'Background of dot'
+            },
+            {
+                name: 'tour.dot.activeBackground',
+                token: 'tour.dot.active.background',
+                variable: '--p-tour-dot-active-background',
+                description: 'Active background of dot'
+            },
+            {
+                name: 'tour.dot.activeWidth',
+                token: 'tour.dot.active.width',
+                variable: '--p-tour-dot-active-width',
+                description: 'Active width of dot'
+            },
+            {
+                name: 'tour.actions.gap',
+                token: 'tour.actions.gap',
+                variable: '--p-tour-actions-gap',
+                description: 'Gap of actions'
             }
         ]
     },
