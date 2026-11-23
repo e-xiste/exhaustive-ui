@@ -8,6 +8,7 @@
         margin-inline: auto;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+        grid-auto-flow: dense;
         gap: 1.5rem;
     }
 
@@ -16,6 +17,10 @@
         flex-direction: column;
         gap: 2rem;
         box-shadow: var(--home-card-shadow);
+
+        &.new-component-wide {
+            grid-column: 1 / -1;
+        }
 
         &.new-component-single {
             grid-column: 1 / -1;
@@ -34,6 +39,10 @@
                 }
             }
         }
+    }
+
+    .new-component-demo {
+        min-width: 0;
     }
 
     .new-component-link {
