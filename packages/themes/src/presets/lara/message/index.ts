@@ -96,7 +96,7 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
         success: {
             background: 'color-mix(in srgb, {green.50}, transparent 5%)',
             borderColor: 'transparent',
-            color: '{green.600}',
+            color: '{green.700}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{green.100}',
@@ -106,17 +106,17 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{green.600}',
+                color: '{green.700}',
                 borderColor: '{green.600}'
             },
             simple: {
-                color: '{green.600}'
+                color: '{green.700}'
             }
         },
         warn: {
             background: 'color-mix(in srgb,{yellow.50}, transparent 5%)',
             borderColor: 'transparent',
-            color: '{yellow.600}',
+            color: '{yellow.700}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{yellow.100}',
@@ -126,17 +126,17 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{yellow.600}',
+                color: '{yellow.700}',
                 borderColor: '{yellow.600}'
             },
             simple: {
-                color: '{yellow.600}'
+                color: '{yellow.700}'
             }
         },
         error: {
             background: 'color-mix(in srgb, {red.50}, transparent 5%)',
             borderColor: 'transparent',
-            color: '{red.600}',
+            color: '{red.700}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{red.100}',
@@ -146,11 +146,11 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{red.600}',
+                color: '{red.700}',
                 borderColor: '{red.600}'
             },
             simple: {
-                color: '{red.600}'
+                color: '{red.700}'
             }
         },
         secondary: {
@@ -198,7 +198,7 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.500}, transparent 84%)',
             borderColor: 'transparent',
-            color: '{blue.500}',
+            color: '{blue.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
@@ -208,17 +208,17 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{blue.500}',
+                color: '{blue.400}',
                 borderColor: '{blue.500}'
             },
             simple: {
-                color: '{blue.500}'
+                color: '{blue.400}'
             }
         },
         success: {
             background: 'color-mix(in srgb, {green.500}, transparent 84%)',
             borderColor: 'transparent',
-            color: '{green.500}',
+            color: '{green.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
@@ -228,17 +228,17 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{green.500}',
+                color: '{green.400}',
                 borderColor: '{green.500}'
             },
             simple: {
-                color: '{green.500}'
+                color: '{green.400}'
             }
         },
         warn: {
             background: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
             borderColor: 'transparent',
-            color: '{yellow.500}',
+            color: '{yellow.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
@@ -248,17 +248,17 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{yellow.500}',
+                color: '{yellow.400}',
                 borderColor: '{yellow.500}'
             },
             simple: {
-                color: '{yellow.500}'
+                color: '{yellow.400}'
             }
         },
         error: {
             background: 'color-mix(in srgb, {red.500}, transparent 84%)',
             borderColor: 'transparent',
-            color: '{red.500}',
+            color: '{red.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
@@ -268,11 +268,11 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{red.500}',
+                color: '{red.400}',
                 borderColor: '{red.500}'
             },
             simple: {
-                color: '{red.500}'
+                color: '{red.400}'
             }
         },
         secondary: {

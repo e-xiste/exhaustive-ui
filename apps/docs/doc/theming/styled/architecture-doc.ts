@@ -27,7 +27,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <h3>Component Tokens</h3>
             <p>
                 Component tokens are isolated tokens per component such as <i>inputtext.background</i> or <i>button.color</i> that map to the semantic tokens. As an example, <i>button.background</i> component token maps to the
-                <i>primary.color</i> semantic token which maps to the <i>green.500</i> primitive token.
+                <i>primary.color</i> semantic token which maps to the <i>emerald.700</i> primitive token in the light mode of Aura.
             </p>
             <h3>Best Practices</h3>
             <p class="mb-0">

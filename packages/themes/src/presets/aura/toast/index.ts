@@ -67,13 +67,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         success: {
             background: 'color-mix(in srgb, {green.50}, transparent 5%)',
             borderColor: '{green.200}',
-            color: '{green.600}',
+            color: '{green.700}',
             detailColor: '{surface.700}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {green.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: '{green.100}',
                 focusRing: {
-                    color: '{green.600}',
+                    color: '{green.700}',
                     shadow: 'none'
                 }
             }
@@ -81,13 +81,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         warn: {
             background: 'color-mix(in srgb,{yellow.50}, transparent 5%)',
             borderColor: '{yellow.200}',
-            color: '{yellow.600}',
+            color: '{yellow.700}',
             detailColor: '{surface.700}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {yellow.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: '{yellow.100}',
                 focusRing: {
-                    color: '{yellow.600}',
+                    color: '{yellow.700}',
                     shadow: 'none'
                 }
             }
@@ -95,13 +95,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         error: {
             background: 'color-mix(in srgb, {red.50}, transparent 5%)',
             borderColor: '{red.200}',
-            color: '{red.600}',
+            color: '{red.700}',
             detailColor: '{surface.700}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {red.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: '{red.100}',
                 focusRing: {
-                    color: '{red.600}',
+                    color: '{red.700}',
                     shadow: 'none'
                 }
             }
@@ -142,13 +142,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {blue.700}, transparent 64%)',
-            color: '{blue.500}',
+            color: '{blue.400}',
             detailColor: '{surface.0}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {blue.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{blue.500}',
+                    color: '{blue.400}',
                     shadow: 'none'
                 }
             }
@@ -156,13 +156,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         success: {
             background: 'color-mix(in srgb, {green.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {green.700}, transparent 64%)',
-            color: '{green.500}',
+            color: '{green.400}',
             detailColor: '{surface.0}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {green.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{green.500}',
+                    color: '{green.400}',
                     shadow: 'none'
                 }
             }
@@ -170,13 +170,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         warn: {
             background: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {yellow.700}, transparent 64%)',
-            color: '{yellow.500}',
+            color: '{yellow.400}',
             detailColor: '{surface.0}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {yellow.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{yellow.500}',
+                    color: '{yellow.400}',
                     shadow: 'none'
                 }
             }
@@ -184,13 +184,13 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
         error: {
             background: 'color-mix(in srgb, {red.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {red.700}, transparent 64%)',
-            color: '{red.500}',
+            color: '{red.400}',
             detailColor: '{surface.0}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {red.500}, transparent 96%)',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{red.500}',
+                    color: '{red.400}',
                     shadow: 'none'
                 }
             }

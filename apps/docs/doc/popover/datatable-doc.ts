@@ -52,7 +52,7 @@ import { TagModule } from '@exhaustive-ui/core/tag';
                         <div class="flex justify-center rounded-sm">
                             <div class="relative mx-auto">
                                 <img class="rounded-sm w-44 sm:w-64" [src]="'https://exhaustive-ui.com/demo/product/' + selectedProduct().image" [alt]="selectedProduct().name" />
-                                <p-tag [value]="selectedProduct().inventoryStatus" [severity]="getSeverity(selectedProduct())" class="absolute dark:bg-surface-900!" [style.left.px]="4" [style.top.px]="4" />
+                                <p-tag [value]="selectedProduct().inventoryStatus" [severity]="getSeverity(selectedProduct())" class="absolute" [style.left.px]="4" [style.top.px]="4" />
                             </div>
                         </div>
                         <div class="pt-4">

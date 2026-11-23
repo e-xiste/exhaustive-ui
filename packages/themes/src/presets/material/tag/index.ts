@@ -24,19 +24,19 @@ export const colorScheme: TagTokenSections.ColorScheme = {
             color: '{surface.600}'
         },
         success: {
-            background: '{green.500}',
+            background: '{green.800}',
             color: '{surface.0}'
         },
         info: {
-            background: '{sky.500}',
+            background: '{sky.800}',
             color: '{surface.0}'
         },
         warn: {
             background: '{orange.500}',
-            color: '{surface.0}'
+            color: '{surface.950}'
         },
         danger: {
-            background: '{red.500}',
+            background: '{red.700}',
             color: '{surface.0}'
         },
         contrast: {
@@ -66,7 +66,7 @@ export const colorScheme: TagTokenSections.ColorScheme = {
             color: '{orange.950}'
         },
         danger: {
-            background: '{red.400}',
+            background: '{red.300}',
             color: '{red.950}'
         },
         contrast: {

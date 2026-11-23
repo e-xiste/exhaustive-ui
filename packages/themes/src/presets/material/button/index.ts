@@ -66,32 +66,32 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 }
             },
             info: {
-                background: '{sky.500}',
-                hoverBackground: '{sky.400}',
-                activeBackground: '{sky.300}',
-                borderColor: '{sky.500}',
-                hoverBorderColor: '{sky.400}',
-                activeBorderColor: '{sky.300}',
+                background: '{sky.800}',
+                hoverBackground: '{sky.900}',
+                activeBackground: '{sky.900}',
+                borderColor: '{sky.800}',
+                hoverBorderColor: '{sky.900}',
+                activeBorderColor: '{sky.900}',
                 color: '#ffffff',
                 hoverColor: '#ffffff',
                 activeColor: '#ffffff',
                 focusRing: {
-                    color: '{sky.500}',
+                    color: '{sky.800}',
                     shadow: 'none'
                 }
             },
             success: {
-                background: '{green.500}',
-                hoverBackground: '{green.400}',
-                activeBackground: '{green.300}',
-                borderColor: '{green.500}',
-                hoverBorderColor: '{green.400}',
-                activeBorderColor: '{green.300}',
+                background: '{green.800}',
+                hoverBackground: '{green.900}',
+                activeBackground: '{green.900}',
+                borderColor: '{green.800}',
+                hoverBorderColor: '{green.900}',
+                activeBorderColor: '{green.900}',
                 color: '#ffffff',
                 hoverColor: '#ffffff',
                 activeColor: '#ffffff',
                 focusRing: {
-                    color: '{green.500}',
+                    color: '{green.800}',
                     shadow: 'none'
                 }
             },
@@ -102,9 +102,9 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 borderColor: '{orange.500}',
                 hoverBorderColor: '{orange.400}',
                 activeBorderColor: '{orange.300}',
-                color: '#ffffff',
-                hoverColor: '#ffffff',
-                activeColor: '#ffffff',
+                color: '{surface.950}',
+                hoverColor: '{surface.950}',
+                activeColor: '{surface.950}',
                 focusRing: {
                     color: '{orange.500}',
                     shadow: 'none'
@@ -112,11 +112,11 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
             },
             help: {
                 background: '{purple.500}',
-                hoverBackground: '{purple.400}',
-                activeBackground: '{purple.300}',
+                hoverBackground: '{purple.600}',
+                activeBackground: '{purple.700}',
                 borderColor: '{purple.500}',
-                hoverBorderColor: '{purple.400}',
-                activeBorderColor: '{purple.300}',
+                hoverBorderColor: '{purple.600}',
+                activeBorderColor: '{purple.700}',
                 color: '#ffffff',
                 hoverColor: '#ffffff',
                 activeColor: '#ffffff',
@@ -126,17 +126,17 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 }
             },
             danger: {
-                background: '{red.500}',
-                hoverBackground: '{red.400}',
-                activeBackground: '{red.300}',
-                borderColor: '{red.500}',
-                hoverBorderColor: '{red.400}',
-                activeBorderColor: '{red.300}',
+                background: '{red.700}',
+                hoverBackground: '{red.800}',
+                activeBackground: '{red.900}',
+                borderColor: '{red.700}',
+                hoverBorderColor: '{red.800}',
+                activeBorderColor: '{red.900}',
                 color: '#ffffff',
                 hoverColor: '#ffffff',
                 activeColor: '#ffffff',
                 focusRing: {
-                    color: '{red.500}',
+                    color: '{red.700}',
                     shadow: 'none'
                 }
             },
@@ -172,20 +172,20 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
             success: {
                 hoverBackground: '{green.50}',
                 activeBackground: '{green.100}',
-                borderColor: '{green.500}',
-                color: '{green.500}'
+                borderColor: '{green.800}',
+                color: '{green.800}'
             },
             info: {
                 hoverBackground: '{sky.50}',
                 activeBackground: '{sky.100}',
-                borderColor: '{sky.500}',
-                color: '{sky.500}'
+                borderColor: '{sky.800}',
+                color: '{sky.800}'
             },
             warn: {
                 hoverBackground: '{orange.50}',
                 activeBackground: '{orange.100}',
                 borderColor: '{orange.500}',
-                color: '{orange.500}'
+                color: '{orange.950}'
             },
             help: {
                 hoverBackground: '{purple.50}',
@@ -196,8 +196,8 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
             danger: {
                 hoverBackground: '{red.50}',
                 activeBackground: '{red.100}',
-                borderColor: '{red.500}',
-                color: '{red.500}'
+                borderColor: '{red.700}',
+                color: '{red.700}'
             },
             contrast: {
                 hoverBackground: '{surface.50}',
@@ -226,17 +226,17 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
             success: {
                 hoverBackground: '{green.50}',
                 activeBackground: '{green.100}',
-                color: '{green.500}'
+                color: '{green.800}'
             },
             info: {
                 hoverBackground: '{sky.50}',
                 activeBackground: '{sky.100}',
-                color: '{sky.500}'
+                color: '{sky.800}'
             },
             warn: {
                 hoverBackground: '{orange.50}',
                 activeBackground: '{orange.100}',
-                color: '{orange.500}'
+                color: '{orange.950}'
             },
             help: {
                 hoverBackground: '{purple.50}',
@@ -246,7 +246,7 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
             danger: {
                 hoverBackground: '{red.50}',
                 activeBackground: '{red.100}',
-                color: '{red.500}'
+                color: '{red.700}'
             },
             contrast: {
                 hoverBackground: '{surface.50}',
@@ -343,32 +343,32 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 }
             },
             help: {
-                background: '{purple.400}',
-                hoverBackground: '{purple.300}',
-                activeBackground: '{purple.200}',
-                borderColor: '{purple.400}',
-                hoverBorderColor: '{purple.300}',
-                activeBorderColor: '{purple.200}',
+                background: '{purple.300}',
+                hoverBackground: '{purple.200}',
+                activeBackground: '{purple.100}',
+                borderColor: '{purple.300}',
+                hoverBorderColor: '{purple.200}',
+                activeBorderColor: '{purple.100}',
                 color: '{purple.950}',
                 hoverColor: '{purple.950}',
                 activeColor: '{purple.950}',
                 focusRing: {
-                    color: '{purple.400}',
+                    color: '{purple.300}',
                     shadow: 'none'
                 }
             },
             danger: {
-                background: '{red.400}',
-                hoverBackground: '{red.300}',
-                activeBackground: '{red.200}',
-                borderColor: '{red.400}',
-                hoverBorderColor: '{red.300}',
-                activeBorderColor: '{red.200}',
+                background: '{red.300}',
+                hoverBackground: '{red.200}',
+                activeBackground: '{red.100}',
+                borderColor: '{red.300}',
+                hoverBorderColor: '{red.200}',
+                activeBorderColor: '{red.100}',
                 color: '{red.950}',
                 hoverColor: '{red.950}',
                 activeColor: '{red.950}',
                 focusRing: {
-                    color: '{red.400}',
+                    color: '{red.300}',
                     shadow: 'none'
                 }
             },
@@ -420,16 +420,16 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 color: '{orange.400}'
             },
             help: {
-                hoverBackground: 'color-mix(in srgb, {purple.400}, transparent 96%)',
-                activeBackground: 'color-mix(in srgb, {purple.400}, transparent 84%)',
+                hoverBackground: 'color-mix(in srgb, {purple.300}, transparent 96%)',
+                activeBackground: 'color-mix(in srgb, {purple.300}, transparent 84%)',
                 borderColor: '{purple.700}',
-                color: '{purple.400}'
+                color: '{purple.300}'
             },
             danger: {
-                hoverBackground: 'color-mix(in srgb, {red.400}, transparent 96%)',
-                activeBackground: 'color-mix(in srgb, {red.400}, transparent 84%)',
+                hoverBackground: 'color-mix(in srgb, {red.300}, transparent 96%)',
+                activeBackground: 'color-mix(in srgb, {red.300}, transparent 84%)',
                 borderColor: '{red.700}',
-                color: '{red.400}'
+                color: '{red.300}'
             },
             contrast: {
                 hoverBackground: '{surface.800}',
@@ -471,14 +471,14 @@ export const colorScheme: ButtonTokenSections.ColorScheme = {
                 color: '{orange.400}'
             },
             help: {
-                hoverBackground: 'color-mix(in srgb, {purple.400}, transparent 96%)',
-                activeBackground: 'color-mix(in srgb, {purple.400}, transparent 84%)',
-                color: '{purple.400}'
+                hoverBackground: 'color-mix(in srgb, {purple.300}, transparent 96%)',
+                activeBackground: 'color-mix(in srgb, {purple.300}, transparent 84%)',
+                color: '{purple.300}'
             },
             danger: {
-                hoverBackground: 'color-mix(in srgb, {red.400}, transparent 96%)',
-                activeBackground: 'color-mix(in srgb, {red.400}, transparent 84%)',
-                color: '{red.400}'
+                hoverBackground: 'color-mix(in srgb, {red.300}, transparent 96%)',
+                activeBackground: 'color-mix(in srgb, {red.300}, transparent 84%)',
+                color: '{red.300}'
             },
             contrast: {
                 hoverBackground: '{surface.800}',

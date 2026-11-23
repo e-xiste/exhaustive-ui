@@ -156,10 +156,10 @@ export const semantic: NoraBaseTokenSections.Semantic = {
                 950: '{slate.950}'
             },
             primary: {
-                color: '{primary.600}',
+                color: '{primary.700}',
                 contrastColor: '#ffffff',
-                hoverColor: '{primary.700}',
-                activeColor: '{primary.800}'
+                hoverColor: '{primary.800}',
+                activeColor: '{primary.900}'
             },
             highlight: {
                 background: '{primary.600}',
@@ -184,7 +184,7 @@ export const semantic: NoraBaseTokenSections.Semantic = {
                 color: '{surface.900}',
                 disabledColor: '{surface.600}',
                 placeholderColor: '{surface.600}',
-                invalidPlaceholderColor: '{red.600}',
+                invalidPlaceholderColor: '{red.700}',
                 floatLabelColor: '{surface.600}',
                 floatLabelFocusColor: '{primary.color}',
                 floatLabelActiveColor: '{surface.600}',
@@ -320,7 +320,7 @@ export const semantic: NoraBaseTokenSections.Semantic = {
             text: {
                 color: '{surface.0}',
                 hoverColor: '{surface.0}',
-                mutedColor: '{surface.400}',
+                mutedColor: '{surface.300}',
                 hoverMutedColor: '{surface.300}'
             },
             content: {

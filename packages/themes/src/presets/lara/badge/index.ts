@@ -40,19 +40,19 @@ export const colorScheme: BadgeTokenSections.ColorScheme = {
             color: '{surface.600}'
         },
         success: {
-            background: '{green.500}',
+            background: '{green.700}',
             color: '{surface.0}'
         },
         info: {
-            background: '{sky.500}',
+            background: '{sky.700}',
             color: '{surface.0}'
         },
         warn: {
-            background: '{orange.500}',
+            background: '{orange.700}',
             color: '{surface.0}'
         },
         danger: {
-            background: '{red.500}',
+            background: '{red.600}',
             color: '{surface.0}'
         },
         contrast: {

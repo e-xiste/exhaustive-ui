@@ -76,47 +76,47 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.50}, transparent 5%)',
             borderColor: '{blue.200}',
-            color: '{blue.600}',
+            color: '{blue.800}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{blue.100}',
                 focusRing: {
-                    color: '{blue.600}',
+                    color: '{blue.800}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{blue.600}',
+                color: '{blue.800}',
                 borderColor: '{blue.600}'
             },
             simple: {
-                color: '{blue.600}'
+                color: '{blue.800}'
             }
         },
         success: {
             background: 'color-mix(in srgb, {green.50}, transparent 5%)',
             borderColor: '{green.200}',
-            color: '{green.600}',
+            color: '{green.800}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{green.100}',
                 focusRing: {
-                    color: '{green.600}',
+                    color: '{green.800}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{green.600}',
+                color: '{green.800}',
                 borderColor: '{green.600}'
             },
             simple: {
-                color: '{green.600}'
+                color: '{green.800}'
             }
         },
         warn: {
             background: 'color-mix(in srgb,{yellow.50}, transparent 5%)',
             borderColor: '{yellow.200}',
-            color: '{yellow.900}',
+            color: '{yellow.950}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{yellow.100}',
@@ -126,31 +126,31 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
                 }
             },
             outlined: {
-                color: '{yellow.900}',
+                color: '{yellow.950}',
                 borderColor: '{yellow.900}'
             },
             simple: {
-                color: '{yellow.900}'
+                color: '{yellow.950}'
             }
         },
         error: {
             background: 'color-mix(in srgb, {red.50}, transparent 5%)',
             borderColor: '{red.200}',
-            color: '{red.600}',
+            color: '{red.800}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: '{red.100}',
                 focusRing: {
-                    color: '{red.600}',
+                    color: '{red.800}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{red.600}',
+                color: '{red.800}',
                 borderColor: '{red.600}'
             },
             simple: {
-                color: '{red.600}'
+                color: '{red.800}'
             }
         },
         secondary: {
@@ -198,81 +198,81 @@ export const colorScheme: MessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {blue.700}, transparent 64%)',
-            color: '{blue.500}',
+            color: '{blue.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{blue.500}',
+                    color: '{blue.400}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{blue.500}',
+                color: '{blue.400}',
                 borderColor: '{blue.500}'
             },
             simple: {
-                color: '{blue.500}'
+                color: '{blue.400}'
             }
         },
         success: {
             background: 'color-mix(in srgb, {green.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {green.700}, transparent 64%)',
-            color: '{green.500}',
+            color: '{green.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{green.500}',
+                    color: '{green.400}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{green.500}',
+                color: '{green.400}',
                 borderColor: '{green.500}'
             },
             simple: {
-                color: '{green.500}'
+                color: '{green.400}'
             }
         },
         warn: {
             background: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {yellow.700}, transparent 64%)',
-            color: '{yellow.500}',
+            color: '{yellow.400}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{yellow.500}',
+                    color: '{yellow.400}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{yellow.500}',
+                color: '{yellow.400}',
                 borderColor: '{yellow.500}'
             },
             simple: {
-                color: '{yellow.500}'
+                color: '{yellow.400}'
             }
         },
         error: {
             background: 'color-mix(in srgb, {red.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {red.700}, transparent 64%)',
-            color: '{red.500}',
+            color: '{red.300}',
             shadow: 'none',
             closeButton: {
                 hoverBackground: 'rgba(255, 255, 255, 0.05)',
                 focusRing: {
-                    color: '{red.500}',
+                    color: '{red.300}',
                     shadow: 'none'
                 }
             },
             outlined: {
-                color: '{red.500}',
+                color: '{red.300}',
                 borderColor: '{red.500}'
             },
             simple: {
-                color: '{red.500}'
+                color: '{red.300}'
             }
         },
         secondary: {

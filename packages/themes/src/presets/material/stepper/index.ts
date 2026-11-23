@@ -60,8 +60,8 @@ export const steppanel: StepperTokenSections.Steppanel = {
 export const colorScheme: StepperTokenSections.ColorScheme = {
     light: {
         stepNumber: {
-            background: '{surface.400}',
-            borderColor: '{surface.400}',
+            background: '{surface.500}',
+            borderColor: '{surface.500}',
             color: '{surface.0}'
         }
     },

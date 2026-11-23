@@ -120,7 +120,7 @@ export class TemplateDoc implements OnInit {
                         label: 'Logout',
                         icon: 'pi pi-sign-out',
                         shortcut: '⌘+Q',
-                        linkClass: 'text-red-500! dark:text-red-400!'
+                        linkClass: 'text-red-700! dark:text-red-400!'
                     }
                 ]
             },

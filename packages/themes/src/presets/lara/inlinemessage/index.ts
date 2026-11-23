@@ -25,19 +25,19 @@ export const colorScheme: InlineMessageTokenSections.ColorScheme = {
         success: {
             background: 'color-mix(in srgb, {green.50}, transparent 5%)',
             borderColor: 'color-mix(in srgb, {green.50}, transparent 5%)',
-            color: '{green.600}',
+            color: '{green.700}',
             shadow: 'none'
         },
         warn: {
             background: 'color-mix(in srgb,{yellow.50}, transparent 5%)',
             borderColor: 'color-mix(in srgb,{yellow.50}, transparent 5%)',
-            color: '{yellow.600}',
+            color: '{yellow.700}',
             shadow: 'none'
         },
         error: {
             background: 'color-mix(in srgb, {red.50}, transparent 5%)',
             borderColor: 'color-mix(in srgb, {red.50}, transparent 5%)',
-            color: '{red.600}',
+            color: '{red.700}',
             shadow: 'none'
         },
         secondary: {
@@ -57,25 +57,25 @@ export const colorScheme: InlineMessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {blue.500}, transparent 84%)',
-            color: '{blue.500}',
+            color: '{blue.400}',
             shadow: 'none'
         },
         success: {
             background: 'color-mix(in srgb, {green.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {green.500}, transparent 84%)',
-            color: '{green.500}',
+            color: '{green.400}',
             shadow: 'none'
         },
         warn: {
             background: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
-            color: '{yellow.500}',
+            color: '{yellow.400}',
             shadow: 'none'
         },
         error: {
             background: 'color-mix(in srgb, {red.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {red.500}, transparent 84%)',
-            color: '{red.500}',
+            color: '{red.400}',
             shadow: 'none'
         },
         secondary: {

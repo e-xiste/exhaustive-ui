@@ -158,10 +158,10 @@ export const semantic: MaterialBaseTokenSections.Semantic = {
                 950: '{slate.950}'
             },
             primary: {
-                color: '{primary.500}',
+                color: '{primary.900}',
                 contrastColor: '#ffffff',
-                hoverColor: '{primary.400}',
-                activeColor: '{primary.300}'
+                hoverColor: '{primary.950}',
+                activeColor: '{primary.950}'
             },
             highlight: {
                 background: 'color-mix(in srgb, {primary.color}, transparent 88%)',

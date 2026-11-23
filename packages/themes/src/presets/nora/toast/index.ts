@@ -77,8 +77,8 @@ export const colorScheme: ToastTokenSections.ColorScheme = {
             }
         },
         warn: {
-            background: '{yellow.600}',
-            borderColor: '{yellow.600}',
+            background: '{yellow.700}',
+            borderColor: '{yellow.700}',
             color: '{yellow.50}',
             detailColor: '{yellow.50}',
             shadow: '{overlay.popover.shadow}',

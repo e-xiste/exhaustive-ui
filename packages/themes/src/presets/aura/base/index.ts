@@ -156,10 +156,10 @@ export const semantic: AuraBaseTokenSections.Semantic = {
                 950: '{slate.950}'
             },
             primary: {
-                color: '{primary.500}',
+                color: '{primary.700}',
                 contrastColor: '#ffffff',
-                hoverColor: '{primary.600}',
-                activeColor: '{primary.700}'
+                hoverColor: '{primary.800}',
+                activeColor: '{primary.900}'
             },
             highlight: {
                 background: '{primary.50}',
@@ -195,7 +195,7 @@ export const semantic: AuraBaseTokenSections.Semantic = {
             text: {
                 color: '{surface.700}',
                 hoverColor: '{surface.800}',
-                mutedColor: '{surface.500}',
+                mutedColor: '{surface.600}',
                 hoverMutedColor: '{surface.600}'
             },
             content: {

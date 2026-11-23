@@ -19,13 +19,13 @@ export const colorScheme: InlineMessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.50}, transparent 5%)',
             borderColor: '{blue.200}',
-            color: '{blue.600}',
+            color: '{blue.800}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {blue.500}, transparent 96%)'
         },
         success: {
             background: 'color-mix(in srgb, {green.50}, transparent 5%)',
             borderColor: '{green.200}',
-            color: '{green.600}',
+            color: '{green.800}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {green.500}, transparent 96%)'
         },
         warn: {
@@ -37,7 +37,7 @@ export const colorScheme: InlineMessageTokenSections.ColorScheme = {
         error: {
             background: 'color-mix(in srgb, {red.50}, transparent 5%)',
             borderColor: '{red.200}',
-            color: '{red.600}',
+            color: '{red.800}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {red.500}, transparent 96%)'
         },
         secondary: {
@@ -57,25 +57,25 @@ export const colorScheme: InlineMessageTokenSections.ColorScheme = {
         info: {
             background: 'color-mix(in srgb, {blue.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {blue.700}, transparent 64%)',
-            color: '{blue.500}',
+            color: '{blue.400}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {blue.500}, transparent 96%)'
         },
         success: {
             background: 'color-mix(in srgb, {green.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {green.700}, transparent 64%)',
-            color: '{green.500}',
+            color: '{green.400}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {green.500}, transparent 96%)'
         },
         warn: {
             background: 'color-mix(in srgb, {yellow.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {yellow.700}, transparent 64%)',
-            color: '{yellow.500}',
+            color: '{yellow.400}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {yellow.500}, transparent 96%)'
         },
         error: {
             background: 'color-mix(in srgb, {red.500}, transparent 84%)',
             borderColor: 'color-mix(in srgb, {red.700}, transparent 64%)',
-            color: '{red.500}',
+            color: '{red.300}',
             shadow: '0px 4px 8px 0px color-mix(in srgb, {red.500}, transparent 96%)'
         },
         secondary: {

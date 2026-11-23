@@ -3,7 +3,7 @@ import type { InputGroupDesignTokens, InputGroupTokenSections } from '@exhaustiv
 export const addon: InputGroupTokenSections.Addon = {
     background: '{form.field.background}',
     borderColor: '{form.field.border.color}',
-    color: '{form.field.icon.color}',
+    color: '{text.muted.color}',
     borderRadius: '{form.field.border.radius}',
     padding: '0.75rem',
     minWidth: '3rem'
