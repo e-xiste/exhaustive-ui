@@ -4,6 +4,7 @@ export const root: InputChipsTokenSections.Root = {
     background: '{form.field.background}',
     disabledBackground: '{form.field.disabled.background}',
     filledBackground: '{form.field.filled.background}',
+    filledHoverBackground: '{form.field.filled.hover.background}',
     filledFocusBackground: '{form.field.filled.focus.background}',
     borderColor: '{form.field.border.color}',
     hoverBorderColor: '{form.field.hover.border.color}',
@@ -12,6 +13,7 @@ export const root: InputChipsTokenSections.Root = {
     color: '{form.field.color}',
     disabledColor: '{form.field.disabled.color}',
     placeholderColor: '{form.field.placeholder.color}',
+    invalidPlaceholderColor: '{form.field.invalid.placeholder.color}',
     shadow: '{form.field.shadow}',
     paddingX: '{form.field.padding.x}',
     paddingY: '{form.field.padding.y}',
@@ -34,13 +36,13 @@ export const colorScheme: InputChipsTokenSections.ColorScheme = {
     light: {
         chip: {
             focusBackground: '{surface.300}',
-            color: '{surface.900}'
+            focusColor: '{surface.900}'
         }
     },
     dark: {
         chip: {
             focusBackground: '{surface.600}',
-            color: '{surface.0}'
+            focusColor: '{surface.0}'
         }
     }
 };

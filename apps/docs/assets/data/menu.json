@@ -95,6 +95,10 @@
                             "routerLink": "/iftalabel"
                         },
                         {
+                            "name": "InputChips",
+                            "routerLink": "/inputchips"
+                        },
+                        {
                             "name": "InputGroup",
                             "routerLink": "/inputgroup"
                         },

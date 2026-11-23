@@ -93,6 +93,7 @@ export class RoadmapDemo {
                 features: [
                     'FileInput, a new component to select, validate and upload files, with list, images and avatar variants',
                     'Tour, a new component for guided onboarding tours, with a spotlight on each step and an accessible card',
+                    'InputChips, a new component to type free-text values as chips, with separators, limits and validation',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

@@ -32,6 +32,7 @@ import type { IftaLabelPassThrough } from '@exhaustive-ui/core/types/iftalabel';
 import type { ImagePassThrough } from '@exhaustive-ui/core/types/image';
 import type { ImageComparePassThrough } from '@exhaustive-ui/core/types/imagecompare';
 import type { InplacePassThrough } from '@exhaustive-ui/core/types/inplace';
+import type { InputChipsPassThrough } from '@exhaustive-ui/core/types/inputchips';
 import type { InputGroupPassThrough } from '@exhaustive-ui/core/types/inputgroup';
 import type { InputGroupAddonPassThrough } from '@exhaustive-ui/core/types/inputgroupaddon';
 import type { InputIconPassThrough } from '@exhaustive-ui/core/types/inputicon';
@@ -134,6 +135,7 @@ export interface GlobalPassThrough {
     image?: ImagePassThrough;
     imageCompare?: ImageComparePassThrough;
     inplace?: InplacePassThrough;
+    inputChips?: InputChipsPassThrough;
     inputText?: InputTextPassThrough;
     inputGroup?: InputGroupPassThrough;
     inputGroupAddon?: InputGroupAddonPassThrough;
