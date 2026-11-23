@@ -29,6 +29,11 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 ### Documentation
 
 - **richtexteditor:** documentation page with 17 sections, the API reference and the pass-through options, and an "Editor vs RichTextEditor" note on both pages.
+- **kanban:** new `Kanban` component (`p-kanban`), a free task board built on `@angular/cdk/drag-drop`, with no other dependency. Cards are dragged within a column or to another column, with a placeholder and a preview, and the board updates `[(columns)]` with new arrays before it emits `onCardMove` (`item`, `fromColumn`, `toColumn`, `fromIndex`, `toIndex`). Work in progress `limit` per column, shown as "3 / 5", with full and over the limit states, a `canDrop` rule and disabled columns, refused with a visible and announced reason. Optional column reorder (`reorderColumns`, `onColumnReorder`), collapsible columns (`collapsible`, `onColumnToggle`), an add card button (`showAddButton`, `onAddCard`), `onCardClick`, `card`, `columnHeader`, `columnFooter` and `empty` templates, horizontal scrolling with a `scrollHeight` that keeps the headers visible, and snap scrolling on small screens. Cards and columns move with the keyboard alone (Space or Enter to pick up and drop, arrow keys, Home and End, Escape to cancel), every step announced by a live region, with replaceable texts through `labels`. Theming through the new `kanban` design tokens in the four presets.
+
+### Documentation
+
+- **kanban:** documentation page with 10 sections, the API reference and the pass-through options.
 
 ## 22.7.0 (2026-11-23)
 

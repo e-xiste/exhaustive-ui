@@ -209,6 +209,10 @@
                             "routerLink": "/dataview"
                         },
                         {
+                            "name": "Kanban",
+                            "routerLink": "/kanban"
+                        },
+                        {
                             "name": "OrderList",
                             "routerLink": "/orderlist"
                         },

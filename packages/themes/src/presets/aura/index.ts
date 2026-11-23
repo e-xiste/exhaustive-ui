@@ -43,6 +43,7 @@ import inputgroup from '@exhaustive-ui/themes/aura/inputgroup';
 import inputnumber from '@exhaustive-ui/themes/aura/inputnumber';
 import inputotp from '@exhaustive-ui/themes/aura/inputotp';
 import inputtext from '@exhaustive-ui/themes/aura/inputtext';
+import kanban from '@exhaustive-ui/themes/aura/kanban';
 import knob from '@exhaustive-ui/themes/aura/knob';
 import listbox from '@exhaustive-ui/themes/aura/listbox';
 import megamenu from '@exhaustive-ui/themes/aura/megamenu';
@@ -140,6 +141,7 @@ export default {
         inputnumber,
         inputotp,
         inputtext,
+        kanban,
         knob,
         listbox,
         megamenu,

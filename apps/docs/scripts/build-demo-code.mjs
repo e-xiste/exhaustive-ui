@@ -109,6 +109,7 @@ const SELECTOR_TO_MODULE = {
     'p-inputchips': 'InputChipsModule',
     'p-inputgroupaddon': 'InputGroupAddonModule',
     'p-inputtext': 'InputTextModule',
+    'p-kanban': 'KanbanModule',
     'p-knob': 'KnobModule',
     'p-listbox': 'ListboxModule',
     'p-mega-menu': 'MegaMenuModule',

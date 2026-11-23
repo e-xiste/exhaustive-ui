@@ -42,6 +42,7 @@ import inputgroup from '@exhaustive-ui/themes/material/inputgroup';
 import inputnumber from '@exhaustive-ui/themes/material/inputnumber';
 import inputotp from '@exhaustive-ui/themes/material/inputotp';
 import inputtext from '@exhaustive-ui/themes/material/inputtext';
+import kanban from '@exhaustive-ui/themes/material/kanban';
 import knob from '@exhaustive-ui/themes/material/knob';
 import listbox from '@exhaustive-ui/themes/material/listbox';
 import megamenu from '@exhaustive-ui/themes/material/megamenu';
@@ -139,6 +140,7 @@ export default {
         inputnumber,
         inputotp,
         inputtext,
+        kanban,
         knob,
         listbox,
         megamenu,
