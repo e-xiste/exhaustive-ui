@@ -45,6 +45,7 @@ import inputtext from '@exhaustive-ui/themes/lara/inputtext';
 import knob from '@exhaustive-ui/themes/lara/knob';
 import listbox from '@exhaustive-ui/themes/lara/listbox';
 import megamenu from '@exhaustive-ui/themes/lara/megamenu';
+import mention from '@exhaustive-ui/themes/lara/mention';
 import menu from '@exhaustive-ui/themes/lara/menu';
 import menubar from '@exhaustive-ui/themes/lara/menubar';
 import message from '@exhaustive-ui/themes/lara/message';
@@ -139,6 +140,7 @@ export default {
         knob,
         listbox,
         megamenu,
+        mention,
         menu,
         menubar,
         message,

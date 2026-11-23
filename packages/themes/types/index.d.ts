@@ -48,6 +48,7 @@ import type { InputTextDesignTokens } from './inputtext';
 import type { KnobDesignTokens } from './knob';
 import type { ListboxDesignTokens } from './listbox';
 import type { MegaMenuDesignTokens } from './megamenu';
+import type { MentionDesignTokens } from './mention';
 import type { MenuDesignTokens } from './menu';
 import type { MenubarDesignTokens } from './menubar';
 import type { MessageDesignTokens } from './message';
@@ -178,6 +179,7 @@ export interface ComponentsDesignTokens {
     knob?: KnobDesignTokens;
     listbox?: ListboxDesignTokens;
     megamenu?: MegaMenuDesignTokens;
+    mention?: MentionDesignTokens;
     menu?: MenuDesignTokens;
     menubar?: MenubarDesignTokens;
     message?: MessageDesignTokens;

@@ -166,6 +166,7 @@ export const routes: Routes = [
                 path: 'megamenu',
                 loadChildren: () => import('@/pages/megamenu/routes')
             },
+            { path: 'mention', loadChildren: () => import('@/pages/mention/routes') },
             { path: 'menu', loadChildren: () => import('@/pages/menu/routes') },
             { path: 'menubar', loadChildren: () => import('@/pages/menubar/routes') },
             { path: 'message', loadChildren: () => import('@/pages/message/routes') },

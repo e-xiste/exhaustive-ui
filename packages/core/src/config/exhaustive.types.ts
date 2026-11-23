@@ -42,6 +42,7 @@ import type { InputOtpPassThrough } from '@exhaustive-ui/core/types/inputotp';
 import type { InputTextPassThrough } from '@exhaustive-ui/core/types/inputtext';
 import type { KnobPassThrough } from '@exhaustive-ui/core/types/knob';
 import type { MegaMenuPassThrough } from '@exhaustive-ui/core/types/megamenu';
+import type { MentionPassThrough } from '@exhaustive-ui/core/types/mention';
 import type { MenuPassThrough } from '@exhaustive-ui/core/types/menu';
 import type { MenubarPassThrough } from '@exhaustive-ui/core/types/menubar';
 import type { MessagePassThrough } from '@exhaustive-ui/core/types/message';
@@ -125,6 +126,7 @@ export interface GlobalPassThrough {
     fileInput?: FileInputPassThrough;
     fileUpload?: FileUploadPassThrough;
     floatLabel?: FloatLabelPassThrough;
+    mention?: MentionPassThrough;
     menu?: MenuPassThrough;
     menubar?: MenubarPassThrough;
     fluid?: FluidPassThrough;

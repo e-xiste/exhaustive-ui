@@ -131,6 +131,10 @@
                             "routerLink": "/listbox"
                         },
                         {
+                            "name": "Mention",
+                            "routerLink": "/mention"
+                        },
+                        {
                             "name": "MultiSelect",
                             "routerLink": "/multiselect"
                         },

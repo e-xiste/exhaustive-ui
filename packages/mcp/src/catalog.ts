@@ -17,6 +17,7 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     'guided-tour': 'tour',
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
+    mentions: 'mention',
     overlaypanel: 'popover',
     sidebar: 'drawer',
     tabview: 'tabs',

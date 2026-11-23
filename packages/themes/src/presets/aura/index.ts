@@ -46,6 +46,7 @@ import inputtext from '@exhaustive-ui/themes/aura/inputtext';
 import knob from '@exhaustive-ui/themes/aura/knob';
 import listbox from '@exhaustive-ui/themes/aura/listbox';
 import megamenu from '@exhaustive-ui/themes/aura/megamenu';
+import mention from '@exhaustive-ui/themes/aura/mention';
 import menu from '@exhaustive-ui/themes/aura/menu';
 import menubar from '@exhaustive-ui/themes/aura/menubar';
 import message from '@exhaustive-ui/themes/aura/message';
@@ -140,6 +141,7 @@ export default {
         knob,
         listbox,
         megamenu,
+        mention,
         menu,
         menubar,
         message,
