@@ -4,6 +4,18 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **tour:** the spotlight, the mask cut-out and the card stay on the target while the page scrolls or the window is resized, instead of easing behind it.
+- **tour:** a step whose target gets hidden while it is displayed is centered, instead of drawing the spotlight in the top left corner.
+- **tour:** the `p-tour` element takes no room in its parent, so it no longer adds an empty gap in a flex or grid layout.
+
+### Documentation
+
+- **tour:** the Controlled section lists the `finish()` method.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.
