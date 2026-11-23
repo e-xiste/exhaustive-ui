@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **scheduler:** new `Scheduler` component (`p-scheduler`), a free event calendar written from scratch on native `Date` and `Intl`, without any calendar library. Four views, `month`, `week`, `day` and `agenda`, with two-way `view` and `date`, a header with Today, previous and next buttons, an `Intl` title in the `locale` and a view switcher, or a `header` template. Overlapping events sit side by side in the time grid, all-day events go to the all-day row, and month cells show up to `maxEventsPerDay` events with a "+N more" popover. With `editable`, events are moved and resized by drag and drop, mouse and touch, snapping to `slotDuration` and auto-scrolling, or with Alt and the arrow keys; `onEventChange` gives the new dates and the application updates its `events`. `selectable` emits `onRangeSelect`, `onViewChange` gives the visible range to load events lazily, and `onEventClick`, `onDateClick` and `onSlotClick` report clicks. `firstDayOfWeek` and the Today text follow the translation configuration, `showWeekends`, `dayStartHour`, `dayEndHour`, `nowIndicator`, an `event` template, replaceable `labels`, a narrow-screen `narrowView`, ARIA grid semantics and live announcements. Custom event colors get a dark or light text automatically. Theming through the new `scheduler` design tokens in the four presets.
+
+### Documentation
+
+- **scheduler:** documentation page with 8 sections, the API reference and the pass-through options.
+
 ## 22.7.0 (2026-11-23)
 
 Contrast: text in the four theme presets meets WCAG AA in light and dark mode.

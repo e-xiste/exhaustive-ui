@@ -213,6 +213,10 @@
                             "routerLink": "/picklist"
                         },
                         {
+                            "name": "Scheduler",
+                            "routerLink": "/scheduler"
+                        },
+                        {
                             "name": "Table",
                             "routerLink": "/table"
                         },

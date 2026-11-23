@@ -212,6 +212,7 @@ export const routes: Routes = [
             },
             { path: 'rating', loadChildren: () => import('@/pages/rating/routes') },
             { path: 'ripple', loadChildren: () => import('@/pages/ripple/routes') },
+            { path: 'scheduler', loadChildren: () => import('@/pages/scheduler/routes') },
             {
                 path: 'scrollpanel',
                 loadChildren: () => import('@/pages/scrollpanel/routes')

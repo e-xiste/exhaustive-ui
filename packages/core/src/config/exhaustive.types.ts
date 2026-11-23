@@ -56,6 +56,7 @@ import type { ProgressSpinnerPassThrough } from '@exhaustive-ui/core/types/progr
 import type { RadioButtonPassThrough } from '@exhaustive-ui/core/types/radiobutton';
 import type { RatingPassThrough } from '@exhaustive-ui/core/types/rating';
 import type { VirtualScrollerPassThrough } from '@exhaustive-ui/core/types/scroller';
+import type { SchedulerPassThrough } from '@exhaustive-ui/core/types/scheduler';
 import type { ScrollPanelPassThrough } from '@exhaustive-ui/core/types/scrollpanel';
 import type { ScrollTopPassThrough } from '@exhaustive-ui/core/types/scrolltop';
 import type { SelectPassThrough } from '@exhaustive-ui/core/types/select';
@@ -151,6 +152,7 @@ export interface GlobalPassThrough {
     radioButton?: RadioButtonPassThrough;
     rating?: RatingPassThrough;
     virtualScroller?: VirtualScrollerPassThrough;
+    scheduler?: SchedulerPassThrough;
     scrollPanel?: ScrollPanelPassThrough;
     scrollTop?: ScrollTopPassThrough;
     select?: SelectPassThrough;

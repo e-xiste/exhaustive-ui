@@ -64,6 +64,7 @@ import progressspinner from '@exhaustive-ui/themes/nora/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/nora/radiobutton';
 import rating from '@exhaustive-ui/themes/nora/rating';
 import ripple from '@exhaustive-ui/themes/nora/ripple';
+import scheduler from '@exhaustive-ui/themes/nora/scheduler';
 import scrollpanel from '@exhaustive-ui/themes/nora/scrollpanel';
 import select from '@exhaustive-ui/themes/nora/select';
 import selectbutton from '@exhaustive-ui/themes/nora/selectbutton';
@@ -157,6 +158,7 @@ export default {
         radiobutton,
         rating,
         ripple,
+        scheduler,
         scrollpanel,
         select,
         selectbutton,
