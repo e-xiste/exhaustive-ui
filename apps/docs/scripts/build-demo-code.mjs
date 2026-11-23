@@ -132,6 +132,7 @@ const SELECTOR_TO_MODULE = {
     'p-radio-button': 'RadioButtonModule',
     'p-rating': 'RatingModule',
     'p-ripple': 'RippleModule',
+    'p-scheduler': 'SchedulerModule',
     'p-scroll-panel': 'ScrollPanelModule',
     'p-scroll-top': 'ScrollTopModule',
     'p-scroller': 'ScrollerModule',

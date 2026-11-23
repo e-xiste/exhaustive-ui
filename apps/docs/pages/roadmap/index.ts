@@ -95,6 +95,7 @@ export class RoadmapDemo {
                     'Tour, a new component for guided onboarding tours, with a spotlight on each step and an accessible card',
                     'InputChips, a new component to type free-text values as chips, with separators, limits and validation',
                     'Mention, a new component that suggests users, tags or commands after @, # or / in a textarea or an input',
+                    'Scheduler, a free event calendar with month, week, day and agenda views, drag and drop and keyboard editing',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

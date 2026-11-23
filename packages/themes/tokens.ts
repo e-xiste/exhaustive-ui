@@ -74,6 +74,7 @@ export interface Tokens {
     radiobutton: TokenMetaData;
     rating: TokenMetaData;
     ripple: TokenMetaData;
+    scheduler: TokenMetaData;
     scrollpanel: TokenMetaData;
     select: TokenMetaData;
     selectbutton: TokenMetaData;
@@ -10550,6 +10551,575 @@ export default {
                 token: 'ripple.background',
                 variable: '--p-ripple-background',
                 description: 'Background of root'
+            }
+        ]
+    },
+    scheduler: {
+        description: 'Scheduler Design Tokens',
+        tokens: [
+            {
+                name: 'scheduler.root.background',
+                token: 'scheduler.background',
+                variable: '--p-scheduler-background',
+                description: 'Background'
+            },
+            {
+                name: 'scheduler.root.borderColor',
+                token: 'scheduler.border.color',
+                variable: '--p-scheduler-border-color',
+                description: 'Border color'
+            },
+            {
+                name: 'scheduler.root.borderRadius',
+                token: 'scheduler.border.radius',
+                variable: '--p-scheduler-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'scheduler.root.color',
+                token: 'scheduler.color',
+                variable: '--p-scheduler-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.root.gap',
+                token: 'scheduler.gap',
+                variable: '--p-scheduler-gap',
+                description: 'Gap between the header and the view'
+            },
+            {
+                name: 'scheduler.root.transitionDuration',
+                token: 'scheduler.transition.duration',
+                variable: '--p-scheduler-transition-duration',
+                description: 'Transition duration'
+            },
+            {
+                name: 'scheduler.header.gap',
+                token: 'scheduler.header.gap',
+                variable: '--p-scheduler-header-gap',
+                description: 'Gap between the header items'
+            },
+            {
+                name: 'scheduler.header.padding',
+                token: 'scheduler.header.padding',
+                variable: '--p-scheduler-header-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.title.fontSize',
+                token: 'scheduler.title.font.size',
+                variable: '--p-scheduler-title-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.title.fontWeight',
+                token: 'scheduler.title.font.weight',
+                variable: '--p-scheduler-title-font-weight',
+                description: 'Font weight'
+            },
+            {
+                name: 'scheduler.title.color',
+                token: 'scheduler.title.color',
+                variable: '--p-scheduler-title-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.grid.borderColor',
+                token: 'scheduler.grid.border.color',
+                variable: '--p-scheduler-grid-border-color',
+                description: 'Color of the grid lines'
+            },
+            {
+                name: 'scheduler.grid.slotBorderColor',
+                token: 'scheduler.grid.slot.border.color',
+                variable: '--p-scheduler-grid-slot-border-color',
+                description: 'Color of the lines between the slots inside an hour'
+            },
+            {
+                name: 'scheduler.weekday.color',
+                token: 'scheduler.weekday.color',
+                variable: '--p-scheduler-weekday-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.weekday.fontSize',
+                token: 'scheduler.weekday.font.size',
+                variable: '--p-scheduler-weekday-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.weekday.fontWeight',
+                token: 'scheduler.weekday.font.weight',
+                variable: '--p-scheduler-weekday-font-weight',
+                description: 'Font weight'
+            },
+            {
+                name: 'scheduler.weekday.padding',
+                token: 'scheduler.weekday.padding',
+                variable: '--p-scheduler-weekday-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.day.padding',
+                token: 'scheduler.day.padding',
+                variable: '--p-scheduler-day-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.day.gap',
+                token: 'scheduler.day.gap',
+                variable: '--p-scheduler-day-gap',
+                description: 'Gap between the events'
+            },
+            {
+                name: 'scheduler.day.minHeight',
+                token: 'scheduler.day.min.height',
+                variable: '--p-scheduler-day-min-height',
+                description: 'Minimum height of a cell'
+            },
+            {
+                name: 'scheduler.day.outsideColor',
+                token: 'scheduler.day.outside.color',
+                variable: '--p-scheduler-day-outside-color',
+                description: 'Text color of the days of other months'
+            },
+            {
+                name: 'scheduler.day.outsideBackground',
+                token: 'scheduler.day.outside.background',
+                variable: '--p-scheduler-day-outside-background',
+                description: 'Background of the days of other months'
+            },
+            {
+                name: 'scheduler.day.selectedBackground',
+                token: 'scheduler.day.selected.background',
+                variable: '--p-scheduler-day-selected-background',
+                description: 'Background of the selected days'
+            },
+            {
+                name: 'scheduler.day.focusRing.width',
+                token: 'scheduler.day.focus.ring.width',
+                variable: '--p-scheduler-day-focus-ring-width',
+                description: 'Focus ring width'
+            },
+            {
+                name: 'scheduler.day.focusRing.style',
+                token: 'scheduler.day.focus.ring.style',
+                variable: '--p-scheduler-day-focus-ring-style',
+                description: 'Focus ring style'
+            },
+            {
+                name: 'scheduler.day.focusRing.color',
+                token: 'scheduler.day.focus.ring.color',
+                variable: '--p-scheduler-day-focus-ring-color',
+                description: 'Focus ring color'
+            },
+            {
+                name: 'scheduler.day.focusRing.offset',
+                token: 'scheduler.day.focus.ring.offset',
+                variable: '--p-scheduler-day-focus-ring-offset',
+                description: 'Focus ring offset'
+            },
+            {
+                name: 'scheduler.day.focusRing.shadow',
+                token: 'scheduler.day.focus.ring.shadow',
+                variable: '--p-scheduler-day-focus-ring-shadow',
+                description: 'Focus ring shadow'
+            },
+            {
+                name: 'scheduler.dayNumber.size',
+                token: 'scheduler.day.number.size',
+                variable: '--p-scheduler-day-number-size',
+                description: 'Size of the circle around the day number'
+            },
+            {
+                name: 'scheduler.dayNumber.fontSize',
+                token: 'scheduler.day.number.font.size',
+                variable: '--p-scheduler-day-number-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.dayNumber.fontWeight',
+                token: 'scheduler.day.number.font.weight',
+                variable: '--p-scheduler-day-number-font-weight',
+                description: 'Font weight'
+            },
+            {
+                name: 'scheduler.dayNumber.color',
+                token: 'scheduler.day.number.color',
+                variable: '--p-scheduler-day-number-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.dayNumber.borderRadius',
+                token: 'scheduler.day.number.border.radius',
+                variable: '--p-scheduler-day-number-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'scheduler.today.numberBackground',
+                token: 'scheduler.today.number.background',
+                variable: '--p-scheduler-today-number-background',
+                description: 'Background of the number of the current day'
+            },
+            {
+                name: 'scheduler.today.numberColor',
+                token: 'scheduler.today.number.color',
+                variable: '--p-scheduler-today-number-color',
+                description: 'Text color of the number of the current day'
+            },
+            {
+                name: 'scheduler.today.fontWeight',
+                token: 'scheduler.today.font.weight',
+                variable: '--p-scheduler-today-font-weight',
+                description: 'Font weight of the number of the current day'
+            },
+            {
+                name: 'scheduler.event.background',
+                token: 'scheduler.event.background',
+                variable: '--p-scheduler-event-background',
+                description: 'Default background'
+            },
+            {
+                name: 'scheduler.event.color',
+                token: 'scheduler.event.color',
+                variable: '--p-scheduler-event-color',
+                description: 'Default text color'
+            },
+            {
+                name: 'scheduler.event.borderColor',
+                token: 'scheduler.event.border.color',
+                variable: '--p-scheduler-event-border-color',
+                description: 'Default color of the accent border'
+            },
+            {
+                name: 'scheduler.event.borderWidth',
+                token: 'scheduler.event.border.width',
+                variable: '--p-scheduler-event-border-width',
+                description: 'Width of the accent border'
+            },
+            {
+                name: 'scheduler.event.borderRadius',
+                token: 'scheduler.event.border.radius',
+                variable: '--p-scheduler-event-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'scheduler.event.padding',
+                token: 'scheduler.event.padding',
+                variable: '--p-scheduler-event-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.event.fontSize',
+                token: 'scheduler.event.font.size',
+                variable: '--p-scheduler-event-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.event.fontWeight',
+                token: 'scheduler.event.font.weight',
+                variable: '--p-scheduler-event-font-weight',
+                description: 'Font weight of the title'
+            },
+            {
+                name: 'scheduler.event.gap',
+                token: 'scheduler.event.gap',
+                variable: '--p-scheduler-event-gap',
+                description: 'Gap between the time and the title'
+            },
+            {
+                name: 'scheduler.event.hoverShadow',
+                token: 'scheduler.event.hover.shadow',
+                variable: '--p-scheduler-event-hover-shadow',
+                description: 'Shadow on hover'
+            },
+            {
+                name: 'scheduler.event.draggingOpacity',
+                token: 'scheduler.event.dragging.opacity',
+                variable: '--p-scheduler-event-dragging-opacity',
+                description: 'Opacity of an event while its preview is dragged'
+            },
+            {
+                name: 'scheduler.event.focusRing.width',
+                token: 'scheduler.event.focus.ring.width',
+                variable: '--p-scheduler-event-focus-ring-width',
+                description: 'Focus ring width'
+            },
+            {
+                name: 'scheduler.event.focusRing.style',
+                token: 'scheduler.event.focus.ring.style',
+                variable: '--p-scheduler-event-focus-ring-style',
+                description: 'Focus ring style'
+            },
+            {
+                name: 'scheduler.event.focusRing.color',
+                token: 'scheduler.event.focus.ring.color',
+                variable: '--p-scheduler-event-focus-ring-color',
+                description: 'Focus ring color'
+            },
+            {
+                name: 'scheduler.event.focusRing.offset',
+                token: 'scheduler.event.focus.ring.offset',
+                variable: '--p-scheduler-event-focus-ring-offset',
+                description: 'Focus ring offset'
+            },
+            {
+                name: 'scheduler.event.focusRing.shadow',
+                token: 'scheduler.event.focus.ring.shadow',
+                variable: '--p-scheduler-event-focus-ring-shadow',
+                description: 'Focus ring shadow'
+            },
+            {
+                name: 'scheduler.more.color',
+                token: 'scheduler.more.color',
+                variable: '--p-scheduler-more-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.more.hoverColor',
+                token: 'scheduler.more.hover.color',
+                variable: '--p-scheduler-more-hover-color',
+                description: 'Text color on hover'
+            },
+            {
+                name: 'scheduler.more.hoverBackground',
+                token: 'scheduler.more.hover.background',
+                variable: '--p-scheduler-more-hover-background',
+                description: 'Background on hover'
+            },
+            {
+                name: 'scheduler.more.fontSize',
+                token: 'scheduler.more.font.size',
+                variable: '--p-scheduler-more-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.more.fontWeight',
+                token: 'scheduler.more.font.weight',
+                variable: '--p-scheduler-more-font-weight',
+                description: 'Font weight'
+            },
+            {
+                name: 'scheduler.more.padding',
+                token: 'scheduler.more.padding',
+                variable: '--p-scheduler-more-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.more.borderRadius',
+                token: 'scheduler.more.border.radius',
+                variable: '--p-scheduler-more-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'scheduler.slot.height',
+                token: 'scheduler.slot.height',
+                variable: '--p-scheduler-slot-height',
+                description: 'Height of a time slot'
+            },
+            {
+                name: 'scheduler.slot.hoverBackground',
+                token: 'scheduler.slot.hover.background',
+                variable: '--p-scheduler-slot-hover-background',
+                description: 'Background of a slot on hover'
+            },
+            {
+                name: 'scheduler.timeLabel.color',
+                token: 'scheduler.time.label.color',
+                variable: '--p-scheduler-time-label-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.timeLabel.fontSize',
+                token: 'scheduler.time.label.font.size',
+                variable: '--p-scheduler-time-label-font-size',
+                description: 'Font size'
+            },
+            {
+                name: 'scheduler.timeLabel.width',
+                token: 'scheduler.time.label.width',
+                variable: '--p-scheduler-time-label-width',
+                description: 'Width of the column of hour labels'
+            },
+            {
+                name: 'scheduler.columnHeader.padding',
+                token: 'scheduler.column.header.padding',
+                variable: '--p-scheduler-column-header-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.columnHeader.color',
+                token: 'scheduler.column.header.color',
+                variable: '--p-scheduler-column-header-color',
+                description: 'Text color of the weekday'
+            },
+            {
+                name: 'scheduler.columnHeader.fontSize',
+                token: 'scheduler.column.header.font.size',
+                variable: '--p-scheduler-column-header-font-size',
+                description: 'Font size of the weekday'
+            },
+            {
+                name: 'scheduler.columnHeader.numberFontSize',
+                token: 'scheduler.column.header.number.font.size',
+                variable: '--p-scheduler-column-header-number-font-size',
+                description: 'Font size of the day number'
+            },
+            {
+                name: 'scheduler.columnHeader.numberFontWeight',
+                token: 'scheduler.column.header.number.font.weight',
+                variable: '--p-scheduler-column-header-number-font-weight',
+                description: 'Font weight of the day number'
+            },
+            {
+                name: 'scheduler.allDay.minHeight',
+                token: 'scheduler.all.day.min.height',
+                variable: '--p-scheduler-all-day-min-height',
+                description: 'Minimum height of the all-day row'
+            },
+            {
+                name: 'scheduler.allDay.labelColor',
+                token: 'scheduler.all.day.label.color',
+                variable: '--p-scheduler-all-day-label-color',
+                description: 'Text color of the label'
+            },
+            {
+                name: 'scheduler.allDay.labelFontSize',
+                token: 'scheduler.all.day.label.font.size',
+                variable: '--p-scheduler-all-day-label-font-size',
+                description: 'Font size of the label'
+            },
+            {
+                name: 'scheduler.nowIndicator.color',
+                token: 'scheduler.now.indicator.color',
+                variable: '--p-scheduler-now-indicator-color',
+                description: 'Color of the current time line'
+            },
+            {
+                name: 'scheduler.nowIndicator.size',
+                token: 'scheduler.now.indicator.size',
+                variable: '--p-scheduler-now-indicator-size',
+                description: 'Thickness of the current time line'
+            },
+            {
+                name: 'scheduler.selection.background',
+                token: 'scheduler.selection.background',
+                variable: '--p-scheduler-selection-background',
+                description: 'Background of a selected range'
+            },
+            {
+                name: 'scheduler.selection.borderColor',
+                token: 'scheduler.selection.border.color',
+                variable: '--p-scheduler-selection-border-color',
+                description: 'Border color of a selected range'
+            },
+            {
+                name: 'scheduler.agenda.padding',
+                token: 'scheduler.agenda.padding',
+                variable: '--p-scheduler-agenda-padding',
+                description: 'Padding'
+            },
+            {
+                name: 'scheduler.agenda.gap',
+                token: 'scheduler.agenda.gap',
+                variable: '--p-scheduler-agenda-gap',
+                description: 'Gap between the days'
+            },
+            {
+                name: 'scheduler.agenda.dateColor',
+                token: 'scheduler.agenda.date.color',
+                variable: '--p-scheduler-agenda-date-color',
+                description: 'Text color of a date'
+            },
+            {
+                name: 'scheduler.agenda.dateFontWeight',
+                token: 'scheduler.agenda.date.font.weight',
+                variable: '--p-scheduler-agenda-date-font-weight',
+                description: 'Font weight of a date'
+            },
+            {
+                name: 'scheduler.agenda.datePadding',
+                token: 'scheduler.agenda.date.padding',
+                variable: '--p-scheduler-agenda-date-padding',
+                description: 'Padding of a date'
+            },
+            {
+                name: 'scheduler.agenda.dateBorderColor',
+                token: 'scheduler.agenda.date.border.color',
+                variable: '--p-scheduler-agenda-date-border-color',
+                description: 'Border color below a date'
+            },
+            {
+                name: 'scheduler.agenda.itemPadding',
+                token: 'scheduler.agenda.item.padding',
+                variable: '--p-scheduler-agenda-item-padding',
+                description: 'Padding of an event'
+            },
+            {
+                name: 'scheduler.agenda.itemGap',
+                token: 'scheduler.agenda.item.gap',
+                variable: '--p-scheduler-agenda-item-gap',
+                description: 'Gap inside an event'
+            },
+            {
+                name: 'scheduler.agenda.itemBorderRadius',
+                token: 'scheduler.agenda.item.border.radius',
+                variable: '--p-scheduler-agenda-item-border-radius',
+                description: 'Border radius of an event'
+            },
+            {
+                name: 'scheduler.agenda.itemHoverBackground',
+                token: 'scheduler.agenda.item.hover.background',
+                variable: '--p-scheduler-agenda-item-hover-background',
+                description: 'Background of an event on hover'
+            },
+            {
+                name: 'scheduler.agenda.timeColor',
+                token: 'scheduler.agenda.time.color',
+                variable: '--p-scheduler-agenda-time-color',
+                description: 'Text color of the time'
+            },
+            {
+                name: 'scheduler.agenda.timeWidth',
+                token: 'scheduler.agenda.time.width',
+                variable: '--p-scheduler-agenda-time-width',
+                description: 'Width of the time column'
+            },
+            {
+                name: 'scheduler.agenda.dotSize',
+                token: 'scheduler.agenda.dot.size',
+                variable: '--p-scheduler-agenda-dot-size',
+                description: 'Size of the color dot'
+            },
+            {
+                name: 'scheduler.popover.width',
+                token: 'scheduler.popover.width',
+                variable: '--p-scheduler-popover-width',
+                description: 'Width of the popover'
+            },
+            {
+                name: 'scheduler.popover.gap',
+                token: 'scheduler.popover.gap',
+                variable: '--p-scheduler-popover-gap',
+                description: 'Gap between the events'
+            },
+            {
+                name: 'scheduler.popover.headerFontWeight',
+                token: 'scheduler.popover.header.font.weight',
+                variable: '--p-scheduler-popover-header-font-weight',
+                description: 'Font weight of the date'
+            },
+            {
+                name: 'scheduler.empty.color',
+                token: 'scheduler.empty.color',
+                variable: '--p-scheduler-empty-color',
+                description: 'Text color'
+            },
+            {
+                name: 'scheduler.empty.padding',
+                token: 'scheduler.empty.padding',
+                variable: '--p-scheduler-empty-padding',
+                description: 'Padding'
             }
         ]
     },

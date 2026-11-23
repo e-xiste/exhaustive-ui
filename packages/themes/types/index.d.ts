@@ -68,6 +68,7 @@ import type { ProgressSpinnerDesignTokens } from './progressspinner';
 import type { RadioButtonDesignTokens } from './radiobutton';
 import type { RatingDesignTokens } from './rating';
 import type { RippleDesignTokens } from './ripple';
+import type { SchedulerDesignTokens } from './scheduler';
 import type { ScrollPanelDesignTokens } from './scrollpanel';
 import type { SelectDesignTokens } from './select';
 import type { SelectButtonDesignTokens } from './selectbutton';
@@ -199,6 +200,7 @@ export interface ComponentsDesignTokens {
     radiobutton?: RadioButtonDesignTokens;
     rating?: RatingDesignTokens;
     ripple?: RippleDesignTokens;
+    scheduler?: SchedulerDesignTokens;
     scrollpanel?: ScrollPanelDesignTokens;
     select?: SelectDesignTokens;
     selectbutton?: SelectButtonDesignTokens;

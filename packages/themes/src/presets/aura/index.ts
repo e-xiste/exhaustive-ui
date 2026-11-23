@@ -66,6 +66,7 @@ import progressspinner from '@exhaustive-ui/themes/aura/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/aura/radiobutton';
 import rating from '@exhaustive-ui/themes/aura/rating';
 import ripple from '@exhaustive-ui/themes/aura/ripple';
+import scheduler from '@exhaustive-ui/themes/aura/scheduler';
 import scrollpanel from '@exhaustive-ui/themes/aura/scrollpanel';
 import select from '@exhaustive-ui/themes/aura/select';
 import selectbutton from '@exhaustive-ui/themes/aura/selectbutton';
@@ -161,6 +162,7 @@ export default {
         radiobutton,
         rating,
         ripple,
+        scheduler,
         scrollpanel,
         select,
         selectbutton,

@@ -65,6 +65,7 @@ import progressspinner from '@exhaustive-ui/themes/lara/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/lara/radiobutton';
 import rating from '@exhaustive-ui/themes/lara/rating';
 import ripple from '@exhaustive-ui/themes/lara/ripple';
+import scheduler from '@exhaustive-ui/themes/lara/scheduler';
 import scrollpanel from '@exhaustive-ui/themes/lara/scrollpanel';
 import select from '@exhaustive-ui/themes/lara/select';
 import selectbutton from '@exhaustive-ui/themes/lara/selectbutton';
@@ -160,6 +161,7 @@ export default {
         radiobutton,
         rating,
         ripple,
+        scheduler,
         scrollpanel,
         select,
         selectbutton,

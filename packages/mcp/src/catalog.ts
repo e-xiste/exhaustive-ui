@@ -15,6 +15,8 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     dropdown: 'select',
     'file-input': 'fileinput',
     'guided-tour': 'tour',
+    fullcalendar: 'scheduler',
+    'full-calendar': 'scheduler',
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
     mentions: 'mention',

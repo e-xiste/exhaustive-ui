@@ -199,6 +199,9 @@ export * as RatingStyle from '@exhaustive-ui/styles/rating';
 // Ripple
 export * as RippleStyle from '@exhaustive-ui/styles/ripple';
 
+// Scheduler
+export * as SchedulerStyle from '@exhaustive-ui/styles/scheduler';
+
 // ScrollPanel
 export * as ScrollPanelStyle from '@exhaustive-ui/styles/scrollpanel';
 
