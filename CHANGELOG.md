@@ -8,58 +8,43 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ### Bug Fixes
 
-- **kanban:** a collapsed column is now a strip as tall as the board, with its toggle at the top, its count horizontal under it and only its title written vertically, cut with an ellipsis when too long; the count no longer overflows the strip, the strip has a hover state and a click anywhere on it expands the column.
-- **kanban:** columns are named groups instead of region landmarks, so two boards on a page no longer repeat landmarks such as "To do" (axe `landmark-unique`).
-- **kanban:** columns shrink to their min width before the board scrolls, and the edges of a board that scrolls fade out, so a column cut by the edge reads as more to scroll.
-
-### Documentation
-
-- **kanban:** the Collapsible Columns demo shows two folded columns and a limit, and the Accessibility section describes columns as groups, and the Scroll section the shrinking columns and the faded edges.
-- **mention:** a mention typed right before a word no longer deletes that word when a suggestion is chosen.
-- **mention:** the suggestion panel follows the trigger when the textarea or the input scrolls, and when the mention wraps to the next line.
-- **mention:** the Enter that commits an IME composition in Safari no longer inserts the highlighted suggestion.
-- **mention:** the textarea announces its suggestion popup with `aria-haspopup="listbox"`.
-- **mention:** the field no longer overflows a narrow container when `cols` is wider than it.
-
-### Documentation
-
-- **mention:** the Accessibility section describes what screen readers get from the textarea, which is not a combobox.
-- **richtexteditor:** a paste over `maxLength` that spans several paragraphs is now cut to the limit instead of being dropped.
-- **richtexteditor:** a value written by the form, such as a reset, no longer goes into the undo history, so undo cannot bring back the previous content.
-- **richtexteditor:** the placeholder is no longer shown over a value while Tiptap loads or during server-side rendering.
-- **richtexteditor:** the toolbar separators and dividers stay visible in the disabled state.
-- **richtexteditor:** `toolbar` ignores names that are not buttons, such as label keys, instead of rendering empty buttons.
-- **richtexteditor:** the error logged when Tiptap is missing gives the install command.
-
-### Documentation
-
-- **richtexteditor:** the "Editor vs RichTextEditor" section lists what RichTextEditor adds and warns that Quill and Tiptap do not write the same HTML; the API names the `onInit` binding of `onEditorInit`.
-- **tour:** the spotlight, the mask cut-out and the card stay on the target while the page scrolls or the window is resized, instead of easing behind it.
-- **tour:** a step whose target gets hidden while it is displayed is centered, instead of drawing the spotlight in the top left corner.
-- **tour:** the `p-tour` element takes no room in its parent, so it no longer adds an empty gap in a flex or grid layout.
-
-### Documentation
-
-- **tour:** the Controlled section lists the `finish()` method.
-- InputChips: the small and large sizes have the height of the other fields of the same size (InputText, Select...), with or without chips.
-- InputChips: a chip rendered by the `chip` template shows the focus ring when it has the keyboard focus.
-- InputChips: removing a chip with a click in the `chip` template (`remove($event)`) no longer emits `onChipClick` for the next chip, and moves the focus to the input like the default remove icon.
-- InputChips: resetting the form also clears the text typed but not added yet, so the label no longer stays floated and the text is not added on blur.
-- InputChips: in the Material preset, the hover and focus backgrounds of the filled variant no longer apply to a disabled field.
-
-### Documentation
-
-- InputChips: the Float Label and Ifta Label demos keep a fixed width as chips are added, a shorter placeholder fits phones, and the Signal Forms section explains that `maxLength` validates the number of chips while `max` stops adding them.
 - **scheduler:** events of the week and day views stay on their hour lines on the days of a daylight saving time change.
 - **scheduler:** Escape cancels a drag even when the dragged event has the focus, and the pointer release no longer emits onEventClick.
 - **scheduler:** on a narrow screen, onViewChange is emitted once at start, for the narrow view, instead of first for the wide view; the breakpoint input can change at runtime.
 - **scheduler:** moving or resizing an event with Alt and the arrow keys keeps it within the visible hours, like a drag.
 - **scheduler:** Escape on the second day of an overnight event returns to a slot of that day.
 - **scheduler:** events of one slot or less show their title and time on one line instead of a line cut in half, and the agenda times no longer wrap on small screens.
+- **kanban:** a collapsed column is now a strip as tall as the board, with its toggle at the top, its count horizontal under it and only its title written vertically, cut with an ellipsis when too long; the count no longer overflows the strip, the strip has a hover state and a click anywhere on it expands the column.
+- **kanban:** columns are named groups instead of region landmarks, so two boards on a page no longer repeat landmarks such as "To do" (axe `landmark-unique`).
+- **kanban:** columns shrink to their min width before the board scrolls, and the edges of a board that scrolls fade out, so a column cut by the edge reads as more to scroll.
+- **richtexteditor:** a paste over `maxLength` that spans several paragraphs is now cut to the limit instead of being dropped.
+- **richtexteditor:** a value written by the form, such as a reset, no longer goes into the undo history, so undo cannot bring back the previous content.
+- **richtexteditor:** the placeholder is no longer shown over a value while Tiptap loads or during server-side rendering.
+- **richtexteditor:** the toolbar separators and dividers stay visible in the disabled state.
+- **richtexteditor:** `toolbar` ignores names that are not buttons, such as label keys, instead of rendering empty buttons.
+- **richtexteditor:** the error logged when Tiptap is missing gives the install command.
+- **mention:** a mention typed right before a word no longer deletes that word when a suggestion is chosen.
+- **mention:** the suggestion panel follows the trigger when the textarea or the input scrolls, and when the mention wraps to the next line.
+- **mention:** the Enter that commits an IME composition in Safari no longer inserts the highlighted suggestion.
+- **mention:** the textarea announces its suggestion popup with `aria-haspopup="listbox"`.
+- **mention:** the field no longer overflows a narrow container when `cols` is wider than it.
+- **inputchips:** the small and large sizes have the height of the other fields of the same size (InputText, Select...), with or without chips.
+- **inputchips:** a chip rendered by the `chip` template shows the focus ring when it has the keyboard focus.
+- **inputchips:** removing a chip with a click in the `chip` template (`remove($event)`) no longer emits `onChipClick` for the next chip, and moves the focus to the input like the default remove icon.
+- **inputchips:** resetting the form also clears the text typed but not added yet, so the label no longer stays floated and the text is not added on blur.
+- **inputchips:** in the Material preset, the hover and focus backgrounds of the filled variant no longer apply to a disabled field.
+- **tour:** the spotlight, the mask cut-out and the card stay on the target while the page scrolls or the window is resized, instead of easing behind it.
+- **tour:** a step whose target gets hidden while it is displayed is centered, instead of drawing the spotlight in the top left corner.
+- **tour:** the `p-tour` element takes no room in its parent, so it no longer adds an empty gap in a flex or grid layout.
 
 ### Documentation
 
 - **scheduler:** the Locale section explains time zones and daylight saving time, and the keyboard table describes page up and page down in the time grid.
+- **kanban:** the Collapsible Columns demo shows two folded columns and a limit, and the Accessibility section describes columns as groups, and the Scroll section the shrinking columns and the faded edges.
+- **richtexteditor:** the "Editor vs RichTextEditor" section lists what RichTextEditor adds and warns that Quill and Tiptap do not write the same HTML; the API names the `onInit` binding of `onEditorInit`.
+- **mention:** the Accessibility section describes what screen readers get from the textarea, which is not a combobox.
+- **inputchips:** the Float Label and Ifta Label demos keep a fixed width as chips are added, a shorter placeholder fits phones, and the Signal Forms section explains that `maxLength` validates the number of chips while `max` stops adding them.
+- **tour:** the Controlled section lists the `finish()` method.
 
 ## 22.8.0 (2026-11-23)
 
