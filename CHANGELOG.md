@@ -34,6 +34,13 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 ### Documentation
 
 - **richtexteditor:** the "Editor vs RichTextEditor" section lists what RichTextEditor adds and warns that Quill and Tiptap do not write the same HTML; the API names the `onInit` binding of `onEditorInit`.
+- **tour:** the spotlight, the mask cut-out and the card stay on the target while the page scrolls or the window is resized, instead of easing behind it.
+- **tour:** a step whose target gets hidden while it is displayed is centered, instead of drawing the spotlight in the top left corner.
+- **tour:** the `p-tour` element takes no room in its parent, so it no longer adds an empty gap in a flex or grid layout.
+
+### Documentation
+
+- **tour:** the Controlled section lists the `finish()` method.
 
 ## 22.8.0 (2026-11-23)
 

@@ -183,6 +183,10 @@ describe('Tour', () => {
             expect(nextButton().textContent!.trim()).toBe('Done');
         });
 
+        it('takes no room in the layout of its parent', () => {
+            expect(getComputedStyle(fixture.nativeElement.querySelector('p-tour')).display).toBe('contents');
+        });
+
         it('keeps the tour inside the component with appendTo self', async () => {
             host.appendTo.set('self');
             await fixture.whenStable();
@@ -423,6 +427,40 @@ describe('Tour', () => {
             expect(Math.round(before - after)).toBe(50);
             window.scrollTo(0, 0);
             spacer.remove();
+        });
+
+        it('sticks to the target without transition while the page scrolls, and eases again on the next step', async () => {
+            const spacer = document.createElement('div');
+            spacer.style.height = '3000px';
+            document.body.appendChild(spacer);
+            window.scrollTo(0, 0);
+            await start();
+            window.scrollTo(0, 40);
+            document.dispatchEvent(new Event('scroll'));
+            await settle();
+            await settle();
+            expect(root()!.classList).toContain('p-tour-tracking');
+            const spotlight = document.querySelector<HTMLElement>('.p-tour-spotlight')!;
+            expect(getComputedStyle(spotlight).transitionProperty).toBe('none');
+            expect(getComputedStyle(card()!).transitionProperty).toBe('none');
+            expect(getComputedStyle(document.querySelector('.p-tour-mask-path')!).transitionProperty).toBe('none');
+            const target = document.querySelector('#first')!.getBoundingClientRect();
+            expect(spotlight.getBoundingClientRect().top).toBeCloseTo(target.top - 8, 0);
+            host.tour().goTo(2);
+            await settle();
+            expect(root()!.classList).not.toContain('p-tour-tracking');
+            window.scrollTo(0, 0);
+            spacer.remove();
+        });
+
+        it('centers the step when its target is hidden after the step started', async () => {
+            await start();
+            expect(card()!.getAttribute('data-p-placement')).not.toBe('center');
+            document.querySelector<HTMLElement>('#first')!.style.display = 'none';
+            host.tour().refresh();
+            await settle();
+            expect(card()!.getAttribute('data-p-placement')).toBe('center');
+            expect(document.querySelector('.p-tour-spotlight')).toBeNull();
         });
 
         it('blocks the target when interaction is disabled', async () => {

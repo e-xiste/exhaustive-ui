@@ -3,7 +3,7 @@ import { style as tour_style } from '@exhaustive-ui/styles/tour';
 import { BaseStyle } from '@exhaustive-ui/core/base';
 
 const classes = {
-    root: ({ instance }) => ['p-tour p-component', { 'p-tour-no-mask': !instance.mask() }],
+    root: ({ instance }) => ['p-tour p-component', { 'p-tour-no-mask': !instance.mask(), 'p-tour-tracking': instance.tracking() }],
     mask: 'p-tour-mask',
     maskPath: 'p-tour-mask-path',
     spotlight: 'p-tour-spotlight',

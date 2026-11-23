@@ -190,6 +190,9 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
     providers: [TourStyle, { provide: PARENT_INSTANCE, useExisting: Tour }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    host: {
+        style: 'display: contents'
+    },
     hostDirectives: [Bind]
 })
 export class Tour extends BaseComponent<TourPassThrough> {
@@ -423,6 +426,11 @@ export class Tour extends BaseComponent<TourPassThrough> {
     readonly placement$ = signal<TourSide>('center');
 
     readonly positioned = signal(false);
+
+    /**
+     * Whether the spotlight and the card follow the target of the current step while the page scrolls or the window is resized: they move without transition to stay on the target.
+     */
+    readonly tracking = signal(false);
 
     readonly announcement = signal('');
 
@@ -697,6 +705,7 @@ export class Tour extends BaseComponent<TourPassThrough> {
             this.onStepChange.emit({ index, previousIndex, step });
         }
 
+        this.tracking.set(false);
         this.observeTarget();
         this.reveal(step);
 
@@ -766,6 +775,14 @@ export class Tour extends BaseComponent<TourPassThrough> {
         }
     }
 
+    /**
+     * Scroll and resize: the spotlight and the card stick to the target instead of easing towards it, which would leave them behind while the page moves.
+     */
+    private onViewportChange = () => {
+        this.tracking.set(true);
+        this.scheduleReposition();
+    };
+
     private scheduleReposition = () => {
         const win = this.window;
         if (!win || this.frame) return;
@@ -787,7 +804,7 @@ export class Tour extends BaseComponent<TourPassThrough> {
         const height = this.document.documentElement.clientHeight || win.innerHeight;
         this.viewport.set({ width, height });
 
-        const target = this.targetElement && this.targetElement.isConnected ? this.targetElement : null;
+        const target = this.targetElement && this.targetElement.isConnected && this.targetElement.getClientRects().length > 0 ? this.targetElement : null;
         let spot: TourRect | null = null;
         if (target) {
             const rect = target.getBoundingClientRect();
@@ -912,12 +929,12 @@ export class Tour extends BaseComponent<TourPassThrough> {
         const doc = this.document;
         const keydown = (event: KeyboardEvent) => this.onDocumentKeydown(event);
         doc.addEventListener('keydown', keydown, true);
-        doc.addEventListener('scroll', this.scheduleReposition, { capture: true, passive: true });
-        win.addEventListener('resize', this.scheduleReposition, { passive: true });
+        doc.addEventListener('scroll', this.onViewportChange, { capture: true, passive: true });
+        win.addEventListener('resize', this.onViewportChange, { passive: true });
         this.listeners.push(
             () => doc.removeEventListener('keydown', keydown, true),
-            () => doc.removeEventListener('scroll', this.scheduleReposition, { capture: true }),
-            () => win.removeEventListener('resize', this.scheduleReposition)
+            () => doc.removeEventListener('scroll', this.onViewportChange, { capture: true }),
+            () => win.removeEventListener('resize', this.onViewportChange)
         );
         if (typeof ResizeObserver !== 'undefined') {
             this.resizeObserver = new ResizeObserver(this.scheduleReposition);
@@ -990,6 +1007,7 @@ export class Tour extends BaseComponent<TourPassThrough> {
         this.lastSteps = null;
         this.targetElement = null;
         this.positioned.set(false);
+        this.tracking.set(false);
         this.spotlightRect.set(null);
         this.announcement.set('');
 

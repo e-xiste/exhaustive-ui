@@ -12,7 +12,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>
                 The current step is the two-way <i>activeIndex</i> property: set it to start the tour at a given step or to move it from outside. <i>onStepChange</i> is emitted on every new step, <i>onFinish</i> when the user completes the tour and
-                <i>onClose</i>, with its reason, when the tour is closed before its end. The component also has <i>start(index)</i>, <i>next()</i>, <i>prev()</i>, <i>goTo(index)</i>, <i>close()</i> and <i>refresh()</i> methods.
+                <i>onClose</i>, with its reason, when the tour is closed before its end. The component also has <i>start(index)</i>, <i>next()</i>, <i>prev()</i>, <i>goTo(index)</i>, <i>close()</i>, <i>finish()</i> and <i>refresh()</i> methods.
             </p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-6">
@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                     <p-button [id]="'tour-controlled-' + i" [label]="'Start at step ' + (i + 1)" severity="secondary" (onClick)="startAt(i)" />
                 }
             </div>
-            <p class="m-0 text-muted-color" aria-live="polite">{{ status }}</p>
+            <div class="text-muted-color" aria-live="polite">{{ status }}</div>
             <p-tour [steps]="steps" [(visible)]="visible" [(activeIndex)]="activeIndex" (onStepChange)="onStepChange($event)" (onFinish)="status = 'Tour completed'" (onClose)="status = 'Tour closed (' + $event.reason + ')'" />
         </div>
         <app-code></app-code>
