@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **mention:** new `Mention` component (`p-mention`) that suggests users, tags or commands while a trigger is typed at the start of a word, in a textarea (`autoResize`, `rows`, `cols`) or a single-line input (`multiline="false"`). Its value is the plain text. `triggers` sets the characters, `@` by default, several at once such as `@` for users and `#` for tags; `onSearch` gives the trigger and the query, and the app answers by setting `suggestions`, at once or after a request (`delay`, `minQueryLength`, `loading`). The chosen suggestion replaces the query with the trigger, its `optionLabel` and a space, and emits `onSelect`. The panel reuses the overlay and the option styles of AutoComplete and opens under the line of the trigger, or under the field with `position="field"`; `item` (with the trigger in its context), `empty`, `header` and `footer` templates, `scrollHeight`, `appendTo` and an optional virtual scroll. Arrow keys, Enter, Tab and Escape drive the suggestions while the focus stays in the field, with the combobox ARIA attributes and a live region announcing the results. It works with template-driven forms, reactive forms and Signal Forms, has `small` and `large` sizes, `filled`, `fluid`, `invalid`, `disabled` and `readonly` states, and the new `mention` design tokens in the four presets.
+
+### Documentation
+
+- **mention:** documentation page with 14 sections, the API reference and the pass-through options.
+
 ## 22.7.0 (2026-11-23)
 
 Contrast: text in the four theme presets meets WCAG AA in light and dark mode.

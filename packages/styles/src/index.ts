@@ -136,6 +136,9 @@ export * as ListboxStyle from '@exhaustive-ui/styles/listbox';
 // MegaMenu
 export * as MegaMenuStyle from '@exhaustive-ui/styles/megamenu';
 
+// Mention
+export * as MentionStyle from '@exhaustive-ui/styles/mention';
+
 // Menu
 export * as MenuStyle from '@exhaustive-ui/styles/menu';
 

@@ -54,6 +54,7 @@ export interface Tokens {
     knob: TokenMetaData;
     listbox: TokenMetaData;
     megamenu: TokenMetaData;
+    mention: TokenMetaData;
     menu: TokenMetaData;
     menubar: TokenMetaData;
     message: TokenMetaData;
@@ -8035,6 +8036,113 @@ export default {
                 token: 'megamenu.mobile.button.focus.ring.shadow',
                 variable: '--p-megamenu-mobile-button-focus-ring-shadow',
                 description: 'Focus ring shadow of mobile button'
+            }
+        ]
+    },
+    mention: {
+        description: 'Mention Design Tokens',
+        tokens: [
+            {
+                name: 'mention.root.transitionDuration',
+                token: 'mention.transition.duration',
+                variable: '--p-mention-transition-duration',
+                description: 'Transition duration of the options'
+            },
+            {
+                name: 'mention.overlay.background',
+                token: 'mention.overlay.background',
+                variable: '--p-mention-overlay-background',
+                description: 'Background of overlay'
+            },
+            {
+                name: 'mention.overlay.borderColor',
+                token: 'mention.overlay.border.color',
+                variable: '--p-mention-overlay-border-color',
+                description: 'Border color of overlay'
+            },
+            {
+                name: 'mention.overlay.borderRadius',
+                token: 'mention.overlay.border.radius',
+                variable: '--p-mention-overlay-border-radius',
+                description: 'Border radius of overlay'
+            },
+            {
+                name: 'mention.overlay.color',
+                token: 'mention.overlay.color',
+                variable: '--p-mention-overlay-color',
+                description: 'Color of overlay'
+            },
+            {
+                name: 'mention.overlay.shadow',
+                token: 'mention.overlay.shadow',
+                variable: '--p-mention-overlay-shadow',
+                description: 'Shadow of overlay'
+            },
+            {
+                name: 'mention.overlay.width',
+                token: 'mention.overlay.width',
+                variable: '--p-mention-overlay-width',
+                description: 'Width of the overlay when it opens at the caret'
+            },
+            {
+                name: 'mention.list.padding',
+                token: 'mention.list.padding',
+                variable: '--p-mention-list-padding',
+                description: 'Padding of list'
+            },
+            {
+                name: 'mention.list.gap',
+                token: 'mention.list.gap',
+                variable: '--p-mention-list-gap',
+                description: 'Gap of list'
+            },
+            {
+                name: 'mention.option.focusBackground',
+                token: 'mention.option.focus.background',
+                variable: '--p-mention-option-focus-background',
+                description: 'Focus background of option'
+            },
+            {
+                name: 'mention.option.color',
+                token: 'mention.option.color',
+                variable: '--p-mention-option-color',
+                description: 'Color of option'
+            },
+            {
+                name: 'mention.option.focusColor',
+                token: 'mention.option.focus.color',
+                variable: '--p-mention-option-focus-color',
+                description: 'Focus color of option'
+            },
+            {
+                name: 'mention.option.padding',
+                token: 'mention.option.padding',
+                variable: '--p-mention-option-padding',
+                description: 'Padding of option'
+            },
+            {
+                name: 'mention.option.borderRadius',
+                token: 'mention.option.border.radius',
+                variable: '--p-mention-option-border-radius',
+                description: 'Border radius of option'
+            },
+            {
+                name: 'mention.option.gap',
+                token: 'mention.option.gap',
+                variable: '--p-mention-option-gap',
+                description: 'Gap between the parts of an option, an avatar and a name for instance'
+            },
+            {
+                name: 'mention.emptyMessage.padding',
+                token: 'mention.empty.message.padding',
+                variable: '--p-mention-empty-message-padding',
+                description: 'Padding of empty message and loader'
+            },
+            {
+                name: 'mention.emptyMessage.color',
+                token: 'mention.empty.message.color',
+                variable: '--p-mention-empty-message-color',
+                description: 'Color of empty message and loader'
             }
         ]
     },

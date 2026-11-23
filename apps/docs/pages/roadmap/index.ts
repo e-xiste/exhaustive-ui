@@ -92,6 +92,7 @@ export class RoadmapDemo {
                 title: 'v22 minor releases',
                 features: [
                     'FileInput, a new component to select, validate and upload files, with list, images and avatar variants',
+                    'Mention, a new component that suggests users, tags or commands after @, # or / in a textarea or an input',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

@@ -45,6 +45,7 @@ import inputtext from '@exhaustive-ui/themes/material/inputtext';
 import knob from '@exhaustive-ui/themes/material/knob';
 import listbox from '@exhaustive-ui/themes/material/listbox';
 import megamenu from '@exhaustive-ui/themes/material/megamenu';
+import mention from '@exhaustive-ui/themes/material/mention';
 import menu from '@exhaustive-ui/themes/material/menu';
 import menubar from '@exhaustive-ui/themes/material/menubar';
 import message from '@exhaustive-ui/themes/material/message';
@@ -138,6 +139,7 @@ export default {
         knob,
         listbox,
         megamenu,
+        mention,
         menu,
         menubar,
         message,

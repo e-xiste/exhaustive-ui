@@ -45,6 +45,7 @@ import inputtext from '@exhaustive-ui/themes/nora/inputtext';
 import knob from '@exhaustive-ui/themes/nora/knob';
 import listbox from '@exhaustive-ui/themes/nora/listbox';
 import megamenu from '@exhaustive-ui/themes/nora/megamenu';
+import mention from '@exhaustive-ui/themes/nora/mention';
 import menu from '@exhaustive-ui/themes/nora/menu';
 import menubar from '@exhaustive-ui/themes/nora/menubar';
 import message from '@exhaustive-ui/themes/nora/message';
@@ -138,6 +139,7 @@ export default {
         knob,
         listbox,
         megamenu,
+        mention,
         menu,
         menubar,
         message,

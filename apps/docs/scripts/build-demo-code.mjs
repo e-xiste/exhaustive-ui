@@ -110,6 +110,7 @@ const SELECTOR_TO_MODULE = {
     'p-knob': 'KnobModule',
     'p-listbox': 'ListboxModule',
     'p-mega-menu': 'MegaMenuModule',
+    'p-mention': 'MentionModule',
     'p-menu': 'MenuModule',
     'p-menubar': 'MenubarModule',
     'p-message': 'MessageModule',

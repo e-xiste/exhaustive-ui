@@ -14,6 +14,7 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     'file-input': 'fileinput',
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
+    mentions: 'mention',
     overlaypanel: 'popover',
     sidebar: 'drawer',
     tabview: 'tabs',
