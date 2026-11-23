@@ -4,6 +4,22 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## 22.7.0 (2026-11-23)
+
+Contrast: text in the four theme presets meets WCAG AA in light and dark mode.
+
+### Bug Fixes
+
+- **themes:** text meets the WCAG AA contrast ratio (4.5:1) in the four presets, light and dark, checked token by token and with axe on every docs page:
+    - Light mode, Aura, Lara and Nora: the primary color is the 700 shade (it was 500, 600 in Nora; white text was at 2.5:1 on emerald). Filled success, info and warn buttons, badges and tags use the 700 shade, help and danger the 600 shade; hover and active go one and two shades darker. Outlined, text and link buttons use the same shades for their text.
+    - Material: the primary color is the 900 shade, success and info the 800 shade, danger the 700 shade. The warn button, badge and tag keep their orange background with dark text, since white never reaches 4.5:1 on Material orange.
+    - Messages, toasts and inline messages: the success, warn and error text is one or two shades darker in light mode, and one shade lighter in dark mode (Aura, Lara, Material).
+    - Dark mode: Material and Nora help and danger buttons, badges and tags are one shade lighter.
+    - The InputGroup addon text uses the muted text color instead of the icon color. The muted text color is the 600 shade in Aura and Lara light mode, like Nora, so it stays readable on hovered and focused rows. The Material Stepper step number and the Nora invalid placeholder are darker; the Nora dark muted text is lighter.
+    - Docs examples: the DataView and Carousel tags no longer force a dark background that only suited Aura, and colored backgrounds in the AnimateOnScroll, unstyled and pass through examples are dark enough for white text.
+
+    The new shades change how the default themes look. To keep the previous colors, override the tokens in a custom preset, for example `semantic.colorScheme.light.primary.color: '{primary.500}'`.
+
 ## 22.6.0 (2026-11-22)
 
 A large audit pass: server rendering crashes, accessibility (axe on every docs page), generated example code that compiles, documentation prose matching the API.
