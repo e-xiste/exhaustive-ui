@@ -4,6 +4,20 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **mention:** a mention typed right before a word no longer deletes that word when a suggestion is chosen.
+- **mention:** the suggestion panel follows the trigger when the textarea or the input scrolls, and when the mention wraps to the next line.
+- **mention:** the Enter that commits an IME composition in Safari no longer inserts the highlighted suggestion.
+- **mention:** the textarea announces its suggestion popup with `aria-haspopup="listbox"`.
+- **mention:** the field no longer overflows a narrow container when `cols` is wider than it.
+
+### Documentation
+
+- **mention:** the Accessibility section describes what screen readers get from the textarea, which is not a combobox.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.

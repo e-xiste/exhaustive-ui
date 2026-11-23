@@ -160,6 +160,10 @@ describe('Mention', () => {
             expect(field().classList).toContain('p-textarea');
             expect(field().getAttribute('aria-autocomplete')).toBe('list');
             expect(field().getAttribute('autocomplete')).toBe('off');
+            // A textarea cannot be a combobox: it announces its popup with aria-haspopup, and never aria-expanded.
+            expect(field().getAttribute('aria-haspopup')).toBe('listbox');
+            expect(field().hasAttribute('aria-expanded')).toBe(false);
+            expect(field().hasAttribute('role')).toBe(false);
         });
 
         it('should render a single-line combobox input when multiline is false', async () => {
@@ -371,6 +375,29 @@ describe('Mention', () => {
             expect(field().value).toBe('Hi @anna welcome');
         });
 
+        it('should keep the word that follows the caret when a mention is typed right before it', async () => {
+            await type('Thanks for the review', { replace: true });
+            field().setSelectionRange(7, 7);
+            await type('@an');
+            expect(field().value).toBe('Thanks @anfor the review');
+            options()[0].click();
+            await render();
+            expect(field().value).toBe('Thanks @anna for the review');
+            expect(host.text).toBe('Thanks @anna for the review');
+            expect(field().selectionStart).toBe(13);
+        });
+
+        it('should keep replacing the whole word when the caret was moved into an existing mention and then typed', async () => {
+            await type('Hi @anxx', { replace: true });
+            field().setSelectionRange(6, 6);
+            field().dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            await render();
+            await type('n');
+            mention.select(USERS[1]);
+            await render();
+            expect(field().value).toBe('Hi @anna ');
+        });
+
         it('should not add a second space when the text after already starts with one', async () => {
             await type('@am tail', { replace: true });
             field().setSelectionRange(3, 3);
@@ -449,6 +476,17 @@ describe('Mention', () => {
             expect(mention.overlayVisible()).toBe(true);
             const enter = await key('Enter');
             expect(enter.defaultPrevented).toBe(false);
+        });
+
+        it('should not select a suggestion with the Enter that ends an IME composition', async () => {
+            await type('@');
+            const composing = await key('Enter', { isComposing: true });
+            expect(composing.defaultPrevented).toBe(false);
+            // Safari sends the Enter that commits the composition after compositionend, with keyCode 229.
+            const committed = await key('Enter', { keyCode: 229 } as KeyboardEventInit);
+            expect(committed.defaultPrevented).toBe(false);
+            expect(field().value).toBe('@');
+            expect(mention.overlayVisible()).toBe(true);
         });
 
         it('should close with Escape and stay closed while typing in the same mention', async () => {
@@ -620,6 +658,26 @@ describe('Mention', () => {
             expect(parseFloat(anchor.style.top)).toBeGreaterThan(fieldEl.offsetTop);
             expect(parseFloat(anchor.style.left)).toBeGreaterThan(fieldEl.offsetLeft);
             expect(overlay()).not.toBeNull();
+        });
+
+        it('should move the panel anchor with the trigger when the textarea scrolls', async () => {
+            const fieldEl = field();
+            fieldEl.style.height = '120px';
+            fieldEl.style.lineHeight = '20px';
+            fieldEl.style.overflowY = 'auto';
+            await type('1\n2\n3\n4 @', { replace: true });
+            expect(mention.overlayVisible()).toBe(true);
+            await type('\n5\n6\n7\n8\n9\n10\n11\n12', { replace: false });
+            fieldEl.setSelectionRange(9, 9);
+            fieldEl.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            await render();
+            expect(mention.overlayVisible()).toBe(true);
+            const anchor = root.querySelector('.p-mention-anchor') as HTMLElement;
+            const before = parseFloat(anchor.style.top);
+            fieldEl.scrollTop = 40;
+            fieldEl.dispatchEvent(new Event('scroll'));
+            await render();
+            expect(parseFloat(anchor.style.top)).toBeCloseTo(before - 40, 0);
         });
 
         it('should align the panel with the whole field when position is field', async () => {

@@ -52,6 +52,11 @@ interface MentionContext {
     start: number;
     /** Index of the caret in the value. */
     caret: number;
+    /**
+     * Number of characters at the end of the word that a chosen suggestion keeps: the text that already followed the
+     * caret when the trigger was typed right before a word, 0 when the caret was moved into an existing mention.
+     */
+    keptTail: number;
 }
 
 /** Computed styles copied to the mirror element that measures the caret position. */
@@ -127,6 +132,7 @@ const MIRRORED_PROPERTIES = [
                 [attr.aria-required]="required() || undefined"
                 [attr.aria-invalid]="$invalid() || undefined"
                 aria-autocomplete="list"
+                aria-haspopup="listbox"
                 [attr.aria-controls]="listVisible() ? listId() : undefined"
                 [attr.aria-activedescendant]="listVisible() ? focusedOptionId() : undefined"
                 autocomplete="off"
@@ -134,6 +140,7 @@ const MIRRORED_PROPERTIES = [
                 (keydown)="onKeyDown($event)"
                 (keyup)="onKeyUp($event)"
                 (click)="onClick($event)"
+                (scroll)="onFieldScroll()"
                 (focus)="onInputFocus($event)"
                 (blur)="onInputBlur($event)"
             ></textarea>
@@ -175,6 +182,7 @@ const MIRRORED_PROPERTIES = [
                 (keydown)="onKeyDown($event)"
                 (keyup)="onKeyUp($event)"
                 (click)="onClick($event)"
+                (scroll)="onFieldScroll()"
                 (focus)="onInputFocus($event)"
                 (blur)="onInputBlur($event)"
             />
@@ -691,10 +699,8 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
             return;
         }
         const value = field.value;
-        let end = ctx.caret;
-        while (end < value.length && !/\s/.test(value[end])) {
-            end++;
-        }
+        // The rest of the word is replaced, except the text that followed the caret when the trigger was typed.
+        const end = ctx.caret + Math.max(0, this.wordTail(value, ctx.caret) - ctx.keptTail);
         const after = value.slice(end);
         const text = ctx.trigger + this.getOptionLabel(option);
         const hasSpace = /^\s/.test(after);
@@ -755,7 +761,8 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.isComposing || !this.overlayVisible()) {
+        // keyCode 229: Safari sends the key that ends an IME composition after compositionend, with isComposing false.
+        if (event.isComposing || event.keyCode === 229 || !this.overlayVisible()) {
             return;
         }
         const count = this.suggestionList().length;
@@ -810,6 +817,15 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
     onClick(event: MouseEvent) {
         this.pointer = [event.clientX, event.clientY];
         this.evaluate(event);
+    }
+
+    onFieldScroll() {
+        // The trigger moves with the text: the panel follows it.
+        const ctx = this.context();
+        if (ctx && this.overlayVisible()) {
+            this.positionAnchor(ctx);
+            this.overlayViewChild()?.alignOverlay();
+        }
     }
 
     onInputFocus(event: FocusEvent) {
@@ -892,8 +908,8 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
             this.hide();
             return;
         }
-        const ctx = this.findContext(field.value, field.selectionStart ?? 0, field.selectionEnd ?? 0);
-        if (!ctx) {
+        const found = this.findContext(field.value, field.selectionStart ?? 0, field.selectionEnd ?? 0);
+        if (!found) {
             this.context.set(null);
             this.lastSearchKey = null;
             this.dismissedStart = -1;
@@ -901,6 +917,7 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
             return;
         }
         const previous = this.context();
+        const ctx: MentionContext = { ...found, keptTail: previous?.start === found.start ? previous.keptTail : event.type === 'input' ? this.wordTail(field.value, found.caret) : 0 };
         this.context.set(ctx);
         if (ctx.start !== this.dismissedStart) {
             this.dismissedStart = -1;
@@ -915,11 +932,10 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
             this.lastSearchKey = key;
             this.search(event, ctx);
         }
-        if (!previous || previous.start !== ctx.start || !this.overlayVisible()) {
-            this.positionAnchor(ctx);
-            if (this.overlayVisible()) {
-                this.overlayViewChild()?.alignOverlay();
-            }
+        // Measured on every change: the trigger moves to the next line when the word wraps.
+        this.positionAnchor(ctx);
+        if (this.overlayVisible()) {
+            this.overlayViewChild()?.alignOverlay();
         }
         this.syncVisibility();
     }
@@ -952,7 +968,16 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
         }
     }
 
-    private findContext(value: string, selectionStart: number, selectionEnd: number): MentionContext | null {
+    /** Number of characters between the caret and the end of its word. */
+    private wordTail(value: string, caret: number) {
+        let end = caret;
+        while (end < value.length && !/\s/.test(value[end])) {
+            end++;
+        }
+        return end - caret;
+    }
+
+    private findContext(value: string, selectionStart: number, selectionEnd: number): Omit<MentionContext, 'keptTail'> | null {
         if (selectionStart !== selectionEnd) {
             return null;
         }
