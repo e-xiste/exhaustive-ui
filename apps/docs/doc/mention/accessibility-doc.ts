@@ -11,10 +11,15 @@ import { Component } from '@angular/core';
         <app-docsectiontext>
             <h3>Screen Reader</h3>
             <p>
-                Mention follows the <a href="https://www.w3.org/WAI/ARIA/apg/patterns/combobox/" target="_blank" rel="noopener noreferrer" class="doc-link">combobox pattern</a> with a listbox popup, while the focus stays in the field. The field has
-                <i>aria-autocomplete="list"</i>; while suggestions are shown, <i>aria-controls</i> points to the listbox and <i>aria-activedescendant</i> to the highlighted option, which has <i>aria-selected</i> along with its position in the list
-                (<i>aria-posinset</i>, <i>aria-setsize</i>). The single-line input has the <i>combobox</i> role and <i>aria-expanded</i>. A textarea cannot take the combobox role in HTML, so the multiline field keeps its native textbox role with the
-                same attributes, as GitHub and Slack comment boxes do.
+                The single-line input follows the <a href="https://www.w3.org/WAI/ARIA/apg/patterns/combobox/" target="_blank" rel="noopener noreferrer" class="doc-link">combobox pattern</a> with a listbox popup, while the focus stays in the field:
+                it has the <i>combobox</i> role, <i>aria-autocomplete="list"</i> and <i>aria-expanded</i>, and while suggestions are shown <i>aria-controls</i> points to the listbox and <i>aria-activedescendant</i> to the highlighted option, which
+                has <i>aria-selected</i> along with its position in the list (<i>aria-posinset</i>, <i>aria-setsize</i>).
+            </p>
+            <p>
+                A textarea cannot take the <i>combobox</i> role in HTML, and <i>aria-expanded</i> is not allowed on a textbox, so the multiline field keeps its native textbox role. It has <i>aria-autocomplete="list"</i> and
+                <i>aria-haspopup="listbox"</i>, and the same <i>aria-controls</i> and <i>aria-activedescendant</i> while suggestions are shown. Screen readers that follow <i>aria-activedescendant</i> on a textbox, such as NVDA and JAWS with Chrome,
+                Edge or Firefox, read the highlighted option as the arrow keys move it. The field is never announced as expanded or collapsed: the live region below is what tells that suggestions appeared. Support for <i>aria-activedescendant</i> on
+                a textbox is weaker in VoiceOver, which may not read the highlighted option; the live region and the inserted text are still announced. Set <i>multiline</i> to false when a single line is enough.
             </p>
             <p>
                 A polite live region announces the number of suggestions, the empty message and the loading state. Its texts come from <i>searchMessage</i>, <i>emptyMessage</i> and <i>loadingMessage</i>, or from the <i>searchMessage</i> and

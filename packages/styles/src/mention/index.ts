@@ -3,6 +3,7 @@ export const style = /*css*/ `
         display: inline-flex;
         position: relative;
         vertical-align: top;
+        max-width: 100%;
     }
 
     .p-mention-fluid {
