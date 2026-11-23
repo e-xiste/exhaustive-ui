@@ -114,12 +114,18 @@ export interface TimedSegment {
 export const layoutDay = (items: NormalizedEvent[], day: Date, startHour: number, endHour: number): TimedSegment[] => {
     const dayStart = atMinutes(day, startHour * 60);
     const dayEnd = atMinutes(day, endHour * 60);
-    const total = dayEnd.getTime() - dayStart.getTime();
+    // Positions follow the wall clock, like the hour labels, so that a day of 23 or 25 hours keeps its events on their hours.
+    const startMinutes = startHour * 60;
+    const total = endHour * 60 - startMinutes;
+    const wall = (date: Date) => dayDiff(day, date) * 1440 + minutesOfDay(date);
     const segments: (TimedSegment & { column: number })[] = [];
     for (const item of items) {
         if (!overlaps(item.start, item.end, dayStart, dayEnd)) continue;
         const start = item.start.getTime() > dayStart.getTime() ? item.start : dayStart;
         const end = item.end.getTime() < dayEnd.getTime() ? item.end : dayEnd;
+        const from = wall(start);
+        // When the clocks go back, the end can read earlier than the start: keep the real duration.
+        const to = Math.max(wall(end), from + (end.getTime() - start.getTime()) / MINUTE);
         segments.push({
             key: `${item.event.id}|${dayKey(day)}`,
             item,
@@ -127,8 +133,8 @@ export const layoutDay = (items: NormalizedEvent[], day: Date, startHour: number
             end,
             isStart: item.start.getTime() >= dayStart.getTime(),
             isEnd: item.end.getTime() <= dayEnd.getTime(),
-            top: ((start.getTime() - dayStart.getTime()) / total) * 100,
-            height: ((end.getTime() - start.getTime()) / total) * 100,
+            top: ((from - startMinutes) / total) * 100,
+            height: ((Math.min(to, endHour * 60) - from) / total) * 100,
             left: 0,
             width: 100,
             column: 0

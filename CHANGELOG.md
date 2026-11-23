@@ -4,6 +4,21 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **scheduler:** events of the week and day views stay on their hour lines on the days of a daylight saving time change.
+- **scheduler:** Escape cancels a drag even when the dragged event has the focus, and the pointer release no longer emits onEventClick.
+- **scheduler:** on a narrow screen, onViewChange is emitted once at start, for the narrow view, instead of first for the wide view; the breakpoint input can change at runtime.
+- **scheduler:** moving or resizing an event with Alt and the arrow keys keeps it within the visible hours, like a drag.
+- **scheduler:** Escape on the second day of an overnight event returns to a slot of that day.
+- **scheduler:** events of one slot or less show their title and time on one line instead of a line cut in half, and the agenda times no longer wrap on small screens.
+
+### Documentation
+
+- **scheduler:** the Locale section explains time zones and daylight saving time, and the keyboard table describes page up and page down in the time grid.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.

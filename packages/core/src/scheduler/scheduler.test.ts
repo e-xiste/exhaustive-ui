@@ -350,6 +350,21 @@ describe('Scheduler', () => {
             expect(parseFloat(a.style.height)).toBeCloseTo((2 / 24) * 100, 3);
         });
 
+        it('should keep the title and the time of an event of one slot on one line', async () => {
+            await setEvents([
+                { id: 1, title: 'Standup', start: at(3, 9), end: at(3, 9, 15) },
+                { id: 2, title: 'Sync', start: at(3, 10), end: at(3, 10, 30) },
+                { id: 3, title: 'Review', start: at(3, 11), end: at(3, 12) }
+            ]);
+            expect(eventButton(1).classList).toContain('p-scheduler-event-compact');
+            expect(eventButton(2).classList).toContain('p-scheduler-event-compact');
+            expect(eventButton(3).classList).not.toContain('p-scheduler-event-compact');
+            // the 15 minutes event is still tall enough for one line of text
+            const title = eventButton(1).querySelector('.p-scheduler-event-title') as HTMLElement;
+            expect(eventButton(1).getBoundingClientRect().height).toBeGreaterThanOrEqual(title.getBoundingClientRect().height);
+            expect(getComputedStyle(eventButton(1)).flexWrap).toBe('nowrap');
+        });
+
         it('should put all-day and multi-day events in the all-day row', async () => {
             await setEvents([
                 { id: 'off', title: 'Day off', start: at(4, 0), allDay: true },
@@ -466,6 +481,16 @@ describe('Scheduler', () => {
             expect(document.activeElement).toBe(cell(12));
         });
 
+        it('should return from the second day of an overnight event to a slot of that day with Escape', async () => {
+            await setView('week');
+            await setEvents([{ id: 1, title: 'Night shift', start: at(3, 22), end: at(4, 2) }]);
+            const segment = host.querySelector('[data-p-column="2026-12-04"] [data-p-event="1"]') as HTMLElement;
+            segment.focus();
+            segment.dispatchEvent(key({ key: 'Escape' }));
+            await render();
+            expect(document.activeElement).toBe(host.querySelector('[data-p-column="2026-12-04"] [data-p-slot="0"]'));
+        });
+
         it('should change the month when the focus leaves it', async () => {
             cell(3).focus();
             cell(3).dispatchEvent(key({ key: 'PageDown' }));
@@ -534,6 +559,25 @@ describe('Scheduler', () => {
             expect(change.end).toEqual(at(3, 11, 30));
             await render();
             expect(host.querySelector('[aria-live]')?.textContent).toContain('Review moved to Thu 3 Dec 10:00 – 11:30');
+        });
+
+        it('should keep an event moved or resized with the keyboard within the visible hours', async () => {
+            fixture.componentRef.setInput('editable', true);
+            fixture.componentRef.setInput('dayStartHour', 8);
+            fixture.componentRef.setInput('dayEndHour', 18);
+            await setView('week');
+            await setEvents([
+                { id: 1, title: 'Early', start: at(3, 8), end: at(3, 9) },
+                { id: 2, title: 'Late', start: at(3, 17, 30), end: at(3, 18) }
+            ]);
+            const spy = vi.fn();
+            component.onEventChange.subscribe(spy);
+            eventButton(1).dispatchEvent(key({ key: 'ArrowUp', altKey: true }));
+            eventButton(2).dispatchEvent(key({ key: 'ArrowDown', altKey: true }));
+            eventButton(2).dispatchEvent(key({ key: 'ArrowDown', altKey: true, shiftKey: true }));
+            expect(spy).not.toHaveBeenCalled();
+            eventButton(2).dispatchEvent(key({ key: 'ArrowUp', altKey: true }));
+            expect(spy.mock.calls[0][0].start).toEqual(at(3, 17));
         });
 
         it('should move an event by days and weeks in the month view', async () => {
@@ -687,6 +731,32 @@ describe('Scheduler', () => {
             expect(spy).not.toHaveBeenCalled();
         });
 
+        it('should cancel a drag with Escape pressed on the dragged event, without a click', async () => {
+            await setEvents([{ id: 1, title: 'Review', start: at(3, 10), end: at(3, 11) }]);
+            const change = vi.fn();
+            const click = vi.fn();
+            component.onEventChange.subscribe(change);
+            component.onEventClick.subscribe(click);
+            const from = slotCenter('2026-12-03', 20);
+            const to = slotCenter('2026-12-03', 26);
+            eventButton(1).focus();
+            eventButton(1).dispatchEvent(pointer('pointerdown', from.x, from.y));
+            document.dispatchEvent(pointer('pointermove', to.x, to.y));
+            await render();
+            expect(host.querySelector('.p-scheduler-ghost')).toBeTruthy();
+            // the focused event receives the key, as after a real mouse down
+            eventButton(1).dispatchEvent(key({ key: 'Escape' }));
+            await render();
+            expect(host.querySelector('.p-scheduler-ghost')).toBeNull();
+            document.dispatchEvent(pointer('pointerup', to.x, to.y));
+            eventButton(1).click();
+            expect(change).not.toHaveBeenCalled();
+            expect(click).not.toHaveBeenCalled();
+            await flush();
+            eventButton(1).click();
+            expect(click).toHaveBeenCalledTimes(1);
+        });
+
         it('should not drag events when editable is false', async () => {
             fixture.componentRef.setInput('editable', false);
             await setEvents([{ id: 1, title: 'Review', start: at(3, 10), end: at(3, 11) }]);
@@ -748,6 +818,41 @@ describe('Scheduler', () => {
             await narrow.whenStable();
             expect(narrow.componentInstance.view()).toBe('agenda');
             narrow.destroy();
+        });
+    });
+
+    describe('Responsive start', () => {
+        it('should emit onViewChange once, for the narrow view, on a narrow screen', async () => {
+            const narrow = TestBed.createComponent(Scheduler);
+            const spy = vi.fn();
+            narrow.componentInstance.onViewChange.subscribe(spy);
+            narrow.componentRef.setInput('breakpoint', '100000px');
+            narrow.componentRef.setInput('date', DATE);
+            narrow.detectChanges();
+            await narrow.whenStable();
+            narrow.detectChanges();
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(spy.mock.calls[0][0].view).toBe('agenda');
+            narrow.destroy();
+        });
+
+        it('should follow a change of the breakpoint', async () => {
+            const wide = TestBed.createComponent(Scheduler);
+            wide.componentRef.setInput('breakpoint', '1px');
+            wide.componentRef.setInput('date', DATE);
+            wide.detectChanges();
+            await wide.whenStable();
+            expect(wide.componentInstance.view()).toBe('month');
+            wide.componentRef.setInput('breakpoint', '100000px');
+            wide.detectChanges();
+            await wide.whenStable();
+            expect(wide.componentInstance.view()).toBe('agenda');
+            // wide again: back to the view before the narrow one
+            wide.componentRef.setInput('breakpoint', '1px');
+            wide.detectChanges();
+            await wide.whenStable();
+            expect(wide.componentInstance.view()).toBe('month');
+            wide.destroy();
         });
     });
 
@@ -856,6 +961,33 @@ describe('Scheduler utils', () => {
         expect(segment.isStart).toBe(false);
         expect(segment.top).toBe(0);
         expect(segment.height).toBeCloseTo(20);
+    });
+
+    it('should place the events on the hour lines on the days of a daylight saving time change', () => {
+        // the days of the year that do not last 24 hours in the time zone of the browser, if it has daylight saving time
+        const days: Date[] = [];
+        for (let date = new Date(2026, 0, 1); date.getFullYear() === 2026; date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)) {
+            const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+            if (next.getTime() - date.getTime() !== 86_400_000) days.push(date);
+        }
+        for (const day of [new Date(2026, 11, 3), ...days]) {
+            const at10 = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 10);
+            const item = normalizeEvent({ id: 1, title: '', start: at10, end: new Date(at10.getTime() + 3_600_000) }, 0, false)!;
+            const [segment] = layoutDay([item], day, 0, 24);
+            expect(segment.top).toBeCloseTo((10 / 24) * 100);
+            expect(segment.height).toBeCloseTo((1 / 24) * 100);
+        }
+    });
+
+    it('should give an overnight event a segment on each day', () => {
+        const item = normalizeEvent({ id: 1, title: '', start: at(3, 22), end: at(4, 2) }, 0, false)!;
+        const [first] = layoutDay([item], new Date(2026, 11, 3), 0, 24);
+        const [second] = layoutDay([item], new Date(2026, 11, 4), 0, 24);
+        expect(first.isEnd).toBe(false);
+        expect(first.top + first.height).toBeCloseTo(100);
+        expect(second.isStart).toBe(false);
+        expect(second.top).toBe(0);
+        expect(second.height).toBeCloseTo((2 / 24) * 100);
     });
 
     it('should choose the text color with the best contrast', () => {
