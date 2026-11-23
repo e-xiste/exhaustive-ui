@@ -273,6 +273,7 @@ export const routes: Routes = [
             },
             { path: 'toolbar', loadChildren: () => import('@/pages/toolbar/routes') },
             { path: 'tooltip', loadChildren: () => import('@/pages/tooltip/routes') },
+            { path: 'tour', loadChildren: () => import('@/pages/tour/routes') },
             { path: 'tree', loadChildren: () => import('@/pages/tree/routes') },
             {
                 path: 'treeselect',

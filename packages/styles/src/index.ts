@@ -268,6 +268,9 @@ export * as ToolbarStyle from '@exhaustive-ui/styles/toolbar';
 // Tooltip
 export * as TooltipStyle from '@exhaustive-ui/styles/tooltip';
 
+// Tour
+export * as TourStyle from '@exhaustive-ui/styles/tour';
+
 // Tree
 export * as TreeStyle from '@exhaustive-ui/styles/tree';
 

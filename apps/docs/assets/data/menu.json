@@ -309,6 +309,10 @@
                         {
                             "name": "Tooltip",
                             "routerLink": "/tooltip"
+                        },
+                        {
+                            "name": "Tour",
+                            "routerLink": "/tour"
                         }
                     ]
                 },

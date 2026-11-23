@@ -90,6 +90,7 @@ import type { ToggleButtonDesignTokens } from './togglebutton';
 import type { ToggleSwitchDesignTokens } from './toggleswitch';
 import type { ToolbarDesignTokens } from './toolbar';
 import type { TooltipDesignTokens } from './tooltip';
+import type { TourDesignTokens } from './tour';
 import type { TreeDesignTokens } from './tree';
 import type { TreeSelectDesignTokens } from './treeselect';
 import type { TreeTableDesignTokens } from './treetable';
@@ -219,6 +220,7 @@ export interface ComponentsDesignTokens {
     toggleswitch?: ToggleSwitchDesignTokens;
     toolbar?: ToolbarDesignTokens;
     tooltip?: TooltipDesignTokens;
+    tour?: TourDesignTokens;
     tree?: TreeDesignTokens;
     treeselect?: TreeSelectDesignTokens;
     treetable?: TreeTableDesignTokens;

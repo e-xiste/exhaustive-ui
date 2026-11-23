@@ -149,6 +149,7 @@ const SELECTOR_TO_MODULE = {
     'p-tiered-menu': 'TieredMenuModule',
     'p-timeline': 'TimelineModule',
     'p-toast': 'ToastModule',
+    'p-tour': 'TourModule',
     'p-toggle-button': 'ToggleButtonModule',
     'p-toggle-switch': 'ToggleSwitchModule',
     'p-toolbar': 'ToolbarModule',
