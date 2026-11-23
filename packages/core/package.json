@@ -13,7 +13,24 @@
     "bugs": {
         "url": "https://github.com/e-xiste/exhaustive-ui/issues"
     },
-    "keywords": ["exhaustive-ui", "angular", "angular components", "angular ui", "ui library", "component library", "design system", "signals", "primeng", "primeng alternative", "primeng fork", "optimus-ui", "datatable", "accessibility", "tailwind", "mit"],
+    "keywords": [
+        "exhaustive-ui",
+        "angular",
+        "angular components",
+        "angular ui",
+        "ui library",
+        "component library",
+        "design system",
+        "signals",
+        "primeng",
+        "primeng alternative",
+        "primeng fork",
+        "optimus-ui",
+        "datatable",
+        "accessibility",
+        "tailwind",
+        "mit"
+    ],
     "publishConfig": {
         "directory": "dist",
         "linkDirectory": false,
@@ -54,6 +71,10 @@
         "@angular-devkit/schematics": "^22.1.6",
         "@angular/build": "catalog:angular22",
         "@schematics/angular": "^22.1.6",
+        "@tiptap/core": "3.32.3",
+        "@tiptap/extension-text-align": "3.32.3",
+        "@tiptap/pm": "3.32.3",
+        "@tiptap/starter-kit": "3.32.3",
         "@types/node": "^26.2.0",
         "@vitest/browser-playwright": "^4.1.11",
         "@vitest/coverage-v8": "^4.1.11",
@@ -68,6 +89,10 @@
         "@angular/forms": "^22.0.0",
         "@angular/platform-browser": "^22.0.0",
         "@angular/router": "^22.0.0",
+        "@tiptap/core": "^3.20.0",
+        "@tiptap/extension-text-align": "^3.20.0",
+        "@tiptap/pm": "^3.20.0",
+        "@tiptap/starter-kit": "^3.20.0",
         "chart.js": "^4.0.0",
         "rxjs": "^6.0.0 || ^7.8.1"
     },
@@ -78,6 +103,18 @@
         "@exhaustive-ui/utils": "workspace:*"
     },
     "peerDependenciesMeta": {
+        "@tiptap/core": {
+            "optional": true
+        },
+        "@tiptap/extension-text-align": {
+            "optional": true
+        },
+        "@tiptap/pm": {
+            "optional": true
+        },
+        "@tiptap/starter-kit": {
+            "optional": true
+        },
         "chart.js": {
             "optional": true
         }

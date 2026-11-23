@@ -96,6 +96,7 @@ export class RoadmapDemo {
                     'InputChips, a new component to type free-text values as chips, with separators, limits and validation',
                     'Mention, a new component that suggests users, tags or commands after @, # or / in a textarea or an input',
                     'Scheduler, a free event calendar with month, week, day and agenda views, drag and drop and keyboard editing',
+                    'RichTextEditor, a new rich text editor built on Tiptap, with an accessible themed toolbar, HTML or JSON values and a character limit',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

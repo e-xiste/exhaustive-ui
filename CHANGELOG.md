@@ -24,6 +24,11 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 ### Documentation
 
 - **scheduler:** documentation page with 8 sections, the API reference and the pass-through options.
+- **richtexteditor:** new `RichTextEditor` component (`p-rich-text-editor`), a rich text editor built on Tiptap and ProseMirror, next to `Editor`, which stays available unchanged. Its value is an HTML string, or the Tiptap JSON document with `format="json"`. The `toolbar` input lists the buttons (bold, italic, underline, strike, code, headings 1 to 3, bullet and numbered lists, quote, code block, link, the four alignments, undo, redo and clear formatting) and follows the WAI-ARIA toolbar pattern: one tab stop, arrow keys, `aria-pressed`, `aria-keyshortcuts`. Links are edited in an inline panel with URL validation, `maxLength` limits the characters of the text with an optional count (`showCount`), and `extensions` adds Tiptap extensions. It works with template-driven forms, reactive forms and Signal Forms, has `placeholder`, `readonly`, `disabled`, `invalid`, `fluid`, `variant`, `size` and `autofocus`, a `toolbar` template, replaceable texts through `labels`, and `onInit`, `onTextChange`, `onSelectionChange`, `onFocus` and `onBlur` events. The four MIT Tiptap packages it needs (`@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit`, `@tiptap/extension-text-align`) are optional peer dependencies, loaded in the browser only. Theming through the new `richtexteditor` design tokens in the four presets, content styles included.
+
+### Documentation
+
+- **richtexteditor:** documentation page with 17 sections, the API reference and the pass-through options, and an "Editor vs RichTextEditor" note on both pages.
 
 ## 22.7.0 (2026-11-23)
 

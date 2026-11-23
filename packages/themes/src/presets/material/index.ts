@@ -64,6 +64,7 @@ import progressbar from '@exhaustive-ui/themes/material/progressbar';
 import progressspinner from '@exhaustive-ui/themes/material/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/material/radiobutton';
 import rating from '@exhaustive-ui/themes/material/rating';
+import richtexteditor from '@exhaustive-ui/themes/material/richtexteditor';
 import ripple from '@exhaustive-ui/themes/material/ripple';
 import scheduler from '@exhaustive-ui/themes/material/scheduler';
 import scrollpanel from '@exhaustive-ui/themes/material/scrollpanel';
@@ -160,6 +161,7 @@ export default {
         progressspinner,
         radiobutton,
         rating,
+        richtexteditor,
         ripple,
         scheduler,
         scrollpanel,

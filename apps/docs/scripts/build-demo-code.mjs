@@ -131,6 +131,8 @@ const SELECTOR_TO_MODULE = {
     'p-progress-spinner': 'ProgressSpinnerModule',
     'p-radio-button': 'RadioButtonModule',
     'p-rating': 'RatingModule',
+    'p-rich-text-editor': 'RichTextEditorModule',
+    'p-richtexteditor': 'RichTextEditorModule',
     'p-ripple': 'RippleModule',
     'p-scheduler': 'SchedulerModule',
     'p-scroll-panel': 'ScrollPanelModule',

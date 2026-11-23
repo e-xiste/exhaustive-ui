@@ -73,6 +73,7 @@ export interface Tokens {
     progressspinner: TokenMetaData;
     radiobutton: TokenMetaData;
     rating: TokenMetaData;
+    richtexteditor: TokenMetaData;
     ripple: TokenMetaData;
     scheduler: TokenMetaData;
     scrollpanel: TokenMetaData;
@@ -10540,6 +10541,683 @@ export default {
                 token: 'rating.icon.active.color',
                 variable: '--p-rating-icon-active-color',
                 description: 'Active color of icon'
+            }
+        ]
+    },
+    richtexteditor: {
+        description: 'RichTextEditor Design Tokens',
+        tokens: [
+            {
+                name: 'richtexteditor.root.background',
+                token: 'richtexteditor.background',
+                variable: '--p-richtexteditor-background',
+                description: 'Background'
+            },
+            {
+                name: 'richtexteditor.root.disabledBackground',
+                token: 'richtexteditor.disabled.background',
+                variable: '--p-richtexteditor-disabled-background',
+                description: 'Background in disabled state'
+            },
+            {
+                name: 'richtexteditor.root.filledBackground',
+                token: 'richtexteditor.filled.background',
+                variable: '--p-richtexteditor-filled-background',
+                description: 'Background of the filled variant'
+            },
+            {
+                name: 'richtexteditor.root.filledFocusBackground',
+                token: 'richtexteditor.filled.focus.background',
+                variable: '--p-richtexteditor-filled-focus-background',
+                description: 'Background of the filled variant while focused'
+            },
+            {
+                name: 'richtexteditor.root.borderColor',
+                token: 'richtexteditor.border.color',
+                variable: '--p-richtexteditor-border-color',
+                description: 'Border color'
+            },
+            {
+                name: 'richtexteditor.root.hoverBorderColor',
+                token: 'richtexteditor.hover.border.color',
+                variable: '--p-richtexteditor-hover-border-color',
+                description: 'Border color while hovered'
+            },
+            {
+                name: 'richtexteditor.root.focusBorderColor',
+                token: 'richtexteditor.focus.border.color',
+                variable: '--p-richtexteditor-focus-border-color',
+                description: 'Border color while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.root.invalidBorderColor',
+                token: 'richtexteditor.invalid.border.color',
+                variable: '--p-richtexteditor-invalid-border-color',
+                description: 'Border color in invalid state'
+            },
+            {
+                name: 'richtexteditor.root.color',
+                token: 'richtexteditor.color',
+                variable: '--p-richtexteditor-color',
+                description: 'Text color'
+            },
+            {
+                name: 'richtexteditor.root.disabledColor',
+                token: 'richtexteditor.disabled.color',
+                variable: '--p-richtexteditor-disabled-color',
+                description: 'Text color in disabled state'
+            },
+            {
+                name: 'richtexteditor.root.shadow',
+                token: 'richtexteditor.shadow',
+                variable: '--p-richtexteditor-shadow',
+                description: 'Shadow'
+            },
+            {
+                name: 'richtexteditor.root.borderRadius',
+                token: 'richtexteditor.border.radius',
+                variable: '--p-richtexteditor-border-radius',
+                description: 'Border radius'
+            },
+            {
+                name: 'richtexteditor.root.transitionDuration',
+                token: 'richtexteditor.transition.duration',
+                variable: '--p-richtexteditor-transition-duration',
+                description: 'Transition duration'
+            },
+            {
+                name: 'richtexteditor.root.focusRing.width',
+                token: 'richtexteditor.focus.ring.width',
+                variable: '--p-richtexteditor-focus-ring-width',
+                description: 'Focus ring width of the root while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.root.focusRing.style',
+                token: 'richtexteditor.focus.ring.style',
+                variable: '--p-richtexteditor-focus-ring-style',
+                description: 'Focus ring style of the root while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.root.focusRing.color',
+                token: 'richtexteditor.focus.ring.color',
+                variable: '--p-richtexteditor-focus-ring-color',
+                description: 'Focus ring color of the root while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.root.focusRing.offset',
+                token: 'richtexteditor.focus.ring.offset',
+                variable: '--p-richtexteditor-focus-ring-offset',
+                description: 'Focus ring offset of the root while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.root.focusRing.shadow',
+                token: 'richtexteditor.focus.ring.shadow',
+                variable: '--p-richtexteditor-focus-ring-shadow',
+                description: 'Focus ring shadow of the root while the editable area is focused'
+            },
+            {
+                name: 'richtexteditor.toolbar.background',
+                token: 'richtexteditor.toolbar.background',
+                variable: '--p-richtexteditor-toolbar-background',
+                description: 'Background of the toolbar'
+            },
+            {
+                name: 'richtexteditor.toolbar.borderColor',
+                token: 'richtexteditor.toolbar.border.color',
+                variable: '--p-richtexteditor-toolbar-border-color',
+                description: 'Border color between the toolbar and the content'
+            },
+            {
+                name: 'richtexteditor.toolbar.padding',
+                token: 'richtexteditor.toolbar.padding',
+                variable: '--p-richtexteditor-toolbar-padding',
+                description: 'Padding of the toolbar'
+            },
+            {
+                name: 'richtexteditor.toolbar.gap',
+                token: 'richtexteditor.toolbar.gap',
+                variable: '--p-richtexteditor-toolbar-gap',
+                description: 'Gap between the buttons of the toolbar'
+            },
+            {
+                name: 'richtexteditor.separator.background',
+                token: 'richtexteditor.separator.background',
+                variable: '--p-richtexteditor-separator-background',
+                description: 'Color of a separator'
+            },
+            {
+                name: 'richtexteditor.separator.height',
+                token: 'richtexteditor.separator.height',
+                variable: '--p-richtexteditor-separator-height',
+                description: 'Height of a separator'
+            },
+            {
+                name: 'richtexteditor.separator.margin',
+                token: 'richtexteditor.separator.margin',
+                variable: '--p-richtexteditor-separator-margin',
+                description: 'Margin of a separator'
+            },
+            {
+                name: 'richtexteditor.button.size',
+                token: 'richtexteditor.button.size',
+                variable: '--p-richtexteditor-button-size',
+                description: 'Size of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.borderRadius',
+                token: 'richtexteditor.button.border.radius',
+                variable: '--p-richtexteditor-button-border-radius',
+                description: 'Border radius of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.color',
+                token: 'richtexteditor.button.color',
+                variable: '--p-richtexteditor-button-color',
+                description: 'Color of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.hoverBackground',
+                token: 'richtexteditor.button.hover.background',
+                variable: '--p-richtexteditor-button-hover-background',
+                description: 'Background of a hovered toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.hoverColor',
+                token: 'richtexteditor.button.hover.color',
+                variable: '--p-richtexteditor-button-hover-color',
+                description: 'Color of a hovered toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.activeBackground',
+                token: 'richtexteditor.button.active.background',
+                variable: '--p-richtexteditor-button-active-background',
+                description: 'Background of a pressed toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.activeColor',
+                token: 'richtexteditor.button.active.color',
+                variable: '--p-richtexteditor-button-active-color',
+                description: 'Color of a pressed toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.iconSize',
+                token: 'richtexteditor.button.icon.size',
+                variable: '--p-richtexteditor-button-icon-size',
+                description: 'Size of a toolbar button icon'
+            },
+            {
+                name: 'richtexteditor.button.fontSize',
+                token: 'richtexteditor.button.font.size',
+                variable: '--p-richtexteditor-button-font-size',
+                description: 'Font size of the letters of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.focusRing.width',
+                token: 'richtexteditor.button.focus.ring.width',
+                variable: '--p-richtexteditor-button-focus-ring-width',
+                description: 'Focus ring width of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.focusRing.style',
+                token: 'richtexteditor.button.focus.ring.style',
+                variable: '--p-richtexteditor-button-focus-ring-style',
+                description: 'Focus ring style of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.focusRing.color',
+                token: 'richtexteditor.button.focus.ring.color',
+                variable: '--p-richtexteditor-button-focus-ring-color',
+                description: 'Focus ring color of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.focusRing.offset',
+                token: 'richtexteditor.button.focus.ring.offset',
+                variable: '--p-richtexteditor-button-focus-ring-offset',
+                description: 'Focus ring offset of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.focusRing.shadow',
+                token: 'richtexteditor.button.focus.ring.shadow',
+                variable: '--p-richtexteditor-button-focus-ring-shadow',
+                description: 'Focus ring shadow of a toolbar button'
+            },
+            {
+                name: 'richtexteditor.button.sm.size',
+                token: 'richtexteditor.button.sm.size',
+                variable: '--p-richtexteditor-button-sm-size',
+                description: 'Size of a toolbar button in the small size'
+            },
+            {
+                name: 'richtexteditor.button.lg.size',
+                token: 'richtexteditor.button.lg.size',
+                variable: '--p-richtexteditor-button-lg-size',
+                description: 'Size of a toolbar button in the large size'
+            },
+            {
+                name: 'richtexteditor.content.padding',
+                token: 'richtexteditor.content.padding',
+                variable: '--p-richtexteditor-content-padding',
+                description: 'Padding of the editable area'
+            },
+            {
+                name: 'richtexteditor.content.minHeight',
+                token: 'richtexteditor.content.min.height',
+                variable: '--p-richtexteditor-content-min-height',
+                description: 'Minimum height of the editable area'
+            },
+            {
+                name: 'richtexteditor.content.fontSize',
+                token: 'richtexteditor.content.font.size',
+                variable: '--p-richtexteditor-content-font-size',
+                description: 'Font size of the editable area'
+            },
+            {
+                name: 'richtexteditor.content.lineHeight',
+                token: 'richtexteditor.content.line.height',
+                variable: '--p-richtexteditor-content-line-height',
+                description: 'Line height of the editable area'
+            },
+            {
+                name: 'richtexteditor.content.gap',
+                token: 'richtexteditor.content.gap',
+                variable: '--p-richtexteditor-content-gap',
+                description: 'Space between two blocks of the content'
+            },
+            {
+                name: 'richtexteditor.content.placeholderColor',
+                token: 'richtexteditor.content.placeholder.color',
+                variable: '--p-richtexteditor-content-placeholder-color',
+                description: 'Color of the placeholder'
+            },
+            {
+                name: 'richtexteditor.content.sm.fontSize',
+                token: 'richtexteditor.content.sm.font.size',
+                variable: '--p-richtexteditor-content-sm-font-size',
+                description: 'Font size of the small size'
+            },
+            {
+                name: 'richtexteditor.content.sm.padding',
+                token: 'richtexteditor.content.sm.padding',
+                variable: '--p-richtexteditor-content-sm-padding',
+                description: 'Padding of the small size'
+            },
+            {
+                name: 'richtexteditor.content.lg.fontSize',
+                token: 'richtexteditor.content.lg.font.size',
+                variable: '--p-richtexteditor-content-lg-font-size',
+                description: 'Font size of the large size'
+            },
+            {
+                name: 'richtexteditor.content.lg.padding',
+                token: 'richtexteditor.content.lg.padding',
+                variable: '--p-richtexteditor-content-lg-padding',
+                description: 'Padding of the large size'
+            },
+            {
+                name: 'richtexteditor.heading.color',
+                token: 'richtexteditor.heading.color',
+                variable: '--p-richtexteditor-heading-color',
+                description: 'Color of the headings'
+            },
+            {
+                name: 'richtexteditor.heading.fontWeight',
+                token: 'richtexteditor.heading.font.weight',
+                variable: '--p-richtexteditor-heading-font-weight',
+                description: 'Font weight of the headings'
+            },
+            {
+                name: 'richtexteditor.heading.lineHeight',
+                token: 'richtexteditor.heading.line.height',
+                variable: '--p-richtexteditor-heading-line-height',
+                description: 'Line height of the headings'
+            },
+            {
+                name: 'richtexteditor.heading.h1.fontSize',
+                token: 'richtexteditor.heading.h1.font.size',
+                variable: '--p-richtexteditor-heading-h1-font-size',
+                description: 'Font size of a heading 1'
+            },
+            {
+                name: 'richtexteditor.heading.h2.fontSize',
+                token: 'richtexteditor.heading.h2.font.size',
+                variable: '--p-richtexteditor-heading-h2-font-size',
+                description: 'Font size of a heading 2'
+            },
+            {
+                name: 'richtexteditor.heading.h3.fontSize',
+                token: 'richtexteditor.heading.h3.font.size',
+                variable: '--p-richtexteditor-heading-h3-font-size',
+                description: 'Font size of a heading 3'
+            },
+            {
+                name: 'richtexteditor.link.color',
+                token: 'richtexteditor.link.color',
+                variable: '--p-richtexteditor-link-color',
+                description: 'Color of a link'
+            },
+            {
+                name: 'richtexteditor.link.hoverColor',
+                token: 'richtexteditor.link.hover.color',
+                variable: '--p-richtexteditor-link-hover-color',
+                description: 'Color of a hovered link'
+            },
+            {
+                name: 'richtexteditor.code.color',
+                token: 'richtexteditor.code.color',
+                variable: '--p-richtexteditor-code-color',
+                description: 'Color of inline code'
+            },
+            {
+                name: 'richtexteditor.code.borderRadius',
+                token: 'richtexteditor.code.border.radius',
+                variable: '--p-richtexteditor-code-border-radius',
+                description: 'Border radius of inline code'
+            },
+            {
+                name: 'richtexteditor.code.padding',
+                token: 'richtexteditor.code.padding',
+                variable: '--p-richtexteditor-code-padding',
+                description: 'Padding of inline code'
+            },
+            {
+                name: 'richtexteditor.code.fontSize',
+                token: 'richtexteditor.code.font.size',
+                variable: '--p-richtexteditor-code-font-size',
+                description: 'Font size of inline code and code blocks'
+            },
+            {
+                name: 'richtexteditor.code.background',
+                token: 'richtexteditor.code.background',
+                variable: '--p-richtexteditor-code-background',
+                description: 'Background of inline code'
+            },
+            {
+                name: 'richtexteditor.codeBlock.borderRadius',
+                token: 'richtexteditor.code.block.border.radius',
+                variable: '--p-richtexteditor-code-block-border-radius',
+                description: 'Border radius of a code block'
+            },
+            {
+                name: 'richtexteditor.codeBlock.padding',
+                token: 'richtexteditor.code.block.padding',
+                variable: '--p-richtexteditor-code-block-padding',
+                description: 'Padding of a code block'
+            },
+            {
+                name: 'richtexteditor.codeBlock.background',
+                token: 'richtexteditor.code.block.background',
+                variable: '--p-richtexteditor-code-block-background',
+                description: 'Background of a code block'
+            },
+            {
+                name: 'richtexteditor.codeBlock.color',
+                token: 'richtexteditor.code.block.color',
+                variable: '--p-richtexteditor-code-block-color',
+                description: 'Text color of a code block'
+            },
+            {
+                name: 'richtexteditor.blockquote.color',
+                token: 'richtexteditor.blockquote.color',
+                variable: '--p-richtexteditor-blockquote-color',
+                description: 'Text color of a quote'
+            },
+            {
+                name: 'richtexteditor.blockquote.borderWidth',
+                token: 'richtexteditor.blockquote.border.width',
+                variable: '--p-richtexteditor-blockquote-border-width',
+                description: 'Width of the border of a quote'
+            },
+            {
+                name: 'richtexteditor.blockquote.padding',
+                token: 'richtexteditor.blockquote.padding',
+                variable: '--p-richtexteditor-blockquote-padding',
+                description: 'Padding of a quote'
+            },
+            {
+                name: 'richtexteditor.blockquote.borderColor',
+                token: 'richtexteditor.blockquote.border.color',
+                variable: '--p-richtexteditor-blockquote-border-color',
+                description: 'Border color of a quote'
+            },
+            {
+                name: 'richtexteditor.linkPanel.background',
+                token: 'richtexteditor.link.panel.background',
+                variable: '--p-richtexteditor-link-panel-background',
+                description: 'Background of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.borderColor',
+                token: 'richtexteditor.link.panel.border.color',
+                variable: '--p-richtexteditor-link-panel-border-color',
+                description: 'Border color of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.color',
+                token: 'richtexteditor.link.panel.color',
+                variable: '--p-richtexteditor-link-panel-color',
+                description: 'Text color of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.borderRadius',
+                token: 'richtexteditor.link.panel.border.radius',
+                variable: '--p-richtexteditor-link-panel-border-radius',
+                description: 'Border radius of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.shadow',
+                token: 'richtexteditor.link.panel.shadow',
+                variable: '--p-richtexteditor-link-panel-shadow',
+                description: 'Shadow of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.padding',
+                token: 'richtexteditor.link.panel.padding',
+                variable: '--p-richtexteditor-link-panel-padding',
+                description: 'Padding of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.gap',
+                token: 'richtexteditor.link.panel.gap',
+                variable: '--p-richtexteditor-link-panel-gap',
+                description: 'Gap between the elements of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.width',
+                token: 'richtexteditor.link.panel.width',
+                variable: '--p-richtexteditor-link-panel-width',
+                description: 'Width of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkPanel.errorColor',
+                token: 'richtexteditor.link.panel.error.color',
+                variable: '--p-richtexteditor-link-panel-error-color',
+                description: 'Color of the error message of the link panel'
+            },
+            {
+                name: 'richtexteditor.linkInput.background',
+                token: 'richtexteditor.link.input.background',
+                variable: '--p-richtexteditor-link-input-background',
+                description: 'Background of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.borderColor',
+                token: 'richtexteditor.link.input.border.color',
+                variable: '--p-richtexteditor-link-input-border-color',
+                description: 'Border color of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusBorderColor',
+                token: 'richtexteditor.link.input.focus.border.color',
+                variable: '--p-richtexteditor-link-input-focus-border-color',
+                description: 'Border color of the focused link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.invalidBorderColor',
+                token: 'richtexteditor.link.input.invalid.border.color',
+                variable: '--p-richtexteditor-link-input-invalid-border-color',
+                description: 'Border color of the link input in invalid state'
+            },
+            {
+                name: 'richtexteditor.linkInput.color',
+                token: 'richtexteditor.link.input.color',
+                variable: '--p-richtexteditor-link-input-color',
+                description: 'Text color of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.placeholderColor',
+                token: 'richtexteditor.link.input.placeholder.color',
+                variable: '--p-richtexteditor-link-input-placeholder-color',
+                description: 'Placeholder color of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.borderRadius',
+                token: 'richtexteditor.link.input.border.radius',
+                variable: '--p-richtexteditor-link-input-border-radius',
+                description: 'Border radius of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.padding',
+                token: 'richtexteditor.link.input.padding',
+                variable: '--p-richtexteditor-link-input-padding',
+                description: 'Padding of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusRing.width',
+                token: 'richtexteditor.link.input.focus.ring.width',
+                variable: '--p-richtexteditor-link-input-focus-ring-width',
+                description: 'Focus ring width of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusRing.style',
+                token: 'richtexteditor.link.input.focus.ring.style',
+                variable: '--p-richtexteditor-link-input-focus-ring-style',
+                description: 'Focus ring style of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusRing.color',
+                token: 'richtexteditor.link.input.focus.ring.color',
+                variable: '--p-richtexteditor-link-input-focus-ring-color',
+                description: 'Focus ring color of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusRing.offset',
+                token: 'richtexteditor.link.input.focus.ring.offset',
+                variable: '--p-richtexteditor-link-input-focus-ring-offset',
+                description: 'Focus ring offset of the link input'
+            },
+            {
+                name: 'richtexteditor.linkInput.focusRing.shadow',
+                token: 'richtexteditor.link.input.focus.ring.shadow',
+                variable: '--p-richtexteditor-link-input-focus-ring-shadow',
+                description: 'Focus ring shadow of the link input'
+            },
+            {
+                name: 'richtexteditor.linkButton.padding',
+                token: 'richtexteditor.link.button.padding',
+                variable: '--p-richtexteditor-link-button-padding',
+                description: 'Padding of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.borderRadius',
+                token: 'richtexteditor.link.button.border.radius',
+                variable: '--p-richtexteditor-link-button-border-radius',
+                description: 'Border radius of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.color',
+                token: 'richtexteditor.link.button.color',
+                variable: '--p-richtexteditor-link-button-color',
+                description: 'Color of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.hoverBackground',
+                token: 'richtexteditor.link.button.hover.background',
+                variable: '--p-richtexteditor-link-button-hover-background',
+                description: 'Background of a hovered link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.applyBackground',
+                token: 'richtexteditor.link.button.apply.background',
+                variable: '--p-richtexteditor-link-button-apply-background',
+                description: 'Background of the apply button'
+            },
+            {
+                name: 'richtexteditor.linkButton.applyHoverBackground',
+                token: 'richtexteditor.link.button.apply.hover.background',
+                variable: '--p-richtexteditor-link-button-apply-hover-background',
+                description: 'Background of the hovered apply button'
+            },
+            {
+                name: 'richtexteditor.linkButton.applyColor',
+                token: 'richtexteditor.link.button.apply.color',
+                variable: '--p-richtexteditor-link-button-apply-color',
+                description: 'Color of the apply button'
+            },
+            {
+                name: 'richtexteditor.linkButton.fontWeight',
+                token: 'richtexteditor.link.button.font.weight',
+                variable: '--p-richtexteditor-link-button-font-weight',
+                description: 'Font weight of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.focusRing.width',
+                token: 'richtexteditor.link.button.focus.ring.width',
+                variable: '--p-richtexteditor-link-button-focus-ring-width',
+                description: 'Focus ring width of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.focusRing.style',
+                token: 'richtexteditor.link.button.focus.ring.style',
+                variable: '--p-richtexteditor-link-button-focus-ring-style',
+                description: 'Focus ring style of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.focusRing.color',
+                token: 'richtexteditor.link.button.focus.ring.color',
+                variable: '--p-richtexteditor-link-button-focus-ring-color',
+                description: 'Focus ring color of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.focusRing.offset',
+                token: 'richtexteditor.link.button.focus.ring.offset',
+                variable: '--p-richtexteditor-link-button-focus-ring-offset',
+                description: 'Focus ring offset of a link panel button'
+            },
+            {
+                name: 'richtexteditor.linkButton.focusRing.shadow',
+                token: 'richtexteditor.link.button.focus.ring.shadow',
+                variable: '--p-richtexteditor-link-button-focus-ring-shadow',
+                description: 'Focus ring shadow of a link panel button'
+            },
+            {
+                name: 'richtexteditor.footer.padding',
+                token: 'richtexteditor.footer.padding',
+                variable: '--p-richtexteditor-footer-padding',
+                description: 'Padding of the footer'
+            },
+            {
+                name: 'richtexteditor.footer.color',
+                token: 'richtexteditor.footer.color',
+                variable: '--p-richtexteditor-footer-color',
+                description: 'Text color of the footer'
+            },
+            {
+                name: 'richtexteditor.footer.fontSize',
+                token: 'richtexteditor.footer.font.size',
+                variable: '--p-richtexteditor-footer-font-size',
+                description: 'Font size of the footer'
+            },
+            {
+                name: 'richtexteditor.footer.borderColor',
+                token: 'richtexteditor.footer.border.color',
+                variable: '--p-richtexteditor-footer-border-color',
+                description: 'Border color between the content and the footer'
+            },
+            {
+                name: 'richtexteditor.footer.limitColor',
+                token: 'richtexteditor.footer.limit.color',
+                variable: '--p-richtexteditor-footer-limit-color',
+                description: 'Color of the count when the limit is reached'
             }
         ]
     },

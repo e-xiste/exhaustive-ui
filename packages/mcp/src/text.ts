@@ -95,6 +95,7 @@ const SYNONYMS: Record<string, string[]> = {
     themes: ['theme'],
     timetable: ['scheduler'],
     theming: ['theme'],
+    tiptap: ['richtexteditor'],
     toggle: ['togglebutton', 'toggleswitch'],
     token: ['tokens', 'theming'],
     tokens: ['token', 'theming'],
@@ -104,6 +105,7 @@ const SYNONYMS: Record<string, string[]> = {
     validation: ['invalid', 'forms'],
     virtual: ['scroller', 'virtualscroll', 'lazy'],
     walkthrough: ['tour', 'onboarding']
+    wysiwyg: ['richtexteditor', 'editor']
 };
 
 /** Crude English stemmer, good enough to match "sorting" against "sortable". */
