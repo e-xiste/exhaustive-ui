@@ -474,6 +474,14 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         super();
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
 
+        // Before the range effect below, so that a narrow screen starts on the narrow view without a first onViewChange of the wide one.
+        effect((onCleanup) => {
+            const breakpoint = this.breakpoint();
+            if (isPlatformBrowser(this.platformId)) {
+                untracked(() => this.bindMediaQuery(breakpoint, onCleanup));
+            }
+        });
+
         effect(() => {
             const view = this.view();
             const start = this.rangeStart();
@@ -723,8 +731,6 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
     private moreTrigger: HTMLElement | null = null;
 
     private nowTimer: any = null;
-
-    private mediaCleanup: (() => void) | null = null;
 
     private viewBeforeNarrow: SchedulerView | null = null;
 
@@ -1003,12 +1009,10 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         if (!isPlatformBrowser(this.platformId)) return;
         const window = this.document.defaultView;
         this.nowTimer = window?.setInterval(() => this.now.set(new Date()), MINUTE);
-        this.bindMediaQuery();
     }
 
     onDestroy() {
         this.document.defaultView?.clearInterval(this.nowTimer);
-        this.mediaCleanup?.();
         this.endDrag();
     }
 
@@ -1160,6 +1164,11 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
             style['width'] = `${timed.width}%`;
         }
         return style;
+    }
+
+    /** Whether a segment of the time grid lasts one slot or less, too short for the title and the time on two lines. */
+    isCompact(segment: TimedSegment) {
+        return segment.end.getTime() - segment.start.getTime() <= this.slot() * MINUTE;
     }
 
     colorStyle(item: NormalizedEvent): Record<string, string> {
@@ -1344,10 +1353,21 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
                     const days = this.skipHiddenDelta(item.start, sign);
                     this.emitChange(event, item, addDays(item.start, days), addDays(item.end, days), 'move');
                 } else if (event.shiftKey) {
-                    const end = new Date(Math.max(item.end.getTime() + sign * this.slot() * MINUTE, item.start.getTime() + this.slot() * MINUTE));
-                    this.emitChange(event, item, item.start, end, 'resize');
+                    // like the resize handle, the end stays within the visible hours of its day
+                    const endDay = startOfDay(new Date(item.end.getTime() - 1));
+                    const lastEnd = atMinutes(endDay, this.endHour() * 60).getTime();
+                    let end = Math.max(item.end.getTime() + sign * this.slot() * MINUTE, item.start.getTime() + this.slot() * MINUTE);
+                    if (item.end.getTime() <= lastEnd) end = Math.min(end, lastEnd);
+                    this.emitChange(event, item, item.start, new Date(end), 'resize');
                 } else {
-                    this.emitChange(event, item, new Date(item.start.getTime() + sign * this.slot() * MINUTE), new Date(item.end.getTime() + sign * this.slot() * MINUTE), 'move');
+                    // like a drag, the start stays within the visible hours, so that the event does not leave the grid
+                    const day = startOfDay(item.start);
+                    const duration = item.end.getTime() - item.start.getTime();
+                    const first = atMinutes(day, this.startHour() * 60).getTime();
+                    const last = atMinutes(day, this.endHour() * 60 - Math.min(this.slot(), duration / MINUTE)).getTime();
+                    let start = item.start.getTime() + sign * this.slot() * MINUTE;
+                    if (item.start.getTime() >= first && item.start.getTime() <= last) start = Math.max(first, Math.min(last, start));
+                    this.emitChange(event, item, new Date(start), new Date(start + duration), 'move');
                 }
             } else {
                 const days = horizontal ? this.skipHiddenDelta(item.start, sign) : this.view() === 'month' ? sign * 7 : 0;
@@ -1367,7 +1387,7 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         if (event.key === 'Escape') {
             event.preventDefault();
             if (mode === 'time') {
-                this.moveSlotFocus(startOfDay(segment.item.start), this.clampSlot(Math.floor((minutesOfDay((segment as TimedSegment).start) - this.startHour() * 60) / this.slot())), false);
+                this.moveSlotFocus(startOfDay((segment as TimedSegment).start), this.clampSlot(Math.floor((minutesOfDay((segment as TimedSegment).start) - this.startHour() * 60) / this.slot())), false);
             } else if (this.view() === 'month') {
                 const cell = (event.currentTarget as HTMLElement).closest('[data-p-day]') as HTMLElement | null;
                 const day = cell && this.dayByKey().get(cell.getAttribute('data-p-day')!);
@@ -1513,12 +1533,18 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         listen('pointerup', (e: PointerEvent) => this.onDragEnd(e, true));
         listen('pointercancel', (e: PointerEvent) => this.onDragEnd(e, false));
         listen('touchmove', (e: TouchEvent) => this.drag?.active && e.cancelable && e.preventDefault(), { passive: false });
-        listen('keydown', (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && this.drag?.active) {
-                e.preventDefault();
-                this.endDrag();
-            }
-        });
+        // In the capture phase: the dragged event has the focus, and its own Escape handler would stop the key first.
+        listen(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Escape' && this.drag?.active) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.cancelDrag();
+                }
+            },
+            { capture: true }
+        );
     }
 
     private onDragMove(event: PointerEvent) {
@@ -1570,6 +1596,14 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         if (drag.mode === 'select') this.keyboardAnchor = null;
         this.updateDrag();
         if (drag.area === 'time') this.autoScroll();
+    }
+
+    /** Escape during a drag: drops the preview and the selection, and ignores the click of the pointer release. */
+    private cancelDrag() {
+        if (this.drag?.mode === 'select') this.clearSelection();
+        this.suppressClick = true;
+        this.document.addEventListener('pointerup', () => setTimeout(() => (this.suppressClick = false)), { once: true, capture: true });
+        this.endDrag();
     }
 
     private endDrag() {
@@ -1786,12 +1820,12 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         return text;
     }
 
-    private bindMediaQuery() {
+    private bindMediaQuery(breakpoint: string, onCleanup: (cleanup: () => void) => void) {
         const window = this.document.defaultView;
         if (!window?.matchMedia) return;
         let query: MediaQueryList;
         try {
-            query = window.matchMedia(`(max-width: ${this.breakpoint()})`);
+            query = window.matchMedia(`(max-width: ${breakpoint})`);
         } catch {
             return;
         }
@@ -1810,7 +1844,7 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         apply(query.matches);
         const listener = (event: MediaQueryListEvent) => apply(event.matches);
         query.addEventListener?.('change', listener);
-        this.mediaCleanup = () => query.removeEventListener?.('change', listener);
+        onCleanup(() => query.removeEventListener?.('change', listener));
     }
 
     private announce(message: string) {

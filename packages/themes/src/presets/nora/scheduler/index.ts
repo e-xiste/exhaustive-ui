@@ -133,7 +133,7 @@ export const agenda: SchedulerTokenSections.Agenda = {
     itemBorderRadius: '{content.border.radius}',
     itemHoverBackground: '{content.hover.background}',
     timeColor: '{text.muted.color}',
-    timeWidth: '8rem',
+    timeWidth: '9.5rem',
     dotSize: '0.625rem'
 };
 

@@ -15,6 +15,10 @@ import { Code } from '@/domain/code';
                 for Saturday, defaults to the <i>firstDayOfWeek</i> of the translation configuration, and the Today button to its <i>today</i> text. Every other text, the view names and the screen reader messages included, can be replaced through
                 <i>labels</i>.
             </p>
+            <p>
+                Like any JavaScript date, the dates are read and displayed in the time zone of the browser: convert the dates of another time zone before passing them. The time grid follows the clock, so on the days of a daylight saving time change
+                the events stay on their hour lines, and a day is always one calendar day when navigating or moving an event.
+            </p>
         </app-docsectiontext>
         <div class="card">
             <p-scheduler [events]="events" locale="fr-FR" [firstDayOfWeek]="1" [labels]="labels" />

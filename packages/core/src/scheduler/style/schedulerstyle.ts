@@ -42,6 +42,7 @@ const classes = {
         {
             'p-scheduler-event-colored': !!segment.item.event.color && mode !== 'list',
             'p-scheduler-event-allday': segment.item.allDayRow,
+            'p-scheduler-event-compact': mode === 'time' && instance.isCompact(segment),
             'p-scheduler-event-editable': segment.item.editable && mode !== 'list',
             'p-scheduler-event-dragging': instance.dragPreview()?.item.event.id === segment.item.event.id && mode !== 'list',
             'p-scheduler-event-continues-before': !segment.isStart,

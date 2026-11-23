@@ -251,6 +251,19 @@ export const style = /*css*/ `
         box-shadow: 0 0 0 1px dt('scheduler.background');
     }
 
+    /* An event of one slot or less: the title and the time share one line, never cut in half */
+    .p-scheduler-event-block.p-scheduler-event-compact {
+        flex-wrap: nowrap;
+        align-items: center;
+        min-height: calc(1.35em + 0.25rem);
+        padding-block: 0;
+    }
+
+    /* the time gives its room to the title first */
+    .p-scheduler-event-block.p-scheduler-event-compact .p-scheduler-event-time {
+        flex-shrink: 100;
+    }
+
     .p-scheduler-event-block:hover {
         box-shadow:
             0 0 0 1px dt('scheduler.background'),
@@ -518,7 +531,9 @@ export const style = /*css*/ `
     }
 
     .p-scheduler-agenda .p-scheduler-event-item .p-scheduler-event-time {
-        flex: 0 0 dt('scheduler.agenda.time.width');
+        flex: 0 0 auto;
+        min-width: dt('scheduler.agenda.time.width');
+        white-space: nowrap;
     }
 
     .p-scheduler-popover-list .p-scheduler-event-item .p-scheduler-event-time {
