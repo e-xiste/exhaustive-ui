@@ -12,7 +12,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>
                 Mention is bound with <i>ngModel</i> and its value is the plain text. Typing <i>&#64;</i> at the start of a word emits <i>onSearch</i> with the text typed after it as <i>event.query</i>; the handler answers by setting
-                <i>suggestions</i>. Choosing one with the mouse, <i>enter</i> or <i>tab</i> replaces the query with the trigger, the suggestion and a space.
+                <i>suggestions</i>. Choosing one with the mouse, <i>enter</i> or <i>tab</i> replaces the query with the trigger, the suggestion and a space. A mention typed right before a word keeps that word, while a suggestion chosen with the caret
+                moved into an existing mention replaces the whole mention.
             </p>
         </app-docsectiontext>
         <div class="card">
