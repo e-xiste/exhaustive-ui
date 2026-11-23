@@ -207,7 +207,7 @@ export interface InputChipsChipTemplateContext {
      */
     removable: boolean;
     /**
-     * Removes the chip.
+     * Removes the chip. Pass the click event so that it does not also emit onChipClick and the focus goes back to the input, as with the default remove icon.
      */
     remove: (event?: Event) => void;
 }

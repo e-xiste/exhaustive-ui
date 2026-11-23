@@ -447,7 +447,7 @@ export class InputChips extends BaseEditableHolder<InputChipsPassThrough> {
             index,
             focused: this.focusedIndex() === index,
             removable: this.removable(),
-            remove: (event?: Event) => this.removeAndRefocus(index, event)
+            remove: (event?: Event) => (event instanceof MouseEvent ? this.onRemoveClick(event, index) : this.removeAndRefocus(index, event))
         };
     }
 
@@ -634,7 +634,12 @@ export class InputChips extends BaseEditableHolder<InputChipsPassThrough> {
     /******************** Forms ********************/
 
     writeControlValue(value: any, setModelValue: (value: any) => void): void {
-        setModelValue(Array.isArray(value) ? [...value] : []);
+        const values = Array.isArray(value) ? [...value] : [];
+        // A form reset empties the field: the text typed but not added is dropped as well, so that it neither keeps the label floated nor becomes a chip on blur.
+        if (!values.length && (value === null || value === undefined || this.chips().length)) {
+            this.clearInput();
+        }
+        setModelValue(values);
     }
 
     /******************** Internals ********************/
@@ -660,6 +665,14 @@ export class InputChips extends BaseEditableHolder<InputChipsPassThrough> {
             }
         }
         this.remove(index, event);
+    }
+
+    private clearInput() {
+        const input = this.inputViewChild()?.nativeElement;
+        if (input) {
+            input.value = '';
+        }
+        this.inputValue.set('');
     }
 
     private commit(event?: Event) {

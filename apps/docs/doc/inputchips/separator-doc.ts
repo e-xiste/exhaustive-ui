@@ -14,7 +14,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
             <p-input-chips [(ngModel)]="colors" separator="," ariaLabel="Colors" placeholder="Comma separated" class="w-full md:w-[30rem]" />
-            <p-input-chips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Separated by a comma, a semicolon or a space" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Comma, semicolon or space" class="w-full md:w-[30rem]" />
         </div>
         <app-code></app-code>
     `

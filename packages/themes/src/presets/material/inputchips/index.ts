@@ -60,7 +60,7 @@ export const css: InputChipsTokenSections.CSS = /*css*/ `
     transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
 }
 
-.p-inputchips:not(.p-disabled):hover .p-inputchips-input.p-variant-filled {
+.p-inputchips:hover .p-inputchips-input.p-variant-filled:not(.p-disabled) {
     background: dt('inputchips.filled.hover.background') no-repeat;
     background-image: linear-gradient(to bottom, dt('inputchips.focus.border.color'), dt('inputchips.focus.border.color')), linear-gradient(to bottom, dt('inputchips.hover.border.color'), dt('inputchips.hover.border.color'));
     background-size: 0 2px, 100% 1px;
@@ -69,7 +69,7 @@ export const css: InputChipsTokenSections.CSS = /*css*/ `
     border-color: transparent;
 }
 
-.p-inputchips:not(.p-disabled).p-focus .p-inputchips-input.p-variant-filled {
+.p-inputchips.p-focus .p-inputchips-input.p-variant-filled:not(.p-disabled) {
     outline: 0 none;
     background: dt('inputchips.filled.focus.background') no-repeat;
     background-image: linear-gradient(to bottom, dt('inputchips.focus.border.color'), dt('inputchips.focus.border.color')), linear-gradient(to bottom, dt('inputchips.border.color'), dt('inputchips.border.color'));

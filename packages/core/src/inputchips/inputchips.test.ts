@@ -6,6 +6,10 @@ import { provideExhaustive } from '@exhaustive-ui/core/config';
 import { IconField } from '@exhaustive-ui/core/iconfield';
 import { InputIcon } from '@exhaustive-ui/core/inputicon';
 import { FloatLabel } from '@exhaustive-ui/core/floatlabel';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { Base } from '@exhaustive-ui/core/base';
+import { Theme } from '@exhaustive-ui/styled';
+import Aura from '@exhaustive-ui/themes/aura';
 import { InputChips } from './inputchips';
 
 @Component({
@@ -753,6 +757,45 @@ describe('InputChips', () => {
             el.remove();
         });
 
+        it('should drop the text not added yet when the form is reset', async () => {
+            const f = TestBed.createComponent(ReactiveHost);
+            f.detectChanges();
+            await f.whenStable();
+            const el: HTMLElement = f.nativeElement;
+            const chips = f.debugElement.children[0].componentInstance as InputChips;
+            const field = el.querySelector('input') as HTMLInputElement;
+            chips.add('one');
+            field.value = 'pending';
+            field.dispatchEvent(new Event('input'));
+            await f.whenStable();
+            f.detectChanges();
+            expect(el.querySelector('p-input-chips')!.classList).toContain('p-inputwrapper-filled');
+            f.componentInstance.control.reset();
+            await f.whenStable();
+            f.detectChanges();
+            expect(chips.chips()).toEqual([]);
+            expect(field.value).toBe('');
+            expect(el.querySelector('p-input-chips')!.classList).not.toContain('p-inputwrapper-filled');
+
+            field.value = 'kept';
+            field.dispatchEvent(new Event('input'));
+            f.componentInstance.control.setValue(['x']);
+            await f.whenStable();
+            expect(field.value).toBe('kept');
+            f.componentInstance.control.reset([]);
+            await f.whenStable();
+            expect(field.value).toBe('');
+        });
+
+        it('should keep the text being typed when the model echoes the value', async () => {
+            fixture.componentRef.setInput('separator', ',');
+            await type('a,b');
+            expect(labels()).toEqual(['a']);
+            component.writeValue(['a']);
+            await render();
+            expect(input().value).toBe('b');
+        });
+
         it('should work with Signal Forms without taking the array maxLength as a chip length', async () => {
             const f = TestBed.createComponent(SignalFormsHost);
             f.detectChanges();
@@ -786,6 +829,29 @@ describe('InputChips', () => {
             await f.whenStable();
             f.detectChanges();
             expect(chips.chips()).toEqual(['b']);
+        });
+
+        it('should not emit onChipClick for the next chip when the template removes a chip with a click', async () => {
+            const f = TestBed.createComponent(ChipTemplateHost);
+            const el: HTMLElement = f.nativeElement;
+            document.body.appendChild(el);
+            f.detectChanges();
+            const chips = f.debugElement.children[0].componentInstance as InputChips;
+            chips.writeValue(['a', 'b']);
+            await f.whenStable();
+            f.detectChanges();
+            const clicked = vi.fn();
+            const removed = vi.fn();
+            chips.onChipClick.subscribe(clicked);
+            chips.onRemove.subscribe((e) => removed(e.value));
+            (el.querySelector('.custom-remove') as HTMLElement).click();
+            await f.whenStable();
+            f.detectChanges();
+            expect(chips.chips()).toEqual(['b']);
+            expect(removed).toHaveBeenCalledExactlyOnceWith('a');
+            expect(clicked).not.toHaveBeenCalled();
+            expect(document.activeElement).toBe(el.querySelector('input'));
+            el.remove();
         });
 
         it('should render the remove icon template', async () => {
@@ -858,5 +924,79 @@ describe('InputChips global pass-through', () => {
         fixture.detectChanges();
         await fixture.whenStable();
         expect(fixture.nativeElement.getAttribute('data-global')).toBe('yes');
+    });
+});
+
+@Component({
+    standalone: true,
+    imports: [InputChips, InputText, FormsModule],
+    template: `
+        @for (size of sizes; track size) {
+            <div [attr.id]="size ?? 'normal'">
+                <input pInputText [pSize]="size" />
+                <p-input-chips [size]="size" placeholder="Empty" />
+                <p-input-chips [size]="size" [ngModel]="['chip']" />
+            </div>
+        }
+    `
+})
+class SizesHost {
+    sizes = ['small', undefined, 'large'] as const;
+}
+
+describe('InputChips with a theme', () => {
+    afterEach(() => {
+        Theme._theme = undefined;
+        Theme._tokens = {};
+        Theme.clearLoadedStyleNames();
+        Base.clearLoadedStyleNames();
+        document.head.querySelectorAll('style[data-exhaustive-style-id]').forEach((style) => style.remove());
+    });
+
+    it('should have the height of an InputText of the same size, with or without chips', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [SizesHost],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(SizesHost);
+        const el: HTMLElement = fixture.nativeElement;
+        document.body.appendChild(el);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const height = (node: Element) => Math.round(node.getBoundingClientRect().height * 4) / 4;
+        for (const id of ['small', 'normal', 'large']) {
+            const row = el.querySelector(`#${id}`)!;
+            const fields = row.querySelectorAll('.p-inputchips-input');
+            expect(row.querySelector('.p-chip')).toBeTruthy();
+            const expected = height(row.querySelector('input[pInputText]')!);
+            expect([id, height(fields[0]), height(fields[1])]).toEqual([id, expected, expected]);
+        }
+        el.remove();
+    });
+
+    it('should show the focus ring on a chip rendered by the chip template', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ChipTemplateHost],
+            providers: [provideZonelessChangeDetection(), provideExhaustive({ theme: { preset: Aura } })]
+        });
+        const fixture = TestBed.createComponent(ChipTemplateHost);
+        const el: HTMLElement = fixture.nativeElement;
+        document.body.appendChild(el);
+        fixture.detectChanges();
+        const chips = fixture.debugElement.children[0].componentInstance as InputChips;
+        chips.writeValue(['a']);
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const field = el.querySelector('input') as HTMLInputElement;
+        field.focus();
+        field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
+        const item = el.querySelector('li[role=option]') as HTMLElement;
+        expect(document.activeElement).toBe(item);
+        expect(item.matches(':focus-visible')).toBe(true);
+        expect(getComputedStyle(item).outlineStyle).not.toBe('none');
+        el.remove();
     });
 });
