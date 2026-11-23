@@ -1,6 +1,50 @@
-.landing-themes {
-    .table-container {
-        width: 1250px;
+.landing-new-components {
+    h2.section-header {
+        margin-block: 0;
+    }
+
+    .new-components-container {
+        max-width: 1250px;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+        gap: 1.5rem;
+    }
+
+    .new-component {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
         box-shadow: var(--home-card-shadow);
+
+        &.new-component-single {
+            grid-column: 1 / -1;
+
+            @media (min-width: 992px) {
+                flex-direction: row;
+                align-items: flex-start;
+
+                .new-component-text {
+                    flex: 0 0 38%;
+                }
+
+                .new-component-demo {
+                    flex: 1 1 0;
+                    min-width: 0;
+                }
+            }
+        }
+    }
+
+    .new-component-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--p-primary-color);
+        border-radius: 6px;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
