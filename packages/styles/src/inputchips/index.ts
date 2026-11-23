@@ -107,9 +107,9 @@ export const style = /*css*/ `
         color: dt('inputchips.chip.focus.color');
     }
 
-    .p-inputchips-chip-item:focus-visible .p-inputchips-chip {
+    .p-inputchips-chip-item:focus-visible {
         outline: dt('focus.ring.width') dt('focus.ring.style') dt('focus.ring.color');
-        outline-offset: -1px;
+        outline-offset: dt('focus.ring.offset');
     }
 
     .p-inputchips-chip-icon {
@@ -158,6 +158,11 @@ export const style = /*css*/ `
 
     .p-inputchips-input-sm .p-inputchips-input-field {
         font-size: dt('form.field.sm.font.size');
+        padding-block: calc(dt('form.field.sm.padding.y') / 2);
+    }
+
+    .p-inputchips-input-sm .p-inputchips-chip.p-chip {
+        padding-block: calc(dt('form.field.sm.padding.y') / 2);
     }
 
     .p-inputchips-input-lg {
@@ -168,6 +173,11 @@ export const style = /*css*/ `
 
     .p-inputchips-input-lg .p-inputchips-input-field {
         font-size: dt('form.field.lg.font.size');
+        padding-block: calc(dt('form.field.lg.padding.y') / 2);
+    }
+
+    .p-inputchips-input-lg .p-inputchips-chip.p-chip {
+        padding-block: calc(dt('form.field.lg.padding.y') / 2);
     }
 
     .p-iconfield .p-inputchips:not(:first-child) .p-inputchips-input {

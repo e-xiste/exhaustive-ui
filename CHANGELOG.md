@@ -4,6 +4,20 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- InputChips: the small and large sizes have the height of the other fields of the same size (InputText, Select...), with or without chips.
+- InputChips: a chip rendered by the `chip` template shows the focus ring when it has the keyboard focus.
+- InputChips: removing a chip with a click in the `chip` template (`remove($event)`) no longer emits `onChipClick` for the next chip, and moves the focus to the input like the default remove icon.
+- InputChips: resetting the form also clears the text typed but not added yet, so the label no longer stays floated and the text is not added on blur.
+- InputChips: in the Material preset, the hover and focus backgrounds of the filled variant no longer apply to a disabled field.
+
+### Documentation
+
+- InputChips: the Float Label and Ifta Label demos keep a fixed width as chips are added, a shorter placeholder fits phones, and the Signal Forms section explains that `maxLength` validates the number of chips while `max` stops adding them.
+
 ## 22.8.0 (2026-11-23)
 
 Six new components, all free and MIT: Scheduler, Kanban, RichTextEditor, Mention, InputChips and Tour. None of them depends on a paid library.
