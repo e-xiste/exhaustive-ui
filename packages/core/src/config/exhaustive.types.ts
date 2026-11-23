@@ -39,6 +39,7 @@ import type { InputMaskPassThrough } from '@exhaustive-ui/core/types/inputmask';
 import type { InputNumberPassThrough } from '@exhaustive-ui/core/types/inputnumber';
 import type { InputOtpPassThrough } from '@exhaustive-ui/core/types/inputotp';
 import type { InputTextPassThrough } from '@exhaustive-ui/core/types/inputtext';
+import type { KanbanPassThrough } from '@exhaustive-ui/core/types/kanban';
 import type { KnobPassThrough } from '@exhaustive-ui/core/types/knob';
 import type { MegaMenuPassThrough } from '@exhaustive-ui/core/types/megamenu';
 import type { MenuPassThrough } from '@exhaustive-ui/core/types/menu';
@@ -139,6 +140,7 @@ export interface GlobalPassThrough {
     inputMask?: InputMaskPassThrough;
     inputNumber?: InputNumberPassThrough;
     inputOtp?: InputOtpPassThrough;
+    kanban?: KanbanPassThrough;
     knob?: KnobPassThrough;
     popover?: PopoverPassThrough;
     message?: MessagePassThrough;

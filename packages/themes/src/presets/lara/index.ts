@@ -42,6 +42,7 @@ import inputgroup from '@exhaustive-ui/themes/lara/inputgroup';
 import inputnumber from '@exhaustive-ui/themes/lara/inputnumber';
 import inputotp from '@exhaustive-ui/themes/lara/inputotp';
 import inputtext from '@exhaustive-ui/themes/lara/inputtext';
+import kanban from '@exhaustive-ui/themes/lara/kanban';
 import knob from '@exhaustive-ui/themes/lara/knob';
 import listbox from '@exhaustive-ui/themes/lara/listbox';
 import megamenu from '@exhaustive-ui/themes/lara/megamenu';
@@ -135,6 +136,7 @@ export default {
         inputnumber,
         inputotp,
         inputtext,
+        kanban,
         knob,
         listbox,
         megamenu,

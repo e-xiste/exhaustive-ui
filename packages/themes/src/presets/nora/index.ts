@@ -42,6 +42,7 @@ import inputgroup from '@exhaustive-ui/themes/nora/inputgroup';
 import inputnumber from '@exhaustive-ui/themes/nora/inputnumber';
 import inputotp from '@exhaustive-ui/themes/nora/inputotp';
 import inputtext from '@exhaustive-ui/themes/nora/inputtext';
+import kanban from '@exhaustive-ui/themes/nora/kanban';
 import knob from '@exhaustive-ui/themes/nora/knob';
 import listbox from '@exhaustive-ui/themes/nora/listbox';
 import megamenu from '@exhaustive-ui/themes/nora/megamenu';
@@ -135,6 +136,7 @@ export default {
         inputnumber,
         inputotp,
         inputtext,
+        kanban,
         knob,
         listbox,
         megamenu,

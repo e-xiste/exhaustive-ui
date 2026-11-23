@@ -92,6 +92,7 @@ export class RoadmapDemo {
                 title: 'v22 minor releases',
                 features: [
                     'FileInput, a new component to select, validate and upload files, with list, images and avatar variants',
+                    'Kanban, a free task board with work in progress limits, drop rules and keyboard and screen reader dragging',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',

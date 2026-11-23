@@ -107,6 +107,7 @@ const SELECTOR_TO_MODULE = {
     'p-input-otp': 'InputOtpModule',
     'p-inputgroupaddon': 'InputGroupAddonModule',
     'p-inputtext': 'InputTextModule',
+    'p-kanban': 'KanbanModule',
     'p-knob': 'KnobModule',
     'p-listbox': 'ListboxModule',
     'p-mega-menu': 'MegaMenuModule',

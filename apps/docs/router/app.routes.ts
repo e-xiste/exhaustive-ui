@@ -155,6 +155,7 @@ export const routes: Routes = [
                 path: 'textarea',
                 loadChildren: () => import('@/pages/textarea/routes')
             },
+            { path: 'kanban', loadChildren: () => import('@/pages/kanban/routes') },
             { path: 'knob', loadChildren: () => import('@/pages/knob/routes') },
             {
                 path: 'keyfilter',

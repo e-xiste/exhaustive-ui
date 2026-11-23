@@ -51,6 +51,7 @@ export interface Tokens {
     inputnumber: TokenMetaData;
     inputotp: TokenMetaData;
     inputtext: TokenMetaData;
+    kanban: TokenMetaData;
     knob: TokenMetaData;
     listbox: TokenMetaData;
     megamenu: TokenMetaData;
@@ -7480,6 +7481,479 @@ export default {
                 token: 'inputtext.lg.padding.y',
                 variable: '--p-inputtext-lg-padding-y',
                 description: 'Lg padding y of root'
+            }
+        ]
+    },
+    kanban: {
+        description: 'Kanban Design Tokens',
+        tokens: [
+            {
+                name: 'kanban.root.transitionDuration',
+                token: 'kanban.transition.duration',
+                variable: '--p-kanban-transition-duration',
+                description: 'Transition duration'
+            },
+            {
+                name: 'kanban.board.gap',
+                token: 'kanban.board.gap',
+                variable: '--p-kanban-board-gap',
+                description: 'Gap between the columns'
+            },
+            {
+                name: 'kanban.board.padding',
+                token: 'kanban.board.padding',
+                variable: '--p-kanban-board-padding',
+                description: 'Padding of the board, around the columns'
+            },
+            {
+                name: 'kanban.column.background',
+                token: 'kanban.column.background',
+                variable: '--p-kanban-column-background',
+                description: 'Background of a column'
+            },
+            {
+                name: 'kanban.column.borderColor',
+                token: 'kanban.column.border.color',
+                variable: '--p-kanban-column-border-color',
+                description: 'Border color of a column'
+            },
+            {
+                name: 'kanban.column.borderRadius',
+                token: 'kanban.column.border.radius',
+                variable: '--p-kanban-column-border-radius',
+                description: 'Border radius of a column'
+            },
+            {
+                name: 'kanban.column.width',
+                token: 'kanban.column.width',
+                variable: '--p-kanban-column-width',
+                description: 'Width of a column'
+            },
+            {
+                name: 'kanban.column.minWidth',
+                token: 'kanban.column.min.width',
+                variable: '--p-kanban-column-min-width',
+                description: 'Minimum width of a column'
+            },
+            {
+                name: 'kanban.column.collapsedWidth',
+                token: 'kanban.column.collapsed.width',
+                variable: '--p-kanban-column-collapsed-width',
+                description: 'Width of a collapsed column'
+            },
+            {
+                name: 'kanban.column.padding',
+                token: 'kanban.column.padding',
+                variable: '--p-kanban-column-padding',
+                description: 'Padding of a column'
+            },
+            {
+                name: 'kanban.column.gap',
+                token: 'kanban.column.gap',
+                variable: '--p-kanban-column-gap',
+                description: 'Gap between the cards'
+            },
+            {
+                name: 'kanban.column.overLimitBorderColor',
+                token: 'kanban.column.over.limit.border.color',
+                variable: '--p-kanban-column-over-limit-border-color',
+                description: 'Border color of a column holding more cards than its limit'
+            },
+            {
+                name: 'kanban.column.overLimitBackground',
+                token: 'kanban.column.over.limit.background',
+                variable: '--p-kanban-column-over-limit-background',
+                description: 'Background of a column holding more cards than its limit'
+            },
+            {
+                name: 'kanban.column.refusedBorderColor',
+                token: 'kanban.column.refused.border.color',
+                variable: '--p-kanban-column-refused-border-color',
+                description: 'Border color of a column that refuses the dragged card'
+            },
+            {
+                name: 'kanban.column.dropTargetBackground',
+                token: 'kanban.column.drop.target.background',
+                variable: '--p-kanban-column-drop-target-background',
+                description: 'Background of the card list while a card is dragged over it'
+            },
+            {
+                name: 'kanban.columnHeader.padding',
+                token: 'kanban.column.header.padding',
+                variable: '--p-kanban-column-header-padding',
+                description: 'Padding of a column header'
+            },
+            {
+                name: 'kanban.columnHeader.gap',
+                token: 'kanban.column.header.gap',
+                variable: '--p-kanban-column-header-gap',
+                description: 'Gap between the items of a column header'
+            },
+            {
+                name: 'kanban.columnHeader.color',
+                token: 'kanban.column.header.color',
+                variable: '--p-kanban-column-header-color',
+                description: 'Text color of a column header'
+            },
+            {
+                name: 'kanban.columnHeader.fontWeight',
+                token: 'kanban.column.header.font.weight',
+                variable: '--p-kanban-column-header-font-weight',
+                description: 'Font weight of a column title'
+            },
+            {
+                name: 'kanban.columnCount.padding',
+                token: 'kanban.column.count.padding',
+                variable: '--p-kanban-column-count-padding',
+                description: 'Padding of a card count'
+            },
+            {
+                name: 'kanban.columnCount.borderRadius',
+                token: 'kanban.column.count.border.radius',
+                variable: '--p-kanban-column-count-border-radius',
+                description: 'Border radius of a card count'
+            },
+            {
+                name: 'kanban.columnCount.fontSize',
+                token: 'kanban.column.count.font.size',
+                variable: '--p-kanban-column-count-font-size',
+                description: 'Font size of a card count'
+            },
+            {
+                name: 'kanban.columnCount.fontWeight',
+                token: 'kanban.column.count.font.weight',
+                variable: '--p-kanban-column-count-font-weight',
+                description: 'Font weight of a card count'
+            },
+            {
+                name: 'kanban.columnCount.background',
+                token: 'kanban.column.count.background',
+                variable: '--p-kanban-column-count-background',
+                description: 'Background of a card count'
+            },
+            {
+                name: 'kanban.columnCount.color',
+                token: 'kanban.column.count.color',
+                variable: '--p-kanban-column-count-color',
+                description: 'Text color of a card count'
+            },
+            {
+                name: 'kanban.columnCount.fullBackground',
+                token: 'kanban.column.count.full.background',
+                variable: '--p-kanban-column-count-full-background',
+                description: 'Background of a card count at the limit'
+            },
+            {
+                name: 'kanban.columnCount.fullColor',
+                token: 'kanban.column.count.full.color',
+                variable: '--p-kanban-column-count-full-color',
+                description: 'Text color of a card count at the limit'
+            },
+            {
+                name: 'kanban.columnCount.overLimitBackground',
+                token: 'kanban.column.count.over.limit.background',
+                variable: '--p-kanban-column-count-over-limit-background',
+                description: 'Background of a card count over the limit'
+            },
+            {
+                name: 'kanban.columnCount.overLimitColor',
+                token: 'kanban.column.count.over.limit.color',
+                variable: '--p-kanban-column-count-over-limit-color',
+                description: 'Text color of a card count over the limit'
+            },
+            {
+                name: 'kanban.columnAction.size',
+                token: 'kanban.column.action.size',
+                variable: '--p-kanban-column-action-size',
+                description: 'Size of the drag handle and collapse buttons'
+            },
+            {
+                name: 'kanban.columnAction.borderRadius',
+                token: 'kanban.column.action.border.radius',
+                variable: '--p-kanban-column-action-border-radius',
+                description: 'Border radius of the drag handle and collapse buttons'
+            },
+            {
+                name: 'kanban.columnAction.color',
+                token: 'kanban.column.action.color',
+                variable: '--p-kanban-column-action-color',
+                description: 'Color of the drag handle and collapse buttons'
+            },
+            {
+                name: 'kanban.columnAction.hoverColor',
+                token: 'kanban.column.action.hover.color',
+                variable: '--p-kanban-column-action-hover-color',
+                description: 'Color of the drag handle and collapse buttons while hovered'
+            },
+            {
+                name: 'kanban.columnAction.hoverBackground',
+                token: 'kanban.column.action.hover.background',
+                variable: '--p-kanban-column-action-hover-background',
+                description: 'Background of the drag handle and collapse buttons while hovered'
+            },
+            {
+                name: 'kanban.columnAction.grabbedBackground',
+                token: 'kanban.column.action.grabbed.background',
+                variable: '--p-kanban-column-action-grabbed-background',
+                description: 'Background of a drag handle while its column is picked up'
+            },
+            {
+                name: 'kanban.columnAction.grabbedColor',
+                token: 'kanban.column.action.grabbed.color',
+                variable: '--p-kanban-column-action-grabbed-color',
+                description: 'Color of a drag handle while its column is picked up'
+            },
+            {
+                name: 'kanban.columnAction.focusRing.width',
+                token: 'kanban.column.action.focus.ring.width',
+                variable: '--p-kanban-column-action-focus-ring-width',
+                description: 'Focus ring width of the column buttons'
+            },
+            {
+                name: 'kanban.columnAction.focusRing.style',
+                token: 'kanban.column.action.focus.ring.style',
+                variable: '--p-kanban-column-action-focus-ring-style',
+                description: 'Focus ring style of the column buttons'
+            },
+            {
+                name: 'kanban.columnAction.focusRing.color',
+                token: 'kanban.column.action.focus.ring.color',
+                variable: '--p-kanban-column-action-focus-ring-color',
+                description: 'Focus ring color of the column buttons'
+            },
+            {
+                name: 'kanban.columnAction.focusRing.offset',
+                token: 'kanban.column.action.focus.ring.offset',
+                variable: '--p-kanban-column-action-focus-ring-offset',
+                description: 'Focus ring offset of the column buttons'
+            },
+            {
+                name: 'kanban.columnAction.focusRing.shadow',
+                token: 'kanban.column.action.focus.ring.shadow',
+                variable: '--p-kanban-column-action-focus-ring-shadow',
+                description: 'Focus ring shadow of the column buttons'
+            },
+            {
+                name: 'kanban.card.background',
+                token: 'kanban.card.background',
+                variable: '--p-kanban-card-background',
+                description: 'Background of a card'
+            },
+            {
+                name: 'kanban.card.borderColor',
+                token: 'kanban.card.border.color',
+                variable: '--p-kanban-card-border-color',
+                description: 'Border color of a card'
+            },
+            {
+                name: 'kanban.card.hoverBorderColor',
+                token: 'kanban.card.hover.border.color',
+                variable: '--p-kanban-card-hover-border-color',
+                description: 'Border color of a card while hovered'
+            },
+            {
+                name: 'kanban.card.borderRadius',
+                token: 'kanban.card.border.radius',
+                variable: '--p-kanban-card-border-radius',
+                description: 'Border radius of a card'
+            },
+            {
+                name: 'kanban.card.padding',
+                token: 'kanban.card.padding',
+                variable: '--p-kanban-card-padding',
+                description: 'Padding of a card'
+            },
+            {
+                name: 'kanban.card.color',
+                token: 'kanban.card.color',
+                variable: '--p-kanban-card-color',
+                description: 'Text color of a card'
+            },
+            {
+                name: 'kanban.card.shadow',
+                token: 'kanban.card.shadow',
+                variable: '--p-kanban-card-shadow',
+                description: 'Shadow of a card'
+            },
+            {
+                name: 'kanban.card.grabbedBorderColor',
+                token: 'kanban.card.grabbed.border.color',
+                variable: '--p-kanban-card-grabbed-border-color',
+                description: 'Border color of a card picked up with the keyboard'
+            },
+            {
+                name: 'kanban.card.grabbedShadow',
+                token: 'kanban.card.grabbed.shadow',
+                variable: '--p-kanban-card-grabbed-shadow',
+                description: 'Shadow of a card picked up with the keyboard'
+            },
+            {
+                name: 'kanban.card.disabledBackground',
+                token: 'kanban.card.disabled.background',
+                variable: '--p-kanban-card-disabled-background',
+                description: 'Background of a card in a disabled column'
+            },
+            {
+                name: 'kanban.card.disabledColor',
+                token: 'kanban.card.disabled.color',
+                variable: '--p-kanban-card-disabled-color',
+                description: 'Text color of a card in a disabled column'
+            },
+            {
+                name: 'kanban.card.focusRing.width',
+                token: 'kanban.card.focus.ring.width',
+                variable: '--p-kanban-card-focus-ring-width',
+                description: 'Focus ring width of a card'
+            },
+            {
+                name: 'kanban.card.focusRing.style',
+                token: 'kanban.card.focus.ring.style',
+                variable: '--p-kanban-card-focus-ring-style',
+                description: 'Focus ring style of a card'
+            },
+            {
+                name: 'kanban.card.focusRing.color',
+                token: 'kanban.card.focus.ring.color',
+                variable: '--p-kanban-card-focus-ring-color',
+                description: 'Focus ring color of a card'
+            },
+            {
+                name: 'kanban.card.focusRing.offset',
+                token: 'kanban.card.focus.ring.offset',
+                variable: '--p-kanban-card-focus-ring-offset',
+                description: 'Focus ring offset of a card'
+            },
+            {
+                name: 'kanban.card.focusRing.shadow',
+                token: 'kanban.card.focus.ring.shadow',
+                variable: '--p-kanban-card-focus-ring-shadow',
+                description: 'Focus ring shadow of a card'
+            },
+            {
+                name: 'kanban.placeholder.background',
+                token: 'kanban.placeholder.background',
+                variable: '--p-kanban-placeholder-background',
+                description: 'Background of the drop placeholder'
+            },
+            {
+                name: 'kanban.placeholder.borderColor',
+                token: 'kanban.placeholder.border.color',
+                variable: '--p-kanban-placeholder-border-color',
+                description: 'Border color of the drop placeholder'
+            },
+            {
+                name: 'kanban.placeholder.borderRadius',
+                token: 'kanban.placeholder.border.radius',
+                variable: '--p-kanban-placeholder-border-radius',
+                description: 'Border radius of the drop placeholder'
+            },
+            {
+                name: 'kanban.preview.shadow',
+                token: 'kanban.preview.shadow',
+                variable: '--p-kanban-preview-shadow',
+                description: 'Shadow of the dragged card or column'
+            },
+            {
+                name: 'kanban.empty.padding',
+                token: 'kanban.empty.padding',
+                variable: '--p-kanban-empty-padding',
+                description: 'Padding of the empty message'
+            },
+            {
+                name: 'kanban.empty.color',
+                token: 'kanban.empty.color',
+                variable: '--p-kanban-empty-color',
+                description: 'Text color of the empty message'
+            },
+            {
+                name: 'kanban.empty.fontSize',
+                token: 'kanban.empty.font.size',
+                variable: '--p-kanban-empty-font-size',
+                description: 'Font size of the empty message'
+            },
+            {
+                name: 'kanban.empty.borderColor',
+                token: 'kanban.empty.border.color',
+                variable: '--p-kanban-empty-border-color',
+                description: 'Border color of the empty message'
+            },
+            {
+                name: 'kanban.empty.borderRadius',
+                token: 'kanban.empty.border.radius',
+                variable: '--p-kanban-empty-border-radius',
+                description: 'Border radius of the empty message'
+            },
+            {
+                name: 'kanban.addButton.padding',
+                token: 'kanban.add.button.padding',
+                variable: '--p-kanban-add-button-padding',
+                description: 'Padding of the add card button'
+            },
+            {
+                name: 'kanban.addButton.gap',
+                token: 'kanban.add.button.gap',
+                variable: '--p-kanban-add-button-gap',
+                description: 'Gap between the icon and the text of the add card button'
+            },
+            {
+                name: 'kanban.addButton.borderRadius',
+                token: 'kanban.add.button.border.radius',
+                variable: '--p-kanban-add-button-border-radius',
+                description: 'Border radius of the add card button'
+            },
+            {
+                name: 'kanban.addButton.color',
+                token: 'kanban.add.button.color',
+                variable: '--p-kanban-add-button-color',
+                description: 'Text color of the add card button'
+            },
+            {
+                name: 'kanban.addButton.hoverColor',
+                token: 'kanban.add.button.hover.color',
+                variable: '--p-kanban-add-button-hover-color',
+                description: 'Text color of the add card button while hovered'
+            },
+            {
+                name: 'kanban.addButton.hoverBackground',
+                token: 'kanban.add.button.hover.background',
+                variable: '--p-kanban-add-button-hover-background',
+                description: 'Background of the add card button while hovered'
+            },
+            {
+                name: 'kanban.addButton.fontWeight',
+                token: 'kanban.add.button.font.weight',
+                variable: '--p-kanban-add-button-font-weight',
+                description: 'Font weight of the add card button'
+            },
+            {
+                name: 'kanban.addButton.focusRing.width',
+                token: 'kanban.add.button.focus.ring.width',
+                variable: '--p-kanban-add-button-focus-ring-width',
+                description: 'Focus ring width of the add card button'
+            },
+            {
+                name: 'kanban.addButton.focusRing.style',
+                token: 'kanban.add.button.focus.ring.style',
+                variable: '--p-kanban-add-button-focus-ring-style',
+                description: 'Focus ring style of the add card button'
+            },
+            {
+                name: 'kanban.addButton.focusRing.color',
+                token: 'kanban.add.button.focus.ring.color',
+                variable: '--p-kanban-add-button-focus-ring-color',
+                description: 'Focus ring color of the add card button'
+            },
+            {
+                name: 'kanban.addButton.focusRing.offset',
+                token: 'kanban.add.button.focus.ring.offset',
+                variable: '--p-kanban-add-button-focus-ring-offset',
+                description: 'Focus ring offset of the add card button'
+            },
+            {
+                name: 'kanban.addButton.focusRing.shadow',
+                token: 'kanban.add.button.focus.ring.shadow',
+                variable: '--p-kanban-add-button-focus-ring-shadow',
+                description: 'Focus ring shadow of the add card button'
             }
         ]
     },

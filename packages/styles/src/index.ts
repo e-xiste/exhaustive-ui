@@ -127,6 +127,9 @@ export * as InputOtpStyle from '@exhaustive-ui/styles/inputotp';
 // InputText
 export * as InputTextStyle from '@exhaustive-ui/styles/inputtext';
 
+// Kanban
+export * as KanbanStyle from '@exhaustive-ui/styles/kanban';
+
 // Knob
 export * as KnobStyle from '@exhaustive-ui/styles/knob';
 

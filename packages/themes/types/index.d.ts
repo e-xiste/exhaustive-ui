@@ -45,6 +45,7 @@ import type { InputGroupDesignTokens } from './inputgroup';
 import type { InputNumberDesignTokens } from './inputnumber';
 import type { InputOtpDesignTokens } from './inputotp';
 import type { InputTextDesignTokens } from './inputtext';
+import type { KanbanDesignTokens } from './kanban';
 import type { KnobDesignTokens } from './knob';
 import type { ListboxDesignTokens } from './listbox';
 import type { MegaMenuDesignTokens } from './megamenu';
@@ -174,6 +175,7 @@ export interface ComponentsDesignTokens {
     inputnumber?: InputNumberDesignTokens;
     inputotp?: InputOtpDesignTokens;
     inputtext?: InputTextDesignTokens;
+    kanban?: KanbanDesignTokens;
     knob?: KnobDesignTokens;
     listbox?: ListboxDesignTokens;
     megamenu?: MegaMenuDesignTokens;

@@ -31,6 +31,7 @@ export function tokenize(value: string): string[] {
 }
 
 const SYNONYMS: Record<string, string[]> = {
+    board: ['kanban'],
     busy: ['loading', 'spinner'],
     calendar: ['datepicker', 'date'],
     chips: ['autocomplete', 'multiple'],
@@ -38,6 +39,7 @@ const SYNONYMS: Record<string, string[]> = {
     date: ['datepicker', 'calendar'],
     datatable: ['table'],
     dialog: ['modal', 'popup'],
+    drag: ['dragdrop', 'kanban', 'orderlist', 'picklist'],
     dropdown: ['select'],
     dropzone: ['fileinput', 'upload'],
     error: ['danger', 'severity', 'invalid'],
@@ -51,6 +53,7 @@ const SYNONYMS: Record<string, string[]> = {
     icon: ['icons'],
     icons: ['icon'],
     inputswitch: ['toggleswitch'],
+    kanban: ['board', 'task'],
     lazy: ['virtual', 'scroller', 'loading'],
     load: ['loading'],
     loading: ['load', 'spinner', 'busy'],
@@ -78,6 +81,8 @@ const SYNONYMS: Record<string, string[]> = {
     switch: ['toggleswitch'],
     tab: ['tabs'],
     tabview: ['tabs'],
+    task: ['kanban'],
+    tasks: ['task'],
     template: ['templates', 'templating', 'ng-template'],
     templates: ['template'],
     templating: ['template'],
@@ -88,6 +93,7 @@ const SYNONYMS: Record<string, string[]> = {
     token: ['tokens', 'theming'],
     tokens: ['token', 'theming'],
     tooltip: ['tooltips'],
+    trello: ['kanban'],
     upload: ['fileinput', 'fileupload', 'file'],
     validation: ['invalid', 'forms'],
     virtual: ['scroller', 'virtualscroll', 'lazy']
