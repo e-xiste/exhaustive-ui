@@ -15,6 +15,8 @@ export const COMPONENT_ALIASES: Record<string, string> = {
     'inplace-editor': 'inplace',
     inputswitch: 'toggleswitch',
     overlaypanel: 'popover',
+    'rich-text-editor': 'richtexteditor',
+    rte: 'richtexteditor',
     sidebar: 'drawer',
     tabview: 'tabs',
     virtualscroller: 'scroller'

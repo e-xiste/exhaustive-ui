@@ -63,6 +63,7 @@ import progressbar from '@exhaustive-ui/themes/lara/progressbar';
 import progressspinner from '@exhaustive-ui/themes/lara/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/lara/radiobutton';
 import rating from '@exhaustive-ui/themes/lara/rating';
+import richtexteditor from '@exhaustive-ui/themes/lara/richtexteditor';
 import ripple from '@exhaustive-ui/themes/lara/ripple';
 import scrollpanel from '@exhaustive-ui/themes/lara/scrollpanel';
 import select from '@exhaustive-ui/themes/lara/select';
@@ -156,6 +157,7 @@ export default {
         progressspinner,
         radiobutton,
         rating,
+        richtexteditor,
         ripple,
         scrollpanel,
         select,

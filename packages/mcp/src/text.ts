@@ -84,13 +84,15 @@ const SYNONYMS: Record<string, string[]> = {
     theme: ['theming', 'themes', 'tokens', 'preset'],
     themes: ['theme'],
     theming: ['theme'],
+    tiptap: ['richtexteditor'],
     toggle: ['togglebutton', 'toggleswitch'],
     token: ['tokens', 'theming'],
     tokens: ['token', 'theming'],
     tooltip: ['tooltips'],
     upload: ['fileinput', 'fileupload', 'file'],
     validation: ['invalid', 'forms'],
-    virtual: ['scroller', 'virtualscroll', 'lazy']
+    virtual: ['scroller', 'virtualscroll', 'lazy'],
+    wysiwyg: ['richtexteditor', 'editor']
 };
 
 /** Crude English stemmer, good enough to match "sorting" against "sortable". */

@@ -143,6 +143,10 @@
                             "routerLink": "/rating"
                         },
                         {
+                            "name": "RichTextEditor",
+                            "routerLink": "/richtexteditor"
+                        },
+                        {
                             "name": "Select",
                             "routerLink": "/select"
                         },

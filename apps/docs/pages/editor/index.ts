@@ -4,6 +4,7 @@ import { CustomToolbarDoc } from '@/doc/editor/customtoolbar-doc';
 import { ImportDoc } from '@/doc/editor/import-doc';
 import { PTComponent } from '@/doc/editor/pt/PTComponent';
 import { QuillDoc } from '@/doc/editor/quill-doc';
+import { EditorVsDoc } from '@/doc/richtexteditor/editorvs-doc';
 import { ReactiveFormsDoc } from '@/doc/editor/reactiveforms-doc';
 import { SignalFormsDoc } from '@/doc/editor/signalforms-doc';
 import { ReadOnlyDoc } from '@/doc/editor/readonly-doc';
@@ -28,6 +29,11 @@ export class EditorDemo {
             id: 'quill',
             label: 'Quill',
             component: QuillDoc
+        },
+        {
+            id: 'editorvs',
+            label: 'Editor vs RichTextEditor',
+            component: EditorVsDoc
         },
         {
             id: 'basic',

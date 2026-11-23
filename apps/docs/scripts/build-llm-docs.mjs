@@ -293,6 +293,7 @@ function toHyphenatedName(name) {
         dynamicdialog: 'dynamic-dialog',
         fileinput: 'file-input',
         fileupload: 'file-upload',
+        richtexteditor: 'rich-text-editor',
         progressbar: 'progress-bar',
         progressspinner: 'progress-spinner',
         blockui: 'block-ui',

@@ -63,6 +63,7 @@ import progressbar from '@exhaustive-ui/themes/nora/progressbar';
 import progressspinner from '@exhaustive-ui/themes/nora/progressspinner';
 import radiobutton from '@exhaustive-ui/themes/nora/radiobutton';
 import rating from '@exhaustive-ui/themes/nora/rating';
+import richtexteditor from '@exhaustive-ui/themes/nora/richtexteditor';
 import ripple from '@exhaustive-ui/themes/nora/ripple';
 import scrollpanel from '@exhaustive-ui/themes/nora/scrollpanel';
 import select from '@exhaustive-ui/themes/nora/select';
@@ -156,6 +157,7 @@ export default {
         progressspinner,
         radiobutton,
         rating,
+        richtexteditor,
         ripple,
         scrollpanel,
         select,

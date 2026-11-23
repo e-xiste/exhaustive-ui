@@ -193,6 +193,9 @@ export * as RadioButtonGroupStyle from '@exhaustive-ui/styles/radiobuttongroup';
 // Rating
 export * as RatingStyle from '@exhaustive-ui/styles/rating';
 
+// RichTextEditor
+export * as RichTextEditorStyle from '@exhaustive-ui/styles/richtexteditor';
+
 // Ripple
 export * as RippleStyle from '@exhaustive-ui/styles/ripple';
 

@@ -211,6 +211,7 @@ export const routes: Routes = [
                 loadChildren: () => import('@/pages/radiobutton/routes')
             },
             { path: 'rating', loadChildren: () => import('@/pages/rating/routes') },
+            { path: 'richtexteditor', loadChildren: () => import('@/pages/richtexteditor/routes') },
             { path: 'ripple', loadChildren: () => import('@/pages/ripple/routes') },
             {
                 path: 'scrollpanel',

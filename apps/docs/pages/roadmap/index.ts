@@ -92,6 +92,7 @@ export class RoadmapDemo {
                 title: 'v22 minor releases',
                 features: [
                     'FileInput, a new component to select, validate and upload files, with list, images and avatar variants',
+                    'RichTextEditor, a new rich text editor built on Tiptap, with an accessible themed toolbar, HTML or JSON values and a character limit',
                     'Signal Forms: no invalid style before the user interacts with a field',
                     'The inherited bugs that need a redesign: virtual lists taller than the browser limit, TreeTable rows with frozen columns, overlay width with virtual scroll',
                     'Feedback and bug reports on 22.0.0',
