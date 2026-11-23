@@ -14,13 +14,7 @@
     "bugs": {
         "url": "https://github.com/e-xiste/exhaustive-ui/issues"
     },
-    "keywords": [
-        "tailwindcss",
-        "tailwind",
-        "plugin",
-        "exhaustive-ui",
-        "angular"
-    ],
+    "keywords": ["tailwindcss", "tailwind", "tailwind v4", "plugin", "exhaustive-ui", "angular", "primeflex alternative"],
     "main": "./src/v3/index.ts",
     "module": "./src/v3/index.ts",
     "types": "./src/v3/index.ts",

@@ -14,14 +14,7 @@
     "bugs": {
         "url": "https://github.com/e-xiste/exhaustive-ui/issues"
     },
-    "keywords": [
-        "exhaustive-ui",
-        "angular",
-        "i18n",
-        "l7n",
-        "exhaustive-ui",
-        "locale"
-    ],
+    "keywords": ["exhaustive-ui", "angular", "i18n", "l10n", "locale", "translations"],
     "sideEffects": false,
     "main": "./dist/cjs/all.js",
     "module": "./dist/js/all.js",

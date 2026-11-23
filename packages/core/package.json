@@ -13,17 +13,7 @@
     "bugs": {
         "url": "https://github.com/e-xiste/exhaustive-ui/issues"
     },
-    "keywords": [
-        "exhaustive",
-        "exhaustiveui",
-        "angular",
-        "ui library",
-        "component library",
-        "material",
-        "bootstrap",
-        "fluent",
-        "tailwind"
-    ],
+    "keywords": ["exhaustive-ui", "angular", "angular components", "angular ui", "ui library", "component library", "design system", "signals", "primeng", "primeng alternative", "primeng fork", "optimus-ui", "datatable", "accessibility", "tailwind", "mit"],
     "publishConfig": {
         "directory": "dist",
         "linkDirectory": false,
