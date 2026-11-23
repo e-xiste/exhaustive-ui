@@ -1,5 +1,6 @@
 import { GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AnalyticsService } from '@/service/analyticsservice';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -16,11 +17,14 @@ import { RouterModule } from '@angular/router';
                 <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a [href]="githubDiscussionsUrl" target="_blank" rel="noopener noreferrer">Discussions</a>
                 <a [href]="licenseUrl" target="_blank" rel="noopener noreferrer">MIT License</a>
+                <button type="button" class="layout-consent-link" (click)="analytics.reset()">Cookie settings</button>
             </div>
         </div>
     `
 })
 export class AppFooterComponent {
+    readonly analytics = inject(AnalyticsService);
+
     readonly exhaustiveUrl = 'https://e-xiste.com';
 
     readonly githubRepoUrl = GITHUB_REPO_URL;

@@ -1,6 +1,7 @@
 import { EXISTE_URL, GITHUB_DISCUSSIONS_URL, GITHUB_REPO_URL } from '@/utils/constants';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AnalyticsService } from '@/service/analyticsservice';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -44,6 +45,9 @@ import { RouterModule } from '@angular/router';
                             <li class="mb-6">
                                 <a [href]="existeUrl" target="_blank" rel="noopener noreferrer" class="text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300">e-xiste</a>
                             </li>
+                            <li class="mb-6">
+                                <button type="button" class="layout-consent-link text-surface-500 dark:text-surface-400 font-medium hover:text-primary rounded-sm transition-all duration-300" (click)="analytics.reset()">Cookie settings</button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -72,6 +76,8 @@ import { RouterModule } from '@angular/router';
     `
 })
 export class FooterSectionComponent {
+    readonly analytics = inject(AnalyticsService);
+
     readonly githubRepoUrl = GITHUB_REPO_URL;
     readonly githubDiscussionsUrl = GITHUB_DISCUSSIONS_URL;
     readonly existeUrl = EXISTE_URL;

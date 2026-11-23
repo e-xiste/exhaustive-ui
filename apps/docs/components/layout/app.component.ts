@@ -7,6 +7,8 @@ import { NodeService } from '@/service/nodeservice';
 import { PhotoService } from '@/service/photoservice';
 import { ProductService } from '@/service/productservice';
 import { SeoService } from '@/service/seoservice';
+import { AnalyticsService } from '@/service/analyticsservice';
+import { AppConsentComponent } from '@/components/layout/consent/app.consent.component';
 import { IMAGE_CONFIG } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
@@ -15,9 +17,9 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
     selector: 'app-root',
-    template: `<router-outlet></router-outlet>`,
+    template: `<router-outlet></router-outlet><app-consent />`,
     standalone: true,
-    imports: [RouterOutlet, FormsModule, ReactiveFormsModule, HttpClientModule],
+    imports: [RouterOutlet, FormsModule, ReactiveFormsModule, HttpClientModule, AppConsentComponent],
     providers: [
         CarService,
         CountryService,
@@ -39,7 +41,10 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
     private seoService = inject(SeoService);
 
+    private analyticsService = inject(AnalyticsService);
+
     constructor() {
         this.seoService.init();
+        this.analyticsService.init();
     }
 }
