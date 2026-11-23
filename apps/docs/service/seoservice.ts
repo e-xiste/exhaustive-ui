@@ -31,8 +31,15 @@ export class SeoService {
         });
     }
 
+    /** Mirrors the current title and description into the og:/twitter: tags; pages call it after setting them. */
+    refresh() {
+        this.update(this.router.url);
+    }
+
     private update(url: string) {
-        const canonical = `${SITE_URL}${url.split('#')[0].split('?')[0]}`;
+        const path = url.split('#')[0].split('?')[0];
+        // The host serves every page from <path>/index.html and redirects <path> to <path>/: the canonical URL is the final one.
+        const canonical = `${SITE_URL}${path.endsWith('/') ? path : `${path}/`}`;
 
         this.setCanonical(canonical);
         this.meta.updateTag({ property: 'og:url', content: canonical });

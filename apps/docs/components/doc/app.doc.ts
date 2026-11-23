@@ -6,6 +6,7 @@ import { switchMap, from, catchError, of, map } from 'rxjs';
 import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AppDocService } from './app.doc.service';
+import { SeoService } from '@/service/seoservice';
 import { AppDocApiSection } from './app.docapisection';
 import { AppDocFeaturesSection } from './app.docfeaturessection';
 import { AppDocPtSection } from './app.docptsection';
@@ -137,6 +138,8 @@ export class AppDoc implements OnInit, OnChanges {
 
     metaService = inject(Meta);
 
+    seoService = inject(SeoService);
+
     scrollListener!: any;
 
     renderer = inject(Renderer2);
@@ -155,6 +158,8 @@ export class AppDoc implements OnInit, OnChanges {
         if (changes.description && changes.description.currentValue) {
             this.metaService.updateTag({ name: 'description', content: changes.description.currentValue });
         }
+
+        this.seoService.refresh();
     }
 
     activateTab(index) {

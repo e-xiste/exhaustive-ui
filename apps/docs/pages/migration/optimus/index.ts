@@ -12,9 +12,9 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: `<app-doc
-        docTitle="Migrating from Optimus UI - ExhaustiveUI"
+        docTitle="Migrate from Optimus UI to ExhaustiveUI for Angular 22 - ExhaustiveUI"
         header="Migrating from Optimus UI"
-        description="Moving an Optimus UI v2 application to ExhaustiveUI: package and configuration renames, then the v22 migrations."
+        description="Move an Optimus UI v2 application to ExhaustiveUI, the MIT fork for Angular 22 rebuilt on Signals: one schematic for the package and configuration renames, then the ng update migrations."
         [docs]="docs"
         docType="page"
     ></app-doc>`

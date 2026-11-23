@@ -1,3 +1,4 @@
+import { PrimengLicenseDoc } from '@/doc/migration/primeng/license-doc';
 import { PrimengChecklistDoc } from '@/doc/migration/primeng/checklist-doc';
 import { PrimengManualDoc } from '@/doc/migration/primeng/manual-doc';
 import { PrimengOverviewDoc } from '@/doc/migration/primeng/overview-doc';
@@ -12,15 +13,16 @@ import { AppDoc } from '@/components/doc/app.doc';
     standalone: true,
     imports: [AppDoc],
     template: `<app-doc
-        docTitle="Migrating from PrimeNG - ExhaustiveUI"
+        docTitle="Migrate from PrimeNG to an MIT library for Angular 22 - ExhaustiveUI"
         header="Migrating from PrimeNG"
-        description="Moving a PrimeNG v21 application to ExhaustiveUI with the migrate-from-primeng schematic and the v22 migrations."
+        description="PrimeNG v22 is no longer MIT. Move a PrimeNG v21 application to ExhaustiveUI, its MIT continuation for Angular 22, with one schematic and the ng update migrations."
         [docs]="docs"
         docType="page"
     ></app-doc>`
 })
 export class MigrationPrimengDemo {
     docs = [
+        { id: 'license', label: 'PrimeNG license change: your options', component: PrimengLicenseDoc },
         { id: 'overview', label: 'Overview', component: PrimengOverviewDoc },
         { id: 'prerequisites', label: 'Before you start', component: PrimengPrerequisitesDoc },
         { id: 'steps', label: 'Migration steps', component: PrimengStepsDoc },
