@@ -61,7 +61,13 @@ export const style = /*css*/ `
             opacity dt('tour.transition.duration');
     }
 
-    .p-tour-card:not(.p-tour-card-positioned) {
+    .p-tour-card:not(.p-tour-card-positioned),
+    .p-tour-tracking .p-tour-card {
+        transition: none;
+    }
+
+    .p-tour-tracking .p-tour-mask-path,
+    .p-tour-tracking .p-tour-spotlight {
         transition: none;
     }
 
