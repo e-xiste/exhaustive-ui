@@ -11,7 +11,7 @@ import { InputChips } from './inputchips';
 @Component({
     standalone: true,
     imports: [InputChips, FormsModule],
-    template: `<p-inputchips [(ngModel)]="tags" name="tags" [disabled]="disabled()" />`
+    template: `<p-input-chips [(ngModel)]="tags" name="tags" [disabled]="disabled()" />`
 })
 class NgModelHost {
     tags = signal<string[] | null>(['angular']);
@@ -30,7 +30,7 @@ class ReactiveHost {
 @Component({
     standalone: true,
     imports: [InputChips, FormField],
-    template: `<p-inputchips [formField]="f.tags" />`
+    template: `<p-input-chips [formField]="f.tags" />`
 })
 class SignalFormsHost {
     model = signal<{ tags: string[] }>({ tags: [] });
@@ -44,12 +44,12 @@ class SignalFormsHost {
     standalone: true,
     imports: [InputChips],
     template: `
-        <p-inputchips>
+        <p-input-chips>
             <ng-template #chip let-value let-index="index" let-remove="remove" let-focused="focused">
                 <span class="custom-chip" [class.is-focused]="focused">{{ index }}:{{ value }}</span>
                 <button type="button" class="custom-remove" (click)="remove($event)">x</button>
             </ng-template>
-        </p-inputchips>
+        </p-input-chips>
     `
 })
 class ChipTemplateHost {}
@@ -58,11 +58,11 @@ class ChipTemplateHost {}
     standalone: true,
     imports: [InputChips],
     template: `
-        <p-inputchips>
+        <p-input-chips>
             <ng-template #removeicon let-value let-class="class">
                 <i class="custom-remove-icon" [class]="class" [attr.data-value]="value"></i>
             </ng-template>
-        </p-inputchips>
+        </p-input-chips>
     `
 })
 class RemoveIconHost {}
@@ -72,12 +72,12 @@ class RemoveIconHost {}
     imports: [InputChips, FloatLabel, IconField, InputIcon],
     template: `
         <p-floatlabel variant="in">
-            <p-inputchips inputId="fl" />
+            <p-input-chips inputId="fl" />
             <label for="fl">Tags</label>
         </p-floatlabel>
         <p-iconfield>
             <p-inputicon class="pi pi-tag" />
-            <p-inputchips class="with-icon" />
+            <p-input-chips class="with-icon" />
         </p-iconfield>
     `
 })
@@ -810,7 +810,7 @@ describe('InputChips', () => {
             f.detectChanges();
             await f.whenStable();
             const el: HTMLElement = f.nativeElement;
-            const chips = el.querySelector('p-inputchips')!;
+            const chips = el.querySelector('p-input-chips')!;
             expect(chips.classList).toContain('p-inputwrapper');
             expect(el.querySelector('#fl')).toBeTruthy();
             expect(el.querySelector('label')!.getAttribute('for')).toBe('fl');

@@ -101,11 +101,11 @@ import { Component } from '@angular/core';
 export class AccessibilityDoc {
     code: Code = {
         html: `<label for="tags">Tags</label>
-<p-inputchips inputId="tags" />
+<p-input-chips inputId="tags" />
 
 <span id="recipients">Recipients</span>
-<p-inputchips ariaLabelledBy="recipients" />
+<p-input-chips ariaLabelledBy="recipients" />
 
-<p-inputchips ariaLabel="Keywords" [labels]="{ addedMessage: '{0} ajouté', removedMessage: '{0} supprimé' }" />`
+<p-input-chips ariaLabel="Keywords" [labels]="{ addedMessage: '{0} ajouté', removedMessage: '{0} supprimé' }" />`
     };
 }

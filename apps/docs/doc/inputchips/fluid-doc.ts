@@ -13,7 +13,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>The fluid prop makes the component take up the full width of its container when set to true.</p>
         </app-docsectiontext>
         <div class="card">
-            <p-inputchips [(ngModel)]="value" fluid ariaLabel="Fluid" placeholder="Add a tag" />
+            <p-input-chips [(ngModel)]="value" fluid ariaLabel="Fluid" placeholder="Add a tag" />
         </div>
         <app-code></app-code>
     `

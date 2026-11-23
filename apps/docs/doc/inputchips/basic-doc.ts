@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-inputchips [(ngModel)]="tags" ariaLabel="Tags" placeholder="Add a tag" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="tags" ariaLabel="Tags" placeholder="Add a tag" class="w-full md:w-[30rem]" />
         </div>
         <app-code></app-code>
     `

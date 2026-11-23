@@ -13,8 +13,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>A <i>separator</i>, a string or a regular expression, splits the text into several chips as it is typed or pasted. Pasting several lines always adds one chip per line. Try pasting <i>red, green, blue</i> below.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-inputchips [(ngModel)]="colors" separator="," ariaLabel="Colors" placeholder="Comma separated" class="w-full md:w-[30rem]" />
-            <p-inputchips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Separated by a comma, a semicolon or a space" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="colors" separator="," ariaLabel="Colors" placeholder="Comma separated" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Separated by a comma, a semicolon or a space" class="w-full md:w-[30rem]" />
         </div>
         <app-code></app-code>
     `

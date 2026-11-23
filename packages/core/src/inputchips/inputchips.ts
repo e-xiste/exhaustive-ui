@@ -83,7 +83,7 @@ const toLimit = (value: unknown): number | undefined => {
  * @group Components
  */
 @Component({
-    selector: 'p-inputchips, p-input-chips',
+    selector: 'p-input-chips, p-inputchips',
     standalone: true,
     imports: [NgTemplateOutlet, SharedModule, BindModule, Chip, TimesCircleIcon],
     template: `

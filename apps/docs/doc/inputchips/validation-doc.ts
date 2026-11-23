@@ -15,7 +15,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-2">
             <label for="recipients" class="font-medium self-start md:self-center">Recipients</label>
-            <p-inputchips [(ngModel)]="recipients" inputId="recipients" separator="," [transform]="lowercase" [validate]="isEmail" [invalid]="!!error()" (onReject)="onReject($event)" (onAdd)="error.set('')" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="recipients" inputId="recipients" separator="," [transform]="lowercase" [validate]="isEmail" [invalid]="!!error()" (onReject)="onReject($event)" (onAdd)="error.set('')" class="w-full md:w-[30rem]" />
             @if (error()) {
                 <p-message severity="error" size="small" variant="simple">{{ error() }}</p-message>
             }

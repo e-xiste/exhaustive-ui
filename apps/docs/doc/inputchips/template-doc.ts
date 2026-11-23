@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             </p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-inputchips [(ngModel)]="languages" ariaLabel="Languages" class="w-full md:w-[30rem]">
+            <p-input-chips [(ngModel)]="languages" ariaLabel="Languages" class="w-full md:w-[30rem]">
                 <ng-template #chip let-value let-remove="remove" let-removable="removable">
                     <span class="inline-flex items-center gap-2 rounded-border px-2 py-1 bg-primary text-primary-contrast">
                         <i class="pi pi-code text-xs" aria-hidden="true"></i>
@@ -26,12 +26,12 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                         }
                     </span>
                 </ng-template>
-            </p-inputchips>
-            <p-inputchips [(ngModel)]="topics" ariaLabel="Topics" class="w-full md:w-[30rem]">
+            </p-input-chips>
+            <p-input-chips [(ngModel)]="topics" ariaLabel="Topics" class="w-full md:w-[30rem]">
                 <ng-template #removeicon let-class="class">
                     <i [class]="class + ' pi pi-trash'" aria-hidden="true"></i>
                 </ng-template>
-            </p-inputchips>
+            </p-input-chips>
         </div>
         <app-code></app-code>
     `

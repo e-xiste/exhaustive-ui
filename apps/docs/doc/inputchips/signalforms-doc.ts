@@ -25,7 +25,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form novalidate (submit)="onSubmit($event)" class="flex flex-col gap-4 w-full md:w-[30rem]">
                 <div class="flex flex-col gap-2">
                     <label for="topics-sf" class="font-medium">Topics</label>
-                    <p-inputchips [formField]="articleForm.topics" inputId="topics-sf" [maxChipLength]="20" fluid />
+                    <p-input-chips [formField]="articleForm.topics" inputId="topics-sf" [maxChipLength]="20" fluid />
                     @let topics = articleForm.topics();
                     @if (topics.invalid() && topics.touched()) {
                         <p-message severity="error" size="small" variant="simple">Add between one and three topics.</p-message>

@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-full md:w-[30rem]">
                 <div class="flex flex-col gap-2">
                     <label for="tags-td" class="font-medium">Tags</label>
-                    <p-inputchips #model="ngModel" [(ngModel)]="tags" name="tags" inputId="tags-td" fluid [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required />
+                    <p-input-chips #model="ngModel" [(ngModel)]="tags" name="tags" inputId="tags-td" fluid [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required />
                     @if (model.invalid && (model.touched || exampleForm.submitted)) {
                         <p-message severity="error" size="small" variant="simple">At least one tag is required.</p-message>
                     }

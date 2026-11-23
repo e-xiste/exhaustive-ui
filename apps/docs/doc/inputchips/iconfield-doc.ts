@@ -16,10 +16,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>InputChips works with <a routerLink="/iconfield">IconField</a> and InputIcon to show an icon at the start of the field.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iconfield class="w-full md:w-[30rem]">
-                <p-inputicon class="pi pi-tag" />
-                <p-inputchips [(ngModel)]="value" ariaLabel="Labels" placeholder="Labels" fluid />
-            </p-iconfield>
+            <p-icon-field class="w-full md:w-[30rem]">
+                <p-input-icon class="pi pi-tag" />
+                <p-input-chips [(ngModel)]="value" ariaLabel="Labels" placeholder="Labels" fluid />
+            </p-icon-field>
         </div>
         <app-code></app-code>
     `

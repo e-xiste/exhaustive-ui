@@ -10,7 +10,7 @@ import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
     imports: [AppDocPtViewer, FormsModule, InputChipsModule],
     template: `
         <app-docptviewer [docs]="docs">
-            <p-inputchips [(ngModel)]="value" ariaLabel="Tags" placeholder="Add a tag" />
+            <p-input-chips [(ngModel)]="value" ariaLabel="Tags" placeholder="Add a tag" />
         </app-docptviewer>
     `
 })

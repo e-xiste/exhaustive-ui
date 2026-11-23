@@ -13,9 +13,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>InputChips provides <i>small</i> and <i>large</i> sizes as alternatives to the base.</p>
         </app-docsectiontext>
         <div class="card flex flex-col items-center gap-4">
-            <p-inputchips [(ngModel)]="value1" size="small" ariaLabel="Small" placeholder="Small" />
-            <p-inputchips [(ngModel)]="value2" ariaLabel="Normal" placeholder="Normal" />
-            <p-inputchips [(ngModel)]="value3" size="large" ariaLabel="Large" placeholder="Large" />
+            <p-input-chips [(ngModel)]="value1" size="small" ariaLabel="Small" placeholder="Small" />
+            <p-input-chips [(ngModel)]="value2" ariaLabel="Normal" placeholder="Normal" />
+            <p-input-chips [(ngModel)]="value3" size="large" ariaLabel="Large" placeholder="Large" />
         </div>
         <app-code></app-code>
     `

@@ -110,7 +110,7 @@ const SYNONYMS: Record<string, string[]> = {
     upload: ['fileinput', 'fileupload', 'file'],
     validation: ['invalid', 'forms'],
     virtual: ['scroller', 'virtualscroll', 'lazy'],
-    walkthrough: ['tour', 'onboarding']
+    walkthrough: ['tour', 'onboarding'],
     wysiwyg: ['richtexteditor', 'editor']
 };
 

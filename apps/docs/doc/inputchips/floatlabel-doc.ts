@@ -15,20 +15,20 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>A floating label appears on top of the input field when focused. Visit <a routerLink="/floatlabel">FloatLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-floatlabel>
-                <p-inputchips [(ngModel)]="value1" inputId="over_label" />
+            <p-float-label>
+                <p-input-chips [(ngModel)]="value1" inputId="over_label" />
                 <label for="over_label">Over Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="in">
-                <p-inputchips [(ngModel)]="value2" inputId="in_label" />
+            <p-float-label variant="in">
+                <p-input-chips [(ngModel)]="value2" inputId="in_label" />
                 <label for="in_label">In Label</label>
-            </p-floatlabel>
+            </p-float-label>
 
-            <p-floatlabel variant="on">
-                <p-inputchips [(ngModel)]="value3" inputId="on_label" />
+            <p-float-label variant="on">
+                <p-input-chips [(ngModel)]="value3" inputId="on_label" />
                 <label for="on_label">On Label</label>
-            </p-floatlabel>
+            </p-float-label>
         </div>
         <app-code></app-code>
     `

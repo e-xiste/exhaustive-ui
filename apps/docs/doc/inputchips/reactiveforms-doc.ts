@@ -21,7 +21,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 w-full md:w-[30rem]">
                 <div class="flex flex-col gap-2">
                     <label for="skills-rf" class="font-medium">Skills</label>
-                    <p-inputchips formControlName="skills" inputId="skills-rf" separator="," [max]="5" fluid [invalid]="isInvalid('skills')" />
+                    <p-input-chips formControlName="skills" inputId="skills-rf" separator="," [max]="5" fluid [invalid]="isInvalid('skills')" />
                     @if (isInvalid('skills')) {
                         <p-message severity="error" size="small" variant="simple">At least one skill is required.</p-message>
                     }

@@ -15,10 +15,10 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>IftaLabel is used to create infield top aligned labels. Visit <a routerLink="/iftalabel">IftaLabel</a> documentation for more information.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-iftalabel>
-                <p-inputchips [(ngModel)]="value" inputId="skills" />
+            <p-ifta-label>
+                <p-input-chips [(ngModel)]="value" inputId="skills" />
                 <label for="skills">Skills</label>
-            </p-iftalabel>
+            </p-ifta-label>
         </div>
         <app-code></app-code>
     `
