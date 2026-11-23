@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
             <p>The things that actually help, roughly in order of impact:</p>
             <ul class="leading-relaxed">
                 <li>Reproducing and triaging issues. A bug with a minimal reproduction is several times more likely to get fixed.</li>
-                <li>Sending pull requests, especially for issues labelled <i>help-needed</i>.</li>
+                <li>Sending pull requests, especially for issues labelled <i>help wanted</i>.</li>
                 <li>Answering questions in discussions, so the same answer is not written five times.</li>
                 <li>Improving this documentation. Every page has a source file and every fix is welcome.</li>
                 <li>Telling your employer you depend on it. Sponsored maintenance time is worth more than any one-off donation.</li>

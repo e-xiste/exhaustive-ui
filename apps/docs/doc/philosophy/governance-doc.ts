@@ -13,12 +13,13 @@ import { RouterModule } from '@angular/router';
                 the discussions and the <a [routerLink]="'/roadmap'" class="doc-link">roadmap</a> is the whole plan.
             </p>
             <p>
-                Contributors earn commit access by contributing — the <a [routerLink]="'/contribution'" class="doc-link">contribution guide</a> describes the Contributor and Committer roles and roughly what it takes to reach them. We would rather
-                grow the number of people who can merge a fix than route everything through one person.
+                Today the project has a single maintainer, who reviews and merges every change and cuts the releases. Pull requests are welcome from anyone; the <a [routerLink]="'/contribution'" class="doc-link">contribution guide</a> explains how to
+                send one. If regular contributors appear, we would rather share merge rights with them than route everything through one person.
             </p>
             <p>
-                Breaking changes are avoided within a major and documented when a major requires them. Where we inherited a name that no longer fits — the CSS cascade layer, the package scope, the icon library — we changed it once, at v1, with a
-                migration schematic, rather than dripping renames across releases.
+                Versions follow Angular: ExhaustiveUI 22 targets Angular 22. Breaking changes are avoided within a major and come with an <i>ng update</i> migration when a major requires them. The names we inherited that no longer fit, the package
+                scope, the CSS cascade layer and the icon library, were changed once, in 22.0, with the <a [routerLink]="'/migration/primeng'" class="doc-link">PrimeNG</a> and
+                <a [routerLink]="'/migration/optimus'" class="doc-link">Optimus UI</a> migration schematics, rather than dripping renames across releases.
             </p>
         </app-docsectiontext>
     `

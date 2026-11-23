@@ -1,4 +1,5 @@
 import { AppDoc } from '@/components/doc/app.doc';
+import { PhilosophyAiDoc } from '@/doc/philosophy/ai-doc';
 import { PhilosophyGovernanceDoc } from '@/doc/philosophy/governance-doc';
 import { PhilosophyLimitsDoc } from '@/doc/philosophy/limits-doc';
 import { PhilosophyOriginDoc } from '@/doc/philosophy/origin-doc';
@@ -18,6 +19,11 @@ export class PhilosophyDemo {
             id: 'origin',
             label: 'Why This Fork Exists',
             component: PhilosophyOriginDoc
+        },
+        {
+            id: 'ai',
+            label: 'How AI Is Used',
+            component: PhilosophyAiDoc
         },
         {
             id: 'promises',

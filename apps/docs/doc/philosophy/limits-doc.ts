@@ -9,10 +9,7 @@ import { Component } from '@angular/core';
         <app-docsectiontext>
             <p>Naming the limits is what makes the commitments above worth anything. Here is what ExhaustiveUI is not.</p>
             <h3>There is no commercial support</h3>
-            <p>
-                No SLA, no support contract, no guaranteed response time. Issues and discussions are answered by volunteers when they have time. If your organisation needs contractual guarantees, this project cannot provide them and you should plan
-                accordingly.
-            </p>
+            <p>No SLA, no support contract, no guaranteed response time. Issues and discussions are answered when there is time. If your organisation needs contractual guarantees, this project cannot provide them and you should plan accordingly.</p>
             <h3>There are no premium templates, blocks or design tooling</h3>
             <p>
                 PrimeTek's application templates, block library and visual theme designer are their commercial products. They are not part of what was MIT licensed, so they are not part of this fork and will not be reimplemented. Theming here means
@@ -25,7 +22,7 @@ import { Component } from '@angular/core';
             </p>
             <h3>The bus factor is real</h3>
             <p>
-                This is maintained by a small group of people in their own time. We would rather say that plainly than imply a larger organisation stands behind it. The best way to change that number is to
+                ExhaustiveUI is maintained by one person, in their own time, with AI doing a large share of the work. We would rather say that plainly than imply a larger organisation stands behind it. The best way to change that number is to
                 <a href="https://github.com/e-xiste/exhaustive-ui" target="_blank" rel="noopener noreferrer">contribute</a>.
             </p>
         </app-docsectiontext>
