@@ -5724,3 +5724,69 @@ describe('Select - hover on a page with scroll-padding-top (optimus-ui#320)', ()
         }
     });
 });
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Select, FormsModule, FloatLabel],
+    template: `
+        <p-float-label>
+            <p-select id="float" [(ngModel)]="city" [inputId]="floatId()" [options]="cities" />
+            <label [for]="floatId()">City</label>
+        </p-float-label>
+        <label id="own-label" for="plain">Country</label>
+        <p-select id="plain-host" inputId="plain" [options]="cities" />
+        <label for="named">Ignored</label>
+        <p-select id="named-host" inputId="named" ariaLabel="Explicit" [options]="cities" />
+    `
+})
+class TestSelectLabelForComponent {
+    cities = ['Rome', 'Paris'];
+    city: string | null = null;
+    floatId = signal('float_city');
+}
+
+describe('Select - named by its <label for> (axe aria-input-field-name)', () => {
+    it('refers the combobox span to the label whose for matches inputId', async () => {
+        TestBed.resetTestingModule();
+        await TestBed.configureTestingModule({
+            imports: [TestSelectLabelForComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).compileComponents();
+        const fixture = TestBed.createComponent(TestSelectLabelForComponent);
+        document.body.appendChild(fixture.nativeElement);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const root = fixture.nativeElement as HTMLElement;
+        const combobox = (hostId: string) => root.querySelector(`#${hostId} [role="combobox"]`) as HTMLElement;
+        const nameOf = (el: HTMLElement) =>
+            (el.getAttribute('aria-labelledby') || '')
+                .split(' ')
+                .map((id) => document.getElementById(id)?.textContent?.trim())
+                .join(' ');
+
+        // an unnamed label gets an id derived from inputId
+        expect(combobox('float').getAttribute('aria-labelledby')).toBe('float_city_label');
+        expect(nameOf(combobox('float'))).toBe('City');
+        expect(combobox('float').hasAttribute('aria-label')).toBe(false);
+        // a label keeps its own id
+        expect(combobox('plain-host').getAttribute('aria-labelledby')).toBe('own-label');
+        // an explicit ariaLabel wins over the label
+        expect(combobox('named-host').getAttribute('aria-label')).toBe('Explicit');
+        expect(combobox('named-host').hasAttribute('aria-labelledby')).toBe(false);
+
+        // the selected value does not replace the label as the name
+        fixture.componentInstance.city = 'Rome';
+        fixture.componentInstance.floatId.set('float_town');
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        // the label keeps the id it was given, and still names the combobox after inputId changes
+        expect(combobox('float').getAttribute('aria-labelledby')).toBe('float_city_label');
+        expect(root.querySelector('label[for="float_town"]')?.id).toBe('float_city_label');
+        expect(nameOf(combobox('float'))).toBe('City');
+        expect(combobox('float').hasAttribute('aria-label')).toBe(false);
+        fixture.nativeElement.remove();
+    });
+});

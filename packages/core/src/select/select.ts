@@ -2,6 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
     afterEveryRender,
     afterNextRender,
+    afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -190,8 +191,8 @@ export class SelectItem extends BaseComponent {
                 [attr.aria-disabled]="$disabled()"
                 [attr.id]="inputId()"
                 role="combobox"
-                [attr.aria-label]="ariaLabel() || (label() === 'p-emptylabel' ? undefined : label())"
-                [attr.aria-labelledby]="ariaLabelledBy()"
+                [attr.aria-label]="ariaLabel() || (associatedLabelId() ? undefined : label() === 'p-emptylabel' ? undefined : label())"
+                [attr.aria-labelledby]="ariaLabelledBy() || (ariaLabel() ? undefined : associatedLabelId())"
                 [attr.aria-haspopup]="'listbox'"
                 [attr.aria-expanded]="overlayVisible() ?? false"
                 [attr.aria-controls]="overlayVisible() ? _id() + '_list' : null"
@@ -1141,6 +1142,8 @@ export class Select extends BaseInput<SelectPassThrough> {
             }
             this.updatePlaceHolderForFloatingLabel();
         });
+        // after render, so a label written after the component in the template exists; again when inputId changes
+        afterRenderEffect(() => this.linkAssociatedLabel());
         this.bindHostAttrs(this.bindDirectiveInstance, () => this.ptms(['host', 'root']));
         afterEveryRender(() => {
             const itemsWrapper = this.itemsWrapper();
@@ -1152,6 +1155,27 @@ export class Select extends BaseInput<SelectPassThrough> {
                 this.selectedOptionUpdated.set(false);
             }
         });
+    }
+
+    /**
+     * Id of the `<label for="inputId">` of the component. The non editable combobox is a span, which a label does not name
+     * natively, so it refers to the label with aria-labelledby (FloatLabel, IftaLabel or a plain label).
+     */
+    readonly associatedLabelId = signal<string | undefined>(undefined);
+
+    private linkAssociatedLabel() {
+        const id = this.inputId();
+        if (!id || !isPlatformBrowser(this.platformId)) {
+            this.associatedLabelId.set(undefined);
+            return;
+        }
+
+        const doc = (this.el.nativeElement as HTMLElement).ownerDocument;
+        const label = doc.querySelector<HTMLLabelElement>(`label[for="${CSS.escape(id)}"]`);
+        if (label && !label.id) {
+            label.id = `${id}_label`;
+        }
+        this.associatedLabelId.set(label?.id || undefined);
     }
 
     private isModelValueNotSet(selectedOption: any): boolean {
