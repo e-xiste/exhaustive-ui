@@ -66,6 +66,21 @@ export class Textarea extends BaseModelHolder<TextareaPassThrough> {
      * @group Props
      */
     invalid = input(undefined, { transform: booleanAttribute });
+    /**
+     * Whether the field has been touched. Signal Forms sets it through `[formField]`: the invalid style and `aria-invalid` then wait until the field is touched, or the form is submitted, like the error messages. Left unset, `invalid` applies at once.
+     * @defaultValue undefined
+     * @group Props
+     */
+    touched = input<boolean | undefined, unknown>(undefined, { transform: (value: unknown) => (value == null ? undefined : booleanAttribute(value)) });
+    /**
+     * The invalid state shown by the component: `invalid`, once the field is touched when `touched` is set; undefined when `invalid` is unset.
+     * @group Props
+     */
+    readonly $invalid = computed<boolean | undefined>(() => {
+        const invalid = this.invalid();
+        // undefined keeps the ng-invalid fallback of the fields that have one
+        return invalid === undefined ? undefined : invalid && this.touched() !== false;
+    });
 
     $variant = computed(() => this.variant() || this.config.inputVariant());
     /**

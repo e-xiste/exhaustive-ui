@@ -303,7 +303,7 @@ export class Checkbox extends BaseEditableHolder<CheckboxPassThrough> {
 
     readonly dataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             checked: this.checked(),
             disabled: this.$disabled(),
             filled: this.$variant() === 'filled',

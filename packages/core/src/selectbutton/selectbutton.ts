@@ -302,7 +302,7 @@ export class SelectButton extends BaseEditableHolder<SelectButtonPassThrough> {
 
     readonly dataP = computed(() =>
         this.cn({
-            invalid: this.invalid()
+            invalid: this.$invalid()
         })
     );
 }

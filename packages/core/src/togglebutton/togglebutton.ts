@@ -228,7 +228,7 @@ export class ToggleButton extends BaseEditableHolder<ToggleButtonPassThrough> {
     readonly dataP = computed(() =>
         this.cn({
             checked: this.active(),
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             [this.size() as string]: this.size()
         })
     );

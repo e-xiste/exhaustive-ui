@@ -1668,7 +1668,7 @@ export class Listbox extends BaseEditableHolder<ListBoxPassThrough> {
 
     containerDataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             disabled: this.$disabled()
         })
     );

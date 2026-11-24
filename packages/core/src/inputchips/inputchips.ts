@@ -362,8 +362,6 @@ export class InputChips extends BaseEditableHolder<InputChipsPassThrough> {
         return Array.isArray(value) ? value : [];
     });
 
-    readonly $invalid = computed(() => !!this.invalid());
-
     readonly $variant = computed(() => this.variant() || this.config.inputVariant());
 
     readonly removable = computed(() => !this.$disabled() && !this.readonly());

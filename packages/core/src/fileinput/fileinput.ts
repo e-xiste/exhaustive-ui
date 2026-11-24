@@ -573,8 +573,6 @@ export class FileInput extends BaseEditableHolder<FileInputPassThrough> {
 
     readonly isMultiple = computed(() => this.variant() !== 'avatar' && this.multiple());
 
-    readonly $invalid = computed(() => !!this.invalid());
-
     readonly mergedLabels = computed<FileInputLabels>(() => ({ ...FILEINPUT_DEFAULT_LABELS, ...(this.labels() ?? {}) }));
 
     readonly existingItems = computed<FileInputItem[]>(() => {

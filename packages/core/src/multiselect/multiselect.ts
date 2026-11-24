@@ -2214,7 +2214,7 @@ export class MultiSelect extends BaseEditableHolder<MultiSelectPassThrough> {
 
     containerDataP = computed(() => {
         return this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             disabled: this.$disabled(),
             focus: this.focused(),
             fluid: this.hasFluid(),

@@ -84,7 +84,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 [attr.type]="type()"
                 [attr.value]="inputValue()"
                 [variant]="$variant()"
-                [invalid]="invalid()"
+                [invalid]="$invalid()"
                 [attr.id]="inputId()"
                 [attr.autocomplete]="autocomplete()"
                 aria-autocomplete="list"
@@ -1903,7 +1903,7 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     inputMultipleDataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             disabled: this.$disabled(),
             focus: this.focused(),
             fluid: this.hasFluid,

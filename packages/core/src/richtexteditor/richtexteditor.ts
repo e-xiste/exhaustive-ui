@@ -520,8 +520,6 @@ export class RichTextEditor extends BaseEditableHolder<RichTextEditorPassThrough
 
     readonly editorId = computed(() => this.inputId() || `${this.uid}_editor`);
 
-    readonly $invalid = computed(() => !!this.invalid());
-
     readonly controlsDisabled = computed(() => this.$disabled() || this.readonly());
 
     readonly mergedLabels = computed<RichTextEditorLabels>(() => ({ ...RICHTEXTEDITOR_DEFAULT_LABELS, ...(this.labels() ?? {}) }));

@@ -16,7 +16,7 @@ import { InputTextStyle } from './style/inputtextstyle';
     host: {
         '[class]': "cx('root')",
         '[attr.data-p]': 'dataP()',
-        '[attr.data-p-invalid]': 'invalid()'
+        '[attr.data-p-invalid]': '$invalid()'
     },
     providers: [InputTextStyle, { provide: PARENT_INSTANCE, useExisting: InputText }],
     hostDirectives: [Bind]
@@ -68,6 +68,21 @@ export class InputText extends BaseModelHolder<InputTextPassThrough> {
      * @group Props
      */
     invalid = input(undefined, { transform: booleanAttribute });
+    /**
+     * Whether the field has been touched. Signal Forms sets it through `[formField]`: the invalid style and `aria-invalid` then wait until the field is touched, or the form is submitted, like the error messages. Left unset, `invalid` applies at once.
+     * @defaultValue undefined
+     * @group Props
+     */
+    touched = input<boolean | undefined, unknown>(undefined, { transform: (value: unknown) => (value == null ? undefined : booleanAttribute(value)) });
+    /**
+     * The invalid state shown by the component: `invalid`, once the field is touched when `touched` is set; undefined when `invalid` is unset.
+     * @group Props
+     */
+    readonly $invalid = computed<boolean | undefined>(() => {
+        const invalid = this.invalid();
+        // undefined keeps the ng-invalid fallback of the fields that have one
+        return invalid === undefined ? undefined : invalid && this.touched() !== false;
+    });
 
     $variant = computed(() => this.variant() || this.config.inputVariant());
 
@@ -104,7 +119,7 @@ export class InputText extends BaseModelHolder<InputTextPassThrough> {
 
     readonly dataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             fluid: this.hasFluid(),
             filled: this.$variant() === 'filled',
             [this.pSize() as string]: this.pSize()

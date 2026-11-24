@@ -1988,7 +1988,7 @@ export class Select extends BaseInput<SelectPassThrough> {
 
     containerDataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             disabled: this.$disabled(),
             focus: this.focused(),
             fluid: this.hasFluid,

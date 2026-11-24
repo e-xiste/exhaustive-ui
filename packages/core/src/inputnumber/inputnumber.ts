@@ -57,7 +57,7 @@ export const INPUTNUMBER_VALUE_ACCESSOR: any = {
             [value]="formattedValue()"
             [ngStyle]="inputStyle()"
             [variant]="$variant()"
-            [invalid]="invalid()"
+            [invalid]="$invalid()"
             [attr.aria-valuemin]="min()"
             [attr.aria-valuemax]="max()"
             [attr.aria-valuenow]="value()"
@@ -1523,7 +1523,7 @@ export class InputNumber extends BaseInput<InputNumberPassThrough> {
 
     dataP = computed(() =>
         this.cn({
-            invalid: this.invalid(),
+            invalid: this.$invalid(),
             disabled: this.$disabled(),
             focus: this.focused(),
             fluid: this.hasFluid,

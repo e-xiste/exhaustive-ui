@@ -615,8 +615,6 @@ export class Mention<T = any> extends BaseInput<MentionPassThrough> {
 
     readonly $appendTo = computed(() => this.appendTo() || this.config.overlayAppendTo());
 
-    readonly $invalid = computed(() => !!this.invalid());
-
     readonly suggestionList = computed<T[]>(() => this.suggestions() || []);
 
     readonly listVisible = computed(() => this.overlayVisible() && this.suggestionList().length > 0);
