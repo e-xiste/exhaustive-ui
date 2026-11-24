@@ -401,7 +401,9 @@ export class CascadeSelectSub extends BaseComponent {
     encapsulation: ViewEncapsulation.None,
     host: {
         '[class]': "cx('root')",
-        '[style]': "sx('root')"
+        '[style]': "sx('root')",
+        // the visible label is outside the combobox: marks the whole field disabled for assistive tools
+        '[attr.aria-disabled]': "$disabled() ? 'true' : undefined"
     },
     hostDirectives: [Bind]
 })

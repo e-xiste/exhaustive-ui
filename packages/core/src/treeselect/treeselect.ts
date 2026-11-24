@@ -244,7 +244,9 @@ const TREESELECT_INSTANCE = new InjectionToken<TreeSelect>('TREESELECT_INSTANCE'
     encapsulation: ViewEncapsulation.None,
     host: {
         '[class]': "cx('root')",
-        '[style]': "sx('root')"
+        '[style]': "sx('root')",
+        // the visible label is outside the combobox: marks the whole field disabled for assistive tools
+        '[attr.aria-disabled]': "$disabled() ? 'true' : undefined"
     }
 })
 export class TreeSelect extends BaseEditableHolder<TreeSelectPassThrough> {
