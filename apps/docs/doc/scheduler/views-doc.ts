@@ -12,8 +12,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>
                 The <i>view</i> is <i>month</i>, <i>week</i>, <i>day</i> or <i>agenda</i>, and it is two-way bindable like the visible <i>date</i>. The view switcher of the header offers the <i>views</i> input, in its order. The week and day views
                 are time grids: timed events are placed by their hours and the overlapping ones sit side by side, while all-day events and events of 24 hours or more go to the all-day row. <i>slotDuration</i> sets the length of a slot in minutes, 30
-                by default, <i>dayStartHour</i> and <i>dayEndHour</i> the visible hours, and a red line marks the current time unless <i>nowIndicator</i> is false. <i>showWeekends</i> hides Saturdays and Sundays. The agenda lists the events of the
-                next <i>agendaDays</i> days, grouped by day.
+                by default, <i>dayStartHour</i> and <i>dayEndHour</i> the visible hours, the events outside them being listed by a button on the top or bottom edge of the day, and a red line marks the current time unless <i>nowIndicator</i> is false.
+                <i>showWeekends</i> hides Saturdays and Sundays. The agenda lists the events of the next <i>agendaDays</i> days, grouped by day.
             </p>
             <p>Under the <i>breakpoint</i> width, 640px by default, the month and week views are replaced by the <i>narrowView</i>, the agenda by default; set it to <i>null</i> to keep the view on small screens.</p>
         </app-docsectiontext>
@@ -39,7 +39,8 @@ export class ViewsDoc {
             { id: 5, title: 'Gym', start: day(1, 7, 30), end: day(1, 8, 30), color: '#f97316' },
             { id: 6, title: 'Workshop', start: day(-1, 14), end: day(-1, 17), color: '#a855f7' },
             { id: 7, title: 'Public holiday', start: day(2), allDay: true, color: '#e11d48' },
-            { id: 8, title: 'Interview', start: day(2, 15), end: day(2, 16) }
+            { id: 8, title: 'Interview', start: day(2, 15), end: day(2, 16) },
+            { id: 9, title: 'Night flight', start: day(1, 22), end: day(1, 23, 30), color: '#0284c7' }
         ];
     }
 }

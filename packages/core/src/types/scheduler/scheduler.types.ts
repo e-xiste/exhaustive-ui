@@ -282,6 +282,22 @@ export interface SchedulerLabels {
      */
     moreAriaLabel: string;
     /**
+     * Text of the button at the top of a day of the week and day views that lists the events ending before dayStartHour, `{0}` is their number.
+     */
+    earlier: string;
+    /**
+     * Accessible label of the "earlier" button, `{0}` is the number of events, `{1}` the first time shown and `{2}` the date.
+     */
+    earlierAriaLabel: string;
+    /**
+     * Text of the button at the bottom of a day of the week and day views that lists the events starting after dayEndHour, `{0}` is their number.
+     */
+    later: string;
+    /**
+     * Accessible label of the "later" button, `{0}` is the number of events, `{1}` the last time shown and `{2}` the date.
+     */
+    laterAriaLabel: string;
+    /**
      * Number of events in the accessible label of a month cell, `{0}` is the number.
      */
     eventCount: string;

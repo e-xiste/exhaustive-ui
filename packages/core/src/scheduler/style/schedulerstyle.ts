@@ -36,6 +36,7 @@ const classes = {
     ],
     dayNumber: ({ day }) => ['p-scheduler-day-number', dayClasses(day)],
     more: 'p-scheduler-more',
+    outsideMore: ({ edge }) => ['p-scheduler-more p-scheduler-outside-more', 'p-scheduler-outside-more-' + edge.position],
     event: ({ instance, segment, mode }) => [
         'p-scheduler-event',
         MODE_CLASSES[mode],
@@ -144,6 +145,10 @@ export enum SchedulerClasses {
      * Class name of the "+N more" button
      */
     more = 'p-scheduler-more',
+    /**
+     * Class name of the button listing the events outside the hours shown, with p-scheduler-outside-more-before or -after
+     */
+    outsideMore = 'p-scheduler-outside-more',
     /**
      * Class name of an event
      */

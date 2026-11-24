@@ -90,6 +90,10 @@ export const SCHEDULER_DEFAULT_LABELS: SchedulerLabels = {
     allDay: 'All day',
     more: '+{0} more',
     moreAriaLabel: '{0} more events on {1}',
+    earlier: '{0} earlier',
+    earlierAriaLabel: '{0} events before {1} on {2}',
+    later: '{0} later',
+    laterAriaLabel: '{0} events after {1} on {2}',
     eventCount: '{0} events',
     noEvents: 'No events in this period',
     weekOf: 'Week of {0}',
@@ -254,9 +258,9 @@ const AUTOSCROLL_EDGE = 40;
                                                 type="button"
                                                 [class]="cx('more')"
                                                 aria-haspopup="dialog"
-                                                [attr.aria-expanded]="moreDay()?.key === day.key"
+                                                [attr.aria-expanded]="moreKey() === day.key"
                                                 [attr.aria-label]="formatLabel('moreAriaLabel', cell.hidden, day.label)"
-                                                (click)="openMore($event, day)"
+                                                (click)="openMore($event, day, cell.all, day.key)"
                                                 (keydown)="onInnerKeydown($event, day)"
                                                 (pointerdown)="$event.stopPropagation()"
                                                 [pBind]="ptm('more')"
@@ -357,6 +361,25 @@ const AUTOSCROLL_EDGE = 40;
                                     @if (selectionIn(column); as range) {
                                         <div [class]="cx('selection')" aria-hidden="true" [style.top.%]="range.top" [style.height.%]="range.height" [pBind]="ptm('selection')"></div>
                                     }
+                                    @if (outsideHours().get(column.key); as outside) {
+                                        @for (edge of outside; track edge.position) {
+                                            <button
+                                                type="button"
+                                                [class]="cx('outsideMore', { edge })"
+                                                aria-haspopup="dialog"
+                                                [attr.aria-expanded]="moreKey() === column.key + '|' + edge.position"
+                                                [attr.aria-label]="formatLabel(edge.position === 'before' ? 'earlierAriaLabel' : 'laterAriaLabel', edge.segments.length, edge.time, column.label)"
+                                                (click)="openMore($event, column, edge.segments, column.key + '|' + edge.position)"
+                                                (pointerdown)="$event.stopPropagation()"
+                                                [pBind]="ptm('more')"
+                                            >
+                                                <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path [attr.d]="edge.position === 'before' ? 'M4 10l4-4 4 4' : 'M4 6l4 4 4-4'" />
+                                                </svg>
+                                                {{ formatLabel(edge.position === 'before' ? 'earlier' : 'later', edge.segments.length) }}
+                                            </button>
+                                        }
+                                    }
                                     @if (column.today && nowTop() !== null) {
                                         <div [class]="cx('nowIndicator')" aria-hidden="true" [style.top.%]="nowTop()" [pBind]="ptm('nowIndicator')"></div>
                                     }
@@ -418,7 +441,7 @@ const AUTOSCROLL_EDGE = 40;
             @if (moreDay(); as day) {
                 <div [class]="cx('popoverHeader')">{{ day.label }}</div>
                 <ul [class]="cx('popoverList')" (keydown)="onListKeydown($event)" [pBind]="ptm('popoverList')">
-                    @for (segment of monthCells().get(day.key)?.all; track segment.key; let first = $first) {
+                    @for (segment of moreSegments(); track segment.key; let first = $first) {
                         <li>
                             <button
                                 type="button"
@@ -716,6 +739,11 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
 
     readonly moreDay = signal<SchedulerDay | null>(null);
 
+    /** Events listed by the popover, and the key of the button that opened it. */
+    readonly moreSegments = signal<SchedulerDaySegment[]>([]);
+
+    readonly moreKey = signal<string | null>(null);
+
     readonly now = signal(new Date());
 
     private lastRangeKey = '';
@@ -914,6 +942,35 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         const events = this.visibleEvents().filter((item) => !item.allDayRow);
         for (const day of this.days()) {
             result.set(day.key, layoutDay(events, day.date, this.startHour(), this.endHour()));
+        }
+        return result;
+    });
+
+    /**
+     * Events of a day of the week and day views that end before dayStartHour or start after dayEndHour, so that the
+     * time grid does not show them. A button at the top or bottom of the column lists them.
+     */
+    readonly outsideHours = computed(() => {
+        type Edge = { position: 'before' | 'after'; time: string; segments: SchedulerDaySegment[] };
+        const result = new Map<string, Edge[]>();
+        const view = this.view();
+        const start = this.startHour();
+        const end = this.endHour();
+        if ((view !== 'week' && view !== 'day') || (start === 0 && end === 24)) return result;
+        const events = this.visibleEvents().filter((item) => !item.allDayRow);
+        for (const day of this.days()) {
+            const shownStart = atMinutes(day.date, start * 60).getTime();
+            const shownEnd = atMinutes(day.date, end * 60).getTime();
+            const before: SchedulerDaySegment[] = [];
+            const after: SchedulerDaySegment[] = [];
+            for (const segment of this.daySegments(events, day.date, true)) {
+                if (segment.item.end.getTime() <= shownStart) before.push(segment);
+                else if (segment.item.start.getTime() >= shownEnd) after.push(segment);
+            }
+            const edges: Edge[] = [];
+            if (before.length) edges.push({ position: 'before', time: this.formatTime(new Date(shownStart)), segments: before });
+            if (after.length) edges.push({ position: 'after', time: this.formatTime(new Date(shownEnd)), segments: after });
+            if (edges.length) result.set(day.key, edges);
         }
         return result;
     });
@@ -1217,10 +1274,12 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         if (this.drag?.active) event.preventDefault();
     }
 
-    openMore(event: MouseEvent, day: SchedulerDay) {
+    openMore(event: MouseEvent, day: SchedulerDay, segments: SchedulerDaySegment[] = this.monthCells().get(day.key)?.all ?? [], key: string = day.key) {
         event.stopPropagation();
         this.moreTrigger = event.currentTarget as HTMLElement;
         this.moreDay.set(day);
+        this.moreSegments.set(segments);
+        this.moreKey.set(key);
         this.morePopover()?.toggle(event, event.currentTarget);
     }
 
@@ -1228,6 +1287,7 @@ export class Scheduler extends BaseComponent<SchedulerPassThrough> {
         const active = this.document.activeElement as HTMLElement | null;
         const trigger = this.moreTrigger;
         this.moreDay.set(null);
+        this.moreKey.set(null);
         if (trigger && (!active || active === this.document.body || active.closest('.p-popover'))) {
             trigger.focus();
         }

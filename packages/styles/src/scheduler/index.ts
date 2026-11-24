@@ -467,6 +467,35 @@ export const style = /*css*/ `
         background: dt('scheduler.slot.hover.background');
     }
 
+    /* lists the events outside dayStartHour and dayEndHour, on the top or bottom edge of the day */
+    .p-scheduler-outside-more {
+        position: absolute;
+        inset-inline-start: 50%;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        max-width: calc(100% - 0.5rem);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        translate: -50% 0;
+        background: dt('scheduler.background');
+        box-shadow: 0 0 0 1px dt('scheduler.grid.border.color');
+    }
+
+    .p-scheduler-outside-more:dir(rtl) {
+        translate: 50% 0;
+    }
+
+    .p-scheduler-outside-more-before {
+        top: 0.25rem;
+    }
+
+    .p-scheduler-outside-more-after {
+        bottom: 0.25rem;
+    }
+
     .p-scheduler-now-indicator {
         position: absolute;
         inset-inline: 0;

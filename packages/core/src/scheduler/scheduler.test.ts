@@ -580,6 +580,37 @@ describe('Scheduler', () => {
             expect(spy.mock.calls[0][0].start).toEqual(at(3, 17));
         });
 
+        it('should list the events outside the visible hours behind a button on the edge of the day', async () => {
+            await setView('week');
+            await setEvents([
+                { id: 1, title: 'Early', start: at(3, 6), end: at(3, 7) },
+                { id: 2, title: 'Late', start: at(3, 19), end: at(3, 20) },
+                { id: 3, title: 'Overlap', start: at(3, 7), end: at(3, 9) }
+            ]);
+            // the whole day is shown: no button
+            expect(host.querySelector('.p-scheduler-outside-more')).toBeNull();
+
+            fixture.componentRef.setInput('dayStartHour', 8);
+            fixture.componentRef.setInput('dayEndHour', 18);
+            await render();
+            const before = host.querySelectorAll<HTMLButtonElement>('.p-scheduler-outside-more-before');
+            const after = host.querySelectorAll<HTMLButtonElement>('.p-scheduler-outside-more-after');
+            expect(before.length).toBe(1);
+            expect(after.length).toBe(1);
+            // the event that overlaps the visible hours stays in the grid
+            expect(before[0].textContent?.trim()).toBe('1 earlier');
+            expect(after[0].textContent?.trim()).toBe('1 later');
+            expect(before[0].getAttribute('aria-label')).toBe('1 events before 08:00 on Thursday, 3 December 2026');
+            expect(before[0].getAttribute('aria-expanded')).toBe('false');
+
+            before[0].click();
+            await render();
+            expect(before[0].getAttribute('aria-expanded')).toBe('true');
+            expect(after[0].getAttribute('aria-expanded')).toBe('false');
+            const listed = [...document.querySelectorAll('.p-popover [data-p-event]')].map((el) => el.getAttribute('data-p-event'));
+            expect(listed).toEqual(['1']);
+        });
+
         it('should move an event by days and weeks in the month view', async () => {
             fixture.componentRef.setInput('editable', true);
             await setEvents([{ id: 1, title: 'Review', start: at(3, 10), end: at(3, 11) }]);
