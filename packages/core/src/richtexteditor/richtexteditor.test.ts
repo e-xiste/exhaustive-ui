@@ -218,6 +218,11 @@ describe('RichTextEditor', () => {
             fixture.detectChanges();
             await ready();
             await waitFor(() => document.activeElement === editable());
+            // the focus class follows on the next change detection, which can land after the focus in slow CI runs
+            await waitFor(() => {
+                fixture.detectChanges();
+                return component.focused() && host.classList.contains('p-richtexteditor-focus');
+            });
             expect(component.focused()).toBe(true);
             expect(host.classList).toContain('p-richtexteditor-focus');
         });
