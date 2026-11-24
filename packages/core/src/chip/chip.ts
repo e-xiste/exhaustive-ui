@@ -35,9 +35,10 @@ import { ChipStyle } from './style/chipstyle';
                         [ngClass]="cx('removeIcon')"
                         (click)="close($event)"
                         (keydown)="onKeydown($event)"
-                        [attr.tabindex]="disabled() ? -1 : 0"
-                        [attr.aria-label]="removeAriaLabel"
-                        role="button"
+                        [attr.tabindex]="removeIconFocusable() ? (disabled() ? -1 : 0) : undefined"
+                        [attr.aria-label]="removeIconFocusable() ? removeAriaLabel : undefined"
+                        [attr.aria-hidden]="removeIconFocusable() ? undefined : true"
+                        [attr.role]="removeIconFocusable() ? 'button' : undefined"
                     ></span>
                 }
                 @if (!_removeIcon()) {
@@ -47,14 +48,24 @@ import { ChipStyle } from './style/chipstyle';
                         [class]="cx('removeIcon')"
                         (click)="close($event)"
                         (keydown)="onKeydown($event)"
-                        [attr.tabindex]="disabled() ? -1 : 0"
-                        [attr.aria-label]="removeAriaLabel"
-                        role="button"
+                        [attr.tabindex]="removeIconFocusable() ? (disabled() ? -1 : 0) : undefined"
+                        [attr.aria-label]="removeIconFocusable() ? removeAriaLabel : undefined"
+                        [attr.aria-hidden]="removeIconFocusable() ? undefined : true"
+                        [attr.role]="removeIconFocusable() ? 'button' : undefined"
                     />
                 }
             }
             @if (removeIconTemplate() || _removeIconTemplate()) {
-                <span [pBind]="ptm('removeIcon')" [attr.tabindex]="disabled() ? -1 : 0" [class]="cx('removeIcon')" (click)="close($event)" (keydown)="onKeydown($event)" [attr.aria-label]="removeAriaLabel" role="button">
+                <span
+                    [pBind]="ptm('removeIcon')"
+                    [attr.tabindex]="removeIconFocusable() ? (disabled() ? -1 : 0) : undefined"
+                    [class]="cx('removeIcon')"
+                    (click)="close($event)"
+                    (keydown)="onKeydown($event)"
+                    [attr.aria-label]="removeIconFocusable() ? removeAriaLabel : undefined"
+                    [attr.aria-hidden]="removeIconFocusable() ? undefined : true"
+                    [attr.role]="removeIconFocusable() ? 'button' : undefined"
+                >
                     <ng-template *ngTemplateOutlet="removeIconTemplate() || _removeIconTemplate()"></ng-template>
                 </span>
             }
@@ -110,6 +121,12 @@ export class Chip extends BaseComponent<ChipPassThrough> {
      * @group Props
      */
     readonly removable = input<boolean | undefined, unknown>(false, { transform: booleanAttribute });
+    /**
+     * Whether the remove icon is a focusable button. Set it to false when the parent removes the chip from the keyboard, such as a chip inside a listbox option: the icon stays clickable but is hidden from the tab order and from screen readers.
+     * @defaultValue true
+     * @group Props
+     */
+    readonly removeIconFocusable = input<boolean, unknown>(true, { transform: booleanAttribute });
     /**
      * Icon of the remove element.
      * @group Props

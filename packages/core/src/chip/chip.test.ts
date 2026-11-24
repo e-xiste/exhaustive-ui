@@ -1687,3 +1687,39 @@ describe('Chip disabled', () => {
         expect(removeIcon().getAttribute('tabindex')).toBe('0');
     });
 });
+
+@Component({
+    imports: [Chip],
+    template: `<p-chip label="Tag" [removable]="true" [removeIconFocusable]="focusable()" (onRemove)="removed = removed + 1"></p-chip>`
+})
+class ChipRemoveIconFocusableHostComponent {
+    focusable = signal(true);
+    removed = 0;
+}
+
+describe('Chip removeIconFocusable', () => {
+    it('should keep a clickable but unfocusable, hidden remove icon when removeIconFocusable is false', async () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [ChipRemoveIconFocusableHostComponent],
+            providers: [provideZonelessChangeDetection()]
+        });
+        const fixture = TestBed.createComponent(ChipRemoveIconFocusableHostComponent);
+        await fixture.whenStable();
+        const removeIcon = () => fixture.nativeElement.querySelector('.p-chip-remove-icon') as HTMLElement;
+
+        expect(removeIcon().getAttribute('tabindex')).toBe('0');
+        expect(removeIcon().getAttribute('role')).toBe('button');
+        expect(removeIcon().getAttribute('aria-label')).toBeTruthy();
+
+        fixture.componentInstance.focusable.set(false);
+        await fixture.whenStable();
+        expect(removeIcon().hasAttribute('tabindex')).toBe(false);
+        expect(removeIcon().hasAttribute('role')).toBe(false);
+        expect(removeIcon().hasAttribute('aria-label')).toBe(false);
+        expect(removeIcon().getAttribute('aria-hidden')).toBe('true');
+
+        removeIcon().dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(fixture.componentInstance.removed).toBe(1);
+    });
+});
