@@ -4,7 +4,9 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.8.1 (2026-11-24)
+
+Fixes from a full review of the six new components (Scheduler, Kanban, RichTextEditor, Mention, InputChips, Tour) and their docs.
 
 ### Bug Fixes
 
