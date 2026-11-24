@@ -51,15 +51,15 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
         <div class="mt-10 mb-4 flex items-center justify-between">
             <p-icon-field iconPosition="left">
                 <p-input-icon class="pi pi-search"> </p-input-icon>
-                <input pInputText type="text" [(ngModel)]="search" placeholder="Search" />
+                <input pInputText type="text" [(ngModel)]="search" placeholder="Search" aria-label="Search customers" />
             </p-icon-field>
             <div class="flex items-center gap-3">
-                <p-button icon="pi pi-filter" outlined severity="secondary" />
+                <p-button icon="pi pi-filter" ariaLabel="Filter" outlined severity="secondary" />
                 <p-divider layout="vertical" class="m-0 p-0" />
-                <p-button icon="pi pi-refresh" outlined severity="secondary" />
+                <p-button icon="pi pi-refresh" ariaLabel="Refresh" outlined severity="secondary" />
                 <p-button label="1 of 15" outlined severity="secondary" />
-                <p-button icon="pi pi-chevron-left" outlined severity="secondary" />
-                <p-button icon="pi pi-chevron-right" outlined severity="secondary" />
+                <p-button icon="pi pi-chevron-left" ariaLabel="Previous page" outlined severity="secondary" />
+                <p-button icon="pi pi-chevron-right" ariaLabel="Next page" outlined severity="secondary" />
             </div>
         </div>
         <div class="flex-1 [&>td]:last:border-0 rounded-lg border border-surface w-full overflow-auto">
@@ -67,7 +67,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <ng-template #header>
                     <tr>
                         <th style="width: 1rem">
-                            <p-table-header-checkbox />
+                            <p-table-header-checkbox ariaLabel="Select all customers" />
                         </th>
                         <th>Name</th>
                         <th>Title</th>
@@ -81,7 +81,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <ng-template #body let-data>
                     <tr>
                         <td style="width: 1rem">
-                            <p-table-checkbox [value]="data" />
+                            <p-table-checkbox [value]="data" [ariaLabel]="'Select ' + data.name" />
                         </td>
                         <td>
                             <div class="flex items-center">
@@ -122,7 +122,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         </td>
                         <td>
                             <div class="flex justify-end w-full">
-                                <p-button (onClick)="displayPopover($event, op)" icon="pi pi-search" rounded outlined severity="secondary" />
+                                <p-button (onClick)="displayPopover($event, op)" icon="pi pi-search" [ariaLabel]="'Show actions for ' + data.name" rounded outlined severity="secondary" />
                             </div>
                         </td>
                     </tr>

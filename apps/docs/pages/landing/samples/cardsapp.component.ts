@@ -118,7 +118,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             <div class="text-color font-medium leading-7">Jacob Jones</div>
                             <div class="text-muted-color text-sm mt-1">hi&#64;jacobjones.co</div>
                         </div>
-                        <p-button icon="pi pi-bell" severity="contrast" text />
+                        <p-button icon="pi pi-bell" ariaLabel="Notifications" severity="contrast" text />
                     </div>
                     <div class="mt-4 flex flex-col gap-1">
                         <button class="w-full flex items-center gap-2 text-color p-2 bg-transparent hover:bg-emphasis active:bg-surface-200 dark:active:bg-surface-700 cursor-pointer rounded-lg transition-all select-none">
@@ -147,8 +147,8 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 'pi-sun': darkMode
                             }"
                         ></i>
-                        <div class="font-medium leading-normal flex-1 text-left">Switch to {{ darkMode ? 'Light' : 'Dark' }}</div>
-                        <p-toggle-switch [(ngModel)]="darkMode" />
+                        <label for="cards-dark-mode" class="font-medium leading-normal flex-1 text-left cursor-pointer">Switch to {{ darkMode ? 'Light' : 'Dark' }}</label>
+                        <p-toggle-switch [(ngModel)]="darkMode" inputId="cards-dark-mode" />
                     </div>
                 </div>
                 <div class="border border-surface rounded-3xl">
@@ -158,7 +158,14 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                 <div class="text-2xl text-color font-medium">Data Analyst</div>
                                 <div class="mt-2 text-color">Data Insights Ltd.</div>
                             </div>
-                            <p-button (click)="jobApplication = !jobApplication" [icon]="jobApplication ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'" severity="secondary" outlined rounded />
+                            <p-button
+                                (click)="jobApplication = !jobApplication"
+                                [icon]="jobApplication ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
+                                [ariaLabel]="jobApplication ? 'Remove job from bookmarks' : 'Bookmark job'"
+                                severity="secondary"
+                                outlined
+                                rounded
+                            />
                         </div>
                         <div class="flex flex-wrap gap-1 items-center justify-between">
                             <div class="flex items-center gap-2 whitespace-nowrap text-muted-color">
@@ -203,7 +210,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div class="flex items-center gap-2 text-color">
                         <i class="pi pi-cloud-upload text-xl"></i>
                         <div class="flex-1 font-medium leading-6">Upload Files</div>
-                        <p-button icon="pi pi-times" text rounded />
+                        <p-button icon="pi pi-times" ariaLabel="Close upload" text rounded />
                     </div>
                     <div>
                         <label for="document-name" class="text-color font-medium leading-6">Document Name </label>
@@ -215,9 +222,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             <ng-template #header let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
                                 <div *ngIf="files.length > 0 || uploadedFiles.length > 0" class="flex w-full flex-wrap justify-between items-center flex-1 gap-4 border-b border-surface pb-4">
                                     <div class="flex gap-2">
-                                        <p-button (click)="chooseCallback()" icon="pi pi-images" rounded outlined severity="secondary"></p-button>
-                                        <p-button (click)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" rounded outlined severity="success" [disabled]="!files || files.length === 0"></p-button>
-                                        <p-button (click)="clearCallback()" icon="pi pi-times" rounded outlined severity="danger" [disabled]="!files || files.length === 0"></p-button>
+                                        <p-button (click)="chooseCallback()" icon="pi pi-images" ariaLabel="Choose files" rounded outlined severity="secondary"></p-button>
+                                        <p-button (click)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" ariaLabel="Upload files" rounded outlined severity="success" [disabled]="!files || files.length === 0"></p-button>
+                                        <p-button (click)="clearCallback()" icon="pi pi-times" ariaLabel="Clear files" rounded outlined severity="danger" [disabled]="!files || files.length === 0"></p-button>
                                     </div>
                                 </div>
                                 <div *ngIf="files.length <= 0 && uploadedFiles.length <= 0" class="flex flex-col items-center justify-center p-6 cursor-pointer" (click)="chooseCallback()">
@@ -265,8 +272,8 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         </p-file-upload>
                     </div>
                     <div>
-                        <label class="text-color font-medium leading-6">Tag (Optional)</label>
-                        <p-auto-complete [(ngModel)]="filesTag" class="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
+                        <label id="files-tag-label" for="files-tag" class="text-color font-medium leading-6">Tag (Optional)</label>
+                        <p-auto-complete [(ngModel)]="filesTag" class="w-full mt-2" inputId="files-tag" ariaLabelledBy="files-tag-label" multiple (completeMethod)="search($event)" [typeahead]="false" />
                     </div>
                     <div class="flex items-center gap-2">
                         <label *ngFor="let permission of permissions" [for]="permission.key" class="cursor-pointer flex-1 flex items-center gap-1 p-2 rounded-border border border-surface hover:bg-emphasis transition-all select-none">
@@ -299,7 +306,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             <p-avatar image="/demo/landing/apps/avatar10.jpg" shape="circle" class="rounded-lg overflow-hidden" />
                             <p-avatar image="/demo/landing/apps/avatar12.jpg" shape="circle" class="rounded-lg overflow-hidden" />
                         </div>
-                        <p-button icon="pi pi-arrow-up-right" rounded text />
+                        <p-button icon="pi pi-arrow-up-right" ariaLabel="Open avatars" rounded text />
                     </div>
                     <div class="text-2xl font-medium text-color mt-6 leading-8">That's your avatar</div>
                     <div class="leading-6 text-muted-color mt-2">Easy to use! place it, watch it.</div>
@@ -307,12 +314,12 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <div class="border border-surface rounded-3xl p-6 flex flex-col gap-6">
                     <div class="flex items-center justify-between gap-2">
                         <div class="text-2xl font-medium leading-8 flex-1">Add Member</div>
-                        <p-button icon="pi pi-times" rounded text severity="secondary" />
+                        <p-button icon="pi pi-times" ariaLabel="Close add member" rounded text severity="secondary" />
                     </div>
                     <div>
-                        <div class="text-muted-color leading-6">Email</div>
+                        <label id="member-email-label" for="member-email" class="block text-muted-color leading-6">Email</label>
                         <div class="flex items-start gap-3 mt-2">
-                            <p-auto-complete [(ngModel)]="emailChips" inputId="multiple-ac-2" class="flex-1 w-full" multiple (onSelect)="search($event)" [typeahead]="false" />
+                            <p-auto-complete [(ngModel)]="emailChips" inputId="member-email" ariaLabelledBy="member-email-label" class="flex-1 w-full" multiple (onSelect)="search($event)" [typeahead]="false" />
                             <p-button label="Invite" />
                         </div>
                     </div>
@@ -325,7 +332,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Brook Simmons</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">brook.sim42&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[0]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
+                                <p-select [(ngModel)]="memberSelectedTypes[0]" ariaLabel="Role of Brook Simmons" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                             <div class="flex items-center gap-2 justify-between">
                                 <p-avatar image="/demo/landing/apps/avatar13.jpg" class="w-9 h-9" shape="circle" />
@@ -333,7 +340,7 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Dianne Russell</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">di.russ23&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[1]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
+                                <p-select [(ngModel)]="memberSelectedTypes[1]" ariaLabel="Role of Dianne Russell" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                             <div class="flex items-center gap-2 justify-between">
                                 <p-avatar image="/demo/landing/apps/avatar12.jpg" class="w-9 h-9" shape="circle" />
@@ -341,14 +348,14 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                                     <div class="text-sm font-medium text-color leading-5">Jacob Jones</div>
                                     <div class="text-sm text-muted-color leading-5 line-clamp-4">jac.jon87&#64;example.com</div>
                                 </div>
-                                <p-select [(ngModel)]="memberSelectedTypes[2]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
+                                <p-select [(ngModel)]="memberSelectedTypes[2]" ariaLabel="Role of Jacob Jones" [options]="memberTypes" optionLabel="name" placeholder="Select" class="border-0! shadow-none!" />
                             </div>
                         </div>
                     </div>
                     <div>
-                        <div class="font-medium leading-6 text-muted-color">Copy Link</div>
+                        <label for="copy-link" class="block font-medium leading-6 text-muted-color">Copy Link</label>
                         <div class="flex items-center gap-3 mt-2">
-                            <input type="text" pInputText [(ngModel)]="copiedText" type="text" class="flex-1" readOnly />
+                            <input type="text" pInputText [(ngModel)]="copiedText" id="copy-link" class="flex-1" readOnly />
                             <p-button label="Copy" severity="secondary" />
                         </div>
                     </div>
@@ -361,33 +368,33 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     <div class="flex flex-col gap-4 mt-6">
                         <div class="flex items-center gap-3">
                             <i class="pi pi-volume-down text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Sound</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[0]" />
+                            <label for="profile-sound" class="leading-6 text-color flex-1">Sound</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[0]" inputId="profile-sound" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-wifi text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Wi-Fi</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[1]" />
+                            <label for="profile-wi-fi" class="leading-6 text-color flex-1">Wi-Fi</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[1]" inputId="profile-wi-fi" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-moon text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Dark Mode</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[2]" />
+                            <label for="profile-dark-mode" class="leading-6 text-color flex-1">Dark Mode</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[2]" inputId="profile-dark-mode" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-map-marker text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Location Services</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[3]" />
+                            <label for="profile-location-services" class="leading-6 text-color flex-1">Location Services</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[3]" inputId="profile-location-services" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-shield text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Privacy Settings</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[4]" />
+                            <label for="profile-privacy-settings" class="leading-6 text-color flex-1">Privacy Settings</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[4]" inputId="profile-privacy-settings" />
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="pi pi-sync text-color text-xl"></i>
-                            <div class="leading-6 text-color flex-1">Auto Update</div>
-                            <p-toggle-switch [(ngModel)]="userProfilesValues[5]" />
+                            <label for="profile-auto-update" class="leading-6 text-color flex-1">Auto Update</label>
+                            <p-toggle-switch [(ngModel)]="userProfilesValues[5]" inputId="profile-auto-update" />
                         </div>
                     </div>
                 </div>
@@ -411,9 +418,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                     </button>
                 </div>
                 <div class="border border-surface rounded-3xl p-6">
-                    <div class="text-color font-medium leading-6 mb-6">Price Range</div>
+                    <div id="price-range-label" class="text-color font-medium leading-6 mb-6">Price Range</div>
                     <div>
-                        <p-slider [(ngModel)]="priceRange" [min]="0" range [max]="15000" />
+                        <p-slider [(ngModel)]="priceRange" [min]="0" range [max]="15000" ariaLabelledBy="price-range-label" />
                     </div>
                     <div class="mt-4 flex gap-2">
                         <div class="flex-1">

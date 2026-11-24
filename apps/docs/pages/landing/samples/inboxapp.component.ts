@@ -23,16 +23,18 @@ import { Tag } from '@exhaustive-ui/core/tag';
         <div class="w-64 h-full overflow-hidden border border-surface rounded-2xl flex flex-col">
             <div class="flex items-center justify-between gap-2 p-4 border-b border-surface">
                 <div class="text-xl font-medium leading-7 text-color">Mails</div>
-                <p-button icon="pi pi-plus" styleClass="w-8 h-8" />
+                <p-button icon="pi pi-plus" ariaLabel="Compose mail" styleClass="w-8 h-8" />
             </div>
             <div class="flex-1 flex flex-col overflow-auto justify-between gap-4 pt-4 pb-4 px-4">
                 <div class="flex-1 overflow-auto flex flex-col gap-2">
                     <div *ngFor="let navData of inboxNavs" class="flex flex-col gap-2">
-                        <div class="text-sm font-medium leading-5 text-surface-400 dark:text-surface-500">
+                        <div class="text-sm font-medium leading-5 text-muted-color">
                             {{ navData.title }}
                         </div>
                         <button
                             *ngFor="let nav of navData.navs"
+                            type="button"
+                            [attr.aria-current]="activeInboxNav === nav.name ? 'page' : null"
                             (click)="activeInboxNav = nav.name"
                             [ngClass]="{
                                 'text-color bg-emphasis': activeInboxNav === nav.name,
@@ -48,7 +50,7 @@ import { Tag } from '@exhaustive-ui/core/tag';
                 <div>
                     <div class="border border-surface rounded-border px-4 pb-4 pt-3 mb-4">
                         <div class="font-medium text-color mb-4">Free Version</div>
-                        <p-progress-bar [value]="75">
+                        <p-progress-bar [value]="75" ariaLabel="Free version usage">
                             <ng-template #content let-value>
                                 <span class="w-full text-center text-sm font-normal text-primary-contrast leading-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">4 days left</span>
                             </ng-template>
@@ -63,37 +65,37 @@ import { Tag } from '@exhaustive-ui/core/tag';
                 <ng-template #caption>
                     <div class="flex xl:items-center justify-between gap-2 flex-col xl:flex-row">
                         <div class="flex items-center gap-2">
-                            <p-checkbox [binary]="true" class="mr-1" />
-                            <p-button icon="pi pi-envelope" outlined severity="secondary" />
-                            <p-button icon="pi pi-exclamation-circle" outlined severity="secondary" />
-                            <p-button icon="pi pi-tag" outlined severity="secondary" />
+                            <p-checkbox [binary]="true" ariaLabel="Select all mails" class="mr-1" />
+                            <p-button icon="pi pi-envelope" ariaLabel="Mark as read" outlined severity="secondary" />
+                            <p-button icon="pi pi-exclamation-circle" ariaLabel="Report spam" outlined severity="secondary" />
+                            <p-button icon="pi pi-tag" ariaLabel="Add label" outlined severity="secondary" />
                             <p-button icon="pi pi-inbox" label="Archive" outlined severity="secondary" />
                             <p-button icon="pi pi-trash" label="Trash" outlined severity="secondary" />
                         </div>
                         <div class="flex items-center gap-2">
                             <p-icon-field iconPosition="left" class="w-6/12 xl:max-w-36">
                                 <p-input-icon class="pi pi-search"></p-input-icon>
-                                <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
+                                <input type="text" pInputText [(ngModel)]="search" placeholder="Search" aria-label="Search mails" class="w-full" />
                             </p-icon-field>
-                            <p-button icon="pi pi-filter" outlined severity="secondary" />
+                            <p-button icon="pi pi-filter" ariaLabel="Filter" outlined severity="secondary" />
                             <p-divider layout="vertical" class="m-0" />
-                            <p-button icon="pi pi-refresh" outlined severity="secondary" />
+                            <p-button icon="pi pi-refresh" ariaLabel="Refresh" outlined severity="secondary" />
                             <p-button label="1 of 15" class="whitespace-nowrap!" outlined severity="secondary" />
-                            <p-button icon="pi pi-chevron-left" outlined severity="secondary" />
-                            <p-button icon="pi pi-chevron-right" outlined severity="secondary" />
+                            <p-button icon="pi pi-chevron-left" ariaLabel="Previous page" outlined severity="secondary" />
+                            <p-button icon="pi pi-chevron-right" ariaLabel="Next page" outlined severity="secondary" />
                         </div>
                     </div>
                 </ng-template>
                 <ng-template #body let-data>
                     <tr>
                         <td style="width: 1rem">
-                            <p-table-checkbox [value]="data" />
+                            <p-table-checkbox [value]="data" [ariaLabel]="'Select mail from ' + data.name" />
                         </td>
 
                         <td style="width: 1rem; padding: 0.5rem">
-                            <div (click)="$event.stopPropagation(); data.bookmarked = !data.bookmarked">
+                            <button type="button" class="block cursor-pointer" [attr.aria-label]="'Bookmark mail from ' + data.name" [attr.aria-pressed]="!!data.bookmarked" (click)="$event.stopPropagation(); data.bookmarked = !data.bookmarked">
                                 <i [ngClass]="data.bookmarked ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"></i>
-                            </div>
+                            </button>
                         </td>
                         <td>
                             <div class="flex items-center">

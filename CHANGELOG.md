@@ -4,6 +4,12 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Documentation
+
+- **landing:** fix every axe violation on the landing page (light and dark, 1440px and 390px, every hero sample app and the Settings drawer) except two AutoComplete issues tracked separately. The hero sidebar entries are now keyboard reachable buttons in a `nav`, with an accessible name in slim mode and `aria-current` on the selected one; icon-only buttons, footer links, inputs, toggles, checkboxes, charts, knobs, the meter group and progress bars are named through the components' own inputs (`ariaLabel`, `ariaLabelledBy`, `inputId`); images get a real or empty alt; the content sections sit in a `main` landmark, the topbar is a `header` and the landing footer a `footer`; the Inbox section titles meet the contrast ratio.
+
 ## 22.8.1 (2026-11-24)
 
 Fixes from a full review of the six new components (Scheduler, Kanban, RichTextEditor, Mention, InputChips, Tour) and their docs.

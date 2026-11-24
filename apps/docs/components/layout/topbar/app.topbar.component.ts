@@ -14,7 +14,7 @@ import { SelectModule } from '@exhaustive-ui/core/select';
     selector: 'app-topbar',
     standalone: true,
     imports: [CommonModule, FormsModule, StyleClass, RouterModule, AppConfiguratorComponent, SelectModule, NgOptimizedImage],
-    template: `<div class="layout-topbar">
+    template: `<header class="layout-topbar">
         <div class="layout-topbar-inner">
             <div class="layout-topbar-logo-container">
                 <a [routerLink]="['/']" class="layout-topbar-logo" aria-label="ExhaustiveUI Logo">
@@ -79,7 +79,7 @@ import { SelectModule } from '@exhaustive-ui/core/select';
                 </li>
             </ul>
         </div>
-    </div>`
+    </header>`
 })
 export class AppTopBarComponent implements OnDestroy {
     readonly githubRepoUrl = GITHUB_REPO_URL;

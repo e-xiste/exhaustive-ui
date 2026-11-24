@@ -52,9 +52,9 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 <div class="flex gap-2 whitespace-nowrap flex-nowrap">
                     <p-icon-field iconPosition="left">
                         <p-input-icon class="pi pi-search"></p-input-icon>
-                        <input type="text" pInputText placeholder="Search" />
+                        <input type="text" pInputText placeholder="Search" aria-label="Search" />
                     </p-icon-field>
-                    <p-button severity="secondary" outlined>
+                    <p-button severity="secondary" ariaLabel="Notifications" outlined>
                         <p-overlay-badge severity="danger" styleClass="min-w-0! w-2.5! h-2.5!">
                             <i class="pi pi-bell"></i>
                         </p-overlay-badge>
@@ -62,10 +62,10 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                 </div>
             </div>
             <div class="mt-4 flex flex-wrap gap-6 items-center justify-between p-1">
-                <p-select-button [(ngModel)]="selectedTime" [options]="timeOptions" aria-labelledby="basic" [allowEmpty]="false" (onChange)="changeSelect()" />
+                <p-select-button [(ngModel)]="selectedTime" [options]="timeOptions" [allowEmpty]="false" (onChange)="changeSelect()" />
                 <div class="flex items-center gap-2">
                     <p-button label="Download" icon="pi pi-download" iconPos="right" />
-                    <p-date-picker [(ngModel)]="dates" appendTo="body" dateFormat="dd.mm.yy" selectionMode="range" showIcon iconDisplay="input" placeholder="06/11/2024 - 06/22/2024" />
+                    <p-date-picker [(ngModel)]="dates" ariaLabel="Date range" appendTo="body" dateFormat="dd.mm.yy" selectionMode="range" showIcon iconDisplay="input" placeholder="06/11/2024 - 06/22/2024" />
                 </div>
             </div>
             <div class="flex flex-col gap-6 mt-6">
@@ -79,14 +79,14 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                             </div>
                         </div>
                     </div>
-                    <p-chart type="bar" [data]="chartData" [options]="chartOptions" [height]="'20rem'" />
+                    <p-chart type="bar" ariaLabel="Crypto analytics per month" [data]="chartData" [options]="chartOptions" [height]="'20rem'" />
                 </div>
                 <div class="flex gap-6 xl:flex-row flex-col">
                     <div class="flex-1 border border-surface rounded-2xl py-5 px-7">
                         <div class="flex items-center gap-6 mb-4">
                             <div class="flex-1 text-color font-semibold leading-6">Transactions</div>
-                            <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
-                            <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                            <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="transactionsMenu.toggle($event)" ariaLabel="Transactions options" ariaControls="transactions_menu" />
+                            <p-menu #transactionsMenu id="transactions_menu" [model]="menuItems" [popup]="true" />
                         </div>
                         <p-table
                             dataKey="id"
@@ -149,10 +149,10 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
                         <div>
                             <div class="flex items-center mb-6">
                                 <div class="flex-1 text-color font-semibold leading-6">My Wallet</div>
-                                <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
-                                <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" styleClass="ml-6" />
+                                <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="walletMenu.toggle($event)" ariaLabel="Wallet options" ariaControls="wallet_menu" />
+                                <p-menu #walletMenu id="wallet_menu" [model]="menuItems" [popup]="true" styleClass="ml-6" />
                             </div>
-                            <p-meter-group [value]="metersData" labelPosition="end">
+                            <p-meter-group [value]="metersData" labelPosition="end" ariaLabel="Wallet allocation">
                                 <ng-template #label>
                                     <div class="flex flex-col gap-6 mt-4">
                                         <ng-container *ngFor="let val of metersData; let index = index">

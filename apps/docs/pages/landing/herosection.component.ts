@@ -79,7 +79,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                         (onClick)="copyInstallCommand()"
                         [pTooltip]="commandCopied ? 'Copied!' : 'Copy to Clipboard'"
                         tooltipPosition="bottom"
-                        aria-label="Copy install command"
+                        ariaLabel="Copy install command"
                         text
                         rounded
                         severity="secondary"
@@ -96,7 +96,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                 </div>
                 <div class="bg-surface-0 border border-black/10 dark:border-white/20 dark:bg-surface-950 w-full rounded-3xl p-0 flex lg:hidden items-start gap-6 overflow-hidden">
                     <ng-container *ngFor="let sampleOption of sampleOptions">
-                        <img *ngIf="selectedSampleOption.title === sampleOption.title" [src]="sampleOption.src + (isDarkMode ? '-dark.jpg' : '.jpg')" class="w-full" />
+                        <img *ngIf="selectedSampleOption.title === sampleOption.title" [src]="sampleOption.src + (isDarkMode ? '-dark.jpg' : '.jpg')" [alt]="sampleOption.title + ' sample app'" class="w-full" />
                     </ng-container>
                 </div>
                 <div class="bg-surface-0 border border-black/10 dark:border-white/20 dark:bg-surface-950 w-full h-[85vh] max-h-[1040px] rounded-3xl p-6 hidden lg:flex lg:mt-20 items-start gap-6 overflow-hidden">
@@ -115,7 +115,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                         >
                             <div class="flex items-center gap-3">
                                 <div class="w-11 h-11 border border-primary rounded-xl flex items-center justify-center">
-                                    <img ngSrc="logo-icon.svg" height="30" width="30" class="dark:invert" />
+                                    <img ngSrc="logo-icon.svg" height="30" width="30" alt="" class="dark:invert" />
                                 </div>
                                 <div
                                     [ngClass]="{
@@ -127,12 +127,15 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     Exhaustive
                                 </div>
                             </div>
-                            <div class="mt-10 flex flex-col gap-2">
-                                <div
+                            <nav aria-label="Sample apps" class="mt-10 flex flex-col gap-2">
+                                <button
                                     *ngFor="let navItem of sampleAppsSidebarNavs"
+                                    type="button"
+                                    [attr.aria-label]="navItem.title"
+                                    [attr.aria-current]="selectedSampleAppsSidebarNav === navItem.title ? 'page' : null"
                                     [pTooltip]="isSlimMenu ? navItem.title : null"
                                     (click)="setSelectedSampleAppsSidebarNav(navItem.title)"
-                                    class="px-4 py-1 flex items-center gap-1 cursor-pointer text-base rounded-lg transition-all select-none"
+                                    class="px-4 py-1 flex items-center gap-1 cursor-pointer text-base rounded-lg border-0 font-[inherit] transition-all select-none"
                                     [ngClass]="{
                                         'w-12 justify-center py-4': isSlimMenu,
                                         'w-full': !isSlimMenu,
@@ -155,8 +158,8 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         }"
                                         >{{ navItem.title }}</span
                                     >
-                                </div>
-                            </div>
+                                </button>
+                            </nav>
                         </div>
                         <div
                             [ngClass]="{
@@ -164,7 +167,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                 'w-auto': !isSlimMenu
                             }"
                         >
-                            <div class="mt-10 flex flex-col gap-2">
+                            <nav aria-label="Sample app settings" class="mt-10 flex flex-col gap-2">
                                 <div
                                     *ngIf="false"
                                     [pTooltip]="isSlimMenu ? 'Expanded Mode' : null"
@@ -182,11 +185,15 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         </a>
                                     </a>
                                 </div>
-                                <div
+                                <button
                                     *ngFor="let navItem of sampleAppsSidebarNavsMore"
+                                    type="button"
+                                    [attr.aria-label]="navItem.title"
+                                    aria-haspopup="dialog"
+                                    [attr.aria-expanded]="dashboardSidebarVisible"
                                     [pTooltip]="isSlimMenu ? navItem.title : null"
                                     (click)="dashboardSidebarVisible = true"
-                                    class="px-4 py-1 flex items-center gap-1 cursor-pointer text-base rounded-lg transition-all select-none"
+                                    class="px-4 py-1 flex items-center gap-1 cursor-pointer text-base rounded-lg border-0 font-[inherit] transition-all select-none"
                                     [ngClass]="{
                                         'w-12 justify-center py-4': isSlimMenu,
                                         'w-full': !isSlimMenu,
@@ -197,8 +204,8 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <i [class]="navItem.icon"></i>
                                     <span [class]="isSlimMenu ? 'hidden' : 'font-medium leading-8'">・</span>
                                     <span [class]="isSlimMenu ? 'hidden' : 'font-medium leading-none'">{{ navItem.title }}</span>
-                                </div>
-                            </div>
+                                </button>
+                            </nav>
                             <p-divider />
                             <div [class]="isSlimMenu ? 'justify-center' : ' gap-3'" class="flex items-center">
                                 <p-avatar image="/demo/landing/apps/main-avatar.png" size="large" shape="circle" class="shrink-0" />
@@ -227,7 +234,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                     <div class="leading-6 text-color font-medium">Brook Simmons</div>
                                     <div class="mt-1 leading-5 text-muted-color text-sm">Sales Executive</div>
                                 </div>
-                                <p-button (onClick)="dashboardSidebarVisible = false" icon="pi pi-sign-out" text rounded severity="secondary" />
+                                <p-button (onClick)="dashboardSidebarVisible = false" icon="pi pi-sign-out" ariaLabel="Close settings" text rounded severity="secondary" />
                             </div>
                             <p-select-button [(ngModel)]="selectedSidebarOption" [options]="sidebarOptions" class="w-full px-6 py-3" styleClass="flex-1 w-full py-2.5">
                                 <ng-template #item let-item>
@@ -239,7 +246,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Call Logs</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
+                                    <p-button icon="pi pi-download text-sm" ariaLabel="Download call logs" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
                                 </div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
                                     <div *ngFor="let data of callLogs" class="flex items-center gap-3 p-2">
@@ -251,16 +258,21 @@ import { OverviewApp } from './samples/overviewapp.component';
                                             <div class="text-sm leading-5 font-medium text-color">{{ data.name }}</div>
                                             <div class="mt-1 text-sm leading-5 text-muted-color">{{ data.time }}</div>
                                         </div>
-                                        <p-button icon="pi pi-phone text-sm" text styleClass="bg-primary/10 dark:bg-primary/20 w-8 h-8" />
+                                        <p-button icon="pi pi-phone text-sm" [ariaLabel]="'Call ' + data.name" text styleClass="bg-primary/10 dark:bg-primary/20 w-8 h-8" />
                                     </div>
                                 </div>
                             </div>
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Email Records</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
+                                    <p-button icon="pi pi-download text-sm" ariaLabel="Download email records" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all" severity="secondary" text />
                                 </div>
-                                <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800">
+                                <div
+                                    tabindex="0"
+                                    role="region"
+                                    aria-label="Email records"
+                                    class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 flex flex-col rounded-lg overflow-hidden divide-y divide-surface-200 dark:divide-surface-800"
+                                >
                                     <div *ngFor="let data of emailRecords" class="flex items-center gap-3 p-2">
                                         <p-overlay-badge severity="danger" styleClass="w-fit">
                                             <p-avatar [image]="data.image" size="normal" class="rounded-md overflow-hidden w-10 h-10 flex" />
@@ -284,9 +296,15 @@ import { OverviewApp } from './samples/overviewapp.component';
                             <div class="h-1/3 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="flex items-start justify-between">
                                     <div class="leading-6 font-medium text-color">Meeting Notes</div>
-                                    <p-button icon="pi pi-download text-sm" styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all leading-none" severity="secondary" text />
+                                    <p-button
+                                        icon="pi pi-download text-sm"
+                                        ariaLabel="Download meeting notes"
+                                        styleClass="w-8 h-8 border-surface! bg-surface-0! dark:bg-surface-900! hover:opacity-75 transition-all leading-none"
+                                        severity="secondary"
+                                        text
+                                    />
                                 </div>
-                                <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 p-4 flex flex-col rounded-lg overflow-hidden">
+                                <div tabindex="0" role="region" aria-label="Meeting notes" class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 p-4 flex flex-col rounded-lg overflow-hidden">
                                     <div class="flex items-start justify-between gap-1">
                                         <div class="text-sm text-color font-medium max-w-60">Subject: Meeting Wrap-up & Action Items: Jacob Jones</div>
                                         <div class="text-sm text-muted-color">February 14, 2024 / 2:00 PM</div>
@@ -311,13 +329,13 @@ import { OverviewApp } from './samples/overviewapp.component';
                             </div>
                         </div>
                         <div *ngIf="selectedSidebarOption === 'Preferences'" class="h-[calc(100%-72px)] flex flex-col gap-4 p-6">
-                            <div *ngFor="let data of preferences" class="h-1/4 flex flex-col p-3 rounded-xl bg-emphasis">
+                            <div *ngFor="let data of preferences; let groupIndex = index" class="h-1/4 flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="leading-6 font-medium text-color p-2">{{ data.title }}</div>
                                 <div class="overflow-y-auto flex-1 bg-surface-0 dark:bg-surface-900 mt-2 p-4 flex flex-col gap-3 rounded-lg">
-                                    <div *ngFor="let pref of data.prefs" class="flex items-center gap-2">
+                                    <div *ngFor="let pref of data.prefs; let prefIndex = index" class="flex items-center gap-2">
                                         <i class="text-lg text-color" [class]="pref.icon"></i>
-                                        <div class="font-medium text-color flex-1">{{ pref.title }}</div>
-                                        <p-toggle-switch [(ngModel)]="pref.checked" />
+                                        <label [for]="'hero-pref-' + groupIndex + '-' + prefIndex" class="font-medium text-color flex-1">{{ pref.title }}</label>
+                                        <p-toggle-switch [(ngModel)]="pref.checked" [inputId]="'hero-pref-' + groupIndex + '-' + prefIndex" />
                                     </div>
                                 </div>
                             </div>
@@ -344,7 +362,7 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         <div class="font-medium text-color p-2">Customer Satisfaction Score</div>
                                     </div>
                                     <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
-                                        <p-knob [(ngModel)]="customerSatisfaction" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
+                                        <p-knob [(ngModel)]="customerSatisfaction" ariaLabel="Customer satisfaction score" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
                                     </div>
                                 </div>
                                 <div class="w-full h-full flex flex-col p-3 rounded-xl bg-emphasis">
@@ -363,20 +381,20 @@ import { OverviewApp } from './samples/overviewapp.component';
                                         <div class="font-medium text-color p-2">Product Usage</div>
                                     </div>
                                     <div class="flex-1 mt-2 py-4 rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
-                                        <p-chart type="line" [data]="lineChartData" [options]="lineChartOptions" class="min-h-44 w-full" width="100%" height="11rem" />
+                                        <p-chart type="line" ariaLabel="Product usage over the last nine days" [data]="lineChartData" [options]="lineChartOptions" class="min-h-44 w-full" width="100%" height="11rem" />
                                     </div>
                                 </div>
                                 <div class="w-full h-full flex flex-col p-3 rounded-xl bg-emphasis">
                                     <div class="font-medium text-color p-2">Churn Risk</div>
                                     <div class="flex-1 py-4 mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
-                                        <p-knob [(ngModel)]="churnRisk" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
+                                        <p-knob [(ngModel)]="churnRisk" ariaLabel="Churn risk" [size]="150" [strokeWidth]="8" valueTemplate="{value}%" class="pointer-events-none" />
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-4 w-full flex flex-col p-3 rounded-xl bg-emphasis">
                                 <div class="font-medium text-color p-2">Total Purchases</div>
                                 <div class="flex-1 py-4 px-2 w-full mt-2 flex items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-900 shadow-xs">
-                                    <p-chart type="bar" [data]="chartData2" [options]="chartOptions2" height="15rem" class="w-full" />
+                                    <p-chart type="bar" ariaLabel="Total purchases per month" [data]="chartData2" [options]="chartOptions2" height="15rem" class="w-full" />
                                 </div>
                             </div>
                         </div>

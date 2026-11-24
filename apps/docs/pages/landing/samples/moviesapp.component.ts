@@ -20,13 +20,13 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
     imports: [CommonModule, RouterModule, SelectButton, FormsModule, AvatarModule, TooltipModule, IconField, InputIcon, ButtonModule, InputTextModule, ProgressBar, Carousel, OverlayBadgeModule],
     template: `
         <div class="flex flex-wrap gap-4 items-center justify-between">
-            <p-select-button [(ngModel)]="value" [options]="options" aria-labelledby="basic" />
+            <p-select-button [(ngModel)]="value" [options]="options" />
             <div class="flex gap-2.5 items-center">
                 <p-icon-field iconPosition="left">
                     <p-input-icon class="pi pi-search"></p-input-icon>
-                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" aria-label="Search movies" />
                 </p-icon-field>
-                <p-button severity="secondary" outlined>
+                <p-button severity="secondary" ariaLabel="Notifications" outlined>
                     <p-overlay-badge severity="danger" badgeSize="small" styleClass="min-w-0! w-2.5! h-2.5!">
                         <i class="pi pi-bell"></i>
                     </p-overlay-badge>
@@ -38,19 +38,19 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
             <div class="flex items-center justify-between gap-2 mb-6">
                 <div class="text-color text-xl font-medium leading-7">Keep watching</div>
                 <div class="xl:flex hidden items-center gap-2">
-                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" severity="secondary" outlined />
-                    <p-button [disabled]="page === carouselData.length - page" (click)="nextPage()" icon="pi pi-chevron-right" severity="secondary" outlined />
+                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" ariaLabel="Previous movies" severity="secondary" outlined />
+                    <p-button [disabled]="page === carouselData.length - page" (click)="nextPage()" icon="pi pi-chevron-right" ariaLabel="Next movies" severity="secondary" outlined />
                 </div>
                 <div class="xl:hidden flex items-center gap-2">
-                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" severity="secondary" outlined />
-                    <p-button [disabled]="page === carouselData.length - 3" (click)="nextPage()" icon="pi pi-chevron-right" severity="secondary" outlined />
+                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" ariaLabel="Previous movies" severity="secondary" outlined />
+                    <p-button [disabled]="page === carouselData.length - 3" (click)="nextPage()" icon="pi pi-chevron-right" ariaLabel="Next movies" severity="secondary" outlined />
                 </div>
             </div>
             <p-carousel [value]="carouselData" [page]="page" [numVisible]="5" [numScroll]="1" [responsiveOptions]="responsiveOptions" [showIndicators]="false" [showNavigators]="false">
                 <ng-template #item let-item>
                     <div class="p-2 rounded-xl hover:bg-emphasis transition-colors cursor-pointer">
                         <div class="relative w-full aspect-195/118.5 rounded-lg overflow-hidden">
-                            <img [src]="item.image" class="w-full h-full object-cover" alt="Carousel Movie Image" />
+                            <img [src]="item.image" class="w-full h-full object-cover" alt="" />
                             <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
                                 {{ item.point }}
                             </div>
@@ -58,6 +58,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                                 <p-progress-bar
                                     [value]="item.watchedPercent"
                                     [showValue]="false"
+                                    [ariaLabel]="item.name + ' watched'"
                                     class="h-1.5! bg-surface-950! dark:bg-surface-50! rounded-full!"
                                     valueStyleClass="p-progressbar-value bg-surface-0! dark:bg-surface-950! rounded-full!"
                                 />
@@ -70,7 +71,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                                     {{ item.categories.join(', ') }}
                                 </div>
                             </div>
-                            <p-button *ngIf="item.bookmarked" icon="pi pi-bookmark-fill" severity="contrast" text rounded />
+                            <p-button *ngIf="item.bookmarked" icon="pi pi-bookmark-fill" [ariaLabel]="'Remove ' + item.name + ' from bookmarks'" severity="contrast" text rounded />
                         </div>
                     </div>
                 </ng-template>
@@ -89,7 +90,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-4 gap-y-6">
                 <div *ngFor="let movie of popularMovies" class="cursor-pointer">
                     <div class="relative aspect-259/174.5 rounded-lg overflow-hidden">
-                        <img class="w-full h-full object-cover" [src]="movie.image" alt="Popular Movie Cover" />
+                        <img class="w-full h-full object-cover" [src]="movie.image" alt="" />
                         <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
                             {{ movie.point }}
                         </div>
@@ -101,7 +102,7 @@ import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
                                 {{ movie.categories.join(', ') }}
                             </div>
                         </div>
-                        <p-button *ngIf="movie.bookmarked" icon="pi pi-bookmark-fill" severity="contrast" text rounded />
+                        <p-button *ngIf="movie.bookmarked" icon="pi pi-bookmark-fill" [ariaLabel]="'Remove ' + movie.name + ' from bookmarks'" severity="contrast" text rounded />
                     </div>
                 </div>
             </div>

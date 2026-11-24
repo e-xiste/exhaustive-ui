@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
     standalone: true,
     imports: [CommonModule, RouterModule, NgOptimizedImage],
     template: `
-        <section class="landing-footer pt-20 px-8 lg:px-20">
+        <footer class="landing-footer pt-20 px-8 lg:px-20">
             <div class="landing-footer-container">
                 <div class="flex flex-wrap z-10">
                     <div class="w-6/12 lg:w-3/12 flex">
@@ -54,25 +54,25 @@ import { RouterModule } from '@angular/router';
 
                 <hr class="section-divider" />
 
-                <aside class="landing-announcement">
+                <div class="landing-announcement">
                     <span class="landing-announcement-text">ExhaustiveUI is a community MIT licensed fork of PrimeNG, now closed source and using a commercial license.</span>
                     <a href="https://primeui.dev/nextchapter" target="_blank" rel="noopener noreferrer" class="landing-announcement-link">Read their announcement</a>
                     <span class="landing-announcement-version">ExhaustiveUI v22 supports Angular v22</span>
-                </aside>
+                </div>
 
                 <div class="flex flex-wrap justify-between py-12 gap-8">
                     <img ngSrc="logo.svg" height="40" width="200" alt="" class="dark:invert" />
                     <div class="flex items-center gap-2">
-                        <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" class="linkbox linkbox-icon">
+                        <a [href]="githubRepoUrl" target="_blank" rel="noopener noreferrer" aria-label="ExhaustiveUI on GitHub" class="linkbox linkbox-icon">
                             <i class="pi pi-github"></i>
                         </a>
-                        <a [href]="githubDiscussionsUrl" class="linkbox linkbox-icon">
+                        <a [href]="githubDiscussionsUrl" aria-label="GitHub Discussions" class="linkbox linkbox-icon">
                             <i class="pi pi-comments"></i>
                         </a>
                     </div>
                 </div>
             </div>
-        </section>
+        </footer>
     `
 })
 export class FooterSectionComponent {

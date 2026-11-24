@@ -24,17 +24,17 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
             <div class="flex flex-col gap-6 pt-3 pb-2 -mb-2 px-5 sticky top-0 bg-surface-0 dark:bg-surface-950 z-10">
                 <div class="flex items-center justify-between gap-6 text-color">
                     <div class="text-2xl font-medium lead">Chats</div>
-                    <p-button icon="pi pi-plus" text />
+                    <p-button icon="pi pi-plus" ariaLabel="New chat" text />
                 </div>
             </div>
             <div class="px-5">
                 <p-icon-field iconPosition="left">
                     <p-input-icon class="pi pi-search"> </p-input-icon>
-                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
+                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" aria-label="Search chats" class="w-full" />
                 </p-icon-field>
             </div>
             <div class="w-full px-5">
-                <p-select-button [(ngModel)]="value" [options]="options" aria-labelledby="basic" class="w-full" styleClass="w-full" />
+                <p-select-button [(ngModel)]="value" [options]="options" class="w-full" styleClass="w-full" />
             </div>
             <div class="flex-1 flex flex-col">
                 <div
@@ -83,13 +83,13 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <p-button icon="pi pi-phone" text />
-                    <p-button icon="pi pi-search" text />
-                    <p-button type="button" icon="pi pi-ellipsis-h" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
-                    <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                    <p-button icon="pi pi-phone" ariaLabel="Call ExhaustiveUI group" text />
+                    <p-button icon="pi pi-search" ariaLabel="Search in conversation" text />
+                    <p-button type="button" icon="pi pi-ellipsis-h" text (click)="chatMenu.toggle($event)" ariaLabel="Conversation options" ariaControls="chat_menu" />
+                    <p-menu #chatMenu id="chat_menu" [model]="menuItems" [popup]="true" />
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto flex flex-col gap-8 py-8 px-6">
+            <div tabindex="0" role="region" aria-label="Messages" class="flex-1 overflow-y-auto flex flex-col gap-8 py-8 px-6">
                 <div *ngFor="let message of chatMessages" class="flex items-start min-w-64 w-fit max-w-[60%]" [ngClass]="{ 'ml-auto mr-0 flex-row-reverse': message.type === 'sent' }">
                     <div
                         class="flex items-center gap-2 sticky top-0 transition-all"
@@ -135,11 +135,11 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
             </div>
             <div class="p-4 border-t border-surface flex items-end justify-between gap-2">
                 <div class="flex items-end gap-1 flex-1">
-                    <p-button icon="pi pi-face-smile" text />
-                    <p-button icon="pi pi-paperclip" text />
-                    <textarea pTextarea class="ml-1 flex-1 border-0 shadow-none max-h-32 min-h-9 bg-emphasis overflow-auto" autoResize rows="1" placeholder="Write your message..."></textarea>
+                    <p-button icon="pi pi-face-smile" ariaLabel="Insert emoji" text />
+                    <p-button icon="pi pi-paperclip" ariaLabel="Attach file" text />
+                    <textarea pTextarea aria-label="Message" class="ml-1 flex-1 border-0 shadow-none max-h-32 min-h-9 bg-emphasis overflow-auto" autoResize rows="1" placeholder="Write your message..."></textarea>
                 </div>
-                <p-button icon="pi pi-send" />
+                <p-button icon="pi pi-send" ariaLabel="Send message" />
             </div>
         </div>
         <div class="w-3/12 xl:block hidden min-w-40 py-6 px-3 overflow-auto">
@@ -148,29 +148,29 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
                 <div class="leading-6 font-medium text-color mt-4 w-full text-center">ExhaustiveUI</div>
                 <div class="leading-5 text-sm text-muted-color mt-1 w-full text-center">&#64;exhaustive-ui</div>
                 <div class="flex items-center justify-center flex-wrap gap-1 mt-4">
-                    <p-button icon="pi pi-phone text-muted-color" severity="secondary" text />
-                    <p-button icon="pi pi-video text-muted-color" severity="secondary" text />
-                    <p-button icon="pi pi-sign-in text-muted-color" severity="secondary" text />
-                    <p-button icon="pi pi-info-circle text-muted-color" severity="secondary" text />
-                    <p-button type="button" icon="pi pi-ellipsis-v text-muted-color" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
-                    <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                    <p-button icon="pi pi-phone text-muted-color" ariaLabel="Start voice call" severity="secondary" text />
+                    <p-button icon="pi pi-video text-muted-color" ariaLabel="Start video call" severity="secondary" text />
+                    <p-button icon="pi pi-sign-in text-muted-color" ariaLabel="Join group" severity="secondary" text />
+                    <p-button icon="pi pi-info-circle text-muted-color" ariaLabel="Group info" severity="secondary" text />
+                    <p-button type="button" icon="pi pi-ellipsis-v text-muted-color" severity="secondary" text (click)="groupMenu.toggle($event)" ariaLabel="Group options" ariaControls="group_menu" />
+                    <p-menu #groupMenu id="group_menu" [model]="menuItems" [popup]="true" />
                 </div>
             </div>
             <div class="flex flex-col gap-4 mt-4">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-bell text-color"></i>
-                    <div class="leading-6 font-medium text-color flex-1">Notification</div>
-                    <p-toggle-switch [(ngModel)]="notification" />
+                    <label for="chat-notification" class="leading-6 font-medium text-color flex-1">Notification</label>
+                    <p-toggle-switch [(ngModel)]="notification" inputId="chat-notification" />
                 </div>
                 <div class="flex items-center gap-2">
                     <i class="pi pi-volume-down text-color"></i>
-                    <div class="leading-6 font-medium text-color flex-1">Sound</div>
-                    <p-toggle-switch [(ngModel)]="sound" />
+                    <label for="chat-sound" class="leading-6 font-medium text-color flex-1">Sound</label>
+                    <p-toggle-switch [(ngModel)]="sound" inputId="chat-sound" />
                 </div>
                 <div class="flex items-center gap-2">
                     <i class="pi pi-download text-color"></i>
-                    <div class="leading-6 font-medium text-color flex-1">Save to downloads</div>
-                    <p-toggle-switch [(ngModel)]="download" />
+                    <label for="chat-download" class="leading-6 font-medium text-color flex-1">Save to downloads</label>
+                    <p-toggle-switch [(ngModel)]="download" inputId="chat-download" />
                 </div>
             </div>
             <div class="mt-6">
