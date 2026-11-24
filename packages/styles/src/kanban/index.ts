@@ -20,19 +20,34 @@ export const style = /*css*/ `
         overflow-x: auto;
         overflow-y: hidden;
         overscroll-behavior-x: contain;
+        scrollbar-width: thin;
     }
 
-    /* the edges of a board that scrolls fade out, so that a column cut by the edge reads as more to scroll */
+    /*
+     * the edges of a board that scrolls fade out, so that a column cut by the edge reads as more to scroll; the scrollbar
+     * stays visible as well, thin, and a second mask layer keeps it out of the fade
+     */
+    .p-kanban-board-overflow-left,
+    .p-kanban-board-overflow-right {
+        mask-size:
+            100% 100%,
+            100% 0.75rem;
+        mask-position:
+            0 0,
+            0 100%;
+        mask-repeat: no-repeat;
+    }
+
     .p-kanban-board-overflow-left {
-        mask-image: linear-gradient(to right, transparent, #000 2.5rem);
+        mask-image: linear-gradient(to right, transparent, #000 2.5rem), linear-gradient(#000, #000);
     }
 
     .p-kanban-board-overflow-right {
-        mask-image: linear-gradient(to left, transparent, #000 2.5rem);
+        mask-image: linear-gradient(to left, transparent, #000 2.5rem), linear-gradient(#000, #000);
     }
 
     .p-kanban-board-overflow-left.p-kanban-board-overflow-right {
-        mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+        mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent), linear-gradient(#000, #000);
     }
 
     .p-kanban-scrollable .p-kanban-board {

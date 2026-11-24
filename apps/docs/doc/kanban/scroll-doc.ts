@@ -17,8 +17,8 @@ const tasks = (from: number, count: number, prefix: string): Task[] => Array.fro
     template: `
         <app-docsectiontext>
             <p>
-                When the columns do not fit, they shrink to their minimum width, then the board scrolls horizontally and fades out the edges that hide columns. <i>scrollHeight</i> gives the board a height: the cards of each column then scroll under
-                its header, which stays visible. While a card is dragged near an edge, the board and the column scroll. On small screens a column takes most of the width and the board snaps from a column to the next one.
+                When the columns do not fit, they shrink to their minimum width, then the board scrolls horizontally, with a thin scrollbar, and fades out the edges that hide columns. <i>scrollHeight</i> gives the board a height: the cards of each
+                column then scroll under its header, which stays visible. While a card is dragged near an edge, the board and the column scroll. On small screens a column takes most of the width and the board snaps from a column to the next one.
             </p>
         </app-docsectiontext>
         <div class="card">
