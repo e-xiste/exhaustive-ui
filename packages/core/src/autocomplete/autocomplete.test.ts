@@ -3267,15 +3267,65 @@ describe('AutoComplete medium bug fixes', () => {
         const container = fixture.nativeElement.querySelector('ul[data-pc-section="inputmultiple"]') as HTMLElement;
         expect(container.getAttribute('role')).toBe('none');
         expect(container.hasAttribute('tabindex')).toBe(false);
-        expect(container.hasAttribute('aria-label')).toBe(false);
-        expect(container.hasAttribute('aria-orientation')).toBe(false);
+        expect(fixture.nativeElement.querySelector('[role="listbox"]')).toBeNull();
         expect(input().getAttribute('aria-label')).toBe('Tags');
 
         autocomplete.writeValue(['Alpha']);
         fixture.detectChanges();
-        expect(container.getAttribute('role')).toBe('listbox');
-        expect(container.getAttribute('tabindex')).toBe('-1');
-        expect(container.getAttribute('aria-label')).toBe('Tags');
+        const listbox = fixture.nativeElement.querySelector('[role="listbox"]') as HTMLElement;
+        expect(container.getAttribute('role')).toBe('none');
+        expect(container.contains(listbox)).toBe(true);
+        expect(listbox.getAttribute('aria-label')).toBe('Tags');
+    });
+
+    it('keeps the combobox out of the chip listbox and the remove icons out of the options (axe aria-required-children, nested-interactive)', () => {
+        autocomplete.writeValue(['Alpha', 'Beta']);
+        fixture.detectChanges();
+
+        const listbox = fixture.nativeElement.querySelector('[role="listbox"]') as HTMLElement;
+        expect(listbox.contains(input())).toBe(false);
+        expect(Array.from(listbox.children).every((child) => child.getAttribute('role') === 'option')).toBe(true);
+        listbox.querySelectorAll('[role="option"]').forEach((option) => {
+            expect(option.querySelector('[tabindex="0"], [role="button"]')).toBeNull();
+        });
+        expect(listbox.querySelector('.p-chip-remove-icon')?.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('moves the focus between the chips with the arrow keys and removes the focused chip with Backspace or Delete', async () => {
+        autocomplete.writeValue(['Alpha', 'Beta', 'Gamma']);
+        fixture.detectChanges();
+        const chips = () => Array.from(fixture.nativeElement.querySelectorAll('[role="option"]')) as HTMLElement[];
+        const key = (target: HTMLElement, code: string) => {
+            target.dispatchEvent(new KeyboardEvent('keydown', { key: code, code, bubbles: true, cancelable: true }));
+            fixture.detectChanges();
+        };
+
+        input().focus();
+        key(input(), 'ArrowLeft');
+        expect(document.activeElement).toBe(chips()[2]);
+        expect(chips()[2].classList).toContain('p-focus');
+
+        key(chips()[2], 'ArrowLeft');
+        expect(document.activeElement).toBe(chips()[1]);
+        key(chips()[1], 'ArrowLeft');
+        key(chips()[0], 'ArrowLeft');
+        expect(document.activeElement).toBe(chips()[0]);
+
+        key(chips()[0], 'ArrowRight');
+        expect(document.activeElement).toBe(chips()[1]);
+
+        key(chips()[1], 'Delete');
+        expect(autocomplete.modelValue()).toEqual(['Alpha', 'Gamma']);
+        expect(document.activeElement).toBe(input());
+
+        key(input(), 'ArrowLeft');
+        key(chips()[1], 'Backspace');
+        expect(autocomplete.modelValue()).toEqual(['Alpha']);
+
+        key(input(), 'ArrowLeft');
+        key(chips()[0], 'ArrowRight');
+        expect(document.activeElement).toBe(input());
+        expect(autocomplete.focusedMultipleOptionIndex()).toBe(-1);
     });
 
     it('names the dropdown button from the locale when dropdownAriaLabel is unset', () => {

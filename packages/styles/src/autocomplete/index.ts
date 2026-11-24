@@ -212,6 +212,15 @@ export const style = /*css*/ `
         color: dt('autocomplete.chip.focus.color');
     }
 
+    .p-autocomplete-chip-item {
+        border-radius: dt('autocomplete.chip.border.radius');
+    }
+
+    .p-autocomplete-chip-item:focus-visible {
+        outline: dt('focus.ring.width') dt('focus.ring.style') dt('focus.ring.color');
+        outline-offset: dt('focus.ring.offset');
+    }
+
     .p-autocomplete-input-chip {
         flex: 1 1 auto;
         display: inline-flex;

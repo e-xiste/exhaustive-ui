@@ -20,6 +20,7 @@ import {
     untracked,
     ViewEncapsulation,
     viewChild,
+    viewChildren,
     contentChild,
     contentChildren,
     output
@@ -130,59 +131,66 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
         }
 
         @if (multiple()) {
-            <ul
-                #multiContainer
-                [pBind]="ptm('inputMultiple')"
-                [class]="cx('inputMultiple')"
-                [attr.data-p]="inputMultipleDataP()"
-                [attr.tabindex]="hasChips() ? -1 : undefined"
-                [attr.role]="hasChips() ? 'listbox' : 'none'"
-                [attr.aria-label]="hasChips() ? ariaLabel() : undefined"
-                [attr.aria-labelledby]="hasChips() ? ariaLabelledBy() : undefined"
-                [attr.aria-orientation]="hasChips() ? 'horizontal' : undefined"
-                [attr.aria-activedescendant]="hasChips() && focused() ? focusedMultipleOptionId() : undefined"
-                (focus)="onMultipleContainerFocus($event)"
-                (blur)="onMultipleContainerBlur($event)"
-                (keydown)="onMultipleContainerKeyDown($event)"
-            >
-                @for (option of modelValue(); track $index; let i = $index) {
-                    <li
-                        #token
-                        [pBind]="ptm('chipItem')"
-                        [class]="cx('chipItem', { i })"
-                        [attr.id]="_id() + '_multiple_option_' + i"
-                        role="option"
-                        [attr.aria-label]="getOptionLabel(option)"
-                        [attr.aria-setsize]="modelValue().length"
-                        [attr.aria-posinset]="i + 1"
-                        [attr.aria-selected]="true"
-                    >
-                        <p-chip
-                            [pt]="ptm('pcChip')"
-                            [class]="cx('pcChip')"
-                            [label]="!selectedItemTemplate() && !_selectedItemTemplate() && getOptionLabel(option)"
-                            [disabled]="$disabled()"
-                            [removable]="!readonly()"
-                            (onRemove)="!readonly() ? removeOption($event, i) : ''"
-                            [unstyled]="unstyled()"
+            <!-- The box only lays out the chips and the input: the chips are a listbox of their own, so the combobox is not inside it -->
+            <ul [pBind]="ptm('inputMultiple')" [class]="cx('inputMultiple')" [attr.data-p]="inputMultipleDataP()" role="none">
+                @if (hasChips()) {
+                    <li role="none" style="display: contents">
+                        <ul
+                            #multiContainer
+                            style="display: contents; list-style: none"
+                            role="listbox"
+                            [attr.aria-label]="ariaLabel()"
+                            [attr.aria-labelledby]="ariaLabelledBy()"
+                            aria-orientation="horizontal"
+                            [attr.aria-disabled]="$disabled() || undefined"
+                            (focusin)="onMultipleContainerFocus($event)"
+                            (focusout)="onMultipleContainerBlur($event)"
+                            (keydown)="onMultipleContainerKeyDown($event)"
                         >
-                            <ng-container *ngTemplateOutlet="selectedItemTemplate() || _selectedItemTemplate(); context: { $implicit: option }"></ng-container>
-                            <ng-template #removeicon>
-                                @if (!removeIconTemplate() && !_removeIconTemplate()) {
-                                    <span [pBind]="ptm('chipIcon')" [class]="cx('chipIcon')" (click)="!readonly() && !$disabled() ? removeOption($event, i) : ''">
-                                        <svg data-p-icon="times-circle" [class]="cx('chipIcon')" [attr.aria-hidden]="true" />
-                                    </span>
-                                }
-                                @if (removeIconTemplate() || _removeIconTemplate()) {
-                                    <span [pBind]="ptm('chipIcon')" [attr.aria-hidden]="true">
-                                        <ng-template *ngTemplateOutlet="removeIconTemplate() || _removeIconTemplate(); context: { removeCallback: removeOption.bind(this), index: i, class: cx('chipIcon') }"></ng-template>
-                                    </span>
-                                }
-                            </ng-template>
-                        </p-chip>
+                            @for (option of modelValue(); track $index; let i = $index) {
+                                <li
+                                    #token
+                                    [pBind]="ptm('chipItem')"
+                                    [class]="cx('chipItem', { i })"
+                                    [attr.id]="_id() + '_multiple_option_' + i"
+                                    role="option"
+                                    [attr.tabindex]="$disabled() ? undefined : -1"
+                                    [attr.aria-label]="getOptionLabel(option)"
+                                    [attr.aria-setsize]="modelValue().length"
+                                    [attr.aria-posinset]="i + 1"
+                                    [attr.aria-selected]="true"
+                                    (focus)="focusedMultipleOptionIndex.set(i)"
+                                >
+                                    <p-chip
+                                        [pt]="ptm('pcChip')"
+                                        [class]="cx('pcChip')"
+                                        [label]="!selectedItemTemplate() && !_selectedItemTemplate() && getOptionLabel(option)"
+                                        [disabled]="$disabled()"
+                                        [removable]="!readonly()"
+                                        [removeIconFocusable]="false"
+                                        (onRemove)="!readonly() ? removeOption($event, i) : ''"
+                                        [unstyled]="unstyled()"
+                                    >
+                                        <ng-container *ngTemplateOutlet="selectedItemTemplate() || _selectedItemTemplate(); context: { $implicit: option }"></ng-container>
+                                        <ng-template #removeicon>
+                                            @if (!removeIconTemplate() && !_removeIconTemplate()) {
+                                                <span [pBind]="ptm('chipIcon')" [class]="cx('chipIcon')" (click)="!readonly() && !$disabled() ? removeOption($event, i) : ''">
+                                                    <svg data-p-icon="times-circle" [class]="cx('chipIcon')" [attr.aria-hidden]="true" />
+                                                </span>
+                                            }
+                                            @if (removeIconTemplate() || _removeIconTemplate()) {
+                                                <span [pBind]="ptm('chipIcon')" [attr.aria-hidden]="true">
+                                                    <ng-template *ngTemplateOutlet="removeIconTemplate() || _removeIconTemplate(); context: { removeCallback: removeOption.bind(this), index: i, class: cx('chipIcon') }"></ng-template>
+                                                </span>
+                                            }
+                                        </ng-template>
+                                    </p-chip>
+                                </li>
+                            }
+                        </ul>
                     </li>
                 }
-                <li [pBind]="ptm('inputChip')" [class]="cx('inputChip')" role="presentation">
+                <li [pBind]="ptm('inputChip')" [class]="cx('inputChip')" role="none">
                     <input
                         #focusInput
                         #multiIn
@@ -748,6 +756,8 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     readonly multiContainerEL = viewChild<Nullable<ElementRef>>('multiContainer');
 
+    readonly chipItemEls = viewChildren<ElementRef<HTMLElement>>('token');
+
     readonly dropdownButton = viewChild<Nullable<ElementRef>>('ddBtn');
 
     readonly itemsViewChild = viewChild<Nullable<ElementRef>>('items');
@@ -1228,6 +1238,11 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
     }
 
     onMultipleContainerBlur(event) {
+        // moving from a chip to another one keeps the focus in the list
+        if (event?.relatedTarget && this.multiContainerEL()?.nativeElement?.contains(event.relatedTarget)) {
+            return;
+        }
+
         this.focusedMultipleOptionIndex.set(-1);
         this.focused.set(false);
     }
@@ -1249,12 +1264,18 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
                 break;
 
             case 'Backspace':
+            case 'Delete':
                 this.onBackspaceKeyOnMultiple(event);
                 break;
 
             default:
                 break;
         }
+    }
+
+    focusChip(index: number) {
+        this.focusedMultipleOptionIndex.set(index);
+        focus(this.chipItemEls()[index]?.nativeElement);
     }
 
     onInputBlur(event) {
@@ -1449,8 +1470,10 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
         this.focusedOptionIndex.set(-1);
         if (this.multiple()) {
             if (isEmpty(target.value) && this.hasSelectedOption()) {
-                focus(this.multiContainerEL()?.nativeElement);
-                this.focusedMultipleOptionIndex.set(this.modelValue().length);
+                // the chips are a listbox next to the input: focus the last chip
+                event.preventDefault();
+                event.stopPropagation();
+                this.focusChip(this.modelValue().length - 1);
             } else {
                 event.stopPropagation(); // To prevent onArrowLeftKeyOnMultiple method
             }
@@ -1578,17 +1601,20 @@ export class AutoComplete<T = any> extends BaseInput<AutoCompletePassThrough> {
 
     onArrowLeftKeyOnMultiple(event) {
         const optionIndex = this.focusedMultipleOptionIndex() < 1 ? 0 : this.focusedMultipleOptionIndex() - 1;
-        this.focusedMultipleOptionIndex.set(optionIndex);
+        event?.preventDefault?.();
+        this.focusChip(optionIndex);
     }
 
     onArrowRightKeyOnMultiple(event) {
         let optionIndex = this.focusedMultipleOptionIndex();
         optionIndex++;
 
-        this.focusedMultipleOptionIndex.set(optionIndex);
+        event?.preventDefault?.();
         if (optionIndex > this.modelValue().length - 1) {
             this.focusedMultipleOptionIndex.set(-1);
             focus(this.inputEL()?.nativeElement);
+        } else {
+            this.focusChip(optionIndex);
         }
     }
 

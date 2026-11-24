@@ -14,7 +14,10 @@ import { Component } from '@angular/core';
                 <i>aria-autocomplete</i>, <i>aria-haspopup</i> and <i>aria-expanded</i> attributes. The relation between the input and the popup is created with <i>aria-controls</i> and <i>aria-activedescendant</i> attribute is used to instruct
                 screen reader which option to read during keyboard navigation within the popup list.
             </p>
-            <p>In multiple mode, chip list uses <i>listbox</i> role whereas each chip has the <i>option</i> role with <i>aria-label</i> set to the label of the chip.</p>
+            <p>
+                In multiple mode, the chips are a <i>listbox</i> next to the input, named like the input, and each chip has the <i>option</i> role with <i>aria-label</i> set to the label of the chip. The chips receive the focus with the arrow keys,
+                and their remove icon is hidden from screen readers and from the tab order: use <i>backspace</i> or <i>delete</i> on a focused chip instead.
+            </p>
             <p>
                 The popup list has an id that refers to the <i>aria-controls</i> attribute of the input element and uses <i>listbox</i> as the role. Each list item has <i>option</i> role and an id to match the <i>aria-activedescendant</i> of the
                 input element.
@@ -128,10 +131,8 @@ import { Component } from '@angular/core';
                         <td>Moves focus to the next chip, if there is none then input field receives the focus.</td>
                     </tr>
                     <tr>
-                        <td>
-                            <i>backspace</i>
-                        </td>
-                        <td>Deletes the chips and adds focus to the input field.</td>
+                        <td><i>backspace</i> / <i>delete</i></td>
+                        <td>Deletes the focused chip and moves the focus to the input field.</td>
                     </tr>
                 </tbody>
             </table>
