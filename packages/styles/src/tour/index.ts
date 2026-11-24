@@ -71,11 +71,6 @@ export const style = /*css*/ `
         transition: none;
     }
 
-    .p-tour-card:focus-visible {
-        outline: dt('tour.card.focus.ring.width') dt('tour.card.focus.ring.style') dt('tour.card.focus.ring.color');
-        outline-offset: dt('tour.card.focus.ring.offset');
-    }
-
     .p-tour-arrow {
         position: absolute;
         width: dt('tour.arrow.size');

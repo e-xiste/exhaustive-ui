@@ -16,13 +16,7 @@ export const card: TourTokenSections.Card = {
     shadow: '{overlay.popover.shadow}',
     padding: '1rem',
     width: '22rem',
-    gap: '0.75rem',
-    focusRing: {
-        width: '{focus.ring.width}',
-        style: '{focus.ring.style}',
-        color: '{focus.ring.color}',
-        offset: '{focus.ring.offset}'
-    }
+    gap: '0.75rem'
 };
 
 export const arrow: TourTokenSections.Arrow = {

@@ -88,6 +88,9 @@ export declare namespace TourTokenSections {
          * @designToken tour.card.gap
          */
         gap?: string;
+        /**
+         * @deprecated since 22.8.5, the card no longer shows a focus ring: it is the target of the focus when a step opens, not a control.
+         */
         focusRing?: {
             /**
              * Focus ring width of card
