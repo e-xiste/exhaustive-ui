@@ -1,6 +1,6 @@
 {
     "name": "@exhaustive-ui/styled",
-    "version": "22.8.2",
+    "version": "22.8.3",
     "author": "e-xiste",
     "description": "Styled utilities for ExhaustiveUI Libraries",
     "keywords": ["styled", "css", "style utilities", "exhaustive", "angular"],

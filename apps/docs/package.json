@@ -1,7 +1,7 @@
 {
     "name": "docs",
     "private": true,
-    "version": "22.8.2",
+    "version": "22.8.3",
     "license": "MIT",
     "type": "module",
     "scripts": {
