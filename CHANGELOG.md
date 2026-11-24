@@ -4,7 +4,9 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.8.4 (2026-11-24)
+
+Select is named by its `<label for>`, as in FloatLabel and IftaLabel.
 
 ### Bug Fixes
 
