@@ -4,11 +4,22 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.8.2 (2026-11-24)
+
+AutoComplete multiple mode passes axe, and the landing page is fully accessible.
+
+### Features
+
+- **chip:** `removeIconFocusable`: set it to false to keep the remove icon clickable but out of the tab order and hidden from screen readers, for a chip whose parent removes it from the keyboard.
+
+### Bug Fixes
+
+- **autocomplete:** in multiple mode the chips are a listbox next to the input instead of around it, so the combobox is no longer inside the listbox (axe `aria-required-children`), and the chip remove icons are no longer focusable buttons inside the options (axe `nested-interactive`). The arrow keys now move the focus to the chips themselves, which show the focus ring; Delete removes the focused chip like Backspace. The layout is unchanged.
 
 ### Documentation
 
-- **landing:** fix every axe violation on the landing page (light and dark, 1440px and 390px, every hero sample app and the Settings drawer) except two AutoComplete issues tracked separately. The hero sidebar entries are now keyboard reachable buttons in a `nav`, with an accessible name in slim mode and `aria-current` on the selected one; icon-only buttons, footer links, inputs, toggles, checkboxes, charts, knobs, the meter group and progress bars are named through the components' own inputs (`ariaLabel`, `ariaLabelledBy`, `inputId`); images get a real or empty alt; the content sections sit in a `main` landmark, the topbar is a `header` and the landing footer a `footer`; the Inbox section titles meet the contrast ratio.
+- **autocomplete:** the Accessibility section describes the chip listbox and the Delete key.
+- **landing:** fix every axe violation on the landing page (light and dark, 1440px and 390px, every hero sample app and the Settings drawer). The hero sidebar entries are now keyboard reachable buttons in a `nav`, with an accessible name in slim mode and `aria-current` on the selected one; icon-only buttons, footer links, inputs, toggles, checkboxes, charts, knobs, the meter group and progress bars are named through the components' own inputs (`ariaLabel`, `ariaLabelledBy`, `inputId`); images get a real or empty alt; the content sections sit in a `main` landmark, the topbar is a `header` and the landing footer a `footer`; the Inbox section titles meet the contrast ratio.
 
 ## 22.8.1 (2026-11-24)
 
