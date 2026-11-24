@@ -11,9 +11,10 @@ import { Component } from '@angular/core';
         <app-docsectiontext>
             <h3>Screen Reader</h3>
             <p>
-                Value to describe the component can either be provided with <i>ariaLabelledBy</i> or <i>ariaLabel</i> props. The select element has a <i>combobox</i> role in addition to <i>aria-haspopup</i> and <i>aria-expanded</i> attributes. If the
-                editable option is enabled <i>aria-autocomplete</i> is also added. The relation between the combobox and the popup is created with <i>aria-controls</i> and <i>aria-activedescendant</i> attribute is used to instruct screen reader which
-                option to read during keyboard navigation within the popup list.
+                Value to describe the component can either be provided with <i>ariaLabelledBy</i> or <i>ariaLabel</i> props. Without them, a <i>label</i> whose <i>for</i> matches <i>inputId</i>, as in FloatLabel and IftaLabel, names the combobox
+                through <i>aria-labelledby</i>; the label gets an id if it has none. The select element has a <i>combobox</i> role in addition to <i>aria-haspopup</i> and <i>aria-expanded</i> attributes. If the editable option is enabled
+                <i>aria-autocomplete</i> is also added. The relation between the combobox and the popup is created with <i>aria-controls</i> and <i>aria-activedescendant</i> attribute is used to instruct screen reader which option to read during
+                keyboard navigation within the popup list.
             </p>
             <p>
                 The popup list has an id that refers to the <i>aria-controls</i> attribute of the <i>combobox</i> element and uses <i>listbox</i> as the role. Each list item has an <i>option</i> role, an id to match the

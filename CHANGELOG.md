@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **select:** a `<label for>` matching `inputId` (FloatLabel, IftaLabel or a plain label) now names the non editable combobox through `aria-labelledby`. The combobox is a span, which a label does not name natively, so it had no accessible name when empty (axe `aria-input-field-name`) and was named by its value otherwise.
+
+### Documentation
+
+- **select:** the Accessibility section describes the label association.
+
 ## 22.8.3 (2026-11-24)
 
 With Signal Forms, fields are styled as invalid once touched or submitted, not on page load.
