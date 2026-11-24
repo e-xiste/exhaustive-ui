@@ -279,6 +279,13 @@ export const style = /*css*/ `
         text-align: center;
     }
 
+    /* week numbers are information, not disabled dates: muted, with a readable contrast */
+    .p-datepicker-weekheader,
+    .p-datepicker-weeklabel-container {
+        color: dt('text.muted.color');
+        font-weight: normal;
+    }
+
     .p-datepicker-month-view {
         margin: dt('datepicker.month.view.margin');
     }

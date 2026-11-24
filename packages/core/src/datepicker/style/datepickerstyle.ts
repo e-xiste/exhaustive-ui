@@ -54,9 +54,9 @@ const classes = {
     decade: 'p-datepicker-decade',
     pcNextButton: 'p-datepicker-next-button',
     dayView: 'p-datepicker-day-view',
-    weekHeader: 'p-datepicker-weekheader p-disabled',
+    weekHeader: 'p-datepicker-weekheader',
     weekNumber: 'p-datepicker-weeknumber',
-    weekLabelContainer: 'p-datepicker-weeklabel-container p-disabled',
+    weekLabelContainer: 'p-datepicker-weeklabel-container',
     weekDayCell: 'p-datepicker-weekday-cell',
     weekDay: 'p-datepicker-weekday',
     dayCell: ({ date }) => [
