@@ -4,6 +4,23 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **scheduler:** in the week and day views, the events outside `dayStartHour` and `dayEndHour` are no longer hidden without a trace: a "N earlier" or "N later" button on the top or bottom edge of the day lists them in the popover of the month view. New labels `earlier`, `earlierAriaLabel`, `later` and `laterAriaLabel`.
+
+### Bug Fixes
+
+- **kanban:** a board that scrolls keeps its fading edges and shows a thin scrollbar, which the fade no longer hides at its ends.
+- **tour:** the card no longer shows a focus ring when a step opens: it receives the focus so that screen readers read the step, but it is not a control. The buttons keep their focus ring. The `card.focusRing` design tokens are deprecated and unused.
+- **multiselect, cascadeselect, treeselect:** a disabled field carries `aria-disabled` on its root, since its visible label is outside the combobox, so accessibility checkers treat its muted text as disabled (axe `color-contrast`).
+- **datepicker:** the week numbers and their header are no longer styled as disabled; they use the muted text color, with a readable contrast.
+
+### Documentation
+
+- **scheduler:** the views demo has an event outside the visible hours.
+
 ## 22.8.4 (2026-11-24)
 
 Select is named by its `<label for>`, as in FloatLabel and IftaLabel.
