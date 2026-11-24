@@ -16,7 +16,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
         <app-docsectiontext>
             <p>
                 Mention can also be used with <a href="https://angular.dev/guide/forms/signals/overview" target="_blank" rel="noopener noreferrer" class="doc-link">Angular Signal Forms</a>. The <i>[formField]</i> directive binds the component to a
-                field holding the text. The field also sets the <i>invalid</i> state of the component, so the component is styled as invalid before any interaction, while the message appears once the field is touched or the form is submitted.
+                field holding the text. The field also sets the <i>invalid</i> and <i>touched</i> states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the message below.
             </p>
         </app-docsectiontext>
         <p-toast />

@@ -17,8 +17,8 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
             <p>
                 InputChips can also be used with <a href="https://angular.dev/guide/forms/signals/overview" target="_blank" rel="noopener noreferrer" class="doc-link">Angular Signal Forms</a>. The <i>[formField]</i> directive binds the component to a
                 field holding an array of strings. Signal Forms' <i>required</i> does not treat an empty array as empty, so use <i>minLength(field, 1)</i> to require a chip; <i>maxLength</i> on the field makes more chips invalid without blocking them
-                (use the <i>max</i> input to stop adding), while <i>maxChipLength</i> limits the length of each chip. The field also sets the <i>invalid</i> state of the component, so it is styled as invalid before any interaction, while the message
-                appears once the field is touched.
+                (use the <i>max</i> input to stop adding), while <i>maxChipLength</i> limits the length of each chip. The field also sets the <i>invalid</i> and <i>touched</i> states of the component, so it is styled as invalid once the field is
+                touched or the form is submitted, like the message below.
             </p>
         </app-docsectiontext>
         <p-toast />

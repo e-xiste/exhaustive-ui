@@ -4,6 +4,16 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Bug Fixes
+
+- **forms:** with Signal Forms, a field bound with `[formField]` is no longer styled as invalid (red border, `aria-invalid`) before the user touches it. Signal Forms write the field's validity to the `invalid` input of the component, which overrode an `[invalid]` binding; the form components now also take the `touched` state Signal Forms provide and show `invalid` once the field is touched or the form is submitted, like the error messages. Without a `touched` value, `invalid` applies at once as before.
+
+### Documentation
+
+- **forms:** the Signal Forms sections describe the touched behaviour, and the v22 migration checklist no longer lists it as a known issue.
+
 ## 22.8.2 (2026-11-24)
 
 AutoComplete multiple mode passes axe, and the landing page is fully accessible.

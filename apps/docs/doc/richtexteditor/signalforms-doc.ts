@@ -26,7 +26,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <div class="flex flex-col gap-2">
                     <label id="sf-label" class="font-medium">Review</label>
                     @let review = reviewForm.review();
-                    <p-rich-text-editor [formField]="reviewForm.review" ariaLabelledBy="sf-label" [toolbar]="['bold', 'italic', 'blockquote']" [maxLength]="280" [showCount]="true" minHeight="5rem" [invalid]="review.invalid() && review.touched()" />
+                    <p-rich-text-editor [formField]="reviewForm.review" ariaLabelledBy="sf-label" [toolbar]="['bold', 'italic', 'blockquote']" [maxLength]="280" [showCount]="true" minHeight="5rem" />
                     @if (review.invalid() && review.touched()) {
                         <p-message severity="error" size="small" variant="simple">A review is required.</p-message>
                     }
