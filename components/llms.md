@@ -16,11 +16,11 @@ The llms-full.txt file is a complete list of all the pages in the ExhaustiveUI d
 
 ## .md extension
 
-Add a .md to a page's URL to display a Markdown version of that page.
+Add .md to the address of a page to read its Markdown version: /button.md , /migration/primeng.md . Clients that ask for Markdown with the Accept: text/markdown header, as several coding agents do, receive it at the normal address, and the HTML pages link to it with rel="alternate" .
 
 ## Agent Skill
 
-The markdown files above are also bundled as an Agent Skill , the SKILL.md format supported by coding agents such as Claude Code, Codex, Cursor and OpenCode. Once installed, the agent reads the component docs, API tables and guides from disk whenever it works on ExhaustiveUI code, instead of fetching them from this site each time. Install it with the skills CLI , which asks which agents to set it up for. By default the skill is installed into the current project, so your team gets it too. Add -g to install it for your user instead. You can also download the zip and extract it into a folder named exhaustive-ui in your agent's skills directory.
+The markdown files above are also bundled as an Agent Skill , the SKILL.md format supported by coding agents such as Claude Code, Codex, Cursor and OpenCode. Once installed, the agent reads the component docs, API tables and guides from disk whenever it works on ExhaustiveUI code, instead of fetching them from this site each time. Install it with the skills CLI , which asks which agents to set it up for. By default the skill is installed into the current project, so your team gets it too. Add -g to install it for your user instead. You can also download the zip and extract it into a folder named exhaustive-ui in your agent's skills directory. In Claude Code, the plugin installs a short skill, which reads the docs of the installed version, together with the MCP server:
 
 ## MCP Server
 

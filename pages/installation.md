@@ -49,6 +49,15 @@ ng add @exhaustive-ui/core --skip-install
 ng add @exhaustive-ui/core --project=admin
 ```
 
+To start from an application that is already set up, with the instructions and the MCP server for coding agents, copy the template:
+
+```bash
+npx tiged e-xiste/exhaustive-ui/templates/angular my-app
+cd my-app
+npm install
+npm start
+```
+
 If the schematic cannot find a providers array to update it prints the three manual steps instead of guessing, so nothing in your workspace is rewritten unexpectedly. If it detects an existing `primeng` or
 `@openng/optimus-ui` dependency it changes nothing and fails with an error rather than reporting success, and points you at the `migrate-from-primeng` or `migrate-from-optimus` schematic, described in the
 [PrimeNG](https://exhaustive-ui.com/migration/primeng) and [Optimus UI](https://exhaustive-ui.com/migration/optimus) migration guides. It does not run that schematic for you. The Angular CLI installs

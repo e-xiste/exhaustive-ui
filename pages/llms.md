@@ -45,7 +45,7 @@ structured format, making it easier for LLMs to retrieve relevant information.
 
 [
 
-](https://exhaustive-ui.com/llms/llms.txt)
+](https://exhaustive-ui.com/llms.txt)
 
 ## /llms-full.txt
 
@@ -53,15 +53,16 @@ The `llms-full.txt` file is a complete list of all the pages in the ExhaustiveUI
 
 [
 
-](https://exhaustive-ui.com/llms/llms-full.txt)
+](https://exhaustive-ui.com/llms-full.txt)
 
 ## .md extension
 
-Add a `.md` to a page's URL to display a Markdown version of that page.
+Add `.md` to the address of a page to read its Markdown version: `/button.md`, `/migration/primeng.md`. Clients that ask for Markdown with the `Accept: text/markdown` header, as several
+coding agents do, receive it at the normal address, and the HTML pages link to it with `rel="alternate"`.
 
 [
 
-](https://exhaustive-ui.com/llms/components/button.md)
+](https://exhaustive-ui.com/button.md)
 
 ## Agent Skill
 
@@ -83,6 +84,13 @@ agent's skills directory.
 [
 
 ](https://exhaustive-ui.com/llms/exhaustive-ui-skill.zip)
+
+In Claude Code, the plugin installs a short skill, which reads the docs of the installed version, together with the MCP server:
+
+```bash
+/plugin marketplace add e-xiste/exhaustive-ui
+/plugin install exhaustive-ui@exhaustive-ui
+```
 
 ## MCP Server
 
