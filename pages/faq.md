@@ -12,7 +12,7 @@ Yes, and yes. Every package is MIT licensed, and the code we forked was MIT too,
 ### Is this an official PrimeNG fork? Are you affiliated with PrimeTek?
 
 No. ExhaustiveUI is an independent community fork, not affiliated with, endorsed by, or sponsored by PrimeTek. It is a fork of
-[Optimus UI](https://github.com/openng-org/optimus-ui) (OpenNG), itself a repository seeded with PrimeNG's MIT licensed code and history, not a fork of the archived
+[Optimus UI](https://github.com/openng-org/optimus-ui) (OpenNG), itself a repository seeded with PrimeNG's MIT licensed code and history, not a GitHub fork of the
 `primefaces/primeng` repository.
 
 ### Which PrimeNG version is this forked from?

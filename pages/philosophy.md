@@ -4,7 +4,7 @@ Why ExhaustiveUI exists, what it commits to, and where it stops.
 
 ## Why This Fork Exists
 
-In June 2026 PrimeTek archived the PrimeNG repository and moved future major versions, starting with v22, to a commercial license. They explained their reasoning in
+In June 2026 PrimeTek moved future major versions of PrimeNG, starting with v22, to a commercial license, and the repository of the MIT versions now receives security fixes only. They explained their reasoning in
 [their own announcement](https://primeui.dev/nextchapter), and it is worth reading. Maintaining a component library of this size for a decade, largely for free, is genuinely hard,
 and we do not think the decision was made lightly.
 

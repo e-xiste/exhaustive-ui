@@ -4,13 +4,14 @@ Moving a PrimeNG v21 application to ExhaustiveUI: the migrate-from-primeng schem
 
 ## PrimeNG license change: your options
 
-PrimeNG v21 is the last version published under the MIT license. From v22, PrimeTek distributes PrimeNG under its own commercial license, with a free Community tier for individuals and non-profits; see
+PrimeNG v21 is the last version published under the MIT license. From v22, PrimeTek distributes PrimeNG under its own commercial license, with a free Community license for individuals, students and small organizations that meet its
+conditions; see
 [their announcement](https://primeui.dev/nextchapter) for the terms. Releases already published under MIT stay MIT.
 
 An application on PrimeNG v21 has three ways forward:
 
-- **Stay on PrimeNG v21.** Nothing to do today, but no more open source fixes, and no support for Angular 22 and later.
-- **Move to PrimeNG v22 or later** under PrimeTek's license, if your organisation qualifies for the Community tier or buys a commercial license.
+- **Stay on PrimeNG v21.** Nothing to do today: PrimeTek keeps publishing security fixes for it. Other bugs are no longer fixed there, and it does not support Angular 22 and later.
+- **Move to PrimeNG v22 or later** under PrimeTek's license, if your organisation qualifies for the Community license or buys a commercial license.
 - **Move to an MIT fork of v21.** [Optimus UI](https://github.com/openng-org/optimus-ui) is the community fork; ExhaustiveUI forks Optimus UI and ships for Angular 22, with the components on Signals and close to 400 inherited bugs fixed. This guide covers the move to ExhaustiveUI; from Optimus UI, follow the [Optimus UI guide](https://exhaustive-ui.com/migration/optimus) instead.
 
 ## Overview
