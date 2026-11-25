@@ -22,6 +22,20 @@ const MAX_EXAMPLE_LENGTH = 3000;
 
 const EXAMPLE_SECTIONS = ['basic', 'usage', 'default', 'import'];
 
+/** Sections whose example only shows a state of the component, without its data: the shortest, and the least useful. */
+const STATE_SECTIONS = ['disabled', 'loading'];
+
+/** Inputs worth detailing although no documentation example uses them, per entry point. */
+const DETAILED_INPUTS = {
+    datepicker: ['touchUI'],
+    dialog: ['appendTo'],
+    fileupload: ['customUpload'],
+    image: ['previewImageSrc'],
+    inputmask: ['mask', 'showClear'],
+    toast: ['life'],
+    treetable: ['customSort']
+};
+
 const oneLine = (text = '') =>
     text
         .replace(/\s+/g, ' ')
@@ -80,7 +94,7 @@ function exampleOf(component) {
     const withCode = sections.filter((s) => s.examples?.typescript);
     const preferred = EXAMPLE_SECTIONS.map((id) => withCode.find((s) => s.id === id)).find(Boolean);
     // A long demo page drowns the card: fall back to the shortest example of the component.
-    const shortest = [...withCode].sort((a, b) => a.examples.typescript.length - b.examples.typescript.length)[0];
+    const [shortest] = withCode.toSorted((a, b) => STATE_SECTIONS.includes(a.id) - STATE_SECTIONS.includes(b.id) || a.examples.typescript.length - b.examples.typescript.length);
     const section = preferred && preferred.examples.typescript.length <= MAX_EXAMPLE_LENGTH ? preferred : shortest;
     return section ? { title: section.label, code: section.examples.typescript.trim() } : undefined;
 }
@@ -99,6 +113,7 @@ export function renderCard(entryPoint, component, types) {
     const main = declarations.find(own) ?? declarations.find((d) => selectorsOf(d).some((s) => /^p-/.test(s))) ?? declarations[0];
     const examples = (component?.sections ?? []).map((s) => s.examples?.typescript).filter(Boolean);
     const used = usedNames(examples);
+    for (const name of DETAILED_INPUTS[entryPoint.name] ?? []) used.add(name);
     const exports = [...new Set([...declarations.map((d) => d.className), ...(entryPoint.modules ?? [])])];
     const title = component?.title?.replace(/^Angular\s+|\s+(Component|Directive)$/g, '') ?? entryPoint.name;
     const lines = [];

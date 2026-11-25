@@ -4,6 +4,12 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Documentation
+
+- **llms:** in the Markdown documentation and the MCP server, the sections of a component have the title and the order they have on the site ("Pagination: Basic" instead of "paginatorbasic-doc"). The sections that are not on the site, left from older versions, are no longer included.
+
 ## 22.9.0 (2026-11-25)
 
 `ng add` sets up your AI coding tools; the MCP server joins the official MCP registry.

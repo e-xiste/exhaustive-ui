@@ -5,6 +5,7 @@ import ComponentTokens from '@exhaustive-ui/themes/tokens';
 import { generateAgentSkill } from './build-llm-skill.mjs';
 import { renderAgentsMd, checkRenames } from './llm/agents.mjs';
 import { generateCards } from './llm/cards.mjs';
+import { getPageSections } from './llm/sections.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -445,22 +446,6 @@ function getComponentMetadata(componentName) {
     const apiDocsMatch = content.match(/\[apiDocs\]="(\[[^\]]+\])"/);
     const themeDocsMatch = content.match(/themeDocs="([^"]+)"/);
 
-    // Extract docs array for sections
-    const docsMatch = content.match(/docs\s*=\s*\[([\s\S]*?)\];/);
-    let sections = [];
-
-    if (docsMatch) {
-        const docsContent = docsMatch[1];
-        const sectionMatches = docsContent.matchAll(/{\s*id:\s*['"]([^'"]+)['"]\s*,\s*label:\s*['"]([^'"]+)['"]/g);
-
-        for (const match of sectionMatches) {
-            sections.push({
-                id: match[1],
-                label: match[2]
-            });
-        }
-    }
-
     // Parse apiDocs array
     let apiComponents = [];
     if (apiDocsMatch) {
@@ -479,7 +464,6 @@ function getComponentMetadata(componentName) {
         title: docTitle ?? componentName,
         header: headerMatch ? headerMatch[1] : componentName,
         description: descriptionMatch ? descriptionMatch[1] : '',
-        sections,
         apiComponents,
         themeDocs: themeDocsMatch ? themeDocsMatch[1] : componentName.toLowerCase()
     };
@@ -504,11 +488,16 @@ function processComponent(componentName, componentDir) {
         sections: []
     };
 
-    const files = fs.readdirSync(componentDir);
+    // Sections have the title and the order they have on the site. A doc file that the page does not show is left
+    // out: it documents something that was removed or replaced.
+    const pageSections = getPageSections(PAGES_DIR, componentName);
+    const position = (file) => pageSections.get(`${path.basename(componentDir)}/${file.replace(/\.ts$/, '')}`);
+    const files = fs
+        .readdirSync(componentDir)
+        .filter((file) => file.endsWith('.ts') && position(file))
+        .sort((a, b) => position(a).order - position(b).order);
 
     for (const file of files) {
-        if (!file.endsWith('.ts') || file.endsWith('.spec.ts')) continue;
-
         const filePath = path.join(componentDir, file);
         const stat = fs.statSync(filePath);
 
@@ -516,8 +505,6 @@ function processComponent(componentName, componentDir) {
 
         // Extract section id from filename (e.g., "basic-doc.ts" -> "basic" or "basicdoc.ts" -> "basic")
         const sectionId = file.replace(/-?doc\.ts$/i, '').toLowerCase();
-        const sectionInfo = metadata.sections.find((s) => s.id === sectionId);
-
         const docData = parseDocFile(filePath);
 
         // Sections that should use inline code from doc file instead of demos.json
@@ -537,7 +524,7 @@ function processComponent(componentName, componentDir) {
         if (docData.description || codeExamples) {
             component.sections.push({
                 id: sectionId,
-                label: sectionInfo ? sectionInfo.label : file.replace('.ts', ''),
+                label: position(file).label,
                 description: docData.description,
                 examples: codeExamples
             });
