@@ -117,7 +117,12 @@ const NATIVE_ATTRIBUTES = new Set([
     'innertext',
     'textcontent',
     'scrolltop',
-    'scrollleft'
+    'scrollleft',
+    'scope',
+    'colspan',
+    'rowspan',
+    'headers',
+    'abbr'
 ]);
 
 export const LEGACY_IMPORT_PATTERN = /^(?:primeng(?:\/.*)?|@primeng\/.*|@openng\/optimus-ui(?:\/.*)?|optimus-ui(?:\/.*)?)$/;

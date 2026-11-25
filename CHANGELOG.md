@@ -13,7 +13,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ### Bug Fixes
 
-- **mcp:** `validate_usage` and `check` no longer report the inputs of RouterLink (`[fragment]`, `[queryParamsHandling]`...) on a link that also carries a directive such as pRipple or pButton.
+- **mcp:** `validate_usage` and `check` no longer report the inputs of RouterLink (`[fragment]`, `[queryParamsHandling]`...) on a link that also carries a directive such as pRipple or pButton, nor `scope`, `headers` and the other native attributes of a table cell.
 - **llms:** the component cards show the two-way syntax of an input (`[(first)]`) instead of an unfilled placeholder.
 
 ### Documentation

@@ -294,6 +294,12 @@ describe('validate_usage', () => {
         expect(structured(result).valid).toBe(true);
     });
 
+    it('accepts the native attributes of a table cell', async () => {
+        const result = await validateUsageTool(ctx, { component: 'button', code: `<th pButton scope="col" colspan="2" rowspan="1">Name</th>` });
+
+        expect(structured(result).valid).toBe(true);
+    });
+
     it('accepts the inputs of RouterLink next to routerLink only', async () => {
         const link = await validateUsageTool(ctx, { component: 'button', code: `<a pButton [routerLink]="url" [fragment]="anchor" [queryParamsHandling]="mode" [state]="state">Go</a>` });
         const noLink = await validateUsageTool(ctx, { component: 'button', code: `<a pButton [fragment]="anchor">Go</a>` });
