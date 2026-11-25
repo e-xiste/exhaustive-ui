@@ -40,3 +40,49 @@ jobs:
                   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
               run: |
                   npx --yes wrangler@4 pages deploy apps/docs/dist/docs/browser --project-name=exhaustive-ui --branch=main --commit-dirty=true
+
+            - name: Write the Markdown docs
+              run: |
+                  node scripts/docs-markdown.mjs docs-markdown
+
+            - name: Upload the Markdown docs
+              uses: actions/upload-artifact@v7
+              with:
+                  name: docs-markdown
+                  path: docs-markdown
+                  retention-days: 1
+
+    # The docs are generated at build time: the docs-markdown branch holds them for the indexes that read a Git
+    # repository (context7.json). Pushes made with GITHUB_TOKEN do not trigger other workflows.
+    docs-markdown:
+        needs: deploy
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/download-artifact@v8
+              with:
+                  name: docs-markdown
+                  path: ${{ runner.temp }}/docs-markdown
+
+            - name: Push the docs-markdown branch
+              run: |
+                  if git fetch --depth=1 origin docs-markdown; then
+                      git switch --create docs-markdown FETCH_HEAD
+                  else
+                      git switch --orphan docs-markdown
+                  fi
+                  git rm -rfq --ignore-unmatch .
+                  cp -R "$RUNNER_TEMP/docs-markdown/." .
+                  git add -A
+                  if git diff --cached --quiet; then
+                      echo "The Markdown docs did not change."
+                      exit 0
+                  fi
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git commit -q -m "docs: ${GITHUB_SHA::10}"
+                  git push origin docs-markdown
