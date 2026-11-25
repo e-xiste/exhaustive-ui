@@ -43,7 +43,7 @@ ExhaustiveUI is API-compatible with PrimeNG v21. On a PrimeNG v21 workspace upda
 dedicated migration schematic:
 
 ```bash
-npm install @exhaustive-ui/core
+npm install @exhaustive-ui/core --legacy-peer-deps            # npm refuses the Angular CDK 22 while primeng is installed
 ng generate @exhaustive-ui/core:migrate-from-primeng          # options: --skip-install, --force
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0      # apply the v22 migrations below
 ```

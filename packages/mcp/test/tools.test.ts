@@ -294,6 +294,14 @@ describe('validate_usage', () => {
         expect(structured(result).valid).toBe(true);
     });
 
+    it('accepts the inputs of RouterLink next to routerLink only', async () => {
+        const link = await validateUsageTool(ctx, { component: 'button', code: `<a pButton [routerLink]="url" [fragment]="anchor" [queryParamsHandling]="mode" [state]="state">Go</a>` });
+        const noLink = await validateUsageTool(ctx, { component: 'button', code: `<a pButton [fragment]="anchor">Go</a>` });
+
+        expect(structured(link).valid).toBe(true);
+        expect(structured(noLink).valid).toBe(false);
+    });
+
     it('checks directives applied to native elements without flagging native attributes', async () => {
         const valid = await validateUsageTool(ctx, { component: 'inputtext', code: `<input pInputText type="text" placeholder="Name" [(ngModel)]="name" pSize="small" [invalid]="form.invalid" />` });
 

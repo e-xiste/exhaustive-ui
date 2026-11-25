@@ -71,6 +71,9 @@ const GLOBAL_ATTRIBUTES = new Set([
     'ptooltip'
 ]);
 
+/** The other inputs of RouterLink, which only mean something next to `routerLink`. */
+const ROUTER_LINK_INPUTS = ['fragment', 'queryparamshandling', 'preservefragment', 'skiplocationchange', 'replaceurl', 'state', 'info', 'relativeto', 'browserurl'];
+
 /** Attributes and properties of native elements a directive like pButton or pInputText is applied to. */
 const NATIVE_ATTRIBUTES = new Set([
     'type',
@@ -320,6 +323,7 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
     const allowedEvents = [...outputs].sort().join(', ');
     const supportsForms = own.some((declaration) => declaration.forms);
     const label = own[0]?.className ?? component.title;
+    const onRouterLink = element.attributes.some((candidate) => candidate.name.toLowerCase() === 'routerlink');
 
     for (const attribute of element.attributes) {
         const lowerName = attribute.name.toLowerCase();
@@ -327,7 +331,7 @@ function checkElement(component: ComponentEntry, element: TemplateElement, match
         switch (attribute.kind) {
             case 'static':
             case 'property': {
-                if (everyInput.has(lowerName) && !inputs.has(lowerName)) {
+                if ((everyInput.has(lowerName) || (onRouterLink && ROUTER_LINK_INPUTS.includes(lowerName))) && !inputs.has(lowerName)) {
                     // Belongs to another ExhaustiveUI directive on the same element (e.g. pTooltip on a p-button).
                     break;
                 }

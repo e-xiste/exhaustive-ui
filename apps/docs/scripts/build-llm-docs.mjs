@@ -164,6 +164,12 @@ const GUIDE_PAGES = [
         description: 'Why ExhaustiveUI exists, what it commits to, and where it stops.'
     },
     {
+        route: 'comparison',
+        docPath: 'comparison',
+        title: 'Comparison',
+        description: 'ExhaustiveUI next to PrimeNG, Optimus UI and Angular Material: license, Angular version, maintainers, and when another library suits you better.'
+    },
+    {
         route: 'faq',
         docPath: 'faq',
         title: 'FAQ',
@@ -546,6 +552,7 @@ function getAllComponents() {
         'customicons',
         'faq',
         'philosophy',
+        'comparison',
         'designer',
         'icons',
         'introduction',
@@ -1232,6 +1239,11 @@ function guideTemplateToMarkdown(content) {
         html = html.replace(/<a\s[^>]*?(?:href="([^"]+)"|\[routerLink\]="'([^']+)'")[^>]*>([\s\S]*?)<\/a>/g, (_, href, route, text) => {
             const url = href || (route ? SITE_URL + route : '');
             return url ? `[${text.replace(/\s+/g, ' ').trim()}](${url})` : text;
+        });
+        html = html.replace(/<table[^>]*>([\s\S]*?)<\/table>/g, (_, table) => {
+            const rows = [...table.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map(([, row]) => [...row.matchAll(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g)].map(([, cell]) => cell.replace(/\s+/g, ' ').trim()));
+            const [head, ...body] = rows.map((cells) => `| ${cells.join(' | ')} |`);
+            return `\n\n${[head, `|${' --- |'.repeat(rows[0].length)}`, ...body].join('\n')}\n\n`;
         });
         html = html.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/g, (_, t) => `\n\n### ${t.trim()}\n\n`);
         html = html.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, (_, list) => {

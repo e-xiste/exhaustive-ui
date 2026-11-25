@@ -47,7 +47,7 @@ ng update @exhaustive-ui/core@22`
 
     primengCode: Code = {
         command: `ng update @angular/core@22 @angular/cli@22 --force
-npm install @exhaustive-ui/core@22
+npm install @exhaustive-ui/core@22 --legacy-peer-deps
 ng generate @exhaustive-ui/core:migrate-from-primeng
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0`
     };

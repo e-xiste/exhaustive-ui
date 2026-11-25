@@ -14,6 +14,9 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 <li><b>Module paths passed to other functions</b>, such as <i>jest.mock('primeng/button')</i> or <i>vi.mock()</i>: only imports, dynamic imports and <i>require()</i> are rewritten. These appear in the report.</li>
                 <li><b>Build and deployment files</b> outside the TypeScript sources and stylesheets: Dockerfiles, CI scripts, CDN links to PrimeNG or PrimeIcons.</li>
                 <li>
+                    <b>The <i>baseUrl</i> option</b> in <i>tsconfig.json</i>: TypeScript 6, which comes with Angular 22, stops the build on it. Remove it, or set <i>"ignoreDeprecations": "6.0"</i>.
+                </li>
+                <li>
                     <b>PrimeTek products</b> such as templates or the theme designer are not part of ExhaustiveUI. A preset built with them is a plain <i>definePreset()</i> object and keeps working once its imports point to
                     <i>&#64;exhaustive-ui/themes</i>.
                 </li>

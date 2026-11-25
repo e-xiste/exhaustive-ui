@@ -9,6 +9,10 @@
                     "routerLink": "/philosophy"
                 },
                 {
+                    "name": "Comparison",
+                    "routerLink": "/comparison"
+                },
+                {
                     "name": "Installation",
                     "routerLink": "/installation"
                 },

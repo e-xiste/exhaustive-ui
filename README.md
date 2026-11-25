@@ -61,7 +61,7 @@ From **PrimeNG v21** ([guide](https://exhaustive-ui.com/migration/primeng)):
 
 ```bash
 ng update @angular/core@22 @angular/cli@22 --force   # PrimeNG v21 declares Angular 21 as a peer
-npm install @exhaustive-ui/core
+npm install @exhaustive-ui/core --legacy-peer-deps   # npm refuses the Angular CDK 22 while primeng is installed
 ng generate @exhaustive-ui/core:migrate-from-primeng
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 ```

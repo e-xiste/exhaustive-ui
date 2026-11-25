@@ -32,7 +32,7 @@ Component names are the lowercase name without separators: `datepicker`, `inputn
 ## Tasks
 
 - **New project**: `ng add @exhaustive-ui/core`.
-- **From PrimeNG v21**, on Angular 22: `npm install @exhaustive-ui/core`, then `ng generate @exhaustive-ui/core:migrate-from-primeng`, and work through its report. Guide: `https://exhaustive-ui.com/migration/primeng.md`.
+- **From PrimeNG v21**, on Angular 22: `npm install @exhaustive-ui/core --legacy-peer-deps` (npm refuses the install otherwise, while `primeng` is there), then `ng generate @exhaustive-ui/core:migrate-from-primeng`, and work through its report. Guide: `https://exhaustive-ui.com/migration/primeng.md`.
 - **From Optimus UI v2**: `ng generate @exhaustive-ui/core:migrate-from-optimus`. Guide: `https://exhaustive-ui.com/migration/optimus.md`.
 - **Update**: `ng update @exhaustive-ui/core`. Guide: `https://exhaustive-ui.com/migration/update.md`.
 

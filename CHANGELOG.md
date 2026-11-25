@@ -13,11 +13,15 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ### Bug Fixes
 
+- **mcp:** `validate_usage` and `check` no longer report the inputs of RouterLink (`[fragment]`, `[queryParamsHandling]`...) on a link that also carries a directive such as pRipple or pButton.
 - **llms:** the component cards show the two-way syntax of an input (`[(first)]`) instead of an unfilled placeholder.
 
 ### Documentation
 
 - **site:** `.md` after the address of a page gives its Markdown version, as the LLMs page says: it answered with the HTML home page. A client that sends `Accept: text/markdown` gets it at the normal address, and the HTML pages link to it. `llms.txt` and `llms-full.txt` are also at the root of the site.
+- **migration:** the install of the PrimeNG guide failed with npm while `primeng` was there: it now passes `--legacy-peer-deps`. The guide also covers the `baseUrl` option, which stops the build on TypeScript 6.
+- **site:** a [comparison](https://exhaustive-ui.com/comparison) with PrimeNG, Optimus UI and Angular Material, and the cases where they suit better.
+- **llms:** the tables of the guides are tables in the Markdown documentation too.
 - **migration:** the PrimeNG pages said that its repository is archived, that v21 gets no more fixes and that its Community license is for non-profits. The repository publishes security fixes for the MIT versions, and the Community license has other conditions.
 - **site:** an address that does not exist is a 404 instead of the home page, and a missing Markdown, text or JSON file a short text one.
 - **llms:** in the Markdown documentation and the MCP server, the sections of a component have the title and the order they have on the site ("Pagination: Basic" instead of "paginatorbasic-doc"). The sections that are not on the site, left from older versions, are no longer included.
