@@ -4,7 +4,9 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.9.0 (2026-11-25)
+
+`ng add` sets up your AI coding tools; the MCP server joins the official MCP registry.
 
 ### Features
 
