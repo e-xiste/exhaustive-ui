@@ -4,6 +4,14 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **ng add:** asks which AI coding tools you use (Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code; none by default) and adds the MCP server to their configuration and a section pointing to the ExhaustiveUI guide to their instructions. Existing files are extended, never replaced. Pass `--ai` to skip the prompt.
+- **schematics:** `ng generate @exhaustive-ui/core:ai-config` does the same in a project that already uses ExhaustiveUI.
+- **mcp:** the package declares its `mcpName`, to be listed in the official MCP registry as `io.github.e-xiste/exhaustive-ui`.
+
 ## 22.8.5 (2026-11-24)
 
 Scheduler lists the events outside the visible hours; Kanban, Tour, DatePicker and disabled field polish.

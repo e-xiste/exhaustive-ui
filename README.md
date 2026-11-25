@@ -41,7 +41,7 @@ ExhaustiveUI v22 requires Angular v22: its major versions follow Angular's (see 
 ng add @exhaustive-ui/core
 ```
 
-The schematic asks which theme preset you want, adds the packages, wires `provideExhaustive` into your root providers and installs everything.
+The schematic asks which theme preset you want, adds the packages, wires `provideExhaustive` into your root providers and installs everything. It also offers to set up your AI coding tools with the MCP server and the library's guide.
 
 ```ts
 import { Button } from '@exhaustive-ui/core/button';

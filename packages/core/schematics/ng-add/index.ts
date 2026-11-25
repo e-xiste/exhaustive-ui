@@ -2,6 +2,7 @@ import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devk
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import { addRootProvider, readWorkspace } from '@schematics/angular/utility';
 import { isObservable, lastValueFrom } from 'rxjs';
+import { configureAiTools } from '../utils/ai-tools';
 import { addDefaultImport } from '../utils/app-config';
 import { VERSIONS } from '../utils/mappings';
 import { hasPrimeng, SKIP_DIRS } from '../utils/package-json';
@@ -97,6 +98,7 @@ function freshSetup(options: Schema): Rule {
     return async (tree: Tree, context: SchematicContext) => {
         addThemesDependency(tree);
         await wireProvideExhaustive(tree, context, options);
+        configureAiTools(tree, context, options.ai);
 
         if (!options.skipInstall) {
             context.addTask(new NodePackageInstallTask());

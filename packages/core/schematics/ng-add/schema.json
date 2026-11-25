@@ -22,6 +22,28 @@
                 "items": ["Aura", "Lara", "Material", "Nora"]
             }
         },
+        "ai": {
+            "type": "array",
+            "uniqueItems": true,
+            "default": ["none"],
+            "description": "The AI coding tools to configure with the ExhaustiveUI MCP server and instructions.",
+            "items": {
+                "type": "string",
+                "enum": ["none", "claude-code", "cursor", "gemini-cli", "open-ai-codex", "vscode"]
+            },
+            "x-prompt": {
+                "message": "Which AI coding tools should know how to use ExhaustiveUI?",
+                "type": "list",
+                "items": [
+                    { "value": "none", "label": "None" },
+                    { "value": "claude-code", "label": "Claude Code   [ `CLAUDE.md` + `.mcp.json` ]" },
+                    { "value": "cursor", "label": "Cursor        [ `AGENTS.md` + `.cursor/mcp.json` ]" },
+                    { "value": "gemini-cli", "label": "Gemini CLI    [ `GEMINI.md` + `.gemini/settings.json` ]" },
+                    { "value": "open-ai-codex", "label": "OpenAI Codex  [ `AGENTS.md` + `.codex/config.toml` ]" },
+                    { "value": "vscode", "label": "VS Code       [ `AGENTS.md` + `.vscode/mcp.json` ]" }
+                ]
+            }
+        },
         "skipInstall": {
             "type": "boolean",
             "default": false,

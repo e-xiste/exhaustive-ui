@@ -12,13 +12,17 @@ import { RouterModule } from '@angular/router';
         <app-docsectiontext>
             <p>The recommended way to add ExhaustiveUI to an Angular CLI workspace is a single command.</p>
             <app-code [code]="code" [hideToggleCode]="true"></app-code>
-            <p>The schematic asks which theme preset you want and then does the rest:</p>
+            <p>The schematic asks which theme preset you want and which AI coding tools you use, if any, and then does the rest:</p>
             <ul class="leading-relaxed">
                 <li>adds <i>&#64;exhaustive-ui/core</i> and <i>&#64;exhaustive-ui/themes</i> to your dependencies</li>
                 <li>wires <i>provideExhaustive</i> into your root providers with the chosen preset, in <i>app.config.ts</i> or your root NgModule</li>
+                <li>
+                    for the AI coding tools you picked, adds the <a [routerLink]="'/llms'" fragment="mcp" class="doc-link">MCP server</a> to their configuration and a section pointing to the ExhaustiveUI guide to their instructions, without touching
+                    what the files already contain
+                </li>
                 <li>installs the packages</li>
             </ul>
-            <p>Pass the preset up front to skip the prompt, or skip the install step if you want to run it yourself:</p>
+            <p>Pass the answers up front to skip the prompts, or skip the install step if you want to run it yourself:</p>
             <app-code [code]="flagsCode" [hideToggleCode]="true"></app-code>
             <p>
                 If the schematic cannot find a providers array to update it prints the three manual steps instead of guessing, so nothing in your workspace is rewritten unexpectedly. If it detects an existing <i>primeng</i> or
@@ -37,6 +41,9 @@ export class NgAddDoc {
     flagsCode: Code = {
         command: `# Choose the preset without the prompt — Aura, Lara, Material or Nora
 ng add @exhaustive-ui/core --theme=Lara
+
+# Set up AI tools without the prompt — claude-code, cursor, gemini-cli, open-ai-codex, vscode or none
+ng add @exhaustive-ui/core --ai=claude-code --ai=cursor
 
 # Wire everything up but do not run the package install
 ng add @exhaustive-ui/core --skip-install

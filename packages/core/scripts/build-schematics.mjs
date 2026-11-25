@@ -62,7 +62,7 @@ fs.copySync(path.join(schematicsDir, 'utils/versions.json'), path.join(outDir, '
 // tsc does not emit imported .json files, so copy the PrimeFlex -> Tailwind dictionary that
 // utils/primeflex.ts requires at runtime.
 fs.copySync(path.join(schematicsDir, 'utils/primeflex-translations.json'), path.join(outDir, 'utils/primeflex-translations.json'));
-for (const name of ['ng-add', 'migrate-from-primeng', 'migrate-from-optimus', 'migrate-from-primeflex']) {
+for (const name of ['ng-add', 'migrate-from-primeng', 'migrate-from-optimus', 'migrate-from-primeflex', 'ai-config']) {
     fs.copySync(path.join(schematicsDir, name, 'schema.json'), path.join(outDir, name, 'schema.json'));
 }
 

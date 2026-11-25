@@ -20,6 +20,11 @@
             "description": "Translate PrimeFlex utility classes to their Tailwind CSS equivalents across Angular templates.",
             "factory": "./migrate-from-primeflex/index#migrateFromPrimeflex",
             "schema": "./migrate-from-primeflex/schema.json"
+        },
+        "ai-config": {
+            "description": "Set up AI coding tools (Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code) with the ExhaustiveUI MCP server and instructions.",
+            "factory": "./ai-config/index#aiConfig",
+            "schema": "./ai-config/schema.json"
         }
     }
 }

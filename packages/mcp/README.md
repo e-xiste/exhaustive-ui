@@ -12,6 +12,14 @@ The package also exposes the `exhaustive-ui-mcp` bin when installed globally or 
 
 ## Setup
 
+`ng add @exhaustive-ui/core` offers to configure the server for Claude Code, Cursor, Gemini CLI, Codex and VS Code. In a project that already uses ExhaustiveUI, run:
+
+```bash
+ng generate @exhaustive-ui/core:ai-config
+```
+
+Or configure it by hand:
+
 ### Claude Code
 
 ```bash

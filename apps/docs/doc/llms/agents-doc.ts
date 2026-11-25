@@ -12,8 +12,11 @@ import { Component } from '@angular/core';
             <p>
                 <i>&#64;exhaustive-ui/core</i> ships its own guide for AI coding agents: <i>node_modules/&#64;exhaustive-ui/core/AGENTS.md</i> gives the rules that matter when writing code with the library (imports, canonical tags, templates,
                 signals, OnPush), the PrimeNG habits to drop, and links to a card per component in <i>llms/cards/</i>. Coding agents read <i>node_modules</i>, so this works without any setup, and always matches the installed version. To make sure
-                your agent reads it first, add one line to the <i>AGENTS.md</i> or <i>CLAUDE.md</i> of your project.
+                your agent reads it first, mention it in the <i>AGENTS.md</i> or <i>CLAUDE.md</i> of your project. <i>ng add</i> offers to do it, and the <i>ai-config</i> schematic does it in a project that already uses ExhaustiveUI: it adds the MCP
+                server to the configuration of each tool you name (<i>claude-code</i>, <i>cursor</i>, <i>gemini-cli</i>, <i>open-ai-codex</i>, <i>vscode</i>) and a section to its instructions, without touching what the files already contain.
             </p>
+            <app-code [code]="schematic" [hideToggleCode]="true"></app-code>
+            <p>Or add the lines yourself:</p>
             <app-code [code]="instructions" [hideToggleCode]="true"></app-code>
             <p>
                 A component card is a 2 to 16 KB summary: the import, the tag, the inputs the examples use with their type and default, the outputs, every template with the context it receives, and one complete example. The same cards are published
@@ -30,6 +33,10 @@ import { Component } from '@angular/core';
     `
 })
 export class AgentsDoc {
+    schematic: Code = {
+        command: `ng generate @exhaustive-ui/core:ai-config --tool=claude-code --tool=cursor`
+    };
+
     instructions: Code = {
         typescript: `<!-- AGENTS.md or CLAUDE.md -->
 This project uses ExhaustiveUI. Before writing code with it, read node_modules/@exhaustive-ui/core/AGENTS.md,
