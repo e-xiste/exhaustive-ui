@@ -1,6 +1,6 @@
-# ExhaustiveUI 22.9.0: guide for AI coding agents
+# ExhaustiveUI 22.9.1: guide for AI coding agents
 
-This project uses ExhaustiveUI (`@exhaustive-ui/core` 22.9.0), an Angular 22 component library forked from PrimeNG v21. Its API is close to PrimeNG but not the same: read this file, then the card of each component you use, before writing code.
+This project uses ExhaustiveUI (`@exhaustive-ui/core` 22.9.1), an Angular 22 component library forked from PrimeNG v21. Its API is close to PrimeNG but not the same: read this file, then the card of each component you use, before writing code.
 
 ## Rules
 

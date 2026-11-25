@@ -10,7 +10,7 @@ date,
 
 | | ExhaustiveUI | PrimeNG | Optimus UI | Angular Material |
 | --- | --- | --- | --- | --- |
-| Version | 22.9.0 | 22.1.5 | 2.1.0 | 22.3.0 |
+| Version | 22.9.1 | 22.1.5 | 2.1.0 | 22.3.0 |
 | License | MIT | MIT up to v21, then commercial with a free tier under conditions | MIT | MIT |
 | Angular | 22 | 22, from 22.1 | 22, from 22.2.1 | 22 and 23 |
 | Maintained by | e-xiste and the community | PrimeTek, a company | OpenNG and the community | The Angular team at Google |

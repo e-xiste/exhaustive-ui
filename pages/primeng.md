@@ -24,6 +24,8 @@ classes are the same, so a PrimeNG v21 application moves across in two parts:
 
 No license is needed. A PrimeTek license or subscription for PrimeNG, its templates or its theme designer does not carry over, and is not required.
 
+For a real migration with its numbers, see the [case study of sakai-ng](https://exhaustive-ui.com/migration/sakai).
+
 ## Before you start
 
 - **PrimeNG v21.** ExhaustiveUI shares its API. On v20 or older, upgrade to v21 first with PrimeNG's own update guides; the schematic checks the installed version and stops otherwise. On PrimeNG v22, the schematic runs, but the features PrimeNG added after v21 have no ExhaustiveUI equivalent: check the compiler errors and the report.
