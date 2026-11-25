@@ -104,10 +104,14 @@ Components ship their own SVG icons. [`@openng/icons`](https://www.npmjs.com/pac
 
 ## Coding agents
 
-Two ways to give an agent (Claude Code, Cursor, Codex, ...) the real ExhaustiveUI API instead of its memory of PrimeNG:
+Several ways to give an agent (Claude Code, Cursor, Codex, ...) the real ExhaustiveUI API instead of its memory of PrimeNG:
 
 - the MCP server: `npx @exhaustive-ui/mcp` (see [its README](packages/mcp));
-- the agent skill, an offline copy of the docs: `npx skills add https://exhaustive-ui.com`.
+- the agent skill, an offline copy of the docs: `npx skills add https://exhaustive-ui.com`;
+- the Claude Code plugin, a short skill and the MCP server together: `/plugin marketplace add e-xiste/exhaustive-ui`, then `/plugin install exhaustive-ui@exhaustive-ui`;
+- the documentation as Markdown: [`llms.txt`](https://exhaustive-ui.com/llms.txt), and `.md` after the address of any page.
+
+To start a new application with all of it in place: `npx tiged e-xiste/exhaustive-ui/templates/angular my-app` (see [the template](templates/angular)).
 
 ## Why this exists
 

@@ -26,6 +26,13 @@ Or configure it by hand:
 claude mcp add exhaustive-ui -s user -- npx -y @exhaustive-ui/mcp
 ```
 
+Or install the plugin, which adds a skill to the server:
+
+```
+/plugin marketplace add e-xiste/exhaustive-ui
+/plugin install exhaustive-ui@exhaustive-ui
+```
+
 Project-only setup (writes `.mcp.json` in the current project):
 
 ```bash

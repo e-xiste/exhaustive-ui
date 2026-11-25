@@ -1,0 +1,19 @@
+{
+    "name": "exhaustive-ui",
+    "owner": {
+        "name": "e-xiste",
+        "url": "https://github.com/e-xiste"
+    },
+    "metadata": {
+        "description": "Plugins for building Angular applications with ExhaustiveUI"
+    },
+    "plugins": [
+        {
+            "name": "exhaustive-ui",
+            "source": "./plugins/exhaustive-ui",
+            "description": "Skill and MCP server for ExhaustiveUI, the MIT licensed Angular component library: the API of the 80+ components, complete examples, theming, and a validator of templates.",
+            "category": "development",
+            "keywords": ["angular", "ui-components", "primeng", "mcp"]
+        }
+    ]
+}

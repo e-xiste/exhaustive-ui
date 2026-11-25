@@ -23,6 +23,8 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
             <a href="/llms/exhaustive-ui-skill.zip" download>
                 <p-button label="Download exhaustive-ui-skill.zip" />
             </a>
+            <p class="mt-4">In Claude Code, the plugin installs a short skill, which reads the docs of the installed version, together with the MCP server:</p>
+            <app-code [code]="pluginCode" [hideToggleCode]="true"></app-code>
         </app-docsectiontext>
     `
 })
@@ -32,5 +34,10 @@ export class AgentSkillDoc {
 
 # update to the latest docs
 npx skills update exhaustive-ui`
+    };
+
+    pluginCode: Code = {
+        command: `/plugin marketplace add e-xiste/exhaustive-ui
+/plugin install exhaustive-ui@exhaustive-ui`
     };
 }

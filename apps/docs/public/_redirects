@@ -1,2 +1,8 @@
 /templates / 301
 /templates/* / 301
+/accessibility /guides/accessibility/ 301
+/accessibility/ /guides/accessibility/ 301
+/theming /theming/styled/ 301
+/theming/ /theming/styled/ 301
+/guides /guides/accessibility/ 301
+/guides/ /guides/accessibility/ 301

@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "exhaustive-ui": {
+      "command": "npx",
+      "args": ["-y", "@exhaustive-ui/mcp"]
+    }
+  }
+}

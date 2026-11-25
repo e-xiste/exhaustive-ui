@@ -102,7 +102,7 @@ function exampleOf(component) {
 function inputLine(input) {
     const type = input.type ? `: \`${input.type}\`` : '';
     const def = input.default !== undefined && input.default !== 'undefined' ? ` = \`${input.default}\`` : '';
-    const twoWay = input.twoWay ? ' (two-way: `[(${input.name})]`)' : '';
+    const twoWay = input.twoWay ? ` (two-way: \`[(${input.name})]\`)` : '';
     return `- \`${input.name}\`${type}${def}${twoWay}: ${firstSentence(input.description)}`;
 }
 

@@ -1,0 +1,6 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: var(--p-text-color);
+  background: var(--p-content-background);
+}

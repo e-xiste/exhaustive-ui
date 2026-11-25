@@ -24,6 +24,8 @@ import { RouterModule } from '@angular/router';
             </ul>
             <p>Pass the answers up front to skip the prompts, or skip the install step if you want to run it yourself:</p>
             <app-code [code]="flagsCode" [hideToggleCode]="true"></app-code>
+            <p>To start from an application that is already set up, with the instructions and the MCP server for coding agents, copy the template:</p>
+            <app-code [code]="templateCode" [hideToggleCode]="true"></app-code>
             <p>
                 If the schematic cannot find a providers array to update it prints the three manual steps instead of guessing, so nothing in your workspace is rewritten unexpectedly. If it detects an existing <i>primeng</i> or
                 <i>&#64;openng/optimus-ui</i> dependency it changes nothing and fails with an error rather than reporting success, and points you at the <i>migrate-from-primeng</i> or <i>migrate-from-optimus</i> schematic, described in the
@@ -36,6 +38,13 @@ import { RouterModule } from '@angular/router';
 export class NgAddDoc {
     code: Code = {
         command: `ng add @exhaustive-ui/core`
+    };
+
+    templateCode: Code = {
+        command: `npx tiged e-xiste/exhaustive-ui/templates/angular my-app
+cd my-app
+npm install
+npm start`
     };
 
     flagsCode: Code = {

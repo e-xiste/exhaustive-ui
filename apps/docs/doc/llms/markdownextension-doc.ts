@@ -8,8 +8,11 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [AppDocSectionText, ButtonModule],
     template: `
         <app-docsectiontext>
-            <p>Add a <code>.md</code> to a page's URL to display a Markdown version of that page.</p>
-            <a href="/llms/components/button.md" target="_blank">
+            <p>
+                Add <code>.md</code> to the address of a page to read its Markdown version: <code>/button.md</code>, <code>/migration/primeng.md</code>. Clients that ask for Markdown with the <code>Accept: text/markdown</code> header, as several
+                coding agents do, receive it at the normal address, and the HTML pages link to it with <code>rel="alternate"</code>.
+            </p>
+            <a href="/button.md" target="_blank">
                 <p-button label="Open /button.md" />
             </a>
         </app-docsectiontext>

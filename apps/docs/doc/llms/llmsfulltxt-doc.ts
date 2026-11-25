@@ -9,7 +9,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     template: `
         <app-docsectiontext>
             <p>The <code>llms-full.txt</code> file is a complete list of all the pages in the ExhaustiveUI documentation. It is used to help AI models understand the entire documentation set.</p>
-            <a href="/llms/llms-full.txt" target="_blank">
+            <a href="/llms-full.txt" target="_blank">
                 <p-button label="Open llms-full.txt" />
             </a>
         </app-docsectiontext>

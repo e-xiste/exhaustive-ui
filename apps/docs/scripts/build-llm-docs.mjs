@@ -5,6 +5,7 @@ import ComponentTokens from '@exhaustive-ui/themes/tokens';
 import { generateAgentSkill } from './build-llm-skill.mjs';
 import { renderAgentsMd, checkRenames } from './llm/agents.mjs';
 import { generateCards } from './llm/cards.mjs';
+import { componentRoute } from './llm/routes.mjs';
 import { getPageSections } from './llm/sections.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -67,13 +68,6 @@ const COMPONENT_NAME_MAP = {
     focustrap: 'FocusTrap',
     classnames: 'ClassNames',
     styleclass: 'StyleClass'
-};
-
-// Components whose documentation directory name differs from their public route.
-// Keep in sync with router/app.routes.ts.
-const COMPONENT_ROUTE_MAP = {
-    scroller: 'virtualscroller',
-    Image: 'image'
 };
 
 // Guide/documentation pages configuration
@@ -1070,7 +1064,8 @@ function generateLlmsTxt(components, pages = [], cardNames = new Set()) {
     let content = '# ExhaustiveUI\n\n';
     content += '> A community-maintained, MIT licensed suite of 80+ accessible Angular UI components.\n\n';
     content += `Before writing code with ExhaustiveUI, read the guide for AI coding agents (rules, setup, PrimeNG differences): ${SITE_URL}/llms/AGENTS.md\n\n`;
-    content += 'Each component link below is a compact card (import, tag, key inputs, templates with their context, one example); the complete document is at /llms/components/<name>.md.\n\n';
+    content +=
+        'Each component link below is a compact card (import, tag, key inputs, templates with their context, one example); the complete document is at /llms/components/<name>.md. Every page of the site has a Markdown version: add .md to its address, or ask for it with `Accept: text/markdown`.\n\n';
     content += 'Machine-readable API (selectors, inputs, outputs, templates, types): https://exhaustive-ui.com/llms/manifest.json\n\n';
 
     // Add Guides section
@@ -1078,7 +1073,7 @@ function generateLlmsTxt(components, pages = [], cardNames = new Set()) {
         content += '## Guides\n\n';
 
         for (const page of pages) {
-            content += `- [${page.title}](https://exhaustive-ui.com/${page.route}): ${page.description}\n`;
+            content += `- [${page.title}](${SITE_URL}/${page.route}.md): ${page.description}\n`;
         }
 
         content += '\n';
@@ -1090,7 +1085,7 @@ function generateLlmsTxt(components, pages = [], cardNames = new Set()) {
     const sorted = [...components].sort((a, b) => a.title.localeCompare(b.title));
 
     for (const comp of sorted) {
-        const route = COMPONENT_ROUTE_MAP[comp.name] ?? comp.name;
+        const route = componentRoute(comp.name);
         const link = cardNames.has(comp.name) ? `${SITE_URL}/llms/cards/${comp.name}.md` : `${SITE_URL}/${route}`;
         content += `- [${comp.title}](${link}): ${comp.description}\n`;
     }

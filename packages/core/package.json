@@ -29,6 +29,10 @@
         "datatable",
         "accessibility",
         "tailwind",
+        "mcp",
+        "ai",
+        "llms",
+        "coding agents",
         "mit"
     ],
     "publishConfig": {

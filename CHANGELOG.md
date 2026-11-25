@@ -6,8 +6,19 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 
 ## Unreleased
 
+### Features
+
+- **agents:** a Claude Code plugin, with a short skill and the MCP server: `/plugin marketplace add e-xiste/exhaustive-ui`, then `/plugin install exhaustive-ui@exhaustive-ui`. `npx skills add e-xiste/exhaustive-ui` also finds the skill; it used to offer an internal one.
+- **template:** a starter application, Angular 22 with ExhaustiveUI and the configuration of the coding agents: `npx tiged e-xiste/exhaustive-ui/templates/angular my-app`.
+
+### Bug Fixes
+
+- **llms:** the component cards show the two-way syntax of an input (`[(first)]`) instead of an unfilled placeholder.
+
 ### Documentation
 
+- **site:** `.md` after the address of a page gives its Markdown version, as the LLMs page says: it answered with the HTML home page. A client that sends `Accept: text/markdown` gets it at the normal address, and the HTML pages link to it. `llms.txt` and `llms-full.txt` are also at the root of the site.
+- **site:** an address that does not exist is a 404 instead of the home page, and a missing Markdown, text or JSON file a short text one.
 - **llms:** in the Markdown documentation and the MCP server, the sections of a component have the title and the order they have on the site ("Pagination: Basic" instead of "paginatorbasic-doc"). The sections that are not on the site, left from older versions, are no longer included.
 - **site:** 12 sections are back on the site and in the Markdown documentation, with their examples corrected: Toast life, clear and target, Select custom filter, overlays inside a Dialog, DatePicker header and footer and touch UI, InputMask clear icon, Image preview source, FileUpload custom upload, TreeTable cell editing, and CSS layers with Bootstrap.
 
