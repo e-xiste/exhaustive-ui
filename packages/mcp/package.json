@@ -1,6 +1,7 @@
 {
     "name": "@exhaustive-ui/mcp",
     "version": "22.8.5",
+    "mcpName": "io.github.e-xiste/exhaustive-ui",
     "author": "e-xiste",
     "description": "Model Context Protocol (MCP) server for the ExhaustiveUI Angular component library",
     "keywords": ["exhaustive-ui", "mcp", "model-context-protocol", "ai", "llm", "coding agents", "claude code", "cursor", "angular", "components", "primeng"],

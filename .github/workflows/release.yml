@@ -52,3 +52,11 @@ jobs:
                           npm dist-tag add "$name@$version" "$tag"
                       done
                   done
+
+    mcp-registry:
+        needs: publish
+        if: ${{ inputs.tag == 'latest' }}
+        permissions:
+            contents: read
+            id-token: write
+        uses: ./.github/workflows/mcp-registry.yml

@@ -1,0 +1,27 @@
+{
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "io.github.e-xiste/exhaustive-ui",
+    "title": "ExhaustiveUI",
+    "description": "Docs, API, code examples and template validation for the ExhaustiveUI Angular component library.",
+    "version": "22.8.5",
+    "websiteUrl": "https://exhaustive-ui.com/llms",
+    "repository": {
+        "url": "https://github.com/e-xiste/exhaustive-ui",
+        "source": "github",
+        "subfolder": "packages/mcp"
+    },
+    "icons": [{ "src": "https://exhaustive-ui.com/large-icon.svg", "mimeType": "image/svg+xml", "sizes": ["any"] }],
+    "packages": [
+        {
+            "registryType": "npm",
+            "identifier": "@exhaustive-ui/mcp",
+            "version": "22.8.5",
+            "runtimeHint": "npx",
+            "transport": { "type": "stdio" },
+            "environmentVariables": [
+                { "name": "EXHAUSTIVE_UI_DOCS_URL", "description": "Read another deployment of the docs, for instance a local ng serve.", "format": "string", "isRequired": false },
+                { "name": "EXHAUSTIVE_UI_MCP_OFFLINE", "description": "Set to 1 to only use the docs snapshot bundled in the package.", "format": "string", "isRequired": false }
+            ]
+        }
+    ]
+}
