@@ -1,0 +1,15 @@
+{
+    "$schema": "https://context7.com/schema/context7.json",
+    "projectTitle": "ExhaustiveUI",
+    "description": "Open source (MIT) Angular UI component library for Angular 22: 80+ accessible components built on Signals (table, form fields, overlays, scheduler, kanban), with design tokens and theme presets. Fork of PrimeNG v21 by way of Optimus UI, with migration schematics for both.",
+    "branch": "docs-markdown",
+    "excludeFiles": ["contribution.md", "philosophy.md"],
+    "rules": [
+        "Import each component from its own entry point, for example `import { Select } from '@exhaustive-ui/core/select'`, and add it to the `imports` of the standalone component. Never import from `primeng`.",
+        "Use the canonical kebab-case tags (`<p-date-picker>`, `<p-toggle-switch>`) and the current component names: Select instead of Dropdown, DatePicker instead of Calendar, Drawer instead of Sidebar, Popover instead of OverlayPanel.",
+        "Write templates as `<ng-template #name let-item>` inside the component; `pTemplate` is legacy. Template names are case sensitive.",
+        "Inputs are signals: on a component instance in TypeScript, read an input with a call, `table.first()`, and write a two-way property with `.set()`.",
+        "Configure the library once in the root providers with `provideExhaustive({ theme: { preset: Aura } })` from `@exhaustive-ui/core/config`; presets come from `@exhaustive-ui/themes/aura`, `lara`, `material` or `nora`.",
+        "Install with `ng add @exhaustive-ui/core`. Each major version follows the Angular major: version 22 requires Angular 22."
+    ]
+}

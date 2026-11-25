@@ -1,0 +1,211 @@
+# Configuration
+
+Application wide configuration for ExhaustiveUI.
+
+## Provider
+
+The initial configuration is defined by the `provideExhaustive` provider during application startup.
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideExhaustive({ /* options */ })
+    ]
+};
+```
+
+## Dynamic
+
+Inject the `Exhaustive` to your application to update the initial configuration at runtime.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+
+    constructor(private config: Exhaustive) {}
+
+    ngOnInit() {
+        this.config.ripple.set(true);
+    }
+}
+```
+
+## Theme
+
+ExhaustiveUI provides 4 predefined themes out of the box; Aura, Material, Lara and Nora. See the theming documentation for details.
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideExhaustive } from '@exhaustive-ui/core/config';
+
+import Aura from '@exhaustive-ui/themes/aura';
+
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideExhaustive({
+            theme: {
+                preset: Aura,
+                options: {
+                    prefix: 'p',
+                    darkModeSelector: 'system',
+                    cssLayer: false
+                }
+            }
+        })
+    ]
+};
+```
+
+## Ripple
+
+Ripple is an optional animation for the supported components such as buttons. It is disabled by default.
+
+```typescript
+provideExhaustive({
+    ripple: true
+})
+```
+
+## InputVariant
+
+Input fields come in two styles, default is `outlined` with borders around the field whereas `filled` alternative adds a background color to the field. A theme such as Material may add more additional design changes per each
+variant.
+
+## OverlayAppendTo
+
+Defines the default location of the overlays; `self` refers to the host element and `body` targets the document body. Defaults to `self`.
+
+## ZIndex
+
+ZIndexes are managed automatically to make sure layering of overlay components work seamlessly when combining multiple components. Still there may be cases where you'd like to configure the configure default values such as a custom
+layout where header section is fixed. In a case like this, dropdown needs to be displayed below the application header but a modal dialog should be displayed above. ExhaustiveUI configuration offers the `zIndex` property to
+customize the default values for components categories. Default values are described below and can be customized when setting up ExhaustiveUI.
+
+```typescript
+import { ExhaustiveConfig } from '@exhaustive-ui/core/api';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+
+    constructor(private exhaustiveConfig: ExhaustiveConfig) {}
+
+    ngOnInit() {
+        this.exhaustiveConfig.zIndex = {
+            modal: 1100,    // dialog, sidebar
+            overlay: 1000,  // dropdown, overlaypanel
+            menu: 1000,     // overlay menus
+            tooltip: 1100   // tooltip
+        };
+    }
+}
+```
+
+## Nonce
+
+The `nonce` value to use on dynamically generated style elements in core.
+
+```typescript
+provideExhaustive({
+    csp: {
+        nonce: '...'
+    }
+})
+```
+
+## Filter Mode
+
+Default filter modes to display on DataTable filter menus.
+
+```typescript
+import { ExhaustiveConfig } from '@exhaustive-ui/core/api';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+
+    constructor(private exhaustiveConfig: ExhaustiveConfig) {}
+
+    ngOnInit() {
+        exhaustiveConfig.filterMatchModeOptions = {
+            text: [FilterMatchMode.STARTS_WITH, FilterMatchMode.CONTAINS, FilterMatchMode.NOT_CONTAINS, FilterMatchMode.ENDS_WITH, FilterMatchMode.EQUALS, FilterMatchMode.NOT_EQUALS],
+            numeric: [FilterMatchMode.EQUALS, FilterMatchMode.NOT_EQUALS, FilterMatchMode.LESS_THAN, FilterMatchMode.LESS_THAN_OR_EQUAL_TO, FilterMatchMode.GREATER_THAN, FilterMatchMode.GREATER_THAN_OR_EQUAL_TO],
+            date: [FilterMatchMode.DATE_IS, FilterMatchMode.DATE_IS_NOT, FilterMatchMode.DATE_BEFORE, FilterMatchMode.DATE_AFTER]
+        };
+    }
+}
+```
+
+## Translation
+
+A translation is specified using the translation property during initialization.
+
+```typescript
+provideExhaustive({
+    translation: {
+        accept: 'Aceptar',
+        reject: 'Rechazar',
+        //translations
+    }
+})
+```
+
+## Runtime
+
+The translations can be changed dynamically at runtime, here is an example with ngx-translate.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { Exhaustive } from '@exhaustive-ui/core/config';
+import { TranslateService } from '@ngx-translate/core';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+
+    constructor(private config: Exhaustive, private translateService: TranslateService) {}
+
+    ngOnInit() {
+        this.translateService.setDefaultLang('en');
+    }
+
+    translate(lang: string) {
+        this.translateService.use(lang);
+        this.translateService.get('exhaustive').subscribe(res => this.config.setTranslation(res));
+    }
+}
+```
+
+## Repository
+
+Ready to use settings for locales are available as the `@exhaustive-ui/locale` package, maintained in the
+[ExhaustiveUI](https://github.com/e-xiste/exhaustive-ui/tree/main/packages/locale) repository. We'd appreciate if you could contribute translations to the repository and share them
+with the rest of the community.
+
+```typescript
+import { de } from '@exhaustive-ui/locale/js/de.js';
+
+provideExhaustive({
+    translation: de
+})
+```
+
+## API
+
+### Locale Options
+
