@@ -4,6 +4,12 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
+## Unreleased
+
+### Features
+
+- **mcp:** a Dockerfile for the MCP server, in `packages/mcp`.
+
 ## 22.9.1 (2026-11-25)
 
 Fewer false reports from the template validator; a Claude Code plugin, a starter template and Markdown pages for coding agents.

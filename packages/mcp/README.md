@@ -54,6 +54,15 @@ Add `.cursor/mcp.json` in a project or edit `~/.cursor/mcp.json`:
 }
 ```
 
+### Docker
+
+The image runs the published package over stdio:
+
+```bash
+docker build -t exhaustive-ui-mcp https://github.com/e-xiste/exhaustive-ui.git#main:packages/mcp
+docker run -i --rm exhaustive-ui-mcp
+```
+
 ### Claude Desktop
 
 Edit `claude_desktop_config.json` (Settings > Developer > Edit Config):
