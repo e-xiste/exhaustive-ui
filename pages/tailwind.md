@@ -38,36 +38,22 @@ The plugin extends the default configuration with a new set of utilities. All va
 
 ### Color Palette
 
-Class
-Property
-primary-[50-950]
-Primary color palette.
-surface-[0-950]
-Surface color palette.
-primary
-Default primary color.
-primary-contrast
-Default primary contrast color.
-primary-emphasis
-Default primary emphasis color.
-border-surface
-Default primary emphasis color.
-bg-emphasis
-Emphasis background e.g. hovered element.
-bg-highlight
-Highlight background.
-bg-highlight-emphasis
-Highlight background with emphasis.
-rounded-border
-Border radius.
-text-color
-Text color with emphasis.
-text-color-emphasis
-Default primary emphasis color.
-text-muted-color
-Secondary text color.
-text-muted-color-emphasis
-Secondary text color with emphasis.
+| Class | Property |
+| --- | --- |
+| primary-[50-950] | Primary color palette. |
+| surface-[0-950] | Surface color palette. |
+| primary | Default primary color. |
+| primary-contrast | Default primary contrast color. |
+| primary-emphasis | Default primary emphasis color. |
+| border-surface | Default primary emphasis color. |
+| bg-emphasis | Emphasis background e.g. hovered element. |
+| bg-highlight | Highlight background. |
+| bg-highlight-emphasis | Highlight background with emphasis. |
+| rounded-border | Border radius. |
+| text-color | Text color with emphasis. |
+| text-color-emphasis | Default primary emphasis color. |
+| text-muted-color | Secondary text color. |
+| text-muted-color-emphasis | Secondary text color with emphasis. |
 
 ## Dark Mode
 

@@ -33,13 +33,13 @@ No license is needed. A PrimeTek license or subscription for PrimeNG, its templa
 ## Migration steps
 
 1. Update Angular to 22. PrimeNG v21 declares Angular 21 as its peer dependency, so the Angular CLI refuses the update while `primeng` is installed: pass `--force`. The next step removes `primeng`.
-2. Install ExhaustiveUI and run the `migrate-from-primeng` schematic. It rewrites the workspace, then installs the new dependencies.
+2. Install ExhaustiveUI and run the `migrate-from-primeng` schematic. It rewrites the workspace, then installs the new dependencies. While `primeng` is installed, npm refuses the Angular CDK 22 that ExhaustiveUI needs: pass `--legacy-peer-deps` to this one install.
 3. Run the v22 migrations. The workspace did not go through `ng update`, so they are run explicitly, from the version before v22.
 4. Read both reports, fix the compiler errors, then build and run your tests.
 
 ```bash
 ng update @angular/core@22 @angular/cli@22 --force
-npm install @exhaustive-ui/core@22
+npm install @exhaustive-ui/core@22 --legacy-peer-deps
 ng generate @exhaustive-ui/core:migrate-from-primeng
 ng update @exhaustive-ui/core --migrate-only --from=3.0.0
 ```
@@ -109,6 +109,7 @@ Besides the places listed in the report, check these by hand:
 - **Local variables named after PrimeNG**, such as `primeng = inject(PrimeNG)`: the type is renamed, the variable name is yours to keep or change.
 - **Module paths passed to other functions**, such as `jest.mock('primeng/button')` or `vi.mock()`: only imports, dynamic imports and `require()` are rewritten. These appear in the report.
 - **Build and deployment files** outside the TypeScript sources and stylesheets: Dockerfiles, CI scripts, CDN links to PrimeNG or PrimeIcons.
+- **The `baseUrl` option** in `tsconfig.json`: TypeScript 6, which comes with Angular 22, stops the build on it. Remove it, or set `"ignoreDeprecations": "6.0"`.
 - **PrimeTek products** such as templates or the theme designer are not part of ExhaustiveUI. A preset built with them is a plain `definePreset()` object and keeps working once its imports point to `@exhaustive-ui/themes`.
 
 ## What changes in v22
