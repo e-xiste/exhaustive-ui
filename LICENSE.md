@@ -1,5 +1,3 @@
-## ExhaustiveUI LICENSE
-
 The MIT License (MIT)
 
 Copyright (c) 2026 e-xiste
