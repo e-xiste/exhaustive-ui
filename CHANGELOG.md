@@ -18,6 +18,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 ### Documentation
 
 - **site:** `.md` after the address of a page gives its Markdown version, as the LLMs page says: it answered with the HTML home page. A client that sends `Accept: text/markdown` gets it at the normal address, and the HTML pages link to it. `llms.txt` and `llms-full.txt` are also at the root of the site.
+- **migration:** the PrimeNG pages said that its repository is archived, that v21 gets no more fixes and that its Community license is for non-profits. The repository publishes security fixes for the MIT versions, and the Community license has other conditions.
 - **site:** an address that does not exist is a 404 instead of the home page, and a missing Markdown, text or JSON file a short text one.
 - **llms:** in the Markdown documentation and the MCP server, the sections of a component have the title and the order they have on the site ("Pagination: Basic" instead of "paginatorbasic-doc"). The sections that are not on the site, left from older versions, are no longer included.
 - **site:** 12 sections are back on the site and in the Markdown documentation, with their examples corrected: Toast life, clear and target, Select custom filter, overlays inside a Dialog, DatePicker header and footer and touch UI, InputMask clear icon, Image preview source, FileUpload custom upload, TreeTable cell editing, and CSS layers with Bootstrap.

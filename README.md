@@ -115,7 +115,7 @@ To start a new application with all of it in place: `npx tiged e-xiste/exhaustiv
 
 ## Why this exists
 
-In June 2026 PrimeTek archived the PrimeNG repository and moved future major versions, starting with v22, to a commercial license — [their announcement explains why](https://primeui.dev/nextchapter). [Optimus UI](https://github.com/openng-org/optimus-ui), maintained by OpenNG, picked up PrimeNG v21, the last MIT licensed version, and kept it open.
+In June 2026 PrimeTek moved future major versions of PrimeNG, starting with v22, to a commercial license, and the repository of the MIT versions now receives security fixes only — [their announcement explains why](https://primeui.dev/nextchapter). [Optimus UI](https://github.com/openng-org/optimus-ui), maintained by OpenNG, picked up PrimeNG v21, the last MIT licensed version, and kept it open.
 
 ExhaustiveUI is a fork of Optimus UI, maintained by [e-xiste](https://e-xiste.com) and the community. It exists to ship fixes and releases at a steadier pace, starting from Optimus UI's `next` branch and its migration of every component to the Angular Signals API. It stays MIT. There is no paid tier and none is planned.
 

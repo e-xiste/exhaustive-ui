@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
     template: `
         <app-docsectiontext>
             <p>
-                In June 2026 PrimeTek archived the PrimeNG repository and moved future major versions, starting with v22, to a commercial license. They explained their reasoning in
+                In June 2026 PrimeTek moved future major versions of PrimeNG, starting with v22, to a commercial license, and the repository of the MIT versions now receives security fixes only. They explained their reasoning in
                 <a href="https://primeui.dev/nextchapter" target="_blank" rel="noopener noreferrer">their own announcement</a>, and it is worth reading. Maintaining a component library of this size for a decade, largely for free, is genuinely hard,
                 and we do not think the decision was made lightly.
             </p>

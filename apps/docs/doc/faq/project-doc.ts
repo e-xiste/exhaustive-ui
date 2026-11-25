@@ -17,7 +17,7 @@ import { RouterModule } from '@angular/router';
             <h3>Is this an official PrimeNG fork? Are you affiliated with PrimeTek?</h3>
             <p>
                 No. ExhaustiveUI is an independent community fork, not affiliated with, endorsed by, or sponsored by PrimeTek. It is a fork of
-                <a href="https://github.com/openng-org/optimus-ui" target="_blank" rel="noopener noreferrer" class="doc-link">Optimus UI</a> (OpenNG), itself a repository seeded with PrimeNG's MIT licensed code and history, not a fork of the archived
+                <a href="https://github.com/openng-org/optimus-ui" target="_blank" rel="noopener noreferrer" class="doc-link">Optimus UI</a> (OpenNG), itself a repository seeded with PrimeNG's MIT licensed code and history, not a GitHub fork of the
                 <i>primefaces/primeng</i> repository.
             </p>
 
