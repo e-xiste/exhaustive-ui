@@ -2,10 +2,6 @@
 
 ConfirmPopup displays a confirmation overlay displayed relatively to its target.
 
-## Accessibility
-
-Screen Reader ConfirmPopup component uses alertdialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. ConfirmPopup adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Overlay Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Buttons Keyboard Support Key Function enter Triggers the action, closes the popup and moves focus to the trigger. space Triggers the action, closes the popup and moves focus to the trigger.
-
 ## Basic
 
 ConfirmPopup is defined using p-confirmPopup tag and an instance of ConfirmationService is required to display it bycalling confirm method.
@@ -81,225 +77,6 @@ export class ConfirmpopupBasicDemo {
 }
 ```
 
-## confirmationapi-doc
-
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Default</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>message</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Message of the confirmation.</td>
-                    </tr>
-                    <tr>
-                        <td>key</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Optional key to match the key of the confirm popup, necessary to use when component tree has multiple confirm popups.</td>
-                    </tr>
-                    <tr>
-                        <td>icon</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Icon to display next to the message.</td>
-                    </tr>
-                    <tr>
-                        <td>accept</td>
-                        <td>Function</td>
-                        <td>null</td>
-                        <td>Callback to execute when action is confirmed.</td>
-                    </tr>
-                    <tr>
-                        <td>reject</td>
-                        <td>Function</td>
-                        <td>null</td>
-                        <td>Callback to execute when action is rejected.</td>
-                    </tr>
-                    <tr>
-                        <td>acceptLabel</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Label of the accept button.</td>
-                    </tr>
-                    <tr>
-                        <td>rejectLabel</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Label of the reject button.</td>
-                    </tr>
-                    <tr>
-                        <td>acceptIcon</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Icon of the accept button.</td>
-                    </tr>
-                    <tr>
-                        <td>rejectIcon</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Icon of the reject button.</td>
-                    </tr>
-                    <tr>
-                        <td>acceptVisible</td>
-                        <td>boolean</td>
-                        <td>true</td>
-                        <td>Visibility of the accept button.</td>
-                    </tr>
-                    <tr>
-                        <td>rejectVisible</td>
-                        <td>boolean</td>
-                        <td>true</td>
-                        <td>Visibility of the reject button.</td>
-                    </tr>
-                    <tr>
-                        <td>acceptButtonStyleClass</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Style class of the accept button.</td>
-                    </tr>
-                    <tr>
-                        <td>rejectButtonStyleClass</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Style class of the reject button.</td>
-                    </tr>
-                    <tr>
-                        <td>defaultFocus</td>
-                        <td>string</td>
-                        <td>accept</td>
-                        <td>Element to receive the focus when the popup gets visible, valid values are "accept", "reject", and "none".</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class ConfirmpopupConfirmationapiDemo {
-}
-```
-
-## Headless
-
-Headless mode allows you to customize the entire user interface instead of the default elements.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-confirm-popup #cp>
-                <ng-template #headless let-message>
-                    <div class="rounded-sm p-4">
-                        <span>{{ message.message }}</span>
-                        <div class="flex items-center gap-2 mt-4">
-                            <p-button (onClick)="cp.onAccept()" label="Save" size="small" [autofocus]="true" />
-                            <p-button (onClick)="cp.onReject()" label="Cancel" [text]="true" size="small" severity="secondary" />
-                        </div>
-                    </div>
-                </ng-template>
-            </p-confirm-popup>
-            <p-button (onClick)="confirm($event)" label="Save" />
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, ConfirmPopupModule, ToastModule, ButtonModule],
-    providers: [ConfirmationService, MessageService]
-})
-export class ConfirmpopupHeadlessDemo {
-    private confirmationService = inject(ConfirmationService);
-    private messageService = inject(MessageService);
-
-    confirm(event: Event) {
-        this.confirmationService.confirm({
-            target: event.target as EventTarget,
-            message: 'Save your current process?',
-            accept: () => {
-                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-            }
-        });
-    }
-}
-```
-
-## props-doc
-
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Default</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>key</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Optional key to match the key of confirm object, necessary to use when component tree has multiple confirm dialogs.</td>
-                    </tr>
-                    <tr>
-                        <td>autoZIndex</td>
-                        <td>boolean</td>
-                        <td>true</td>
-                        <td>Whether to automatically manage layering.</td>
-                    </tr>
-                    <tr>
-                        <td>style</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Inline style of the component.</td>
-                    </tr>
-                    <tr>
-                        <td>styleClass</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Style class of the component.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class ConfirmpopupPropsDemo {
-}
-```
-
 ## Template
 
 Content section can be customized using content template.
@@ -370,40 +147,62 @@ export class ConfirmpopupTemplateDemo {
 }
 ```
 
-## templates-doc
+## Headless
+
+Headless mode allows you to customize the entire user interface instead of the default elements.
 
 ```typescript
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ConfirmPopupModule } from '@exhaustive-ui/core/confirmpopup';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Parameters</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>accepticon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>rejecticon</td>
-                        <td>-</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-confirm-popup #cp>
+                <ng-template #headless let-message>
+                    <div class="rounded-sm p-4">
+                        <span>{{ message.message }}</span>
+                        <div class="flex items-center gap-2 mt-4">
+                            <p-button (onClick)="cp.onAccept()" label="Save" size="small" [autofocus]="true" />
+                            <p-button (onClick)="cp.onReject()" label="Cancel" [text]="true" size="small" severity="secondary" />
+                        </div>
+                    </div>
+                </ng-template>
+            </p-confirm-popup>
+            <p-button (onClick)="confirm($event)" label="Save" />
         </div>
     `,
     standalone: true,
-    imports: []
+    imports: [CommonModule, ConfirmPopupModule, ToastModule, ButtonModule],
+    providers: [ConfirmationService, MessageService]
 })
-export class ConfirmpopupTemplatesDemo {
+export class ConfirmpopupHeadlessDemo {
+    private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
+
+    confirm(event: Event) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: 'Save your current process?',
+            accept: () => {
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+            }
+        });
+    }
 }
 ```
+
+## Accessibility
+
+Screen Reader ConfirmPopup component uses alertdialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. ConfirmPopup adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Overlay Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Buttons Keyboard Support Key Function enter Triggers the action, closes the popup and moves focus to the trigger. space Triggers the action, closes the popup and moves focus to the trigger.
 
 ## Confirm Popup
 

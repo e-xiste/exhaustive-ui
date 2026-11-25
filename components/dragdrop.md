@@ -195,30 +195,6 @@ export class DragdropDatatableDemo implements OnInit {
 }
 ```
 
-## Drag Handle
-
-dragHandle is used to restrict dragging unless mousedown occurs on the specified element. Panel below can only be dragged using its header.
-
-```typescript
-import { Component } from '@angular/core';
-import { DragDropModule } from '@exhaustive-ui/core/dragdrop';
-import { PanelModule } from '@exhaustive-ui/core/panel';
-
-@Component({
-    template: `
-        <div class="card">
-            <div pDraggable dragHandle=".p-panel-header" class="w-60">
-                <p-panel header="Drag Header"> Content </p-panel>
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [DragDropModule, PanelModule]
-})
-export class DragdropDraghandleDemo {
-}
-```
-
 ## Drop Indicator
 
 When a suitable draggable enters a droppable area, the area gets p-draggable-enter class that can be used to style the droppable section.
@@ -294,6 +270,30 @@ export class DragdropDropindicatorDemo {
         }
         return index;
     }
+}
+```
+
+## Drag Handle
+
+dragHandle is used to restrict dragging unless mousedown occurs on the specified element. Panel below can only be dragged using its header.
+
+```typescript
+import { Component } from '@angular/core';
+import { DragDropModule } from '@exhaustive-ui/core/dragdrop';
+import { PanelModule } from '@exhaustive-ui/core/panel';
+
+@Component({
+    template: `
+        <div class="card">
+            <div pDraggable dragHandle=".p-panel-header" class="w-60">
+                <p-panel header="Drag Header"> Content </p-panel>
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [DragDropModule, PanelModule]
+})
+export class DragdropDraghandleDemo {
 }
 ```
 

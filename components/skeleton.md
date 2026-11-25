@@ -2,9 +2,61 @@
 
 Skeleton is a placeholder to display instead of the actual content.
 
-## Accessibility
+## Shapes
 
-Screen Reader Skeleton uses aria-hidden as "true" so that it gets ignored by screen readers, any valid attribute is passed to the root element so you may customize it further if required. If multiple skeletons are grouped inside a container, you may use aria-busy on the container element as well to indicate the loading process.
+Various shapes and sizes can be created using styling properties like shape , width , height , borderRadius and class .
+
+```typescript
+import { Component } from '@angular/core';
+import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="flex flex-wrap">
+                <div class="w-full xl:w-6/12 p-4">
+                    <div class="font-semibold mb-4">Rectangle</div>
+                    <p-skeleton class="mb-2" />
+                    <p-skeleton width="10rem" class="mb-2" />
+                    <p-skeleton width="5rem" class="mb-2" />
+                    <p-skeleton height="2rem" class="mb-2" />
+                    <p-skeleton width="10rem" height="4rem" />
+                </div>
+                <div class="w-full xl:w-6/12 p-4">
+                    <div class="font-semibold mb-4">Rounded</div>
+                    <p-skeleton class="mb-2" borderRadius="16px" />
+                    <p-skeleton width="10rem" class="mb-2" borderRadius="16px" />
+                    <p-skeleton width="5rem" class="mb-2" borderRadius="16px" />
+                    <p-skeleton height="2rem" class="mb-2" borderRadius="16px" />
+                    <p-skeleton width="10rem" height="4rem" borderRadius="16px" />
+                </div>
+                <div class="w-full xl:w-6/12 p-4">
+                    <div class="font-semibold mt-4 mb-4">Square</div>
+                    <div class="flex items-end">
+                        <p-skeleton size="2rem" class="mr-2" />
+                        <p-skeleton size="3rem" class="mr-2" />
+                        <p-skeleton size="4rem" class="mr-2" />
+                        <p-skeleton size="5rem" />
+                    </div>
+                </div>
+                <div class="field w-full xl:w-6/12 p-4">
+                    <div class="font-semibold mt-4 mb-4">Circle</div>
+                    <div class="flex items-end">
+                        <p-skeleton shape="circle" size="2rem" class="mr-2" />
+                        <p-skeleton shape="circle" size="3rem" class="mr-2" />
+                        <p-skeleton shape="circle" size="4rem" class="mr-2" />
+                        <p-skeleton shape="circle" size="5rem" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [SkeletonModule]
+})
+export class SkeletonShapesDemo {
+}
+```
 
 ## Card
 
@@ -38,51 +90,6 @@ import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
     imports: [SkeletonModule]
 })
 export class SkeletonCardDemo {
-}
-```
-
-## DataTable
-
-Sample DataTable implementation using different Skeleton components and Tailwind CSS utilities.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
-import { TableModule } from '@exhaustive-ui/core/table';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-table [value]="products" [tableStyle]="{ 'min-width': '50rem' }">
-                <ng-template #header>
-                    <tr>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Quantity</th>
-                    </tr>
-                </ng-template>
-                <ng-template #body let-product>
-                    <tr>
-                        <td><p-skeleton /></td>
-                        <td><p-skeleton /></td>
-                        <td><p-skeleton /></td>
-                        <td><p-skeleton /></td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    `,
-    standalone: true,
-    imports: [SkeletonModule, TableModule, CommonModule]
-})
-export class SkeletonDatatableDemo implements OnInit {
-    products: any[] | undefined;
-
-    ngOnInit() {
-        this.products = Array.from({ length: 5 }).map((_, i) => `Item #${i}`);
-    }
 }
 ```
 
@@ -146,61 +153,54 @@ export class SkeletonListDemo {
 }
 ```
 
-## Shapes
+## DataTable
 
-Various shapes and sizes can be created using styling properties like shape , width , height , borderRadius and class .
+Sample DataTable implementation using different Skeleton components and Tailwind CSS utilities.
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { SkeletonModule } from '@exhaustive-ui/core/skeleton';
+import { TableModule } from '@exhaustive-ui/core/table';
 
 @Component({
     template: `
         <div class="card">
-            <div class="flex flex-wrap">
-                <div class="w-full xl:w-6/12 p-4">
-                    <div class="font-semibold mb-4">Rectangle</div>
-                    <p-skeleton class="mb-2" />
-                    <p-skeleton width="10rem" class="mb-2" />
-                    <p-skeleton width="5rem" class="mb-2" />
-                    <p-skeleton height="2rem" class="mb-2" />
-                    <p-skeleton width="10rem" height="4rem" />
-                </div>
-                <div class="w-full xl:w-6/12 p-4">
-                    <div class="font-semibold mb-4">Rounded</div>
-                    <p-skeleton class="mb-2" borderRadius="16px" />
-                    <p-skeleton width="10rem" class="mb-2" borderRadius="16px" />
-                    <p-skeleton width="5rem" class="mb-2" borderRadius="16px" />
-                    <p-skeleton height="2rem" class="mb-2" borderRadius="16px" />
-                    <p-skeleton width="10rem" height="4rem" borderRadius="16px" />
-                </div>
-                <div class="w-full xl:w-6/12 p-4">
-                    <div class="font-semibold mt-4 mb-4">Square</div>
-                    <div class="flex items-end">
-                        <p-skeleton size="2rem" class="mr-2" />
-                        <p-skeleton size="3rem" class="mr-2" />
-                        <p-skeleton size="4rem" class="mr-2" />
-                        <p-skeleton size="5rem" />
-                    </div>
-                </div>
-                <div class="field w-full xl:w-6/12 p-4">
-                    <div class="font-semibold mt-4 mb-4">Circle</div>
-                    <div class="flex items-end">
-                        <p-skeleton shape="circle" size="2rem" class="mr-2" />
-                        <p-skeleton shape="circle" size="3rem" class="mr-2" />
-                        <p-skeleton shape="circle" size="4rem" class="mr-2" />
-                        <p-skeleton shape="circle" size="5rem" />
-                    </div>
-                </div>
-            </div>
+            <p-table [value]="products" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template #header>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-product>
+                    <tr>
+                        <td><p-skeleton /></td>
+                        <td><p-skeleton /></td>
+                        <td><p-skeleton /></td>
+                        <td><p-skeleton /></td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
     `,
     standalone: true,
-    imports: [SkeletonModule]
+    imports: [SkeletonModule, TableModule, CommonModule]
 })
-export class SkeletonShapesDemo {
+export class SkeletonDatatableDemo implements OnInit {
+    products: any[] | undefined;
+
+    ngOnInit() {
+        this.products = Array.from({ length: 5 }).map((_, i) => `Item #${i}`);
+    }
 }
 ```
+
+## Accessibility
+
+Screen Reader Skeleton uses aria-hidden as "true" so that it gets ignored by screen readers, any valid attribute is passed to the root element so you may customize it further if required. If multiple skeletons are grouped inside a container, you may use aria-busy on the container element as well to indicate the loading process.
 
 ## Skeleton
 

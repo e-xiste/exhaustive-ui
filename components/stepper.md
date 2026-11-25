@@ -2,11 +2,7 @@
 
 The Stepper component displays a wizard-like workflow by guiding users through the multi-step progression.
 
-## Accessibility
-
-Screen Reader Stepper container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Stepper. Each stepper header has a tab role and aria-controls to refer to the corresponding stepper content element. The content element of each stepper has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name. Tab Header Keyboard Support Key Function tab Moves focus through the header. enter Activates the focused stepper header. space Activates the focused stepper header.
-
-## basic-doc
+## Horizontal
 
 Stepper consists of a combination of StepList , Step , StepPanels and StepPanel components. The value property is essential for associating Step and StepPanel with each other.
 
@@ -64,6 +60,69 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [StepperModule, ButtonModule]
 })
 export class StepperBasicDemo {
+}
+```
+
+## Vertical
+
+Vertical layout requires StepItem as a wrapper of Step and StepPanel components.
+
+```typescript
+import { Component } from '@angular/core';
+import { StepperModule } from '@exhaustive-ui/core/stepper';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-stepper [value]="1">
+                <p-step-item [value]="1">
+                    <p-step>Header I</p-step>
+                    <p-step-panel>
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="flex flex-col h-48">
+                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content I</div>
+                            </div>
+                            <div class="py-6">
+                                <p-button label="Next" (onClick)="activateCallback(2)" />
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+                </p-step-item>
+                <p-step-item [value]="2">
+                    <p-step>Header II</p-step>
+                    <p-step-panel>
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="flex flex-col h-48">
+                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content II</div>
+                            </div>
+                            <div class="flex py-6 gap-2">
+                                <p-button label="Back" severity="secondary" (onClick)="activateCallback(1)" />
+                                <p-button label="Next" (onClick)="activateCallback(3)" />
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+                </p-step-item>
+                <p-step-item [value]="3">
+                    <p-step>Header III</p-step>
+                    <p-step-panel>
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="flex flex-col h-48">
+                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content III</div>
+                            </div>
+                            <div class="py-6">
+                                <p-button label="Back" severity="secondary" (onClick)="activateCallback(2)" />
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+                </p-step-item>
+            </p-stepper>
+        </div>
+    `,
+    standalone: true,
+    imports: [StepperModule, ButtonModule]
+})
+export class StepperVerticalDemo {
 }
 ```
 
@@ -128,7 +187,7 @@ export class StepperLinearDemo {
 }
 ```
 
-## stepsonly
+## Steps Only
 
 Use Stepper with a StepList only for custom requirements where a progress indicator is needed.
 
@@ -291,68 +350,9 @@ export class StepperTemplateDemo {
 }
 ```
 
-## Vertical
+## Accessibility
 
-Vertical layout requires StepItem as a wrapper of Step and StepPanel components.
-
-```typescript
-import { Component } from '@angular/core';
-import { StepperModule } from '@exhaustive-ui/core/stepper';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-stepper [value]="1">
-                <p-step-item [value]="1">
-                    <p-step>Header I</p-step>
-                    <p-step-panel>
-                        <ng-template #content let-activateCallback="activateCallback">
-                            <div class="flex flex-col h-48">
-                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content I</div>
-                            </div>
-                            <div class="py-6">
-                                <p-button label="Next" (onClick)="activateCallback(2)" />
-                            </div>
-                        </ng-template>
-                    </p-step-panel>
-                </p-step-item>
-                <p-step-item [value]="2">
-                    <p-step>Header II</p-step>
-                    <p-step-panel>
-                        <ng-template #content let-activateCallback="activateCallback">
-                            <div class="flex flex-col h-48">
-                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content II</div>
-                            </div>
-                            <div class="flex py-6 gap-2">
-                                <p-button label="Back" severity="secondary" (onClick)="activateCallback(1)" />
-                                <p-button label="Next" (onClick)="activateCallback(3)" />
-                            </div>
-                        </ng-template>
-                    </p-step-panel>
-                </p-step-item>
-                <p-step-item [value]="3">
-                    <p-step>Header III</p-step>
-                    <p-step-panel>
-                        <ng-template #content let-activateCallback="activateCallback">
-                            <div class="flex flex-col h-48">
-                                <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-sm bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content III</div>
-                            </div>
-                            <div class="py-6">
-                                <p-button label="Back" severity="secondary" (onClick)="activateCallback(2)" />
-                            </div>
-                        </ng-template>
-                    </p-step-panel>
-                </p-step-item>
-            </p-stepper>
-        </div>
-    `,
-    standalone: true,
-    imports: [StepperModule, ButtonModule]
-})
-export class StepperVerticalDemo {
-}
-```
+Screen Reader Stepper container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Stepper. Each stepper header has a tab role and aria-controls to refer to the corresponding stepper content element. The content element of each stepper has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name. Tab Header Keyboard Support Key Function tab Moves focus through the header. enter Activates the focused stepper header. space Activates the focused stepper header.
 
 ## Stepper
 

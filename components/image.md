@@ -2,10 +2,6 @@
 
 Displays an image with preview and tranformation options.
 
-## Accessibility
-
-Screen Reader The preview button is a native button element with an aria-label that refers to the aria.zoomImage property of the locale API by default. When preview is active, dialog role with aria-modal is applied to the overlay image container. Button controls use aria.rotateRight , aria.rotateLeft , aria.zoomIn , aria.zoomOut and aria.close from the locale API as aria-label . ButtonBar Keyboard Support When preview is activated, close button receives the initial focus. Key Function tab Moves focus through button bar. enter Activates the button. space Activates the button. esc Closes the image preview.
-
 ## Basic
 
 Image is used as the native img element and supports all properties that the native element has. For multiple image, see Galleria.
@@ -49,27 +45,6 @@ export class ImagePreviewDemo {
 }
 ```
 
-## previewimagesource-doc
-
-In case that you want to show different image on preview, you can set previewImageSrc attribute. It could come handy when wanted to use smaller image version at first and bigger one on preview.
-
-```typescript
-import { Component } from '@angular/core';
-import { ImageModule } from '@exhaustive-ui/core/image';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-image src="https://exhaustive-ui.com/demo/galleria/galleria11.jpg" previewImageSrc="https://exhaustive-ui.com/demo/galleria/galleria11.jpg" alt="Image" width="250" [preview]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ImageModule]
-})
-export class ImagePreviewimagesourceDemo {
-}
-```
-
 ## Template
 
 An eye icon is displayed by default when the image is hovered in preview mode. Use the indicator template for custom content.
@@ -100,6 +75,10 @@ import { ImageModule } from '@exhaustive-ui/core/image';
 export class ImageTemplateDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader The preview button is a native button element with an aria-label that refers to the aria.zoomImage property of the locale API by default. When preview is active, dialog role with aria-modal is applied to the overlay image container. Button controls use aria.rotateRight , aria.rotateLeft , aria.zoomIn , aria.zoomOut and aria.close from the locale API as aria-label . ButtonBar Keyboard Support When preview is activated, close button receives the initial focus. Key Function tab Moves focus through button bar. enter Activates the button. space Activates the button. esc Closes the image preview.
 
 ## Image
 

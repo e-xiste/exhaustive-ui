@@ -2,10 +2,6 @@
 
 Compare two images side by side with a slider.
 
-## Accessibility
-
-Screen Reader ImageComponent component uses a native range slider internally. Value to describe the component can be defined using aria-labelledby and aria-label props. Keyboard Support Key Function tab Moves focus to the component. left arrow up arrow Decrements the value. right arrow down arrow Increments the value. home Set the minimum value. end Set the maximum value. page up Increments the value by 10 steps. page down Decrements the value by 10 steps.
-
 ## Basic
 
 Images are defined using templating with left and right templates. Use the style or class properties to define the size of the container.
@@ -61,6 +57,10 @@ import { ImageCompareModule } from '@exhaustive-ui/core/imagecompare';
 export class ImagecompareResponsiveDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader ImageComponent component uses a native range slider internally. Value to describe the component can be defined using aria-labelledby and aria-label props. Keyboard Support Key Function tab Moves focus to the component. left arrow up arrow Decrements the value. right arrow down arrow Increments the value. home Set the minimum value. end Set the maximum value. page up Increments the value by 10 steps. page down Decrements the value by 10 steps.
 
 ## Pass Through Options
 

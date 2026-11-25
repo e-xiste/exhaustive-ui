@@ -2,9 +2,40 @@
 
 Timeline visualizes a series of chained events.
 
-## Accessibility
+## Basic
 
-Screen Reader Timeline uses a semantic ordered list element to list the events. No specific role is enforced, still you may use any aria role and attributes as any valid attribute is passed to the list element. Keyboard Support Component does not include any interactive elements.
+Timeline receives the events with the value property as a collection of arbitrary objects. In addition, content template is required to display the representation of an event. Example below is a sample events array that is used throughout the documentation.
+
+```typescript
+import { Component } from '@angular/core';
+import { TimelineModule } from '@exhaustive-ui/core/timeline';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-timeline [value]="events">
+                <ng-template #content let-event>
+                    {{ event.status }}
+                </ng-template>
+            </p-timeline>
+        </div>
+    `,
+    standalone: true,
+    imports: [TimelineModule]
+})
+export class TimelineBasicDemo {
+    events: any[];
+
+    constructor() {
+        this.events = [
+            { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0', image: 'game-controller.jpg' },
+            { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
+            { status: 'Shipped', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
+            { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
+        ];
+    }
+}
+```
 
 ## Alignment
 
@@ -55,82 +86,6 @@ export class TimelineAlignmentDemo {
             { status: 'Shipped', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
             { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
         ];
-    }
-}
-```
-
-## Basic
-
-Timeline receives the events with the value property as a collection of arbitrary objects. In addition, content template is required to display the representation of an event. Example below is a sample events array that is used throughout the documentation.
-
-```typescript
-import { Component } from '@angular/core';
-import { TimelineModule } from '@exhaustive-ui/core/timeline';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-timeline [value]="events">
-                <ng-template #content let-event>
-                    {{ event.status }}
-                </ng-template>
-            </p-timeline>
-        </div>
-    `,
-    standalone: true,
-    imports: [TimelineModule]
-})
-export class TimelineBasicDemo {
-    events: any[];
-
-    constructor() {
-        this.events = [
-            { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0', image: 'game-controller.jpg' },
-            { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-            { status: 'Shipped', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
-            { status: 'Delivered', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
-        ];
-    }
-}
-```
-
-## Horizontal
-
-TimeLine orientation is controlled with the layout property, default is vertical having horizontal as the alternative.
-
-```typescript
-import { Component } from '@angular/core';
-import { TimelineModule } from '@exhaustive-ui/core/timeline';
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-4">
-            <p-timeline [value]="events" layout="horizontal" align="top">
-                <ng-template #content let-event>
-                    {{ event }}
-                </ng-template>
-            </p-timeline>
-            <p-timeline [value]="events" layout="horizontal" align="bottom">
-                <ng-template #content let-event>
-                    {{ event }}
-                </ng-template>
-            </p-timeline>
-            <p-timeline [value]="events" layout="horizontal" align="alternate">
-                <ng-template #content let-event>
-                    {{ event }}
-                </ng-template>
-                <ng-template #opposite let-event><span>&nbsp;</span></ng-template>
-            </p-timeline>
-        </div>
-    `,
-    standalone: true,
-    imports: [TimelineModule]
-})
-export class TimelineHorizontalDemo {
-    events: string[];
-
-    constructor() {
-        this.events = ['2020', '2021', '2022', '2023'];
     }
 }
 ```
@@ -238,6 +193,51 @@ export class TimelineTemplateDemo {
     }
 }
 ```
+
+## Horizontal
+
+TimeLine orientation is controlled with the layout property, default is vertical having horizontal as the alternative.
+
+```typescript
+import { Component } from '@angular/core';
+import { TimelineModule } from '@exhaustive-ui/core/timeline';
+
+@Component({
+    template: `
+        <div class="card flex flex-col gap-4">
+            <p-timeline [value]="events" layout="horizontal" align="top">
+                <ng-template #content let-event>
+                    {{ event }}
+                </ng-template>
+            </p-timeline>
+            <p-timeline [value]="events" layout="horizontal" align="bottom">
+                <ng-template #content let-event>
+                    {{ event }}
+                </ng-template>
+            </p-timeline>
+            <p-timeline [value]="events" layout="horizontal" align="alternate">
+                <ng-template #content let-event>
+                    {{ event }}
+                </ng-template>
+                <ng-template #opposite let-event><span>&nbsp;</span></ng-template>
+            </p-timeline>
+        </div>
+    `,
+    standalone: true,
+    imports: [TimelineModule]
+})
+export class TimelineHorizontalDemo {
+    events: string[];
+
+    constructor() {
+        this.events = ['2020', '2021', '2022', '2023'];
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Timeline uses a semantic ordered list element to list the events. No specific role is enforced, still you may use any aria role and attributes as any valid attribute is passed to the list element. Keyboard Support Component does not include any interactive elements.
 
 ## Timeline
 

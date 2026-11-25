@@ -2,32 +2,6 @@
 
 Button is an extension to standard button element with icons and theming.
 
-## Accessibility
-
-Screen Reader Button component renders a native button element that implicitly includes any passed prop. Text to describe the button is defined with the ariaLabel input, if not present label prop is used as the value. If the button is icon only or custom templating is used, it is recommended to use ariaLabel so that screen readers would be able to read the element properly.
-
-## Badge
-
-Buttons have built-in badge support with badge and badgeSeverity properties.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center flex-wrap gap-4">
-            <p-button label="Emails" badge="2" styleClass="m-0" />
-            <p-button label="Messages" icon="pi pi-users" badge="2" badgeSeverity="contrast" styleClass="m-0" [outlined]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonBadgeDemo {
-}
-```
-
 ## Basic
 
 Text to display on a button is defined with the label property.
@@ -46,66 +20,6 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [ButtonModule]
 })
 export class ButtonBasicDemo {
-}
-```
-
-## Button Group
-
-Multiple buttons are grouped when wrapped inside an element with ButtonGroup component.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonGroupModule } from '@exhaustive-ui/core/buttongroup';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button-group>
-                <p-button label="Save" icon="pi pi-check" />
-                <p-button label="Delete" icon="pi pi-trash" />
-                <p-button label="Cancel" icon="pi pi-times" />
-            </p-button-group>
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonGroupModule, ButtonModule]
-})
-export class ButtonButtongroupDemo {
-}
-```
-
-## buttonset-doc
-
-Multiple buttons are grouped when wrapped inside an element with p-buttonset class.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <span class="p-buttonset">
-                <button pButton pRipple>
-                    <i class="pi pi-check" pButtonIcon></i>
-                    <span pButtonLabel>Save</span>
-                </button>
-                <button pButton pRipple>
-                    <i class="pi pi-trash" pButtonIcon></i>
-                    <span pButtonLabel>Delete</span>
-                </button>
-                <button pButton pRipple>
-                    <i class="pi pi-times" pButtonIcon></i>
-                    <span pButtonLabel>Cancel</span>
-                </button>
-            </span>
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonButtonsetDemo {
 }
 ```
 
@@ -133,24 +47,31 @@ export class ButtonDirectiveDemo {
 }
 ```
 
-## Disabled
+## Link
 
-When disabled is present, the element cannot be edited and focused.
+A button can be rendered as a link when link property is present, while the pButton directive can be applied on an anchor element to style the link as a button.
 
 ```typescript
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-button label="Submit" [disabled]="true" />
+        <div class="card flex justify-center gap-4">
+            <p-button label="Link" link />
+            <a href="https://angular.dev/" pButton target="_blank" rel="noopener noreferrer">
+                <span pButtonLabel>Angular Website</span>
+            </a>
+            <a routerLink="/" pButton>
+                <span pButtonLabel>Router Link</span>
+            </a>
         </div>
     `,
     standalone: true,
-    imports: [ButtonModule]
+    imports: [ButtonModule, RouterModule]
 })
-export class ButtonDisabledDemo {
+export class ButtonLinkDemo {
 }
 ```
 
@@ -183,7 +104,226 @@ export class ButtonIconsDemo {
 }
 ```
 
-## iconsonly-doc
+## Loading
+
+Busy state is controlled with the loading property.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-4">
+            <p-button label="Search" icon="pi pi-check" [loading]="loading()" (onClick)="load()" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonLoadingDemo {
+    loading = signal(false);
+
+    load() {
+        this.loading.set(true);
+
+        setTimeout(() => {
+            this.loading.set(false);
+        }, 2000);
+    }
+}
+```
+
+## Severity
+
+Severity defines the type of button.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" />
+            <p-button label="Secondary" severity="secondary" />
+            <p-button label="Success" severity="success" />
+            <p-button label="Info" severity="info" />
+            <p-button label="Warn" severity="warn" />
+            <p-button label="Help" severity="help" />
+            <p-button label="Danger" severity="danger" />
+            <p-button label="Contrast" severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonSeverityDemo {
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button label="Submit" [disabled]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonDisabledDemo {
+}
+```
+
+## Raised
+
+Raised buttons display a shadow to indicate elevation.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" [raised]="true" />
+            <p-button label="Secondary" [raised]="true" severity="secondary" />
+            <p-button label="Success" [raised]="true" severity="success" />
+            <p-button label="Info" [raised]="true" severity="info" />
+            <p-button label="Warn" [raised]="true" severity="warn" />
+            <p-button label="Help" [raised]="true" severity="help" />
+            <p-button label="Danger" [raised]="true" severity="danger" />
+            <p-button label="Contrast" [raised]="true" severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonRaisedDemo {
+}
+```
+
+## Rounded
+
+Rounded buttons have a circular border radius.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" [rounded]="true" />
+            <p-button label="Secondary" [rounded]="true" severity="secondary" />
+            <p-button label="Success" [rounded]="true" severity="success" />
+            <p-button label="Info" [rounded]="true" severity="info" />
+            <p-button label="Warn" [rounded]="true" severity="warn" />
+            <p-button label="Help" [rounded]="true" severity="help" />
+            <p-button label="Danger" [rounded]="true" severity="danger" />
+            <p-button label="Contrast" [rounded]="true" severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonRoundedDemo {
+}
+```
+
+## Text
+
+Text buttons are displayed as textual elements.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" variant="text" />
+            <p-button label="Secondary" variant="text" severity="secondary" />
+            <p-button label="Success" variant="text" severity="success" />
+            <p-button label="Info" variant="text" severity="info" />
+            <p-button label="Warn" variant="text" severity="warn" />
+            <p-button label="Help" variant="text" severity="help" />
+            <p-button label="Danger" variant="text" severity="danger" />
+            <p-button label="Plain" variant="text" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonTextDemo {
+}
+```
+
+## Raised Text
+
+Text buttons can be displayed as raised for elevation.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" variant="text" [raised]="true" />
+            <p-button label="Secondary" variant="text" [raised]="true" severity="secondary" />
+            <p-button label="Success" variant="text" [raised]="true" severity="success" />
+            <p-button label="Info" variant="text" [raised]="true" severity="info" />
+            <p-button label="Warn" variant="text" [raised]="true" severity="warn" />
+            <p-button label="Help" variant="text" [raised]="true" severity="help" />
+            <p-button label="Danger" variant="text" [raised]="true" severity="danger" />
+            <p-button label="Plain" variant="text" [raised]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonRaisedtextDemo {
+}
+```
+
+## Outlined
+
+Outlined buttons display a border without a background initially.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4 justify-center">
+            <p-button label="Primary" variant="outlined" />
+            <p-button label="Secondary" variant="outlined" severity="secondary" />
+            <p-button label="Success" variant="outlined" severity="success" />
+            <p-button label="Info" variant="outlined" severity="info" />
+            <p-button label="Warn" variant="outlined" severity="warn" />
+            <p-button label="Help" variant="outlined" severity="help" />
+            <p-button label="Danger" variant="outlined" severity="danger" />
+            <p-button label="Contrast" variant="outlined" severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class ButtonOutlinedDemo {
+}
+```
+
+## Icon Only
 
 Buttons can have icons without labels.
 
@@ -248,67 +388,9 @@ export class ButtonIconsonlyDemo {
 }
 ```
 
-## Link
+## Badge
 
-A button can be rendered as a link when link property is present, while the pButton directive can be applied on an anchor element to style the link as a button.
-
-```typescript
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center gap-4">
-            <p-button label="Link" link />
-            <a href="https://angular.dev/" pButton target="_blank" rel="noopener noreferrer">
-                <span pButtonLabel>Angular Website</span>
-            </a>
-            <a routerLink="/" pButton>
-                <span pButtonLabel>Router Link</span>
-            </a>
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule, RouterModule]
-})
-export class ButtonLinkDemo {
-}
-```
-
-## Loading
-
-Busy state is controlled with the loading property.
-
-```typescript
-import { Component, signal } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center gap-4">
-            <p-button label="Search" icon="pi pi-check" [loading]="loading()" (onClick)="load()" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonLoadingDemo {
-    loading = signal(false);
-
-    load() {
-        this.loading.set(true);
-
-        setTimeout(() => {
-            this.loading.set(false);
-        }, 2000);
-    }
-}
-```
-
-## Outlined
-
-Outlined buttons display a border without a background initially.
+Buttons have built-in badge support with badge and badgeSeverity properties.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -316,133 +398,41 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" variant="outlined" />
-            <p-button label="Secondary" variant="outlined" severity="secondary" />
-            <p-button label="Success" variant="outlined" severity="success" />
-            <p-button label="Info" variant="outlined" severity="info" />
-            <p-button label="Warn" variant="outlined" severity="warn" />
-            <p-button label="Help" variant="outlined" severity="help" />
-            <p-button label="Danger" variant="outlined" severity="danger" />
-            <p-button label="Contrast" variant="outlined" severity="contrast" />
+        <div class="card flex justify-center flex-wrap gap-4">
+            <p-button label="Emails" badge="2" styleClass="m-0" />
+            <p-button label="Messages" icon="pi pi-users" badge="2" badgeSeverity="contrast" styleClass="m-0" [outlined]="true" />
         </div>
     `,
     standalone: true,
     imports: [ButtonModule]
 })
-export class ButtonOutlinedDemo {
+export class ButtonBadgeDemo {
 }
 ```
 
-## Raised
+## Button Group
 
-Raised buttons display a shadow to indicate elevation.
+Multiple buttons are grouped when wrapped inside an element with ButtonGroup component.
 
 ```typescript
 import { Component } from '@angular/core';
+import { ButtonGroupModule } from '@exhaustive-ui/core/buttongroup';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" [raised]="true" />
-            <p-button label="Secondary" [raised]="true" severity="secondary" />
-            <p-button label="Success" [raised]="true" severity="success" />
-            <p-button label="Info" [raised]="true" severity="info" />
-            <p-button label="Warn" [raised]="true" severity="warn" />
-            <p-button label="Help" [raised]="true" severity="help" />
-            <p-button label="Danger" [raised]="true" severity="danger" />
-            <p-button label="Contrast" [raised]="true" severity="contrast" />
+        <div class="card flex justify-center">
+            <p-button-group>
+                <p-button label="Save" icon="pi pi-check" />
+                <p-button label="Delete" icon="pi pi-trash" />
+                <p-button label="Cancel" icon="pi pi-times" />
+            </p-button-group>
         </div>
     `,
     standalone: true,
-    imports: [ButtonModule]
+    imports: [ButtonGroupModule, ButtonModule]
 })
-export class ButtonRaisedDemo {
-}
-```
-
-## Raised Text
-
-Text buttons can be displayed as raised for elevation.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" variant="text" [raised]="true" />
-            <p-button label="Secondary" variant="text" [raised]="true" severity="secondary" />
-            <p-button label="Success" variant="text" [raised]="true" severity="success" />
-            <p-button label="Info" variant="text" [raised]="true" severity="info" />
-            <p-button label="Warn" variant="text" [raised]="true" severity="warn" />
-            <p-button label="Help" variant="text" [raised]="true" severity="help" />
-            <p-button label="Danger" variant="text" [raised]="true" severity="danger" />
-            <p-button label="Plain" variant="text" [raised]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonRaisedtextDemo {
-}
-```
-
-## Rounded
-
-Rounded buttons have a circular border radius.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" [rounded]="true" />
-            <p-button label="Secondary" [rounded]="true" severity="secondary" />
-            <p-button label="Success" [rounded]="true" severity="success" />
-            <p-button label="Info" [rounded]="true" severity="info" />
-            <p-button label="Warn" [rounded]="true" severity="warn" />
-            <p-button label="Help" [rounded]="true" severity="help" />
-            <p-button label="Danger" [rounded]="true" severity="danger" />
-            <p-button label="Contrast" [rounded]="true" severity="contrast" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonRoundedDemo {
-}
-```
-
-## Severity
-
-Severity defines the type of button.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" />
-            <p-button label="Secondary" severity="secondary" />
-            <p-button label="Success" severity="success" />
-            <p-button label="Info" severity="info" />
-            <p-button label="Warn" severity="warn" />
-            <p-button label="Help" severity="help" />
-            <p-button label="Danger" severity="danger" />
-            <p-button label="Contrast" severity="contrast" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonSeverityDemo {
+export class ButtonButtongroupDemo {
 }
 ```
 
@@ -515,33 +505,9 @@ export class ButtonTemplateDemo {
 }
 ```
 
-## Text
+## Accessibility
 
-Text buttons are displayed as textual elements.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap gap-4 justify-center">
-            <p-button label="Primary" variant="text" />
-            <p-button label="Secondary" variant="text" severity="secondary" />
-            <p-button label="Success" variant="text" severity="success" />
-            <p-button label="Info" variant="text" severity="info" />
-            <p-button label="Warn" variant="text" severity="warn" />
-            <p-button label="Help" variant="text" severity="help" />
-            <p-button label="Danger" variant="text" severity="danger" />
-            <p-button label="Plain" variant="text" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class ButtonTextDemo {
-}
-```
+Screen Reader Button component renders a native button element that implicitly includes any passed prop. Text to describe the button is defined with the ariaLabel input, if not present label prop is used as the value. If the button is icon only or custom templating is used, it is recommended to use ariaLabel so that screen readers would be able to read the element properly.
 
 ## Button
 

@@ -2,10 +2,6 @@
 
 DataView displays data in grid grid-cols-12 gap-4 or list layout with pagination and sorting features.
 
-## Accessibility
-
-Screen Reader The container element that wraps the layout options buttons has a group role whereas each button element uses button role and aria-pressed is updated depending on selection state. Values to describe the buttons are derived from the aria.listView and aria.gridView properties of the locale API respectively. Refer to paginator accessibility documentation for the paginator of the component. Keyboard Support Key Function tab Moves focus to the buttons. space Toggles the checked state of a button.
-
 ## Basic
 
 DataView requires a value to display along with a list template that receives an object in the collection to return content.
@@ -92,6 +88,216 @@ export class DataviewBasicDemo {
             const d = data.slice(0, 5);
             this.products.set([...d]);
         });
+    }
+}
+```
+
+## Pagination
+
+Pagination is enabled with the paginator and rows properties. Refer to the Paginator for more information about customizing the paginator.
+
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component, signal, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DataViewModule } from '@exhaustive-ui/core/dataview';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { Product } from '@/domain/product';
+import { ProductService } from '@/service/productservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-data-view #dv [value]="products()" [rows]="5" [paginator]="true">
+                <ng-template #list let-items>
+                    <div class="grid grid-cols-12 gap-4 grid-nogutter">
+                        <div class="col-span-12" *ngFor="let item of items; let first = first">
+                            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
+                                <div class="md:w-40 relative">
+                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
+                                    <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute" [style.left.px]="4" [style.top.px]="4" />
+                                </div>
+                                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                        <div>
+                                            <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
+                                            <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
+                                        </div>
+                                        <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
+                                            <div
+                                                class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
+                                                style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
+                                            >
+                                                <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{ item.rating }}</span>
+                                                <i class="pi pi-star-fill text-yellow-500"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col md:items-end gap-8">
+                                        <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
+                                        <div class="flex flex-row-reverse md:flex-row gap-2">
+                                            <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [outlined]="true" />
+                                            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-data-view>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, RouterModule, DataViewModule, ButtonModule, TagModule],
+    providers: [ProductService]
+})
+export class DataviewPaginationDemo {
+    private productService = inject(ProductService);
+
+    products = signal<any>([]);
+
+    getSeverity(product: Product) {
+        switch (product.inventoryStatus) {
+            case 'INSTOCK':
+                return 'success';
+
+            case 'LOWSTOCK':
+                return 'warn';
+
+            case 'OUTOFSTOCK':
+                return 'danger';
+
+            default:
+                return null;
+        }
+    }
+
+    ngOnInit() {
+        this.productService.getProducts().then((data) => {
+            this.products.set(data);
+        });
+    }
+}
+```
+
+## Sorting
+
+Built-in sorting is controlled by bindings sortField and sortOrder properties from a custom UI.
+
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectItem } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { DataViewModule } from '@exhaustive-ui/core/dataview';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { TagModule } from '@exhaustive-ui/core/tag';
+import { Product } from '@/domain/product';
+import { ProductService } from '@/service/productservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-data-view #dv [value]="products()" [sortField]="sortField" [sortOrder]="sortOrder">
+                <ng-template #header>
+                    <div class="flex flex-col md:flex-row md:justify-between">
+                        <p-select [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By Price" (onChange)="onSortChange($event)" class="mb-2 md:mb-0" />
+                    </div>
+                </ng-template>
+                <ng-template #list let-items>
+                    <div class="grid grid-cols-12 gap-4 grid-nogutter">
+                        <div class="col-span-12" *ngFor="let item of items; let first = first">
+                            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
+                                <div class="md:w-40 relative">
+                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
+                                    <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute" [style.left.px]="4" [style.top.px]="4" />
+                                </div>
+                                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                        <div>
+                                            <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
+                                            <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
+                                        </div>
+                                        <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
+                                            <div
+                                                class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
+                                                style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
+                                            >
+                                                <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{ item.rating }}</span>
+                                                <i class="pi pi-star-fill text-yellow-500"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col md:items-end gap-8">
+                                        <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
+                                        <div class="flex flex-row-reverse md:flex-row gap-2">
+                                            <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [outlined]="true" />
+                                            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-data-view>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, DataViewModule, ButtonModule, TagModule, SelectModule],
+    providers: [ProductService]
+})
+export class DataviewSortingDemo {
+    private productService = inject(ProductService);
+
+    sortOptions!: SelectItem[];
+
+    sortKey!: string;
+
+    sortOrder!: number;
+
+    sortField!: string;
+
+    products = signal<any>([]);
+
+    onSortChange(event: any) {
+        let value = event.value;
+
+        if (value.indexOf('!') === 0) {
+            this.sortOrder = -1;
+            this.sortField = value.substring(1, value.length);
+        } else {
+            this.sortOrder = 1;
+            this.sortField = value;
+        }
+    }
+
+    getSeverity(product: Product) {
+        switch (product.inventoryStatus) {
+            case 'INSTOCK':
+                return 'success';
+
+            case 'LOWSTOCK':
+                return 'warn';
+
+            case 'OUTOFSTOCK':
+                return 'danger';
+
+            default:
+                return null;
+        }
+    }
+
+    ngOnInit() {
+        this.productService.getProducts().then((data) => this.products.set(data.slice(0, 5)));
+
+        this.sortOptions = [
+            { label: 'Price High to Low', value: '!price' },
+            { label: 'Price Low to High', value: 'price' }
+        ];
     }
 }
 ```
@@ -354,215 +560,9 @@ export class DataviewLoadingDemo {
 }
 ```
 
-## Pagination
+## Accessibility
 
-Pagination is enabled with the paginator and rows properties. Refer to the Paginator for more information about customizing the paginator.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, signal, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { DataViewModule } from '@exhaustive-ui/core/dataview';
-import { TagModule } from '@exhaustive-ui/core/tag';
-import { Product } from '@/domain/product';
-import { ProductService } from '@/service/productservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-data-view #dv [value]="products()" [rows]="5" [paginator]="true">
-                <ng-template #list let-items>
-                    <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                        <div class="col-span-12" *ngFor="let item of items; let first = first">
-                            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
-                                <div class="md:w-40 relative">
-                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
-                                    <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute" [style.left.px]="4" [style.top.px]="4" />
-                                </div>
-                                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                        <div>
-                                            <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                                            <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                                        </div>
-                                        <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                                            <div
-                                                class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                                style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                            >
-                                                <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{ item.rating }}</span>
-                                                <i class="pi pi-star-fill text-yellow-500"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col md:items-end gap-8">
-                                        <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
-                                        <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [outlined]="true" />
-                                            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-template>
-            </p-data-view>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, RouterModule, DataViewModule, ButtonModule, TagModule],
-    providers: [ProductService]
-})
-export class DataviewPaginationDemo {
-    private productService = inject(ProductService);
-
-    products = signal<any>([]);
-
-    getSeverity(product: Product) {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warn';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    }
-
-    ngOnInit() {
-        this.productService.getProducts().then((data) => {
-            this.products.set(data);
-        });
-    }
-}
-```
-
-## Sorting
-
-Built-in sorting is controlled by bindings sortField and sortOrder properties from a custom UI.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectItem } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { DataViewModule } from '@exhaustive-ui/core/dataview';
-import { SelectModule } from '@exhaustive-ui/core/select';
-import { TagModule } from '@exhaustive-ui/core/tag';
-import { Product } from '@/domain/product';
-import { ProductService } from '@/service/productservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-data-view #dv [value]="products()" [sortField]="sortField" [sortOrder]="sortOrder">
-                <ng-template #header>
-                    <div class="flex flex-col md:flex-row md:justify-between">
-                        <p-select [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By Price" (onChange)="onSortChange($event)" class="mb-2 md:mb-0" />
-                    </div>
-                </ng-template>
-                <ng-template #list let-items>
-                    <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                        <div class="col-span-12" *ngFor="let item of items; let first = first">
-                            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
-                                <div class="md:w-40 relative">
-                                    <img class="block xl:block mx-auto rounded-border w-full" [src]="'https://exhaustive-ui.com/demo/product/' + item.image" [alt]="item.name" />
-                                    <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute" [style.left.px]="4" [style.top.px]="4" />
-                                </div>
-                                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                        <div>
-                                            <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                                            <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                                        </div>
-                                        <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                                            <div
-                                                class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                                style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                            >
-                                                <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{ item.rating }}</span>
-                                                <i class="pi pi-star-fill text-yellow-500"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col md:items-end gap-8">
-                                        <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
-                                        <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <p-button icon="pi pi-heart" ariaLabel="Add to favorites" [outlined]="true" />
-                                            <p-button icon="pi pi-shopping-cart" class="flex-auto md:flex-initial whitespace-nowrap" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-template>
-            </p-data-view>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, DataViewModule, ButtonModule, TagModule, SelectModule],
-    providers: [ProductService]
-})
-export class DataviewSortingDemo {
-    private productService = inject(ProductService);
-
-    sortOptions!: SelectItem[];
-
-    sortKey!: string;
-
-    sortOrder!: number;
-
-    sortField!: string;
-
-    products = signal<any>([]);
-
-    onSortChange(event: any) {
-        let value = event.value;
-
-        if (value.indexOf('!') === 0) {
-            this.sortOrder = -1;
-            this.sortField = value.substring(1, value.length);
-        } else {
-            this.sortOrder = 1;
-            this.sortField = value;
-        }
-    }
-
-    getSeverity(product: Product) {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warn';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    }
-
-    ngOnInit() {
-        this.productService.getProducts().then((data) => this.products.set(data.slice(0, 5)));
-
-        this.sortOptions = [
-            { label: 'Price High to Low', value: '!price' },
-            { label: 'Price Low to High', value: 'price' }
-        ];
-    }
-}
-```
+Screen Reader The container element that wraps the layout options buttons has a group role whereas each button element uses button role and aria-pressed is updated depending on selection state. Values to describe the buttons are derived from the aria.listView and aria.gridView properties of the locale API respectively. Refer to paginator accessibility documentation for the paginator of the component. Keyboard Support Key Function tab Moves focus to the buttons. space Toggles the checked state of a button.
 
 ## Data View
 

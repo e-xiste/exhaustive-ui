@@ -2,10 +2,6 @@
 
 
 
-## Accessibility
-
-Screen Reader Terminal component has an input element that can be described with aria-label or aria-labelledby props. The element that lists the previous commands has aria-live so that changes are received by the screen reader. Keyboard Support Key Function tab Moves focus through the input element. enter Executes the command when focus in on the input element.
-
 ## Basic
 
 Commands are processed using observables via the TerminalService . Import this service into your component and subscribe to commandHandler to process commands by sending replies with sendResponse function.
@@ -65,6 +61,10 @@ export class TerminalBasicDemo implements OnDestroy {
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader Terminal component has an input element that can be described with aria-label or aria-labelledby props. The element that lists the previous commands has aria-live so that changes are received by the screen reader. Keyboard Support Key Function tab Moves focus through the input element. enter Executes the command when focus in on the input element.
 
 ## Terminal
 

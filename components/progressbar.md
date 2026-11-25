@@ -2,10 +2,6 @@
 
 ProgressBar is a process status indicator.
 
-## Accessibility
-
-Screen Reader ProgressBar components uses progressbar role along with aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using aria-labelledby and aria-label props.
-
 ## Basic
 
 ProgressBar is used with the value property.
@@ -79,29 +75,6 @@ export class ProgressbarDynamicDemo implements OnInit, OnDestroy {
 }
 ```
 
-## Indeterminate
-
-For progresses with no value to track, set the mode property to indeterminate .
-
-```typescript
-import { Component } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-progress-bar aria-label="Loading" mode="indeterminate" [style]="{ height: '6px' }" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ProgressBarModule],
-    providers: [MessageService]
-})
-export class ProgressbarIndeterminateDemo {
-}
-```
-
 ## Template
 
 content template allows displaying custom content inside the progressbar.
@@ -126,6 +99,33 @@ import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
 export class ProgressbarTemplateDemo {
 }
 ```
+
+## Indeterminate
+
+For progresses with no value to track, set the mode property to indeterminate .
+
+```typescript
+import { Component } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ProgressBarModule } from '@exhaustive-ui/core/progressbar';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-progress-bar aria-label="Loading" mode="indeterminate" [style]="{ height: '6px' }" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ProgressBarModule],
+    providers: [MessageService]
+})
+export class ProgressbarIndeterminateDemo {
+}
+```
+
+## Accessibility
+
+Screen Reader ProgressBar components uses progressbar role along with aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using aria-labelledby and aria-label props.
 
 ## Progress Bar
 

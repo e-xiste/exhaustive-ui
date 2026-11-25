@@ -2,13 +2,25 @@
 
 Dialogs can be created dynamically with any component as the content using a DialogService.
 
-## Closing a Dialog
+## Usage
 
-Most of the time, requirement is returning a value from the dialog. DialogRef's close method is used for this purpose where the parameter passed will be available at the onClose event at the caller. Here is an example on how to close the dialog from the ProductListDemo by passing a selected product.
+To use dynamic dialog, a reference should be declared as DynamicDialogRef after the DialogService injected into the component.
+
+## Opening a Dialog
+
+The open method of the DialogService is used to open a Dialog. First parameter is the component to load and second one is the configuration object to customize the Dialog. It returns the DynamicDialogRef of the new dialog, or null when a dialog with the same component is already open, unless duplicate is enabled in the configuration.
 
 ## Customization
 
 DynamicDialog uses the Dialog component internally, visit dialog for more information about the available props.
+
+## Passing Data
+
+To pass data to a dynamically loaded component, you can use either the data or inputValues property, depending on your requirements. The data property is ideal for passing generic information that is not directly tied to the component's inputs, while inputValues allows you to set specific input properties on the component in a more structured and type-safe way. Both properties can be used together or independently, offering flexibility to meet different use cases. Additionally, the loaded component can control the dialog using the DynamicDialogRef API, providing complete control over the dialog lifecycle. Both DynamicDialogConfig and DynamicDialogRef are injectable through the constructor.
+
+## Closing a Dialog
+
+Most of the time, requirement is returning a value from the dialog. DialogRef's close method is used for this purpose where the parameter passed will be available at the onClose event at the caller. Here is an example on how to close the dialog from the ProductListDemo by passing a selected product.
 
 ## Example
 
@@ -83,22 +95,6 @@ export class DynamicdialogExampleDemo implements OnDestroy {
     }
 }
 ```
-
-## Opening a Dialog
-
-The open method of the DialogService is used to open a Dialog. First parameter is the component to load and second one is the configuration object to customize the Dialog. It returns the DynamicDialogRef of the new dialog, or null when a dialog with the same component is already open, unless duplicate is enabled in the configuration.
-
-## Passing Data
-
-To pass data to a dynamically loaded component, you can use either the data or inputValues property, depending on your requirements. The data property is ideal for passing generic information that is not directly tied to the component's inputs, while inputValues allows you to set specific input properties on the component in a more structured and type-safe way. Both properties can be used together or independently, offering flexibility to meet different use cases. Additionally, the loaded component can control the dialog using the DynamicDialogRef API, providing complete control over the dialog lifecycle. Both DynamicDialogConfig and DynamicDialogRef are injectable through the constructor.
-
-## style-doc
-
-Following is the list of structural style classes, for theming classes visit theming page.
-
-## Usage
-
-To use dynamic dialog, a reference should be declared as DynamicDialogRef after the DialogService injected into the component.
 
 ## Theming
 

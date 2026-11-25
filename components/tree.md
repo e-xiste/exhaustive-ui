@@ -2,10 +2,6 @@
 
 Tree is used to display hierarchical data.
 
-## Accessibility
-
-Screen Reader Value to describe the component can either be provided with aria-labelledby or aria-label props. The root list element has a tree role whereas each list item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. In checkbox selection, aria-checked is used instead of aria-selected . The container element of a treenode has the group role. Checkbox and toggle icons are hidden from screen readers as their parent element with treeitem role and attributes are used instead for readers and keyboard support. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem. Keyboard Support Key Function tab Moves focus to the first selected node when focus enters the component, if there is none then first element receives the focus. If focus is already inside the component, moves focus to the next focusable element in the page tab sequence. shift + tab Moves focus to the last selected node when focus enters the component, if there is none then first element receives the focus. If focus is already inside the component, moves focus to the previous focusable element in the page tab sequence. enter Selects the focused treenode. space Selects the focused treenode. down arrow Moves focus to the next treenode. up arrow Moves focus to the previous treenode. right arrow If node is closed, opens the node otherwise moves focus to the first child node. left arrow If node is open, closes the node otherwise moves focus to the parent node.
-
 ## Basic
 
 Tree component requires an array of TreeNode objects as its value .
@@ -34,113 +30,6 @@ export class TreeBasicDemo implements OnInit {
     ngOnInit() {
         this.nodeService.getFiles().then((data) => {
             this.files.set(data);
-        });
-    }
-}
-```
-
-## Checkbox
-
-Selection of multiple nodes via checkboxes is enabled by configuring selectionMode as checkbox .
-
-```typescript
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@exhaustive-ui/core/api';
-import { TreeModule } from '@exhaustive-ui/core/tree';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tree [value]="files()" selectionMode="checkbox" class="w-full md:w-120" [(selection)]="selectedFiles" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeModule, FormsModule],
-    providers: [NodeService]
-})
-export class TreeCheckboxDemo implements OnInit {
-    private nodeService = inject(NodeService);
-
-    files = signal<TreeNode[]>(undefined);
-
-    selectedFiles!: TreeNode[];
-
-    ngOnInit() {
-        this.nodeService.getFiles().then((data) => {
-            this.files.set(data);
-        });
-    }
-}
-```
-
-## Context Menu
-
-Tree has exclusive integration with ContextMenu using the contextMenu property along with the contextMenuSelection to manage the selection.
-
-```typescript
-import { Component, model, OnInit, signal, inject } from '@angular/core';
-import { MenuItem, MessageService, TreeNode } from '@exhaustive-ui/core/api';
-import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { TreeModule } from '@exhaustive-ui/core/tree';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-toast [style]="{ marginTop: '80px' }" />
-            <p-tree [value]="files()" class="w-full md:w-80" selectionMode="single" [(selection)]="selectedNode" [(contextMenuSelection)]="contextMenuNode" [contextMenu]="cm" contextMenuSelectionMode="separate" />
-            <p-context-menu #cm [model]="items" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeModule, ContextMenuModule, ToastModule],
-    providers: [MessageService, NodeService]
-})
-export class TreeContextmenuDemo implements OnInit {
-    private nodeService = inject(NodeService);
-    private messageService = inject(MessageService);
-
-    files = signal<TreeNode[]>([]);
-
-    selectedNode = model<TreeNode | null>(null);
-
-    contextMenuNode = model<TreeNode | null>(null);
-
-    items!: MenuItem[];
-
-    ngOnInit() {
-        this.nodeService.getFiles().then((files) => this.files.set(files));
-
-        this.items = [
-            { label: 'View', icon: 'pi pi-search', command: () => this.viewFile(this.contextMenuNode()) },
-            { label: 'Toggle', icon: 'pi pi-sort', command: () => this.toggleFile(this.contextMenuNode()) }
-        ];
-    }
-
-    viewFile(node: TreeNode | null) {
-        if (node) {
-            this.messageService.add({ severity: 'info', summary: 'File Selected', detail: node.label });
-        }
-    }
-
-    toggleFile(node: TreeNode | null) {
-        if (node) {
-            this.files.set(this.updateNodeInTree(this.files(), node.key, { ...node, expanded: !node.expanded }));
-        }
-    }
-
-    updateNodeInTree(nodes: TreeNode[], key: string | undefined, updatedNode: TreeNode): TreeNode[] {
-        return nodes.map((n) => {
-            if (n.key === key) {
-                return updatedNode;
-            }
-            if (n.children) {
-                return { ...n, children: this.updateNodeInTree(n.children, key, updatedNode) };
-            }
-            return n;
         });
     }
 }
@@ -198,6 +87,121 @@ export class TreeControlledDemo implements OnInit {
             expanded: isExpand,
             children: node.children ? node.children.map((child) => this.expandRecursive(child, isExpand)) : node.children
         };
+    }
+}
+```
+
+## Selection: Single
+
+Single node selection is configured by setting selectionMode as single along with selection properties to manage the selection value binding.
+
+```typescript
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tree [value]="files()" class="w-full md:w-120" selectionMode="single" [(selection)]="selectedFile" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeModule, FormsModule],
+    providers: [NodeService]
+})
+export class TreeSingleDemo implements OnInit {
+    private nodeService = inject(NodeService);
+
+    files = signal<TreeNode[]>(undefined);
+
+    selectedFile!: TreeNode;
+
+    ngOnInit() {
+        this.nodeService.getFiles().then((data) => {
+            this.files.set(data);
+        });
+    }
+}
+```
+
+## Selection: Multiple
+
+More than one node is selectable by setting selectionMode to multiple . By default in multiple selection mode, metaKey press (e.g. ⌘ ) is necessary to add to existing selections however this can be configured with disabling the metaKeySelection property. Note that in touch enabled devices, Tree always ignores metaKey. In multiple selection mode, selection binding should be an array of the selected nodes. Nodes are matched by their key , or by reference when they have no key.
+
+```typescript
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { TreeModule } from '@exhaustive-ui/core/tree';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="flex items-center mb-6 gap-2">
+                <p-toggle-switch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
+                <label for="input-metakey">MetaKey</label>
+            </div>
+            <p-tree [metaKeySelection]="metaKeySelection" [value]="files()" class="w-full md:w-120" selectionMode="multiple" [(selection)]="selectedFiles" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeModule, FormsModule, ToggleSwitchModule],
+    providers: [NodeService]
+})
+export class TreeMultipleDemo implements OnInit {
+    private nodeService = inject(NodeService);
+
+    metaKeySelection: boolean = false;
+
+    files = signal<TreeNode[]>(undefined);
+
+    selectedFiles!: TreeNode[];
+
+    ngOnInit() {
+        this.nodeService.getFiles().then((data) => {
+            this.files.set(data);
+        });
+    }
+}
+```
+
+## Selection: Checkbox
+
+Selection of multiple nodes via checkboxes is enabled by configuring selectionMode as checkbox .
+
+```typescript
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tree [value]="files()" selectionMode="checkbox" class="w-full md:w-120" [(selection)]="selectedFiles" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeModule, FormsModule],
+    providers: [NodeService]
+})
+export class TreeCheckboxDemo implements OnInit {
+    private nodeService = inject(NodeService);
+
+    files = signal<TreeNode[]>(undefined);
+
+    selectedFiles!: TreeNode[];
+
+    ngOnInit() {
+        this.nodeService.getFiles().then((data) => {
+            this.files.set(data);
+        });
     }
 }
 ```
@@ -262,47 +266,6 @@ export class TreeEventDemo implements OnInit {
 
     nodeUnselect(event: any) {
         this.messageService.add({ severity: 'info', summary: 'Node Unselected', detail: event.node.label });
-    }
-}
-```
-
-## Filter
-
-Filtering is enabled by adding the filter property, by default label property of a node is used to compare against the value in the text field, in order to customize which field(s) should be used during search define filterBy property. In addition filterMode specifies the filtering strategy. In lenient mode when the query matches a node, children of the node are not searched further as all descendants of the node are included. On the other hand, in strict mode when the query matches a node, filtering continues on all descendants.
-
-```typescript
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { TreeNode } from '@exhaustive-ui/core/api';
-import { TreeModule } from '@exhaustive-ui/core/tree';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap gap-4">
-            <div class="flex-auto md:flex md:justify-start md:items-center flex-col">
-                <p-tree [value]="files()" [filter]="true" filterPlaceholder="Lenient Filter" />
-            </div>
-            <div class="flex-auto md:flex md:justify-start md:items-center flex-col">
-                <p-tree [value]="files2()" [filter]="true" filterMode="strict" filterPlaceholder="Strict Filter" />
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeModule],
-    providers: [NodeService]
-})
-export class TreeFilterDemo implements OnInit {
-    private nodeService = inject(NodeService);
-
-    files = signal<TreeNode[]>(undefined);
-
-    files2 = signal<TreeNode[]>(undefined);
-
-    ngOnInit() {
-        this.nodeService.getFiles().then((data) => {
-            this.files.set(data);
-            this.files2.set(data);
-        });
     }
 }
 ```
@@ -384,85 +347,6 @@ export class TreeLazyDemo implements OnInit {
 }
 ```
 
-## Multiple
-
-More than one node is selectable by setting selectionMode to multiple . By default in multiple selection mode, metaKey press (e.g. ⌘ ) is necessary to add to existing selections however this can be configured with disabling the metaKeySelection property. Note that in touch enabled devices, Tree always ignores metaKey. In multiple selection mode, selection binding should be an array of the selected nodes. Nodes are matched by their key , or by reference when they have no key.
-
-```typescript
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@exhaustive-ui/core/api';
-import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
-import { TreeModule } from '@exhaustive-ui/core/tree';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <div class="flex items-center mb-6 gap-2">
-                <p-toggle-switch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
-                <label for="input-metakey">MetaKey</label>
-            </div>
-            <p-tree [metaKeySelection]="metaKeySelection" [value]="files()" class="w-full md:w-120" selectionMode="multiple" [(selection)]="selectedFiles" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeModule, FormsModule, ToggleSwitchModule],
-    providers: [NodeService]
-})
-export class TreeMultipleDemo implements OnInit {
-    private nodeService = inject(NodeService);
-
-    metaKeySelection: boolean = false;
-
-    files = signal<TreeNode[]>(undefined);
-
-    selectedFiles!: TreeNode[];
-
-    ngOnInit() {
-        this.nodeService.getFiles().then((data) => {
-            this.files.set(data);
-        });
-    }
-}
-```
-
-## Single
-
-Single node selection is configured by setting selectionMode as single along with selection properties to manage the selection value binding.
-
-```typescript
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeNode } from '@exhaustive-ui/core/api';
-import { TreeModule } from '@exhaustive-ui/core/tree';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tree [value]="files()" class="w-full md:w-120" selectionMode="single" [(selection)]="selectedFile" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeModule, FormsModule],
-    providers: [NodeService]
-})
-export class TreeSingleDemo implements OnInit {
-    private nodeService = inject(NodeService);
-
-    files = signal<TreeNode[]>(undefined);
-
-    selectedFile!: TreeNode;
-
-    ngOnInit() {
-        this.nodeService.getFiles().then((data) => {
-            this.files.set(data);
-        });
-    }
-}
-```
-
 ## Template
 
 Custom node content instead of a node label is defined with the pTemplate property.
@@ -519,7 +403,48 @@ export class TreeTemplateDemo implements OnInit {
 }
 ```
 
-## Virtual Scroll
+## Filter
+
+Filtering is enabled by adding the filter property, by default label property of a node is used to compare against the value in the text field, in order to customize which field(s) should be used during search define filterBy property. In addition filterMode specifies the filtering strategy. In lenient mode when the query matches a node, children of the node are not searched further as all descendants of the node are included. On the other hand, in strict mode when the query matches a node, filtering continues on all descendants.
+
+```typescript
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { TreeModule } from '@exhaustive-ui/core/tree';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap gap-4">
+            <div class="flex-auto md:flex md:justify-start md:items-center flex-col">
+                <p-tree [value]="files()" [filter]="true" filterPlaceholder="Lenient Filter" />
+            </div>
+            <div class="flex-auto md:flex md:justify-start md:items-center flex-col">
+                <p-tree [value]="files2()" [filter]="true" filterMode="strict" filterPlaceholder="Strict Filter" />
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeModule],
+    providers: [NodeService]
+})
+export class TreeFilterDemo implements OnInit {
+    private nodeService = inject(NodeService);
+
+    files = signal<TreeNode[]>(undefined);
+
+    files2 = signal<TreeNode[]>(undefined);
+
+    ngOnInit() {
+        this.nodeService.getFiles().then((data) => {
+            this.files.set(data);
+            this.files2.set(data);
+        });
+    }
+}
+```
+
+## Virtual Scroll: Preload
 
 VirtualScroller is a performance-approach to handle huge data efficiently. Setting virtualScroll property as true and providing a virtualScrollItemSize in pixels would be enough to enable this functionality.
 
@@ -550,7 +475,7 @@ export class TreeVirtualscrollDemo implements OnInit {
 }
 ```
 
-## virtualscrolllazy-doc
+## Virtual Scroll: Lazy
 
 VirtualScroller is a performance-approach to handle huge data efficiently. Setting virtualScroll property as true and providing a virtualScrollItemSize in pixels would be enough to enable this functionality.
 
@@ -597,6 +522,81 @@ export class TreeVirtualscrolllazyDemo implements OnInit {
     }
 }
 ```
+
+## Context Menu
+
+Tree has exclusive integration with ContextMenu using the contextMenu property along with the contextMenuSelection to manage the selection.
+
+```typescript
+import { Component, model, OnInit, signal, inject } from '@angular/core';
+import { MenuItem, MessageService, TreeNode } from '@exhaustive-ui/core/api';
+import { ContextMenuModule } from '@exhaustive-ui/core/contextmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { TreeModule } from '@exhaustive-ui/core/tree';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-toast [style]="{ marginTop: '80px' }" />
+            <p-tree [value]="files()" class="w-full md:w-80" selectionMode="single" [(selection)]="selectedNode" [(contextMenuSelection)]="contextMenuNode" [contextMenu]="cm" contextMenuSelectionMode="separate" />
+            <p-context-menu #cm [model]="items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeModule, ContextMenuModule, ToastModule],
+    providers: [MessageService, NodeService]
+})
+export class TreeContextmenuDemo implements OnInit {
+    private nodeService = inject(NodeService);
+    private messageService = inject(MessageService);
+
+    files = signal<TreeNode[]>([]);
+
+    selectedNode = model<TreeNode | null>(null);
+
+    contextMenuNode = model<TreeNode | null>(null);
+
+    items!: MenuItem[];
+
+    ngOnInit() {
+        this.nodeService.getFiles().then((files) => this.files.set(files));
+
+        this.items = [
+            { label: 'View', icon: 'pi pi-search', command: () => this.viewFile(this.contextMenuNode()) },
+            { label: 'Toggle', icon: 'pi pi-sort', command: () => this.toggleFile(this.contextMenuNode()) }
+        ];
+    }
+
+    viewFile(node: TreeNode | null) {
+        if (node) {
+            this.messageService.add({ severity: 'info', summary: 'File Selected', detail: node.label });
+        }
+    }
+
+    toggleFile(node: TreeNode | null) {
+        if (node) {
+            this.files.set(this.updateNodeInTree(this.files(), node.key, { ...node, expanded: !node.expanded }));
+        }
+    }
+
+    updateNodeInTree(nodes: TreeNode[], key: string | undefined, updatedNode: TreeNode): TreeNode[] {
+        return nodes.map((n) => {
+            if (n.key === key) {
+                return updatedNode;
+            }
+            if (n.children) {
+                return { ...n, children: this.updateNodeInTree(n.children, key, updatedNode) };
+            }
+            return n;
+        });
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Value to describe the component can either be provided with aria-labelledby or aria-label props. The root list element has a tree role whereas each list item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. In checkbox selection, aria-checked is used instead of aria-selected . The container element of a treenode has the group role. Checkbox and toggle icons are hidden from screen readers as their parent element with treeitem role and attributes are used instead for readers and keyboard support. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem. Keyboard Support Key Function tab Moves focus to the first selected node when focus enters the component, if there is none then first element receives the focus. If focus is already inside the component, moves focus to the next focusable element in the page tab sequence. shift + tab Moves focus to the last selected node when focus enters the component, if there is none then first element receives the focus. If focus is already inside the component, moves focus to the previous focusable element in the page tab sequence. enter Selects the focused treenode. space Selects the focused treenode. down arrow Moves focus to the next treenode. up arrow Moves focus to the previous treenode. right arrow If node is closed, opens the node otherwise moves focus to the first child node. left arrow If node is open, closes the node otherwise moves focus to the parent node.
 
 ## Tree
 

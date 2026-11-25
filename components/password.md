@@ -2,10 +2,6 @@
 
 Password displays strength indicator for password fields.
 
-## Accessibility
-
-Screen Reader Value to describe the component can either be provided via label tag combined with id prop or using ariaLabelledBy , ariaLabel props. Screen reader is notified about the changes to the strength of the password using a section that has aria-live while typing.
-
 ## Basic
 
 Two-way value binding is defined using ngModel .
@@ -29,9 +25,9 @@ export class PasswordBasicDemo {
 }
 ```
 
-## Clear Icon
+## Meter
 
-When showClear is enabled, a clear icon is displayed to clear the value.
+Strength meter is displayed as a popup while a value is being entered.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -41,20 +37,20 @@ import { PasswordModule } from '@exhaustive-ui/core/password';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" [showClear]="true" inputStyleClass="w-56" ariaLabel="Password" />
+            <p-password [(ngModel)]="value" autocomplete="off" ariaLabel="Password" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, PasswordModule]
 })
-export class PasswordCleariconDemo {
+export class PasswordMeterDemo {
     value!: string;
 }
 ```
 
-## Disabled
+## Locale
 
-When disabled is present, the element cannot be edited and focused.
+Labels are translated at component level by promptLabel , weakLabel , mediumLabel and strongLabel properties. In order to apply global translations for all Password components in the application, refer to the locale
 
 ```typescript
 import { Component } from '@angular/core';
@@ -64,20 +60,20 @@ import { PasswordModule } from '@exhaustive-ui/core/password';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [disabled]="true" placeholder="Disabled" autocomplete="off" ariaLabel="Password" />
+            <p-password [(ngModel)]="value" promptLabel="Choose a password" weakLabel="Too simple" mediumLabel="Average complexity" strongLabel="Complex password" autocomplete="off" ariaLabel="Password" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, PasswordModule]
 })
-export class PasswordDisabledDemo {
+export class PasswordLocaleDemo {
     value!: string;
 }
 ```
 
-## Filled
+## Toggle Mask
 
-Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+When toggleMask is present, an icon is displayed to show the value as plain text.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -87,13 +83,50 @@ import { PasswordModule } from '@exhaustive-ui/core/password';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [feedback]="false" variant="filled" autocomplete="off" ariaLabel="Password" />
+            <p-password [(ngModel)]="value" [toggleMask]="true" autocomplete="off" ariaLabel="Password" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, PasswordModule]
 })
-export class PasswordFilledDemo {
+export class PasswordTogglemaskDemo {
+    value!: string;
+}
+```
+
+## Template
+
+3 templates are included to customize the overlay. These are header , content and footer . Note that content overrides the default meter.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+import { DividerModule } from '@exhaustive-ui/core/divider';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-password [(ngModel)]="value" autocomplete="off" ariaLabel="Password">
+                <ng-template #header>
+                    <div class="font-semibold text-xm mb-4">Reset Password</div>
+                </ng-template>
+                <ng-template #footer>
+                    <p-divider />
+                    <ul class="pl-2 my-0 leading-normal text-sm">
+                        <li>At least one lowercase</li>
+                        <li>At least one uppercase</li>
+                        <li>At least one numeric</li>
+                        <li>Minimum 8 characters</li>
+                    </ul>
+                </ng-template>
+            </p-password>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule, DividerModule]
+})
+export class PasswordTemplateDemo {
     value!: string;
 }
 ```
@@ -138,29 +171,6 @@ export class PasswordFloatlabelDemo {
 }
 ```
 
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" fluid ariaLabel="Password" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule]
-})
-export class PasswordFluidDemo {
-    value!: string;
-}
-```
-
 ## Ifta Label
 
 IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
@@ -185,6 +195,127 @@ import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
     imports: [FormsModule, RouterModule, PasswordModule, IftaLabelModule]
 })
 export class PasswordIftalabelDemo {
+    value!: string;
+}
+```
+
+## Clear Icon
+
+When showClear is enabled, a clear icon is displayed to clear the value.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" [showClear]="true" inputStyleClass="w-56" ariaLabel="Password" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule]
+})
+export class PasswordCleariconDemo {
+    value!: string;
+}
+```
+
+## Sizes
+
+Password provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-password [(ngModel)]="value1" size="small" placeholder="Small" ariaLabel="Small" />
+            <p-password [(ngModel)]="value2" placeholder="Normal" ariaLabel="Normal" />
+            <p-password [(ngModel)]="value3" size="large" placeholder="Large" ariaLabel="Large" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule]
+})
+export class PasswordSizesDemo {
+    value1: string;
+
+    value2: string;
+
+    value3: string;
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-password [(ngModel)]="value" [feedback]="false" autocomplete="off" fluid ariaLabel="Password" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule]
+})
+export class PasswordFluidDemo {
+    value!: string;
+}
+```
+
+## Filled
+
+Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-password [(ngModel)]="value" [feedback]="false" variant="filled" autocomplete="off" ariaLabel="Password" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule]
+})
+export class PasswordFilledDemo {
+    value!: string;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from '@exhaustive-ui/core/password';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-password [(ngModel)]="value" [disabled]="true" placeholder="Disabled" autocomplete="off" ariaLabel="Password" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, PasswordModule]
+})
+export class PasswordDisabledDemo {
     value!: string;
 }
 ```
@@ -215,53 +346,51 @@ export class PasswordInvalidDemo {
 }
 ```
 
-## Locale
-
-Labels are translated at component level by promptLabel , weakLabel , mediumLabel and strongLabel properties. In order to apply global translations for all Password components in the application, refer to the locale
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { PasswordModule } from '@exhaustive-ui/core/password';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     template: `
+        <p-toast />
         <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" promptLabel="Choose a password" weakLabel="Too simple" mediumLabel="Average complexity" strongLabel="Complex password" autocomplete="off" ariaLabel="Password" />
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
+                <div class="flex flex-col gap-1">
+                    <p-password #model="ngModel" [(ngModel)]="value" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="password" [feedback]="false" autocomplete="off" required fluid ariaLabel="Password" />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Password is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, PasswordModule]
+    imports: [FormsModule, PasswordModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService]
 })
-export class PasswordLocaleDemo {
-    value!: string;
+export class PasswordTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## Meter
-
-Strength meter is displayed as a popup while a value is being entered.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" autocomplete="off" ariaLabel="Password" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule]
-})
-export class PasswordMeterDemo {
-    value!: string;
-}
-```
-
-## reactiveforms-doc
+## Reactive Forms
 
 Password can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -376,138 +505,9 @@ export class PasswordSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-Password provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-password [(ngModel)]="value1" size="small" placeholder="Small" ariaLabel="Small" />
-            <p-password [(ngModel)]="value2" placeholder="Normal" ariaLabel="Normal" />
-            <p-password [(ngModel)]="value3" size="large" placeholder="Large" ariaLabel="Large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule]
-})
-export class PasswordSizesDemo {
-    value1: string;
-
-    value2: string;
-
-    value3: string;
-}
-```
-
-## Template
-
-3 templates are included to customize the overlay. These are header , content and footer . Note that content overrides the default meter.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-import { DividerModule } from '@exhaustive-ui/core/divider';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" autocomplete="off" ariaLabel="Password">
-                <ng-template #header>
-                    <div class="font-semibold text-xm mb-4">Reset Password</div>
-                </ng-template>
-                <ng-template #footer>
-                    <p-divider />
-                    <ul class="pl-2 my-0 leading-normal text-sm">
-                        <li>At least one lowercase</li>
-                        <li>At least one uppercase</li>
-                        <li>At least one numeric</li>
-                        <li>Minimum 8 characters</li>
-                    </ul>
-                </ng-template>
-            </p-password>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule, DividerModule]
-})
-export class PasswordTemplateDemo {
-    value!: string;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
-                <div class="flex flex-col gap-1">
-                    <p-password #model="ngModel" [(ngModel)]="value" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="password" [feedback]="false" autocomplete="off" required fluid ariaLabel="Password" />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Password is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService]
-})
-export class PasswordTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Toggle Mask
-
-When toggleMask is present, an icon is displayed to show the value as plain text.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from '@exhaustive-ui/core/password';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-password [(ngModel)]="value" [toggleMask]="true" autocomplete="off" ariaLabel="Password" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, PasswordModule]
-})
-export class PasswordTogglemaskDemo {
-    value!: string;
-}
-```
+Screen Reader Value to describe the component can either be provided via label tag combined with id prop or using ariaLabelledBy , ariaLabel props. Screen reader is notified about the changes to the strength of the password using a section that has aria-live while typing.
 
 ## Password
 

@@ -2,10 +2,6 @@
 
 PanelMenu is a hybrid of Accordion and Tree components.
 
-## Accessibility
-
-Screen Reader Accordion header elements have a button role, an aria-label defined using the label property of the menuitem model and aria-controls to define the id of the content section along with aria-expanded for the visibility state. The content of an accordion panel uses region role, defines an id that matches the aria-controls of the header and aria-labelledby referring to the id of the header. The tree elements has a tree as the role and each menu item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. The container element of a treenode has the group role. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem. Header Keyboard Support Key Function tab Adds focus to the first header when focus moves in to the component, if there is already a focused tab header then moves the focus out of the component based on the page tab sequence. enter Toggles the visibility of the content. space Toggles the visibility of the content. down arrow If panel is collapsed then moves focus to the next header, otherwise first treenode of the panel receives the focus. up arrow If previous panel is collapsed then moves focus to the previous header, otherwise last treenode of the previous panel receives the focus. home Moves focus to the first header. end Moves focus to the last header. Tree Keyboard Support Key Function tab Moves focus to the next focusable element in the page tab order. shift + tab Moves focus to the previous focusable element in the page tab order. enter Activates the focused treenode. space Activates the focused treenode. down arrow Moves focus to the next treenode. up arrow Moves focus to the previous treenode. right arrow If node is closed, opens the node otherwise moves focus to the first child node. left arrow If node is open, closes the node otherwise moves focus to the parent node.
-
 ## Basic
 
 PanelMenu requires a collection of menuitems as its model .
@@ -110,30 +106,25 @@ export class PanelmenuBasicDemo implements OnInit {
 }
 ```
 
-## Command
+## Multiple
 
-The command property defines the callback to run when an item is activated by click or a key event.
+Only one single root menuitem can be active by default, enable multiple property to be able to open more than one items.
 
 ```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { Component, OnInit } from '@angular/core';
+import { MenuItem } from '@exhaustive-ui/core/api';
 import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
-import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-toast />
-            <p-panel-menu [model]="items" class="w-full md:w-80" />
+            <p-panel-menu [model]="items" class="w-full md:w-80" [multiple]="true" />
         </div>
     `,
     standalone: true,
-    imports: [PanelMenu, ToastModule],
-    providers: [MessageService]
+    imports: [PanelMenu]
 })
-export class PanelmenuCommandDemo implements OnInit {
-    private messageService = inject(MessageService);
-
+export class PanelmenuMultipleDemo implements OnInit {
     items: MenuItem[];
 
     ngOnInit() {
@@ -143,64 +134,76 @@ export class PanelmenuCommandDemo implements OnInit {
                 icon: 'pi pi-file',
                 items: [
                     {
-                        label: 'New',
-                        icon: 'pi pi-plus',
-                        command: () => {
-                            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
-                        }
+                        label: 'Documents',
+                        icon: 'pi pi-file',
+                        items: [
+                            {
+                                label: 'Invoices',
+                                icon: 'pi pi-file-pdf',
+                                items: [
+                                    {
+                                        label: 'Pending',
+                                        icon: 'pi pi-stop'
+                                    },
+                                    {
+                                        label: 'Paid',
+                                        icon: 'pi pi-check-circle'
+                                    }
+                                ]
+                            },
+                            {
+                                label: 'Clients',
+                                icon: 'pi pi-users'
+                            }
+                        ]
                     },
                     {
-                        label: 'Search',
-                        icon: 'pi pi-search',
-                        command: () => {
-                            this.messageService.add({
-                                severity: 'warn',
-                                summary: 'Search Results',
-                                detail: 'No results found',
-                                life: 3000
-                            });
-                        }
-                    },
-                    {
-                        label: 'Print',
-                        icon: 'pi pi-print',
-                        command: () => {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No printer connected', life: 3000 });
-                        }
+                        label: 'Images',
+                        icon: 'pi pi-image',
+                        items: [
+                            {
+                                label: 'Logos',
+                                icon: 'pi pi-image'
+                            }
+                        ]
                     }
                 ]
             },
             {
-                label: 'Sync',
+                label: 'Cloud',
                 icon: 'pi pi-cloud',
                 items: [
                     {
-                        label: 'Import',
-                        icon: 'pi pi-cloud-download',
-                        command: () => {
-                            this.messageService.add({
-                                severity: 'info',
-                                summary: 'Downloads',
-                                detail: 'Downloaded from cloud',
-                                life: 3000
-                            });
-                        }
+                        label: 'Upload',
+                        icon: 'pi pi-cloud-upload'
                     },
                     {
-                        label: 'Export',
-                        icon: 'pi pi-cloud-upload',
-                        command: () => {
-                            this.messageService.add({ severity: 'info', summary: 'Shared', detail: 'Exported to cloud', life: 3000 });
-                        }
+                        label: 'Download',
+                        icon: 'pi pi-cloud-download'
+                    },
+                    {
+                        label: 'Sync',
+                        icon: 'pi pi-refresh'
                     }
                 ]
             },
             {
-                label: 'Sign Out',
-                icon: 'pi pi-sign-out',
-                command: () => {
-                    this.messageService.add({ severity: 'info', summary: 'Signed out', detail: 'User logged out', life: 3000 });
-                }
+                label: 'Devices',
+                icon: 'pi pi-desktop',
+                items: [
+                    {
+                        label: 'Phone',
+                        icon: 'pi pi-mobile'
+                    },
+                    {
+                        label: 'Desktop',
+                        icon: 'pi pi-desktop'
+                    },
+                    {
+                        label: 'Tablet',
+                        icon: 'pi pi-tablet'
+                    }
+                ]
             }
         ];
     }
@@ -315,181 +318,6 @@ export class PanelmenuControlledDemo implements OnInit {
 
     private areAllItemsExpanded(): boolean {
         return this.items.every((menuItem) => menuItem.expanded);
-    }
-}
-```
-
-## Multiple
-
-Only one single root menuitem can be active by default, enable multiple property to be able to open more than one items.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '@exhaustive-ui/core/api';
-import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-panel-menu [model]="items" class="w-full md:w-80" [multiple]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [PanelMenu]
-})
-export class PanelmenuMultipleDemo implements OnInit {
-    items: MenuItem[];
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Files',
-                icon: 'pi pi-file',
-                items: [
-                    {
-                        label: 'Documents',
-                        icon: 'pi pi-file',
-                        items: [
-                            {
-                                label: 'Invoices',
-                                icon: 'pi pi-file-pdf',
-                                items: [
-                                    {
-                                        label: 'Pending',
-                                        icon: 'pi pi-stop'
-                                    },
-                                    {
-                                        label: 'Paid',
-                                        icon: 'pi pi-check-circle'
-                                    }
-                                ]
-                            },
-                            {
-                                label: 'Clients',
-                                icon: 'pi pi-users'
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Images',
-                        icon: 'pi pi-image',
-                        items: [
-                            {
-                                label: 'Logos',
-                                icon: 'pi pi-image'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: 'Cloud',
-                icon: 'pi pi-cloud',
-                items: [
-                    {
-                        label: 'Upload',
-                        icon: 'pi pi-cloud-upload'
-                    },
-                    {
-                        label: 'Download',
-                        icon: 'pi pi-cloud-download'
-                    },
-                    {
-                        label: 'Sync',
-                        icon: 'pi pi-refresh'
-                    }
-                ]
-            },
-            {
-                label: 'Devices',
-                icon: 'pi pi-desktop',
-                items: [
-                    {
-                        label: 'Phone',
-                        icon: 'pi pi-mobile'
-                    },
-                    {
-                        label: 'Desktop',
-                        icon: 'pi pi-desktop'
-                    },
-                    {
-                        label: 'Tablet',
-                        icon: 'pi pi-tablet'
-                    }
-                ]
-            }
-        ];
-    }
-}
-```
-
-## Router
-
-Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-panel-menu [model]="items" class="w-full md:w-80" />
-        </div>
-    `,
-    standalone: true,
-    imports: [PanelMenu],
-    providers: [MessageService]
-})
-export class PanelmenuRouterDemo implements OnInit {
-    private router = inject(Router);
-
-    items: MenuItem[];
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Router',
-                icon: 'pi pi-palette',
-                items: [
-                    {
-                        label: 'Installation',
-                        icon: 'pi pi-eraser',
-                        routerLink: '/installation'
-                    },
-                    {
-                        label: 'Configuration',
-                        icon: 'pi pi-heart',
-                        routerLink: '/configuration'
-                    }
-                ]
-            },
-            {
-                label: 'Programmatic',
-                icon: 'pi pi-link',
-                command: () => {
-                    this.router.navigate(['/installation']);
-                }
-            },
-            {
-                label: 'External',
-                icon: 'pi pi-home',
-                items: [
-                    {
-                        label: 'Angular',
-                        icon: 'pi pi-star',
-                        url: 'https://angular.io/'
-                    },
-                    {
-                        label: 'Vite.js',
-                        icon: 'pi pi-bookmark',
-                        url: 'https://vitejs.dev/'
-                    }
-                ]
-            }
-        ];
     }
 }
 ```
@@ -613,6 +441,178 @@ export class PanelmenuTemplateDemo implements OnInit {
     }
 }
 ```
+
+## Command
+
+The command property defines the callback to run when an item is activated by click or a key event.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-panel-menu [model]="items" class="w-full md:w-80" />
+        </div>
+    `,
+    standalone: true,
+    imports: [PanelMenu, ToastModule],
+    providers: [MessageService]
+})
+export class PanelmenuCommandDemo implements OnInit {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[];
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Files',
+                icon: 'pi pi-file',
+                items: [
+                    {
+                        label: 'New',
+                        icon: 'pi pi-plus',
+                        command: () => {
+                            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
+                        }
+                    },
+                    {
+                        label: 'Search',
+                        icon: 'pi pi-search',
+                        command: () => {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: 'Search Results',
+                                detail: 'No results found',
+                                life: 3000
+                            });
+                        }
+                    },
+                    {
+                        label: 'Print',
+                        icon: 'pi pi-print',
+                        command: () => {
+                            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No printer connected', life: 3000 });
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'Sync',
+                icon: 'pi pi-cloud',
+                items: [
+                    {
+                        label: 'Import',
+                        icon: 'pi pi-cloud-download',
+                        command: () => {
+                            this.messageService.add({
+                                severity: 'info',
+                                summary: 'Downloads',
+                                detail: 'Downloaded from cloud',
+                                life: 3000
+                            });
+                        }
+                    },
+                    {
+                        label: 'Export',
+                        icon: 'pi pi-cloud-upload',
+                        command: () => {
+                            this.messageService.add({ severity: 'info', summary: 'Shared', detail: 'Exported to cloud', life: 3000 });
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'Sign Out',
+                icon: 'pi pi-sign-out',
+                command: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Signed out', detail: 'User logged out', life: 3000 });
+                }
+            }
+        ];
+    }
+}
+```
+
+## Router
+
+Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { PanelMenu } from '@exhaustive-ui/core/panelmenu';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-panel-menu [model]="items" class="w-full md:w-80" />
+        </div>
+    `,
+    standalone: true,
+    imports: [PanelMenu],
+    providers: [MessageService]
+})
+export class PanelmenuRouterDemo implements OnInit {
+    private router = inject(Router);
+
+    items: MenuItem[];
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Router',
+                icon: 'pi pi-palette',
+                items: [
+                    {
+                        label: 'Installation',
+                        icon: 'pi pi-eraser',
+                        routerLink: '/installation'
+                    },
+                    {
+                        label: 'Configuration',
+                        icon: 'pi pi-heart',
+                        routerLink: '/configuration'
+                    }
+                ]
+            },
+            {
+                label: 'Programmatic',
+                icon: 'pi pi-link',
+                command: () => {
+                    this.router.navigate(['/installation']);
+                }
+            },
+            {
+                label: 'External',
+                icon: 'pi pi-home',
+                items: [
+                    {
+                        label: 'Angular',
+                        icon: 'pi pi-star',
+                        url: 'https://angular.io/'
+                    },
+                    {
+                        label: 'Vite.js',
+                        icon: 'pi pi-bookmark',
+                        url: 'https://vitejs.dev/'
+                    }
+                ]
+            }
+        ];
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Accordion header elements have a button role, an aria-label defined using the label property of the menuitem model and aria-controls to define the id of the content section along with aria-expanded for the visibility state. The content of an accordion panel uses region role, defines an id that matches the aria-controls of the header and aria-labelledby referring to the id of the header. The tree elements has a tree as the role and each menu item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. The container element of a treenode has the group role. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem. Header Keyboard Support Key Function tab Adds focus to the first header when focus moves in to the component, if there is already a focused tab header then moves the focus out of the component based on the page tab sequence. enter Toggles the visibility of the content. space Toggles the visibility of the content. down arrow If panel is collapsed then moves focus to the next header, otherwise first treenode of the panel receives the focus. up arrow If previous panel is collapsed then moves focus to the previous header, otherwise last treenode of the previous panel receives the focus. home Moves focus to the first header. end Moves focus to the last header. Tree Keyboard Support Key Function tab Moves focus to the next focusable element in the page tab order. shift + tab Moves focus to the previous focusable element in the page tab order. enter Activates the focused treenode. space Activates the focused treenode. down arrow Moves focus to the next treenode. up arrow Moves focus to the previous treenode. right arrow If node is closed, opens the node otherwise moves focus to the first child node. left arrow If node is open, closes the node otherwise moves focus to the parent node.
 
 ## Panel Menu
 

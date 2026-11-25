@@ -2,10 +2,6 @@
 
 TieredMenu displays submenus in nested overlays.
 
-## Accessibility
-
-Screen Reader TieredMenu component uses the menubar role with aria-orientation set to "vertical" and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a TieredMenu uses the menu role with an aria-labelledby defined as the id of the submenu root menuitem label. In addition, menuitems that open a submenu have aria-haspopup , aria-expanded and aria-controls to define the relation between the item and the submenu. In popup mode, the component implicitly manages the aria-expanded , aria-haspopup and aria-controls attributes of the target element to define the relation between the target and the popup. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. space If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. escape If focus is inside a popup submenu, closes the submenu and moves focus to the root item of the closed submenu. down arrow Moves focus to the next menuitem within the submenu. up arrow Moves focus to the previous menuitem within the submenu. right arrow Opens a submenu if there is one available and moves focus to the first item. left arrow Closes a submenu and moves focus to the root item of the closed submenu. home Moves focus to the first menuitem within the submenu. end Moves focus to the last menuitem within the submenu.
-
 ## Basic
 
 TieredMenu requires a collection of menuitems as its model .
@@ -93,94 +89,6 @@ export class TieredmenuBasicDemo implements OnInit {
                     {
                         label: 'Whatsapp',
                         icon: 'pi pi-whatsapp'
-                    }
-                ]
-            }
-        ];
-    }
-}
-```
-
-## Command
-
-The command property defines the callback to run when an item is activated by click or a key event.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-tiered-menu [model]="items" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TieredMenuModule, ToastModule],
-    providers: [MessageService]
-})
-export class TieredmenuCommandDemo implements OnInit {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'File',
-                icon: 'pi pi-file',
-                items: [
-                    {
-                        label: 'New',
-                        icon: 'pi pi-plus',
-                        command: () => {
-                            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
-                        }
-                    },
-                    {
-                        label: 'Print',
-                        icon: 'pi pi-print',
-                        command: () => {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No printer connected', life: 3000 });
-                        }
-                    }
-                ]
-            },
-            {
-                label: 'Search',
-                icon: 'pi pi-search',
-                command: () => {
-                    this.messageService.add({ severity: 'warn', summary: 'Search Results', detail: 'No results found', life: 3000 });
-                }
-            },
-            {
-                separator: true
-            },
-            {
-                label: 'Sync',
-                icon: 'pi pi-cloud',
-                items: [
-                    {
-                        label: 'Import',
-                        icon: 'pi pi-cloud-download',
-                        command: () => {
-                            this.messageService.add({
-                                severity: 'info',
-                                summary: 'Downloads',
-                                detail: 'Downloaded from cloud',
-                                life: 3000
-                            });
-                        }
-                    },
-                    {
-                        label: 'Export',
-                        icon: 'pi pi-cloud-upload',
-                        command: () => {
-                            this.messageService.add({ severity: 'info', summary: 'Shared', detail: 'Exported to cloud', life: 3000 });
-                        }
                     }
                 ]
             }
@@ -278,68 +186,6 @@ export class TieredmenuPopupDemo implements OnInit {
                     {
                         label: 'Whatsapp',
                         icon: 'pi pi-whatsapp'
-                    }
-                ]
-            }
-        ];
-    }
-}
-```
-
-## Router
-
-Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { MenuItem } from '@exhaustive-ui/core/api';
-import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tiered-menu [model]="items" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TieredMenuModule]
-})
-export class TieredmenuRouterDemo implements OnInit {
-    private router = inject(Router);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Router',
-                icon: 'pi pi-palette',
-                items: [
-                    {
-                        label: 'Theming',
-                        routerLink: '/theming'
-                    }
-                ]
-            },
-            {
-                label: 'Programmatic',
-                icon: 'pi pi-link',
-                command: () => {
-                    this.router.navigate(['/installation']);
-                }
-            },
-            {
-                label: 'External',
-                icon: 'pi pi-home',
-                items: [
-                    {
-                        label: 'Angular',
-                        url: 'https://angular.dev/'
-                    },
-                    {
-                        label: 'Vite.js',
-                        url: 'https://vitejs.dev/'
                     }
                 ]
             }
@@ -465,6 +311,160 @@ export class TieredmenuTemplateDemo implements OnInit {
     }
 }
 ```
+
+## Command
+
+The command property defines the callback to run when an item is activated by click or a key event.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-tiered-menu [model]="items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TieredMenuModule, ToastModule],
+    providers: [MessageService]
+})
+export class TieredmenuCommandDemo implements OnInit {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'File',
+                icon: 'pi pi-file',
+                items: [
+                    {
+                        label: 'New',
+                        icon: 'pi pi-plus',
+                        command: () => {
+                            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
+                        }
+                    },
+                    {
+                        label: 'Print',
+                        icon: 'pi pi-print',
+                        command: () => {
+                            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No printer connected', life: 3000 });
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'Search',
+                icon: 'pi pi-search',
+                command: () => {
+                    this.messageService.add({ severity: 'warn', summary: 'Search Results', detail: 'No results found', life: 3000 });
+                }
+            },
+            {
+                separator: true
+            },
+            {
+                label: 'Sync',
+                icon: 'pi pi-cloud',
+                items: [
+                    {
+                        label: 'Import',
+                        icon: 'pi pi-cloud-download',
+                        command: () => {
+                            this.messageService.add({
+                                severity: 'info',
+                                summary: 'Downloads',
+                                detail: 'Downloaded from cloud',
+                                life: 3000
+                            });
+                        }
+                    },
+                    {
+                        label: 'Export',
+                        icon: 'pi pi-cloud-upload',
+                        command: () => {
+                            this.messageService.add({ severity: 'info', summary: 'Shared', detail: 'Exported to cloud', life: 3000 });
+                        }
+                    }
+                ]
+            }
+        ];
+    }
+}
+```
+
+## Router
+
+Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { TieredMenuModule } from '@exhaustive-ui/core/tieredmenu';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tiered-menu [model]="items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TieredMenuModule]
+})
+export class TieredmenuRouterDemo implements OnInit {
+    private router = inject(Router);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Router',
+                icon: 'pi pi-palette',
+                items: [
+                    {
+                        label: 'Theming',
+                        routerLink: '/theming'
+                    }
+                ]
+            },
+            {
+                label: 'Programmatic',
+                icon: 'pi pi-link',
+                command: () => {
+                    this.router.navigate(['/installation']);
+                }
+            },
+            {
+                label: 'External',
+                icon: 'pi pi-home',
+                items: [
+                    {
+                        label: 'Angular',
+                        url: 'https://angular.dev/'
+                    },
+                    {
+                        label: 'Vite.js',
+                        url: 'https://vitejs.dev/'
+                    }
+                ]
+            }
+        ];
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader TieredMenu component uses the menubar role with aria-orientation set to "vertical" and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a TieredMenu uses the menu role with an aria-labelledby defined as the id of the submenu root menuitem label. In addition, menuitems that open a submenu have aria-haspopup , aria-expanded and aria-controls to define the relation between the item and the submenu. In popup mode, the component implicitly manages the aria-expanded , aria-haspopup and aria-controls attributes of the target element to define the relation between the target and the popup. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. space If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. escape If focus is inside a popup submenu, closes the submenu and moves focus to the root item of the closed submenu. down arrow Moves focus to the next menuitem within the submenu. up arrow Moves focus to the previous menuitem within the submenu. right arrow Opens a submenu if there is one available and moves focus to the first item. left arrow Closes a submenu and moves focus to the root item of the closed submenu. home Moves focus to the first menuitem within the submenu. end Moves focus to the last menuitem within the submenu.
 
 ## Tiered Menu
 

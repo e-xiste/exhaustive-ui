@@ -2,31 +2,6 @@
 
 Textarea adds styling and autoResize functionality to standard textarea element.
 
-## Accessibility
-
-Screen Reader Textarea component renders a native textarea element that implicitly includes any passed prop. Value to describe the component can either be provided via label tag combined with id prop or using aria-labelledby , aria-label props.
-
-## AutoResize
-
-When autoResize is enabled, textarea grows instead of displaying a scrollbar.
-
-```typescript
-import { Component } from '@angular/core';
-import { TextareaModule } from '@exhaustive-ui/core/textarea';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <textarea rows="5" cols="30" pTextarea [autoResize]="true" aria-label="Message"></textarea>
-        </div>
-    `,
-    standalone: true,
-    imports: [TextareaModule]
-})
-export class TextareaAutoresizeDemo {
-}
-```
-
 ## Basic
 
 Textarea is applied to an input field with pTextarea directive.
@@ -50,9 +25,9 @@ export class TextareaBasicDemo {
 }
 ```
 
-## Disabled
+## AutoResize
 
-When disabled is present, the element cannot be edited and focused.
+When autoResize is enabled, textarea grows instead of displaying a scrollbar.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -61,36 +36,13 @@ import { TextareaModule } from '@exhaustive-ui/core/textarea';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <textarea rows="5" cols="30" pTextarea [disabled]="true" aria-label="Message"></textarea>
+            <textarea rows="5" cols="30" pTextarea [autoResize]="true" aria-label="Message"></textarea>
         </div>
     `,
     standalone: true,
     imports: [TextareaModule]
 })
-export class TextareaDisabledDemo {
-}
-```
-
-## Filled
-
-Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TextareaModule } from '@exhaustive-ui/core/textarea';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <textarea [(ngModel)]="value" [variant]="'filled'" rows="5" cols="30" pTextarea aria-label="Message"></textarea>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TextareaModule]
-})
-export class TextareaFilledDemo {
-    value!: string;
+export class TextareaAutoresizeDemo {
 }
 ```
 
@@ -134,29 +86,6 @@ export class TextareaFloatlabelDemo {
 }
 ```
 
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TextareaModule } from '@exhaustive-ui/core/textarea';
-
-@Component({
-    template: `
-        <div class="card">
-            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" fluid aria-label="Message"></textarea>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TextareaModule]
-})
-export class TextareaFluidDemo {
-    value!: string;
-}
-```
-
 ## Ifta Label
 
 IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
@@ -185,6 +114,102 @@ export class TextareaIftalabelDemo {
 }
 ```
 
+## Sizes
+
+Textarea provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <textarea pTextarea [(ngModel)]="value1" pSize="small" placeholder="Small" rows="3"></textarea>
+            <textarea pTextarea [(ngModel)]="value2" placeholder="Normal" rows="3"></textarea>
+            <textarea pTextarea [(ngModel)]="value3" pSize="large" placeholder="Large" rows="3"></textarea>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TextareaModule]
+})
+export class TextareaSizesDemo {
+    value1!: string;
+
+    value2!: string;
+
+    value3!: string;
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
+
+@Component({
+    template: `
+        <div class="card">
+            <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" fluid aria-label="Message"></textarea>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TextareaModule]
+})
+export class TextareaFluidDemo {
+    value!: string;
+}
+```
+
+## Filled
+
+Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <textarea [(ngModel)]="value" [variant]="'filled'" rows="5" cols="30" pTextarea aria-label="Message"></textarea>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TextareaModule]
+})
+export class TextareaFilledDemo {
+    value!: string;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { TextareaModule } from '@exhaustive-ui/core/textarea';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <textarea rows="5" cols="30" pTextarea [disabled]="true" aria-label="Message"></textarea>
+        </div>
+    `,
+    standalone: true,
+    imports: [TextareaModule]
+})
+export class TextareaDisabledDemo {
+}
+```
+
 ## Invalid
 
 The invalid state is applied using the ⁠invalid property to indicate failed validation, which can be integrated with Angular Forms.
@@ -208,29 +233,54 @@ export class TextareaInvalidDemo {
 }
 ```
 
-## keyfilter-doc
-
-InputText has built-in key filtering support to block certain keys, refer to keyfilter page for more information.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
-import { KeyFilterModule } from '@exhaustive-ui/core/keyfilter';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MessageModule } from '@exhaustive-ui/core/message';
 import { TextareaModule } from '@exhaustive-ui/core/textarea';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
+        <p-toast />
         <div class="card flex justify-center">
-            <textarea pKeyFilter="int" rows="5" cols="30" pTextarea aria-label="Number"></textarea>
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                    <textarea name="address" aria-label="Address" #address="ngModel" rows="5" cols="30" [(ngModel)]="value" pTextarea [invalid]="address.invalid && (address.touched || exampleForm.submitted)" required></textarea>
+                    @if (address.invalid && (address.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Address is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [KeyFilterModule, TextareaModule]
+    imports: [CommonModule, FormsModule, ButtonModule, MessageModule, TextareaModule, ToastModule],
+    providers: [MessageService]
 })
-export class TextareaKeyfilterDemo {
+export class TextareaTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    items: any[] = [];
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form is submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 Textarea can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -346,81 +396,9 @@ export class TextareaSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-Textarea provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TextareaModule } from '@exhaustive-ui/core/textarea';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <textarea pTextarea [(ngModel)]="value1" pSize="small" placeholder="Small" rows="3"></textarea>
-            <textarea pTextarea [(ngModel)]="value2" placeholder="Normal" rows="3"></textarea>
-            <textarea pTextarea [(ngModel)]="value3" pSize="large" placeholder="Large" rows="3"></textarea>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TextareaModule]
-})
-export class TextareaSizesDemo {
-    value1!: string;
-
-    value2!: string;
-
-    value3!: string;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { TextareaModule } from '@exhaustive-ui/core/textarea';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-1">
-                    <textarea name="address" aria-label="Address" #address="ngModel" rows="5" cols="30" [(ngModel)]="value" pTextarea [invalid]="address.invalid && (address.touched || exampleForm.submitted)" required></textarea>
-                    @if (address.invalid && (address.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Address is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, ButtonModule, MessageModule, TextareaModule, ToastModule],
-    providers: [MessageService]
-})
-export class TextareaTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    items: any[] = [];
-
-    value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form is submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader Textarea component renders a native textarea element that implicitly includes any passed prop. Value to describe the component can either be provided via label tag combined with id prop or using aria-labelledby , aria-label props.
 
 ## Textarea
 

@@ -2,10 +2,6 @@
 
 Popover is a container component that can overlay other components on page.
 
-## Accessibility
-
-Screen Reader Popover component uses dialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Popover adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Popover Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Close Button Keyboard Support Key Function enter Closes the popup and moves focus to the trigger. space Closes the popup and moves focus to the trigger.
-
 ## Basic
 
 Popover is accessed via its reference and visibility is controlled using toggle , show and hide methods with an event of the target.
@@ -77,6 +73,63 @@ export class PopoverBasicDemo {
         { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
         { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
     ];
+}
+```
+
+## Select Data
+
+In this sample, data is retrieved from the content inside the popover.
+
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Popover, PopoverModule } from '@exhaustive-ui/core/popover';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button type="button" [label]="selectedMember ? selectedMember.name : 'Select Member'" (onClick)="toggle($event)" styleClass="min-w-48" />
+            <p-popover #op>
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <span class="font-medium block mb-2">Team Members</span>
+                        <ul class="list-none p-0 m-0 flex flex-col">
+                            <li *ngFor="let member of members" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border" (click)="selectMember(member)">
+                                <img [src]="'https://exhaustive-ui.com/demo/avatar/' + member.image" [alt]="member.name" style="width: 32px" />
+                                <div>
+                                    <span class="font-medium">{{ member.name }}</span>
+                                    <div class="text-sm text-surface-500 dark:text-surface-400">{{ member.email }}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </p-popover>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, PopoverModule, ButtonModule]
+})
+export class PopoverSelectdataDemo {
+    @ViewChild('op') op!: Popover;
+
+    selectedMember = null;
+
+    members = [
+        { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
+        { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
+        { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
+    ];
+
+    toggle(event) {
+        this.op.toggle(event);
+    }
+
+    selectMember(member) {
+        this.selectedMember = member;
+        this.op.hide();
+    }
 }
 ```
 
@@ -218,60 +271,30 @@ export class PopoverDatatableDemo implements OnInit {
 }
 ```
 
-## Select Data
+## Template
 
-In this sample, data is retrieved from the content inside the popover.
+Content of the OverlayPanel is defined by content template.
 
 ```typescript
-import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Popover, PopoverModule } from '@exhaustive-ui/core/popover';
+import { Component } from '@angular/core';
+import { PopoverModule } from '@exhaustive-ui/core/popover';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-button type="button" [label]="selectedMember ? selectedMember.name : 'Select Member'" (onClick)="toggle($event)" styleClass="min-w-48" />
             <p-popover #op>
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <span class="font-medium block mb-2">Team Members</span>
-                        <ul class="list-none p-0 m-0 flex flex-col">
-                            <li *ngFor="let member of members" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border" (click)="selectMember(member)">
-                                <img [src]="'https://exhaustive-ui.com/demo/avatar/' + member.image" [alt]="member.name" style="width: 32px" />
-                                <div>
-                                    <span class="font-medium">{{ member.name }}</span>
-                                    <div class="text-sm text-surface-500 dark:text-surface-400">{{ member.email }}</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <ng-template #content>
+                    <h4>Custom Content</h4>
+                </ng-template>
             </p-popover>
+            <p-button (click)="op.toggle($event)" icon="pi pi-image" label="Show"></p-button>
         </div>
     `,
     standalone: true,
-    imports: [CommonModule, PopoverModule, ButtonModule]
+    imports: [PopoverModule, ButtonModule]
 })
-export class PopoverSelectdataDemo {
-    @ViewChild('op') op!: Popover;
-
-    selectedMember = null;
-
-    members = [
-        { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
-        { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
-        { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
-    ];
-
-    toggle(event) {
-        this.op.toggle(event);
-    }
-
-    selectMember(member) {
-        this.selectedMember = member;
-        this.op.hide();
-    }
+export class PopoverTemplateDemo {
 }
 ```
 
@@ -303,32 +326,9 @@ export class PopoverTargetDemo {
 }
 ```
 
-## Template
+## Accessibility
 
-Content of the OverlayPanel is defined by content template.
-
-```typescript
-import { Component } from '@angular/core';
-import { PopoverModule } from '@exhaustive-ui/core/popover';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-popover #op>
-                <ng-template #content>
-                    <h4>Custom Content</h4>
-                </ng-template>
-            </p-popover>
-            <p-button (click)="op.toggle($event)" icon="pi pi-image" label="Show"></p-button>
-        </div>
-    `,
-    standalone: true,
-    imports: [PopoverModule, ButtonModule]
-})
-export class PopoverTemplateDemo {
-}
-```
+Screen Reader Popover component uses dialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Popover adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Popover Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Close Button Keyboard Support Key Function enter Closes the popup and moves focus to the trigger. space Closes the popup and moves focus to the trigger.
 
 ## Popover
 

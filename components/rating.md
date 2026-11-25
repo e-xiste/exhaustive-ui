@@ -2,10 +2,6 @@
 
 Rating component is a star based selection input.
 
-## Accessibility
-
-Screen Reader Rating component internally uses radio buttons that are only visible to screen readers. The value to read for item is retrieved from the locale API via star and stars of the aria property.
-
 ## Basic
 
 Two-way value binding is defined using ngModel .
@@ -26,29 +22,6 @@ import { RatingModule } from '@exhaustive-ui/core/rating';
 })
 export class RatingBasicDemo {
     value!: number;
-}
-```
-
-## Disabled
-
-When disabled is present, a visual hint is applied to indicate that the Knob cannot be interacted with.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RatingModule } from '@exhaustive-ui/core/rating';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-rating [(ngModel)]="value" [disabled]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RatingModule]
-})
-export class RatingDisabledDemo {
-    value: number = 5;
 }
 ```
 
@@ -75,7 +48,128 @@ export class RatingNumberofstarsDemo {
 }
 ```
 
-## reactiveforms-doc
+## Template
+
+Templating allows customizing the content where the icon instance is available as the implicit variable.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-rating [(ngModel)]="value">
+                <ng-template #onicon>
+                    <img src="https://exhaustive-ui.com/demo/rating/custom-icon-active.png" alt="" height="24" width="24" />
+                </ng-template>
+                <ng-template #officon>
+                    <img src="https://exhaustive-ui.com/demo/rating/custom-icon.png" alt="" height="24" width="24" />
+                </ng-template>
+            </p-rating>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RatingModule]
+})
+export class RatingTemplateDemo {
+    value!: number;
+}
+```
+
+## Readonly
+
+When readonly present, value cannot be edited.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-rating [(ngModel)]="value" [readonly]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RatingModule]
+})
+export class RatingReadonlyDemo {
+    value: number = 3;
+}
+```
+
+## Disabled
+
+When disabled is present, a visual hint is applied to indicate that the Knob cannot be interacted with.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-rating [(ngModel)]="value" [disabled]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RatingModule]
+})
+export class RatingDisabledDemo {
+    value: number = 5;
+}
+```
+
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { RatingModule } from '@exhaustive-ui/core/rating';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-40">
+                <div class="flex flex-col items-center gap-2">
+                    <p-rating #ratingValue="ngModel" [(ngModel)]="value" required name="ratingValue" [invalid]="ratingValue.invalid && (ratingValue.touched || exampleForm.submitted)" />
+                    @if (ratingValue.invalid && (ratingValue.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Value is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RatingModule, ButtonModule, ToastModule, MessageModule, CommonModule],
+    providers: [MessageService]
+})
+export class RatingTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 Rating can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -139,29 +233,6 @@ export class RatingReactiveformsDemo {
 }
 ```
 
-## Readonly
-
-When readonly present, value cannot be edited.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RatingModule } from '@exhaustive-ui/core/rating';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-rating [(ngModel)]="value" [readonly]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RatingModule]
-})
-export class RatingReadonlyDemo {
-    value: number = 3;
-}
-```
-
 ## Signal Forms
 
 Rating can also be used with Angular Signal Forms , the @angular/forms/signals API of Angular 21 and newer. The form model is a signal, form() declares its validators and the [formField] directive binds the component to a field. The field also sets the invalid and touched states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the messages below.
@@ -214,80 +285,9 @@ export class RatingSignalformsDemo {
 }
 ```
 
-## Template
+## Accessibility
 
-Templating allows customizing the content where the icon instance is available as the implicit variable.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RatingModule } from '@exhaustive-ui/core/rating';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-rating [(ngModel)]="value">
-                <ng-template #onicon>
-                    <img src="https://exhaustive-ui.com/demo/rating/custom-icon-active.png" alt="" height="24" width="24" />
-                </ng-template>
-                <ng-template #officon>
-                    <img src="https://exhaustive-ui.com/demo/rating/custom-icon.png" alt="" height="24" width="24" />
-                </ng-template>
-            </p-rating>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RatingModule]
-})
-export class RatingTemplateDemo {
-    value!: number;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { RatingModule } from '@exhaustive-ui/core/rating';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-40">
-                <div class="flex flex-col items-center gap-2">
-                    <p-rating #ratingValue="ngModel" [(ngModel)]="value" required name="ratingValue" [invalid]="ratingValue.invalid && (ratingValue.touched || exampleForm.submitted)" />
-                    @if (ratingValue.invalid && (ratingValue.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Value is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RatingModule, ButtonModule, ToastModule, MessageModule, CommonModule],
-    providers: [MessageService]
-})
-export class RatingTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader Rating component internally uses radio buttons that are only visible to screen readers. The value to read for item is retrieved from the locale API via star and stars of the aria property.
 
 ## Rating
 

@@ -2,10 +2,6 @@
 
 ToggleButton is used to select a boolean value using a button.
 
-## Accessibility
-
-Screen Reader ToggleButton component uses an element with button role and updates aria-pressed state for screen readers. Value to describe the component can be defined with ariaLabelledBy or ariaLabel props, it is highly suggested to use either of these props as the component changes the label displayed which will result in screen readers to read different labels when the component receives focus. To prevent this, always provide an aria label that does not change related to state.
-
 ## Basic
 
 Two-way binding to a boolean property is defined using the standard ngModel directive.
@@ -52,9 +48,9 @@ export class TogglebuttonCustomizedDemo {
 }
 ```
 
-## Disabled
+## Sizes
 
-When disabled is present, the element cannot be edited and focused.
+ToggleButton provides small and large sizes as alternatives to the base.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -63,15 +59,21 @@ import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-toggle-button disabled="true" onIcon="pi pi-check" offIcon="pi pi-times" [(ngModel)]="checked" onLabel="Yes" offLabel="No" class="w-full sm:w-40" ariaLabel="Confirmation" />
+        <div class="card flex flex-col items-center gap-4">
+            <p-toggle-button [(ngModel)]="value1" onLabel="On" offLabel="Off" size="small" class="min-w-16" />
+            <p-toggle-button [(ngModel)]="value2" onLabel="On" offLabel="Off" class="min-w-20" />
+            <p-toggle-button [(ngModel)]="value3" onLabel="On" offLabel="Off" size="large" class="min-w-24" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, ToggleButtonModule]
 })
-export class TogglebuttonDisabledDemo {
-    checked: boolean = false;
+export class TogglebuttonSizesDemo {
+    value1: boolean = false;
+
+    value2: boolean = false;
+
+    value3: boolean = false;
 }
 ```
 
@@ -94,6 +96,29 @@ import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
     imports: [FormsModule, ToggleButtonModule]
 })
 export class TogglebuttonFluidDemo {
+    checked: boolean = false;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toggle-button disabled="true" onIcon="pi pi-check" offIcon="pi pi-times" [(ngModel)]="checked" onLabel="Yes" offLabel="No" class="w-full sm:w-40" ariaLabel="Confirmation" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ToggleButtonModule]
+})
+export class TogglebuttonDisabledDemo {
     checked: boolean = false;
 }
 ```
@@ -121,7 +146,54 @@ export class TogglebuttonInvalidDemo {
 }
 ```
 
-## reactiveforms-doc
+## Forms: Template Driven
+
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
+                <div class="flex flex-col items-center gap-1">
+                    <p-toggle-button #model="ngModel" [(ngModel)]="checked" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="country" onLabel="Accept All" offLabel="Reject All" required class="min-w-40" />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Consent is mandatory.</p-message>
+                    }
+                </div>
+                <button pButton type="submit">
+                    <span pButtonLabel>Submit</span>
+                </button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, ToggleButtonModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
+})
+export class TogglebuttonTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    checked: boolean;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 ToggleButton can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -238,81 +310,9 @@ export class TogglebuttonSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-ToggleButton provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-toggle-button [(ngModel)]="value1" onLabel="On" offLabel="Off" size="small" class="min-w-16" />
-            <p-toggle-button [(ngModel)]="value2" onLabel="On" offLabel="Off" class="min-w-20" />
-            <p-toggle-button [(ngModel)]="value3" onLabel="On" offLabel="Off" size="large" class="min-w-24" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ToggleButtonModule]
-})
-export class TogglebuttonSizesDemo {
-    value1: boolean = false;
-
-    value2: boolean = false;
-
-    value3: boolean = false;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { ToggleButtonModule } from '@exhaustive-ui/core/togglebutton';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
-                <div class="flex flex-col items-center gap-1">
-                    <p-toggle-button #model="ngModel" [(ngModel)]="checked" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="country" onLabel="Accept All" offLabel="Reject All" required class="min-w-40" />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Consent is mandatory.</p-message>
-                    }
-                </div>
-                <button pButton type="submit">
-                    <span pButtonLabel>Submit</span>
-                </button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, ToggleButtonModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class TogglebuttonTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    checked: boolean;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader ToggleButton component uses an element with button role and updates aria-pressed state for screen readers. Value to describe the component can be defined with ariaLabelledBy or ariaLabel props, it is highly suggested to use either of these props as the component changes the label displayed which will result in screen readers to read different labels when the component receives focus. To prevent this, always provide an aria label that does not change related to state.
 
 ## Toggle Button
 

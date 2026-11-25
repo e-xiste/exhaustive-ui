@@ -2,10 +2,6 @@
 
 ScrollTop gets displayed after a certain scroll position and used to navigates to the top of the page quickly.
 
-## Accessibility
-
-Screen Reader ScrollTop uses a button element with an aria-label that refers to the aria.scrollTop property of the locale API by default, you may use your own aria roles and attributes as any valid attribute is passed to the button element implicitly.
-
 ## Basic
 
 ScrollTop listens window scroll by default.
@@ -58,6 +54,10 @@ import { ScrollTopModule } from '@exhaustive-ui/core/scrolltop';
 export class ScrolltopElementDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader ScrollTop uses a button element with an aria-label that refers to the aria.scrollTop property of the locale API by default, you may use your own aria roles and attributes as any valid attribute is passed to the button element implicitly.
 
 ## Scroll Top
 

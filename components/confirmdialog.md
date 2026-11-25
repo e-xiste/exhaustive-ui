@@ -2,10 +2,6 @@
 
 ConfirmDialog is backed by a service utilizing Observables to display confirmation windows easily that can be shared by multiple actions on the same component.
 
-## Accessibility
-
-Screen Reader ConfirmDialog component uses alertdialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. When confirm function is used and a trigger is passed as a parameter, ConfirmDialog adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. If the dialog is controlled with the visible property aria-expanded and aria-controls need to be handled explicitly. Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Buttons Keyboard Support Key Function enter Triggers the action, closes the popup and moves focus to the trigger. space Triggers the action, closes the popup and moves focus to the trigger.
-
 ## Basic
 
 ConfirmDialog is defined using p-confirm-dialog tag and an instance of ConfirmationService is required to display it bycalling confirm method.
@@ -86,65 +82,6 @@ export class ConfirmdialogBasicDemo {
             },
             reject: () => {
                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-            }
-        });
-    }
-}
-```
-
-## Headless
-
-Headless mode allows you to customize the entire user interface instead of the default elements.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ConfirmDialogModule } from '@exhaustive-ui/core/confirmdialog';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-confirm-dialog #cd>
-                <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
-                    @if (message) {
-                        <div class="flex flex-col items-center p-8 bg-surface-0 dark:bg-surface-900 rounded-sm">
-                            <div class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20">
-                                <i class="pi pi-question text-5xl!"></i>
-                            </div>
-                            <span class="font-bold text-2xl block mb-2 mt-6">{{ message.header }}</span>
-                            <p class="mb-0">{{ message.message }}</p>
-                            <div class="flex items-center gap-2 mt-6">
-                                <p-button label="Save" (onClick)="onAccept()" styleClass="w-32"></p-button>
-                                <p-button label="Cancel" [outlined]="true" (onClick)="onReject()" styleClass="w-32"></p-button>
-                            </div>
-                        </div>
-                    }
-                </ng-template>
-            </p-confirm-dialog>
-            <p-button (click)="confirm()" label="Save" />
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, ConfirmDialogModule, ToastModule, ButtonModule],
-    providers: [ConfirmationService, MessageService]
-})
-export class ConfirmdialogHeadlessDemo {
-    private confirmationService = inject(ConfirmationService);
-    private messageService = inject(MessageService);
-
-    confirm() {
-        this.confirmationService.confirm({
-            header: 'Are you sure?',
-            message: 'Please confirm to proceed.',
-            accept: () => {
-                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'You have rejected' });
             }
         });
     }
@@ -290,6 +227,69 @@ export class ConfirmdialogTemplateDemo {
     }
 }
 ```
+
+## Headless
+
+Headless mode allows you to customize the entire user interface instead of the default elements.
+
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { ConfirmationService, MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ConfirmDialogModule } from '@exhaustive-ui/core/confirmdialog';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-confirm-dialog #cd>
+                <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
+                    @if (message) {
+                        <div class="flex flex-col items-center p-8 bg-surface-0 dark:bg-surface-900 rounded-sm">
+                            <div class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20">
+                                <i class="pi pi-question text-5xl!"></i>
+                            </div>
+                            <span class="font-bold text-2xl block mb-2 mt-6">{{ message.header }}</span>
+                            <p class="mb-0">{{ message.message }}</p>
+                            <div class="flex items-center gap-2 mt-6">
+                                <p-button label="Save" (onClick)="onAccept()" styleClass="w-32"></p-button>
+                                <p-button label="Cancel" [outlined]="true" (onClick)="onReject()" styleClass="w-32"></p-button>
+                            </div>
+                        </div>
+                    }
+                </ng-template>
+            </p-confirm-dialog>
+            <p-button (click)="confirm()" label="Save" />
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, ConfirmDialogModule, ToastModule, ButtonModule],
+    providers: [ConfirmationService, MessageService]
+})
+export class ConfirmdialogHeadlessDemo {
+    private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
+
+    confirm() {
+        this.confirmationService.confirm({
+            header: 'Are you sure?',
+            message: 'Please confirm to proceed.',
+            accept: () => {
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'You have rejected' });
+            }
+        });
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader ConfirmDialog component uses alertdialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. When confirm function is used and a trigger is passed as a parameter, ConfirmDialog adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. If the dialog is controlled with the visible property aria-expanded and aria-controls need to be handled explicitly. Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Buttons Keyboard Support Key Function enter Triggers the action, closes the popup and moves focus to the trigger. space Triggers the action, closes the popup and moves focus to the trigger.
 
 ## Confirm Dialog
 

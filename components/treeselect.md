@@ -2,10 +2,6 @@
 
 TreeSelect is a form component to choose from hierarchical data.
 
-## Accessibility
-
-Screen Reader Value to describe the component can either be provided with ariaLabelledBy or ariaLabel props. The treeselect element has a combobox role in addition to aria-haspopup and aria-expanded attributes. The relation between the combobox and the popup is created with aria-controls that refers to the id of the popup. The popup list has an id that refers to the aria-controls attribute of the combobox element and uses tree as the role. Each list item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. In checkbox selection, aria-checked is used instead of aria-selected . Checkbox and toggle icons are hidden from screen readers as their parent element with treeitem role and attributes are used instead for readers and keyboard support. The container element of a treenode has the group role. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem.
-
 ## Basic
 
 TreeSelect is used as a controlled component with ng-model directive along with an options collection. Internally Tree component is used so the options model is based on TreeNode API. In single selection mode, value binding should be the key value of a node.
@@ -28,6 +24,39 @@ import { NodeService } from '@/service/nodeservice';
     providers: [NodeService]
 })
 export class TreeselectBasicDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Multiple
+
+More than one node is selectable by setting selectionMode to multiple . By default in multiple selection mode, metaKey press (e.g. ⌘ ) is necessary to add to existing selections however this can be configured with disabling the metaKeySelection property. Note that in touch enabled devices, TreeSelect always ignores metaKey. In multiple selection mode, value binding should be an array of the selected nodes. Nodes are matched by their key , or by reference when they have no key.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tree-select class="w-full md:w-80" [(ngModel)]="selectedNodes" [options]="nodes" [metaKeySelection]="false" selectionMode="multiple" placeholder="Select Item" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeSelectModule, FormsModule],
+    providers: [NodeService]
+})
+export class TreeselectMultipleDemo {
     private nodeService = inject(NodeService);
 
     nodes!: any[];
@@ -73,43 +102,9 @@ export class TreeselectCheckboxDemo {
 }
 ```
 
-## Clear Icon
+## Virtual Scroll
 
-When showClear is enabled, a clear icon is displayed to clear the value.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" class="md:w-80 w-full" [showClear]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeSelectModule, FormsModule, RouterModule],
-    providers: [NodeService]
-})
-export class TreeselectCleariconDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Disabled
-
-When disabled is present, the element cannot be edited and focused.
+VirtualScrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable VirtualScrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
 
 ```typescript
 import { Component, inject } from '@angular/core';
@@ -120,47 +115,25 @@ import { NodeService } from '@/service/nodeservice';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" [disabled]="true" placeholder="TreeSelect" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeSelectModule, FormsModule],
-    providers: [NodeService]
-})
-export class TreeselectDisabledDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Filled
-
-Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" variant="filled" [options]="nodes" placeholder="Select Item" />
+            <p-tree-select
+                class="w-full md:w-80"
+                [(ngModel)]="selectedNodes"
+                [options]="nodes"
+                display="chip"
+                [metaKeySelection]="false"
+                selectionMode="checkbox"
+                placeholder="Select Item"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="35"
+                [virtualScrollOptions]="{ scrollHeight: '200px' }"
+            ></p-tree-select>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, TreeSelectModule],
     providers: [NodeService]
 })
-export class TreeselectFilledDemo {
+export class TreeselectVirtualscrollDemo {
     private nodeService = inject(NodeService);
 
     nodes!: any[];
@@ -168,198 +141,7 @@ export class TreeselectFilledDemo {
     selectedNodes: any;
 
     constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Filter
-
-Filtering is enabled by adding the filter property, by default label property of a node is used to compare against the value in the text field, in order to customize which field(s) should be used during search define filterBy property. In addition filterMode specifies the filtering strategy. In lenient mode when the query matches a node, children of the node are not searched further as all descendants of the node are included. On the other hand, in strict mode when the query matches a node, filtering continues on all descendants.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" [filter]="true" [filterInputAutoFocus]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TreeSelectModule],
-    providers: [NodeService]
-})
-export class TreeselectFilterDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Float Label
-
-A floating label appears on top of the input field when focused. Visit FloatLabel documentation for more information.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-float-label class="w-full md:w-80">
-                <p-tree-select [(ngModel)]="value1" inputId="over_label" [options]="nodes" class="w-full" />
-                <label for="over_label">Over Label</label>
-            </p-float-label>
-            <p-float-label class="w-full md:w-80" variant="in">
-                <p-tree-select [(ngModel)]="value2" inputId="in_label" [options]="nodes" class="w-full" />
-                <label for="in_label">In Label</label>
-            </p-float-label>
-            <p-float-label class="w-full md:w-80" variant="on">
-                <p-tree-select [(ngModel)]="value3" inputId="on_label" [options]="nodes" class="w-full" />
-                <label for="on_label">On Label</label>
-            </p-float-label>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RouterModule, TreeSelectModule, FloatLabelModule],
-    providers: [NodeService]
-})
-export class TreeselectFloatlabelDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    value1: any;
-
-    value2: any;
-
-    value3: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" fluid />
-        </div>
-    `,
-    standalone: true,
-    imports: [TreeSelectModule, FormsModule, RouterModule],
-    providers: [NodeService]
-})
-export class TreeselectFluidDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Ifta Label
-
-IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-ifta-label class="w-full md:w-80">
-                <p-tree-select [(ngModel)]="selectedValue" inputId="t_file" [options]="nodes" class="w-full" />
-                <label for="t_file">File</label>
-            </p-ifta-label>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RouterModule, TreeSelectModule, IftaLabelModule],
-    providers: [NodeService]
-})
-export class TreeselectIftalabelDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedValue: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Invalid
-
-The invalid state is applied using the ⁠invalid property to indicate failed validation, which can be integrated with Angular Forms.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-4">
-            <p-tree-select [invalid]="selectedValue1 === undefined" [(ngModel)]="selectedValue1" [options]="nodes" placeholder="TreeSelect" class="md:w-80 w-full" />
-            <p-tree-select [invalid]="selectedValue2 === undefined" [(ngModel)]="selectedValue2" [options]="nodes" placeholder="TreeSelect" class="md:w-80 w-full" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TreeSelectModule],
-    providers: [NodeService]
-})
-export class TreeselectInvalidDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedValue1: any;
-
-    selectedValue2: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
+        this.nodeService.getLargeTreeNodes().then((files) => (this.nodes = files));
     }
 }
 ```
@@ -454,9 +236,9 @@ export class TreeselectLazyDemo {
 }
 ```
 
-## Multiple
+## Filter
 
-More than one node is selectable by setting selectionMode to multiple . By default in multiple selection mode, metaKey press (e.g. ⌘ ) is necessary to add to existing selections however this can be configured with disabling the metaKeySelection property. Note that in touch enabled devices, TreeSelect always ignores metaKey. In multiple selection mode, value binding should be an array of the selected nodes. Nodes are matched by their key , or by reference when they have no key.
+Filtering is enabled by adding the filter property, by default label property of a node is used to compare against the value in the text field, in order to customize which field(s) should be used during search define filterBy property. In addition filterMode specifies the filtering strategy. In lenient mode when the query matches a node, children of the node are not searched further as all descendants of the node are included. On the other hand, in strict mode when the query matches a node, filtering continues on all descendants.
 
 ```typescript
 import { Component, inject } from '@angular/core';
@@ -467,14 +249,14 @@ import { NodeService } from '@/service/nodeservice';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-tree-select class="w-full md:w-80" [(ngModel)]="selectedNodes" [options]="nodes" [metaKeySelection]="false" selectionMode="multiple" placeholder="Select Item" />
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" [filter]="true" [filterInputAutoFocus]="true" />
         </div>
     `,
     standalone: true,
-    imports: [TreeSelectModule, FormsModule],
+    imports: [FormsModule, TreeSelectModule],
     providers: [NodeService]
 })
-export class TreeselectMultipleDemo {
+export class TreeselectFilterDemo {
     private nodeService = inject(NodeService);
 
     nodes!: any[];
@@ -487,7 +269,405 @@ export class TreeselectMultipleDemo {
 }
 ```
 
-## reactiveforms-doc
+## Template
+
+TreeSelect offers multiple templates for customization through templating.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item">
+                <ng-template #dropdownicon>
+                    <i class="pi pi-search"></i>
+                </ng-template>
+                <ng-template #header>
+                    <div class="font-medium px-3 py-2">Available Files</div>
+                </ng-template>
+                <ng-template #footer>
+                    <div class="px-3 pt-1 pb-2 flex justify-between">
+                        <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus" />
+                        <p-button label="Remove All" severity="danger" text size="small" icon="pi pi-plus" />
+                    </div>
+                </ng-template>
+            </p-tree-select>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TreeSelectModule, ButtonModule],
+    providers: [NodeService]
+})
+export class TreeselectTemplateDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Float Label
+
+A floating label appears on top of the input field when focused. Visit FloatLabel documentation for more information.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { FloatLabelModule } from '@exhaustive-ui/core/floatlabel';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center items-end gap-4">
+            <p-float-label class="w-full md:w-80">
+                <p-tree-select [(ngModel)]="value1" inputId="over_label" [options]="nodes" class="w-full" />
+                <label for="over_label">Over Label</label>
+            </p-float-label>
+            <p-float-label class="w-full md:w-80" variant="in">
+                <p-tree-select [(ngModel)]="value2" inputId="in_label" [options]="nodes" class="w-full" />
+                <label for="in_label">In Label</label>
+            </p-float-label>
+            <p-float-label class="w-full md:w-80" variant="on">
+                <p-tree-select [(ngModel)]="value3" inputId="on_label" [options]="nodes" class="w-full" />
+                <label for="on_label">On Label</label>
+            </p-float-label>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RouterModule, TreeSelectModule, FloatLabelModule],
+    providers: [NodeService]
+})
+export class TreeselectFloatlabelDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    value1: any;
+
+    value2: any;
+
+    value3: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Ifta Label
+
+IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-ifta-label class="w-full md:w-80">
+                <p-tree-select [(ngModel)]="selectedValue" inputId="t_file" [options]="nodes" class="w-full" />
+                <label for="t_file">File</label>
+            </p-ifta-label>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RouterModule, TreeSelectModule, IftaLabelModule],
+    providers: [NodeService]
+})
+export class TreeselectIftalabelDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedValue: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Clear Icon
+
+When showClear is enabled, a clear icon is displayed to clear the value.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" class="md:w-80 w-full" [showClear]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeSelectModule, FormsModule, RouterModule],
+    providers: [NodeService]
+})
+export class TreeselectCleariconDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Sizes
+
+TreeSelect provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-tree-select [(ngModel)]="value1" [options]="nodes" size="small" placeholder="Small" class="md:w-80 w-full" />
+            <p-tree-select [(ngModel)]="value2" [options]="nodes" placeholder="Normal" class="md:w-80 w-full" />
+            <p-tree-select [(ngModel)]="value3" [options]="nodes" size="large" placeholder="Large" class="md:w-80 w-full" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TreeSelectModule],
+    providers: [NodeService]
+})
+export class TreeselectSizesDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    value1: any;
+
+    value2: any;
+
+    value3: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tree-select [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item" fluid />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeSelectModule, FormsModule, RouterModule],
+    providers: [NodeService]
+})
+export class TreeselectFluidDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Filled
+
+Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" variant="filled" [options]="nodes" placeholder="Select Item" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TreeSelectModule],
+    providers: [NodeService]
+})
+export class TreeselectFilledDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" [disabled]="true" placeholder="TreeSelect" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TreeSelectModule, FormsModule],
+    providers: [NodeService]
+})
+export class TreeselectDisabledDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedNodes: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Invalid
+
+The invalid state is applied using the ⁠invalid property to indicate failed validation, which can be integrated with Angular Forms.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-4">
+            <p-tree-select [invalid]="selectedValue1 === undefined" [(ngModel)]="selectedValue1" [options]="nodes" placeholder="TreeSelect" class="md:w-80 w-full" />
+            <p-tree-select [invalid]="selectedValue2 === undefined" [(ngModel)]="selectedValue2" [options]="nodes" placeholder="TreeSelect" class="md:w-80 w-full" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TreeSelectModule],
+    providers: [NodeService]
+})
+export class TreeselectInvalidDemo {
+    private nodeService = inject(NodeService);
+
+    nodes!: any[];
+
+    selectedValue1: any;
+
+    selectedValue2: any;
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+}
+```
+
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { NodeService } from '@/service/nodeservice';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-full md:w-80">
+                <div class="flex flex-col gap-1">
+                    <p-tree-select #node="ngModel" [(ngModel)]="selectedNodes" [invalid]="node.invalid && exampleForm.submitted" name="node" class="md:w-80 w-full" [options]="nodes" placeholder="Select Item" required />
+                    @if (node.invalid && exampleForm.submitted) {
+                        <p-message severity="error" size="small" variant="simple">Selection is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, TreeSelectModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService, NodeService]
+})
+export class TreeselectTemplatedrivenformsDemo {
+    private nodeService = inject(NodeService);
+
+    messageService = inject(MessageService);
+
+    selectedNodes: any;
+
+    nodes!: any[];
+
+    constructor() {
+        this.nodeService.getFiles().then((files) => (this.nodes = files));
+    }
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 TreeSelect can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -617,189 +797,9 @@ export class TreeselectSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-TreeSelect provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-tree-select [(ngModel)]="value1" [options]="nodes" size="small" placeholder="Small" class="md:w-80 w-full" />
-            <p-tree-select [(ngModel)]="value2" [options]="nodes" placeholder="Normal" class="md:w-80 w-full" />
-            <p-tree-select [(ngModel)]="value3" [options]="nodes" size="large" placeholder="Large" class="md:w-80 w-full" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TreeSelectModule],
-    providers: [NodeService]
-})
-export class TreeselectSizesDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    value1: any;
-
-    value2: any;
-
-    value3: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## Template
-
-TreeSelect offers multiple templates for customization through templating.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tree-select class="md:w-80 w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item">
-                <ng-template #dropdownicon>
-                    <i class="pi pi-search"></i>
-                </ng-template>
-                <ng-template #header>
-                    <div class="font-medium px-3 py-2">Available Files</div>
-                </ng-template>
-                <ng-template #footer>
-                    <div class="px-3 pt-1 pb-2 flex justify-between">
-                        <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus" />
-                        <p-button label="Remove All" severity="danger" text size="small" icon="pi pi-plus" />
-                    </div>
-                </ng-template>
-            </p-tree-select>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TreeSelectModule, ButtonModule],
-    providers: [NodeService]
-})
-export class TreeselectTemplateDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-full md:w-80">
-                <div class="flex flex-col gap-1">
-                    <p-tree-select #node="ngModel" [(ngModel)]="selectedNodes" [invalid]="node.invalid && exampleForm.submitted" name="node" class="md:w-80 w-full" [options]="nodes" placeholder="Select Item" required />
-                    @if (node.invalid && exampleForm.submitted) {
-                        <p-message severity="error" size="small" variant="simple">Selection is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, TreeSelectModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService, NodeService]
-})
-export class TreeselectTemplatedrivenformsDemo {
-    private nodeService = inject(NodeService);
-
-    messageService = inject(MessageService);
-
-    selectedNodes: any;
-
-    nodes!: any[];
-
-    constructor() {
-        this.nodeService.getFiles().then((files) => (this.nodes = files));
-    }
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## virtualscroll-doc
-
-VirtualScrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable VirtualScrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TreeSelectModule } from '@exhaustive-ui/core/treeselect';
-import { NodeService } from '@/service/nodeservice';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-tree-select
-                class="w-full md:w-80"
-                [(ngModel)]="selectedNodes"
-                [options]="nodes"
-                display="chip"
-                [metaKeySelection]="false"
-                selectionMode="checkbox"
-                placeholder="Select Item"
-                [virtualScroll]="true"
-                [virtualScrollItemSize]="35"
-                [virtualScrollOptions]="{ scrollHeight: '200px' }"
-            ></p-tree-select>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, TreeSelectModule],
-    providers: [NodeService]
-})
-export class TreeselectVirtualscrollDemo {
-    private nodeService = inject(NodeService);
-
-    nodes!: any[];
-
-    selectedNodes: any;
-
-    constructor() {
-        this.nodeService.getLargeTreeNodes().then((files) => (this.nodes = files));
-    }
-}
-```
+Screen Reader Value to describe the component can either be provided with ariaLabelledBy or ariaLabel props. The treeselect element has a combobox role in addition to aria-haspopup and aria-expanded attributes. The relation between the combobox and the popup is created with aria-controls that refers to the id of the popup. The popup list has an id that refers to the aria-controls attribute of the combobox element and uses tree as the role. Each list item has a treeitem role along with aria-label , aria-selected and aria-expanded attributes. In checkbox selection, aria-checked is used instead of aria-selected . Checkbox and toggle icons are hidden from screen readers as their parent element with treeitem role and attributes are used instead for readers and keyboard support. The container element of a treenode has the group role. The aria-setsize , aria-posinset and aria-level attributes are calculated implicitly and added to each treeitem.
 
 ## Tree Select
 

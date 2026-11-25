@@ -2,10 +2,6 @@
 
 Splitter is utilized to separate and resize panels.
 
-## Accessibility
-
-Screen Reader Splitter bar defines separator as the role with aria-orientation set to either horizontal or vertical. Keyboard Support Key Function tab Moves focus through the splitter bar. down arrow Moves a vertical splitter down. up arrow Moves a vertical splitter up. left arrow Moves a vertical splitter to the left. right arrow Moves a vertical splitter to the right.
-
 ## Horizontal
 
 Splitter requires two SplitterPanel components as children which are displayed horizontally by default.
@@ -31,48 +27,6 @@ import { SplitterModule } from '@exhaustive-ui/core/splitter';
     imports: [SplitterModule]
 })
 export class SplitterHorizontalDemo {
-}
-```
-
-## Nested
-
-Splitters can be combined to create advanced layouts.
-
-```typescript
-import { Component } from '@angular/core';
-import { SplitterModule } from '@exhaustive-ui/core/splitter';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-splitter [style]="{ height: '300px' }" [panelSizes]="[20, 80]" [minSizes]="[10, 0]" class="mb-8">
-                <ng-template #panel>
-                    <div class="col flex w-full items-center justify-center">Panel 1</div>
-                </ng-template>
-                <ng-template #panel>
-                    <p-splitter layout="vertical" [panelSizes]="[50, 50]">
-                        <ng-template #panel>
-                            <div style="flex-grow: 1;" class="flex items-center justify-center">Panel 2</div>
-                        </ng-template>
-                        <ng-template #panel>
-                            <p-splitter [panelSizes]="[20, 80]">
-                                <ng-template #panel>
-                                    <div class="col h-full flex items-center justify-center">Panel 3</div>
-                                </ng-template>
-                                <ng-template #panel>
-                                    <div class="col h-full flex items-center justify-center">Panel 4</div>
-                                </ng-template>
-                            </p-splitter>
-                        </ng-template>
-                    </p-splitter>
-                </ng-template>
-            </p-splitter>
-        </div>
-    `,
-    standalone: true,
-    imports: [SplitterModule]
-})
-export class SplitterNestedDemo {
 }
 ```
 
@@ -131,6 +85,52 @@ import { SplitterModule } from '@exhaustive-ui/core/splitter';
 export class SplitterVerticalDemo {
 }
 ```
+
+## Nested
+
+Splitters can be combined to create advanced layouts.
+
+```typescript
+import { Component } from '@angular/core';
+import { SplitterModule } from '@exhaustive-ui/core/splitter';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-splitter [style]="{ height: '300px' }" [panelSizes]="[20, 80]" [minSizes]="[10, 0]" class="mb-8">
+                <ng-template #panel>
+                    <div class="col flex w-full items-center justify-center">Panel 1</div>
+                </ng-template>
+                <ng-template #panel>
+                    <p-splitter layout="vertical" [panelSizes]="[50, 50]">
+                        <ng-template #panel>
+                            <div style="flex-grow: 1;" class="flex items-center justify-center">Panel 2</div>
+                        </ng-template>
+                        <ng-template #panel>
+                            <p-splitter [panelSizes]="[20, 80]">
+                                <ng-template #panel>
+                                    <div class="col h-full flex items-center justify-center">Panel 3</div>
+                                </ng-template>
+                                <ng-template #panel>
+                                    <div class="col h-full flex items-center justify-center">Panel 4</div>
+                                </ng-template>
+                            </p-splitter>
+                        </ng-template>
+                    </p-splitter>
+                </ng-template>
+            </p-splitter>
+        </div>
+    `,
+    standalone: true,
+    imports: [SplitterModule]
+})
+export class SplitterNestedDemo {
+}
+```
+
+## Accessibility
+
+Screen Reader Splitter bar defines separator as the role with aria-orientation set to either horizontal or vertical. Keyboard Support Key Function tab Moves focus through the splitter bar. down arrow Moves a vertical splitter down. up arrow Moves a vertical splitter up. left arrow Moves a vertical splitter to the left. right arrow Moves a vertical splitter to the right.
 
 ## Splitter
 

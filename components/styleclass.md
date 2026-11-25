@@ -2,6 +2,30 @@
 
 StyleClass manages css classes declaratively to during enter/leave animations or just to toggle classes on an element.
 
+## Toggle Class
+
+StyleClass has two modes, toggleClass to simply add-remove a class and enter/leave animations. The target element to change the styling is defined with the selector property that accepts any valid CSS selector or keywords including @next , prev , parent , grandparent
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center">
+            <p-button label="Toggle Display" pStyleClass="@next" toggleClass="hidden" />
+            <input type="text" pInputText class="hidden mt-4" />
+        </div>
+    `,
+    standalone: true,
+    imports: [StyleClassModule, ButtonModule, InputTextModule]
+})
+export class StyleclassToggleclassDemo {
+}
+```
+
 ## Animation
 
 Classes to apply during enter and leave animations are specified using the enterFromClass , enterActiveClass , enterToClass , leaveFromClass , leaveActiveClass , leaveToClass properties. In addition in case the target is an overlay, hideOnOutsideClick would be handy to hide the target if outside of the popup is clicked, or enable hideOnEscape to close the popup by listening escape key.
@@ -103,30 +127,6 @@ import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
     imports: [StyleClassModule, ButtonModule]
 })
 export class StyleclassHideonresizeDemo {
-}
-```
-
-## Toggle Class
-
-StyleClass has two modes, toggleClass to simply add-remove a class and enter/leave animations. The target element to change the styling is defined with the selector property that accepts any valid CSS selector or keywords including @next , prev , parent , grandparent
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-import { StyleClassModule } from '@exhaustive-ui/core/styleclass';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center">
-            <p-button label="Toggle Display" pStyleClass="@next" toggleClass="hidden" />
-            <input type="text" pInputText class="hidden mt-4" />
-        </div>
-    `,
-    standalone: true,
-    imports: [StyleClassModule, ButtonModule, InputTextModule]
-})
-export class StyleclassToggleclassDemo {
 }
 ```
 

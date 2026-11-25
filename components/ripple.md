@@ -2,9 +2,31 @@
 
 Ripple directive adds ripple effect to the host element.
 
-## Accessibility
+## Default
 
-Screen Reader Ripple element has the aria-hidden attribute as true so that it gets ignored by the screen readers. Keyboard Support Component does not include any interactive elements.
+Default Demo Content.
+
+```typescript
+import { Component } from '@angular/core';
+import { RippleModule } from '@exhaustive-ui/core/ripple';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <span
+                >Ripple option at the
+                <span class="mx-1 h-8 w-8 rounded-border inline-flex items-center justify-center bg-primary text-primary-contrast"><i class="pi pi-palette"></i></span>
+                configurator needs to be turned on for the demo.</span
+            >
+            <div pRipple class="ripple-box">Default</div>
+        </div>
+    `,
+    standalone: true,
+    imports: [RippleModule]
+})
+export class RippleDefaultDemo {
+}
+```
 
 ## Custom
 
@@ -36,31 +58,9 @@ export class RippleCustomDemo {
 }
 ```
 
-## Default
+## Accessibility
 
-Default Demo Content.
-
-```typescript
-import { Component } from '@angular/core';
-import { RippleModule } from '@exhaustive-ui/core/ripple';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <span
-                >Ripple option at the
-                <span class="mx-1 h-8 w-8 rounded-border inline-flex items-center justify-center bg-primary text-primary-contrast"><i class="pi pi-palette"></i></span>
-                configurator needs to be turned on for the demo.</span
-            >
-            <div pRipple class="ripple-box">Default</div>
-        </div>
-    `,
-    standalone: true,
-    imports: [RippleModule]
-})
-export class RippleDefaultDemo {
-}
-```
+Screen Reader Ripple element has the aria-hidden attribute as true so that it gets ignored by the screen readers. Keyboard Support Component does not include any interactive elements.
 
 ## Ripple
 

@@ -2,10 +2,6 @@
 
 Tour guides the user through the interface, one step at a time: a spotlight highlights an element and a card next to it explains it, with a step counter and back and next buttons. It is an accessible dialog that follows its target when the page scrolls or the layout changes.
 
-## Accessibility
-
-Screen Reader The card is an element with the dialog role, labelled by the title of the step with aria-labelledby and described by its text with aria-describedby ; a step without title is labelled by its counter, for example "Step 2 of 5". With the mask, the dialog is modal, aria-modal is true and the focus stays in the card; without mask, it is a non-modal dialog. The mask, the spotlight, the arrow and the progress dots are hidden from assistive technologies, and the visible "2 / 5" counter is read as "Step 2 of 5". A polite live region announces each new step with its title. Every text can be translated through labels . When the tour starts, the focus moves into the card; when a step changes, it stays on the button the user pressed, or moves to the card. When the tour ends, the focus returns to the element that had it before, usually the button that started the tour. A custom step template gives titleId and contentId to its title and text to keep the dialog labelled. The transitions of the spotlight and the card are disabled, and the target is scrolled into view without smooth scrolling, when the user prefers reduced motion.
-
 ## Basic
 
 A tour is a list of steps . Each step highlights its target , a CSS selector, an element or a function that returns one, and explains it in a card with a title and a text. The visible property starts and stops the tour; the card has a step counter, progress dots, back, next and close buttons. The mask darkens the page around a spotlight that follows the target when the page scrolls or the layout changes.
@@ -44,127 +40,6 @@ export class TourBasicDemo {
 }
 ```
 
-## Centered Step
-
-A step without target is displayed in the middle of the screen, for a welcome or a closing message. A step whose target is not found, an element that is not rendered yet for example, is centered too and a warning is logged; with missingTarget set to skip , the tour moves on to the following step instead.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { TourModule, TourStep } from '@exhaustive-ui/core/tour';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-6">
-            <p-button id="tour-centered-profile" label="Your profile" icon="pi pi-user" severity="secondary" />
-            <p-button label="Start the tour" icon="pi pi-play" (onClick)="visible = true" />
-            <p-tour [steps]="steps" [(visible)]="visible" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TourModule, ButtonModule]
-})
-export class TourCenteredDemo {
-    visible = false;
-
-    steps: TourStep[] = [
-        { title: 'Welcome aboard', content: 'This short tour shows you around. It takes less than a minute.' },
-        { target: '#tour-centered-profile', title: 'Your profile', content: 'Add a picture and tell your team what you work on.' },
-        { target: '#tour-centered-not-rendered', title: 'Missing target', content: 'This target does not exist, so the step is centered.' },
-        { title: 'You are all set', content: 'Restart the tour at any time from the help menu.' }
-    ];
-}
-```
-
-## Controlled
-
-The current step is the two-way activeIndex property: set it to start the tour at a given step or to move it from outside. onStepChange is emitted on every new step, onFinish when the user completes the tour and onClose , with its reason, when the tour is closed before its end. The component also has start(index) , next() , prev() , goTo(index) , close() , finish() and refresh() methods.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { TourModule, TourStep, TourStepChangeEvent } from '@exhaustive-ui/core/tour';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-6">
-            <div class="flex flex-wrap justify-center gap-2">
-                @for (step of steps; track step.title; let i = $index) {
-                    <p-button [id]="'tour-controlled-' + i" [label]="'Start at step ' + (i + 1)" severity="secondary" (onClick)="startAt(i)" />
-                }
-            </div>
-            <div class="text-muted-color" aria-live="polite">{{ status }}</div>
-            <p-tour [steps]="steps" [(visible)]="visible" [(activeIndex)]="activeIndex" (onStepChange)="onStepChange($event)" (onFinish)="status = 'Tour completed'" (onClose)="status = 'Tour closed (' + $event.reason + ')'" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TourModule, ButtonModule]
-})
-export class TourControlledDemo {
-    visible = false;
-
-    activeIndex = 0;
-
-    status = 'Not started';
-
-    steps: TourStep[] = [
-        { target: '#tour-controlled-0', title: 'Step 1', content: 'The first button starts the tour here.' },
-        { target: '#tour-controlled-1', title: 'Step 2', content: 'The second button starts the tour here.' },
-        { target: '#tour-controlled-2', title: 'Step 3', content: 'The third button starts the tour here.' }
-    ];
-
-    startAt(index: number) {
-        this.activeIndex = index;
-        this.visible = true;
-        this.status = `Step ${index + 1}`;
-    }
-
-    onStepChange(event: TourStepChangeEvent) {
-        this.status = `Step ${event.index + 1}, coming from step ${event.previousIndex + 1}`;
-    }
-}
-```
-
-## Labels
-
-Every text of the component, screen reader announcements included, can be replaced through labels . Missing keys keep their English default; the close button uses the aria.close text of the locale. Placeholders such as {{ '{0}' }} receive the values. showCounter and showDots hide the counter and the dots.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { TourLabels, TourModule, TourStep } from '@exhaustive-ui/core/tour';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-6">
-            <p-button id="tour-labels-share" label="Partager" icon="pi pi-share-alt" severity="secondary" />
-            <p-button label="Lancer la visite" icon="pi pi-play" (onClick)="visible = true" />
-            <p-tour [steps]="steps" [(visible)]="visible" [labels]="labels" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TourModule, ButtonModule]
-})
-export class TourLabelsDemo {
-    visible = false;
-
-    labels: Partial<TourLabels> = {
-        next: 'Suivant',
-        prev: 'Retour',
-        done: 'Terminer',
-        close: 'Fermer',
-        counter: '{0} sur {1}',
-        stepLabel: 'Étape {0} sur {1}',
-        stepMessage: 'Étape {0} sur {1} : {2}'
-    };
-
-    steps: TourStep[] = [
-        { title: 'Bienvenue', content: 'Découvrez les nouveautés en deux étapes.' },
-        { target: '#tour-labels-share', title: 'Partager', content: 'Invitez vos collègues à modifier le document.' }
-    ];
-}
-```
-
 ## Placement
 
 The card is displayed below the target by default. The placement of the tour, or of a step, puts it on another side: top , right , bottom , left , auto for the side with the most room, or center . When the card does not fit, it flips to the opposite side, then to the side with the most room, and it always stays inside the screen. In right-to-left documents, left and right are swapped.
@@ -198,9 +73,9 @@ export class TourPlacementDemo {
 }
 ```
 
-## Spotlight
+## Centered Step
 
-spotlightPadding and spotlightRadius size the cut-out around the target, in pixels, for the whole tour or for one step. The highlighted target stays clickable unless disableInteraction is set. A click on the mask closes the tour with dismissableMask , and closeOnEscape controls the Escape key.
+A step without target is displayed in the middle of the screen, for a welcome or a closing message. A step whose target is not found, an element that is not rendered yet for example, is centered too and a warning is logged; with missingTarget set to skip , the tour moves on to the following step instead.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -210,25 +85,22 @@ import { TourModule, TourStep } from '@exhaustive-ui/core/tour';
 @Component({
     template: `
         <div class="card flex flex-col items-center gap-6">
-            <div class="flex gap-6 items-center">
-                <p-button id="tour-spotlight-round" icon="pi pi-heart" [rounded]="true" ariaLabel="Favorite" />
-                <p-button id="tour-spotlight-locked" label="Delete account" severity="danger" (onClick)="deleted = deleted + 1" />
-            </div>
+            <p-button id="tour-centered-profile" label="Your profile" icon="pi pi-user" severity="secondary" />
             <p-button label="Start the tour" icon="pi pi-play" (onClick)="visible = true" />
-            <p-tour [steps]="steps" [(visible)]="visible" [dismissableMask]="true" />
+            <p-tour [steps]="steps" [(visible)]="visible" />
         </div>
     `,
     standalone: true,
     imports: [TourModule, ButtonModule]
 })
-export class TourSpotlightDemo {
+export class TourCenteredDemo {
     visible = false;
 
-    deleted = 0;
-
     steps: TourStep[] = [
-        { target: '#tour-spotlight-round', spotlightPadding: 6, spotlightRadius: 999, title: 'Round spotlight', content: 'The cut-out follows the shape of the button.' },
-        { target: '#tour-spotlight-locked', disableInteraction: true, title: 'Not clickable', content: 'This button cannot be clicked while the step is displayed. Click the mask to close the tour.' }
+        { title: 'Welcome aboard', content: 'This short tour shows you around. It takes less than a minute.' },
+        { target: '#tour-centered-profile', title: 'Your profile', content: 'Add a picture and tell your team what you work on.' },
+        { target: '#tour-centered-not-rendered', title: 'Missing target', content: 'This target does not exist, so the step is centered.' },
+        { title: 'You are all set', content: 'Restart the tour at any time from the help menu.' }
     ];
 }
 ```
@@ -288,6 +160,55 @@ export class TourTemplateDemo {
 }
 ```
 
+## Controlled
+
+The current step is the two-way activeIndex property: set it to start the tour at a given step or to move it from outside. onStepChange is emitted on every new step, onFinish when the user completes the tour and onClose , with its reason, when the tour is closed before its end. The component also has start(index) , next() , prev() , goTo(index) , close() , finish() and refresh() methods.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TourModule, TourStep, TourStepChangeEvent } from '@exhaustive-ui/core/tour';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-6">
+            <div class="flex flex-wrap justify-center gap-2">
+                @for (step of steps; track step.title; let i = $index) {
+                    <p-button [id]="'tour-controlled-' + i" [label]="'Start at step ' + (i + 1)" severity="secondary" (onClick)="startAt(i)" />
+                }
+            </div>
+            <div class="text-muted-color" aria-live="polite">{{ status }}</div>
+            <p-tour [steps]="steps" [(visible)]="visible" [(activeIndex)]="activeIndex" (onStepChange)="onStepChange($event)" (onFinish)="status = 'Tour completed'" (onClose)="status = 'Tour closed (' + $event.reason + ')'" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TourModule, ButtonModule]
+})
+export class TourControlledDemo {
+    visible = false;
+
+    activeIndex = 0;
+
+    status = 'Not started';
+
+    steps: TourStep[] = [
+        { target: '#tour-controlled-0', title: 'Step 1', content: 'The first button starts the tour here.' },
+        { target: '#tour-controlled-1', title: 'Step 2', content: 'The second button starts the tour here.' },
+        { target: '#tour-controlled-2', title: 'Step 3', content: 'The third button starts the tour here.' }
+    ];
+
+    startAt(index: number) {
+        this.activeIndex = index;
+        this.visible = true;
+        this.status = `Step ${index + 1}`;
+    }
+
+    onStepChange(event: TourStepChangeEvent) {
+        this.status = `Step ${event.index + 1}, coming from step ${event.previousIndex + 1}`;
+    }
+}
+```
+
 ## Without Mask
 
 With mask set to false, the page stays usable while the tour runs: the target keeps its ring, the card is a non-modal dialog and the focus is not trapped in it. Use it for hints the user follows while working, here filling a field.
@@ -318,6 +239,85 @@ export class TourWithoutmaskDemo {
     steps: TourStep[] = [{ target: '#tour-nomask-name', placement: 'right', title: 'Name your project', content: 'You can type in the field while this hint is open.' }];
 }
 ```
+
+## Spotlight
+
+spotlightPadding and spotlightRadius size the cut-out around the target, in pixels, for the whole tour or for one step. The highlighted target stays clickable unless disableInteraction is set. A click on the mask closes the tour with dismissableMask , and closeOnEscape controls the Escape key.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TourModule, TourStep } from '@exhaustive-ui/core/tour';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-6">
+            <div class="flex gap-6 items-center">
+                <p-button id="tour-spotlight-round" icon="pi pi-heart" [rounded]="true" ariaLabel="Favorite" />
+                <p-button id="tour-spotlight-locked" label="Delete account" severity="danger" (onClick)="deleted = deleted + 1" />
+            </div>
+            <p-button label="Start the tour" icon="pi pi-play" (onClick)="visible = true" />
+            <p-tour [steps]="steps" [(visible)]="visible" [dismissableMask]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TourModule, ButtonModule]
+})
+export class TourSpotlightDemo {
+    visible = false;
+
+    deleted = 0;
+
+    steps: TourStep[] = [
+        { target: '#tour-spotlight-round', spotlightPadding: 6, spotlightRadius: 999, title: 'Round spotlight', content: 'The cut-out follows the shape of the button.' },
+        { target: '#tour-spotlight-locked', disableInteraction: true, title: 'Not clickable', content: 'This button cannot be clicked while the step is displayed. Click the mask to close the tour.' }
+    ];
+}
+```
+
+## Labels
+
+Every text of the component, screen reader announcements included, can be replaced through labels . Missing keys keep their English default; the close button uses the aria.close text of the locale. Placeholders such as {{ '{0}' }} receive the values. showCounter and showDots hide the counter and the dots.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TourLabels, TourModule, TourStep } from '@exhaustive-ui/core/tour';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-6">
+            <p-button id="tour-labels-share" label="Partager" icon="pi pi-share-alt" severity="secondary" />
+            <p-button label="Lancer la visite" icon="pi pi-play" (onClick)="visible = true" />
+            <p-tour [steps]="steps" [(visible)]="visible" [labels]="labels" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TourModule, ButtonModule]
+})
+export class TourLabelsDemo {
+    visible = false;
+
+    labels: Partial<TourLabels> = {
+        next: 'Suivant',
+        prev: 'Retour',
+        done: 'Terminer',
+        close: 'Fermer',
+        counter: '{0} sur {1}',
+        stepLabel: 'Étape {0} sur {1}',
+        stepMessage: 'Étape {0} sur {1} : {2}'
+    };
+
+    steps: TourStep[] = [
+        { title: 'Bienvenue', content: 'Découvrez les nouveautés en deux étapes.' },
+        { target: '#tour-labels-share', title: 'Partager', content: 'Invitez vos collègues à modifier le document.' }
+    ];
+}
+```
+
+## Accessibility
+
+Screen Reader The card is an element with the dialog role, labelled by the title of the step with aria-labelledby and described by its text with aria-describedby ; a step without title is labelled by its counter, for example "Step 2 of 5". With the mask, the dialog is modal, aria-modal is true and the focus stays in the card; without mask, it is a non-modal dialog. The mask, the spotlight, the arrow and the progress dots are hidden from assistive technologies, and the visible "2 / 5" counter is read as "Step 2 of 5". A polite live region announces each new step with its title. Every text can be translated through labels . When the tour starts, the focus moves into the card; when a step changes, it stays on the button the user pressed, or moves to the card. When the tour ends, the focus returns to the element that had it before, usually the button that started the tour. A custom step template gives titleId and contentId to its title and text to keep the dialog labelled. The transitions of the spotlight and the card are disabled, and the target is scrolled into view without smooth scrolling, when the user prefers reduced motion.
 
 ## Tour
 

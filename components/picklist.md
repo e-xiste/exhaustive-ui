@@ -2,10 +2,6 @@
 
 PickList is used to reorder items between different lists.
 
-## Accessibility
-
-Screen Reader Value to describe the source listbox and target listbox can be provided with sourceAriaLabel and targetAriaLabel props, which default to sourceHeader and targetHeader . The list elements has a listbox role with the aria-multiselectable attribute. Each list item has an option role with aria-selected and aria-disabled as their attributes. Controls buttons are button elements with an aria-label that refers to the aria.moveTop , aria.moveUp , aria.moveDown , aria.moveBottom , aria.moveToTarget , aria.moveAllToTarget , aria.moveToSource and aria.moveAllToSource properties of the locale API by default. They can be overridden with topButtonAriaLabel , upButtonAriaLabel , downButtonAriaLabel , bottomButtonAriaLabel , rightButtonAriaLabel , allRightButtonAriaLabel , leftButtonAriaLabel and allLeftButtonAriaLabel . The buttons can be customized with buttonProps , moveTopButtonProps , moveUpButtonProps , moveDownButtonProps , moveBottomButtonProps , moveToTargetProps , moveAllToTargetProps , moveToSourceProps and moveAllToSourceProps . PickList Keyboard Support Key Function tab Moves focus to the first selected option, if there is none then first option receives the focus. up arrow Moves focus to the previous option. down arrow Moves focus to the next option. enter Toggles the selected state of the focused option. space Toggles the selected state of the focused option. home Moves focus to the first option. end Moves focus to the last option. shift + down arrow Moves focus to the next option and toggles the selection state. shift + up arrow Moves focus to the previous option and toggles the selection state. shift + space Selects the items between the most recently selected option and the focused option. control + shift + home Selects the focused options and all the options up to the first one. control + shift + end Selects the focused options and all the options down to the first one. control + a Selects all options. Buttons Keyboard Support Key Function enter Executes button action. space Executes button action.
-
 ## Basic
 
 PickList is used as a controlled input with source and target properties. Content of a list item needs to be defined with the item template that receives an object in the list as parameter. Drag & drop functionality depends on @angular/cdk package.
@@ -176,117 +172,9 @@ export class PicklistTemplateDemo implements OnInit {
 }
 ```
 
-## templates-doc
+## Accessibility
 
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Parameters</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>item</td>
-                        <td>
-                            $implicit: Data of the item<br />
-                            index: Index of the item
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>sourceHeader</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>targetHeader</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>sourceFilter</td>
-                        <td>
-                            options.filter: Callback to filter data by the value param<br />
-                            options.reset: Resets the filters.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>targetFilter</td>
-                        <td>
-                            options.filter: Callback to filter data by the value param<br />
-                            options.reset: Resets the filters
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>emptymessagesource</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>emptyfiltermessagesource</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>emptymessagetarget</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>emptyfiltermessagetarget</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>moveupicon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>movetopicon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>movedownicon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>movebottomicon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>movetotargeticon</td>
-                        <td>$implicit: viewChanged</td>
-                    </tr>
-                    <tr>
-                        <td>movealltotargeticon</td>
-                        <td>$implicit: viewChanged</td>
-                    </tr>
-                    <tr>
-                        <td>movetosourceicon</td>
-                        <td>$implicit: viewChanged</td>
-                    </tr>
-                    <tr>
-                        <td>movealltosourceicon</td>
-                        <td>$implicit: viewChanged</td>
-                    </tr>
-                    <tr>
-                        <td>targetfiltericon</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>sourcefiltericon</td>
-                        <td>-</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class PicklistTemplatesDemo {
-}
-```
+Screen Reader Value to describe the source listbox and target listbox can be provided with sourceAriaLabel and targetAriaLabel props, which default to sourceHeader and targetHeader . The list elements has a listbox role with the aria-multiselectable attribute. Each list item has an option role with aria-selected and aria-disabled as their attributes. Controls buttons are button elements with an aria-label that refers to the aria.moveTop , aria.moveUp , aria.moveDown , aria.moveBottom , aria.moveToTarget , aria.moveAllToTarget , aria.moveToSource and aria.moveAllToSource properties of the locale API by default. They can be overridden with topButtonAriaLabel , upButtonAriaLabel , downButtonAriaLabel , bottomButtonAriaLabel , rightButtonAriaLabel , allRightButtonAriaLabel , leftButtonAriaLabel and allLeftButtonAriaLabel . The buttons can be customized with buttonProps , moveTopButtonProps , moveUpButtonProps , moveDownButtonProps , moveBottomButtonProps , moveToTargetProps , moveAllToTargetProps , moveToSourceProps and moveAllToSourceProps . PickList Keyboard Support Key Function tab Moves focus to the first selected option, if there is none then first option receives the focus. up arrow Moves focus to the previous option. down arrow Moves focus to the next option. enter Toggles the selected state of the focused option. space Toggles the selected state of the focused option. home Moves focus to the first option. end Moves focus to the last option. shift + down arrow Moves focus to the next option and toggles the selection state. shift + up arrow Moves focus to the previous option and toggles the selection state. shift + space Selects the items between the most recently selected option and the focused option. control + shift + home Selects the focused options and all the options up to the first one. control + shift + end Selects the focused options and all the options down to the first one. control + a Selects all options. Buttons Keyboard Support Key Function enter Executes button action. space Executes button action.
 
 ## Pick List
 

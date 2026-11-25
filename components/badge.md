@@ -2,10 +2,6 @@
 
 Badge is a small status indicator for another element.
 
-## Accessibility
-
-Screen Reader Badge does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the badges are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 Content of the badge is specified using the value property.
@@ -24,101 +20,6 @@ import { BadgeModule } from '@exhaustive-ui/core/badge';
     imports: [BadgeModule]
 })
 export class BadgeBasicDemo {
-}
-```
-
-## Button
-
-Buttons have built-in support for badges to display a badge inline.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center flex-wrap gap-4">
-            <p-button label="Emails" icon="pi pi-bell" label="Notifications" badge="2" />
-            <p-button label="Inbox" icon="pi pi-inbox" badge="2" badgeSeverity="contrast" outlined />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule]
-})
-export class BadgeButtonDemo {
-}
-```
-
-## directive-doc
-
-Content of the badge is specified using the value property.
-
-```typescript
-import { Component } from '@angular/core';
-import { BadgeModule } from '@exhaustive-ui/core/badge';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <i class="pi pi-bell text-3xl!" pBadge value="2"></i>
-        </div>
-    `,
-    standalone: true,
-    imports: [BadgeModule]
-})
-export class BadgeDirectiveDemo {
-}
-```
-
-## Overlay
-
-A badge can be added to any element by encapsulating the content with the OverlayBadge component.
-
-```typescript
-import { Component } from '@angular/core';
-import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-6">
-            <p-overlay-badge value="2">
-                <i class="pi pi-bell" style="font-size: 2rem"></i>
-            </p-overlay-badge>
-            <p-overlay-badge value="4" severity="danger">
-                <i class="pi pi-calendar" style="font-size: 2rem"></i>
-            </p-overlay-badge>
-            <p-overlay-badge severity="danger">
-                <i class="pi pi-envelope" style="font-size: 2rem"></i>
-            </p-overlay-badge>
-        </div>
-    `,
-    standalone: true,
-    imports: [OverlayBadgeModule]
-})
-export class BadgeOverlayDemo {
-}
-```
-
-## position-doc
-
-A Badge can be positioned at the top right corner of an element by adding p-overlay-badge style class to the element and embedding the badge inside.
-
-```typescript
-import { Component } from '@angular/core';
-import { BadgeModule } from '@exhaustive-ui/core/badge';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <i class="pi pi-bell mr-6 p-text-secondary" pBadge style="font-size: 2rem" value="2"></i>
-            <i class="pi pi-calendar mr-6 p-text-secondary" pBadge style="font-size: 2rem" [value]="'10+'" severity="danger"></i>
-            <i class="pi pi-envelope p-text-secondary" pBadge style="font-size: 2rem" severity="danger"></i>
-        </div>
-    `,
-    standalone: true,
-    imports: [BadgeModule]
-})
-export class BadgePositionDemo {
 }
 ```
 
@@ -172,6 +73,61 @@ import { BadgeModule } from '@exhaustive-ui/core/badge';
 export class BadgeSizeDemo {
 }
 ```
+
+## Overlay
+
+A badge can be added to any element by encapsulating the content with the OverlayBadge component.
+
+```typescript
+import { Component } from '@angular/core';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-6">
+            <p-overlay-badge value="2">
+                <i class="pi pi-bell" style="font-size: 2rem"></i>
+            </p-overlay-badge>
+            <p-overlay-badge value="4" severity="danger">
+                <i class="pi pi-calendar" style="font-size: 2rem"></i>
+            </p-overlay-badge>
+            <p-overlay-badge severity="danger">
+                <i class="pi pi-envelope" style="font-size: 2rem"></i>
+            </p-overlay-badge>
+        </div>
+    `,
+    standalone: true,
+    imports: [OverlayBadgeModule]
+})
+export class BadgeOverlayDemo {
+}
+```
+
+## Button
+
+Buttons have built-in support for badges to display a badge inline.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center flex-wrap gap-4">
+            <p-button label="Emails" icon="pi pi-bell" label="Notifications" badge="2" />
+            <p-button label="Inbox" icon="pi pi-inbox" badge="2" badgeSeverity="contrast" outlined />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule]
+})
+export class BadgeButtonDemo {
+}
+```
+
+## Accessibility
+
+Screen Reader Badge does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the badges are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
 
 ## Badge
 

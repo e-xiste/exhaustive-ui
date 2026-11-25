@@ -2,73 +2,6 @@
 
 SpeedDial is a floating button with a popup menu.
 
-## Accessibility
-
-Screen Reader SpeedDial component renders a native button element that implicitly includes any passed prop. Text to describe the button can be defined with the aria-labelledby or aria-label props. Addititonally the button includes includes aria-haspopup , aria-expanded for states along with aria-controls to define the relation between the popup and the button. The popup overlay uses menu role on the list and each action item has a menuitem role with an aria-label as the menuitem label. The id of the menu refers to the aria-controls of the button.
-
-## Circle
-
-Items can be displayed around the button when type is set to circle . Additional radius property defines the radius of the circle.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card">
-            <div style="position:relative; height: 500px;" class="flex items-center justify-center">
-                <p-toast />
-                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="circle" [style]="{ position: 'absolute' }" [buttonProps]="{ severity: 'warn', rounded: true }" />
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [SpeedDialModule, ToastModule, RouterModule],
-    providers: [MessageService]
-})
-export class SpeeddialCircleDemo implements OnInit {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                icon: 'pi pi-pencil',
-                command: () => {
-                    this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
-                }
-            },
-            {
-                icon: 'pi pi-refresh',
-                command: () => {
-                    this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-                }
-            },
-            {
-                icon: 'pi pi-trash',
-                command: () => {
-                    this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-                }
-            },
-            {
-                icon: 'pi pi-upload',
-                routerLink: ['/fileupload']
-            },
-            {
-                icon: 'pi pi-external-link',
-                target: '_blank',
-                url: 'https://angular.dev'
-            }
-        ];
-    }
-}
-```
-
 ## Linear
 
 SpeedDial items are defined with the model property based on MenuModel API. Default orientation of the items is linear and direction property is used to define the position of the items related to the button.
@@ -135,9 +68,9 @@ export class SpeeddialLinearDemo implements OnInit {
 }
 ```
 
-## Mask
+## Circle
 
-Adding mask property displays a modal layer behind the popup items.
+Items can be displayed around the button when type is set to circle . Additional radius property defines the radius of the circle.
 
 ```typescript
 import { Component, OnInit, inject } from '@angular/core';
@@ -148,10 +81,10 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
-        <div class="card p-4">
-            <div [style]="{ position: 'relative', height: '350px' }">
+        <div class="card">
+            <div style="position:relative; height: 500px;" class="flex items-center justify-center">
                 <p-toast />
-                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" mask [style]="{ position: 'absolute', right: '1rem', bottom: '1rem' }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="circle" [style]="{ position: 'absolute' }" [buttonProps]="{ severity: 'warn', rounded: true }" />
             </div>
         </div>
     `,
@@ -159,7 +92,73 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     imports: [SpeedDialModule, ToastModule, RouterModule],
     providers: [MessageService]
 })
-export class SpeeddialMaskDemo implements OnInit {
+export class SpeeddialCircleDemo implements OnInit {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+                }
+            },
+            {
+                icon: 'pi pi-refresh',
+                command: () => {
+                    this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+                }
+            },
+            {
+                icon: 'pi pi-trash',
+                command: () => {
+                    this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+                }
+            },
+            {
+                icon: 'pi pi-upload',
+                routerLink: ['/fileupload']
+            },
+            {
+                icon: 'pi pi-external-link',
+                target: '_blank',
+                url: 'https://angular.dev'
+            }
+        ];
+    }
+}
+```
+
+## Semi Circle
+
+When type is defined as semi-circle , items are displayed in a half-circle around the button.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card">
+            <div style="position: relative; height: 500px">
+                <p-toast />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="down" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', top: 0 }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="right" [style]="{ position: 'absolute', top: 'calc(50% - 2rem)', left: 0 }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="left" [style]="{ position: 'absolute', top: 'calc(50% - 2rem)', right: 0 }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="up" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', bottom: 0 }" />
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [SpeedDialModule, ToastModule, RouterModule],
+    providers: [MessageService]
+})
+export class SpeeddialSemicircleDemo implements OnInit {
     private messageService = inject(MessageService);
 
     items: MenuItem[] | undefined;
@@ -264,9 +263,82 @@ export class SpeeddialQuartercircleDemo implements OnInit {
 }
 ```
 
-## Semi Circle
+## Tooltip
 
-When type is defined as semi-circle , items are displayed in a half-circle around the button.
+Items display a tooltip on hover when a standalone Tooltip is present with a target that matches the items.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card">
+            <div [style]="{ position: 'relative', height: '350px' }">
+                <p-toast />
+                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" [style]="{ position: 'absolute', right: 0, bottom: 0 }" [buttonProps]="{ severity: 'help', rounded: true }" [tooltipOptions]="{ tooltipPosition: 'left' }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" [style]="{ position: 'absolute', left: 0, bottom: 0 }" [buttonProps]="{ severity: 'danger', rounded: true }" [tooltipOptions]="{ tooltipPosition: 'right' }" />
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [SpeedDialModule, ToastModule, RouterModule],
+    providers: [MessageService]
+})
+export class SpeeddialTooltipDemo implements OnInit {
+    private messageService = inject(MessageService);
+    private router = inject(Router);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Add',
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+                }
+            },
+            {
+                label: 'Update',
+                icon: 'pi pi-refresh',
+                command: () => {
+                    this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+                }
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-trash',
+                command: () => {
+                    this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+                }
+            },
+            {
+                label: 'Upload',
+                icon: 'pi pi-upload',
+                command: () => {
+                    this.router.navigate(['/fileupload']);
+                }
+            },
+            {
+                label: 'Angular.dev',
+                icon: 'pi pi-external-link',
+                target: '_blank',
+                url: 'https://angular.dev'
+            }
+        ];
+    }
+}
+```
+
+## Mask
+
+Adding mask property displays a modal layer behind the popup items.
 
 ```typescript
 import { Component, OnInit, inject } from '@angular/core';
@@ -277,13 +349,10 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
-        <div class="card">
-            <div style="position: relative; height: 500px">
+        <div class="card p-4">
+            <div [style]="{ position: 'relative', height: '350px' }">
                 <p-toast />
-                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="down" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', top: 0 }" />
-                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="right" [style]="{ position: 'absolute', top: 'calc(50% - 2rem)', left: 0 }" />
-                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="left" [style]="{ position: 'absolute', top: 'calc(50% - 2rem)', right: 0 }" />
-                <p-speed-dial [model]="items" ariaLabel="Actions" [radius]="80" type="semi-circle" direction="up" [style]="{ position: 'absolute', left: 'calc(50% - 2rem)', bottom: 0 }" />
+                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" mask [style]="{ position: 'absolute', right: '1rem', bottom: '1rem' }" />
             </div>
         </div>
     `,
@@ -291,7 +360,7 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     imports: [SpeedDialModule, ToastModule, RouterModule],
     providers: [MessageService]
 })
-export class SpeeddialSemicircleDemo implements OnInit {
+export class SpeeddialMaskDemo implements OnInit {
     private messageService = inject(MessageService);
 
     items: MenuItem[] | undefined;
@@ -446,78 +515,9 @@ export class SpeeddialTemplateDemo implements OnInit {
 }
 ```
 
-## Tooltip
+## Accessibility
 
-Items display a tooltip on hover when a standalone Tooltip is present with a target that matches the items.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { SpeedDialModule } from '@exhaustive-ui/core/speeddial';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card">
-            <div [style]="{ position: 'relative', height: '350px' }">
-                <p-toast />
-                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" [style]="{ position: 'absolute', right: 0, bottom: 0 }" [buttonProps]="{ severity: 'help', rounded: true }" [tooltipOptions]="{ tooltipPosition: 'left' }" />
-                <p-speed-dial [model]="items" ariaLabel="Actions" direction="up" [style]="{ position: 'absolute', left: 0, bottom: 0 }" [buttonProps]="{ severity: 'danger', rounded: true }" [tooltipOptions]="{ tooltipPosition: 'right' }" />
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [SpeedDialModule, ToastModule, RouterModule],
-    providers: [MessageService]
-})
-export class SpeeddialTooltipDemo implements OnInit {
-    private messageService = inject(MessageService);
-    private router = inject(Router);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Add',
-                icon: 'pi pi-pencil',
-                command: () => {
-                    this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
-                }
-            },
-            {
-                label: 'Update',
-                icon: 'pi pi-refresh',
-                command: () => {
-                    this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-                }
-            },
-            {
-                label: 'Delete',
-                icon: 'pi pi-trash',
-                command: () => {
-                    this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-                }
-            },
-            {
-                label: 'Upload',
-                icon: 'pi pi-upload',
-                command: () => {
-                    this.router.navigate(['/fileupload']);
-                }
-            },
-            {
-                label: 'Angular.dev',
-                icon: 'pi pi-external-link',
-                target: '_blank',
-                url: 'https://angular.dev'
-            }
-        ];
-    }
-}
-```
+Screen Reader SpeedDial component renders a native button element that implicitly includes any passed prop. Text to describe the button can be defined with the aria-labelledby or aria-label props. Addititonally the button includes includes aria-haspopup , aria-expanded for states along with aria-controls to define the relation between the popup and the button. The popup overlay uses menu role on the list and each action item has a menuitem role with an aria-label as the menuitem label. The id of the menu refers to the aria-controls of the button.
 
 ## Speed Dial
 

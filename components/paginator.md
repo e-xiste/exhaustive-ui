@@ -2,10 +2,6 @@
 
 Paginator displays data in paged format and provides navigation between pages.
 
-## Accessibility
-
-Screen Reader Paginator is placed inside a nav element to indicate a navigation section. All of the paginator elements can be customized using templating however the default behavious is listed below. First, previous, next and last page navigators elements with aria-label attributes referring to the aria.firstPageLabel , aria.prevPageLabel , aria.nextPageLabel and aria.lastPageLabel properties of the locale API respectively. Page links are also button elements with an aria-label attribute derived from the aria.pageLabel of the locale API. Current page is marked with aria-current set to "page" as well. Current page report uses aria-live="polite" to instruct screen reader about the changes to the pagination state. Rows per page dropdown internally uses a Select component, refer to the Select documentation for accessibility details. Additionally, the Select uses an aria-label from the aria.rowsPerPage property of the locale API. Jump to page input is an input element with an aria-label that refers to the aria.jumpToPage property of the locale API. Keyboard Support Key Function tab Moves focus through the paginator elements. enter Executes the paginator element action. space Executes the paginator element action. Rows Per Page Dropdown Keyboard Support Refer to the Select documentation for more details about keyboard support.
-
 ## Basic
 
 Paginator is used as a controlled component with first , rows and onPageChange properties to manage the first index and number of records to display per page. Total number of records need to be with totalRecords property. Default template includes a dropdown to change the rows so rowsPerPageOptions is also necessary for the dropdown options.
@@ -24,74 +20,6 @@ import { PaginatorState, PaginatorModule } from '@exhaustive-ui/core/paginator';
     imports: [PaginatorModule]
 })
 export class PaginatorBasicDemo {
-    first: number = 0;
-
-    rows: number = 10;
-
-    onPageChange(event: PaginatorState) {
-        this.first = event.first ?? 0;
-        this.rows = event.rows ?? 10;
-    }
-}
-```
-
-## currentpagereport-doc
-
-Current page report item in the template displays information about the pagination state. Default value is ({{ '{' }}currentPage{{ '}' }} of {{ '{' }}totalPages{{ '}' }}) whereas available placeholders are the following; {{ '{' }}currentPage{{ '}' }} {{ '{' }}totalPages{{ '}' }} {{ '{' }}rows{{ '}' }} {{ '{' }}first{{ '}' }} {{ '{' }}last{{ '}' }} {{ '{' }}totalRecords{{ '}' }}
-
-```typescript
-import { Component } from '@angular/core';
-import { PaginatorState, PaginatorModule } from '@exhaustive-ui/core/paginator';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-paginator
-                (onPageChange)="onPageChange($event)"
-                [first]="first"
-                [rows]="rows"
-                [totalRecords]="120"
-                [showCurrentPageReport]="true"
-                [showPageLinks]="false"
-                [showJumpToPageDropdown]="false"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-            />
-        </div>
-    `,
-    standalone: true,
-    imports: [PaginatorModule]
-})
-export class PaginatorCurrentpagereportDemo {
-    first: number = 0;
-
-    rows: number = 10;
-
-    onPageChange(event: PaginatorState) {
-        this.first = event.first ?? 0;
-        this.rows = event.rows ?? 10;
-    }
-}
-```
-
-## Images
-
-Sample image gallery implementation using paginator.
-
-```typescript
-import { Component } from '@angular/core';
-import { PaginatorModule, PaginatorState } from '@exhaustive-ui/core/paginator';
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-4 justify-center items-center">
-            <p-paginator [first]="first" [rows]="1" [totalRecords]="12" (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
-            <img [src]="'https://exhaustive-ui.com/demo/nature/nature' + (first + 1) + '.jpg'" [alt]="'Nature image ' + (first + 1)" class="max-w-full rounded-xl" />
-        </div>
-    `,
-    standalone: true,
-    imports: [PaginatorModule]
-})
-export class PaginatorImagesDemo {
     first: number = 0;
 
     rows: number = 10;
@@ -204,6 +132,78 @@ export class PaginatorTemplateDemo {
     }
 }
 ```
+
+## Current Page Report
+
+Current page report item in the template displays information about the pagination state. Default value is ({{ '{' }}currentPage{{ '}' }} of {{ '{' }}totalPages{{ '}' }}) whereas available placeholders are the following; {{ '{' }}currentPage{{ '}' }} {{ '{' }}totalPages{{ '}' }} {{ '{' }}rows{{ '}' }} {{ '{' }}first{{ '}' }} {{ '{' }}last{{ '}' }} {{ '{' }}totalRecords{{ '}' }}
+
+```typescript
+import { Component } from '@angular/core';
+import { PaginatorState, PaginatorModule } from '@exhaustive-ui/core/paginator';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-paginator
+                (onPageChange)="onPageChange($event)"
+                [first]="first"
+                [rows]="rows"
+                [totalRecords]="120"
+                [showCurrentPageReport]="true"
+                [showPageLinks]="false"
+                [showJumpToPageDropdown]="false"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+            />
+        </div>
+    `,
+    standalone: true,
+    imports: [PaginatorModule]
+})
+export class PaginatorCurrentpagereportDemo {
+    first: number = 0;
+
+    rows: number = 10;
+
+    onPageChange(event: PaginatorState) {
+        this.first = event.first ?? 0;
+        this.rows = event.rows ?? 10;
+    }
+}
+```
+
+## Images
+
+Sample image gallery implementation using paginator.
+
+```typescript
+import { Component } from '@angular/core';
+import { PaginatorModule, PaginatorState } from '@exhaustive-ui/core/paginator';
+
+@Component({
+    template: `
+        <div class="card flex flex-col gap-4 justify-center items-center">
+            <p-paginator [first]="first" [rows]="1" [totalRecords]="12" (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+            <img [src]="'https://exhaustive-ui.com/demo/nature/nature' + (first + 1) + '.jpg'" [alt]="'Nature image ' + (first + 1)" class="max-w-full rounded-xl" />
+        </div>
+    `,
+    standalone: true,
+    imports: [PaginatorModule]
+})
+export class PaginatorImagesDemo {
+    first: number = 0;
+
+    rows: number = 10;
+
+    onPageChange(event: PaginatorState) {
+        this.first = event.first ?? 0;
+        this.rows = event.rows ?? 10;
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Paginator is placed inside a nav element to indicate a navigation section. All of the paginator elements can be customized using templating however the default behavious is listed below. First, previous, next and last page navigators elements with aria-label attributes referring to the aria.firstPageLabel , aria.prevPageLabel , aria.nextPageLabel and aria.lastPageLabel properties of the locale API respectively. Page links are also button elements with an aria-label attribute derived from the aria.pageLabel of the locale API. Current page is marked with aria-current set to "page" as well. Current page report uses aria-live="polite" to instruct screen reader about the changes to the pagination state. Rows per page dropdown internally uses a Select component, refer to the Select documentation for accessibility details. Additionally, the Select uses an aria-label from the aria.rowsPerPage property of the locale API. Jump to page input is an input element with an aria-label that refers to the aria.jumpToPage property of the locale API. Keyboard Support Key Function tab Moves focus through the paginator elements. enter Executes the paginator element action. space Executes the paginator element action. Rows Per Page Dropdown Keyboard Support Refer to the Select documentation for more details about keyboard support.
 
 ## Paginator
 

@@ -2,10 +2,6 @@
 
 Inplace provides an easy to do editing and display at the same time where clicking the output displays the actual content.
 
-## Accessibility
-
-Screen Reader Inplace component defines aria-live as "polite" by default, since any valid attribute is passed to the main container aria roles and attributes of the root element can be customized easily. Display element uses button role in view mode. Closable inplace components display a close button whose aria-label is defined with the closeAriaLabel property. View Mode Keyboard Support Key Function enter Switches to content. Close Button Keyboard Support Key Function enter Switches to display. space Switches to display.
-
 ## Basic
 
 Inplace component requires display and content templates to define the content of each state.
@@ -34,37 +30,6 @@ import { InplaceModule } from '@exhaustive-ui/core/inplace';
     imports: [InplaceModule]
 })
 export class InplaceBasicDemo {
-}
-```
-
-## Image
-
-Any content such as an image can be placed inside an Inplace.
-
-```typescript
-import { Component } from '@angular/core';
-import { InplaceModule } from '@exhaustive-ui/core/inplace';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-inplace>
-                <ng-template #display>
-                    <span class="inline-flex items-center gap-2">
-                        <span class="pi pi-image" style="vertical-align: middle"></span>
-                        <span class="ml-2">View Photo</span>
-                    </span>
-                </ng-template>
-                <ng-template #content>
-                    <img class="w-full sm:w-80 shadow-md" src="https://exhaustive-ui.com/demo/galleria/galleria5.jpg" alt="Nature" />
-                </ng-template>
-            </p-inplace>
-        </div>
-    `,
-    standalone: true,
-    imports: [InplaceModule]
-})
-export class InplaceImageDemo {
 }
 ```
 
@@ -101,6 +66,37 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [InplaceModule, InputTextModule, AutoFocusModule, ButtonModule]
 })
 export class InplaceInputDemo {
+}
+```
+
+## Image
+
+Any content such as an image can be placed inside an Inplace.
+
+```typescript
+import { Component } from '@angular/core';
+import { InplaceModule } from '@exhaustive-ui/core/inplace';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-inplace>
+                <ng-template #display>
+                    <span class="inline-flex items-center gap-2">
+                        <span class="pi pi-image" style="vertical-align: middle"></span>
+                        <span class="ml-2">View Photo</span>
+                    </span>
+                </ng-template>
+                <ng-template #content>
+                    <img class="w-full sm:w-80 shadow-md" src="https://exhaustive-ui.com/demo/galleria/galleria5.jpg" alt="Nature" />
+                </ng-template>
+            </p-inplace>
+        </div>
+    `,
+    standalone: true,
+    imports: [InplaceModule]
+})
+export class InplaceImageDemo {
 }
 ```
 
@@ -159,6 +155,10 @@ export class InplaceLazyDemo {
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader Inplace component defines aria-live as "polite" by default, since any valid attribute is passed to the main container aria roles and attributes of the root element can be customized easily. Display element uses button role in view mode. Closable inplace components display a close button whose aria-label is defined with the closeAriaLabel property. View Mode Keyboard Support Key Function enter Switches to content. Close Button Keyboard Support Key Function enter Switches to display. space Switches to display.
 
 ## Inplace
 

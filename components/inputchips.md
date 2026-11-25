@@ -2,9 +2,56 @@
 
 InputChips enters several free-text values, such as tags, keywords or email addresses, each shown as a removable chip. Values are added with Enter, a separator or a paste, checked against limits and your own rules, and the component works with every kind of Angular form.
 
-## Accessibility
+## Basic
 
-Screen Reader The chips are the options of a horizontal listbox , followed by a text input. Label the component with a label element pointing at inputId , with ariaLabelledBy or with ariaLabel : the input and the list get the same name (the list falls back to the listLabel text). Each chip reports its position in the list, and the list is described by the keys that remove a chip. The remove icon is hidden from screen readers, since the keyboard removes the focused chip. A polite live region announces the chips added and removed, duplicates, rejected values and the max limit. All these texts can be replaced, or translated, with the labels input.
+InputChips is bound with ngModel and its value is an array of strings. Type a value and press Enter to add it as a chip; the text is trimmed and a value that is already in the list is not added twice. Click the icon of a chip, or press Backspace in the empty input and then Backspace again, to remove it.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-input-chips [(ngModel)]="tags" ariaLabel="Tags" placeholder="Add a tag" class="w-full md:w-[30rem]" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule]
+})
+export class InputchipsBasicDemo {
+    tags: string[] = ['angular', 'signals'];
+}
+```
+
+## Separator
+
+A separator , a string or a regular expression, splits the text into several chips as it is typed or pasted. Pasting several lines always adds one chip per line. Try pasting red, green, blue below.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-input-chips [(ngModel)]="colors" separator="," ariaLabel="Colors" placeholder="Comma separated" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Comma, semicolon or space" class="w-full md:w-[30rem]" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule]
+})
+export class InputchipsSeparatorDemo {
+    colors: string[] = [];
+
+    emails: string[] = [];
+
+    pattern = /[,;\s]/;
+}
+```
 
 ## Add on Blur and Tab
 
@@ -32,32 +79,9 @@ export class InputchipsAddonblurDemo {
 }
 ```
 
-## Basic
+## Limits
 
-InputChips is bound with ngModel and its value is an array of strings. Type a value and press Enter to add it as a chip; the text is trimmed and a value that is already in the list is not added twice. Click the icon of a chip, or press Backspace in the empty input and then Backspace again, to remove it.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-input-chips [(ngModel)]="tags" ariaLabel="Tags" placeholder="Add a tag" class="w-full md:w-[30rem]" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule]
-})
-export class InputchipsBasicDemo {
-    tags: string[] = ['angular', 'signals'];
-}
-```
-
-## Disabled
-
-When disabled is present, the element cannot be edited and focused. With readonly , the chips can still be focused and read, but not added or removed.
+max limits the number of chips and maxChipLength the length of each chip; values beyond the limits are not added and screen readers hear why. Set allowDuplicate to accept the same value more than once.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -67,23 +91,61 @@ import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
 @Component({
     template: `
         <div class="card flex flex-col items-center gap-4">
-            <p-input-chips [(ngModel)]="value1" disabled ariaLabel="Disabled" />
-            <p-input-chips [(ngModel)]="value2" readonly ariaLabel="Readonly" />
+            <p-input-chips [(ngModel)]="keywords" [max]="3" [maxChipLength]="12" ariaLabel="Keywords" placeholder="Up to 3 keywords of 12 characters" class="w-full md:w-[30rem]" />
+            <p-input-chips [(ngModel)]="votes" allowDuplicate ariaLabel="Votes" class="w-full md:w-[30rem]" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, InputChipsModule]
 })
-export class InputchipsDisabledDemo {
-    value1: string[] = ['disabled'];
+export class InputchipsLimitsDemo {
+    keywords: string[] = ['design'];
 
-    value2: string[] = ['readonly'];
+    votes: string[] = ['yes', 'yes', 'no'];
 }
 ```
 
-## Filled
+## Validation
 
-Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+transform turns each value into the text of its chip, here in lowercase, and validate decides whether it can be added. A rejected value stays in the input so that it can be corrected, and onReject tells why.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule, InputChipsRejectEvent } from '@exhaustive-ui/core/inputchips';
+import { MessageModule } from '@exhaustive-ui/core/message';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-2">
+            <label for="recipients" class="font-medium self-start md:self-center">Recipients</label>
+            <p-input-chips [(ngModel)]="recipients" inputId="recipients" separator="," [transform]="lowercase" [validate]="isEmail" [invalid]="!!error()" (onReject)="onReject($event)" (onAdd)="error.set('')" class="w-full md:w-[30rem]" />
+            @if (error()) {
+                <p-message severity="error" size="small" variant="simple">{{ error() }}</p-message>
+            }
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule, MessageModule]
+})
+export class InputchipsValidationDemo {
+    recipients: string[] = ['ada@example.com'];
+
+    error = signal('');
+
+    lowercase = (value: string) => value.toLowerCase();
+
+    isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+    onReject(event: InputChipsRejectEvent) {
+        this.error.set(event.reason === 'duplicate' ? `${event.value} is already a recipient.` : `${event.value} is not an email address.`);
+    }
+}
+```
+
+## Template
+
+The chip template replaces the content of a chip; its context gives the value, its index , whether it is focused or removable , and a remove function. The removeicon template only replaces the remove icon.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -92,15 +154,32 @@ import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-input-chips [(ngModel)]="value" variant="filled" ariaLabel="Filled" placeholder="Add a tag" />
+        <div class="card flex flex-col items-center gap-4">
+            <p-input-chips [(ngModel)]="languages" ariaLabel="Languages" class="w-full md:w-[30rem]">
+                <ng-template #chip let-value let-remove="remove" let-removable="removable">
+                    <span class="inline-flex items-center gap-2 rounded-border px-2 py-1 bg-primary text-primary-contrast">
+                        <i class="pi pi-code text-xs" aria-hidden="true"></i>
+                        {{ value }}
+                        @if (removable) {
+                            <i class="pi pi-times text-xs cursor-pointer" aria-hidden="true" (click)="remove($event)"></i>
+                        }
+                    </span>
+                </ng-template>
+            </p-input-chips>
+            <p-input-chips [(ngModel)]="topics" ariaLabel="Topics" class="w-full md:w-[30rem]">
+                <ng-template #removeicon let-class="class">
+                    <i [class]="class + ' pi pi-trash'" aria-hidden="true"></i>
+                </ng-template>
+            </p-input-chips>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, InputChipsModule]
 })
-export class InputchipsFilledDemo {
-    value: string[] = [];
+export class InputchipsTemplateDemo {
+    languages: string[] = ['TypeScript', 'Rust'];
+
+    topics: string[] = ['forms', 'accessibility'];
 }
 ```
 
@@ -144,26 +223,31 @@ export class InputchipsFloatlabelDemo {
 }
 ```
 
-## Fluid
+## Ifta Label
 
-The fluid prop makes the component take up the full width of its container when set to true.
+IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
 
 ```typescript
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
 
 @Component({
     template: `
-        <div class="card">
-            <p-input-chips [(ngModel)]="value" fluid ariaLabel="Fluid" placeholder="Add a tag" />
+        <div class="card flex justify-center">
+            <p-ifta-label>
+                <p-input-chips [(ngModel)]="value" inputId="skills" class="w-72" />
+                <label for="skills">Skills</label>
+            </p-ifta-label>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, InputChipsModule]
+    imports: [FormsModule, InputChipsModule, IftaLabelModule, RouterModule]
 })
-export class InputchipsFluidDemo {
-    value: string[] = [];
+export class InputchipsIftalabelDemo {
+    value: string[] = ['Angular'];
 }
 ```
 
@@ -196,31 +280,104 @@ export class InputchipsIconfieldDemo {
 }
 ```
 
-## Ifta Label
+## Sizes
 
-IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
+InputChips provides small and large sizes as alternatives to the base.
 
 ```typescript
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-input-chips [(ngModel)]="value1" size="small" ariaLabel="Small" placeholder="Small" />
+            <p-input-chips [(ngModel)]="value2" ariaLabel="Normal" placeholder="Normal" />
+            <p-input-chips [(ngModel)]="value3" size="large" ariaLabel="Large" placeholder="Large" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule]
+})
+export class InputchipsSizesDemo {
+    value1: string[] = ['small'];
+
+    value2: string[] = ['normal'];
+
+    value3: string[] = ['large'];
+}
+```
+
+## Filled
+
+Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
 
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-ifta-label>
-                <p-input-chips [(ngModel)]="value" inputId="skills" class="w-72" />
-                <label for="skills">Skills</label>
-            </p-ifta-label>
+            <p-input-chips [(ngModel)]="value" variant="filled" ariaLabel="Filled" placeholder="Add a tag" />
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, InputChipsModule, IftaLabelModule, RouterModule]
+    imports: [FormsModule, InputChipsModule]
 })
-export class InputchipsIftalabelDemo {
-    value: string[] = ['Angular'];
+export class InputchipsFilledDemo {
+    value: string[] = [];
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-input-chips [(ngModel)]="value" fluid ariaLabel="Fluid" placeholder="Add a tag" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule]
+})
+export class InputchipsFluidDemo {
+    value: string[] = [];
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused. With readonly , the chips can still be focused and read, but not added or removed.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-input-chips [(ngModel)]="value1" disabled ariaLabel="Disabled" />
+            <p-input-chips [(ngModel)]="value2" readonly ariaLabel="Readonly" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputChipsModule]
+})
+export class InputchipsDisabledDemo {
+    value1: string[] = ['disabled'];
+
+    value2: string[] = ['readonly'];
 }
 ```
 
@@ -250,33 +407,54 @@ export class InputchipsInvalidDemo {
 }
 ```
 
-## Limits
+## Forms: Template Driven
 
-max limits the number of chips and maxChipLength the length of each chip; values beyond the limits are not added and screen readers hear why. Set allowDuplicate to accept the same value more than once.
+The value is an array of strings, empty when there is no chip, so required works as on the other fields. Enter adds a chip and does not submit the form; on an empty input, it submits the form as usual.
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-input-chips [(ngModel)]="keywords" [max]="3" [maxChipLength]="12" ariaLabel="Keywords" placeholder="Up to 3 keywords of 12 characters" class="w-full md:w-[30rem]" />
-            <p-input-chips [(ngModel)]="votes" allowDuplicate ariaLabel="Votes" class="w-full md:w-[30rem]" />
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-full md:w-[30rem]">
+                <div class="flex flex-col gap-2">
+                    <label for="tags-td" class="font-medium">Tags</label>
+                    <p-input-chips #model="ngModel" [(ngModel)]="tags" name="tags" inputId="tags-td" fluid [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">At least one tag is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, InputChipsModule]
+    imports: [FormsModule, InputChipsModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
 })
-export class InputchipsLimitsDemo {
-    keywords: string[] = ['design'];
+export class InputchipsTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
 
-    votes: string[] = ['yes', 'yes', 'no'];
+    tags: string[] = [];
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 InputChips can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -340,34 +518,6 @@ export class InputchipsReactiveformsDemo {
 }
 ```
 
-## Separator
-
-A separator , a string or a regular expression, splits the text into several chips as it is typed or pasted. Pasting several lines always adds one chip per line. Try pasting red, green, blue below.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-input-chips [(ngModel)]="colors" separator="," ariaLabel="Colors" placeholder="Comma separated" class="w-full md:w-[30rem]" />
-            <p-input-chips [(ngModel)]="emails" [separator]="pattern" ariaLabel="Recipients" placeholder="Comma, semicolon or space" class="w-full md:w-[30rem]" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule]
-})
-export class InputchipsSeparatorDemo {
-    colors: string[] = [];
-
-    emails: string[] = [];
-
-    pattern = /[,;\s]/;
-}
-```
-
 ## Signal Forms
 
 InputChips can also be used with Angular Signal Forms . The [formField] directive binds the component to a field holding an array of strings. Signal Forms' required does not treat an empty array as empty, so use minLength(field, 1) to require a chip; maxLength on the field makes more chips invalid without blocking them (use the max input to stop adding), while maxChipLength limits the length of each chip. The field also sets the invalid and touched states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the message below.
@@ -422,159 +572,9 @@ export class InputchipsSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-InputChips provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-input-chips [(ngModel)]="value1" size="small" ariaLabel="Small" placeholder="Small" />
-            <p-input-chips [(ngModel)]="value2" ariaLabel="Normal" placeholder="Normal" />
-            <p-input-chips [(ngModel)]="value3" size="large" ariaLabel="Large" placeholder="Large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule]
-})
-export class InputchipsSizesDemo {
-    value1: string[] = ['small'];
-
-    value2: string[] = ['normal'];
-
-    value3: string[] = ['large'];
-}
-```
-
-## Template
-
-The chip template replaces the content of a chip; its context gives the value, its index , whether it is focused or removable , and a remove function. The removeicon template only replaces the remove icon.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-input-chips [(ngModel)]="languages" ariaLabel="Languages" class="w-full md:w-[30rem]">
-                <ng-template #chip let-value let-remove="remove" let-removable="removable">
-                    <span class="inline-flex items-center gap-2 rounded-border px-2 py-1 bg-primary text-primary-contrast">
-                        <i class="pi pi-code text-xs" aria-hidden="true"></i>
-                        {{ value }}
-                        @if (removable) {
-                            <i class="pi pi-times text-xs cursor-pointer" aria-hidden="true" (click)="remove($event)"></i>
-                        }
-                    </span>
-                </ng-template>
-            </p-input-chips>
-            <p-input-chips [(ngModel)]="topics" ariaLabel="Topics" class="w-full md:w-[30rem]">
-                <ng-template #removeicon let-class="class">
-                    <i [class]="class + ' pi pi-trash'" aria-hidden="true"></i>
-                </ng-template>
-            </p-input-chips>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule]
-})
-export class InputchipsTemplateDemo {
-    languages: string[] = ['TypeScript', 'Rust'];
-
-    topics: string[] = ['forms', 'accessibility'];
-}
-```
-
-## templatedrivenforms-doc
-
-The value is an array of strings, empty when there is no chip, so required works as on the other fields. Enter adds a chip and does not submit the form; on an empty input, it submits the form as usual.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { InputChipsModule } from '@exhaustive-ui/core/inputchips';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-full md:w-[30rem]">
-                <div class="flex flex-col gap-2">
-                    <label for="tags-td" class="font-medium">Tags</label>
-                    <p-input-chips #model="ngModel" [(ngModel)]="tags" name="tags" inputId="tags-td" fluid [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">At least one tag is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class InputchipsTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    tags: string[] = [];
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Validation
-
-transform turns each value into the text of its chip, here in lowercase, and validate decides whether it can be added. A rejected value stays in the input so that it can be corrected, and onReject tells why.
-
-```typescript
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputChipsModule, InputChipsRejectEvent } from '@exhaustive-ui/core/inputchips';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-2">
-            <label for="recipients" class="font-medium self-start md:self-center">Recipients</label>
-            <p-input-chips [(ngModel)]="recipients" inputId="recipients" separator="," [transform]="lowercase" [validate]="isEmail" [invalid]="!!error()" (onReject)="onReject($event)" (onAdd)="error.set('')" class="w-full md:w-[30rem]" />
-            @if (error()) {
-                <p-message severity="error" size="small" variant="simple">{{ error() }}</p-message>
-            }
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputChipsModule, MessageModule]
-})
-export class InputchipsValidationDemo {
-    recipients: string[] = ['ada@example.com'];
-
-    error = signal('');
-
-    lowercase = (value: string) => value.toLowerCase();
-
-    isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-    onReject(event: InputChipsRejectEvent) {
-        this.error.set(event.reason === 'duplicate' ? `${event.value} is already a recipient.` : `${event.value} is not an email address.`);
-    }
-}
-```
+Screen Reader The chips are the options of a horizontal listbox , followed by a text input. Label the component with a label element pointing at inputId , with ariaLabelledBy or with ariaLabel : the input and the list get the same name (the list falls back to the listLabel text). Each chip reports its position in the list, and the list is described by the keys that remove a chip. The remove icon is hidden from screen readers, since the keyboard removes the focused chip. A polite live region announces the chips added and removed, duplicates, rejected values and the max limit. All these texts can be replaced, or translated, with the labels input.
 
 ## Input Chips
 

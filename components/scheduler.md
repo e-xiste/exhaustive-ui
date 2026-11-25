@@ -2,10 +2,6 @@
 
 Scheduler is a free event calendar with month, week, day and agenda views. Events are moved and resized by drag and drop or with the keyboard, and the visible range can be loaded lazily. It has no calendar library dependency.
 
-## Accessibility
-
-Screen Reader The month view is an ARIA grid labelled by the title, with a columnheader per weekday and a gridcell per day. A cell is named by its full date and its number of events, the current date has aria-current="date" and the focused or selected days aria-selected . The agenda is a group labelled by the title, so several schedulers on a page do not add landmarks. In the week and day views, each day column is a group labelled by its column header and each slot a button named by its date and hours, such as "Thursday, 3 December 2026, 10:00 – 10:30". Events are buttons named by their title and time, "Review, Thu 3 Dec 10:00 – 11:00", and editable events are described by how to move them with the keyboard. The "+N more" button names the number of hidden events and their day, and opens a dialog that lists them all. A polite live region announces the new range after a navigation, "December 2026" or "Week of 29 Nov 2026", and every moved or resized event. Set ariaLabel to make the component a labelled region.
-
 ## Basic
 
 Scheduler displays the events of a month by default. An event has an id , a title , a start date and an optional end , exclusive, which defaults to one hour later. Set allDay for events that last whole days, and color to give an event its own background: the text turns dark or light by itself to stay readable. A cell shows up to maxEventsPerDay events, 3 by default, and a "+N more" button opens the full list of the day. The dates are plain JavaScript dates, without any calendar library.
@@ -38,6 +34,46 @@ export class SchedulerBasicDemo {
             { id: 6, title: 'Dentist', start: day(-3, 8, 30), end: day(-3, 9, 15), color: '#e11d48' },
             { id: 7, title: 'Sprint planning', start: day(7, 10), end: day(7, 12) },
             { id: 8, title: 'Birthday', start: day(9), allDay: true, color: '#f472b6' }
+        ];
+    }
+}
+```
+
+## Week and Day
+
+The view is month , week , day or agenda , and it is two-way bindable like the visible date . The view switcher of the header offers the views input, in its order. The week and day views are time grids: timed events are placed by their hours and the overlapping ones sit side by side, while all-day events and events of 24 hours or more go to the all-day row. slotDuration sets the length of a slot in minutes, 30 by default, dayStartHour and dayEndHour the visible hours, the events outside them being listed by a button on the top or bottom edge of the day, and a red line marks the current time unless nowIndicator is false. showWeekends hides Saturdays and Sundays. The agenda lists the events of the next agendaDays days, grouped by day. Under the breakpoint width, 640px by default, the month and week views are replaced by the narrowView , the agenda by default; set it to null to keep the view on small screens.
+
+```typescript
+import { Component } from '@angular/core';
+import { SchedulerEvent, SchedulerModule, SchedulerView } from '@exhaustive-ui/core/scheduler';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-scheduler [events]="events" [(view)]="view" [slotDuration]="30" [dayStartHour]="7" [dayEndHour]="21" [scrollToHour]="8" />
+        </div>
+    `,
+    standalone: true,
+    imports: [SchedulerModule]
+})
+export class SchedulerViewsDemo {
+    view: SchedulerView = 'week';
+
+    events: SchedulerEvent[] = [];
+
+    constructor() {
+        const today = new Date();
+        const day = (offset: number, hour = 0, minute = 0) => new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, hour, minute);
+        this.events = [
+            { id: 1, title: 'Team standup', start: day(0, 9), end: day(0, 9, 30) },
+            { id: 2, title: 'Design review', start: day(0, 10), end: day(0, 11, 30), color: '#6366f1' },
+            { id: 3, title: 'Customer call', start: day(0, 11), end: day(0, 12) },
+            { id: 4, title: 'Pairing', start: day(0, 11, 30), end: day(0, 13), color: '#0f766e' },
+            { id: 5, title: 'Gym', start: day(1, 7, 30), end: day(1, 8, 30), color: '#f97316' },
+            { id: 6, title: 'Workshop', start: day(-1, 14), end: day(-1, 17), color: '#a855f7' },
+            { id: 7, title: 'Public holiday', start: day(2), allDay: true, color: '#e11d48' },
+            { id: 8, title: 'Interview', start: day(2, 15), end: day(2, 16) },
+            { id: 9, title: 'Night flight', start: day(1, 22), end: day(1, 23, 30), color: '#0284c7' }
         ];
     }
 }
@@ -139,57 +175,6 @@ export class SchedulerLazyDemo {
 }
 ```
 
-## Locale
-
-Dates and times are formatted with Intl.DateTimeFormat in the locale , which defaults to the LOCALE_ID of the application; hour12 forces a 12 or 24-hour clock. firstDayOfWeek , from 0 for Sunday to 6 for Saturday, defaults to the firstDayOfWeek of the translation configuration, and the Today button to its today text. Every other text, the view names and the screen reader messages included, can be replaced through labels . Like any JavaScript date, the dates are read and displayed in the time zone of the browser: convert the dates of another time zone before passing them. The time grid follows the clock, so on the days of a daylight saving time change the events stay on their hour lines, and a day is always one calendar day when navigating or moving an event. The translation configuration sets the first day of the week and the Today text for every Scheduler, DatePicker included.
-
-```typescript
-import { Component } from '@angular/core';
-import { SchedulerEvent, SchedulerLabels, SchedulerModule } from '@exhaustive-ui/core/scheduler';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-scheduler [events]="events" locale="fr-FR" [firstDayOfWeek]="1" [labels]="labels" />
-        </div>
-    `,
-    standalone: true,
-    imports: [SchedulerModule]
-})
-export class SchedulerLocaleDemo {
-    labels: Partial<SchedulerLabels> = {
-        today: "Aujourd'hui",
-        previous: 'Précédent',
-        next: 'Suivant',
-        views: 'Vue',
-        month: 'Mois',
-        week: 'Semaine',
-        day: 'Jour',
-        agenda: 'Agenda',
-        allDay: 'Toute la journée',
-        more: '+{0} autres',
-        moreAriaLabel: '{0} autres événements le {1}',
-        eventCount: '{0} événements',
-        noEvents: 'Aucun événement sur cette période',
-        weekOf: 'Semaine du {0}',
-        moved: '{0} déplacé au {1}',
-        editableHint: 'Alt et les flèches déplacent l’événement, Alt Maj et haut ou bas le redimensionnent'
-    };
-
-    events: SchedulerEvent[] = [];
-
-    constructor() {
-        const today = new Date();
-        const day = (offset: number, hour = 0, minute = 0) => new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, hour, minute);
-        this.events = [
-            { id: 1, title: 'Réunion d’équipe', start: day(0, 9), end: day(0, 10) },
-            { id: 2, title: 'Déjeuner', start: day(1, 12, 30), end: day(1, 14), color: '#fbbf24' },
-            { id: 3, title: 'Congés', start: day(4), end: day(8), allDay: true, color: '#0f766e' }
-        ];
-    }
-}
-```
-
 ## Template
 
 The event template replaces the content of an event and receives the event, the view , the formatted timeText and whether it is displayed as an all-day chip. It is rendered inside the button of the event, so it must not contain interactive elements. The header template replaces the toolbar and receives the title , the view , the range and the today , prev , next and changeView functions.
@@ -245,25 +230,42 @@ export class SchedulerTemplateDemo {
 }
 ```
 
-## Week and Day
+## Locale
 
-The view is month , week , day or agenda , and it is two-way bindable like the visible date . The view switcher of the header offers the views input, in its order. The week and day views are time grids: timed events are placed by their hours and the overlapping ones sit side by side, while all-day events and events of 24 hours or more go to the all-day row. slotDuration sets the length of a slot in minutes, 30 by default, dayStartHour and dayEndHour the visible hours, the events outside them being listed by a button on the top or bottom edge of the day, and a red line marks the current time unless nowIndicator is false. showWeekends hides Saturdays and Sundays. The agenda lists the events of the next agendaDays days, grouped by day. Under the breakpoint width, 640px by default, the month and week views are replaced by the narrowView , the agenda by default; set it to null to keep the view on small screens.
+Dates and times are formatted with Intl.DateTimeFormat in the locale , which defaults to the LOCALE_ID of the application; hour12 forces a 12 or 24-hour clock. firstDayOfWeek , from 0 for Sunday to 6 for Saturday, defaults to the firstDayOfWeek of the translation configuration, and the Today button to its today text. Every other text, the view names and the screen reader messages included, can be replaced through labels . Like any JavaScript date, the dates are read and displayed in the time zone of the browser: convert the dates of another time zone before passing them. The time grid follows the clock, so on the days of a daylight saving time change the events stay on their hour lines, and a day is always one calendar day when navigating or moving an event. The translation configuration sets the first day of the week and the Today text for every Scheduler, DatePicker included.
 
 ```typescript
 import { Component } from '@angular/core';
-import { SchedulerEvent, SchedulerModule, SchedulerView } from '@exhaustive-ui/core/scheduler';
+import { SchedulerEvent, SchedulerLabels, SchedulerModule } from '@exhaustive-ui/core/scheduler';
 
 @Component({
     template: `
         <div class="card">
-            <p-scheduler [events]="events" [(view)]="view" [slotDuration]="30" [dayStartHour]="7" [dayEndHour]="21" [scrollToHour]="8" />
+            <p-scheduler [events]="events" locale="fr-FR" [firstDayOfWeek]="1" [labels]="labels" />
         </div>
     `,
     standalone: true,
     imports: [SchedulerModule]
 })
-export class SchedulerViewsDemo {
-    view: SchedulerView = 'week';
+export class SchedulerLocaleDemo {
+    labels: Partial<SchedulerLabels> = {
+        today: "Aujourd'hui",
+        previous: 'Précédent',
+        next: 'Suivant',
+        views: 'Vue',
+        month: 'Mois',
+        week: 'Semaine',
+        day: 'Jour',
+        agenda: 'Agenda',
+        allDay: 'Toute la journée',
+        more: '+{0} autres',
+        moreAriaLabel: '{0} autres événements le {1}',
+        eventCount: '{0} événements',
+        noEvents: 'Aucun événement sur cette période',
+        weekOf: 'Semaine du {0}',
+        moved: '{0} déplacé au {1}',
+        editableHint: 'Alt et les flèches déplacent l’événement, Alt Maj et haut ou bas le redimensionnent'
+    };
 
     events: SchedulerEvent[] = [];
 
@@ -271,19 +273,17 @@ export class SchedulerViewsDemo {
         const today = new Date();
         const day = (offset: number, hour = 0, minute = 0) => new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, hour, minute);
         this.events = [
-            { id: 1, title: 'Team standup', start: day(0, 9), end: day(0, 9, 30) },
-            { id: 2, title: 'Design review', start: day(0, 10), end: day(0, 11, 30), color: '#6366f1' },
-            { id: 3, title: 'Customer call', start: day(0, 11), end: day(0, 12) },
-            { id: 4, title: 'Pairing', start: day(0, 11, 30), end: day(0, 13), color: '#0f766e' },
-            { id: 5, title: 'Gym', start: day(1, 7, 30), end: day(1, 8, 30), color: '#f97316' },
-            { id: 6, title: 'Workshop', start: day(-1, 14), end: day(-1, 17), color: '#a855f7' },
-            { id: 7, title: 'Public holiday', start: day(2), allDay: true, color: '#e11d48' },
-            { id: 8, title: 'Interview', start: day(2, 15), end: day(2, 16) },
-            { id: 9, title: 'Night flight', start: day(1, 22), end: day(1, 23, 30), color: '#0284c7' }
+            { id: 1, title: 'Réunion d’équipe', start: day(0, 9), end: day(0, 10) },
+            { id: 2, title: 'Déjeuner', start: day(1, 12, 30), end: day(1, 14), color: '#fbbf24' },
+            { id: 3, title: 'Congés', start: day(4), end: day(8), allDay: true, color: '#0f766e' }
         ];
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader The month view is an ARIA grid labelled by the title, with a columnheader per weekday and a gridcell per day. A cell is named by its full date and its number of events, the current date has aria-current="date" and the focused or selected days aria-selected . The agenda is a group labelled by the title, so several schedulers on a page do not add landmarks. In the week and day views, each day column is a group labelled by its column header and each slot a button named by its date and hours, such as "Thursday, 3 December 2026, 10:00 – 10:30". Events are buttons named by their title and time, "Review, Thu 3 Dec 10:00 – 11:00", and editable events are described by how to move them with the keyboard. The "+N more" button names the number of hidden events and their day, and opens a dialog that lists them all. A polite live region announces the new range after a navigation, "December 2026" or "Week of 29 Nov 2026", and every moved or resized event. Set ariaLabel to make the component a labelled region.
 
 ## Scheduler
 

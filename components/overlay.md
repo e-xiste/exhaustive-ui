@@ -2,22 +2,6 @@
 
 This API allows overlay components to be controlled from the ExhaustiveUI. In this way, all overlay components in the application can have the same behavior.
 
-## Accessibility
-
-Screen Reader Overlay component uses dialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Overlay adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Overlay Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Close Button Keyboard Support Key Function enter Closes the popup and moves focus to the trigger. space Closes the popup and moves focus to the trigger.
-
-## appendto-doc
-
-Overlay can be mounted into its location, body or DOM element instance using this option.
-
-## autozindex-doc
-
-The autoZIndex determines whether to automatically manage layering. Its default value is 'true'.
-
-## basezindex-doc
-
-The baseZIndex is base zIndex value to use in layering. Its default value is 0.
-
 ## Basic
 
 Overlay is a container to display content in an overlay window. All the options mentioned above can be used as props for this component.
@@ -46,32 +30,41 @@ export class OverlayBasicDemo {
 }
 ```
 
-## Events
+## Template
+
+Content can be customized with the content template.
 
 ```typescript
 import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { OverlayModule } from '@exhaustive-ui/core/overlay';
 
 @Component({
     template: `
-        <section class="py-6">
-        </section>
+        <div class="card flex justify-center">
+            <p-button (click)="toggle()" label="Show Overlay"></p-button>
+            <p-overlay [(visible)]="overlayVisible" [responsive]="{ breakpoint: '640px', direction: 'bottom', contentStyleClass: 'h-20rem' }" contentStyleClass="p-6 bg-surface-0 dark:bg-surface-900 shadow-sm rounded-border">
+                <ng-template #content let-option> Content - {{ option.mode }} </ng-template>
+            </p-overlay>
+        </div>
     `,
     standalone: true,
-    imports: []
+    imports: [ButtonModule, OverlayModule]
 })
-export class OverlayEventsDemo {
+export class OverlayTemplateDemo {
+    overlayVisible: boolean = false;
+
+    toggle() {
+        this.overlayVisible = !this.overlayVisible;
+    }
 }
 ```
 
-## hideonescape-doc
-
-The hideOnEscape determines to hide the overlay when escape key pressed. Accepts boolean, the overlay is hidden unless it is set to false .
-
-## Mode
+## Options: Mode
 
 It has two valid values; overlay and modal . In overlay mode, a container element is opened like overlaypanel or dropdown's panel. In modal mode, the container element behaves like popup. This behaviour is similar to a dialog component.
 
-## Responsive
+## Options: Responsive
 
 It is the option used to determine in which mode it should appear according to the given media or breakpoint .
 
@@ -106,7 +99,11 @@ export class OverlayResponsiveDemo {
 }
 ```
 
-## Target
+## Options: AppendTo
+
+Overlay can be mounted into its location, body or DOM element instance using this option.
+
+## Options: Target
 
 The target is used to detect the element that will be used to position the overlay. Valid values would be;
 
@@ -133,35 +130,38 @@ export class OverlayTargetDemo {
 }
 ```
 
-## Template
+## Options: BaseZIndex
 
-Content can be customized with the content template.
+The baseZIndex is base zIndex value to use in layering. Its default value is 0.
+
+## Options: AutoZIndex
+
+The autoZIndex determines whether to automatically manage layering. Its default value is 'true'.
+
+## Options: HideOnEscape
+
+The hideOnEscape determines to hide the overlay when escape key pressed. Accepts boolean, the overlay is hidden unless it is set to false .
+
+## Options: Events
 
 ```typescript
 import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { OverlayModule } from '@exhaustive-ui/core/overlay';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-button (click)="toggle()" label="Show Overlay"></p-button>
-            <p-overlay [(visible)]="overlayVisible" [responsive]="{ breakpoint: '640px', direction: 'bottom', contentStyleClass: 'h-20rem' }" contentStyleClass="p-6 bg-surface-0 dark:bg-surface-900 shadow-sm rounded-border">
-                <ng-template #content let-option> Content - {{ option.mode }} </ng-template>
-            </p-overlay>
-        </div>
+        <section class="py-6">
+        </section>
     `,
     standalone: true,
-    imports: [ButtonModule, OverlayModule]
+    imports: []
 })
-export class OverlayTemplateDemo {
-    overlayVisible: boolean = false;
-
-    toggle() {
-        this.overlayVisible = !this.overlayVisible;
-    }
+export class OverlayEventsDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader Overlay component uses dialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Overlay adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined. Overlay Keyboard Support When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup. Key Function tab Moves focus to the next the focusable element within the popup. shift + tab Moves focus to the previous the focusable element within the popup. escape Closes the popup and moves focus to the trigger. Close Button Keyboard Support Key Function enter Closes the popup and moves focus to the trigger. space Closes the popup and moves focus to the trigger.
 
 ## Overlay
 

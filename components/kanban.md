@@ -2,56 +2,6 @@
 
 Kanban is a task board. Cards are dragged within a column and from a column to another one, with the mouse, a finger or the keyboard, with work in progress limits, drop rules, collapsible and reorderable columns, and every move announced to screen readers.
 
-## Accessibility
-
-Screen Reader Every column is a group named by its title, rather than a landmark, so that two boards on a page never repeat landmarks such as "To do". It holds a list whose label also gives the count, such as "In progress, 2 of 3 cards", or a group with the same label when the column is empty. Each card is a list item holding a focusable element with the button role, described with aria-describedby by the instructions to move it, and with aria-pressed true while it is picked up. The count of a column reads "2 of 3 cards" instead of "2 / 3", and "over the limit" when it is exceeded. A card can be moved with the keyboard alone, and an assertive live region announces each step: "Picked up Task A, position 2 of 5 in To do", "Moved to In progress, position 1 of 3", "Dropped Task A in In progress, position 1 of 3" or "Cancelled, Task A returned to To do, position 2 of 5". A refused move is announced with its reason, such as "Review is full, 1 of 1 cards", and so is a full column a card is dragged over with the pointer. The column drag handles, the collapse buttons and the add card buttons name their column, for example "Add card to Done". Name the board with ariaLabel or ariaLabelledBy , and translate every text with labels .
-
-## Add Card
-
-showAddButton adds an "Add card" button at the bottom of every column. It emits onAddCard with the column, and the application creates the card, often after a dialog; set the new columns to display it. The button is disabled in a disabled column and in a column that reached its limit.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanAddCardEvent, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" showAddButton (onAddCard)="addCard($event)" ariaLabel="Board with add buttons" />
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanAddcardDemo {
-    nextId = 4;
-
-    columns: KanbanColumn<Task>[] = [
-        { id: 'ideas', title: 'Ideas', items: [{ id: 1, title: 'A mobile app' }] },
-        {
-            id: 'planned',
-            title: 'Planned',
-            limit: 2,
-            items: [
-                { id: 2, title: 'Two-factor authentication' },
-                { id: 3, title: 'Public API' }
-            ]
-        },
-        { id: 'shipped', title: 'Shipped', items: [] }
-    ];
-
-    addCard({ column }: KanbanAddCardEvent<Task>) {
-        const card = { id: this.nextId, title: `New card ${this.nextId++}` };
-        this.columns = this.columns.map((c) => (c.id === column.id ? { ...c, items: [...c.items, card] } : c));
-    }
-}
-```
-
 ## Basic
 
 Kanban displays columns , each with an id , a title and its items . Drag a card to reorder it in its column or to move it to another column, with the mouse, a finger or the keyboard. The board updates columns with new arrays after every move, so bind it two-way with [(columns)] . dataKey names the field that identifies a card, and itemLabel the field displayed by the default card, title by default.
@@ -95,231 +45,6 @@ export class KanbanBasicDemo {
         },
         { id: 'review', title: 'Review', items: [{ id: 6, title: 'Dark mode for the settings page' }] },
         { id: 'done', title: 'Done', items: [{ id: 7, title: 'Set up the staging server' }] }
-    ];
-}
-```
-
-## Collapsible Columns
-
-collapsible adds a button to the header of every column that folds it into a narrow strip, as tall as the board, with its count and its title written vertically. A click anywhere on the strip unfolds it, and its button stays the way to do it with the keyboard. The board sets the collapsed property of the column and emits onColumnToggle ; set collapsed in the columns to start with a folded column. A collapsed column does not take dropped cards, and the keyboard moves skip it.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" collapsible ariaLabel="Board with collapsible columns" />
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanCollapsibleDemo {
-    columns: KanbanColumn<Task>[] = [
-        {
-            id: 'backlog',
-            title: 'Backlog',
-            collapsed: true,
-            items: [
-                { id: 1, title: 'Offline mode' },
-                { id: 2, title: 'Keyboard shortcuts' },
-                { id: 3, title: 'Audit log' }
-            ]
-        },
-        {
-            id: 'todo',
-            title: 'To do',
-            items: [
-                { id: 4, title: 'Onboarding checklist' },
-                { id: 5, title: 'Export to PDF' }
-            ]
-        },
-        { id: 'doing', title: 'In progress', limit: 3, items: [{ id: 6, title: 'Usage based billing' }] },
-        { id: 'done', title: 'Done', collapsed: true, items: [{ id: 7, title: 'Single sign-on' }] }
-    ];
-}
-```
-
-## Limits and Rules
-
-The limit of a column is its work in progress limit: the header shows the count as "2 / 3", the count turns orange when the column is full and red when it holds more cards than its limit, and the column refuses the cards dropped beyond it. While a card is dragged over a column that refuses it, the column gets a dashed red border and screen readers hear the reason. A disabled column neither gives nor takes cards. canDrop decides any other rule. It receives the card, the column it comes from and the column it would go to, and returns false to refuse the move; moves within a column are always allowed. Here a card can only reach Done from Review , and the Archived column is disabled.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanCanDrop, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" [canDrop]="canDrop" ariaLabel="Board with limits" />
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanLimitsDemo {
-    columns: KanbanColumn<Task>[] = [
-        {
-            id: 'todo',
-            title: 'To do',
-            items: [
-                { id: 1, title: 'Plan the sprint' },
-                { id: 2, title: 'Interview a customer' },
-                { id: 3, title: 'Clean the backlog' }
-            ]
-        },
-        {
-            id: 'doing',
-            title: 'In progress',
-            limit: 3,
-            items: [
-                { id: 4, title: 'New pricing page' },
-                { id: 5, title: 'Invoice emails' }
-            ]
-        },
-        { id: 'review', title: 'Review', limit: 1, items: [{ id: 6, title: 'Search filters' }] },
-        { id: 'done', title: 'Done', items: [] },
-        { id: 'archived', title: 'Archived', disabled: true, items: [{ id: 7, title: 'Old landing page' }] }
-    ];
-
-    canDrop: KanbanCanDrop<Task> = (item, from, to) => to.id !== 'done' || from.id === 'review';
-}
-```
-
-## Saving Moves
-
-onCardMove is emitted once a card is dropped, with the pointer or the keyboard, after the columns are updated. It holds the item , the fromColumn and toColumn as they are after the move, the fromIndex and toIndex , and all the columns : send the change to the server from there. A keyboard move only emits when the card is dropped, not at every arrow key, and Escape emits nothing. With a server, keep the previous columns to put the card back when the request fails.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanCardMoveEvent, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" (onCardMove)="onCardMove($event)" ariaLabel="Board that saves its moves" />
-            <ul class="mt-4 mb-0 text-sm text-muted-color list-none p-0" aria-label="Saved moves">
-                @for (line of log; track $index) {
-                    <li>{{ line }}</li>
-                } @empty {
-                    <li>Move a card to see the request.</li>
-                }
-            </ul>
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanPersistDemo {
-    columns: KanbanColumn<Task>[] = [
-        {
-            id: 'todo',
-            title: 'To do',
-            items: [
-                { id: 1, title: 'Order the new laptops' },
-                { id: 2, title: 'Book the team offsite' }
-            ]
-        },
-        { id: 'doing', title: 'In progress', items: [{ id: 3, title: 'Hire a designer' }] },
-        { id: 'done', title: 'Done', items: [] }
-    ];
-
-    log: string[] = [];
-
-    onCardMove(event: KanbanCardMoveEvent<Task>) {
-        this.log = [`PATCH /api/tasks/${event.item.id} { "status": "${event.toColumn.id}", "position": ${event.toIndex} }`, ...this.log].slice(0, 4);
-    }
-}
-```
-
-## Column Reorder
-
-reorderColumns adds a drag handle to the header of every column. Drag it to move the column, or focus it and use Space or Enter, the left and right arrow keys, and Space or Enter again. The board emits onColumnReorder with the column, its previous and its new index once the columns are updated.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanColumn, KanbanColumnReorderEvent, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" reorderColumns (onColumnReorder)="onReorder($event)" ariaLabel="Board with reorderable columns" />
-            <p class="mt-4 mb-0 text-sm text-muted-color">Order: {{ order }}</p>
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanReordercolumnsDemo {
-    columns: KanbanColumn<Task>[] = [
-        { id: 'todo', title: 'To do', items: [{ id: 1, title: 'Draft the newsletter' }] },
-        { id: 'doing', title: 'In progress', items: [{ id: 2, title: 'Record the demo video' }] },
-        { id: 'blocked', title: 'Blocked', items: [{ id: 3, title: 'Legal review of the terms' }] },
-        { id: 'done', title: 'Done', items: [] }
-    ];
-
-    order = this.columns.map((column) => column.title).join(', ');
-
-    onReorder(event: KanbanColumnReorderEvent<Task>) {
-        this.order = event.columns.map((column) => column.title).join(', ');
-    }
-}
-```
-
-## Scroll
-
-When the columns do not fit, they shrink to their minimum width, then the board scrolls horizontally, with a thin scrollbar, and fades out the edges that hide columns. scrollHeight gives the board a height: the cards of each column then scroll under its header, which stays visible. While a card is dragged near an edge, the board and the column scroll. On small screens a column takes most of the width and the board snaps from a column to the next one.
-
-```typescript
-import { Component } from '@angular/core';
-import { KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
-
-interface Task {
-    id: number;
-    title: string;
-}
-
-const tasks = (from: number, count: number, prefix: string): Task[] => Array.from({ length: count }, (_, i) => ({ id: from + i, title: `${prefix} ${i + 1}` }));
-
-@Component({
-    template: `
-        <div class="card">
-            <p-kanban [(columns)]="columns" dataKey="id" scrollHeight="24rem" ariaLabel="Scrollable board" />
-        </div>
-    `,
-    standalone: true,
-    imports: [KanbanModule]
-})
-export class KanbanScrollDemo {
-    columns: KanbanColumn<Task>[] = [
-        { id: 'backlog', title: 'Backlog', items: tasks(1, 12, 'Story') },
-        { id: 'todo', title: 'To do', items: tasks(100, 6, 'Task') },
-        { id: 'doing', title: 'In progress', items: tasks(200, 3, 'Feature') },
-        { id: 'review', title: 'Review', items: tasks(300, 2, 'Change') },
-        { id: 'qa', title: 'QA', items: tasks(400, 2, 'Test') },
-        { id: 'done', title: 'Done', items: tasks(500, 9, 'Release') }
     ];
 }
 ```
@@ -408,6 +133,281 @@ export class KanbanTemplateDemo {
     }
 }
 ```
+
+## Limits and Rules
+
+The limit of a column is its work in progress limit: the header shows the count as "2 / 3", the count turns orange when the column is full and red when it holds more cards than its limit, and the column refuses the cards dropped beyond it. While a card is dragged over a column that refuses it, the column gets a dashed red border and screen readers hear the reason. A disabled column neither gives nor takes cards. canDrop decides any other rule. It receives the card, the column it comes from and the column it would go to, and returns false to refuse the move; moves within a column are always allowed. Here a card can only reach Done from Review , and the Archived column is disabled.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanCanDrop, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" [canDrop]="canDrop" ariaLabel="Board with limits" />
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanLimitsDemo {
+    columns: KanbanColumn<Task>[] = [
+        {
+            id: 'todo',
+            title: 'To do',
+            items: [
+                { id: 1, title: 'Plan the sprint' },
+                { id: 2, title: 'Interview a customer' },
+                { id: 3, title: 'Clean the backlog' }
+            ]
+        },
+        {
+            id: 'doing',
+            title: 'In progress',
+            limit: 3,
+            items: [
+                { id: 4, title: 'New pricing page' },
+                { id: 5, title: 'Invoice emails' }
+            ]
+        },
+        { id: 'review', title: 'Review', limit: 1, items: [{ id: 6, title: 'Search filters' }] },
+        { id: 'done', title: 'Done', items: [] },
+        { id: 'archived', title: 'Archived', disabled: true, items: [{ id: 7, title: 'Old landing page' }] }
+    ];
+
+    canDrop: KanbanCanDrop<Task> = (item, from, to) => to.id !== 'done' || from.id === 'review';
+}
+```
+
+## Add Card
+
+showAddButton adds an "Add card" button at the bottom of every column. It emits onAddCard with the column, and the application creates the card, often after a dialog; set the new columns to display it. The button is disabled in a disabled column and in a column that reached its limit.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanAddCardEvent, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" showAddButton (onAddCard)="addCard($event)" ariaLabel="Board with add buttons" />
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanAddcardDemo {
+    nextId = 4;
+
+    columns: KanbanColumn<Task>[] = [
+        { id: 'ideas', title: 'Ideas', items: [{ id: 1, title: 'A mobile app' }] },
+        {
+            id: 'planned',
+            title: 'Planned',
+            limit: 2,
+            items: [
+                { id: 2, title: 'Two-factor authentication' },
+                { id: 3, title: 'Public API' }
+            ]
+        },
+        { id: 'shipped', title: 'Shipped', items: [] }
+    ];
+
+    addCard({ column }: KanbanAddCardEvent<Task>) {
+        const card = { id: this.nextId, title: `New card ${this.nextId++}` };
+        this.columns = this.columns.map((c) => (c.id === column.id ? { ...c, items: [...c.items, card] } : c));
+    }
+}
+```
+
+## Collapsible Columns
+
+collapsible adds a button to the header of every column that folds it into a narrow strip, as tall as the board, with its count and its title written vertically. A click anywhere on the strip unfolds it, and its button stays the way to do it with the keyboard. The board sets the collapsed property of the column and emits onColumnToggle ; set collapsed in the columns to start with a folded column. A collapsed column does not take dropped cards, and the keyboard moves skip it.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" collapsible ariaLabel="Board with collapsible columns" />
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanCollapsibleDemo {
+    columns: KanbanColumn<Task>[] = [
+        {
+            id: 'backlog',
+            title: 'Backlog',
+            collapsed: true,
+            items: [
+                { id: 1, title: 'Offline mode' },
+                { id: 2, title: 'Keyboard shortcuts' },
+                { id: 3, title: 'Audit log' }
+            ]
+        },
+        {
+            id: 'todo',
+            title: 'To do',
+            items: [
+                { id: 4, title: 'Onboarding checklist' },
+                { id: 5, title: 'Export to PDF' }
+            ]
+        },
+        { id: 'doing', title: 'In progress', limit: 3, items: [{ id: 6, title: 'Usage based billing' }] },
+        { id: 'done', title: 'Done', collapsed: true, items: [{ id: 7, title: 'Single sign-on' }] }
+    ];
+}
+```
+
+## Column Reorder
+
+reorderColumns adds a drag handle to the header of every column. Drag it to move the column, or focus it and use Space or Enter, the left and right arrow keys, and Space or Enter again. The board emits onColumnReorder with the column, its previous and its new index once the columns are updated.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanColumn, KanbanColumnReorderEvent, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" reorderColumns (onColumnReorder)="onReorder($event)" ariaLabel="Board with reorderable columns" />
+            <p class="mt-4 mb-0 text-sm text-muted-color">Order: {{ order }}</p>
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanReordercolumnsDemo {
+    columns: KanbanColumn<Task>[] = [
+        { id: 'todo', title: 'To do', items: [{ id: 1, title: 'Draft the newsletter' }] },
+        { id: 'doing', title: 'In progress', items: [{ id: 2, title: 'Record the demo video' }] },
+        { id: 'blocked', title: 'Blocked', items: [{ id: 3, title: 'Legal review of the terms' }] },
+        { id: 'done', title: 'Done', items: [] }
+    ];
+
+    order = this.columns.map((column) => column.title).join(', ');
+
+    onReorder(event: KanbanColumnReorderEvent<Task>) {
+        this.order = event.columns.map((column) => column.title).join(', ');
+    }
+}
+```
+
+## Scroll
+
+When the columns do not fit, they shrink to their minimum width, then the board scrolls horizontally, with a thin scrollbar, and fades out the edges that hide columns. scrollHeight gives the board a height: the cards of each column then scroll under its header, which stays visible. While a card is dragged near an edge, the board and the column scroll. On small screens a column takes most of the width and the board snaps from a column to the next one.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+const tasks = (from: number, count: number, prefix: string): Task[] => Array.from({ length: count }, (_, i) => ({ id: from + i, title: `${prefix} ${i + 1}` }));
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" scrollHeight="24rem" ariaLabel="Scrollable board" />
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanScrollDemo {
+    columns: KanbanColumn<Task>[] = [
+        { id: 'backlog', title: 'Backlog', items: tasks(1, 12, 'Story') },
+        { id: 'todo', title: 'To do', items: tasks(100, 6, 'Task') },
+        { id: 'doing', title: 'In progress', items: tasks(200, 3, 'Feature') },
+        { id: 'review', title: 'Review', items: tasks(300, 2, 'Change') },
+        { id: 'qa', title: 'QA', items: tasks(400, 2, 'Test') },
+        { id: 'done', title: 'Done', items: tasks(500, 9, 'Release') }
+    ];
+}
+```
+
+## Saving Moves
+
+onCardMove is emitted once a card is dropped, with the pointer or the keyboard, after the columns are updated. It holds the item , the fromColumn and toColumn as they are after the move, the fromIndex and toIndex , and all the columns : send the change to the server from there. A keyboard move only emits when the card is dropped, not at every arrow key, and Escape emits nothing. With a server, keep the previous columns to put the card back when the request fails.
+
+```typescript
+import { Component } from '@angular/core';
+import { KanbanCardMoveEvent, KanbanColumn, KanbanModule } from '@exhaustive-ui/core/kanban';
+
+interface Task {
+    id: number;
+    title: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-kanban [(columns)]="columns" dataKey="id" (onCardMove)="onCardMove($event)" ariaLabel="Board that saves its moves" />
+            <ul class="mt-4 mb-0 text-sm text-muted-color list-none p-0" aria-label="Saved moves">
+                @for (line of log; track $index) {
+                    <li>{{ line }}</li>
+                } @empty {
+                    <li>Move a card to see the request.</li>
+                }
+            </ul>
+        </div>
+    `,
+    standalone: true,
+    imports: [KanbanModule]
+})
+export class KanbanPersistDemo {
+    columns: KanbanColumn<Task>[] = [
+        {
+            id: 'todo',
+            title: 'To do',
+            items: [
+                { id: 1, title: 'Order the new laptops' },
+                { id: 2, title: 'Book the team offsite' }
+            ]
+        },
+        { id: 'doing', title: 'In progress', items: [{ id: 3, title: 'Hire a designer' }] },
+        { id: 'done', title: 'Done', items: [] }
+    ];
+
+    log: string[] = [];
+
+    onCardMove(event: KanbanCardMoveEvent<Task>) {
+        this.log = [`PATCH /api/tasks/${event.item.id} { "status": "${event.toColumn.id}", "position": ${event.toIndex} }`, ...this.log].slice(0, 4);
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Every column is a group named by its title, rather than a landmark, so that two boards on a page never repeat landmarks such as "To do". It holds a list whose label also gives the count, such as "In progress, 2 of 3 cards", or a group with the same label when the column is empty. Each card is a list item holding a focusable element with the button role, described with aria-describedby by the instructions to move it, and with aria-pressed true while it is picked up. The count of a column reads "2 of 3 cards" instead of "2 / 3", and "over the limit" when it is exceeded. A card can be moved with the keyboard alone, and an assertive live region announces each step: "Picked up Task A, position 2 of 5 in To do", "Moved to In progress, position 1 of 3", "Dropped Task A in In progress, position 1 of 3" or "Cancelled, Task A returned to To do, position 2 of 5". A refused move is announced with its reason, such as "Review is full, 1 of 1 cards", and so is a full column a card is dragged over with the pointer. The column drag handles, the collapse buttons and the add card buttons name their column, for example "Add card to Done". Name the board with ariaLabel or ariaLabelledBy , and translate every text with labels .
 
 ## Kanban
 

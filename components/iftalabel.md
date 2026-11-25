@@ -2,10 +2,6 @@
 
 IftaLabel is used to create infield top aligned labels.
 
-## Accessibility
-
-Screen Reader IftaLabel does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 IftaLabel is used by wrapping the input and its label.
@@ -29,33 +25,6 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [FormsModule, IftaLabelModule, InputTextModule]
 })
 export class IftalabelBasicDemo {
-    value: string | undefined;
-}
-```
-
-## Invalid
-
-When the form element is invalid, the label is also highlighted.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-ifta-label>
-                <input pInputText id="username" [(ngModel)]="value" [invalid]="!value" autocomplete="off" />
-                <label for="username">Username</label>
-            </p-ifta-label>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, IftaLabelModule, InputTextModule]
-})
-export class IftalabelInvalidDemo {
     value: string | undefined;
 }
 ```
@@ -123,6 +92,37 @@ export class IftalabelSizesDemo {
     cities = ['New York', 'Rome', 'London', 'Istanbul', 'Paris'];
 }
 ```
+
+## Invalid
+
+When the form element is invalid, the label is also highlighted.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-ifta-label>
+                <input pInputText id="username" [(ngModel)]="value" [invalid]="!value" autocomplete="off" />
+                <label for="username">Username</label>
+            </p-ifta-label>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, IftaLabelModule, InputTextModule]
+})
+export class IftalabelInvalidDemo {
+    value: string | undefined;
+}
+```
+
+## Accessibility
+
+Screen Reader IftaLabel does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
 
 ## Ifta Label
 

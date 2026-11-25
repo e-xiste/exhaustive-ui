@@ -2,10 +2,6 @@
 
 SelectButton is used to choose single or multiple items from a list using buttons.
 
-## Accessibility
-
-Screen Reader The container element that wraps the buttons has a group role whereas each button element uses button role and aria-pressed is updated depending on selection state. Value to describe an option is automatically set as its aria-label from the label of the option resolved with optionLabel so it is still suggested to define a label even the option display consists of presentational content like icons only.
-
 ## Basic
 
 SelectButton requires a value to bind and a collection of options.
@@ -25,6 +21,131 @@ import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
     imports: [FormsModule, SelectButtonModule]
 })
 export class SelectbuttonBasicDemo {
+    stateOptions: any[] = [
+        { label: 'One-Way', value: 'one-way' },
+        { label: 'Return', value: 'return' }
+    ];
+
+    value: string = 'one-way';
+}
+```
+
+## Multiple
+
+SelectButton allows selecting only one item by default and setting multiple option enables choosing more than one item. In multiple case, model property should be an array.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-select-button [options]="paymentOptions" [(ngModel)]="value" [multiple]="true" optionLabel="name" optionValue="value" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SelectButtonModule]
+})
+export class SelectbuttonMultipleDemo {
+    paymentOptions: any[] = [
+        { name: 'Option 1', value: 1 },
+        { name: 'Option 2', value: 2 },
+        { name: 'Option 3', value: 3 }
+    ];
+
+    value!: number;
+}
+```
+
+## Template
+
+For custom content support define a template named item where the default local template variable refers to an option.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-select-button [options]="justifyOptions" [(ngModel)]="value" optionLabel="justify">
+                <ng-template #item let-item>
+                    <i [class]="item.icon"></i>
+                </ng-template>
+            </p-select-button>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SelectButton]
+})
+export class SelectbuttonTemplateDemo {
+    value: any;
+
+    justifyOptions: any[] = [
+        { icon: 'pi pi-align-left', justify: 'Left' },
+        { icon: 'pi pi-align-right', justify: 'Right' },
+        { icon: 'pi pi-align-center', justify: 'Center' },
+        { icon: 'pi pi-align-justify', justify: 'Justify' }
+    ];
+}
+```
+
+## Sizes
+
+SelectButton provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-select-button [(ngModel)]="value1" [options]="options" size="small" />
+            <p-select-button [(ngModel)]="value2" [options]="options" />
+            <p-select-button [(ngModel)]="value3" [options]="options" size="large" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SelectButton]
+})
+export class SelectbuttonSizesDemo {
+    value1!: string;
+
+    value2: string = 'Beginner';
+
+    value3: string = 'Expert';
+
+    options: any[] = [
+        { label: 'Beginner', value: 'Beginner' },
+        { label: 'Expert', value: 'Expert' }
+    ];
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-select-button [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" fluid />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SelectButtonModule]
+})
+export class SelectbuttonFluidDemo {
     stateOptions: any[] = [
         { label: 'One-Way', value: 'one-way' },
         { label: 'Return', value: 'return' }
@@ -70,34 +191,6 @@ export class SelectbuttonDisabledDemo {
 }
 ```
 
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-select-button [options]="stateOptions" [(ngModel)]="value" optionLabel="label" optionValue="value" fluid />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SelectButtonModule]
-})
-export class SelectbuttonFluidDemo {
-    stateOptions: any[] = [
-        { label: 'One-Way', value: 'one-way' },
-        { label: 'Return', value: 'return' }
-    ];
-
-    value: string = 'one-way';
-}
-```
-
 ## Invalid
 
 The invalid state is applied using the ⁠invalid property to indicate failed validation, which can be integrated with Angular Forms.
@@ -126,36 +219,57 @@ export class SelectbuttonInvalidDemo {
 }
 ```
 
-## Multiple
-
-SelectButton allows selecting only one item by default and setting multiple option enables choosing more than one item. In multiple case, model property should be an array.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SelectButtonModule } from '@exhaustive-ui/core/selectbutton';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { SelectButton } from '@exhaustive-ui/core/selectbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     template: `
+        <p-toast />
         <div class="card flex justify-center">
-            <p-select-button [options]="paymentOptions" [(ngModel)]="value" [multiple]="true" optionLabel="name" optionValue="value" />
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                    <p-select-button #model="ngModel" [(ngModel)]="value" [options]="stateOptions" optionLabel="label" optionValue="value" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required name="value" />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Selection is required.</p-message>
+                    }
+                </div>
+                <button pButton type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, SelectButtonModule]
+    imports: [FormsModule, SelectButton, ToastModule, ButtonModule, MessageModule, CommonModule],
+    providers: [MessageService]
 })
-export class SelectbuttonMultipleDemo {
-    paymentOptions: any[] = [
-        { name: 'Option 1', value: 1 },
-        { name: 'Option 2', value: 2 },
-        { name: 'Option 3', value: 3 }
+export class SelectbuttonTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: any;
+
+    stateOptions: any[] = [
+        { label: 'One-Way', value: 'one-way' },
+        { label: 'Return', value: 'return' }
     ];
 
-    value!: number;
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 SelectButton can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -281,123 +395,9 @@ export class SelectbuttonSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-SelectButton provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectButton } from '@exhaustive-ui/core/selectbutton';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-select-button [(ngModel)]="value1" [options]="options" size="small" />
-            <p-select-button [(ngModel)]="value2" [options]="options" />
-            <p-select-button [(ngModel)]="value3" [options]="options" size="large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SelectButton]
-})
-export class SelectbuttonSizesDemo {
-    value1!: string;
-
-    value2: string = 'Beginner';
-
-    value3: string = 'Expert';
-
-    options: any[] = [
-        { label: 'Beginner', value: 'Beginner' },
-        { label: 'Expert', value: 'Expert' }
-    ];
-}
-```
-
-## Template
-
-For custom content support define a template named item where the default local template variable refers to an option.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectButton } from '@exhaustive-ui/core/selectbutton';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-select-button [options]="justifyOptions" [(ngModel)]="value" optionLabel="justify">
-                <ng-template #item let-item>
-                    <i [class]="item.icon"></i>
-                </ng-template>
-            </p-select-button>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SelectButton]
-})
-export class SelectbuttonTemplateDemo {
-    value: any;
-
-    justifyOptions: any[] = [
-        { icon: 'pi pi-align-left', justify: 'Left' },
-        { icon: 'pi pi-align-right', justify: 'Right' },
-        { icon: 'pi pi-align-center', justify: 'Center' },
-        { icon: 'pi pi-align-justify', justify: 'Justify' }
-    ];
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { SelectButton } from '@exhaustive-ui/core/selectbutton';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
-                <div class="flex flex-col gap-1">
-                    <p-select-button #model="ngModel" [(ngModel)]="value" [options]="stateOptions" optionLabel="label" optionValue="value" [invalid]="model.invalid && (model.touched || exampleForm.submitted)" required name="value" />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Selection is required.</p-message>
-                    }
-                </div>
-                <button pButton type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SelectButton, ToastModule, ButtonModule, MessageModule, CommonModule],
-    providers: [MessageService]
-})
-export class SelectbuttonTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    value: any;
-
-    stateOptions: any[] = [
-        { label: 'One-Way', value: 'one-way' },
-        { label: 'Return', value: 'return' }
-    ];
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader The container element that wraps the buttons has a group role whereas each button element uses button role and aria-pressed is updated depending on selection state. Value to describe an option is automatically set as its aria-label from the label of the option resolved with optionLabel so it is still suggested to define a label even the option display consists of presentational content like icons only.
 
 ## Select Button
 

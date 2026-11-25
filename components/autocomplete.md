@@ -2,11 +2,495 @@
 
 AutoComplete is an input component that provides real-time suggestions when being typed.
 
-## Accessibility
+## Basic
 
-Screen Reader Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props. The input element has combobox role in addition to aria-autocomplete , aria-haspopup and aria-expanded attributes. The relation between the input and the popup is created with aria-controls and aria-activedescendant attribute is used to instruct screen reader which option to read during keyboard navigation within the popup list. In multiple mode, the chips are a listbox next to the input, named like the input, and each chip has the option role with aria-label set to the label of the chip. The chips receive the focus with the arrow keys, and their remove icon is hidden from screen readers and from the tab order: use backspace or delete on a focused chip instead. The popup list has an id that refers to the aria-controls attribute of the input element and uses listbox as the role. Each list item has option role and an id to match the aria-activedescendant of the input element.
+AutoComplete uses ngModel for two-way binding, requires a list of suggestions and a completeMethod to query for the results. The completeMethod gets the query text as event.query property and should update the suggestions with the search results.
 
-## advanced-chips-doc
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" />
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, AutoCompleteModule]
+})
+export class AutocompleteBasicDemo {
+    items: any[] = [];
+
+    value: any;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Dropdown
+
+Enabling dropdown property displays a button next to the input field where click behavior of the button is defined using dropdownMode property that takes blank or current as possible values. blank is the default mode to send a query with an empty string whereas current setting sends a query with the current value of the input.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [dropdown]="true" [suggestions]="items" (completeMethod)="search($event)" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteDropdownDemo {
+    items: any[] | undefined;
+
+    value: any;
+
+    search(event: AutoCompleteCompleteEvent) {
+        let _items = [...Array(10).keys()];
+
+        this.items = event.query ? [...Array(10).keys()].map((item) => event.query + '-' + item) : _items;
+    }
+}
+```
+
+## Objects
+
+AutoComplete can also work with objects using the optionLabel property that defines the label to display as a suggestion. The value passed to the model would still be the object instance of a suggestion. Here is an example with a Country object that has name and code fields such as {name: "United States", code:"USA"} .
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { CountryService } from '@/service/countryservice';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedCountry" ariaLabel="Country" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule],
+    providers: [CountryService]
+})
+export class AutocompleteObjectsDemo implements OnInit {
+    private countryService = inject(CountryService);
+
+    countries: any[] | undefined;
+
+    selectedCountry: any;
+
+    filteredCountries: any[] | undefined;
+
+    ngOnInit() {
+        this.countryService.getCountries().then((countries) => {
+            this.countries = countries;
+        });
+    }
+
+    filterCountry(event: AutoCompleteCompleteEvent) {
+        let filtered: any[] = [];
+        let query = event.query;
+
+        for (let i = 0; i < (this.countries as any[]).length; i++) {
+            let country = (this.countries as any[])[i];
+            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(country);
+            }
+        }
+
+        this.filteredCountries = filtered;
+    }
+}
+```
+
+## Template
+
+AutoComplete offers multiple templates for customization through templating.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { CountryService } from '@/service/countryservice';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedCountryAdvanced" ariaLabel="Country" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name">
+                <ng-template let-country #item>
+                    <div class="flex items-center gap-2">
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                        <div>{{ country.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template #header>
+                    <div class="font-medium px-3 py-2">Available Countries</div>
+                </ng-template>
+                <ng-template #footer>
+                    <div class="px-3 py-3">
+                        <p-button label="Add New" fluid severity="secondary" text size="small" icon="pi pi-plus" />
+                    </div>
+                </ng-template>
+            </p-auto-complete>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule],
+    providers: [CountryService]
+})
+export class AutocompleteTemplateDemo {
+    private countryService = inject(CountryService);
+
+    countries: any[] | undefined;
+
+    selectedCountryAdvanced: any[] | undefined;
+
+    filteredCountries: any[] | undefined;
+
+    ngOnInit() {
+        this.countryService.getCountries().then((countries) => {
+            this.countries = countries;
+        });
+    }
+
+    filterCountry(event: AutoCompleteCompleteEvent) {
+        let filtered: any[] = [];
+        let query = event.query;
+
+        for (let i = 0; i < (this.countries as any[]).length; i++) {
+            let country = (this.countries as any[])[i];
+            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(country);
+            }
+        }
+        this.filteredCountries = filtered;
+    }
+}
+```
+
+## Group
+
+Option grouping is enabled when group property is set to true . group template is available to customize the option groups. All templates get the option instance as the default local template variable.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { FilterService, SelectItemGroup } from '@exhaustive-ui/core/api';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedCity" ariaLabel="City" [group]="true" [suggestions]="filteredGroups" (completeMethod)="filterGroupedCity($event)" placeholder="Hint: type 'a'">
+                <ng-template let-group #group>
+                    <div class="flex items-center">
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
+                        <span>{{ group.label }}</span>
+                    </div>
+                </ng-template>
+            </p-auto-complete>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, AutoCompleteModule]
+})
+export class AutocompleteGroupDemo implements OnInit {
+    private filterService = inject(FilterService);
+
+    selectedCity: any;
+
+    filteredGroups: any[] | undefined;
+
+    groupedCities: SelectItemGroup[] | undefined;
+
+    ngOnInit() {
+        this.groupedCities = [
+            {
+                label: 'Germany',
+                value: 'de',
+                items: [
+                    { label: 'Berlin', value: 'Berlin' },
+                    { label: 'Frankfurt', value: 'Frankfurt' },
+                    { label: 'Hamburg', value: 'Hamburg' },
+                    { label: 'Munich', value: 'Munich' }
+                ]
+            },
+            {
+                label: 'USA',
+                value: 'us',
+                items: [
+                    { label: 'Chicago', value: 'Chicago' },
+                    { label: 'Los Angeles', value: 'Los Angeles' },
+                    { label: 'New York', value: 'New York' },
+                    { label: 'San Francisco', value: 'San Francisco' }
+                ]
+            },
+            {
+                label: 'Japan',
+                value: 'jp',
+                items: [
+                    { label: 'Kyoto', value: 'Kyoto' },
+                    { label: 'Osaka', value: 'Osaka' },
+                    { label: 'Tokyo', value: 'Tokyo' },
+                    { label: 'Yokohama', value: 'Yokohama' }
+                ]
+            }
+        ];
+    }
+
+    filterGroupedCity(event: AutoCompleteCompleteEvent) {
+        let query = event.query;
+        let filteredGroups = [];
+
+        for (let optgroup of this.groupedCities as SelectItemGroup[]) {
+            let filteredSubOptions = this.filterService.filter(optgroup.items, ['label'], query, 'contains');
+            if (filteredSubOptions && filteredSubOptions.length) {
+                filteredGroups.push({
+                    label: optgroup.label,
+                    value: optgroup.value,
+                    items: filteredSubOptions
+                });
+            }
+        }
+
+        this.filteredGroups = filteredGroups;
+    }
+}
+```
+
+## Force Selection
+
+ForceSelection mode validates the manual input to check whether it also exists in the suggestions list, if not the input value is cleared to make sure the value passed to the model is always one of the suggestions.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+import { CountryService } from '@/service/countryservice';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedCountry" ariaLabel="Country" [forceSelection]="true" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule],
+    providers: [CountryService]
+})
+export class AutocompleteForceSelectionDemo implements OnInit {
+    private countryService = inject(CountryService);
+
+    countries: any[] | undefined;
+
+    selectedCountry: any;
+
+    filteredCountries: any[] | undefined;
+
+    ngOnInit() {
+        this.countryService.getCountries().then((countries) => {
+            this.countries = countries;
+        });
+    }
+
+    filterCountry(event: AutoCompleteCompleteEvent) {
+        let filtered: any[] = [];
+        let query = event.query;
+
+        for (let i = 0; i < (this.countries as any[]).length; i++) {
+            let country = (this.countries as any[])[i];
+            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(country);
+            }
+        }
+
+        this.filteredCountries = filtered;
+    }
+}
+```
+
+## Virtual Scroll
+
+Virtual scrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable virtual scrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Item" [virtualScroll]="true" [suggestions]="filteredItems" [virtualScrollItemSize]="34" (completeMethod)="filterItems($event)" optionLabel="label" [dropdown]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteVirtualScrollDemo {
+    selectedItem: any;
+
+    filteredItems: any[] | undefined;
+
+    items: any[] | undefined;
+
+    filterItems(event: AutoCompleteCompleteEvent) {
+        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+        let filtered: any[] = [];
+        let query = event.query;
+
+        for (let i = 0; i < (this.items as any[]).length; i++) {
+            let item = (this.items as any[])[i];
+            if (item.label.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(item);
+            }
+        }
+
+        this.filteredItems = filtered;
+    }
+
+    ngOnInit() {
+        this.items = [];
+        for (let i = 0; i < 10000; i++) {
+            this.items.push({ label: 'Item ' + i, value: 'Item ' + i });
+        }
+    }
+}
+```
+
+## Multiple
+
+Enable multiple selection mode using the ⁠multiple property to allow users to select more than one value from the autocomplete. When enabled, the value reference must be an array.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <label id="multiple-ac-1-label" for="multiple-ac-1" class="font-bold mb-2 block">With Typeahead</label>
+            <p-auto-complete [(ngModel)]="value1" inputId="multiple-ac-1" ariaLabelledBy="multiple-ac-1-label" multiple fluid [suggestions]="items" (completeMethod)="search($event)" />
+            <label id="multiple-ac-2-label" for="multiple-ac-2" class="font-bold mt-8 mb-2 block">Without Typeahead</label>
+            <p-auto-complete [(ngModel)]="value2" inputId="multiple-ac-2" ariaLabelledBy="multiple-ac-2-label" multiple fluid (completeMethod)="search($event)" [typeahead]="false" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteMultipleDemo {
+    value1: any[] | undefined;
+
+    value2: any[] | undefined;
+
+    items: any[] | undefined;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Chips: Basic
+
+With ⁠multiple enabled, the AutoComplete component behaves like a chips or tags input. Use addOnBlur , ⁠addOnTab , and ⁠separator properties to customize the keystroke behavior for adding items.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+@Component({
+    template: `
+        <div class="card">
+            <label id="chips-blur-label" for="chips-blur" class="font-bold mb-2 block">With Add On Blur</label>
+            <p-auto-complete [(ngModel)]="valueBlur" inputId="chips-blur" ariaLabelledBy="chips-blur-label" multiple fluid [typeahead]="false" [addOnBlur]="true" placeholder="Type and click outside to add..." />
+            <label id="chips-tab-label" for="chips-tab" class="font-bold mt-8 mb-2 block">With Add On Tab</label>
+            <p-auto-complete [(ngModel)]="valueTab" inputId="chips-tab" ariaLabelledBy="chips-tab-label" multiple fluid [typeahead]="false" [addOnTab]="true" placeholder="Type and press Tab to add..." />
+            <label id="chips-separator-label" for="chips-separator" class="font-bold mt-8 mb-2 block">With Separator (Comma)</label>
+            <p-auto-complete [(ngModel)]="valueSeparator" inputId="chips-separator" ariaLabelledBy="chips-separator-label" multiple fluid [typeahead]="false" separator="," placeholder="Type items separated by comma..." />
+            <label id="chips-combined-label" for="chips-combined" class="font-bold mt-8 mb-2 block">Combined Features</label>
+            <p-auto-complete
+                [(ngModel)]="valueCombined"
+                inputId="chips-combined"
+                ariaLabelledBy="chips-combined-label"
+                multiple
+                fluid
+                [typeahead]="false"
+                [addOnBlur]="true"
+                [addOnTab]="true"
+                separator=","
+                placeholder="Use Tab, Blur, or Comma to add items..."
+            />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteBasicChipsDemo {
+    valueBlur: any[] = [];
+    valueTab: any[] = [];
+    valueSeparator: any[] = [];
+    valueCombined: any[] = [];
+}
+```
+
+## Chips: Advanced
 
 This example demonstrates an advanced use case with templating, object handling, dropdown, and multiple mode.
 
@@ -111,224 +595,7 @@ export class AutocompleteAdvancedChipsDemo implements OnInit {
 }
 ```
 
-## basic-chips-doc
-
-With ⁠multiple enabled, the AutoComplete component behaves like a chips or tags input. Use addOnBlur , ⁠addOnTab , and ⁠separator properties to customize the keystroke behavior for adding items.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-@Component({
-    template: `
-        <div class="card">
-            <label id="chips-blur-label" for="chips-blur" class="font-bold mb-2 block">With Add On Blur</label>
-            <p-auto-complete [(ngModel)]="valueBlur" inputId="chips-blur" ariaLabelledBy="chips-blur-label" multiple fluid [typeahead]="false" [addOnBlur]="true" placeholder="Type and click outside to add..." />
-            <label id="chips-tab-label" for="chips-tab" class="font-bold mt-8 mb-2 block">With Add On Tab</label>
-            <p-auto-complete [(ngModel)]="valueTab" inputId="chips-tab" ariaLabelledBy="chips-tab-label" multiple fluid [typeahead]="false" [addOnTab]="true" placeholder="Type and press Tab to add..." />
-            <label id="chips-separator-label" for="chips-separator" class="font-bold mt-8 mb-2 block">With Separator (Comma)</label>
-            <p-auto-complete [(ngModel)]="valueSeparator" inputId="chips-separator" ariaLabelledBy="chips-separator-label" multiple fluid [typeahead]="false" separator="," placeholder="Type items separated by comma..." />
-            <label id="chips-combined-label" for="chips-combined" class="font-bold mt-8 mb-2 block">Combined Features</label>
-            <p-auto-complete
-                [(ngModel)]="valueCombined"
-                inputId="chips-combined"
-                ariaLabelledBy="chips-combined-label"
-                multiple
-                fluid
-                [typeahead]="false"
-                [addOnBlur]="true"
-                [addOnTab]="true"
-                separator=","
-                placeholder="Use Tab, Blur, or Comma to add items..."
-            />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteBasicChipsDemo {
-    valueBlur: any[] = [];
-    valueTab: any[] = [];
-    valueSeparator: any[] = [];
-    valueCombined: any[] = [];
-}
-```
-
-## Basic
-
-AutoComplete uses ngModel for two-way binding, requires a list of suggestions and a completeMethod to query for the results. The completeMethod gets the query text as event.query property and should update the suggestions with the search results.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" />
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, AutoCompleteModule]
-})
-export class AutocompleteBasicDemo {
-    items: any[] = [];
-
-    value: any;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-}
-```
-
-## clear-icon-doc
-
-When showClear is enabled, a clear icon is displayed to clear the value.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" [showClear]="true" inputStyleClass="w-56" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteClearIconDemo {
-    items: any[] = [];
-
-    value: any;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-}
-```
-
-## Disabled
-
-When disabled is present, the element cannot be edited and focused.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Search" [suggestions]="suggestions" placeholder="Disabled" (completeMethod)="search($event)" [disabled]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteDisabledDemo {
-    selectedItem: any;
-
-    suggestions: any[] | undefined;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.suggestions = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-}
-```
-
-## Dropdown
-
-Enabling dropdown property displays a button next to the input field where click behavior of the button is defined using dropdownMode property that takes blank or current as possible values. blank is the default mode to send a query with an empty string whereas current setting sends a query with the current value of the input.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [dropdown]="true" [suggestions]="items" (completeMethod)="search($event)" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteDropdownDemo {
-    items: any[] | undefined;
-
-    value: any;
-
-    search(event: AutoCompleteCompleteEvent) {
-        let _items = [...Array(10).keys()];
-
-        this.items = event.query ? [...Array(10).keys()].map((item) => event.query + '-' + item) : _items;
-    }
-}
-```
-
-## Filled
-
-Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Search" [suggestions]="suggestions" (completeMethod)="search($event)" variant="filled" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteFilledDemo {
-    selectedItem: any;
-
-    suggestions: any[] | undefined;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.suggestions = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-}
-```
-
-## float-label-doc
+## Float Label
 
 A floating label appears on top of the input field when focused. Visit FloatLabel documentation for more information.
 
@@ -379,193 +646,7 @@ export class AutocompleteFloatLabelDemo {
 }
 ```
 
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" fluid />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteFluidDemo {
-    items: any[] = [];
-
-    value: any;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-}
-```
-
-## force-selection-doc
-
-ForceSelection mode validates the manual input to check whether it also exists in the suggestions list, if not the input value is cleared to make sure the value passed to the model is always one of the suggestions.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-import { CountryService } from '@/service/countryservice';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedCountry" ariaLabel="Country" [forceSelection]="true" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule],
-    providers: [CountryService]
-})
-export class AutocompleteForceSelectionDemo implements OnInit {
-    private countryService = inject(CountryService);
-
-    countries: any[] | undefined;
-
-    selectedCountry: any;
-
-    filteredCountries: any[] | undefined;
-
-    ngOnInit() {
-        this.countryService.getCountries().then((countries) => {
-            this.countries = countries;
-        });
-    }
-
-    filterCountry(event: AutoCompleteCompleteEvent) {
-        let filtered: any[] = [];
-        let query = event.query;
-
-        for (let i = 0; i < (this.countries as any[]).length; i++) {
-            let country = (this.countries as any[])[i];
-            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                filtered.push(country);
-            }
-        }
-
-        this.filteredCountries = filtered;
-    }
-}
-```
-
-## Group
-
-Option grouping is enabled when group property is set to true . group template is available to customize the option groups. All templates get the option instance as the default local template variable.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { FilterService, SelectItemGroup } from '@exhaustive-ui/core/api';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedCity" ariaLabel="City" [group]="true" [suggestions]="filteredGroups" (completeMethod)="filterGroupedCity($event)" placeholder="Hint: type 'a'">
-                <ng-template let-group #group>
-                    <div class="flex items-center">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
-                        <span>{{ group.label }}</span>
-                    </div>
-                </ng-template>
-            </p-auto-complete>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, AutoCompleteModule]
-})
-export class AutocompleteGroupDemo implements OnInit {
-    private filterService = inject(FilterService);
-
-    selectedCity: any;
-
-    filteredGroups: any[] | undefined;
-
-    groupedCities: SelectItemGroup[] | undefined;
-
-    ngOnInit() {
-        this.groupedCities = [
-            {
-                label: 'Germany',
-                value: 'de',
-                items: [
-                    { label: 'Berlin', value: 'Berlin' },
-                    { label: 'Frankfurt', value: 'Frankfurt' },
-                    { label: 'Hamburg', value: 'Hamburg' },
-                    { label: 'Munich', value: 'Munich' }
-                ]
-            },
-            {
-                label: 'USA',
-                value: 'us',
-                items: [
-                    { label: 'Chicago', value: 'Chicago' },
-                    { label: 'Los Angeles', value: 'Los Angeles' },
-                    { label: 'New York', value: 'New York' },
-                    { label: 'San Francisco', value: 'San Francisco' }
-                ]
-            },
-            {
-                label: 'Japan',
-                value: 'jp',
-                items: [
-                    { label: 'Kyoto', value: 'Kyoto' },
-                    { label: 'Osaka', value: 'Osaka' },
-                    { label: 'Tokyo', value: 'Tokyo' },
-                    { label: 'Yokohama', value: 'Yokohama' }
-                ]
-            }
-        ];
-    }
-
-    filterGroupedCity(event: AutoCompleteCompleteEvent) {
-        let query = event.query;
-        let filteredGroups = [];
-
-        for (let optgroup of this.groupedCities as SelectItemGroup[]) {
-            let filteredSubOptions = this.filterService.filter(optgroup.items, ['label'], query, 'contains');
-            if (filteredSubOptions && filteredSubOptions.length) {
-                filteredGroups.push({
-                    label: optgroup.label,
-                    value: optgroup.value,
-                    items: filteredSubOptions
-                });
-            }
-        }
-
-        this.filteredGroups = filteredGroups;
-    }
-}
-```
-
-## ifta-label-doc
+## Ifta Label
 
 IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
 
@@ -600,6 +681,177 @@ export class AutocompleteIftaLabelDemo {
 
     search(event: AutoCompleteCompleteEvent) {
         this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Clear Icon
+
+When showClear is enabled, a clear icon is displayed to clear the value.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" [showClear]="true" inputStyleClass="w-56" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteClearIconDemo {
+    items: any[] = [];
+
+    value: any;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Sizes
+
+AutoComplete provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-auto-complete [(ngModel)]="value1" ariaLabel="Small" [suggestions]="items" (completeMethod)="search()" size="small" placeholder="Small" dropdown />
+            <p-auto-complete [(ngModel)]="value2" ariaLabel="Normal" [suggestions]="items" (completeMethod)="search()" placeholder="Normal" dropdown />
+            <p-auto-complete [(ngModel)]="value3" ariaLabel="Large" [suggestions]="items" (completeMethod)="search()" size="large" placeholder="Large" dropdown />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteSizesDemo {
+    items: any[] | undefined;
+
+    value1: any;
+
+    value2: any;
+
+    value3: any;
+
+    search() {
+        this.items = [];
+    }
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-auto-complete [(ngModel)]="value" ariaLabel="Search" [suggestions]="items" (completeMethod)="search($event)" fluid />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteFluidDemo {
+    items: any[] = [];
+
+    value: any;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Filled
+
+Specify the variant property as filled to display the component with a higher visual emphasis than the default outlined style.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Search" [suggestions]="suggestions" (completeMethod)="search($event)" variant="filled" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteFilledDemo {
+    selectedItem: any;
+
+    suggestions: any[] | undefined;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.suggestions = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Search" [suggestions]="suggestions" placeholder="Disabled" (completeMethod)="search($event)" [disabled]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AutoCompleteModule]
+})
+export class AutocompleteDisabledDemo {
+    selectedItem: any;
+
+    suggestions: any[] | undefined;
+
+    search(event: AutoCompleteCompleteEvent) {
+        this.suggestions = [...Array(10).keys()].map((item) => event.query + '-' + item);
     }
 }
 ```
@@ -641,102 +893,59 @@ export class AutocompleteInvalidDemo {
 }
 ```
 
-## Multiple
-
-Enable multiple selection mode using the ⁠multiple property to allow users to select more than one value from the autocomplete. When enabled, the value reference must be an array.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { AutoCompleteCompleteEvent } from '@exhaustive-ui/core/autocomplete';
 import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
-        <div class="card">
-            <label id="multiple-ac-1-label" for="multiple-ac-1" class="font-bold mb-2 block">With Typeahead</label>
-            <p-auto-complete [(ngModel)]="value1" inputId="multiple-ac-1" ariaLabelledBy="multiple-ac-1-label" multiple fluid [suggestions]="items" (completeMethod)="search($event)" />
-            <label id="multiple-ac-2-label" for="multiple-ac-2" class="font-bold mt-8 mb-2 block">Without Typeahead</label>
-            <p-auto-complete [(ngModel)]="value2" inputId="multiple-ac-2" ariaLabelledBy="multiple-ac-2-label" multiple fluid (completeMethod)="search($event)" [typeahead]="false" />
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
+                <div class="flex flex-col gap-1">
+                    <p-auto-complete #val="ngModel" ariaLabel="Value" [(ngModel)]="value" [suggestions]="items" [invalid]="val.invalid && (val.touched || exampleForm.submitted)" name="val" (completeMethod)="search($event)" required fluid />
+                    @if (val.invalid && (val.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Value is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
+    imports: [CommonModule, FormsModule, AutoCompleteModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
 })
-export class AutocompleteMultipleDemo {
-    value1: any[] | undefined;
+export class AutocompleteTemplateDrivenFormsDemo {
+    messageService = inject(MessageService);
 
-    value2: any[] | undefined;
+    items: any[] = [];
 
-    items: any[] | undefined;
+    value: any;
 
     search(event: AutoCompleteCompleteEvent) {
         this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
     }
-}
-```
 
-## Objects
-
-AutoComplete can also work with objects using the optionLabel property that defines the label to display as a suggestion. The value passed to the model would still be the object instance of a suggestion. Here is an example with a Country object that has name and code fields such as {name: "United States", code:"USA"} .
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-import { CountryService } from '@/service/countryservice';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedCountry" ariaLabel="Country" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule],
-    providers: [CountryService]
-})
-export class AutocompleteObjectsDemo implements OnInit {
-    private countryService = inject(CountryService);
-
-    countries: any[] | undefined;
-
-    selectedCountry: any;
-
-    filteredCountries: any[] | undefined;
-
-    ngOnInit() {
-        this.countryService.getCountries().then((countries) => {
-            this.countries = countries;
-        });
-    }
-
-    filterCountry(event: AutoCompleteCompleteEvent) {
-        let filtered: any[] = [];
-        let query = event.query;
-
-        for (let i = 0; i < (this.countries as any[]).length; i++) {
-            let country = (this.countries as any[])[i];
-            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                filtered.push(country);
-            }
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
         }
-
-        this.filteredCountries = filtered;
     }
 }
 ```
 
-## reactive-forms-doc
+## Reactive Forms
 
 AutoComplete can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -874,218 +1083,9 @@ export class AutocompleteSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-AutoComplete provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-auto-complete [(ngModel)]="value1" ariaLabel="Small" [suggestions]="items" (completeMethod)="search()" size="small" placeholder="Small" dropdown />
-            <p-auto-complete [(ngModel)]="value2" ariaLabel="Normal" [suggestions]="items" (completeMethod)="search()" placeholder="Normal" dropdown />
-            <p-auto-complete [(ngModel)]="value3" ariaLabel="Large" [suggestions]="items" (completeMethod)="search()" size="large" placeholder="Large" dropdown />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteSizesDemo {
-    items: any[] | undefined;
-
-    value1: any;
-
-    value2: any;
-
-    value3: any;
-
-    search() {
-        this.items = [];
-    }
-}
-```
-
-## Template
-
-AutoComplete offers multiple templates for customization through templating.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { CountryService } from '@/service/countryservice';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedCountryAdvanced" ariaLabel="Country" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" optionLabel="name">
-                <ng-template let-country #item>
-                    <div class="flex items-center gap-2">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
-                        <div>{{ country.name }}</div>
-                    </div>
-                </ng-template>
-                <ng-template #header>
-                    <div class="font-medium px-3 py-2">Available Countries</div>
-                </ng-template>
-                <ng-template #footer>
-                    <div class="px-3 py-3">
-                        <p-button label="Add New" fluid severity="secondary" text size="small" icon="pi pi-plus" />
-                    </div>
-                </ng-template>
-            </p-auto-complete>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule],
-    providers: [CountryService]
-})
-export class AutocompleteTemplateDemo {
-    private countryService = inject(CountryService);
-
-    countries: any[] | undefined;
-
-    selectedCountryAdvanced: any[] | undefined;
-
-    filteredCountries: any[] | undefined;
-
-    ngOnInit() {
-        this.countryService.getCountries().then((countries) => {
-            this.countries = countries;
-        });
-    }
-
-    filterCountry(event: AutoCompleteCompleteEvent) {
-        let filtered: any[] = [];
-        let query = event.query;
-
-        for (let i = 0; i < (this.countries as any[]).length; i++) {
-            let country = (this.countries as any[])[i];
-            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                filtered.push(country);
-            }
-        }
-        this.filteredCountries = filtered;
-    }
-}
-```
-
-## template-driven-forms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { AutoCompleteCompleteEvent } from '@exhaustive-ui/core/autocomplete';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
-                <div class="flex flex-col gap-1">
-                    <p-auto-complete #val="ngModel" ariaLabel="Value" [(ngModel)]="value" [suggestions]="items" [invalid]="val.invalid && (val.touched || exampleForm.submitted)" name="val" (completeMethod)="search($event)" required fluid />
-                    @if (val.invalid && (val.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Value is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, AutoCompleteModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class AutocompleteTemplateDrivenFormsDemo {
-    messageService = inject(MessageService);
-
-    items: any[] = [];
-
-    value: any;
-
-    search(event: AutoCompleteCompleteEvent) {
-        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
-    }
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## virtual-scroll-doc
-
-Virtual scrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable virtual scrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from '@exhaustive-ui/core/autocomplete';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-auto-complete [(ngModel)]="selectedItem" ariaLabel="Item" [virtualScroll]="true" [suggestions]="filteredItems" [virtualScrollItemSize]="34" (completeMethod)="filterItems($event)" optionLabel="label" [dropdown]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AutoCompleteModule]
-})
-export class AutocompleteVirtualScrollDemo {
-    selectedItem: any;
-
-    filteredItems: any[] | undefined;
-
-    items: any[] | undefined;
-
-    filterItems(event: AutoCompleteCompleteEvent) {
-        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-        let filtered: any[] = [];
-        let query = event.query;
-
-        for (let i = 0; i < (this.items as any[]).length; i++) {
-            let item = (this.items as any[])[i];
-            if (item.label.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                filtered.push(item);
-            }
-        }
-
-        this.filteredItems = filtered;
-    }
-
-    ngOnInit() {
-        this.items = [];
-        for (let i = 0; i < 10000; i++) {
-            this.items.push({ label: 'Item ' + i, value: 'Item ' + i });
-        }
-    }
-}
-```
+Screen Reader Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props. The input element has combobox role in addition to aria-autocomplete , aria-haspopup and aria-expanded attributes. The relation between the input and the popup is created with aria-controls and aria-activedescendant attribute is used to instruct screen reader which option to read during keyboard navigation within the popup list. In multiple mode, the chips are a listbox next to the input, named like the input, and each chip has the option role with aria-label set to the label of the chip. The chips receive the focus with the arrow keys, and their remove icon is hidden from screen readers and from the tab order: use backspace or delete on a focused chip instead. The popup list has an id that refers to the aria-controls attribute of the input element and uses listbox as the role. Each list item has option role and an id to match the aria-activedescendant of the input element.
 
 ## Pass Through Options
 

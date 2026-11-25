@@ -2,10 +2,6 @@
 
 Dialog is a container to display content in an overlay window.
 
-## Accessibility
-
-Screen Reader Dialog component uses dialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Trigger element also requires aria-expanded and aria-controls to be handled explicitly. Close element is a button with an aria-label that refers to the aria.close property of the locale API by default, you may use closeButtonProps to customize the element and override the default aria-label . Maximize element is a button with an aria-label that refers to the aria.maximizeLabel and aria.minimizeLabel property of the locale API. It cannot be customized using the maximizeButtonProps . Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the dialog. shift + tab Moves focus to the previous the focusable element within the dialog. escape Closes the dialog if closeOnEscape is true. Close Button Keyboard Support Key Function enter Closes the dialog. space Closes the dialog.
-
 ## Basic
 
 Dialog is used as a container and visibility is controlled with visible property.
@@ -41,6 +37,285 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
     imports: [DialogModule, ButtonModule, InputTextModule]
 })
 export class DialogBasicDemo {
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
+## Template
+
+Dialog can be customized using header and footer templates.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
+                <ng-template #header>
+                    <div class="inline-flex items-center justify-center gap-2">
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <span class="font-bold whitespace-nowrap">Amy Elsner</span>
+                    </div>
+                </ng-template>
+                <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
+                <div class="flex items-center gap-4 mb-4">
+                    <label for="username" class="font-semibold w-24">Username</label>
+                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
+                </div>
+                <div class="flex items-center gap-4 mb-2">
+                    <label for="email" class="font-semibold w-24">Email</label>
+                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
+                </div>
+                <ng-template #footer>
+                    <p-button label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
+                    <p-button label="Save" [outlined]="true" severity="secondary" (click)="visible = false" />
+                </ng-template>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule, InputTextModule, AvatarModule]
+})
+export class DialogTemplateDemo {
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
+## Position
+
+The position property is used to display a Dialog at all edges and corners of the screen.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="flex flex-wrap justify-center gap-2 mb-2">
+                <p-button (click)="showDialog('left')" icon="pi pi-arrow-right" label="Left" severity="secondary" styleClass="min-w-40" />
+                <p-button (click)="showDialog('right')" icon="pi pi-arrow-left" label="Right" severity="secondary" styleClass="min-w-40" />
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mb-2">
+                <p-button (click)="showDialog('topleft')" icon="pi pi-arrow-down-right" label="TopLeft" severity="secondary" styleClass="min-w-40" />
+                <p-button (click)="showDialog('top')" icon="pi pi-arrow-down" label="Top" severity="secondary" styleClass="min-w-40" />
+                <p-button (click)="showDialog('topright')" icon="pi pi-arrow-down-left" label="TopRight" severity="secondary" styleClass="min-w-40" />
+            </div>
+            <div class="flex flex-wrap justify-center gap-2">
+                <p-button (click)="showDialog('bottomleft')" icon="pi pi-arrow-up-right" label="BottomLeft" severity="secondary" styleClass="min-w-40" />
+                <p-button (click)="showDialog('bottom')" icon="pi pi-arrow-up" label="Bottom" severity="secondary" styleClass="min-w-40" />
+                <p-button (click)="showDialog('bottomright')" icon="pi pi-arrow-up-left" label="BottomRight" severity="secondary" styleClass="min-w-40" />
+            </div>
+            <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [position]="position" [style]="{ width: '25rem' }">
+                <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
+                <div class="flex items-center gap-4 mb-4">
+                    <label for="username" class="font-semibold w-24">Username</label>
+                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
+                </div>
+                <div class="flex items-center gap-4 mb-8">
+                    <label for="email" class="font-semibold w-24">Email</label>
+                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
+                </div>
+                <div class="flex justify-end gap-2">
+                    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+                    <p-button label="Save" (click)="visible = false" />
+                </div>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule, InputTextModule]
+})
+export class DialogPositionDemo {
+    visible: boolean = false;
+
+    position: 'left' | 'right' | 'top' | 'bottom' | 'center' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright' = 'center';
+
+    showDialog(position: 'left' | 'right' | 'top' | 'bottom' | 'center' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright') {
+        this.position = position;
+        this.visible = true;
+    }
+}
+```
+
+## Maximizable
+
+Setting maximizable property to true enables the full screen mode.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Header" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule]
+})
+export class DialogMaximizableDemo {
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
+## Long Content
+
+Dialog automatically displays a scroller when content exceeds viewport.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Header" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+                <p class="mb-8">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <p class="mb-8">
+                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+                    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea
+                    commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+                </p>
+                <p class="mb-8">
+                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui
+                    officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime
+                    placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non
+                    recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+                </p>
+                <p class="mb-8">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <p class="mb-8">
+                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+                    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea
+                    commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+                </p>
+                <p>
+                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui
+                    officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime
+                    placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non
+                    recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+                </p>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule]
+})
+export class DialogLongcontentDemo {
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
+## Without Modal
+
+Mask layer behind the Dialog is configured with the modal property. By default, no modal layer is added.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Edit Profile" [(visible)]="visible" [style]="{ width: '25rem' }">
+                <span class="p-text-secondary block mb-8">Update your information.</span>
+                <div class="flex items-center gap-4 mb-4">
+                    <label for="username" class="font-semibold w-24">Username</label>
+                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
+                </div>
+                <div class="flex items-center gap-4 mb-8">
+                    <label for="email" class="font-semibold w-24">Email</label>
+                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
+                </div>
+                <div class="flex justify-end gap-2">
+                    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+                    <p-button label="Save" (click)="visible = false" />
+                </div>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule, InputTextModule]
+})
+export class DialogWithoutmodalDemo {
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
+## Responsive
+
+Dialog width can be adjusted per screen size with the breakpoints option where a key defines the max-width for the breakpoint and value for the corresponding width. When no breakpoint matches width defined in style property is used.
+
+```typescript
+import { Component } from '@angular/core';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Header" [(visible)]="visible" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [DialogModule, ButtonModule]
+})
+export class DialogResponsiveDemo {
     visible: boolean = false;
 
     showDialog() {
@@ -128,370 +403,9 @@ export class DialogHeadlessDemo {
 }
 ```
 
-## Long Content
+## Accessibility
 
-Dialog automatically displays a scroller when content exceeds viewport.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" label="Show" />
-            <p-dialog header="Header" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-                <p class="mb-8">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-                <p class="mb-8">
-                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea
-                    commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                </p>
-                <p class="mb-8">
-                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui
-                    officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime
-                    placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non
-                    recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-                </p>
-                <p class="mb-8">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-                <p class="mb-8">
-                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea
-                    commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                </p>
-                <p>
-                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui
-                    officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime
-                    placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non
-                    recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-                </p>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule]
-})
-export class DialogLongcontentDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## Maximizable
-
-Setting maximizable property to true enables the full screen mode.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" label="Show" />
-            <p-dialog header="Header" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule]
-})
-export class DialogMaximizableDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## modal-doc
-
-Mask layer behind the Dialog can be turned on by setting the modal property to true .
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" icon="pi pi-external-link" label="Show"></p-button>
-            <p-dialog header="Header" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-                <p class="m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule]
-})
-export class DialogModalDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## overlaysinside-doc
-
-When dialog includes other components with overlays such as dropdown, the overlay part cannot exceed dialog boundaries due to overflow. In order to solve this, you can either append the overlay to the body by using appendTo property or allow overflow in dialog.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { SelectModule } from '@exhaustive-ui/core/select';
-
-interface City {
-    name: string;
-    code: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" icon="pi pi-external-link" label="Show"></p-button>
-            <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '50vw' }">
-                <div class="flex py-2 justify-center">
-                    <p-select appendTo="body" [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name"></p-select>
-                </div>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, DialogModule, ButtonModule, SelectModule]
-})
-export class DialogOverlaysinsideDemo implements OnInit {
-    cities: City[] | undefined;
-
-    selectedCity: City | undefined;
-
-    visible: boolean = false;
-
-    ngOnInit() {
-        this.cities = [
-            { name: 'New York', code: 'NY' },
-            { name: 'Rome', code: 'RM' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Paris', code: 'PRS' }
-        ];
-    }
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## Position
-
-The position property is used to display a Dialog at all edges and corners of the screen.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card">
-            <div class="flex flex-wrap justify-center gap-2 mb-2">
-                <p-button (click)="showDialog('left')" icon="pi pi-arrow-right" label="Left" severity="secondary" styleClass="min-w-40" />
-                <p-button (click)="showDialog('right')" icon="pi pi-arrow-left" label="Right" severity="secondary" styleClass="min-w-40" />
-            </div>
-            <div class="flex flex-wrap justify-center gap-2 mb-2">
-                <p-button (click)="showDialog('topleft')" icon="pi pi-arrow-down-right" label="TopLeft" severity="secondary" styleClass="min-w-40" />
-                <p-button (click)="showDialog('top')" icon="pi pi-arrow-down" label="Top" severity="secondary" styleClass="min-w-40" />
-                <p-button (click)="showDialog('topright')" icon="pi pi-arrow-down-left" label="TopRight" severity="secondary" styleClass="min-w-40" />
-            </div>
-            <div class="flex flex-wrap justify-center gap-2">
-                <p-button (click)="showDialog('bottomleft')" icon="pi pi-arrow-up-right" label="BottomLeft" severity="secondary" styleClass="min-w-40" />
-                <p-button (click)="showDialog('bottom')" icon="pi pi-arrow-up" label="Bottom" severity="secondary" styleClass="min-w-40" />
-                <p-button (click)="showDialog('bottomright')" icon="pi pi-arrow-up-left" label="BottomRight" severity="secondary" styleClass="min-w-40" />
-            </div>
-            <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [position]="position" [style]="{ width: '25rem' }">
-                <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
-                <div class="flex items-center gap-4 mb-4">
-                    <label for="username" class="font-semibold w-24">Username</label>
-                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <label for="email" class="font-semibold w-24">Email</label>
-                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
-                </div>
-                <div class="flex justify-end gap-2">
-                    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
-                    <p-button label="Save" (click)="visible = false" />
-                </div>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule, InputTextModule]
-})
-export class DialogPositionDemo {
-    visible: boolean = false;
-
-    position: 'left' | 'right' | 'top' | 'bottom' | 'center' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright' = 'center';
-
-    showDialog(position: 'left' | 'right' | 'top' | 'bottom' | 'center' | 'topleft' | 'topright' | 'bottomleft' | 'bottomright') {
-        this.position = position;
-        this.visible = true;
-    }
-}
-```
-
-## Responsive
-
-Dialog width can be adjusted per screen size with the breakpoints option where a key defines the max-width for the breakpoint and value for the corresponding width. When no breakpoint matches width defined in style property is used.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" label="Show" />
-            <p-dialog header="Header" [(visible)]="visible" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule]
-})
-export class DialogResponsiveDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## Template
-
-Dialog can be customized using header and footer templates.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-import { AvatarModule } from '@exhaustive-ui/core/avatar';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" label="Show" />
-            <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
-                <ng-template #header>
-                    <div class="inline-flex items-center justify-center gap-2">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
-                        <span class="font-bold whitespace-nowrap">Amy Elsner</span>
-                    </div>
-                </ng-template>
-                <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span>
-                <div class="flex items-center gap-4 mb-4">
-                    <label for="username" class="font-semibold w-24">Username</label>
-                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
-                </div>
-                <div class="flex items-center gap-4 mb-2">
-                    <label for="email" class="font-semibold w-24">Email</label>
-                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
-                </div>
-                <ng-template #footer>
-                    <p-button label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
-                    <p-button label="Save" [outlined]="true" severity="secondary" (click)="visible = false" />
-                </ng-template>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule, InputTextModule, AvatarModule]
-})
-export class DialogTemplateDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
-
-## Without Modal
-
-Mask layer behind the Dialog is configured with the modal property. By default, no modal layer is added.
-
-```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from '@exhaustive-ui/core/dialog';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button (click)="showDialog()" label="Show" />
-            <p-dialog header="Edit Profile" [(visible)]="visible" [style]="{ width: '25rem' }">
-                <span class="p-text-secondary block mb-8">Update your information.</span>
-                <div class="flex items-center gap-4 mb-4">
-                    <label for="username" class="font-semibold w-24">Username</label>
-                    <input pInputText id="username" class="flex-auto" autocomplete="off" />
-                </div>
-                <div class="flex items-center gap-4 mb-8">
-                    <label for="email" class="font-semibold w-24">Email</label>
-                    <input pInputText id="email" class="flex-auto" autocomplete="off" />
-                </div>
-                <div class="flex justify-end gap-2">
-                    <p-button label="Cancel" severity="secondary" (click)="visible = false" />
-                    <p-button label="Save" (click)="visible = false" />
-                </div>
-            </p-dialog>
-        </div>
-    `,
-    standalone: true,
-    imports: [DialogModule, ButtonModule, InputTextModule]
-})
-export class DialogWithoutmodalDemo {
-    visible: boolean = false;
-
-    showDialog() {
-        this.visible = true;
-    }
-}
-```
+Screen Reader Dialog component uses dialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Trigger element also requires aria-expanded and aria-controls to be handled explicitly. Close element is a button with an aria-label that refers to the aria.close property of the locale API by default, you may use closeButtonProps to customize the element and override the default aria-label . Maximize element is a button with an aria-label that refers to the aria.maximizeLabel and aria.minimizeLabel property of the locale API. It cannot be customized using the maximizeButtonProps . Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the dialog. shift + tab Moves focus to the previous the focusable element within the dialog. escape Closes the dialog if closeOnEscape is true. Close Button Keyboard Support Key Function enter Closes the dialog. space Closes the dialog.
 
 ## Dialog
 

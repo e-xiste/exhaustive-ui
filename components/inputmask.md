@@ -2,10 +2,6 @@
 
 InputMask component is used to enter input in a certain format such as numeric, date, currency and phone.
 
-## Accessibility
-
-Screen Reader InputMask directive is used with a native input element that implicitly includes any passed attribute. Value to describe the component can either be provided via label tag combined with id attribute or using aria-labelledby , aria-label attributes.
-
 ## Basic
 
 InputMask is used as a controlled input with ngModel properties.
@@ -30,32 +26,49 @@ export class InputmaskBasicDemo {
 }
 ```
 
-## clearicon-doc
+## Mask
 
-When showClear is enabled, a clear icon is displayed to clear the value.
+Mask format can be a combination of the following definitions; a for alphabetic characters, 9 for numeric characters and * for alphanumberic characters. In addition, formatting characters like ( , ) , - are also accepted.
 
 ```typescript
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+import { FluidModule } from '@exhaustive-ui/core/fluid';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-input-mask mask="99-999999" [(ngModel)]="value" placeholder="99-999999" [showClear]="true" />
-        </div>
+        <p-fluid class="card flex flex-wrap gap-4">
+            <div class="flex-auto">
+                <span class="font-bold block mb-2">SSN</span>
+                <input pInputText pInputMask="999-99-9999" [(ngModel)]="value1" placeholder="999-99-9999" />
+            </div>
+            <div class="flex-auto">
+                <span class="font-bold block mb-2">Phone</span>
+                <input pInputText pInputMask="(999) 999-9999" [(ngModel)]="value2" placeholder="(999) 999-9999" />
+            </div>
+            <div class="flex-auto">
+                <span class="font-bold block mb-2">Serial Number</span>
+                <input pInputText pInputMask="a*-999-a999" [(ngModel)]="value3" placeholder="a*-999-a999" />
+            </div>
+        </p-fluid>
     `,
     standalone: true,
-    imports: [FormsModule, InputMaskModule]
+    imports: [FormsModule, InputMaskModule, InputText, FluidModule]
 })
-export class InputmaskCleariconDemo {
-    value: string | undefined;
+export class InputmaskMaskDemo {
+    value1: string | undefined;
+
+    value2: string | undefined;
+
+    value3: string | undefined;
 }
 ```
 
-## Disabled
+## Optional
 
-When disabled is present, the element cannot be edited and focused.
+When the input does not complete the mask definition, it is cleared by default. Use autoClear property to control this behavior. In addition, ? is used to mark anything after the question mark optional.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -66,13 +79,37 @@ import { InputText } from '@exhaustive-ui/core/inputtext';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <input pInputText pInputMask="999-99-9999" [(ngModel)]="value" disabled aria-label="SSN" />
+            <input pInputText pInputMask="(999) 999-9999? x99999" [(ngModel)]="value" placeholder="(999) 999-9999? x99999" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, InputMaskModule, InputText]
 })
-export class InputmaskDisabledDemo {
+export class InputmaskOptionalDemo {
+    value: string | undefined;
+}
+```
+
+## SlotChar
+
+Default placeholder for a mask is underscore that can be customized using slotChar property.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <input pInputText [(ngModel)]="value" pInputMask="99/99/9999" placeholder="99/99/9999" slotChar="mm/dd/yyyy" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputMaskModule, InputText]
+})
+export class InputmaskSlotcharDemo {
     value: string | undefined;
 }
 ```
@@ -142,30 +179,6 @@ export class InputmaskFloatlabelDemo {
 }
 ```
 
-## Fluid
-
-The fluid prop makes the component take up the full width of its container when set to true.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
-import { InputText } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card">
-            <input pInputText pInputMask="99-999999" [(ngModel)]="value" placeholder="99-999999" fluid />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText]
-})
-export class InputmaskFluidDemo {
-    value: string | undefined;
-}
-```
-
 ## Ifta Label
 
 IftaLabel is used to create infield top aligned labels. Visit IftaLabel documentation for more information.
@@ -191,6 +204,84 @@ import { IftaLabelModule } from '@exhaustive-ui/core/iftalabel';
     imports: [FormsModule, RouterModule, InputMaskModule, InputText, IftaLabelModule]
 })
 export class InputmaskIftalabelDemo {
+    value: string | undefined;
+}
+```
+
+## Sizes
+
+InputMask provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <input pInputText [(ngModel)]="value1" placeholder="Small" pSize="small" pInputMask="99-999999" />
+            <input pInputText [(ngModel)]="value2" placeholder="Normal" pInputMask="99-999999" />
+            <input pInputText [(ngModel)]="value3" placeholder="Large" pSize="large" pInputMask="99-999999" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputMaskModule, InputText]
+})
+export class InputmaskSizesDemo {
+    value1: string | undefined;
+
+    value2: string | undefined;
+
+    value3: string | undefined;
+}
+```
+
+## Fluid
+
+The fluid prop makes the component take up the full width of its container when set to true.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card">
+            <input pInputText pInputMask="99-999999" [(ngModel)]="value" placeholder="99-999999" fluid />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputMaskModule, InputText]
+})
+export class InputmaskFluidDemo {
+    value: string | undefined;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+import { InputText } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <input pInputText pInputMask="999-99-9999" [(ngModel)]="value" disabled aria-label="SSN" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputMaskModule, InputText]
+})
+export class InputmaskDisabledDemo {
     value: string | undefined;
 }
 ```
@@ -222,71 +313,55 @@ export class InputmaskInvalidDemo {
 }
 ```
 
-## Mask
-
-Mask format can be a combination of the following definitions; a for alphabetic characters, 9 for numeric characters and * for alphanumberic characters. In addition, formatting characters like ( , ) , - are also accepted.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
-import { InputText } from '@exhaustive-ui/core/inputtext';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 import { FluidModule } from '@exhaustive-ui/core/fluid';
-
-@Component({
-    template: `
-        <p-fluid class="card flex flex-wrap gap-4">
-            <div class="flex-auto">
-                <span class="font-bold block mb-2">SSN</span>
-                <input pInputText pInputMask="999-99-9999" [(ngModel)]="value1" placeholder="999-99-9999" />
-            </div>
-            <div class="flex-auto">
-                <span class="font-bold block mb-2">Phone</span>
-                <input pInputText pInputMask="(999) 999-9999" [(ngModel)]="value2" placeholder="(999) 999-9999" />
-            </div>
-            <div class="flex-auto">
-                <span class="font-bold block mb-2">Serial Number</span>
-                <input pInputText pInputMask="a*-999-a999" [(ngModel)]="value3" placeholder="a*-999-a999" />
-            </div>
-        </p-fluid>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText, FluidModule]
-})
-export class InputmaskMaskDemo {
-    value1: string | undefined;
-
-    value2: string | undefined;
-
-    value3: string | undefined;
-}
-```
-
-## Optional
-
-When the input does not complete the mask definition, it is cleared by default. Use autoClear property to control this behavior. In addition, ? is used to mark anything after the question mark optional.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
 import { InputText } from '@exhaustive-ui/core/inputtext';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
+        <p-toast />
         <div class="card flex justify-center">
-            <input pInputText pInputMask="(999) 999-9999? x99999" [(ngModel)]="value" placeholder="(999) 999-9999? x99999" />
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
+                <div class="flex flex-col gap-1">
+                    <input pInputText name="serial" pInputMask="99-999999" #serialNumber="ngModel" [(ngModel)]="value" placeholder="99-999999" [invalid]="serialNumber.invalid && (serialNumber.touched || exampleForm.submitted)" required fluid />
+                    @if (serialNumber.invalid && (serialNumber.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Serial number is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText]
+    imports: [FormsModule, InputMaskModule, InputText, ButtonModule, ToastModule, MessageModule, FluidModule],
+    providers: [MessageService]
 })
-export class InputmaskOptionalDemo {
-    value: string | undefined;
+export class InputmaskTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    items: any[] = [];
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 InputMask can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -404,107 +479,9 @@ export class InputmaskSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-InputMask provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
-import { InputText } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <input pInputText [(ngModel)]="value1" placeholder="Small" pSize="small" pInputMask="99-999999" />
-            <input pInputText [(ngModel)]="value2" placeholder="Normal" pInputMask="99-999999" />
-            <input pInputText [(ngModel)]="value3" placeholder="Large" pSize="large" pInputMask="99-999999" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText]
-})
-export class InputmaskSizesDemo {
-    value1: string | undefined;
-
-    value2: string | undefined;
-
-    value3: string | undefined;
-}
-```
-
-## SlotChar
-
-Default placeholder for a mask is underscore that can be customized using slotChar property.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
-import { InputText } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <input pInputText [(ngModel)]="value" pInputMask="99/99/9999" placeholder="99/99/9999" slotChar="mm/dd/yyyy" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText]
-})
-export class InputmaskSlotcharDemo {
-    value: string | undefined;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { FluidModule } from '@exhaustive-ui/core/fluid';
-import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
-import { InputText } from '@exhaustive-ui/core/inputtext';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
-                <div class="flex flex-col gap-1">
-                    <input pInputText name="serial" pInputMask="99-999999" #serialNumber="ngModel" [(ngModel)]="value" placeholder="99-999999" [invalid]="serialNumber.invalid && (serialNumber.touched || exampleForm.submitted)" required fluid />
-                    @if (serialNumber.invalid && (serialNumber.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Serial number is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputMaskModule, InputText, ButtonModule, ToastModule, MessageModule, FluidModule],
-    providers: [MessageService]
-})
-export class InputmaskTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    items: any[] = [];
-
-    value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader InputMask directive is used with a native input element that implicitly includes any passed attribute. Value to describe the component can either be provided via label tag combined with id attribute or using aria-labelledby , aria-label attributes.
 
 ## Input Mask
 

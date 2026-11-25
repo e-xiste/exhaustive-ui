@@ -2,10 +2,6 @@
 
 SplitButton groups a set of commands in an overlay with a default action item.
 
-## Accessibility
-
-Screen Reader SplitButton component renders two native button elements, main button uses the label property to define aria-label by default which can be customized with buttonProps . Dropdown button requires an explicit definition to describe it using menuButtonProps option and also includes aria-haspopup , aria-expanded for states along with aria-controls to define the relation between the popup and the button. The popup overlay uses menu role on the list and each action item has a menuitem role with an aria-label as the menuitem label. The id of the menu refers to the aria-controls of the dropdown button.
-
 ## Basic
 
 SplitButton has a default action button and a collection of additional options defined by the model property based on MenuModel API.
@@ -63,67 +59,6 @@ export class SplitbuttonBasicDemo {
 
     delete() {
         this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted' });
-    }
-}
-```
-
-## Disabled
-
-When the disabled attribute is present, the element is uneditable and unfocused. Additionally, the disabled states of the button and menu button can be handled independently. The button is disabled when buttonDisabled is present, and the menu button is disabled when menuButtonDisabled is present.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-split-button label="Save" icon="pi pi-plus" (onClick)="save('info')" [model]="items" [disabled]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [SplitButtonModule, ToastModule, RouterModule],
-    providers: [MessageService]
-})
-export class SplitbuttonDisabledDemo {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[];
-
-    constructor() {
-        this.items = [
-            {
-                label: 'Update',
-                command: () => {
-                    this.update();
-                }
-            },
-            {
-                label: 'Delete',
-                command: () => {
-                    this.delete();
-                }
-            },
-            { label: 'Angular.dev', url: 'https://angular.dev' },
-            { separator: true },
-            { label: 'Upload', routerLink: ['/fileupload'] }
-        ];
-    }
-
-    save(severity: string) {
-        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
-    }
-
-    update() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
-    }
-
-    delete() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
     }
 }
 ```
@@ -346,9 +281,9 @@ export class SplitbuttonNestedDemo {
 }
 ```
 
-## Outlined
+## Severity
 
-Outlined buttons display a border without a background initially.
+The severity property defines the type of button.
 
 ```typescript
 import { Component, inject } from '@angular/core';
@@ -361,21 +296,82 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     template: `
         <div class="card flex justify-center flex-wrap gap-4">
             <p-toast />
-            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" outlined />
-            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" outlined severity="secondary" />
-            <p-split-button label="Success" [model]="items" (onClick)="save('info')" outlined severity="success" />
-            <p-split-button label="Info" [model]="items" (onClick)="save('info')" outlined severity="info" />
-            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" outlined severity="warn" />
-            <p-split-button label="Help" [model]="items" (onClick)="save('info')" outlined severity="help" />
-            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" outlined severity="danger" />
-            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" outlined severity="contrast" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="secondary" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="success" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="info" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="warn" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="help" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="danger" />
+            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="contrast" />
         </div>
     `,
     standalone: true,
     imports: [SplitButtonModule, ToastModule, RouterModule],
     providers: [MessageService]
 })
-export class SplitbuttonOutlinedDemo {
+export class SplitbuttonSeverityDemo {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[];
+
+    constructor() {
+        this.items = [
+            {
+                label: 'Update',
+                command: () => {
+                    this.update();
+                }
+            },
+            {
+                label: 'Delete',
+                command: () => {
+                    this.delete();
+                }
+            },
+            { label: 'Angular.dev', url: 'https://angular.dev' },
+            { separator: true },
+            { label: 'Upload', routerLink: ['/fileupload'] }
+        ];
+    }
+
+    save() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Saved' });
+    }
+
+    update() {
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated' });
+    }
+
+    delete() {
+        this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted' });
+    }
+}
+```
+
+## Disabled
+
+When the disabled attribute is present, the element is uneditable and unfocused. Additionally, the disabled states of the button and menu button can be handled independently. The button is disabled when buttonDisabled is present, and the menu button is disabled when menuButtonDisabled is present.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-split-button label="Save" icon="pi pi-plus" (onClick)="save('info')" [model]="items" [disabled]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [SplitButtonModule, ToastModule, RouterModule],
+    providers: [MessageService]
+})
+export class SplitbuttonDisabledDemo {
     private messageService = inject(MessageService);
 
     items: MenuItem[];
@@ -482,78 +478,6 @@ export class SplitbuttonRaisedDemo {
 }
 ```
 
-## Raised Text
-
-Text buttons can be displayed as raised as well for elevation.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center flex-wrap gap-4">
-            <p-toast />
-            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" raised text />
-            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" raised text severity="secondary" />
-            <p-split-button label="Success" [model]="items" (onClick)="save('info')" raised text severity="success" />
-            <p-split-button label="Info" [model]="items" (onClick)="save('info')" raised text severity="info" />
-            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" raised text severity="warn" />
-            <p-split-button label="Help" [model]="items" (onClick)="save('info')" raised text severity="help" />
-            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" raised text severity="danger" />
-            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" raised text severity="contrast" />
-        </div>
-    `,
-    standalone: true,
-    imports: [SplitButtonModule, ToastModule, RouterModule],
-    providers: [MessageService]
-})
-export class SplitbuttonRaisedtextDemo {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[];
-
-    constructor() {
-        this.items = [
-            {
-                label: 'Update',
-                command: () => {
-                    this.update();
-                }
-            },
-            {
-                label: 'Delete',
-                command: () => {
-                    this.delete();
-                }
-            },
-            { label: 'Angular.dev', url: 'https://angular.dev' },
-            { separator: true },
-            { label: 'Upload', routerLink: ['/fileupload'] }
-        ];
-    }
-
-    save(severity: string) {
-        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
-    }
-
-    update() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
-    }
-
-    delete() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
-    }
-}
-```
-
-## reversedkeys-doc
-
-Following keys are reserved in the preset scheme and cannot be used as a token name; primitive , semantic , components , directives , colorscheme , light , dark , common , root , states and extend .
-
 ## Rounded
 
 Rounded buttons have a circular border radius.
@@ -622,9 +546,9 @@ export class SplitbuttonRoundedDemo {
 }
 ```
 
-## Severity
+## Text
 
-The severity property defines the type of button.
+Text buttons are displayed as textual elements.
 
 ```typescript
 import { Component, inject } from '@angular/core';
@@ -637,21 +561,21 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     template: `
         <div class="card flex justify-center flex-wrap gap-4">
             <p-toast />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="secondary" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="success" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="info" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="warn" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="help" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="danger" />
-            <p-split-button label="Save" (onClick)="save()" [model]="items" severity="contrast" />
+            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" text />
+            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" text severity="secondary" />
+            <p-split-button label="Success" [model]="items" (onClick)="save('info')" text severity="success" />
+            <p-split-button label="Info" [model]="items" (onClick)="save('info')" text severity="info" />
+            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" text severity="warn" />
+            <p-split-button label="Help" [model]="items" (onClick)="save('info')" text severity="help" />
+            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" text severity="danger" />
+            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" text severity="contrast" />
         </div>
     `,
     standalone: true,
     imports: [SplitButtonModule, ToastModule, RouterModule],
     providers: [MessageService]
 })
-export class SplitbuttonSeverityDemo {
+export class SplitbuttonTextDemo {
     private messageService = inject(MessageService);
 
     items: MenuItem[];
@@ -676,16 +600,152 @@ export class SplitbuttonSeverityDemo {
         ];
     }
 
-    save() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Saved' });
+    save(severity: string) {
+        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
     }
 
     update() {
-        this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated' });
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
     }
 
     delete() {
-        this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted' });
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
+    }
+}
+```
+
+## Raised Text
+
+Text buttons can be displayed as raised as well for elevation.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center flex-wrap gap-4">
+            <p-toast />
+            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" raised text />
+            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" raised text severity="secondary" />
+            <p-split-button label="Success" [model]="items" (onClick)="save('info')" raised text severity="success" />
+            <p-split-button label="Info" [model]="items" (onClick)="save('info')" raised text severity="info" />
+            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" raised text severity="warn" />
+            <p-split-button label="Help" [model]="items" (onClick)="save('info')" raised text severity="help" />
+            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" raised text severity="danger" />
+            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" raised text severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [SplitButtonModule, ToastModule, RouterModule],
+    providers: [MessageService]
+})
+export class SplitbuttonRaisedtextDemo {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[];
+
+    constructor() {
+        this.items = [
+            {
+                label: 'Update',
+                command: () => {
+                    this.update();
+                }
+            },
+            {
+                label: 'Delete',
+                command: () => {
+                    this.delete();
+                }
+            },
+            { label: 'Angular.dev', url: 'https://angular.dev' },
+            { separator: true },
+            { label: 'Upload', routerLink: ['/fileupload'] }
+        ];
+    }
+
+    save(severity: string) {
+        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
+    }
+
+    update() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
+    }
+
+    delete() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
+    }
+}
+```
+
+## Outlined
+
+Outlined buttons display a border without a background initially.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center flex-wrap gap-4">
+            <p-toast />
+            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" outlined />
+            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" outlined severity="secondary" />
+            <p-split-button label="Success" [model]="items" (onClick)="save('info')" outlined severity="success" />
+            <p-split-button label="Info" [model]="items" (onClick)="save('info')" outlined severity="info" />
+            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" outlined severity="warn" />
+            <p-split-button label="Help" [model]="items" (onClick)="save('info')" outlined severity="help" />
+            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" outlined severity="danger" />
+            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" outlined severity="contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [SplitButtonModule, ToastModule, RouterModule],
+    providers: [MessageService]
+})
+export class SplitbuttonOutlinedDemo {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[];
+
+    constructor() {
+        this.items = [
+            {
+                label: 'Update',
+                command: () => {
+                    this.update();
+                }
+            },
+            {
+                label: 'Delete',
+                command: () => {
+                    this.delete();
+                }
+            },
+            { label: 'Angular.dev', url: 'https://angular.dev' },
+            { separator: true },
+            { label: 'Upload', routerLink: ['/fileupload'] }
+        ];
+    }
+
+    save(severity: string) {
+        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
+    }
+
+    update() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
+    }
+
+    delete() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
     }
 }
 ```
@@ -821,73 +881,9 @@ export class SplitbuttonTemplateDemo {
 }
 ```
 
-## Text
+## Accessibility
 
-Text buttons are displayed as textual elements.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { SplitButtonModule } from '@exhaustive-ui/core/splitbutton';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center flex-wrap gap-4">
-            <p-toast />
-            <p-split-button label="Primary" [model]="items" (onClick)="save('info')" text />
-            <p-split-button label="Secondary" [model]="items" (onClick)="save('info')" text severity="secondary" />
-            <p-split-button label="Success" [model]="items" (onClick)="save('info')" text severity="success" />
-            <p-split-button label="Info" [model]="items" (onClick)="save('info')" text severity="info" />
-            <p-split-button label="Warning" [model]="items" (onClick)="save('info')" text severity="warn" />
-            <p-split-button label="Help" [model]="items" (onClick)="save('info')" text severity="help" />
-            <p-split-button label="Danger" [model]="items" (onClick)="save('info')" text severity="danger" />
-            <p-split-button label="Contrast" [model]="items" (onClick)="save('info')" text severity="contrast" />
-        </div>
-    `,
-    standalone: true,
-    imports: [SplitButtonModule, ToastModule, RouterModule],
-    providers: [MessageService]
-})
-export class SplitbuttonTextDemo {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[];
-
-    constructor() {
-        this.items = [
-            {
-                label: 'Update',
-                command: () => {
-                    this.update();
-                }
-            },
-            {
-                label: 'Delete',
-                command: () => {
-                    this.delete();
-                }
-            },
-            { label: 'Angular.dev', url: 'https://angular.dev' },
-            { separator: true },
-            { label: 'Upload', routerLink: ['/fileupload'] }
-        ];
-    }
-
-    save(severity: string) {
-        this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
-    }
-
-    update() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
-    }
-
-    delete() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
-    }
-}
-```
+Screen Reader SplitButton component renders two native button elements, main button uses the label property to define aria-label by default which can be customized with buttonProps . Dropdown button requires an explicit definition to describe it using menuButtonProps option and also includes aria-haspopup , aria-expanded for states along with aria-controls to define the relation between the popup and the button. The popup overlay uses menu role on the list and each action item has a menuitem role with an aria-label as the menuitem label. The id of the menu refers to the aria-controls of the dropdown button.
 
 ## Split Button
 

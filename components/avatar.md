@@ -2,148 +2,44 @@
 
 Avatar represents people using icons, labels and images.
 
-## Accessibility
+## Label
 
-Screen Reader Avatar does not include any roles and attributes by default. Any attribute is passed to the root element so you may add a role like img along with aria-labelledby or aria-label to describe the component. In case avatars need to be tabbable, tabIndex can be added as well to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
-
-## AvatarGroup
-
-Grouping is available by wrapping multiple Avatar components inside an AvatarGroup .
+A letter Avatar is defined with the label property.
 
 ```typescript
 import { Component } from '@angular/core';
 import { AvatarModule } from '@exhaustive-ui/core/avatar';
-import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';
+import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
 
 @Component({
     template: `
-        <div class="card flex justify-center">
-            <p-avatar-group>
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" ariaLabel="Asiya Javayant" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" ariaLabel="Onyama Limba" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" ariaLabel="Ioni Bowcher" size="large" shape="circle" />
-                <p-avatar image="https://exhaustive-ui.com/demo/avatar/xuxuefeng.png" ariaLabel="Xuxue Feng" size="large" shape="circle" />
-                <p-avatar label="+2" shape="circle" size="large" />
-            </p-avatar-group>
+        <div class="card">
+            <div class="flex flex-wrap gap-8">
+                <div class="flex-auto">
+                    <div class="font-semibold mb-4">Label</div>
+                    <p-avatar label="P" class="mr-2" size="xlarge" />
+                    <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" />
+                    <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" />
+                </div>
+                <div class="flex-auto">
+                    <div class="font-semibold mb-4">Circle</div>
+                    <p-avatar label="P" class="mr-2" size="xlarge" shape="circle" />
+                    <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />
+                    <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" shape="circle" />
+                </div>
+                <div class="flex-auto">
+                    <div class="font-semibold mb-4">Badge</div>
+                    <p-overlay-badge value="4" severity="danger" class="inline-flex">
+                        <p-avatar label="U" size="xlarge" />
+                    </p-overlay-badge>
+                </div>
+            </div>
         </div>
     `,
     standalone: true,
-    imports: [AvatarModule, AvatarGroupModule]
+    imports: [AvatarModule, OverlayBadgeModule]
 })
-export class AvatarAvatargroupDemo {
-}
-```
-
-## avatargroupstyle-doc
-
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Element</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>p-avatar-group</td>
-                        <td>Container element.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class AvatarAvatargroupstyleDemo {
-}
-```
-
-## avatarstyle-doc
-
-Following is the list of structural style classes, for theming classes visit theming page.
-
-```typescript
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Element</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>p-avatar</td>
-                        <td>Container element.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-image</td>
-                        <td>Container element in image mode.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-circle</td>
-                        <td>Container element with a circle shape.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-text</td>
-                        <td>Text of the Avatar.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-icon</td>
-                        <td>Icon of the Avatar.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-lg</td>
-                        <td>Container element with a large size.</td>
-                    </tr>
-                    <tr>
-                        <td>p-avatar-xl</td>
-                        <td>Container element with an xlarge size.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: [RouterModule]
-})
-export class AvatarAvatarstyleDemo {
-}
-```
-
-## Badge
-
-A badge can be added to an Avatar with the Badge directive.
-
-```typescript
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AvatarModule } from '@exhaustive-ui/core/avatar';
-import { BadgeModule } from '@exhaustive-ui/core/badge';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" pBadge value="4" severity="danger" />
-        </div>
-    `,
-    standalone: true,
-    imports: [AvatarModule, BadgeModule, RouterModule]
-})
-export class AvatarBadgeDemo {
+export class AvatarLabelDemo {
 }
 ```
 
@@ -227,44 +123,54 @@ export class AvatarImageDemo {
 }
 ```
 
-## Label
+## AvatarGroup
 
-A letter Avatar is defined with the label property.
+Grouping is available by wrapping multiple Avatar components inside an AvatarGroup .
 
 ```typescript
 import { Component } from '@angular/core';
 import { AvatarModule } from '@exhaustive-ui/core/avatar';
-import { OverlayBadgeModule } from '@exhaustive-ui/core/overlaybadge';
+import { AvatarGroupModule } from '@exhaustive-ui/core/avatargroup';
 
 @Component({
     template: `
-        <div class="card">
-            <div class="flex flex-wrap gap-8">
-                <div class="flex-auto">
-                    <div class="font-semibold mb-4">Label</div>
-                    <p-avatar label="P" class="mr-2" size="xlarge" />
-                    <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" />
-                    <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" />
-                </div>
-                <div class="flex-auto">
-                    <div class="font-semibold mb-4">Circle</div>
-                    <p-avatar label="P" class="mr-2" size="xlarge" shape="circle" />
-                    <p-avatar label="V" class="mr-2" size="large" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />
-                    <p-avatar label="U" class="mr-2" [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" shape="circle" />
-                </div>
-                <div class="flex-auto">
-                    <div class="font-semibold mb-4">Badge</div>
-                    <p-overlay-badge value="4" severity="danger" class="inline-flex">
-                        <p-avatar label="U" size="xlarge" />
-                    </p-overlay-badge>
-                </div>
-            </div>
+        <div class="card flex justify-center">
+            <p-avatar-group>
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/asiyajavayant.png" ariaLabel="Asiya Javayant" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/onyamalimba.png" ariaLabel="Onyama Limba" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/ionibowcher.png" ariaLabel="Ioni Bowcher" size="large" shape="circle" />
+                <p-avatar image="https://exhaustive-ui.com/demo/avatar/xuxuefeng.png" ariaLabel="Xuxue Feng" size="large" shape="circle" />
+                <p-avatar label="+2" shape="circle" size="large" />
+            </p-avatar-group>
         </div>
     `,
     standalone: true,
-    imports: [AvatarModule, OverlayBadgeModule]
+    imports: [AvatarModule, AvatarGroupModule]
 })
-export class AvatarLabelDemo {
+export class AvatarAvatargroupDemo {
+}
+```
+
+## Size
+
+size property defines the size of the Avatar with large and xlarge as possible values.
+
+```typescript
+import { Component } from '@angular/core';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-avatar label="P" size="large" />
+            <p-avatar label="T" size="xlarge" />
+        </div>
+    `,
+    standalone: true,
+    imports: [AvatarModule]
+})
+export class AvatarSizeDemo {
 }
 ```
 
@@ -290,25 +196,26 @@ export class AvatarShapeDemo {
 }
 ```
 
-## Size
+## Badge
 
-size property defines the size of the Avatar with large and xlarge as possible values.
+A badge can be added to an Avatar with the Badge directive.
 
 ```typescript
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { BadgeModule } from '@exhaustive-ui/core/badge';
 
 @Component({
     template: `
-        <div class="card flex justify-center gap-2">
-            <p-avatar label="P" size="large" />
-            <p-avatar label="T" size="xlarge" />
+        <div class="card flex justify-center">
+            <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" ariaLabel="Amy Elsner" pBadge value="4" severity="danger" />
         </div>
     `,
     standalone: true,
-    imports: [AvatarModule]
+    imports: [AvatarModule, BadgeModule, RouterModule]
 })
-export class AvatarSizeDemo {
+export class AvatarBadgeDemo {
 }
 ```
 
@@ -357,6 +264,10 @@ import { AvatarModule } from '@exhaustive-ui/core/avatar';
 export class AvatarTemplateDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader Avatar does not include any roles and attributes by default. Any attribute is passed to the root element so you may add a role like img along with aria-labelledby or aria-label to describe the component. In case avatars need to be tabbable, tabIndex can be added as well to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
 
 ## Avatar
 

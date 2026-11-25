@@ -2,10 +2,6 @@
 
 Fieldset is a grouping component with a content toggle feature.
 
-## Accessibility
-
-Screen Reader Fieldset component uses the semantic fieldset element. When toggleable option is enabled, a clickable element with button role is included inside the legend element, this button has aria-controls to define the id of the content section along with aria-expanded for the visibility state. The aria-label of the button is the value of the legend property. The content uses region , defines an id that matches the aria-controls of the content toggle button and aria-labelledby referring to the id of the header. Content Toggle Button Keyboard Support Key Function tab Moves focus to the next the focusable element in the page tab sequence. shift + tab Moves focus to the previous the focusable element in the page tab sequence. enter Toggles the visibility of the content. space Toggles the visibility of the content.
-
 ## Basic
 
 A simple Fieldset is created with a legend property along with the content as children.
@@ -29,6 +25,32 @@ import { FieldsetModule } from '@exhaustive-ui/core/fieldset';
     imports: [FieldsetModule]
 })
 export class FieldsetBasicDemo {
+}
+```
+
+## Toggleable
+
+Content of the fieldset can be expanded and collapsed using toggleable option, default state is defined with collapsed option.
+
+```typescript
+import { Component } from '@angular/core';
+import { FieldsetModule } from '@exhaustive-ui/core/fieldset';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-fieldset legend="Header" [toggleable]="true">
+                <p style="margin:0">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </p-fieldset>
+        </div>
+    `,
+    standalone: true,
+    imports: [FieldsetModule]
+})
+export class FieldsetToggleableDemo {
 }
 ```
 
@@ -65,31 +87,9 @@ export class FieldsetTemplateDemo {
 }
 ```
 
-## Toggleable
+## Accessibility
 
-Content of the fieldset can be expanded and collapsed using toggleable option, default state is defined with collapsed option.
-
-```typescript
-import { Component } from '@angular/core';
-import { FieldsetModule } from '@exhaustive-ui/core/fieldset';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-fieldset legend="Header" [toggleable]="true">
-                <p style="margin:0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </p-fieldset>
-        </div>
-    `,
-    standalone: true,
-    imports: [FieldsetModule]
-})
-export class FieldsetToggleableDemo {
-}
-```
+Screen Reader Fieldset component uses the semantic fieldset element. When toggleable option is enabled, a clickable element with button role is included inside the legend element, this button has aria-controls to define the id of the content section along with aria-expanded for the visibility state. The aria-label of the button is the value of the legend property. The content uses region , defines an id that matches the aria-controls of the content toggle button and aria-labelledby referring to the id of the header. Content Toggle Button Keyboard Support Key Function tab Moves focus to the next the focusable element in the page tab sequence. shift + tab Moves focus to the previous the focusable element in the page tab sequence. enter Toggles the visibility of the content. space Toggles the visibility of the content.
 
 ## Fieldset
 

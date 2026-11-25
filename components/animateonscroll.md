@@ -2,10 +2,6 @@
 
 AnimateOnScroll is used to apply animations to elements when entering or leaving the viewport during scrolling.
 
-## Accessibility
-
-Screen Reader AnimateOnScroll does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 Animation classes are defined with the enterClass and leaveClass properties. This example utilizes @exhaustive-ui/tailwindcss plugin animations however any valid CSS animation is supported.
@@ -144,6 +140,10 @@ import { AvatarModule } from '@exhaustive-ui/core/avatar';
 export class AnimateonscrollBasicDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader AnimateOnScroll does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
 
 ## Animate On Scroll
 

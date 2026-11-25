@@ -2,9 +2,139 @@
 
 Mention suggests users, tags or commands while a trigger such as @ or # is typed in a textarea or an input, and inserts the chosen suggestion in the text. Its value is plain text, and it works with every kind of Angular form.
 
-## Accessibility
+## Basic
 
-Screen Reader The single-line input follows the combobox pattern with a listbox popup, while the focus stays in the field: it has the combobox role, aria-autocomplete="list" and aria-expanded , and while suggestions are shown aria-controls points to the listbox and aria-activedescendant to the highlighted option, which has aria-selected along with its position in the list ( aria-posinset , aria-setsize ). A textarea cannot take the combobox role in HTML, and aria-expanded is not allowed on a textbox, so the multiline field keeps its native textbox role. It has aria-autocomplete="list" and aria-haspopup="listbox" , and the same aria-controls and aria-activedescendant while suggestions are shown. Screen readers that follow aria-activedescendant on a textbox, such as NVDA and JAWS with Chrome, Edge or Firefox, read the highlighted option as the arrow keys move it. The field is never announced as expanded or collapsed: the live region below is what tells that suggestions appeared. Support for aria-activedescendant on a textbox is weaker in VoiceOver, which may not read the highlighted option; the live region and the inserted text are still announced. Set multiline to false when a single line is enough. A polite live region announces the number of suggestions, the empty message and the loading state. Its texts come from searchMessage , emptyMessage and loadingMessage , or from the searchMessage and emptySearchMessage keys of the translation configuration, and the listbox is labelled with the aria.listLabel key. Give the field a name with a label and inputId , ariaLabelledBy or ariaLabel , and describe it with ariaDescribedBy .
+Mention is bound with ngModel and its value is the plain text. Typing @ at the start of a word emits onSearch with the text typed after it as event.query ; the handler answers by setting suggestions . Choosing one with the mouse, enter or tab replaces the query with the trigger, the suggestion and a space. A mention typed right before a word keeps that word, while a suggestion chosen with the caret moved into an existing mention replaces the whole mention.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-mention [(ngModel)]="text" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="4" placeholder="Type @ to mention someone" ariaLabel="Comment" fluid />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, MentionModule]
+})
+export class MentionBasicDemo {
+    text = '';
+
+    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'ivanmagalhaes', 'onyamalimba', 'stephenshaw', 'xuxuefeng'];
+
+    suggestions: string[] = [];
+
+    search(event: MentionSearchEvent) {
+        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
+    }
+}
+```
+
+## Multiple Triggers
+
+triggers lists the characters that start a mention, @ only by default. event.trigger tells the search handler which one was typed, here users for @ and tags for # , and the item template receives it as trigger . A trigger only counts at the start of a word, so an email address does not open the panel.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-mention [(ngModel)]="text" [triggers]="['@', '#']" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="4" placeholder="Mention a user with @ or add a tag with #" ariaLabel="Post" fluid>
+                <ng-template #item let-option let-trigger="trigger">
+                    @if (trigger === '#') {
+                        <i class="pi pi-hashtag" aria-hidden="true"></i>
+                    } @else {
+                        <i class="pi pi-user" aria-hidden="true"></i>
+                    }
+                    <span>{{ option }}</span>
+                </ng-template>
+            </p-mention>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, MentionModule]
+})
+export class MentionTriggersDemo {
+    text = '';
+
+    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'onyamalimba', 'xuxuefeng'];
+
+    tags = ['angular', 'accessibility', 'design', 'forms', 'performance', 'release', 'signals', 'theming'];
+
+    suggestions: string[] = [];
+
+    search(event: MentionSearchEvent) {
+        const source = event.trigger === '#' ? this.tags : this.users;
+        this.suggestions = source.filter((item) => item.startsWith(event.query.toLowerCase()));
+    }
+}
+```
+
+## Template
+
+Suggestions can be objects: optionLabel names the property that is inserted in the text. The item template renders each suggestion, with an avatar for instance, and header , footer and empty templates customize the panel. With autoResize , the textarea grows with its content.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
+
+interface User {
+    name: string;
+    username: string;
+    image: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-mention [(ngModel)]="text" [suggestions]="suggestions" optionLabel="username" (onSearch)="search($event)" [rows]="3" autoResize placeholder="Write a reply, type @ to mention someone" ariaLabel="Reply" fluid>
+                <ng-template #header>
+                    <div class="font-medium px-3 pt-2 pb-1 text-sm">People in this conversation</div>
+                </ng-template>
+                <ng-template #item let-user>
+                    <p-avatar [image]="'https://exhaustive-ui.com/demo/avatar/' + user.image" shape="circle" size="normal" aria-hidden="true" />
+                    <div class="flex flex-col">
+                        <span class="font-medium">{{ user.name }}</span>
+                        <span class="text-sm text-muted-color">&#64;{{ user.username }}</span>
+                    </div>
+                </ng-template>
+                <ng-template #empty let-query="query">Nobody matches "{{ query }}"</ng-template>
+            </p-mention>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, AvatarModule, MentionModule]
+})
+export class MentionTemplateDemo {
+    text = '';
+
+    users: User[] = [
+        { name: 'Amy Elsner', username: 'amy', image: 'amyelsner.png' },
+        { name: 'Anna Fali', username: 'anna', image: 'annafali.png' },
+        { name: 'Asiya Javayant', username: 'asiya', image: 'asiyajavayant.png' },
+        { name: 'Bernardo Dominic', username: 'bernardo', image: 'bernardodominic.png' },
+        { name: 'Elwin Sharvill', username: 'elwin', image: 'elwinsharvill.png' },
+        { name: 'Ioni Bowcher', username: 'ioni', image: 'ionibowcher.png' },
+        { name: 'Onyama Limba', username: 'onyama', image: 'onyamalimba.png' },
+        { name: 'Xuxue Feng', username: 'xuxue', image: 'xuxuefeng.png' }
+    ];
+
+    suggestions: User[] = [];
+
+    search(event: MentionSearchEvent) {
+        const query = event.query.toLowerCase();
+        this.suggestions = this.users.filter((user) => user.username.startsWith(query) || user.name.toLowerCase().includes(query));
+    }
+}
+```
 
 ## Async Search
 
@@ -83,9 +213,9 @@ export class MentionAsyncDemo {
 }
 ```
 
-## Basic
+## Single Line
 
-Mention is bound with ngModel and its value is the plain text. Typing @ at the start of a word emits onSearch with the text typed after it as event.query ; the handler answers by setting suggestions . Choosing one with the mouse, enter or tab replaces the query with the trigger, the suggestion and a space. A mention typed right before a word keeps that word, while a suggestion chosen with the caret moved into an existing mention replaces the whole mention.
+With multiline set to false, Mention renders a single-line input instead of a textarea. The panel opens under the trigger by default; position="field" opens it under the whole field, like an AutoComplete.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -94,47 +224,26 @@ import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
 
 @Component({
     template: `
-        <div class="card">
-            <p-mention [(ngModel)]="text" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="4" placeholder="Type @ to mention someone" ariaLabel="Comment" fluid />
+        <div class="card flex flex-col gap-4">
+            <p-mention [(ngModel)]="title" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Task title, @ to assign" ariaLabel="Task title" fluid />
+            <p-mention [(ngModel)]="subtitle" [multiline]="false" position="field" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Panel under the field" ariaLabel="Task subtitle" fluid />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, MentionModule]
 })
-export class MentionBasicDemo {
-    text = '';
+export class MentionSinglelineDemo {
+    title = '';
 
-    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'ivanmagalhaes', 'onyamalimba', 'stephenshaw', 'xuxuefeng'];
+    subtitle = '';
+
+    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'onyamalimba', 'xuxuefeng'];
 
     suggestions: string[] = [];
 
     search(event: MentionSearchEvent) {
         this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
     }
-}
-```
-
-## Disabled
-
-When disabled is present, the field cannot be edited or focused. With readonly , the text can be selected but not changed, and no panel opens.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MentionModule } from '@exhaustive-ui/core/mention';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-mention [(ngModel)]="text" disabled [rows]="2" [cols]="40" ariaLabel="Disabled comment" />
-            <p-mention [(ngModel)]="text" readonly [rows]="2" [cols]="40" ariaLabel="Read-only comment" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, MentionModule]
-})
-export class MentionDisabledDemo {
-    text = 'Thanks @amyelsner, merged in #release';
 }
 ```
 
@@ -169,6 +278,67 @@ export class MentionFilledDemo {
 }
 ```
 
+## Sizes
+
+Mention provides small and large sizes as alternatives to the default, like the other form fields.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-mention [(ngModel)]="small" size="small" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Small" ariaLabel="Small" />
+            <p-mention [(ngModel)]="normal" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Normal" ariaLabel="Normal" />
+            <p-mention [(ngModel)]="large" size="large" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Large" ariaLabel="Large" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, MentionModule]
+})
+export class MentionSizesDemo {
+    small = '';
+
+    normal = '';
+
+    large = '';
+
+    users = ['amyelsner', 'annafali', 'bernardodominic', 'ionibowcher'];
+
+    suggestions: string[] = [];
+
+    search(event: MentionSearchEvent) {
+        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
+    }
+}
+```
+
+## Disabled
+
+When disabled is present, the field cannot be edited or focused. With readonly , the text can be selected but not changed, and no panel opens.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MentionModule } from '@exhaustive-ui/core/mention';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-mention [(ngModel)]="text" disabled [rows]="2" [cols]="40" ariaLabel="Disabled comment" />
+            <p-mention [(ngModel)]="text" readonly [rows]="2" [cols]="40" ariaLabel="Read-only comment" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, MentionModule]
+})
+export class MentionDisabledDemo {
+    text = 'Thanks @amyelsner, merged in #release';
+}
+```
+
 ## Invalid
 
 The invalid state is applied using the invalid property to indicate failed validation, here until someone is mentioned.
@@ -200,7 +370,62 @@ export class MentionInvalidDemo {
 }
 ```
 
-## reactiveforms-doc
+## Forms: Template Driven
+
+The value is the plain text, so the usual validators such as required and maxlength work as on a textarea.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label for="td-comment" class="font-medium">Comment</label>
+                    <p-mention #model="ngModel" [(ngModel)]="comment" name="comment" inputId="td-comment" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="3" [invalid]="model.invalid && exampleForm.submitted" required fluid />
+                    @if (model.invalid && exampleForm.submitted) {
+                        <p-message severity="error" size="small" variant="simple">A comment is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, MentionModule, ButtonModule, MessageModule, ToastModule],
+    providers: [MessageService]
+})
+export class MentionTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    comment = '';
+
+    users = ['amyelsner', 'annafali', 'bernardodominic', 'ionibowcher', 'xuxuefeng'];
+
+    suggestions: string[] = [];
+
+    search(event: MentionSearchEvent) {
+        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
+    }
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 Mention can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -334,234 +559,9 @@ export class MentionSignalformsDemo {
 }
 ```
 
-## Single Line
+## Accessibility
 
-With multiline set to false, Mention renders a single-line input instead of a textarea. The panel opens under the trigger by default; position="field" opens it under the whole field, like an AutoComplete.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-4">
-            <p-mention [(ngModel)]="title" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Task title, @ to assign" ariaLabel="Task title" fluid />
-            <p-mention [(ngModel)]="subtitle" [multiline]="false" position="field" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Panel under the field" ariaLabel="Task subtitle" fluid />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, MentionModule]
-})
-export class MentionSinglelineDemo {
-    title = '';
-
-    subtitle = '';
-
-    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'onyamalimba', 'xuxuefeng'];
-
-    suggestions: string[] = [];
-
-    search(event: MentionSearchEvent) {
-        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
-    }
-}
-```
-
-## Sizes
-
-Mention provides small and large sizes as alternatives to the default, like the other form fields.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-mention [(ngModel)]="small" size="small" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Small" ariaLabel="Small" />
-            <p-mention [(ngModel)]="normal" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Normal" ariaLabel="Normal" />
-            <p-mention [(ngModel)]="large" size="large" [multiline]="false" [suggestions]="suggestions" (onSearch)="search($event)" placeholder="Large" ariaLabel="Large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, MentionModule]
-})
-export class MentionSizesDemo {
-    small = '';
-
-    normal = '';
-
-    large = '';
-
-    users = ['amyelsner', 'annafali', 'bernardodominic', 'ionibowcher'];
-
-    suggestions: string[] = [];
-
-    search(event: MentionSearchEvent) {
-        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
-    }
-}
-```
-
-## Template
-
-Suggestions can be objects: optionLabel names the property that is inserted in the text. The item template renders each suggestion, with an avatar for instance, and header , footer and empty templates customize the panel. With autoResize , the textarea grows with its content.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AvatarModule } from '@exhaustive-ui/core/avatar';
-import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
-
-interface User {
-    name: string;
-    username: string;
-    image: string;
-}
-
-@Component({
-    template: `
-        <div class="card">
-            <p-mention [(ngModel)]="text" [suggestions]="suggestions" optionLabel="username" (onSearch)="search($event)" [rows]="3" autoResize placeholder="Write a reply, type @ to mention someone" ariaLabel="Reply" fluid>
-                <ng-template #header>
-                    <div class="font-medium px-3 pt-2 pb-1 text-sm">People in this conversation</div>
-                </ng-template>
-                <ng-template #item let-user>
-                    <p-avatar [image]="'https://exhaustive-ui.com/demo/avatar/' + user.image" shape="circle" size="normal" aria-hidden="true" />
-                    <div class="flex flex-col">
-                        <span class="font-medium">{{ user.name }}</span>
-                        <span class="text-sm text-muted-color">&#64;{{ user.username }}</span>
-                    </div>
-                </ng-template>
-                <ng-template #empty let-query="query">Nobody matches "{{ query }}"</ng-template>
-            </p-mention>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, AvatarModule, MentionModule]
-})
-export class MentionTemplateDemo {
-    text = '';
-
-    users: User[] = [
-        { name: 'Amy Elsner', username: 'amy', image: 'amyelsner.png' },
-        { name: 'Anna Fali', username: 'anna', image: 'annafali.png' },
-        { name: 'Asiya Javayant', username: 'asiya', image: 'asiyajavayant.png' },
-        { name: 'Bernardo Dominic', username: 'bernardo', image: 'bernardodominic.png' },
-        { name: 'Elwin Sharvill', username: 'elwin', image: 'elwinsharvill.png' },
-        { name: 'Ioni Bowcher', username: 'ioni', image: 'ionibowcher.png' },
-        { name: 'Onyama Limba', username: 'onyama', image: 'onyamalimba.png' },
-        { name: 'Xuxue Feng', username: 'xuxue', image: 'xuxuefeng.png' }
-    ];
-
-    suggestions: User[] = [];
-
-    search(event: MentionSearchEvent) {
-        const query = event.query.toLowerCase();
-        this.suggestions = this.users.filter((user) => user.username.startsWith(query) || user.name.toLowerCase().includes(query));
-    }
-}
-```
-
-## templatedrivenforms-doc
-
-The value is the plain text, so the usual validators such as required and maxlength work as on a textarea.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-2">
-                    <label for="td-comment" class="font-medium">Comment</label>
-                    <p-mention #model="ngModel" [(ngModel)]="comment" name="comment" inputId="td-comment" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="3" [invalid]="model.invalid && exampleForm.submitted" required fluid />
-                    @if (model.invalid && exampleForm.submitted) {
-                        <p-message severity="error" size="small" variant="simple">A comment is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, MentionModule, ButtonModule, MessageModule, ToastModule],
-    providers: [MessageService]
-})
-export class MentionTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    comment = '';
-
-    users = ['amyelsner', 'annafali', 'bernardodominic', 'ionibowcher', 'xuxuefeng'];
-
-    suggestions: string[] = [];
-
-    search(event: MentionSearchEvent) {
-        this.suggestions = this.users.filter((user) => user.startsWith(event.query.toLowerCase()));
-    }
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Multiple Triggers
-
-triggers lists the characters that start a mention, @ only by default. event.trigger tells the search handler which one was typed, here users for @ and tags for # , and the item template receives it as trigger . A trigger only counts at the start of a word, so an email address does not open the panel.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MentionModule, MentionSearchEvent } from '@exhaustive-ui/core/mention';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-mention [(ngModel)]="text" [triggers]="['@', '#']" [suggestions]="suggestions" (onSearch)="search($event)" [rows]="4" placeholder="Mention a user with @ or add a tag with #" ariaLabel="Post" fluid>
-                <ng-template #item let-option let-trigger="trigger">
-                    @if (trigger === '#') {
-                        <i class="pi pi-hashtag" aria-hidden="true"></i>
-                    } @else {
-                        <i class="pi pi-user" aria-hidden="true"></i>
-                    }
-                    <span>{{ option }}</span>
-                </ng-template>
-            </p-mention>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, MentionModule]
-})
-export class MentionTriggersDemo {
-    text = '';
-
-    users = ['amyelsner', 'annafali', 'asiyajavayant', 'bernardodominic', 'elwinsharvill', 'ionibowcher', 'onyamalimba', 'xuxuefeng'];
-
-    tags = ['angular', 'accessibility', 'design', 'forms', 'performance', 'release', 'signals', 'theming'];
-
-    suggestions: string[] = [];
-
-    search(event: MentionSearchEvent) {
-        const source = event.trigger === '#' ? this.tags : this.users;
-        this.suggestions = source.filter((item) => item.startsWith(event.query.toLowerCase()));
-    }
-}
-```
+Screen Reader The single-line input follows the combobox pattern with a listbox popup, while the focus stays in the field: it has the combobox role, aria-autocomplete="list" and aria-expanded , and while suggestions are shown aria-controls points to the listbox and aria-activedescendant to the highlighted option, which has aria-selected along with its position in the list ( aria-posinset , aria-setsize ). A textarea cannot take the combobox role in HTML, and aria-expanded is not allowed on a textbox, so the multiline field keeps its native textbox role. It has aria-autocomplete="list" and aria-haspopup="listbox" , and the same aria-controls and aria-activedescendant while suggestions are shown. Screen readers that follow aria-activedescendant on a textbox, such as NVDA and JAWS with Chrome, Edge or Firefox, read the highlighted option as the arrow keys move it. The field is never announced as expanded or collapsed: the live region below is what tells that suggestions appeared. Support for aria-activedescendant on a textbox is weaker in VoiceOver, which may not read the highlighted option; the live region and the inserted text are still announced. Set multiline to false when a single line is enough. A polite live region announces the number of suggestions, the empty message and the loading state. Its texts come from searchMessage , emptyMessage and loadingMessage , or from the searchMessage and emptySearchMessage keys of the translation configuration, and the listbox is labelled with the aria.listLabel key. Give the field a name with a label and inputId , ariaLabelledBy or ariaLabel , and describe it with ariaDescribedBy .
 
 ## Mention
 

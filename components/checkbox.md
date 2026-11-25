@@ -2,10 +2,6 @@
 
 Checkbox is an extension to standard checkbox element with theming.
 
-## Accessibility
-
-Screen Reader Checkbox component uses a hidden native checkbox element internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
-
 ## Basic
 
 Binary checkbox is used as a controlled input with ngModel and binary properties.
@@ -29,9 +25,9 @@ export class CheckboxBasicDemo {
 }
 ```
 
-## Disabled
+## Indeterminate
 
-When disabled is present, the element cannot be edited and focused.
+The indeterminate state indicates that a checkbox is neither "on" or "off".
 
 ```typescript
 import { Component } from '@angular/core';
@@ -40,18 +36,53 @@ import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
 
 @Component({
     template: `
-        <div class="card flex justify-center gap-2">
-            <p-checkbox [(ngModel)]="checked1" [binary]="true" ariaLabel="Unchecked option" [disabled]="true" />
-            <p-checkbox [(ngModel)]="checked2" [binary]="true" ariaLabel="Checked option" [disabled]="true" />
+        <div class="card flex justify-center gap-4">
+            <p-checkbox [(ngModel)]="checked" [binary]="true" [indeterminate]="true" ariaLabel="Select all" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, CheckboxModule]
 })
-export class CheckboxDisabledDemo {
-    checked1: boolean = false;
+export class CheckboxIndeterminateDemo {
+    checked: any = null;
+}
+```
 
-    checked2: boolean = true;
+## Group
+
+Multiple checkboxes can be grouped together.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-4">
+            <div class="flex items-center">
+                <p-checkbox inputId="ingredient1" name="pizza" value="Cheese" [(ngModel)]="pizza" />
+                <label for="ingredient1" class="ml-2"> Cheese </label>
+            </div>
+            <div class="flex items-center">
+                <p-checkbox inputId="ingredient2" name="pizza" value="Mushroom" [(ngModel)]="pizza" />
+                <label for="ingredient2" class="ml-2"> Mushroom </label>
+            </div>
+            <div class="flex items-center">
+                <p-checkbox inputId="ingredient3" name="pizza" value="Pepper" [(ngModel)]="pizza" />
+                <label for="ingredient3" class="ml-2"> Pepper </label>
+            </div>
+            <div class="flex items-center">
+                <p-checkbox inputId="ingredient4" name="pizza" value="Onion" [(ngModel)]="pizza" />
+                <label for="ingredient4" class="ml-2"> Onion </label>
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, CheckboxModule]
+})
+export class CheckboxMultipleDemo {
+    pizza: string[] = [];
 }
 ```
 
@@ -118,9 +149,9 @@ export class CheckboxFilledDemo {
 }
 ```
 
-## Indeterminate
+## Sizes
 
-The indeterminate state indicates that a checkbox is neither "on" or "off".
+Checkbox provides small and large sizes as alternatives to the base.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -129,15 +160,52 @@ import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
 
 @Component({
     template: `
-        <div class="card flex justify-center gap-4">
-            <p-checkbox [(ngModel)]="checked" [binary]="true" [indeterminate]="true" ariaLabel="Select all" />
+        <div class="card flex flex-wrap justify-center gap-4">
+            <div class="flex items-center gap-2">
+                <p-checkbox [(ngModel)]="size" inputId="size_small" name="size" value="Small" size="small" />
+                <label for="size_small" class="text-sm">Small</label>
+            </div>
+            <div class="flex items-center gap-2">
+                <p-checkbox [(ngModel)]="size" inputId="size_normal" name="size" value="Normal" />
+                <label for="size_normal">Normal</label>
+            </div>
+            <div class="flex items-center gap-2">
+                <p-checkbox [(ngModel)]="size" inputId="size_large" name="size" value="Large" size="large" />
+                <label for="size_large" class="text-lg">Large</label>
+            </div>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, CheckboxModule]
 })
-export class CheckboxIndeterminateDemo {
-    checked: any = null;
+export class CheckboxSizesDemo {
+    size: any = null;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-checkbox [(ngModel)]="checked1" [binary]="true" ariaLabel="Unchecked option" [disabled]="true" />
+            <p-checkbox [(ngModel)]="checked2" [binary]="true" ariaLabel="Checked option" [disabled]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, CheckboxModule]
+})
+export class CheckboxDisabledDemo {
+    checked1: boolean = false;
+
+    checked2: boolean = true;
 }
 ```
 
@@ -164,45 +232,94 @@ export class CheckboxInvalidDemo {
 }
 ```
 
-## multiple-doc
-
-Multiple checkboxes can be grouped together.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     template: `
-        <div class="card flex flex-wrap justify-center gap-4">
-            <div class="flex items-center">
-                <p-checkbox inputId="ingredient1" name="pizza" value="Cheese" [(ngModel)]="pizza" />
-                <label for="ingredient1" class="ml-2"> Cheese </label>
-            </div>
-            <div class="flex items-center">
-                <p-checkbox inputId="ingredient2" name="pizza" value="Mushroom" [(ngModel)]="pizza" />
-                <label for="ingredient2" class="ml-2"> Mushroom </label>
-            </div>
-            <div class="flex items-center">
-                <p-checkbox inputId="ingredient3" name="pizza" value="Pepper" [(ngModel)]="pizza" />
-                <label for="ingredient3" class="ml-2"> Pepper </label>
-            </div>
-            <div class="flex items-center">
-                <p-checkbox inputId="ingredient4" name="pizza" value="Onion" [(ngModel)]="pizza" />
-                <label for="ingredient4" class="ml-2"> Onion </label>
-            </div>
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="flex flex-col gap-4">
+                <div class="flex flex-wrap gap-4">
+                    @for (item of formKeys; track item) {
+                        <div class="flex items-center gap-2">
+                            <p-checkbox [inputId]="item" [name]="item" [(ngModel)]="formModel[item]" [binary]="true" [invalid]="isInvalid()"></p-checkbox>
+                            <label [for]="item">{{ item | titlecase }}</label>
+                        </div>
+                    }
+                </div>
+                @if (isInvalid()) {
+                    <p-message severity="error" size="small" variant="simple"> At least one ingredient must be selected. </p-message>
+                }
+                <button pButton severity="secondary" type="submit">
+                    <span pButtonLabel>Submit</span>
+                </button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, CheckboxModule]
+    imports: [CommonModule, FormsModule, CheckboxModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService]
 })
-export class CheckboxMultipleDemo {
-    pizza: string[] = [];
+export class CheckboxTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    formSubmitted: boolean = false;
+
+    formModel = {
+        cheese: false,
+        mushroom: false,
+        pepper: false,
+        onion: false
+    };
+
+    get formKeys(): string[] {
+        return Object.keys(this.formModel);
+    }
+
+    isInvalid(): boolean {
+        return this.formSubmitted && !this.isAtLeastOneSelected();
+    }
+
+    isAtLeastOneSelected(): boolean {
+        return Object.values(this.formModel).some((value) => value === true);
+    }
+
+    onSubmit(form: NgForm) {
+        this.formSubmitted = true;
+
+        if (this.isAtLeastOneSelected()) {
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Form is submitted',
+                life: 3000
+            });
+
+            this.formModel = {
+                cheese: false,
+                mushroom: false,
+                pepper: false,
+                onion: false
+            };
+            form.resetForm(this.formModel);
+
+            this.formSubmitted = false;
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 Checkbox can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -365,126 +482,9 @@ export class CheckboxSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-Checkbox provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-4">
-            <div class="flex items-center gap-2">
-                <p-checkbox [(ngModel)]="size" inputId="size_small" name="size" value="Small" size="small" />
-                <label for="size_small" class="text-sm">Small</label>
-            </div>
-            <div class="flex items-center gap-2">
-                <p-checkbox [(ngModel)]="size" inputId="size_normal" name="size" value="Normal" />
-                <label for="size_normal">Normal</label>
-            </div>
-            <div class="flex items-center gap-2">
-                <p-checkbox [(ngModel)]="size" inputId="size_large" name="size" value="Large" size="large" />
-                <label for="size_large" class="text-lg">Large</label>
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, CheckboxModule]
-})
-export class CheckboxSizesDemo {
-    size: any = null;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, NgForm } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { CheckboxModule } from '@exhaustive-ui/core/checkbox';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="flex flex-col gap-4">
-                <div class="flex flex-wrap gap-4">
-                    @for (item of formKeys; track item) {
-                        <div class="flex items-center gap-2">
-                            <p-checkbox [inputId]="item" [name]="item" [(ngModel)]="formModel[item]" [binary]="true" [invalid]="isInvalid()"></p-checkbox>
-                            <label [for]="item">{{ item | titlecase }}</label>
-                        </div>
-                    }
-                </div>
-                @if (isInvalid()) {
-                    <p-message severity="error" size="small" variant="simple"> At least one ingredient must be selected. </p-message>
-                }
-                <button pButton severity="secondary" type="submit">
-                    <span pButtonLabel>Submit</span>
-                </button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, CheckboxModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService]
-})
-export class CheckboxTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    formSubmitted: boolean = false;
-
-    formModel = {
-        cheese: false,
-        mushroom: false,
-        pepper: false,
-        onion: false
-    };
-
-    get formKeys(): string[] {
-        return Object.keys(this.formModel);
-    }
-
-    isInvalid(): boolean {
-        return this.formSubmitted && !this.isAtLeastOneSelected();
-    }
-
-    isAtLeastOneSelected(): boolean {
-        return Object.values(this.formModel).some((value) => value === true);
-    }
-
-    onSubmit(form: NgForm) {
-        this.formSubmitted = true;
-
-        if (this.isAtLeastOneSelected()) {
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Form is submitted',
-                life: 3000
-            });
-
-            this.formModel = {
-                cheese: false,
-                mushroom: false,
-                pepper: false,
-                onion: false
-            };
-            form.resetForm(this.formModel);
-
-            this.formSubmitted = false;
-        }
-    }
-}
-```
+Screen Reader Checkbox component uses a hidden native checkbox element internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
 
 ## Checkbox
 

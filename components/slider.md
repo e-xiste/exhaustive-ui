@@ -2,10 +2,6 @@
 
 Slider is a component to provide input with a drag handle.
 
-## Accessibility
-
-Screen Reader Slider element component uses slider role on the handle in addition to the aria-orientation , aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using ariaLabelledBy and ariaLabel props.
-
 ## Basic
 
 Two-way binding is defined using the standard ngModel directive.
@@ -26,6 +22,79 @@ import { SliderModule } from '@exhaustive-ui/core/slider';
 })
 export class SliderBasicDemo {
     value!: number;
+}
+```
+
+## Input
+
+Slider is connected to an input field using two-way binding.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SliderModule } from '@exhaustive-ui/core/slider';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <div>
+                <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" aria-label="Volume" />
+                <p-slider [(ngModel)]="value" class="w-full" ariaLabel="Volume" />
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SliderModule, InputTextModule]
+})
+export class SliderInputDemo {
+    value: number = 50;
+}
+```
+
+## Step
+
+Size of each movement is defined with the step property.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SliderModule } from '@exhaustive-ui/core/slider';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-slider [(ngModel)]="value" [step]="20" class="w-56" ariaLabel="Volume" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SliderModule]
+})
+export class SliderStepDemo {
+    value: number = 20;
+}
+```
+
+## Range
+
+When range property is present, slider provides two handles to define two values. In range mode, value should be an array instead of a single value.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SliderModule } from '@exhaustive-ui/core/slider';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" ariaLabel="Range" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, SliderModule]
+})
+export class SliderRangeDemo {
+    rangeValues: number[] = [20, 80];
 }
 ```
 
@@ -71,36 +140,9 @@ export class SliderFilterDemo {
 }
 ```
 
-## Input
+## Vertical
 
-Slider is connected to an input field using two-way binding.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SliderModule } from '@exhaustive-ui/core/slider';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <div>
-                <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" aria-label="Volume" />
-                <p-slider [(ngModel)]="value" class="w-full" ariaLabel="Volume" />
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SliderModule, InputTextModule]
-})
-export class SliderInputDemo {
-    value: number = 50;
-}
-```
-
-## Range
-
-When range property is present, slider provides two handles to define two values. In range mode, value should be an array instead of a single value.
+Default layout of slider is horizontal , use orientation property for the alternative vertical mode.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -110,18 +152,63 @@ import { SliderModule } from '@exhaustive-ui/core/slider';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" ariaLabel="Range" />
+            <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" ariaLabel="Volume" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, SliderModule]
 })
-export class SliderRangeDemo {
-    rangeValues: number[] = [20, 80];
+export class SliderVerticalDemo {
+    value: number = 50;
 }
 ```
 
-## reactiveforms-doc
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { SliderModule } from '@exhaustive-ui/core/slider';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
+                <div class="flex flex-col gap-4">
+                    <p-slider #model="ngModel" [(ngModel)]="value" class="w-56" required [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="slider" ariaLabel="Volume" />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, SliderModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
+})
+export class SliderTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 Slider can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -238,96 +325,9 @@ export class SliderSignalformsDemo {
 }
 ```
 
-## Step
+## Accessibility
 
-Size of each movement is defined with the step property.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SliderModule } from '@exhaustive-ui/core/slider';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-slider [(ngModel)]="value" [step]="20" class="w-56" ariaLabel="Volume" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SliderModule]
-})
-export class SliderStepDemo {
-    value: number = 20;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { SliderModule } from '@exhaustive-ui/core/slider';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
-                <div class="flex flex-col gap-4">
-                    <p-slider #model="ngModel" [(ngModel)]="value" class="w-56" required [invalid]="model.invalid && (model.touched || exampleForm.submitted)" name="slider" ariaLabel="Volume" />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, SliderModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class SliderTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Vertical
-
-Default layout of slider is horizontal , use orientation property for the alternative vertical mode.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SliderModule } from '@exhaustive-ui/core/slider';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" ariaLabel="Volume" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, SliderModule]
-})
-export class SliderVerticalDemo {
-    value: number = 50;
-}
-```
+Screen Reader Slider element component uses slider role on the handle in addition to the aria-orientation , aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using ariaLabelledBy and ariaLabel props.
 
 ## Slider
 

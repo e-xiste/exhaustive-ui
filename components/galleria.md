@@ -2,9 +2,359 @@
 
 Galleria is an advanced content gallery component.
 
-## Accessibility
+## Basic
 
-Screen Reader Galleria uses region role and since any attribute is passed to the main container element, attributes such as aria-label and aria-roledescription can be used as well. The slides container has aria-live attribute set as "polite" if galleria is not in autoplay mode, otherwise "off" would be the value in autoplay. A slide has a group role with an aria-label that refers to the aria.slideNumber property of the locale API. Similarly aria.slide is used as the aria-roledescription of the item. Inactive slides are hidden from the readers with aria-hidden . Next and Previous navigators of the thumbnails are button elements with aria-label attributes referring to the aria.nextPageLabel and aria.prevPageLabel properties of the locale API respectively. Quick navigation elements and thumnbails follow the tab pattern. They are placed inside an element with a tablist role whereas each item has a tab role with aria-selected and aria-controls attributes. The aria-label attribute of a quick navigation item refers to the aria.pageLabel of the locale API. Current page is marked with aria-current . In full screen mode, modal element uses dialog role with aria-modal enabled. The close button retrieves aria-label from the aria.close property of the locale API. Next/Prev Keyboard Support Key Function tab Moves focus through interactive elements in the carousel. enter Activates navigation. space Activates navigation. Quick Navigation Keyboard Support Key Function tab Moves focus through the active slide link. enter Activates the focused slide link. space Activates the focused slide link. right arrow Moves focus to the next slide link. left arrow Moves focus to the previous slide link. home Moves focus to the first slide link. end Moves focus to the last slide link.
+Galleria requires a value as a collection of images, item template for the higher resolution image and thumbnail template to display as a thumbnail.
+
+```typescript
+import { Component, inject, model, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width:100%" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" />
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, GalleriaModule],
+    providers: [PhotoService]
+})
+export class GalleriaBasicDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = model([]);
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+}
+```
+
+## Controlled
+
+Galleria can be controlled programmatically using the activeIndex property.
+
+```typescript
+import { Component, inject, model, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="mb-4">
+                <p-button type="button" icon="pi pi-minus" ariaLabel="Previous image" (click)="prev()" />
+                <p-button type="button" icon="pi pi-plus" ariaLabel="Next image" (click)="next()" severity="secondary" styleClass="ml-2" />
+            </div>
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%;" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" />
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, GalleriaModule, ButtonModule],
+    providers: [PhotoService]
+})
+export class GalleriaControlledDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = model([]);
+
+    get activeIndex(): number {
+        return this._activeIndex;
+    }
+
+    set activeIndex(newValue) {
+        if (this.images() && 0 <= newValue && newValue <= this.images().length - 1) {
+            this._activeIndex = newValue;
+        }
+    }
+
+    _activeIndex: number = 2;
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+
+    next() {
+        this.activeIndex++;
+    }
+
+    prev() {
+        this.activeIndex--;
+    }
+}
+```
+
+## Thumbnail
+
+Galleria can be controlled programmatically using the activeIndex property.
+
+```typescript
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="flex flex-wrap gap-4 mb-8">
+                <div *ngFor="let option of positionOptions" class="flex items-center">
+                    <p-radio-button [name]="option.label" [value]="option.value" [(ngModel)]="position" [inputId]="option.label" />
+                    <label [for]="option.label" class="ml-2"> {{ option.label }} </label>
+                </div>
+            </div>
+            <p-galleria [value]="images()" [thumbnailsPosition]="position" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <div class="grid gap-4 justify-center">
+                        <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
+                    </div>
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, GalleriaModule, RadioButtonModule],
+    providers: [PhotoService]
+})
+export class GalleriaThumbnailDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = signal<any[]>([]);
+
+    position: 'left' | 'right' | 'top' | 'bottom' = 'bottom';
+
+    positionOptions = [
+        {
+            label: 'Bottom',
+            value: 'bottom'
+        },
+        {
+            label: 'Top',
+            value: 'top'
+        },
+        {
+            label: 'Left',
+            value: 'left'
+        },
+        {
+            label: 'Right',
+            value: 'right'
+        }
+    ];
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+}
+```
+
+## Responsive
+
+Galleria responsiveness is defined with the responsiveOptions property.
+
+```typescript
+import { Component, inject, model, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, GalleriaModule],
+    providers: [PhotoService]
+})
+export class GalleriaResponsiveDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = model([]);
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+}
+```
+
+## AutoPlay
+
+A slideshow implementation is defined by adding circular and autoPlay properties.
+
+```typescript
+import { Component, inject, model, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-galleria [value]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="display: block" />
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, GalleriaModule],
+    providers: [PhotoService]
+})
+export class GalleriaAutoplayDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = model([]);
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+}
+```
+
+## Caption
+
+Description of an image is specified with the caption template.
+
+```typescript
+import { Component, inject, model, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GalleriaModule } from '@exhaustive-ui/core/galleria';
+import { PhotoService } from '@/service/photoservice';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
+                </ng-template>
+                <ng-template #thumbnail let-item>
+                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="display: block;" />
+                </ng-template>
+                <ng-template #caption let-item>
+                    <div class="text-xl mb-2 font-bold">{{ item.title }}</div>
+                    <p class="text-white">{{ item.alt }}</p>
+                </ng-template>
+            </p-galleria>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, GalleriaModule],
+    providers: [PhotoService]
+})
+export class GalleriaCaptionDemo implements OnInit {
+    private photoService = inject(PhotoService);
+
+    images = model([]);
+
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1300px',
+            numVisible: 4
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1
+        }
+    ];
+
+    ngOnInit() {
+        this.photoService.getImages().then((images) => this.images.set(images));
+    }
+}
+```
 
 ## Advanced
 
@@ -217,359 +567,9 @@ export class GalleriaAdvancedDemo implements OnInit, OnDestroy {
 }
 ```
 
-## AutoPlay
+## Accessibility
 
-A slideshow implementation is defined by adding circular and autoPlay properties.
-
-```typescript
-import { Component, inject, model, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-galleria [value]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="display: block" />
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, GalleriaModule],
-    providers: [PhotoService]
-})
-export class GalleriaAutoplayDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = model([]);
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-}
-```
-
-## Basic
-
-Galleria requires a value as a collection of images, item template for the higher resolution image and thumbnail template to display as a thumbnail.
-
-```typescript
-import { Component, inject, model, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width:100%" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" />
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, GalleriaModule],
-    providers: [PhotoService]
-})
-export class GalleriaBasicDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = model([]);
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-}
-```
-
-## Caption
-
-Description of an image is specified with the caption template.
-
-```typescript
-import { Component, inject, model, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="display: block;" />
-                </ng-template>
-                <ng-template #caption let-item>
-                    <div class="text-xl mb-2 font-bold">{{ item.title }}</div>
-                    <p class="text-white">{{ item.alt }}</p>
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, GalleriaModule],
-    providers: [PhotoService]
-})
-export class GalleriaCaptionDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = model([]);
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-}
-```
-
-## Controlled
-
-Galleria can be controlled programmatically using the activeIndex property.
-
-```typescript
-import { Component, inject, model, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <div class="mb-4">
-                <p-button type="button" icon="pi pi-minus" ariaLabel="Previous image" (click)="prev()" />
-                <p-button type="button" icon="pi pi-plus" ariaLabel="Next image" (click)="next()" severity="secondary" styleClass="ml-2" />
-            </div>
-            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%;" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" />
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, GalleriaModule, ButtonModule],
-    providers: [PhotoService]
-})
-export class GalleriaControlledDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = model([]);
-
-    get activeIndex(): number {
-        return this._activeIndex;
-    }
-
-    set activeIndex(newValue) {
-        if (this.images() && 0 <= newValue && newValue <= this.images().length - 1) {
-            this._activeIndex = newValue;
-        }
-    }
-
-    _activeIndex: number = 2;
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-
-    next() {
-        this.activeIndex++;
-    }
-
-    prev() {
-        this.activeIndex--;
-    }
-}
-```
-
-## Responsive
-
-Galleria responsiveness is defined with the responsiveOptions property.
-
-```typescript
-import { Component, inject, model, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, GalleriaModule],
-    providers: [PhotoService]
-})
-export class GalleriaResponsiveDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = model([]);
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-}
-```
-
-## Thumbnail
-
-Galleria can be controlled programmatically using the activeIndex property.
-
-```typescript
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { GalleriaModule } from '@exhaustive-ui/core/galleria';
-import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
-import { PhotoService } from '@/service/photoservice';
-
-@Component({
-    template: `
-        <div class="card">
-            <div class="flex flex-wrap gap-4 mb-8">
-                <div *ngFor="let option of positionOptions" class="flex items-center">
-                    <p-radio-button [name]="option.label" [value]="option.value" [(ngModel)]="position" [inputId]="option.label" />
-                    <label [for]="option.label" class="ml-2"> {{ option.label }} </label>
-                </div>
-            </div>
-            <p-galleria [value]="images()" [thumbnailsPosition]="position" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
-                <ng-template #item let-item>
-                    <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
-                </ng-template>
-                <ng-template #thumbnail let-item>
-                    <div class="grid gap-4 justify-center">
-                        <img [src]="item.thumbnailImageSrc" [alt]="item.alt" style="width: 100%; display: block" />
-                    </div>
-                </ng-template>
-            </p-galleria>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, GalleriaModule, RadioButtonModule],
-    providers: [PhotoService]
-})
-export class GalleriaThumbnailDemo implements OnInit {
-    private photoService = inject(PhotoService);
-
-    images = signal<any[]>([]);
-
-    position: 'left' | 'right' | 'top' | 'bottom' = 'bottom';
-
-    positionOptions = [
-        {
-            label: 'Bottom',
-            value: 'bottom'
-        },
-        {
-            label: 'Top',
-            value: 'top'
-        },
-        {
-            label: 'Left',
-            value: 'left'
-        },
-        {
-            label: 'Right',
-            value: 'right'
-        }
-    ];
-
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1300px',
-            numVisible: 4
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1
-        }
-    ];
-
-    ngOnInit() {
-        this.photoService.getImages().then((images) => this.images.set(images));
-    }
-}
-```
+Screen Reader Galleria uses region role and since any attribute is passed to the main container element, attributes such as aria-label and aria-roledescription can be used as well. The slides container has aria-live attribute set as "polite" if galleria is not in autoplay mode, otherwise "off" would be the value in autoplay. A slide has a group role with an aria-label that refers to the aria.slideNumber property of the locale API. Similarly aria.slide is used as the aria-roledescription of the item. Inactive slides are hidden from the readers with aria-hidden . Next and Previous navigators of the thumbnails are button elements with aria-label attributes referring to the aria.nextPageLabel and aria.prevPageLabel properties of the locale API respectively. Quick navigation elements and thumnbails follow the tab pattern. They are placed inside an element with a tablist role whereas each item has a tab role with aria-selected and aria-controls attributes. The aria-label attribute of a quick navigation item refers to the aria.pageLabel of the locale API. Current page is marked with aria-current . In full screen mode, modal element uses dialog role with aria-modal enabled. The close button retrieves aria-label from the aria.close property of the locale API. Next/Prev Keyboard Support Key Function tab Moves focus through interactive elements in the carousel. enter Activates navigation. space Activates navigation. Quick Navigation Keyboard Support Key Function tab Moves focus through the active slide link. enter Activates the focused slide link. space Activates the focused slide link. right arrow Moves focus to the next slide link. left arrow Moves focus to the previous slide link. home Moves focus to the first slide link. end Moves focus to the last slide link.
 
 ## Galleria
 

@@ -2,9 +2,13 @@
 
 RichTextEditor is a rich text editor built on Tiptap and ProseMirror, with a themed toolbar that follows the WAI-ARIA toolbar pattern, inline link editing, HTML or JSON values and a character limit. It works with every kind of Angular form.
 
-## Accessibility
+## Tiptap
 
-Screen Reader The editable area has the textbox role with aria-multiline , and is named with ariaLabelledBy or ariaLabel ; ariaDescribedBy links a hint or an error message. It also reports aria-invalid , aria-required , aria-readonly , aria-disabled and the placeholder with aria-placeholder . The toolbar follows the WAI-ARIA toolbar pattern : it has the toolbar role, a label and aria-controls , and only one button is in the tab order. Every button has a label, its shortcut in aria-keyshortcuts , and the formatting buttons tell whether they apply to the selection with aria-pressed . A button that cannot apply, such as undo with nothing to undo, has aria-disabled . The link panel is a labelled dialog whose field has a visible label and an error message linked with aria-describedby . When showCount is set, the count describes the editable area and reaching maxLength is announced. Every text can be replaced through labels .
+RichTextEditor is built on Tiptap and ProseMirror. Install the four open source Tiptap packages it uses, all MIT licensed; no Tiptap account, key or paid extension is needed. They are optional peer dependencies of ExhaustiveUI, so only the applications that use RichTextEditor install them. Tiptap is loaded in the browser only, on first use: during server-side rendering the component renders an empty placeholder.
+
+## Editor vs RichTextEditor
+
+ExhaustiveUI has two rich text editors. Editor wraps Quill and stays available unchanged for the applications that use it. RichTextEditor is built on Tiptap and ProseMirror and adds what Editor does not have: a toolbar that follows the WAI-ARIA toolbar pattern, with a single tab stop and the arrow keys, links edited in an inline panel that checks the URL, a value in HTML or in Tiptap JSON, a character limit with a count, and Tiptap extensions for your own content. Prefer RichTextEditor for new forms. Both values are HTML, but Quill and Tiptap do not write the same markup, lists for example, so check the stored content before moving an existing field from one to the other.
 
 ## Basic
 
@@ -31,103 +35,29 @@ export class RichtexteditorBasicDemo {
 }
 ```
 
-## Disabled
+## Toolbar
 
-When disabled is present, the editor and its toolbar cannot be focused or changed.
+The toolbar input lists the buttons in order, and '|' separates two groups. The buttons are bold , italic , underline , strike , code , heading1 , heading2 , heading3 , bulletList , orderedList , blockquote , codeBlock , link , alignLeft , alignCenter , alignRight , alignJustify , undo , redo and clear ; textAlign adds the four alignments. An empty array hides the toolbar, the shortcuts keep working.
 
 ```typescript
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+import { RichTextEditorModule, RichTextEditorToolbar } from '@exhaustive-ui/core/richtexteditor';
 
 @Component({
     template: `
-        <div class="card">
-            <p-rich-text-editor [(ngModel)]="html" [disabled]="true" ariaLabel="Disabled editor" />
+        <div class="card flex flex-col gap-2">
+            <label id="toolbar-label" class="font-medium">Announcement</label>
+            <p-rich-text-editor [(ngModel)]="html" [toolbar]="toolbar" ariaLabelledBy="toolbar-label" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, RichTextEditorModule]
 })
-export class RichtexteditorDisabledDemo {
-    html: string | null = '<p>This content is disabled.</p>';
-}
-```
+export class RichtexteditorToolbarDemo {
+    toolbar: RichTextEditorToolbar = ['heading2', 'heading3', '|', 'bold', 'italic', 'code', '|', 'textAlign', '|', 'bulletList', 'codeBlock', '|', 'clear'];
 
-## Editor vs RichTextEditor
-
-ExhaustiveUI has two rich text editors. Editor wraps Quill and stays available unchanged for the applications that use it. RichTextEditor is built on Tiptap and ProseMirror and adds what Editor does not have: a toolbar that follows the WAI-ARIA toolbar pattern, with a single tab stop and the arrow keys, links edited in an inline panel that checks the URL, a value in HTML or in Tiptap JSON, a character limit with a count, and Tiptap extensions for your own content. Prefer RichTextEditor for new forms. Both values are HTML, but Quill and Tiptap do not write the same markup, lists for example, so check the stored content before moving an existing field from one to the other.
-
-## Extensions
-
-extensions adds Tiptap extensions to the StarterKit, the text alignment and the link support that the component already includes: your own nodes, marks and shortcuts, or any of the open source Tiptap extensions. The onInit event gives the Tiptap editor once it is created, to run commands from your own buttons. This example adds a highlight mark, toggled with Ctrl+Shift+H or the button.
-
-```typescript
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RichTextEditorInitEvent, RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { Editor, Mark, mergeAttributes } from '@tiptap/core';
-
-/**
- * A mark that renders <mark>, toggled with Ctrl+Shift+H.
- */
-const Highlight = Mark.create({
-    name: 'highlight',
-    parseHTML: () => [{ tag: 'mark' }],
-    renderHTML: ({ HTMLAttributes }) => ['mark', mergeAttributes(HTMLAttributes), 0],
-    addKeyboardShortcuts() {
-        return { 'Mod-Shift-h': () => this.editor.commands.toggleMark(this.name) };
-    }
-});
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-4">
-            <p-rich-text-editor [(ngModel)]="html" [extensions]="extensions" (onInit)="onInit($event)" ariaLabel="Notes" />
-            <p-button label="Highlight the selection" severity="secondary" size="small" class="self-start" [disabled]="!editor()" (onClick)="toggleHighlight()" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule, ButtonModule]
-})
-export class RichtexteditorExtensionsDemo {
-    extensions = [Highlight];
-
-    editor = signal<Editor | undefined>(undefined);
-
-    html: string | null = '<p>Select some words, then press <mark>Ctrl+Shift+H</mark> to highlight them.</p>';
-
-    onInit(event: RichTextEditorInitEvent<Editor>) {
-        this.editor.set(event.editor);
-    }
-
-    toggleHighlight() {
-        this.editor()?.chain().focus().toggleMark('highlight').run();
-    }
-}
-```
-
-## Invalid
-
-The invalid state is applied with the invalid property, which also sets aria-invalid on the editable area.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-rich-text-editor [(ngModel)]="html" [invalid]="!html" ariaLabel="Comment" placeholder="A comment is required" minHeight="5rem" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule]
-})
-export class RichtexteditorInvalidDemo {
-    html: string | null = null;
+    html: string | null = '<h2 style="text-align: center">A centered title</h2><p>Select text and use the toolbar: the alignment buttons apply to headings and paragraphs.</p>';
 }
 ```
 
@@ -193,7 +123,218 @@ export class RichtexteditorMaxlengthDemo {
 }
 ```
 
-## reactiveforms-doc
+## ReadOnly
+
+When readonly is present, the content can be read, selected and copied but not changed. The toolbar is hidden and the editable area stays focusable for screen readers.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-rich-text-editor [(ngModel)]="html" [readonly]="true" ariaLabel="Terms of service" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule]
+})
+export class RichtexteditorReadonlyDemo {
+    html: string | null = '<h3>Terms of service</h3><p>By using the service you agree to these terms. They can be <strong>read and copied</strong> but not edited.</p>';
+}
+```
+
+## Template
+
+The toolbar template replaces the whole toolbar. It receives the Tiptap editor , undefined while Tiptap loads, an isActive function, the disabled state and openLink to open the link panel. Use the Tiptap commands, such as editor.chain().focus().toggleBold().run() . A custom toolbar takes care of its own keyboard support.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-rich-text-editor [(ngModel)]="html" ariaLabel="Message">
+                <ng-template #toolbar let-editor let-isActive="isActive" let-disabled="disabled" let-openLink="openLink">
+                    <div class="flex gap-2 flex-wrap">
+                        <button pButton type="button" size="small" [outlined]="!isActive('bold')" [attr.aria-pressed]="isActive('bold')" [disabled]="disabled" (click)="editor?.chain().focus().toggleBold().run()">
+                            <span pButtonLabel>Bold</span>
+                        </button>
+                        <button pButton type="button" size="small" [outlined]="!isActive('blockquote')" [attr.aria-pressed]="isActive('blockquote')" [disabled]="disabled" (click)="editor?.chain().focus().toggleBlockquote().run()">
+                            <span pButtonLabel>Quote</span>
+                        </button>
+                        <button pButton type="button" size="small" [outlined]="true" [disabled]="disabled" (click)="openLink()"><span pButtonLabel>Link</span></button>
+                    </div>
+                </ng-template>
+            </p-rich-text-editor>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule, ButtonModule]
+})
+export class RichtexteditorTemplateDemo {
+    html: string | null = '<p>A toolbar made of ExhaustiveUI buttons.</p>';
+}
+```
+
+## Extensions
+
+extensions adds Tiptap extensions to the StarterKit, the text alignment and the link support that the component already includes: your own nodes, marks and shortcuts, or any of the open source Tiptap extensions. The onInit event gives the Tiptap editor once it is created, to run commands from your own buttons. This example adds a highlight mark, toggled with Ctrl+Shift+H or the button.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RichTextEditorInitEvent, RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { Editor, Mark, mergeAttributes } from '@tiptap/core';
+
+/**
+ * A mark that renders <mark>, toggled with Ctrl+Shift+H.
+ */
+const Highlight = Mark.create({
+    name: 'highlight',
+    parseHTML: () => [{ tag: 'mark' }],
+    renderHTML: ({ HTMLAttributes }) => ['mark', mergeAttributes(HTMLAttributes), 0],
+    addKeyboardShortcuts() {
+        return { 'Mod-Shift-h': () => this.editor.commands.toggleMark(this.name) };
+    }
+});
+
+@Component({
+    template: `
+        <div class="card flex flex-col gap-4">
+            <p-rich-text-editor [(ngModel)]="html" [extensions]="extensions" (onInit)="onInit($event)" ariaLabel="Notes" />
+            <p-button label="Highlight the selection" severity="secondary" size="small" class="self-start" [disabled]="!editor()" (onClick)="toggleHighlight()" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule, ButtonModule]
+})
+export class RichtexteditorExtensionsDemo {
+    extensions = [Highlight];
+
+    editor = signal<Editor | undefined>(undefined);
+
+    html: string | null = '<p>Select some words, then press <mark>Ctrl+Shift+H</mark> to highlight them.</p>';
+
+    onInit(event: RichTextEditorInitEvent<Editor>) {
+        this.editor.set(event.editor);
+    }
+
+    toggleHighlight() {
+        this.editor()?.chain().focus().toggleMark('highlight').run();
+    }
+}
+```
+
+## Disabled
+
+When disabled is present, the editor and its toolbar cannot be focused or changed.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-rich-text-editor [(ngModel)]="html" [disabled]="true" ariaLabel="Disabled editor" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule]
+})
+export class RichtexteditorDisabledDemo {
+    html: string | null = '<p>This content is disabled.</p>';
+}
+```
+
+## Invalid
+
+The invalid state is applied with the invalid property, which also sets aria-invalid on the editable area.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-rich-text-editor [(ngModel)]="html" [invalid]="!html" ariaLabel="Comment" placeholder="A comment is required" minHeight="5rem" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule]
+})
+export class RichtexteditorInvalidDemo {
+    html: string | null = null;
+}
+```
+
+## Forms: Template Driven
+
+The value is null while the editor is empty, so required works as on the other fields. The control is marked as touched when the editable area loses the focus.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label id="td-label" class="font-medium">Message</label>
+                    <p-rich-text-editor
+                        #model="ngModel"
+                        [(ngModel)]="message"
+                        name="message"
+                        ariaLabelledBy="td-label"
+                        [toolbar]="['bold', 'italic', 'link']"
+                        minHeight="5rem"
+                        [invalid]="model.invalid && (model.touched || exampleForm.submitted)"
+                        required
+                    />
+                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">A message is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RichTextEditorModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
+})
+export class RichtexteditorTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    message: string | null = null;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 RichTextEditor can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -257,29 +398,6 @@ export class RichtexteditorReactiveformsDemo {
 }
 ```
 
-## ReadOnly
-
-When readonly is present, the content can be read, selected and copied but not changed. The toolbar is hidden and the editable area stays focusable for screen readers.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-rich-text-editor [(ngModel)]="html" [readonly]="true" ariaLabel="Terms of service" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule]
-})
-export class RichtexteditorReadonlyDemo {
-    html: string | null = '<h3>Terms of service</h3><p>By using the service you agree to these terms. They can be <strong>read and copied</strong> but not edited.</p>';
-}
-```
-
 ## Signal Forms
 
 RichTextEditor can also be used with Angular Signal Forms . The [formField] directive binds the component to a field holding the HTML, null when empty, so required works. To limit the length, use the maxLength input of the component, which counts the characters of the text, rather than the maxLength validator, which would count the HTML tags.
@@ -333,127 +451,9 @@ export class RichtexteditorSignalformsDemo {
 }
 ```
 
-## Template
+## Accessibility
 
-The toolbar template replaces the whole toolbar. It receives the Tiptap editor , undefined while Tiptap loads, an isActive function, the disabled state and openLink to open the link panel. Use the Tiptap commands, such as editor.chain().focus().toggleBold().run() . A custom toolbar takes care of its own keyboard support.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-rich-text-editor [(ngModel)]="html" ariaLabel="Message">
-                <ng-template #toolbar let-editor let-isActive="isActive" let-disabled="disabled" let-openLink="openLink">
-                    <div class="flex gap-2 flex-wrap">
-                        <button pButton type="button" size="small" [outlined]="!isActive('bold')" [attr.aria-pressed]="isActive('bold')" [disabled]="disabled" (click)="editor?.chain().focus().toggleBold().run()">
-                            <span pButtonLabel>Bold</span>
-                        </button>
-                        <button pButton type="button" size="small" [outlined]="!isActive('blockquote')" [attr.aria-pressed]="isActive('blockquote')" [disabled]="disabled" (click)="editor?.chain().focus().toggleBlockquote().run()">
-                            <span pButtonLabel>Quote</span>
-                        </button>
-                        <button pButton type="button" size="small" [outlined]="true" [disabled]="disabled" (click)="openLink()"><span pButtonLabel>Link</span></button>
-                    </div>
-                </ng-template>
-            </p-rich-text-editor>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule, ButtonModule]
-})
-export class RichtexteditorTemplateDemo {
-    html: string | null = '<p>A toolbar made of ExhaustiveUI buttons.</p>';
-}
-```
-
-## templatedrivenforms-doc
-
-The value is null while the editor is empty, so required works as on the other fields. The control is marked as touched when the editable area loses the focus.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { RichTextEditorModule } from '@exhaustive-ui/core/richtexteditor';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-2">
-                    <label id="td-label" class="font-medium">Message</label>
-                    <p-rich-text-editor
-                        #model="ngModel"
-                        [(ngModel)]="message"
-                        name="message"
-                        ariaLabelledBy="td-label"
-                        [toolbar]="['bold', 'italic', 'link']"
-                        minHeight="5rem"
-                        [invalid]="model.invalid && (model.touched || exampleForm.submitted)"
-                        required
-                    />
-                    @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">A message is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class RichtexteditorTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    message: string | null = null;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Tiptap
-
-RichTextEditor is built on Tiptap and ProseMirror. Install the four open source Tiptap packages it uses, all MIT licensed; no Tiptap account, key or paid extension is needed. They are optional peer dependencies of ExhaustiveUI, so only the applications that use RichTextEditor install them. Tiptap is loaded in the browser only, on first use: during server-side rendering the component renders an empty placeholder.
-
-## Toolbar
-
-The toolbar input lists the buttons in order, and '|' separates two groups. The buttons are bold , italic , underline , strike , code , heading1 , heading2 , heading3 , bulletList , orderedList , blockquote , codeBlock , link , alignLeft , alignCenter , alignRight , alignJustify , undo , redo and clear ; textAlign adds the four alignments. An empty array hides the toolbar, the shortcuts keep working.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RichTextEditorModule, RichTextEditorToolbar } from '@exhaustive-ui/core/richtexteditor';
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-2">
-            <label id="toolbar-label" class="font-medium">Announcement</label>
-            <p-rich-text-editor [(ngModel)]="html" [toolbar]="toolbar" ariaLabelledBy="toolbar-label" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RichTextEditorModule]
-})
-export class RichtexteditorToolbarDemo {
-    toolbar: RichTextEditorToolbar = ['heading2', 'heading3', '|', 'bold', 'italic', 'code', '|', 'textAlign', '|', 'bulletList', 'codeBlock', '|', 'clear'];
-
-    html: string | null = '<h2 style="text-align: center">A centered title</h2><p>Select text and use the toolbar: the alignment buttons apply to headings and paragraphs.</p>';
-}
-```
+Screen Reader The editable area has the textbox role with aria-multiline , and is named with ariaLabelledBy or ariaLabel ; ariaDescribedBy links a hint or an error message. It also reports aria-invalid , aria-required , aria-readonly , aria-disabled and the placeholder with aria-placeholder . The toolbar follows the WAI-ARIA toolbar pattern : it has the toolbar role, a label and aria-controls , and only one button is in the tab order. Every button has a label, its shortcut in aria-keyshortcuts , and the formatting buttons tell whether they apply to the selection with aria-pressed . A button that cannot apply, such as undo with nothing to undo, has aria-disabled . The link panel is a labelled dialog whose field has a visible label and an error message linked with aria-describedby . When showCount is set, the count describes the editable area and reaching maxLength is announced. Every text can be replaced through labels .
 
 ## Pass Through Options
 

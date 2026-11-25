@@ -2,13 +2,9 @@
 
 RadioButton is an extension to standard radio button element with theming.
 
-## Accessibility
+## Group
 
-Screen Reader RadioButton component uses a hidden native radio button element internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
-
-## Disabled
-
-When disabled is present, the element cannot be edited and focused.
+RadioButton is used as a controlled input with value and ngModel properties.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -17,16 +13,32 @@ import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
 
 @Component({
     template: `
-        <div class="card flex justify-center gap-2">
-            <p-radio-button [(ngModel)]="value" [value]="1" [disabled]="true" ariaLabel="Option 1" />
-            <p-radio-button [(ngModel)]="value" [value]="2" [disabled]="true" ariaLabel="Option 2" />
+        <div class="card flex justify-center">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center">
+                    <p-radio-button name="pizza" value="Cheese" [(ngModel)]="ingredient" inputId="ingredient1" />
+                    <label for="ingredient1" class="ml-2">Cheese</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radio-button name="pizza" value="Mushroom" [(ngModel)]="ingredient" inputId="ingredient2" />
+                    <label for="ingredient2" class="ml-2">Mushroom</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radio-button name="pizza" value="Pepper" [(ngModel)]="ingredient" inputId="ingredient3" />
+                    <label for="ingredient3" class="ml-2">Pepper</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radio-button name="pizza" value="Onion" [(ngModel)]="ingredient" inputId="ingredient4" />
+                    <label for="ingredient4" class="ml-2">Onion</label>
+                </div>
+            </div>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, RadioButtonModule]
 })
-export class RadiobuttonDisabledDemo {
-    value: number = 2;
+export class RadiobuttonGroupDemo {
+    ingredient!: string;
 }
 ```
 
@@ -93,9 +105,9 @@ export class RadiobuttonFilledDemo {
 }
 ```
 
-## Group
+## Sizes
 
-RadioButton is used as a controlled input with value and ngModel properties.
+RadioButton provides small and large sizes as alternatives to the base.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -106,21 +118,17 @@ import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
     template: `
         <div class="card flex justify-center">
             <div class="flex flex-wrap gap-4">
-                <div class="flex items-center">
-                    <p-radio-button name="pizza" value="Cheese" [(ngModel)]="ingredient" inputId="ingredient1" />
-                    <label for="ingredient1" class="ml-2">Cheese</label>
+                <div class="flex items-center gap-2">
+                    <p-radio-button [(ngModel)]="size" inputId="size_small" name="size" value="Small" size="small" />
+                    <label for="size_small" class="text-sm">Small</label>
                 </div>
-                <div class="flex items-center">
-                    <p-radio-button name="pizza" value="Mushroom" [(ngModel)]="ingredient" inputId="ingredient2" />
-                    <label for="ingredient2" class="ml-2">Mushroom</label>
+                <div class="flex items-center gap-2">
+                    <p-radio-button [(ngModel)]="size" inputId="size_normal" name="size" value="Normal" />
+                    <label for="size_normal">Normal</label>
                 </div>
-                <div class="flex items-center">
-                    <p-radio-button name="pizza" value="Pepper" [(ngModel)]="ingredient" inputId="ingredient3" />
-                    <label for="ingredient3" class="ml-2">Pepper</label>
-                </div>
-                <div class="flex items-center">
-                    <p-radio-button name="pizza" value="Onion" [(ngModel)]="ingredient" inputId="ingredient4" />
-                    <label for="ingredient4" class="ml-2">Onion</label>
+                <div class="flex items-center gap-2">
+                    <p-radio-button [(ngModel)]="size" inputId="size_large" name="size" value="Large" size="large" />
+                    <label for="size_large" class="text-lg">Large</label>
                 </div>
             </div>
         </div>
@@ -128,8 +136,32 @@ import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
     standalone: true,
     imports: [FormsModule, RadioButtonModule]
 })
-export class RadiobuttonGroupDemo {
-    ingredient!: string;
+export class RadiobuttonSizesDemo {
+    size: any = false;
+}
+```
+
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-radio-button [(ngModel)]="value" [value]="1" [disabled]="true" ariaLabel="Option 1" />
+            <p-radio-button [(ngModel)]="value" [value]="2" [disabled]="true" ariaLabel="Option 2" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RadioButtonModule]
+})
+export class RadiobuttonDisabledDemo {
+    value: number = 2;
 }
 ```
 
@@ -156,7 +188,72 @@ export class RadiobuttonInvalidDemo {
 }
 ```
 
-## reactiveforms-doc
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-wrap gap-4">
+                    @for (category of categories; track category.name) {
+                        <div class="flex items-center gap-2">
+                            <p-radio-button [(ngModel)]="ingredient" [inputId]="category.key" [value]="category" [invalid]="isInvalid(exampleForm)" name="ingredient" />
+                            <label [for]="category.key"> {{ category.name }} </label>
+                        </div>
+                    }
+                </div>
+                @if (isInvalid(exampleForm)) {
+                    <p-message severity="error" size="small" variant="simple"> At least one ingredient must be selected. </p-message>
+                }
+                <button pButton severity="secondary" type="submit">
+                    <span pButtonLabel>Submit</span>
+                </button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, RadioButtonModule, ButtonModule, ToastModule, MessageModule, CommonModule],
+    providers: [MessageService]
+})
+export class RadiobuttonTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    formSubmitted: boolean = false;
+
+    ingredient!: any;
+
+    categories: any[] = [
+        { name: 'Cheese', key: 'C' },
+        { name: 'Mushroom', key: 'M' },
+        { name: 'Pepper', key: 'P' },
+        { name: 'Onion', key: 'O' }
+    ];
+
+    isInvalid(form: NgForm) {
+        return !this.ingredient && form.submitted;
+    }
+
+    onSubmit(form: NgForm) {
+        if (!this.isInvalid(form)) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 RadioButton can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -311,106 +408,9 @@ export class RadiobuttonSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-RadioButton provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <div class="flex flex-wrap gap-4">
-                <div class="flex items-center gap-2">
-                    <p-radio-button [(ngModel)]="size" inputId="size_small" name="size" value="Small" size="small" />
-                    <label for="size_small" class="text-sm">Small</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <p-radio-button [(ngModel)]="size" inputId="size_normal" name="size" value="Normal" />
-                    <label for="size_normal">Normal</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <p-radio-button [(ngModel)]="size" inputId="size_large" name="size" value="Large" size="large" />
-                    <label for="size_large" class="text-lg">Large</label>
-                </div>
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RadioButtonModule]
-})
-export class RadiobuttonSizesDemo {
-    size: any = false;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-wrap gap-4">
-                    @for (category of categories; track category.name) {
-                        <div class="flex items-center gap-2">
-                            <p-radio-button [(ngModel)]="ingredient" [inputId]="category.key" [value]="category" [invalid]="isInvalid(exampleForm)" name="ingredient" />
-                            <label [for]="category.key"> {{ category.name }} </label>
-                        </div>
-                    }
-                </div>
-                @if (isInvalid(exampleForm)) {
-                    <p-message severity="error" size="small" variant="simple"> At least one ingredient must be selected. </p-message>
-                }
-                <button pButton severity="secondary" type="submit">
-                    <span pButtonLabel>Submit</span>
-                </button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, RadioButtonModule, ButtonModule, ToastModule, MessageModule, CommonModule],
-    providers: [MessageService]
-})
-export class RadiobuttonTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    formSubmitted: boolean = false;
-
-    ingredient!: any;
-
-    categories: any[] = [
-        { name: 'Cheese', key: 'C' },
-        { name: 'Mushroom', key: 'M' },
-        { name: 'Pepper', key: 'P' },
-        { name: 'Onion', key: 'O' }
-    ];
-
-    isInvalid(form: NgForm) {
-        return !this.ingredient && form.submitted;
-    }
-
-    onSubmit(form: NgForm) {
-        if (!this.isInvalid(form)) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader RadioButton component uses a hidden native radio button element internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
 
 ## Pass Through Options
 

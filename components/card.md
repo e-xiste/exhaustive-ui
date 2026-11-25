@@ -2,9 +2,31 @@
 
 Card is a flexible container component.
 
-## Accessibility
+## Basic
 
-Screen Reader A card can be utilized in many use cases as a result no role is enforced, in fact a role may not be necessary if the card is used for presentational purposes only. Any valid attribute is passed to the container element so if you require to use one of the landmark roles like region , you may use the role property. Keyboard Support Component does not include any interactive elements.
+A simple Card is created with a header property along with the content as children.
+
+```typescript
+import { Component } from '@angular/core';
+import { CardModule } from '@exhaustive-ui/core/card';
+
+@Component({
+    template: `
+        <div class="mb-4 p-8">
+            <p-card header="Simple Card">
+                <p class="m-0">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque
+                    quas!
+                </p>
+            </p-card>
+        </div>
+    `,
+    standalone: true,
+    imports: [CardModule]
+})
+export class CardBasicDemo {
+}
+```
 
 ## Advanced
 
@@ -44,31 +66,9 @@ export class CardAdvancedDemo {
 }
 ```
 
-## Basic
+## Accessibility
 
-A simple Card is created with a header property along with the content as children.
-
-```typescript
-import { Component } from '@angular/core';
-import { CardModule } from '@exhaustive-ui/core/card';
-
-@Component({
-    template: `
-        <div class="mb-4 p-8">
-            <p-card header="Simple Card">
-                <p class="m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque
-                    quas!
-                </p>
-            </p-card>
-        </div>
-    `,
-    standalone: true,
-    imports: [CardModule]
-})
-export class CardBasicDemo {
-}
-```
+Screen Reader A card can be utilized in many use cases as a result no role is enforced, in fact a role may not be necessary if the card is used for presentational purposes only. Any valid attribute is passed to the container element so if you require to use one of the landmark roles like region , you may use the role property. Keyboard Support Component does not include any interactive elements.
 
 ## Card
 

@@ -2,10 +2,6 @@
 
 OrderList is used to sort a collection.
 
-## Accessibility
-
-Screen Reader Value to describe the listbox can be provided with ariaLabelledBy or ariaLabel props. The list element has a listbox role with the aria-multiselectable attribute. Each list item has an option role with aria-selected and aria-disabled as their attributes. Controls buttons are button elements with an aria-label that refers to the aria.moveTop , aria.moveUp , aria.moveDown and aria.moveBottom properties of the locale API. The buttons can be customized with buttonProps , moveTopButtonProps , moveUpButtonProps , moveDownButtonProps and moveBottomButtonProps . OrderList Keyboard Support Key Function tab Moves focus to the first selected option, if there is none then first option receives the focus. up arrow Moves focus to the previous option. down arrow Moves focus to the next option. enter Toggles the selected state of the focused option. space Toggles the selected state of the focused option. home Moves focus to the first option. end Moves focus to the last option. shift + down arrow Moves focus to the next option and toggles the selection state. shift + up arrow Moves focus to the previous option and toggles the selection state. shift + space Selects the items between the most recently selected option and the focused option. control + shift + home Selects the focused options and all the options up to the first one. control + shift + end Selects the focused options and all the options down to the first one. control + a Selects all options. Buttons Keyboard Support Key Function enter Executes button action. space Executes button action.
-
 ## Basic
 
 OrderList is used as a controlled input with value property. Content of a list item needs to be defined with the item template that receives an object in the list as parameter.
@@ -31,70 +27,6 @@ import { ProductService } from '@/service/productservice';
     providers: [ProductService]
 })
 export class OrderlistBasicDemo implements OnInit {
-    private productService = inject(ProductService);
-
-    products = signal<Product[]>([]);
-
-    ngOnInit() {
-        this.productService.getProductsSmall().then((cars) => {
-            this.products.set(cars);
-        });
-    }
-
-    getSeverity(status: string) {
-        switch (status) {
-            case 'INSTOCK':
-                return 'success';
-            case 'LOWSTOCK':
-                return 'warning';
-            case 'OUTOFSTOCK':
-                return 'danger';
-        }
-    }
-}
-```
-
-## dragdrop-doc
-
-Items can be reordered using drag and drop by enabling dragdrop property. Depends on @angular/cdk package.
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { OrderListModule } from '@exhaustive-ui/core/orderlist';
-import { Product } from '@/domain/product';
-import { ProductService } from '@/service/productservice';
-
-@Component({
-    template: `
-        <div class="card sm:flex sm:justify-center">
-            <p-order-list [value]="products()" dataKey="id" [dragdrop]="true" [responsive]="true" breakpoint="575px" scrollHeight="20rem" ariaLabel="Products">
-                <ng-template let-option let-selected="selected" #item>
-                    <div class="flex flex-wrap p-1 items-center gap-4 w-full">
-                        <img class="w-12 shrink-0 rounded-sm" src="https://exhaustive-ui.com/demo/product/{{ option.image }}" [alt]="option.name" />
-                        <div class="flex-1 flex flex-col">
-                            <span class="font-medium text-sm">{{ option.name }}</span>
-                            <span
-                                [ngClass]="{
-                                    'text-sm': true,
-                                    'text-surface-500': !selected,
-                                    'dark:text-surface-400': !selected,
-                                    'text-inherit': selected
-                                }"
-                                >{{ option.category }}</span
-                            >
-                        </div>
-                        <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
-                    </div>
-                </ng-template>
-            </p-order-list>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, OrderListModule],
-    providers: [ProductService]
-})
-export class OrderlistDragdropDemo implements OnInit {
     private productService = inject(ProductService);
 
     products = signal<Product[]>([]);
@@ -245,6 +177,74 @@ export class OrderlistTemplateDemo implements OnInit {
     }
 }
 ```
+
+## Drag & Drop
+
+Items can be reordered using drag and drop by enabling dragdrop property. Depends on @angular/cdk package.
+
+```typescript
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { OrderListModule } from '@exhaustive-ui/core/orderlist';
+import { Product } from '@/domain/product';
+import { ProductService } from '@/service/productservice';
+
+@Component({
+    template: `
+        <div class="card sm:flex sm:justify-center">
+            <p-order-list [value]="products()" dataKey="id" [dragdrop]="true" [responsive]="true" breakpoint="575px" scrollHeight="20rem" ariaLabel="Products">
+                <ng-template let-option let-selected="selected" #item>
+                    <div class="flex flex-wrap p-1 items-center gap-4 w-full">
+                        <img class="w-12 shrink-0 rounded-sm" src="https://exhaustive-ui.com/demo/product/{{ option.image }}" [alt]="option.name" />
+                        <div class="flex-1 flex flex-col">
+                            <span class="font-medium text-sm">{{ option.name }}</span>
+                            <span
+                                [ngClass]="{
+                                    'text-sm': true,
+                                    'text-surface-500': !selected,
+                                    'dark:text-surface-400': !selected,
+                                    'text-inherit': selected
+                                }"
+                                >{{ option.category }}</span
+                            >
+                        </div>
+                        <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
+                    </div>
+                </ng-template>
+            </p-order-list>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, OrderListModule],
+    providers: [ProductService]
+})
+export class OrderlistDragdropDemo implements OnInit {
+    private productService = inject(ProductService);
+
+    products = signal<Product[]>([]);
+
+    ngOnInit() {
+        this.productService.getProductsSmall().then((cars) => {
+            this.products.set(cars);
+        });
+    }
+
+    getSeverity(status: string) {
+        switch (status) {
+            case 'INSTOCK':
+                return 'success';
+            case 'LOWSTOCK':
+                return 'warning';
+            case 'OUTOFSTOCK':
+                return 'danger';
+        }
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Value to describe the listbox can be provided with ariaLabelledBy or ariaLabel props. The list element has a listbox role with the aria-multiselectable attribute. Each list item has an option role with aria-selected and aria-disabled as their attributes. Controls buttons are button elements with an aria-label that refers to the aria.moveTop , aria.moveUp , aria.moveDown and aria.moveBottom properties of the locale API. The buttons can be customized with buttonProps , moveTopButtonProps , moveUpButtonProps , moveDownButtonProps and moveBottomButtonProps . OrderList Keyboard Support Key Function tab Moves focus to the first selected option, if there is none then first option receives the focus. up arrow Moves focus to the previous option. down arrow Moves focus to the next option. enter Toggles the selected state of the focused option. space Toggles the selected state of the focused option. home Moves focus to the first option. end Moves focus to the last option. shift + down arrow Moves focus to the next option and toggles the selection state. shift + up arrow Moves focus to the previous option and toggles the selection state. shift + space Selects the items between the most recently selected option and the focused option. control + shift + home Selects the focused options and all the options up to the first one. control + shift + end Selects the focused options and all the options down to the first one. control + a Selects all options. Buttons Keyboard Support Key Function enter Executes button action. space Executes button action.
 
 ## Order List
 

@@ -2,9 +2,77 @@
 
 FileUpload is an advanced uploader with dragdrop support, multi file uploads, auto uploading, progress tracking and validations.
 
-## Accessibility
+## Basic
 
-Screen Reader FileUpload uses a hidden native input element with type="file" for screen readers. Keyboard Support Interactive elements of the uploader are buttons, visit the Button accessibility section for more information.
+FileUpload basic mode provides a simpler UI as an alternative to default advanced mode.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+interface UploadEvent {
+    originalEvent: Event;
+    files: File[];
+}
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex flex-wrap gap-6 items-center justify-between">
+            <p-file-upload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onUpload($event)" />
+            <p-button label="Upload" (onClick)="fu.upload()" severity="secondary" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileUploadModule, ToastModule, ButtonModule],
+    providers: [MessageService]
+})
+export class FileuploadBasicDemo {
+    private messageService = inject(MessageService);
+
+    onUpload(event: UploadEvent) {
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
+    }
+}
+```
+
+## Auto
+
+When auto property is enabled, a file gets uploaded instantly after selection.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+interface UploadEvent {
+    originalEvent: Event;
+    files: File[];
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-file-upload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="Browse" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileUploadModule, ToastModule],
+    providers: [MessageService]
+})
+export class FileuploadAutoDemo {
+    private messageService = inject(MessageService);
+
+    onBasicUploadAuto(event: UploadEvent) {
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Auto Mode' });
+    }
+}
+```
 
 ## Advanced
 
@@ -47,118 +115,6 @@ export class FileuploadAdvancedDemo {
         }
 
         this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
-    }
-}
-```
-
-## Auto
-
-When auto property is enabled, a file gets uploaded instantly after selection.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-interface UploadEvent {
-    originalEvent: Event;
-    files: File[];
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-file-upload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="Browse" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileUploadModule, ToastModule],
-    providers: [MessageService]
-})
-export class FileuploadAutoDemo {
-    private messageService = inject(MessageService);
-
-    onBasicUploadAuto(event: UploadEvent) {
-        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Auto Mode' });
-    }
-}
-```
-
-## Basic
-
-FileUpload basic mode provides a simpler UI as an alternative to default advanced mode.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-interface UploadEvent {
-    originalEvent: Event;
-    files: File[];
-}
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex flex-wrap gap-6 items-center justify-between">
-            <p-file-upload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]" url="https://exhaustive-ui.com/api/upload" accept="image/*" maxFileSize="1000000" (onUpload)="onUpload($event)" />
-            <p-button label="Upload" (onClick)="fu.upload()" severity="secondary" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileUploadModule, ToastModule, ButtonModule],
-    providers: [MessageService]
-})
-export class FileuploadBasicDemo {
-    private messageService = inject(MessageService);
-
-    onUpload(event: UploadEvent) {
-        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
-    }
-}
-```
-
-## custom-doc
-
-FileUpload basic mode provides a simpler UI as an alternative to default advanced mode.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast></p-toast>
-            <p-file-upload name="myfile[]" [customUpload]="true" (uploadHandler)="customUploader($event)"></p-file-upload>
-        </div>
-    `,
-    standalone: true,
-    imports: [FileUploadModule, ToastModule],
-    providers: [MessageService]
-})
-export class FileuploadCustomDemo {
-    private messageService = inject(MessageService);
-
-    async customUploader(event) {
-        const file = event.files[0];
-        const reader = new FileReader();
-        let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
-
-        reader.readAsDataURL(blob);
-
-        reader.onloadend = function () {
-            const base64data = reader.result;
-        };
-
-        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
     }
 }
 ```
@@ -303,6 +259,10 @@ export class FileuploadTemplateDemo {
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader FileUpload uses a hidden native input element with type="file" for screen readers. Keyboard Support Interactive elements of the uploader are buttons, visit the Button accessibility section for more information.
 
 ## File Upload
 

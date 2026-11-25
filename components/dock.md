@@ -2,9 +2,86 @@
 
 Dock is a navigation component consisting of menuitems.
 
-## Accessibility
+## Basic
 
-Screen Reader Dock component uses the menu role with the aria-orientation and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter Activates the focused menuitem. space Activates the focused menuitem. down arrow Moves focus to the next menuitem in vertical layout. up arrow Moves focus to the previous menuitem in vertical layout. home Moves focus to the first menuitem in horizontal layout. end Moves focus to the last menuitem in horizontal layout.
+Dock requires a collection of menuitems as its model . Default location is bottom and other sides are also available when defined with the position property. Content of the dock component is defined by item template.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { DockModule } from '@exhaustive-ui/core/dock';
+import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+
+@Component({
+    template: `
+        <div class="card">
+            <div class="flex flex-wrap gap-4 mb-8">
+                <div *ngFor="let pos of positionOptions" class="flex items-center">
+                    <p-radio-button name="dock" [value]="pos.value" [(ngModel)]="position" [inputId]="pos.label" />
+                    <label [for]="pos.label" class="ml-2"> {{ pos.label }} </label>
+                </div>
+            </div>
+            <div class="dock-window">
+                <p-dock [model]="items" [position]="position">
+                    <ng-template #item let-item>
+                        <img [pTooltip]="item.label" tooltipPosition="top" [src]="item.icon" [alt]="item.label" width="100%" />
+                    </ng-template>
+                </p-dock>
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, DockModule, RadioButtonModule, TooltipModule]
+})
+export class DockBasicDemo implements OnInit {
+    items: MenuItem[] | undefined;
+
+    position: 'left' | 'right' | 'top' | 'bottom' = 'bottom';
+
+    positionOptions = [
+        {
+            label: 'Bottom',
+            value: 'bottom'
+        },
+        {
+            label: 'Top',
+            value: 'top'
+        },
+        {
+            label: 'Left',
+            value: 'left'
+        },
+        {
+            label: 'Right',
+            value: 'right'
+        }
+    ];
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Finder',
+                icon: 'https://exhaustive-ui.com/demo/dock/finder.svg'
+            },
+            {
+                label: 'App Store',
+                icon: 'https://exhaustive-ui.com/demo/dock/appstore.svg'
+            },
+            {
+                label: 'Photos',
+                icon: 'https://exhaustive-ui.com/demo/dock/photos.svg'
+            },
+            {
+                label: 'Trash',
+                icon: 'https://exhaustive-ui.com/demo/dock/trash.png'
+            }
+        ];
+    }
+}
+```
 
 ## Advanced
 
@@ -378,86 +455,9 @@ export class DockAdvancedDemo implements OnInit, OnDestroy {
 }
 ```
 
-## Basic
+## Accessibility
 
-Dock requires a collection of menuitems as its model . Default location is bottom and other sides are also available when defined with the position property. Content of the dock component is defined by item template.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MenuItem } from '@exhaustive-ui/core/api';
-import { DockModule } from '@exhaustive-ui/core/dock';
-import { RadioButtonModule } from '@exhaustive-ui/core/radiobutton';
-import { TooltipModule } from '@exhaustive-ui/core/tooltip';
-
-@Component({
-    template: `
-        <div class="card">
-            <div class="flex flex-wrap gap-4 mb-8">
-                <div *ngFor="let pos of positionOptions" class="flex items-center">
-                    <p-radio-button name="dock" [value]="pos.value" [(ngModel)]="position" [inputId]="pos.label" />
-                    <label [for]="pos.label" class="ml-2"> {{ pos.label }} </label>
-                </div>
-            </div>
-            <div class="dock-window">
-                <p-dock [model]="items" [position]="position">
-                    <ng-template #item let-item>
-                        <img [pTooltip]="item.label" tooltipPosition="top" [src]="item.icon" [alt]="item.label" width="100%" />
-                    </ng-template>
-                </p-dock>
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, DockModule, RadioButtonModule, TooltipModule]
-})
-export class DockBasicDemo implements OnInit {
-    items: MenuItem[] | undefined;
-
-    position: 'left' | 'right' | 'top' | 'bottom' = 'bottom';
-
-    positionOptions = [
-        {
-            label: 'Bottom',
-            value: 'bottom'
-        },
-        {
-            label: 'Top',
-            value: 'top'
-        },
-        {
-            label: 'Left',
-            value: 'left'
-        },
-        {
-            label: 'Right',
-            value: 'right'
-        }
-    ];
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Finder',
-                icon: 'https://exhaustive-ui.com/demo/dock/finder.svg'
-            },
-            {
-                label: 'App Store',
-                icon: 'https://exhaustive-ui.com/demo/dock/appstore.svg'
-            },
-            {
-                label: 'Photos',
-                icon: 'https://exhaustive-ui.com/demo/dock/photos.svg'
-            },
-            {
-                label: 'Trash',
-                icon: 'https://exhaustive-ui.com/demo/dock/trash.png'
-            }
-        ];
-    }
-}
-```
+Screen Reader Dock component uses the menu role with the aria-orientation and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter Activates the focused menuitem. space Activates the focused menuitem. down arrow Moves focus to the next menuitem in vertical layout. up arrow Moves focus to the previous menuitem in vertical layout. home Moves focus to the first menuitem in horizontal layout. end Moves focus to the last menuitem in horizontal layout.
 
 ## Dock
 

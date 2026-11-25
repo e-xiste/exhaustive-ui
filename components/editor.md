@@ -2,9 +2,9 @@
 
 Editor is rich text editor component based on Quill.
 
-## Accessibility
+## Quill
 
-Quill performs generally well in terms of accessibility. The elements in the toolbar can be tabbed and have the necessary ARIA roles/attributes for screen readers. One known limitation is the lack of arrow key support for dropdowns in the toolbar that may be overcome with a custom toolbar.
+Editor uses Quill editor underneath so it needs to be installed as a dependency.
 
 ## Basic
 
@@ -29,7 +29,30 @@ export class EditorBasicDemo {
 }
 ```
 
-## customtoolbar-doc
+## ReadOnly
+
+When readonly is present, the value cannot be edited.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { EditorModule } from '@exhaustive-ui/core/editor';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-editor [(ngModel)]="text" [readonly]="true" [style]="{ height: '320px' }" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, EditorModule]
+})
+export class EditorReadonlyDemo {
+    text: string = 'Always bet on Prime!';
+}
+```
+
+## Template
 
 Editor provides a default toolbar with common options, to customize it define your elements inside the header element. Refer to Quill documentation for available controls.
 
@@ -60,11 +83,51 @@ export class EditorCustomtoolbarDemo {
 }
 ```
 
-## Quill
+## Forms: Template Driven
 
-Editor uses Quill editor underneath so it needs to be installed as a dependency.
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { EditorModule } from '@exhaustive-ui/core/editor';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
-## reactiveforms-doc
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                    <p-editor #content="ngModel" [(ngModel)]="text" [invalid]="content.invalid && (content.touched || exampleForm.submitted)" name="content" [style]="{ height: '320px' }" required />
+                    @if (content.invalid && (content.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, EditorModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
+})
+export class EditorTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    text: string | undefined;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 Editor can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -127,29 +190,6 @@ export class EditorReactiveformsDemo {
 }
 ```
 
-## ReadOnly
-
-When readonly is present, the value cannot be edited.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { EditorModule } from '@exhaustive-ui/core/editor';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-editor [(ngModel)]="text" [readonly]="true" [style]="{ height: '320px' }" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, EditorModule]
-})
-export class EditorReadonlyDemo {
-    text: string = 'Always bet on Prime!';
-}
-```
-
 ## Signal Forms
 
 Editor can also be used with Angular Signal Forms , the @angular/forms/signals API of Angular 21 and newer. The form model is a signal, form() declares its validators and the [formField] directive binds the component to a field. The field also sets the invalid and touched states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the messages below.
@@ -202,49 +242,9 @@ export class EditorSignalformsDemo {
 }
 ```
 
-## templatedrivenforms-doc
+## Accessibility
 
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { EditorModule } from '@exhaustive-ui/core/editor';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-1">
-                    <p-editor #content="ngModel" [(ngModel)]="text" [invalid]="content.invalid && (content.touched || exampleForm.submitted)" name="content" [style]="{ height: '320px' }" required />
-                    @if (content.invalid && (content.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Content is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, EditorModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class EditorTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    text: string | undefined;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Quill performs generally well in terms of accessibility. The elements in the toolbar can be tabbed and have the necessary ARIA roles/attributes for screen readers. One known limitation is the lack of arrow key support for dropdowns in the toolbar that may be overcome with a custom toolbar.
 
 ## Editor
 

@@ -2,10 +2,6 @@
 
 Text, icon, buttons and other content can be grouped next to an input.
 
-## Accessibility
-
-Screen Reader InputGroup and InputGroupAddon does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 A group is created by wrapping the input and add-ons with the p-input-group component. Each add-on element is defined as a child of p-input-group-addon component.
@@ -69,6 +65,39 @@ export class InputgroupBasicDemo {
         { name: 'Istanbul', code: 'IST' },
         { name: 'Paris', code: 'PRS' }
     ];
+}
+```
+
+## Multiple
+
+Multiple add-ons can be placed inside the same group.
+
+```typescript
+import { Component } from '@angular/core';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-input-group class="w-full md:w-120!">
+                <p-input-group-addon>
+                    <i class="pi pi-clock"></i>
+                </p-input-group-addon>
+                <p-input-group-addon>
+                    <i class="pi pi-star-fill"></i>
+                </p-input-group-addon>
+                <input type="text" pInputText placeholder="Price" />
+                <p-input-group-addon>$</p-input-group-addon>
+                <p-input-group-addon>.00</p-input-group-addon>
+            </p-input-group>
+        </div>
+    `,
+    standalone: true,
+    imports: [InputGroupModule, InputGroupAddonModule, InputTextModule]
+})
+export class InputgroupMultipleDemo {
 }
 ```
 
@@ -256,38 +285,9 @@ export class InputgroupIftalabelDemo {
 }
 ```
 
-## Multiple
+## Accessibility
 
-Multiple add-ons can be placed inside the same group.
-
-```typescript
-import { Component } from '@angular/core';
-import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
-import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-input-group class="w-full md:w-120!">
-                <p-input-group-addon>
-                    <i class="pi pi-clock"></i>
-                </p-input-group-addon>
-                <p-input-group-addon>
-                    <i class="pi pi-star-fill"></i>
-                </p-input-group-addon>
-                <input type="text" pInputText placeholder="Price" />
-                <p-input-group-addon>$</p-input-group-addon>
-                <p-input-group-addon>.00</p-input-group-addon>
-            </p-input-group>
-        </div>
-    `,
-    standalone: true,
-    imports: [InputGroupModule, InputGroupAddonModule, InputTextModule]
-})
-export class InputgroupMultipleDemo {
-}
-```
+Screen Reader InputGroup and InputGroupAddon does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
 
 ## Input Group
 

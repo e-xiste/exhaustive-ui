@@ -2,10 +2,6 @@
 
 Listbox is used to select one or more values from a list of items.
 
-## Accessibility
-
-Screen Reader Value to describe the component can be provided ariaLabelledBy or ariaLabel props. The list element has a listbox role with the aria-multiselectable attribute that sets to true when multiple selection is enabled. Each list item has an option role with aria-selected and aria-disabled as their attributes.
-
 ## Basic
 
 Listbox is used as a controlled component with ngModel property along with an options collection. Label and value of an option are defined with the optionLabel and optionValue properties respectively. Default property name for the optionLabel is label and value for the optionValue . If optionValue is omitted and the object has no value property, the object itself becomes the value of an option. Note that, when options are simple primitive values such as a string array, no optionLabel and optionValue would be necessary.
@@ -30,46 +26,6 @@ interface City {
     imports: [FormsModule, ListboxModule]
 })
 export class ListboxBasicDemo implements OnInit {
-    cities!: City[];
-
-    selectedCity!: City;
-
-    ngOnInit() {
-        this.cities = [
-            { name: 'New York', code: 'NY' },
-            { name: 'Rome', code: 'RM' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Paris', code: 'PRS' }
-        ];
-    }
-}
-```
-
-## Checkbox
-
-Listbox allows item selection using checkboxes.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ListboxModule } from '@exhaustive-ui/core/listbox';
-
-interface City {
-    name: string;
-    code: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-listbox [(ngModel)]="selectedCity" [options]="cities" [multiple]="true" [checkbox]="true" optionLabel="name" class="w-full md:w-56" ariaLabel="City" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ListboxModule]
-})
-export class ListboxCheckboxDemo implements OnInit {
     cities!: City[];
 
     selectedCity!: City;
@@ -126,9 +82,9 @@ export class ListboxCheckmarkDemo implements OnInit {
 }
 ```
 
-## Disabled
+## Checkbox
 
-When disabled is present, the element cannot be edited and focused.
+Listbox allows item selection using checkboxes.
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
@@ -143,13 +99,13 @@ interface City {
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [disabled]="true" class="w-full md:w-56" ariaLabel="City" />
+            <p-listbox [(ngModel)]="selectedCity" [options]="cities" [multiple]="true" [checkbox]="true" optionLabel="name" class="w-full md:w-56" ariaLabel="City" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, ListboxModule]
 })
-export class ListboxDisabledDemo implements OnInit {
+export class ListboxCheckboxDemo implements OnInit {
     cities!: City[];
 
     selectedCity!: City;
@@ -166,43 +122,9 @@ export class ListboxDisabledDemo implements OnInit {
 }
 ```
 
-## dragdrop-doc
+## Multiple
 
-Items can be reordered using drag and drop by enabling dragdrop property. Depends on @angular/cdk package.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ListboxModule } from '@exhaustive-ui/core/listbox';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [dragdrop]="true" class="w-full md:w-56" ariaLabel="City" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ListboxModule]
-})
-export class ListboxDragdropDemo implements OnInit {
-    cities!: any[];
-    selectedCity!: any;
-
-    ngOnInit() {
-        this.cities = [
-            { name: 'New York', code: 'NY' },
-            { name: 'Rome', code: 'RM' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Paris', code: 'PRS' }
-        ];
-    }
-}
-```
-
-## Filter
-
-ListBox provides built-in filtering that is enabled by adding the filter property.
+ListBox allows choosing a single item by default, enable multiple property to choose more than one. When the optional metaKeySelection is present, behavior is changed in a way that selecting a new item requires meta key to be present.
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
@@ -217,16 +139,16 @@ interface City {
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [filter]="true" class="w-full md:w-56" ariaLabel="City" />
+            <p-listbox [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [multiple]="true" [metaKeySelection]="false" class="w-full md:w-56" ariaLabel="Cities" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, ListboxModule]
 })
-export class ListboxFilterDemo implements OnInit {
+export class ListboxMultipleDemo implements OnInit {
     cities!: City[];
 
-    selectedCity!: City;
+    selectedCities!: City[];
 
     ngOnInit() {
         this.cities = [
@@ -313,6 +235,186 @@ export class ListboxGroupDemo {
 }
 ```
 
+## Filter
+
+ListBox provides built-in filtering that is enabled by adding the filter property.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ListboxModule } from '@exhaustive-ui/core/listbox';
+
+interface City {
+    name: string;
+    code: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [filter]="true" class="w-full md:w-56" ariaLabel="City" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ListboxModule]
+})
+export class ListboxFilterDemo implements OnInit {
+    cities!: City[];
+
+    selectedCity!: City;
+
+    ngOnInit() {
+        this.cities = [
+            { name: 'New York', code: 'NY' },
+            { name: 'Rome', code: 'RM' },
+            { name: 'London', code: 'LDN' },
+            { name: 'Istanbul', code: 'IST' },
+            { name: 'Paris', code: 'PRS' }
+        ];
+    }
+}
+```
+
+## Template
+
+For custom content support define a template named item where the default local template variable refers to an option.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ListboxModule } from '@exhaustive-ui/core/listbox';
+
+interface Country {
+    name: string;
+    code: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" class="w-full md:w-56" ariaLabel="Country">
+                <ng-template #item let-country>
+                    <div class="flex items-center gap-2">
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" alt="" />
+                        <div>{{ country.name }}</div>
+                    </div>
+                </ng-template>
+            </p-listbox>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ListboxModule]
+})
+export class ListboxTemplateDemo implements OnInit {
+    countries!: Country[];
+
+    selectedCountry!: Country;
+
+    ngOnInit() {
+        this.countries = [
+            { name: 'Australia', code: 'AU' },
+            { name: 'Brazil', code: 'BR' },
+            { name: 'China', code: 'CN' },
+            { name: 'Egypt', code: 'EG' },
+            { name: 'France', code: 'FR' },
+            { name: 'Germany', code: 'DE' },
+            { name: 'India', code: 'IN' },
+            { name: 'Japan', code: 'JP' },
+            { name: 'Spain', code: 'ES' },
+            { name: 'United States', code: 'US' }
+        ];
+    }
+}
+```
+
+## Virtual Scroll
+
+VirtualScrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable VirtualScrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ListboxModule } from '@exhaustive-ui/core/listbox';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-listbox
+                [options]="items"
+                [(ngModel)]="selectedItems"
+                [selectAll]="selectAll"
+                [filter]="true"
+                [checkbox]="true"
+                optionLabel="label"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="40"
+                [multiple]="true"
+                [metaKeySelection]="false"
+                (onSelectAllChange)="onSelectAllChange($event)"
+                (onChange)="onChange($event)"
+                scrollHeight="250px"
+                [striped]="true"
+                class="w-full md:w-56"
+                ariaLabel="Item"
+            />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ListboxModule]
+})
+export class ListboxVirtualscrollDemo {
+    items = Array.from({ length: 100000 }, (_, i) => ({ label: `Item #${i}`, value: i }));
+
+    selectedItems!: any[];
+
+    selectAll: boolean = false;
+
+    onSelectAllChange(event) {
+        this.selectedItems = event.checked ? [...this.items] : [];
+        this.selectAll = event.checked;
+    }
+
+    onChange(event) {
+        const { value } = event;
+        if (value) this.selectAll = value.length === this.items.length;
+    }
+}
+```
+
+## Drag & Drop
+
+Items can be reordered using drag and drop by enabling dragdrop property. Depends on @angular/cdk package.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ListboxModule } from '@exhaustive-ui/core/listbox';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [dragdrop]="true" class="w-full md:w-56" ariaLabel="City" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ListboxModule]
+})
+export class ListboxDragdropDemo implements OnInit {
+    cities!: any[];
+    selectedCity!: any;
+
+    ngOnInit() {
+        this.cities = [
+            { name: 'New York', code: 'NY' },
+            { name: 'Rome', code: 'RM' },
+            { name: 'London', code: 'LDN' },
+            { name: 'Istanbul', code: 'IST' },
+            { name: 'Paris', code: 'PRS' }
+        ];
+    }
+}
+```
+
 ## Invalid
 
 The invalid state is applied using the ⁠invalid property to indicate failed validation, which can be integrated with Angular Forms.
@@ -353,9 +455,9 @@ export class ListboxInvalidDemo implements OnInit {
 }
 ```
 
-## Multiple
+## Disabled
 
-ListBox allows choosing a single item by default, enable multiple property to choose more than one. When the optional metaKeySelection is present, behavior is changed in a way that selecting a new item requires meta key to be present.
+When disabled is present, the element cannot be edited and focused.
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
@@ -370,16 +472,16 @@ interface City {
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-listbox [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" [multiple]="true" [metaKeySelection]="false" class="w-full md:w-56" ariaLabel="Cities" />
+            <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [disabled]="true" class="w-full md:w-56" ariaLabel="City" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, ListboxModule]
 })
-export class ListboxMultipleDemo implements OnInit {
+export class ListboxDisabledDemo implements OnInit {
     cities!: City[];
 
-    selectedCities!: City[];
+    selectedCity!: City;
 
     ngOnInit() {
         this.cities = [
@@ -393,7 +495,68 @@ export class ListboxMultipleDemo implements OnInit {
 }
 ```
 
-## reactiveforms-doc
+## Forms: Template Driven
+
+```typescript
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ListboxModule } from '@exhaustive-ui/core/listbox';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+
+interface City {
+    name: string;
+    code: string;
+}
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
+                <div class="flex flex-col gap-1">
+                    <p-listbox #city="ngModel" [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" class="w-full md:w-56" [invalid]="city.invalid && exampleForm.submitted" name="city" required ariaLabel="City" />
+                    @if (city.invalid && exampleForm.submitted) {
+                        <p-message severity="error" size="small" variant="simple">City is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ListboxModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService]
+})
+export class ListboxTemplatedrivenformsDemo implements OnInit {
+    messageService = inject(MessageService);
+
+    selectedCity!: City;
+
+    cities!: City[];
+
+    ngOnInit() {
+        this.cities = [
+            { name: 'New York', code: 'NY' },
+            { name: 'Rome', code: 'RM' },
+            { name: 'London', code: 'LDN' },
+            { name: 'Istanbul', code: 'IST' },
+            { name: 'Paris', code: 'PRS' }
+        ];
+    }
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 Listbox can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -536,172 +699,9 @@ export class ListboxSignalformsDemo {
 }
 ```
 
-## Template
+## Accessibility
 
-For custom content support define a template named item where the default local template variable refers to an option.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ListboxModule } from '@exhaustive-ui/core/listbox';
-
-interface Country {
-    name: string;
-    code: string;
-}
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" class="w-full md:w-56" ariaLabel="Country">
-                <ng-template #item let-country>
-                    <div class="flex items-center gap-2">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" alt="" />
-                        <div>{{ country.name }}</div>
-                    </div>
-                </ng-template>
-            </p-listbox>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ListboxModule]
-})
-export class ListboxTemplateDemo implements OnInit {
-    countries!: Country[];
-
-    selectedCountry!: Country;
-
-    ngOnInit() {
-        this.countries = [
-            { name: 'Australia', code: 'AU' },
-            { name: 'Brazil', code: 'BR' },
-            { name: 'China', code: 'CN' },
-            { name: 'Egypt', code: 'EG' },
-            { name: 'France', code: 'FR' },
-            { name: 'Germany', code: 'DE' },
-            { name: 'India', code: 'IN' },
-            { name: 'Japan', code: 'JP' },
-            { name: 'Spain', code: 'ES' },
-            { name: 'United States', code: 'US' }
-        ];
-    }
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ListboxModule } from '@exhaustive-ui/core/listbox';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-
-interface City {
-    name: string;
-    code: string;
-}
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4 md:w-56">
-                <div class="flex flex-col gap-1">
-                    <p-listbox #city="ngModel" [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" class="w-full md:w-56" [invalid]="city.invalid && exampleForm.submitted" name="city" required ariaLabel="City" />
-                    @if (city.invalid && exampleForm.submitted) {
-                        <p-message severity="error" size="small" variant="simple">City is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ListboxModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService]
-})
-export class ListboxTemplatedrivenformsDemo implements OnInit {
-    messageService = inject(MessageService);
-
-    selectedCity!: City;
-
-    cities!: City[];
-
-    ngOnInit() {
-        this.cities = [
-            { name: 'New York', code: 'NY' },
-            { name: 'Rome', code: 'RM' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Paris', code: 'PRS' }
-        ];
-    }
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Virtual Scroll
-
-VirtualScrolling is an efficient way of rendering the options by displaying a small subset of data in the viewport at any time. When dealing with huge number of options, it is suggested to enable VirtualScrolling to avoid performance issues. Usage is simple as setting virtualScroll property to true and defining virtualScrollItemSize to specify the height of an item.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ListboxModule } from '@exhaustive-ui/core/listbox';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-listbox
-                [options]="items"
-                [(ngModel)]="selectedItems"
-                [selectAll]="selectAll"
-                [filter]="true"
-                [checkbox]="true"
-                optionLabel="label"
-                [virtualScroll]="true"
-                [virtualScrollItemSize]="40"
-                [multiple]="true"
-                [metaKeySelection]="false"
-                (onSelectAllChange)="onSelectAllChange($event)"
-                (onChange)="onChange($event)"
-                scrollHeight="250px"
-                [striped]="true"
-                class="w-full md:w-56"
-                ariaLabel="Item"
-            />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, ListboxModule]
-})
-export class ListboxVirtualscrollDemo {
-    items = Array.from({ length: 100000 }, (_, i) => ({ label: `Item #${i}`, value: i }));
-
-    selectedItems!: any[];
-
-    selectAll: boolean = false;
-
-    onSelectAllChange(event) {
-        this.selectedItems = event.checked ? [...this.items] : [];
-        this.selectAll = event.checked;
-    }
-
-    onChange(event) {
-        const { value } = event;
-        if (value) this.selectAll = value.length === this.items.length;
-    }
-}
-```
+Screen Reader Value to describe the component can be provided ariaLabelledBy or ariaLabel props. The list element has a listbox role with the aria-multiselectable attribute that sets to true when multiple selection is enabled. Each list item has an option role with aria-selected and aria-disabled as their attributes.
 
 ## Listbox
 

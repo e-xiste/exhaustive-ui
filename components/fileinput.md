@@ -2,36 +2,6 @@
 
 FileInput selects files by drag and drop, paste or the file picker, validates each file and uploads it with its own progress. It has a list, an images and an avatar variant, and works with every kind of Angular form.
 
-## Accessibility
-
-Screen Reader The dropzone, the add tile and the avatar are buttons that open the native file picker, which stays hidden. Describe them with ariaLabelledBy or ariaLabel ; the hint is linked to the dropzone with aria-describedby . The file list is labelled, every action button names its file, for example "Remove report.pdf", and progress bars use the progressbar role. A polite live region announces the files added and rejected, finished and failed uploads, and removed files.
-
-## Avatar
-
-The avatar variant is a single clickable image to replace a profile picture or a logo, round by default or square with avatarShape . It holds one file, so its value is a file or null. The image shown comes from the chosen file, otherwise from the first existing file. On mobile devices, capture opens the camera directly.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FileInputModule } from '@exhaustive-ui/core/fileinput';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-12">
-            <p-file-input variant="avatar" accept="image/*" capture="user" ariaLabel="Profile picture" [(ngModel)]="photo" />
-            <p-file-input variant="avatar" avatarShape="square" accept="image/*" ariaLabel="Company logo" [(ngModel)]="logo" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, FileInputModule]
-})
-export class FileinputAvatarDemo {
-    photo: File | null = null;
-
-    logo: File | null = null;
-}
-```
-
 ## Basic
 
 FileInput is bound with ngModel , and its value is the array of selected files. Files are added by clicking the dropzone, with the keyboard, by drag and drop, or by pasting them, a screenshot for example, while the component has the focus. Dropping a folder adds the files it contains and keeps their relative path. Without an url or an uploadHandler , nothing is uploaded: the files stay in the value, ready to be sent with the form.
@@ -55,9 +25,56 @@ export class FileinputBasicDemo {
 }
 ```
 
-## Disabled
+## Upload
 
-When disabled is present, files can no longer be added or removed.
+Each file is uploaded in its own request, with its own progress bar, as soon as it is added. Set url to post the files with HttpClient , which requires provideHttpClient() , or pass an uploadHandler function to upload them yourself, straight to cloud storage for example. The handler receives the file, an AbortSignal and a progress callback, and returns a promise of the server response. At most concurrency files upload at the same time, 3 by default. An upload in progress can be canceled, and a failed or canceled upload can be retried. Set auto to false to start the uploads with the upload() method instead. The demo below simulates the server. Files with "error" in their name fail. Posting to an endpoint only needs its url. The form data field is named file , or the value of fieldName .
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileInputModule, FileInputUploadEvent, FileInputUploadHandler } from '@exhaustive-ui/core/fileinput';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <p-file-input [uploadHandler]="upload" (onUpload)="onUpload($event)" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileInputModule, ToastModule],
+    providers: [MessageService]
+})
+export class FileinputUploadDemo {
+    messageService = inject(MessageService);
+
+    upload: FileInputUploadHandler = (file, { signal, progress }) =>
+        new Promise((resolve, reject) => {
+            let percent = 0;
+            const timer = setInterval(() => {
+                percent += 100000 / Math.max(file.size, 200000);
+                progress(percent);
+                if (file.name.includes('error') && percent > 50) {
+                    clearInterval(timer);
+                    reject(new Error('The server answered 500'));
+                } else if (percent >= 100) {
+                    clearInterval(timer);
+                    resolve({ name: file.name });
+                }
+            }, 150);
+            signal.addEventListener('abort', () => clearInterval(timer));
+        });
+
+    onUpload(event: FileInputUploadEvent) {
+        this.messageService.add({ severity: 'success', summary: 'Uploaded', detail: event.item.name, life: 2000 });
+    }
+}
+```
+
+## Validation
+
+accept takes extensions such as .pdf and MIME types such as image/* . maxFileSize and minFileSize limit the size of each file, maxFiles the number of files, existing files included, and maxTotalSize the size of all the files together, in bytes. A rejected file stays in the list with the reason next to it until the user removes it, and it is not part of the value. Use hint to state the rules under the dropzone.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -66,48 +83,13 @@ import { FileInputModule } from '@exhaustive-ui/core/fileinput';
 @Component({
     template: `
         <div class="card">
-            <p-file-input disabled />
+            <p-file-input accept="image/*,.pdf" [maxFileSize]="5000000" [maxFiles]="5" [maxTotalSize]="15000000" hint="Images and PDF · 5 MB per file · 5 files and 15 MB in total" />
         </div>
     `,
     standalone: true,
     imports: [FileInputModule]
 })
-export class FileinputDisabledDemo {
-}
-```
-
-## Existing Files
-
-When a form edits a record, pass the files already stored on the server to existing . They are listed before the new files, with a download button when they have a url and a delete button. Deleting one emits onRemoveExisting : delete the file on the server from there. Existing files count toward maxFiles and are not part of the value.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileInputExistingFile, FileInputModule, FileInputRemoveExistingEvent } from '@exhaustive-ui/core/fileinput';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <p-file-input [existing]="attachments" (onRemoveExisting)="onRemoveExisting($event)" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileInputModule, ToastModule],
-    providers: [MessageService]
-})
-export class FileinputExistingDemo {
-    messageService = inject(MessageService);
-
-    attachments: FileInputExistingFile[] = [
-        { id: 1, name: 'signed-contract.pdf', size: 1240000, type: 'application/pdf' },
-        { id: 2, name: 'facade.jpg', size: 312000, type: 'image/jpeg', url: 'https://exhaustive-ui.com/demo/galleria/galleria1.jpg' }
-    ];
-
-    onRemoveExisting(event: FileInputRemoveExistingEvent) {
-        this.messageService.add({ severity: 'info', summary: 'Delete on the server', detail: event.file.name, life: 3000 });
-    }
+export class FileinputValidationDemo {
 }
 ```
 
@@ -148,9 +130,103 @@ export class FileinputImagesDemo {
 }
 ```
 
-## Invalid
+## Avatar
 
-The invalid state is applied using the invalid property to indicate failed validation.
+The avatar variant is a single clickable image to replace a profile picture or a logo, round by default or square with avatarShape . It holds one file, so its value is a file or null. The image shown comes from the chosen file, otherwise from the first existing file. On mobile devices, capture opens the camera directly.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { FileInputModule } from '@exhaustive-ui/core/fileinput';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-12">
+            <p-file-input variant="avatar" accept="image/*" capture="user" ariaLabel="Profile picture" [(ngModel)]="photo" />
+            <p-file-input variant="avatar" avatarShape="square" accept="image/*" ariaLabel="Company logo" [(ngModel)]="logo" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, FileInputModule]
+})
+export class FileinputAvatarDemo {
+    photo: File | null = null;
+
+    logo: File | null = null;
+}
+```
+
+## Existing Files
+
+When a form edits a record, pass the files already stored on the server to existing . They are listed before the new files, with a download button when they have a url and a delete button. Deleting one emits onRemoveExisting : delete the file on the server from there. Existing files count toward maxFiles and are not part of the value.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileInputExistingFile, FileInputModule, FileInputRemoveExistingEvent } from '@exhaustive-ui/core/fileinput';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <p-file-input [existing]="attachments" (onRemoveExisting)="onRemoveExisting($event)" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileInputModule, ToastModule],
+    providers: [MessageService]
+})
+export class FileinputExistingDemo {
+    messageService = inject(MessageService);
+
+    attachments: FileInputExistingFile[] = [
+        { id: 1, name: 'signed-contract.pdf', size: 1240000, type: 'application/pdf' },
+        { id: 2, name: 'facade.jpg', size: 312000, type: 'image/jpeg', url: 'https://exhaustive-ui.com/demo/galleria/galleria1.jpg' }
+    ];
+
+    onRemoveExisting(event: FileInputRemoveExistingEvent) {
+        this.messageService.add({ severity: 'info', summary: 'Delete on the server', detail: event.file.name, life: 3000 });
+    }
+}
+```
+
+## Template
+
+The dropzone template replaces the content of the dropzone and receives an open function and an active flag, true while files are dragged over it. The item template replaces a row of the list and receives the item with its remove , retry and cancel functions.
+
+```typescript
+import { Component } from '@angular/core';
+import { FileInputModule } from '@exhaustive-ui/core/fileinput';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-file-input accept=".csv,.xlsx">
+                <ng-template #dropzone let-active="active">
+                    <i class="pi pi-file-excel !text-3xl text-muted-color"></i>
+                    <span class="font-semibold">{{ active ? 'Release to import' : 'Import a spreadsheet' }}</span>
+                    <span class="text-sm text-muted-color">CSV or Excel</span>
+                </ng-template>
+                <ng-template #item let-item let-remove="remove">
+                    <i class="pi pi-table text-muted-color"></i>
+                    <span class="flex-1 truncate">{{ item.name }}</span>
+                    <p-button icon="pi pi-times" severity="secondary" text rounded [ariaLabel]="'Remove ' + item.name" (onClick)="remove()" />
+                </ng-template>
+            </p-file-input>
+        </div>
+    `,
+    standalone: true,
+    imports: [FileInputModule, ButtonModule]
+})
+export class FileinputTemplateDemo {
+}
+```
+
+## Sizes
+
+FileInput provides small and large sizes as alternatives to the default, like the other form fields.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -158,15 +234,16 @@ import { FileInputModule } from '@exhaustive-ui/core/fileinput';
 
 @Component({
     template: `
-        <div class="card">
-            <p-file-input [invalid]="files.length === 0" (onSelect)="files = $event.items" />
+        <div class="card flex flex-col gap-4">
+            <p-file-input size="small" />
+            <p-file-input />
+            <p-file-input size="large" />
         </div>
     `,
     standalone: true,
     imports: [FileInputModule]
 })
-export class FileinputInvalidDemo {
-    files: unknown[] = [];
+export class FileinputSizesDemo {
 }
 ```
 
@@ -200,7 +277,97 @@ export class FileinputLabelsDemo {
 }
 ```
 
-## reactiveforms-doc
+## Disabled
+
+When disabled is present, files can no longer be added or removed.
+
+```typescript
+import { Component } from '@angular/core';
+import { FileInputModule } from '@exhaustive-ui/core/fileinput';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-file-input disabled />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileInputModule]
+})
+export class FileinputDisabledDemo {
+}
+```
+
+## Invalid
+
+The invalid state is applied using the invalid property to indicate failed validation.
+
+```typescript
+import { Component } from '@angular/core';
+import { FileInputModule } from '@exhaustive-ui/core/fileinput';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-file-input [invalid]="files.length === 0" (onSelect)="files = $event.items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FileInputModule]
+})
+export class FileinputInvalidDemo {
+    files: unknown[] = [];
+}
+```
+
+## Forms: Template Driven
+
+The value is an array of files, empty when nothing is selected, so required works as on the other fields. Resetting the form clears the files.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileInputModule } from '@exhaustive-ui/core/fileinput';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label id="receipts-label" class="font-medium">Receipts</label>
+                    <p-file-input #model="ngModel" [(ngModel)]="receipts" name="receipts" ariaLabelledBy="receipts-label" size="small" accept="image/*,.pdf" [invalid]="model.invalid && exampleForm.submitted" required />
+                    @if (model.invalid && exampleForm.submitted) {
+                        <p-message severity="error" size="small" variant="simple">At least one receipt is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, FileInputModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
+})
+export class FileinputTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    receipts: File[] = [];
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 FileInput can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -317,176 +484,9 @@ export class FileinputSignalformsDemo {
 }
 ```
 
-## Sizes
+## Accessibility
 
-FileInput provides small and large sizes as alternatives to the default, like the other form fields.
-
-```typescript
-import { Component } from '@angular/core';
-import { FileInputModule } from '@exhaustive-ui/core/fileinput';
-
-@Component({
-    template: `
-        <div class="card flex flex-col gap-4">
-            <p-file-input size="small" />
-            <p-file-input />
-            <p-file-input size="large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileInputModule]
-})
-export class FileinputSizesDemo {
-}
-```
-
-## Template
-
-The dropzone template replaces the content of the dropzone and receives an open function and an active flag, true while files are dragged over it. The item template replaces a row of the list and receives the item with its remove , retry and cancel functions.
-
-```typescript
-import { Component } from '@angular/core';
-import { FileInputModule } from '@exhaustive-ui/core/fileinput';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-file-input accept=".csv,.xlsx">
-                <ng-template #dropzone let-active="active">
-                    <i class="pi pi-file-excel !text-3xl text-muted-color"></i>
-                    <span class="font-semibold">{{ active ? 'Release to import' : 'Import a spreadsheet' }}</span>
-                    <span class="text-sm text-muted-color">CSV or Excel</span>
-                </ng-template>
-                <ng-template #item let-item let-remove="remove">
-                    <i class="pi pi-table text-muted-color"></i>
-                    <span class="flex-1 truncate">{{ item.name }}</span>
-                    <p-button icon="pi pi-times" severity="secondary" text rounded [ariaLabel]="'Remove ' + item.name" (onClick)="remove()" />
-                </ng-template>
-            </p-file-input>
-        </div>
-    `,
-    standalone: true,
-    imports: [FileInputModule, ButtonModule]
-})
-export class FileinputTemplateDemo {
-}
-```
-
-## templatedrivenforms-doc
-
-The value is an array of files, empty when nothing is selected, so required works as on the other fields. Resetting the form clears the files.
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileInputModule } from '@exhaustive-ui/core/fileinput';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-2">
-                    <label id="receipts-label" class="font-medium">Receipts</label>
-                    <p-file-input #model="ngModel" [(ngModel)]="receipts" name="receipts" ariaLabelledBy="receipts-label" size="small" accept="image/*,.pdf" [invalid]="model.invalid && exampleForm.submitted" required />
-                    @if (model.invalid && exampleForm.submitted) {
-                        <p-message severity="error" size="small" variant="simple">At least one receipt is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit" class="self-start"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, FileInputModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class FileinputTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    receipts: File[] = [];
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
-
-## Upload
-
-Each file is uploaded in its own request, with its own progress bar, as soon as it is added. Set url to post the files with HttpClient , which requires provideHttpClient() , or pass an uploadHandler function to upload them yourself, straight to cloud storage for example. The handler receives the file, an AbortSignal and a progress callback, and returns a promise of the server response. At most concurrency files upload at the same time, 3 by default. An upload in progress can be canceled, and a failed or canceled upload can be retried. Set auto to false to start the uploads with the upload() method instead. The demo below simulates the server. Files with "error" in their name fail. Posting to an endpoint only needs its url. The form data field is named file , or the value of fieldName .
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { FileInputModule, FileInputUploadEvent, FileInputUploadHandler } from '@exhaustive-ui/core/fileinput';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card">
-            <p-file-input [uploadHandler]="upload" (onUpload)="onUpload($event)" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileInputModule, ToastModule],
-    providers: [MessageService]
-})
-export class FileinputUploadDemo {
-    messageService = inject(MessageService);
-
-    upload: FileInputUploadHandler = (file, { signal, progress }) =>
-        new Promise((resolve, reject) => {
-            let percent = 0;
-            const timer = setInterval(() => {
-                percent += 100000 / Math.max(file.size, 200000);
-                progress(percent);
-                if (file.name.includes('error') && percent > 50) {
-                    clearInterval(timer);
-                    reject(new Error('The server answered 500'));
-                } else if (percent >= 100) {
-                    clearInterval(timer);
-                    resolve({ name: file.name });
-                }
-            }, 150);
-            signal.addEventListener('abort', () => clearInterval(timer));
-        });
-
-    onUpload(event: FileInputUploadEvent) {
-        this.messageService.add({ severity: 'success', summary: 'Uploaded', detail: event.item.name, life: 2000 });
-    }
-}
-```
-
-## Validation
-
-accept takes extensions such as .pdf and MIME types such as image/* . maxFileSize and minFileSize limit the size of each file, maxFiles the number of files, existing files included, and maxTotalSize the size of all the files together, in bytes. A rejected file stays in the list with the reason next to it until the user removes it, and it is not part of the value. Use hint to state the rules under the dropzone.
-
-```typescript
-import { Component } from '@angular/core';
-import { FileInputModule } from '@exhaustive-ui/core/fileinput';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-file-input accept="image/*,.pdf" [maxFileSize]="5000000" [maxFiles]="5" [maxTotalSize]="15000000" hint="Images and PDF · 5 MB per file · 5 files and 15 MB in total" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FileInputModule]
-})
-export class FileinputValidationDemo {
-}
-```
+Screen Reader The dropzone, the add tile and the avatar are buttons that open the native file picker, which stays hidden. Describe them with ariaLabelledBy or ariaLabel ; the hint is linked to the dropzone with aria-describedby . The file list is labelled, every action button names its file, for example "Remove report.pdf", and progress bars use the progressbar role. A polite live region announces the files added and rejected, finished and failed uploads, and removed files.
 
 ## Pass Through Options
 

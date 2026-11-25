@@ -2,10 +2,6 @@
 
 ProgressSpinner is a process status indicator.
 
-## Accessibility
-
-Screen Reader ProgressSpinner components uses progressbar role. Value to describe the component can be defined using aria-labelledby and aria-label props.
-
 ## Basic
 
 An infinite spin animation is displayed by default.
@@ -47,6 +43,10 @@ import { ProgressSpinnerModule } from '@exhaustive-ui/core/progressspinner';
 export class ProgressspinnerCustomDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader ProgressSpinner components uses progressbar role. Value to describe the component can be defined using aria-labelledby and aria-label props.
 
 ## Progress Spinner
 

@@ -2,9 +2,52 @@
 
 Tooltip directive provides advisory information for a component. Tooltip is integrated within various ExhaustiveUI components.
 
-## Accessibility
+## Position
 
-Screen Reader Tooltip component uses tooltip role and when it becomes visible the generated id of the tooltip is defined as the aria-describedby of the target. Keyboard Support Key Function escape Closes the tooltip when focus is on the target.
+Position of the tooltip is specified using tooltipPosition attribute. Valid values are top , bottom , right and left . Default position of the tooltip is right .
+
+```typescript
+import { Component } from '@angular/core';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-2">
+            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="right" placeholder="Right" />
+            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="top" placeholder="Top" />
+            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="bottom" placeholder="Bottom" />
+            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="left" placeholder="Left" />
+        </div>
+    `,
+    standalone: true,
+    imports: [InputTextModule, TooltipModule]
+})
+export class TooltipPositionDemo {
+}
+```
+
+## Event
+
+Tooltip gets displayed on hover event of its target by default, other option is the focus event to display and blur to hide.
+
+```typescript
+import { Component } from '@angular/core';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-2">
+            <input type="text" pInputText pTooltip="Enter your username" tooltipEvent="focus" placeholder="focus to display tooltip" />
+        </div>
+    `,
+    standalone: true,
+    imports: [InputTextModule, TooltipModule]
+})
+export class TooltipEventDemo {
+}
+```
 
 ## Auto Hide
 
@@ -26,6 +69,28 @@ import { TooltipModule } from '@exhaustive-ui/core/tooltip';
     imports: [InputTextModule, TooltipModule]
 })
 export class TooltipAutohideDemo {
+}
+```
+
+## Delay
+
+Adding delays to the show and hide events are defined with showDelay and hideDelay options respectively.
+
+```typescript
+import { Component } from '@angular/core';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { TooltipModule } from '@exhaustive-ui/core/tooltip';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button pTooltip="Confirm to proceed" showDelay="1000" hideDelay="300" label="Save" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ButtonModule, TooltipModule]
+})
+export class TooltipDelayDemo {
 }
 ```
 
@@ -58,50 +123,6 @@ export class TooltipCustomDemo {
 }
 ```
 
-## Delay
-
-Adding delays to the show and hide events are defined with showDelay and hideDelay options respectively.
-
-```typescript
-import { Component } from '@angular/core';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { TooltipModule } from '@exhaustive-ui/core/tooltip';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-button pTooltip="Confirm to proceed" showDelay="1000" hideDelay="300" label="Save" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ButtonModule, TooltipModule]
-})
-export class TooltipDelayDemo {
-}
-```
-
-## Event
-
-Tooltip gets displayed on hover event of its target by default, other option is the focus event to display and blur to hide.
-
-```typescript
-import { Component } from '@angular/core';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-import { TooltipModule } from '@exhaustive-ui/core/tooltip';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-2">
-            <input type="text" pInputText pTooltip="Enter your username" tooltipEvent="focus" placeholder="focus to display tooltip" />
-        </div>
-    `,
-    standalone: true,
-    imports: [InputTextModule, TooltipModule]
-})
-export class TooltipEventDemo {
-}
-```
-
 ## Tooltip Options
 
 Tooltip is also configurable by using tooltipOptions property.
@@ -130,30 +151,9 @@ export class TooltipOptionsDemo {
 }
 ```
 
-## Position
+## Accessibility
 
-Position of the tooltip is specified using tooltipPosition attribute. Valid values are top , bottom , right and left . Default position of the tooltip is right .
-
-```typescript
-import { Component } from '@angular/core';
-import { InputTextModule } from '@exhaustive-ui/core/inputtext';
-import { TooltipModule } from '@exhaustive-ui/core/tooltip';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-2">
-            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="right" placeholder="Right" />
-            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="top" placeholder="Top" />
-            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="bottom" placeholder="Bottom" />
-            <input type="text" pInputText pTooltip="Enter your username" tooltipPosition="left" placeholder="Left" />
-        </div>
-    `,
-    standalone: true,
-    imports: [InputTextModule, TooltipModule]
-})
-export class TooltipPositionDemo {
-}
-```
+Screen Reader Tooltip component uses tooltip role and when it becomes visible the generated id of the tooltip is defined as the aria-describedby of the target. Keyboard Support Key Function escape Closes the tooltip when focus is on the target.
 
 ## Tooltip
 

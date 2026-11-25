@@ -2,10 +2,6 @@
 
 Drawer is a container component displayed as an overlay.
 
-## Accessibility
-
-Screen Reader Drawer component uses complementary role by default, since any attribute is passed to the root element aria role can be changed depending on your use case and additional attributes like aria-labelledby can be added. In addition aria-modal is added since focus is kept within the drawer when opened. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Trigger element also requires aria-expanded and aria-controls to be handled explicitly. Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the drawer. shift + tab Moves focus to the previous the focusable element within the drawer. escape Closes the dialog if closeOnEscape is true. Close Button Keyboard Support Key Function enter Closes the drawer. space Closes the drawer.
-
 ## Basic
 
 Drawer is used as a container and visibility is controlled with a binding to visible .
@@ -31,6 +27,95 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [DrawerModule, ButtonModule]
 })
 export class DrawerBasicDemo {
+    visible: boolean = false;
+}
+```
+
+## Position
+
+Drawer location is configured with the position property that can take left , right , top and bottom as a value.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-drawer header="Left Drawer" [(visible)]="visible1" position="left">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+            </p-drawer>
+            <p-drawer header="Right Drawer" [(visible)]="visible2" position="right">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+            </p-drawer>
+            <p-drawer header="Top Drawer" [(visible)]="visible3" position="top" [style]="{ height: 'auto' }">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+            </p-drawer>
+            <p-drawer header="Bottom Drawer" [(visible)]="visible4" position="bottom" [style]="{ height: 'auto' }">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+            </p-drawer>
+            <div class="flex gap-2 justify-center">
+                <p-button type="button" (click)="visible1 = true" icon="pi pi-arrow-right" ariaLabel="Open left drawer" />
+                <p-button type="button" (click)="visible2 = true" icon="pi pi-arrow-left" ariaLabel="Open right drawer" />
+                <p-button type="button" (click)="visible3 = true" icon="pi pi-arrow-down" ariaLabel="Open top drawer" />
+                <p-button type="button" (click)="visible4 = true" icon="pi pi-arrow-up" ariaLabel="Open bottom drawer" />
+            </div>
+        </div>
+    `,
+    standalone: true,
+    imports: [DrawerModule, ButtonModule, FormsModule]
+})
+export class DrawerPositionDemo {
+    visible1: boolean = false;
+
+    visible2: boolean = false;
+
+    visible3: boolean = false;
+
+    visible4: boolean = false;
+}
+```
+
+## Size
+
+Drawer dimension can be defined with style or class properties, this responsive example utilizes Tailwind.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-drawer header="Drawer" [(visible)]="visible" styleClass="w-full! md:w-80! lg:w-120!">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+            </p-drawer>
+            <p-button (click)="visible = true" icon="pi pi-arrow-right" ariaLabel="Open drawer" />
+        </div>
+    `,
+    standalone: true,
+    imports: [DrawerModule, ButtonModule, FormsModule]
+})
+export class DrawerSizeDemo {
     visible: boolean = false;
 }
 ```
@@ -61,6 +146,56 @@ import { DrawerModule } from '@exhaustive-ui/core/drawer';
     imports: [DrawerModule, ButtonModule, FormsModule]
 })
 export class DrawerFullscreenDemo {
+    visible: boolean = false;
+}
+```
+
+## Template
+
+Drawer is customizable by header , content , footer templates.
+
+```typescript
+import { Component } from '@angular/core';
+import { DrawerModule } from '@exhaustive-ui/core/drawer';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { AvatarModule } from '@exhaustive-ui/core/avatar';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-drawer [(visible)]="visible" [closable]="false">
+                <ng-template #header>
+                    <div class="flex items-center gap-2">
+                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
+                        <span class="font-bold">Amy Elsner</span>
+                    </div>
+                </ng-template>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+                <ng-template #footer>
+                    <div class="flex items-center gap-2">
+                        <button pButton class="w-full" outlined>
+                            <i class="pi pi-user" pButtonIcon></i>
+                            <span pButtonLabel>Account</span>
+                        </button>
+                        <button pButton class="w-full" severity="danger" text>
+                            <i class="pi pi-sign-out" pButtonIcon></i>
+                            <span pButtonLabel>Logout</span>
+                        </button>
+                    </div>
+                </ng-template>
+            </p-drawer>
+            <button pButton (click)="visible = true" aria-label="Open drawer">
+                <i class="pi pi-plus" pButtonIcon></i>
+            </button>
+        </div>
+    `,
+    standalone: true,
+    imports: [DrawerModule, ButtonModule, AvatarModule]
+})
+export class DrawerTemplateDemo {
     visible: boolean = false;
 }
 ```
@@ -300,144 +435,9 @@ export class DrawerHeadlessDemo {
 }
 ```
 
-## Position
+## Accessibility
 
-Drawer location is configured with the position property that can take left , right , top and bottom as a value.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { DrawerModule } from '@exhaustive-ui/core/drawer';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-drawer header="Left Drawer" [(visible)]="visible1" position="left">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-            </p-drawer>
-            <p-drawer header="Right Drawer" [(visible)]="visible2" position="right">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-            </p-drawer>
-            <p-drawer header="Top Drawer" [(visible)]="visible3" position="top" [style]="{ height: 'auto' }">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-            </p-drawer>
-            <p-drawer header="Bottom Drawer" [(visible)]="visible4" position="bottom" [style]="{ height: 'auto' }">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-            </p-drawer>
-            <div class="flex gap-2 justify-center">
-                <p-button type="button" (click)="visible1 = true" icon="pi pi-arrow-right" ariaLabel="Open left drawer" />
-                <p-button type="button" (click)="visible2 = true" icon="pi pi-arrow-left" ariaLabel="Open right drawer" />
-                <p-button type="button" (click)="visible3 = true" icon="pi pi-arrow-down" ariaLabel="Open top drawer" />
-                <p-button type="button" (click)="visible4 = true" icon="pi pi-arrow-up" ariaLabel="Open bottom drawer" />
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [DrawerModule, ButtonModule, FormsModule]
-})
-export class DrawerPositionDemo {
-    visible1: boolean = false;
-
-    visible2: boolean = false;
-
-    visible3: boolean = false;
-
-    visible4: boolean = false;
-}
-```
-
-## Size
-
-Drawer dimension can be defined with style or class properties, this responsive example utilizes Tailwind.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { DrawerModule } from '@exhaustive-ui/core/drawer';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-drawer header="Drawer" [(visible)]="visible" styleClass="w-full! md:w-80! lg:w-120!">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-            </p-drawer>
-            <p-button (click)="visible = true" icon="pi pi-arrow-right" ariaLabel="Open drawer" />
-        </div>
-    `,
-    standalone: true,
-    imports: [DrawerModule, ButtonModule, FormsModule]
-})
-export class DrawerSizeDemo {
-    visible: boolean = false;
-}
-```
-
-## Template
-
-Drawer is customizable by header , content , footer templates.
-
-```typescript
-import { Component } from '@angular/core';
-import { DrawerModule } from '@exhaustive-ui/core/drawer';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { AvatarModule } from '@exhaustive-ui/core/avatar';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-drawer [(visible)]="visible" [closable]="false">
-                <ng-template #header>
-                    <div class="flex items-center gap-2">
-                        <p-avatar image="https://exhaustive-ui.com/demo/avatar/amyelsner.png" shape="circle" />
-                        <span class="font-bold">Amy Elsner</span>
-                    </div>
-                </ng-template>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </p>
-                <ng-template #footer>
-                    <div class="flex items-center gap-2">
-                        <button pButton class="w-full" outlined>
-                            <i class="pi pi-user" pButtonIcon></i>
-                            <span pButtonLabel>Account</span>
-                        </button>
-                        <button pButton class="w-full" severity="danger" text>
-                            <i class="pi pi-sign-out" pButtonIcon></i>
-                            <span pButtonLabel>Logout</span>
-                        </button>
-                    </div>
-                </ng-template>
-            </p-drawer>
-            <button pButton (click)="visible = true" aria-label="Open drawer">
-                <i class="pi pi-plus" pButtonIcon></i>
-            </button>
-        </div>
-    `,
-    standalone: true,
-    imports: [DrawerModule, ButtonModule, AvatarModule]
-})
-export class DrawerTemplateDemo {
-    visible: boolean = false;
-}
-```
+Screen Reader Drawer component uses complementary role by default, since any attribute is passed to the root element aria role can be changed depending on your use case and additional attributes like aria-labelledby can be added. In addition aria-modal is added since focus is kept within the drawer when opened. It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Trigger element also requires aria-expanded and aria-controls to be handled explicitly. Overlay Keyboard Support Key Function tab Moves focus to the next the focusable element within the drawer. shift + tab Moves focus to the previous the focusable element within the drawer. escape Closes the dialog if closeOnEscape is true. Close Button Keyboard Support Key Function enter Closes the drawer. space Closes the drawer.
 
 ## Drawer
 

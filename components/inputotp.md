@@ -2,10 +2,6 @@
 
 Input Otp is used to enter one time passwords.
 
-## Accessibility
-
-Screen Reader Input OTP uses a set of InputText components, refer to the InputText component for more information about the screen reader support.
-
 ## Basic
 
 Two-way value binding is defined using ngModel . The number of characters is defined with the length property, which is set to 4 by default.
@@ -25,29 +21,6 @@ import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
     imports: [FormsModule, InputOtpModule]
 })
 export class InputotpBasicDemo {
-    value: any;
-}
-```
-
-## Integer Only
-
-When integerOnly is present, only integers can be accepted as input.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-input-otp [(ngModel)]="value" [integerOnly]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputOtpModule]
-})
-export class InputotpIntegeronlyDemo {
     value: any;
 }
 ```
@@ -75,7 +48,130 @@ export class InputotpMaskDemo {
 }
 ```
 
-## reactiveforms-doc
+## Integer Only
+
+When integerOnly is present, only integers can be accepted as input.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-input-otp [(ngModel)]="value" [integerOnly]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputOtpModule]
+})
+export class InputotpIntegeronlyDemo {
+    value: any;
+}
+```
+
+## Sizes
+
+InputOtp provides small and large sizes as alternatives to the base.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
+
+@Component({
+    template: `
+        <div class="card flex flex-col items-center gap-4">
+            <p-input-otp [(ngModel)]="value1" size="small" />
+            <p-input-otp [(ngModel)]="value2" />
+            <p-input-otp [(ngModel)]="value3" size="large" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputOtpModule]
+})
+export class InputotpSizesDemo {
+    value1: any;
+
+    value2: any;
+
+    value3: any;
+}
+```
+
+## Template
+
+Define a template with your own UI elements with bindings to the provided events and attributes to replace the default design.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-input-otp [(ngModel)]="value">
+                <ng-template #input let-token let-events="events" let-index="index">
+                    <input class="custom-otp-input" (keydown)="events.keydown($event)" (input)="events.input($event)" type="text" [attr.value]="token" [maxLength]="1" [attr.aria-label]="'Digit ' + index" />
+                </ng-template>
+            </p-input-otp>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputOtpModule]
+})
+export class InputotpTemplateDemo {
+    value: any;
+}
+```
+
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                    <p-input-otp #otpModel="ngModel" [(ngModel)]="value" [invalid]="otpModel.invalid && (otpModel.touched || exampleForm.submitted)" name="value" required [minlength]="4" />
+                    @if (otpModel.invalid && (otpModel.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Passcode is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputOtpModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService]
+})
+export class InputotpTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: any;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
+}
+```
+
+## Reactive Forms
 
 InputOtp can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -138,46 +234,6 @@ export class InputotpReactiveformsDemo {
 }
 ```
 
-## Sample
-
-A sample UI implementation with templating and additional elements.
-
-```typescript
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <div class="flex flex-col items-center">
-                <div class="font-bold text-xl mb-2">Authenticate Your Account</div>
-                <p class="text-muted-color block mb-8">Please enter the code sent to your phone.</p>
-                <p-input-otp [(ngModel)]="value" [length]="6">
-                    <ng-template #input let-token let-events="events" let-index="index">
-                        <input type="text" [maxLength]="1" (input)="events.input($event)" (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" [attr.aria-label]="'Digit ' + index" />
-                        <div *ngIf="index === 3" class="px-4">
-                            <i class="pi pi-minus"></i>
-                        </div>
-                    </ng-template>
-                </p-input-otp>
-                <div class="flex justify-between mt-8 self-stretch">
-                    <p-button label="Resend Code" [link]="true" class="p-0" />
-                    <p-button label="Submit Code" />
-                </div>
-            </div>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, InputOtpModule, ButtonModule]
-})
-export class InputotpSampleDemo {
-    value: any;
-}
-```
-
 ## Signal Forms
 
 InputOtp can also be used with Angular Signal Forms , the @angular/forms/signals API of Angular 21 and newer. The form model is a signal, form() declares its validators and the [formField] directive binds the component to a field. The field also sets the invalid and touched states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the messages below.
@@ -231,105 +287,49 @@ export class InputotpSignalformsDemo {
 }
 ```
 
-## Sizes
+## Sample
 
-InputOtp provides small and large sizes as alternatives to the base.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
-
-@Component({
-    template: `
-        <div class="card flex flex-col items-center gap-4">
-            <p-input-otp [(ngModel)]="value1" size="small" />
-            <p-input-otp [(ngModel)]="value2" />
-            <p-input-otp [(ngModel)]="value3" size="large" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputOtpModule]
-})
-export class InputotpSizesDemo {
-    value1: any;
-
-    value2: any;
-
-    value3: any;
-}
-```
-
-## Template
-
-Define a template with your own UI elements with bindings to the provided events and attributes to replace the default design.
+A sample UI implementation with templating and additional elements.
 
 ```typescript
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-input-otp [(ngModel)]="value">
-                <ng-template #input let-token let-events="events" let-index="index">
-                    <input class="custom-otp-input" (keydown)="events.keydown($event)" (input)="events.input($event)" type="text" [attr.value]="token" [maxLength]="1" [attr.aria-label]="'Digit ' + index" />
-                </ng-template>
-            </p-input-otp>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, InputOtpModule]
-})
-export class InputotpTemplateDemo {
-    value: any;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
 import { InputOtpModule } from '@exhaustive-ui/core/inputotp';
 import { ButtonModule } from '@exhaustive-ui/core/button';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
 
 @Component({
     template: `
-        <p-toast />
         <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col gap-1">
-                    <p-input-otp #otpModel="ngModel" [(ngModel)]="value" [invalid]="otpModel.invalid && (otpModel.touched || exampleForm.submitted)" name="value" required [minlength]="4" />
-                    @if (otpModel.invalid && (otpModel.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Passcode is required.</p-message>
-                    }
+            <div class="flex flex-col items-center">
+                <div class="font-bold text-xl mb-2">Authenticate Your Account</div>
+                <p class="text-muted-color block mb-8">Please enter the code sent to your phone.</p>
+                <p-input-otp [(ngModel)]="value" [length]="6">
+                    <ng-template #input let-token let-events="events" let-index="index">
+                        <input type="text" [maxLength]="1" (input)="events.input($event)" (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" [attr.aria-label]="'Digit ' + index" />
+                        <div *ngIf="index === 3" class="px-4">
+                            <i class="pi pi-minus"></i>
+                        </div>
+                    </ng-template>
+                </p-input-otp>
+                <div class="flex justify-between mt-8 self-stretch">
+                    <p-button label="Resend Code" [link]="true" class="p-0" />
+                    <p-button label="Submit Code" />
                 </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
+            </div>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, InputOtpModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService]
+    imports: [CommonModule, FormsModule, InputOtpModule, ButtonModule]
 })
-export class InputotpTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
+export class InputotpSampleDemo {
     value: any;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
 }
 ```
+
+## Accessibility
+
+Screen Reader Input OTP uses a set of InputText components, refer to the InputText component for more information about the screen reader support.
 
 ## Input Otp
 

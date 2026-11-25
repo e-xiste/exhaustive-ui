@@ -2,10 +2,6 @@
 
 MeterGroup displays scalar measurements within a known range.
 
-## Accessibility
-
-Screen Reader MeterGroup component uses meter role in addition to the aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using aria-labelledby prop. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 MeterGroup requires a value as the data to display where each item in the collection should be a type of MeterItem .
@@ -25,6 +21,33 @@ import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
 })
 export class MetergroupBasicDemo {
     value = [{ label: 'Space used', value: 15, color: 'var(--p-primary-color)' }];
+}
+```
+
+## Multiple
+
+Adding more items to the array displays the meters in a group.
+
+```typescript
+import { Component } from '@angular/core';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-meter-group [value]="value" aria-label="Storage usage" />
+        </div>
+    `,
+    standalone: true,
+    imports: [MeterGroupModule]
+})
+export class MetergroupMultipleDemo {
+    value = [
+        { label: 'Apps', color: '#34d399', value: 16 },
+        { label: 'Messages', color: '#fbbf24', value: 8 },
+        { label: 'Media', color: '#60a5fa', value: 24 },
+        { label: 'System', color: '#c084fc', value: 10 }
+    ];
 }
 ```
 
@@ -82,6 +105,33 @@ export class MetergroupLabelDemo {
 }
 ```
 
+## Vertical
+
+Layout of the MeterGroup is configured with the orientation property that accepts either horizontal or vertical as available options.
+
+```typescript
+import { Component } from '@angular/core';
+import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-meter-group [value]="value" aria-label="Storage usage" orientation="vertical" labelOrientation="vertical" [style]="{ height: '300px' }" />
+        </div>
+    `,
+    standalone: true,
+    imports: [MeterGroupModule]
+})
+export class MetergroupVerticalDemo {
+    value = [
+        { label: 'Apps', color: '#34d399', value: 16 },
+        { label: 'Messages', color: '#fbbf24', value: 8 },
+        { label: 'Media', color: '#60a5fa', value: 24 },
+        { label: 'System', color: '#c084fc', value: 10 }
+    ];
+}
+```
+
 ## Min Max
 
 Boundaries are configured with the min and max values whose defaults are 0 and 100 respectively.
@@ -100,33 +150,6 @@ import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
     imports: [MeterGroupModule]
 })
 export class MetergroupMinmaxDemo {
-    value = [
-        { label: 'Apps', color: '#34d399', value: 16 },
-        { label: 'Messages', color: '#fbbf24', value: 8 },
-        { label: 'Media', color: '#60a5fa', value: 24 },
-        { label: 'System', color: '#c084fc', value: 10 }
-    ];
-}
-```
-
-## Multiple
-
-Adding more items to the array displays the meters in a group.
-
-```typescript
-import { Component } from '@angular/core';
-import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-meter-group [value]="value" aria-label="Storage usage" />
-        </div>
-    `,
-    standalone: true,
-    imports: [MeterGroupModule]
-})
-export class MetergroupMultipleDemo {
     value = [
         { label: 'Apps', color: '#34d399', value: 16 },
         { label: 'Messages', color: '#fbbf24', value: 8 },
@@ -200,32 +223,9 @@ export class MetergroupTemplateDemo {
 }
 ```
 
-## Vertical
+## Accessibility
 
-Layout of the MeterGroup is configured with the orientation property that accepts either horizontal or vertical as available options.
-
-```typescript
-import { Component } from '@angular/core';
-import { MeterGroupModule } from '@exhaustive-ui/core/metergroup';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-meter-group [value]="value" aria-label="Storage usage" orientation="vertical" labelOrientation="vertical" [style]="{ height: '300px' }" />
-        </div>
-    `,
-    standalone: true,
-    imports: [MeterGroupModule]
-})
-export class MetergroupVerticalDemo {
-    value = [
-        { label: 'Apps', color: '#34d399', value: 16 },
-        { label: 'Messages', color: '#fbbf24', value: 8 },
-        { label: 'Media', color: '#60a5fa', value: 24 },
-        { label: 'System', color: '#c084fc', value: 10 }
-    ];
-}
-```
+Screen Reader MeterGroup component uses meter role in addition to the aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using aria-labelledby prop. Keyboard Support Component does not include any interactive elements.
 
 ## Pass Through Options
 

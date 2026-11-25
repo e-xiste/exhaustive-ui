@@ -2,10 +2,6 @@
 
 FloatLabel appears on top of the input field when focused.
 
-## Accessibility
-
-Screen Reader FloatLabel does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 FloatLabel is used by wrapping the input and its label.
@@ -33,9 +29,9 @@ export class FloatlabelBasicDemo {
 }
 ```
 
-## Invalid
+## Variants
 
-When the form element is invalid, the label is also highlighted.
+The variant property defines the position of the label. Default value is over , whereas in and on are the alternatives.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -46,29 +42,23 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 @Component({
     template: `
         <div class="card flex flex-wrap justify-center items-end gap-4">
-            <p-float-label>
-                <input pInputText id="value1" [(ngModel)]="value1" [invalid]="!value1" autocomplete="off" />
-                <label for="value1">Username</label>
-            </p-float-label>
             <p-float-label variant="in">
-                <input pInputText id="value2" [(ngModel)]="value2" [invalid]="!value2" autocomplete="off" />
-                <label for="value2">Username</label>
+                <input pInputText id="in_label" [(ngModel)]="value1" autocomplete="off" />
+                <label for="in_label">In Label</label>
             </p-float-label>
             <p-float-label variant="on">
-                <input pInputText id="value3" [(ngModel)]="value3" [invalid]="!value3" autocomplete="off" />
-                <label for="value3">Username</label>
+                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <label for="on_label">On Label</label>
             </p-float-label>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, FloatLabelModule, InputTextModule]
 })
-export class FloatlabelInvalidDemo {
+export class FloatlabelVariantsDemo {
     value1: string | undefined;
 
     value2: string | undefined;
-
-    value3: string | undefined;
 }
 ```
 
@@ -136,9 +126,9 @@ export class FloatlabelSizesDemo {
 }
 ```
 
-## Variants
+## Invalid
 
-The variant property defines the position of the label. Default value is over , whereas in and on are the alternatives.
+When the form element is invalid, the label is also highlighted.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -149,25 +139,35 @@ import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 @Component({
     template: `
         <div class="card flex flex-wrap justify-center items-end gap-4">
+            <p-float-label>
+                <input pInputText id="value1" [(ngModel)]="value1" [invalid]="!value1" autocomplete="off" />
+                <label for="value1">Username</label>
+            </p-float-label>
             <p-float-label variant="in">
-                <input pInputText id="in_label" [(ngModel)]="value1" autocomplete="off" />
-                <label for="in_label">In Label</label>
+                <input pInputText id="value2" [(ngModel)]="value2" [invalid]="!value2" autocomplete="off" />
+                <label for="value2">Username</label>
             </p-float-label>
             <p-float-label variant="on">
-                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
-                <label for="on_label">On Label</label>
+                <input pInputText id="value3" [(ngModel)]="value3" [invalid]="!value3" autocomplete="off" />
+                <label for="value3">Username</label>
             </p-float-label>
         </div>
     `,
     standalone: true,
     imports: [FormsModule, FloatLabelModule, InputTextModule]
 })
-export class FloatlabelVariantsDemo {
+export class FloatlabelInvalidDemo {
     value1: string | undefined;
 
     value2: string | undefined;
+
+    value3: string | undefined;
 }
 ```
+
+## Accessibility
+
+Screen Reader FloatLabel does not require any roles and attributes. Keyboard Support Component does not include any interactive elements.
 
 ## Float Label
 

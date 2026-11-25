@@ -2,9 +2,9 @@
 
 Chart components are based on Charts.js 3.3.2+, an open source HTML5 based charting library.
 
-## Accessibility
+## Chart.js
 
-Screen Reader Chart components internally use canvas element, refer to the Chart.js accessibility guide for more information.
+To begin with, first you must install the charts.js package using npm and then include it in your project. An example with CLI would be;
 
 ## Basic
 
@@ -90,13 +90,9 @@ export class ChartBasicDemo implements OnInit {
 }
 ```
 
-## Chart.js
+## Pie
 
-To begin with, first you must install the charts.js package using npm and then include it in your project. An example with CLI would be;
-
-## Combo
-
-Different chart types can be combined in the same graph using the type option of a dataset.
+A pie chart is a circular statistical graphic which is divided into slices to illustrate numerical proportion.
 
 ```typescript
 import { isPlatformBrowser } from '@angular/common';
@@ -105,14 +101,14 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
 
 @Component({
     template: `
-        <div class="card">
-            <p-chart type="line" ariaLabel="Combined line and bar chart of three datasets from January to July" [data]="data" [options]="options" class="h-120" />
+        <div class="card flex justify-center">
+            <p-chart type="pie" ariaLabel="Pie chart of categories A, B and C" [data]="data" [options]="options" class="w-full md:w-120" />
         </div>
     `,
     standalone: true,
     imports: [ChartModule]
 })
-export class ChartComboDemo implements OnInit {
+export class ChartPieDemo implements OnInit {
     data: any;
 
     options: any;
@@ -126,64 +122,25 @@ export class ChartComboDemo implements OnInit {
     initChart() {
         if (isPlatformBrowser(this.platformId)) {
             const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+            const textColor = documentStyle.getPropertyValue('--text-color');
 
             this.data = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: ['A', 'B', 'C'],
                 datasets: [
                     {
-                        type: 'line',
-                        label: 'Dataset 1',
-                        borderColor: documentStyle.getPropertyValue('--p-orange-500'),
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        data: [50, 25, 12, 48, 56, 76, 42]
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Dataset 2',
-                        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        data: [21, 84, 24, 75, 37, 65, 34],
-                        borderColor: 'white',
-                        borderWidth: 2
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Dataset 3',
-                        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                        data: [41, 52, 24, 74, 23, 21, 32]
+                        data: [540, 325, 702],
+                        backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
+                        hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
                     }
                 ]
             };
 
             this.options = {
-                maintainAspectRatio: false,
-                aspectRatio: 0.6,
                 plugins: {
                     legend: {
                         labels: {
+                            usePointStyle: true,
                             color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
                         }
                     }
                 }
@@ -244,6 +201,99 @@ export class ChartDoughnutDemo implements OnInit {
                     legend: {
                         labels: {
                             color: textColor
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Vertical Bar
+
+A bar chart or bar graph is a chart that presents grouped data with rectangular bars with lengths proportional to the values that they represent.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-chart type="bar" ariaLabel="Vertical bar chart of two datasets from January to July" [data]="data" [options]="options" class="h-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartVerticalbarDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+            this.data = {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'My First dataset',
+                        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                    },
+                    {
+                        label: 'My Second dataset',
+                        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            this.options = {
+                maintainAspectRatio: false,
+                aspectRatio: 0.8,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: textColorSecondary,
+                            font: {
+                                weight: 500
+                            }
+                        },
+                        grid: {
+                            color: surfaceBorder,
+                            drawBorder: false
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder,
+                            drawBorder: false
                         }
                     }
                 }
@@ -338,638 +388,6 @@ export class ChartHorizontalbarDemo implements OnInit {
                         grid: {
                             color: surfaceBorder,
                             drawBorder: false
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## Line
-
-A line chart or line graph is a type of chart which displays information as a series of data points called 'markers' connected by straight line segments.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-chart type="line" ariaLabel="Line chart of two datasets from January to July" [data]="data" [options]="options" class="h-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartLineDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-            this.data = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                    {
-                        label: 'First Dataset',
-                        data: [65, 59, 80, 81, 56, 55, 40],
-                        fill: false,
-                        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Second Dataset',
-                        data: [28, 48, 40, 19, 86, 27, 90],
-                        fill: false,
-                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        tension: 0.4
-                    }
-                ]
-            };
-
-            this.options = {
-                maintainAspectRatio: false,
-                aspectRatio: 0.6,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder,
-                            drawBorder: false
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder,
-                            drawBorder: false
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## linestyle-doc
-
-Various styles of a line series can be customized to display customizations like an area chart.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-chart type="line" ariaLabel="Line chart of three styled datasets from January to July" [data]="data" [options]="options" class="h-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartLinestyleDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-            this.data = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                    {
-                        label: 'First Dataset',
-                        data: [65, 59, 80, 81, 56, 55, 40],
-                        fill: false,
-                        tension: 0.4,
-                        borderColor: documentStyle.getPropertyValue('--p-cyan-500')
-                    },
-                    {
-                        label: 'Second Dataset',
-                        data: [28, 48, 40, 19, 86, 27, 90],
-                        fill: false,
-                        borderDash: [5, 5],
-                        tension: 0.4,
-                        borderColor: documentStyle.getPropertyValue('--p-orange-500')
-                    },
-                    {
-                        label: 'Third Dataset',
-                        data: [12, 51, 62, 33, 21, 62, 45],
-                        fill: true,
-                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        tension: 0.4,
-                        backgroundColor: 'rgba(107, 114, 128, 0.2)'
-                    }
-                ]
-            };
-
-            this.options = {
-                maintainAspectRatio: false,
-                aspectRatio: 0.6,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## methods-doc
-
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Parameters</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>refresh</td>
-                        <td>-</td>
-                        <td>Redraws the graph with new data.</td>
-                    </tr>
-                    <tr>
-                        <td>reinit</td>
-                        <td>-</td>
-                        <td>Destroys the graph first and then creates it again.</td>
-                    </tr>
-                    <tr>
-                        <td>generateLegend</td>
-                        <td>-</td>
-                        <td>Returns an HTML string of a legend for that chart. The legend is generated from the legendCallback in the options.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class ChartMethodsDemo {
-}
-```
-
-## MultiAxis
-
-Multiple axes can be added using the scales option.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-chart type="line" ariaLabel="Line chart of two datasets on separate axes from January to July" [data]="data" [options]="options" class="h-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartMultiaxisDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-            this.data = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                    {
-                        label: 'Dataset 1',
-                        fill: false,
-                        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                        yAxisID: 'y',
-                        tension: 0.4,
-                        data: [65, 59, 80, 81, 56, 55, 10]
-                    },
-                    {
-                        label: 'Dataset 2',
-                        fill: false,
-                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        yAxisID: 'y1',
-                        tension: 0.4,
-                        data: [28, 48, 40, 19, 86, 27, 90]
-                    }
-                ]
-            };
-
-            this.options = {
-                stacked: false,
-                maintainAspectRatio: false,
-                aspectRatio: 0.6,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    },
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            drawOnChartArea: false,
-                            color: surfaceBorder
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## Pie
-
-A pie chart is a circular statistical graphic which is divided into slices to illustrate numerical proportion.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-chart type="pie" ariaLabel="Pie chart of categories A, B and C" [data]="data" [options]="options" class="w-full md:w-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartPieDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--text-color');
-
-            this.data = {
-                labels: ['A', 'B', 'C'],
-                datasets: [
-                    {
-                        data: [540, 325, 702],
-                        backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
-                        hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
-                    }
-                ]
-            };
-
-            this.options = {
-                plugins: {
-                    legend: {
-                        labels: {
-                            usePointStyle: true,
-                            color: textColor
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## Polar Area
-
-Polar area charts are similar to pie charts, but each segment has the same angle - the radius of the segment differs depending on the value.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-chart type="polarArea" ariaLabel="Polar area chart of five values" [data]="data" [options]="options" class="w-full md:w-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartPolarareaDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-            this.data = {
-                datasets: [
-                    {
-                        data: [11, 16, 7, 3, 14],
-                        backgroundColor: [
-                            documentStyle.getPropertyValue('--p-pink-500'),
-                            documentStyle.getPropertyValue('--p-gray-500'),
-                            documentStyle.getPropertyValue('--p-orange-500'),
-                            documentStyle.getPropertyValue('--p-purple-500'),
-                            documentStyle.getPropertyValue('--p-cyan-500')
-                        ],
-                        label: 'My dataset'
-                    }
-                ],
-                labels: ['Pink', 'Gray', 'Orange', 'Purple', 'Cyan']
-            };
-
-            this.options = {
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    r: {
-                        grid: {
-                            color: surfaceBorder
-                        }
-                    }
-                }
-            };
-        }
-    }
-}
-```
-
-## props-doc
-
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-    template: `
-        <div class="doc-tablewrapper">
-            <table class="doc-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Default</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>type</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Type of the chart.</td>
-                    </tr>
-                    <tr>
-                        <td>data</td>
-                        <td>any</td>
-                        <td>null</td>
-                        <td>Data to display.</td>
-                    </tr>
-                    <tr>
-                        <td>options</td>
-                        <td>any</td>
-                        <td>null</td>
-                        <td>Options to customize the chart.</td>
-                    </tr>
-                    <tr>
-                        <td>plugins</td>
-                        <td>any[]</td>
-                        <td>null</td>
-                        <td>Array of per-chart plugins to customize the chart behaviour.</td>
-                    </tr>
-                    <tr>
-                        <td>width</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Width of the chart.</td>
-                    </tr>
-                    <tr>
-                        <td>height</td>
-                        <td>string</td>
-                        <td>null</td>
-                        <td>Height of the chart.</td>
-                    </tr>
-                    <tr>
-                        <td>responsive</td>
-                        <td>boolean</td>
-                        <td>true</td>
-                        <td>Whether the chart is redrawn on screen size change.</td>
-                    </tr>
-                    <tr>
-                        <td>onDataSelect</td>
-                        <td>function</td>
-                        <td>null</td>
-                        <td>Callback to execute when an element on chart is clicked.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    `,
-    standalone: true,
-    imports: []
-})
-export class ChartPropsDemo {
-}
-```
-
-## radar-doc
-
-A radar chart is a graphical method of displaying multivariate data in the form of a two-dimensional chart of three or more quantitative variables represented on axes starting from the same point.
-
-```typescript
-import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ChartModule } from '@exhaustive-ui/core/chart';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-chart type="radar" ariaLabel="Radar chart comparing two datasets across seven activities" [data]="data" [options]="options" class="w-full md:w-120" />
-        </div>
-    `,
-    standalone: true,
-    imports: [ChartModule]
-})
-export class ChartRadarDemo implements OnInit {
-    data: any;
-
-    options: any;
-
-    platformId = inject(PLATFORM_ID);
-
-    ngOnInit() {
-        this.initChart();
-    }
-
-    initChart() {
-        if (isPlatformBrowser(this.platformId)) {
-            const documentStyle = getComputedStyle(document.documentElement);
-            const textColor = documentStyle.getPropertyValue('--p-text-color');
-            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-
-            this.data = {
-                labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
-                datasets: [
-                    {
-                        label: 'My First dataset',
-                        borderColor: documentStyle.getPropertyValue('--p-gray-400'),
-                        pointBackgroundColor: documentStyle.getPropertyValue('--p-gray-400'),
-                        pointBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
-                        pointHoverBackgroundColor: textColor,
-                        pointHoverBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
-                        data: [65, 59, 90, 81, 56, 55, 40]
-                    },
-                    {
-                        label: 'My Second dataset',
-                        borderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-                        pointBackgroundColor: documentStyle.getPropertyValue('--p-cyan-400'),
-                        pointBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-                        pointHoverBackgroundColor: textColor,
-                        pointHoverBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-                        data: [28, 48, 40, 19, 96, 27, 100]
-                    }
-                ]
-            };
-
-            this.options = {
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
-                    }
-                },
-                scales: {
-                    r: {
-                        grid: {
-                            color: textColorSecondary
                         }
                     }
                 }
@@ -1081,9 +499,9 @@ export class ChartStackedbarDemo implements OnInit {
 }
 ```
 
-## Vertical Bar
+## Line
 
-A bar chart or bar graph is a chart that presents grouped data with rectangular bars with lengths proportional to the values that they represent.
+A line chart or line graph is a type of chart which displays information as a series of data points called 'markers' connected by straight line segments.
 
 ```typescript
 import { isPlatformBrowser } from '@angular/common';
@@ -1093,13 +511,13 @@ import { ChartModule } from '@exhaustive-ui/core/chart';
 @Component({
     template: `
         <div class="card">
-            <p-chart type="bar" ariaLabel="Vertical bar chart of two datasets from January to July" [data]="data" [options]="options" class="h-120" />
+            <p-chart type="line" ariaLabel="Line chart of two datasets from January to July" [data]="data" [options]="options" class="h-120" />
         </div>
     `,
     standalone: true,
     imports: [ChartModule]
 })
-export class ChartVerticalbarDemo implements OnInit {
+export class ChartLineDemo implements OnInit {
     data: any;
 
     options: any;
@@ -1121,23 +539,25 @@ export class ChartVerticalbarDemo implements OnInit {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                     {
-                        label: 'My First dataset',
-                        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                        label: 'First Dataset',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        fill: false,
                         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                        data: [65, 59, 80, 81, 56, 55, 40]
+                        tension: 0.4
                     },
                     {
-                        label: 'My Second dataset',
-                        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        label: 'Second Dataset',
+                        data: [28, 48, 40, 19, 86, 27, 90],
+                        fill: false,
                         borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        data: [28, 48, 40, 19, 86, 27, 90]
+                        tension: 0.4
                     }
                 ]
             };
 
             this.options = {
                 maintainAspectRatio: false,
-                aspectRatio: 0.8,
+                aspectRatio: 0.6,
                 plugins: {
                     legend: {
                         labels: {
@@ -1148,10 +568,7 @@ export class ChartVerticalbarDemo implements OnInit {
                 scales: {
                     x: {
                         ticks: {
-                            color: textColorSecondary,
-                            font: {
-                                weight: 500
-                            }
+                            color: textColorSecondary
                         },
                         grid: {
                             color: surfaceBorder,
@@ -1173,6 +590,469 @@ export class ChartVerticalbarDemo implements OnInit {
     }
 }
 ```
+
+## MultiAxis
+
+Multiple axes can be added using the scales option.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-chart type="line" ariaLabel="Line chart of two datasets on separate axes from January to July" [data]="data" [options]="options" class="h-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartMultiaxisDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+            this.data = {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'Dataset 1',
+                        fill: false,
+                        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                        yAxisID: 'y',
+                        tension: 0.4,
+                        data: [65, 59, 80, 81, 56, 55, 10]
+                    },
+                    {
+                        label: 'Dataset 2',
+                        fill: false,
+                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            this.options = {
+                stacked: false,
+                maintainAspectRatio: false,
+                aspectRatio: 0.6,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                            color: surfaceBorder
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Line Styles
+
+Various styles of a line series can be customized to display customizations like an area chart.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-chart type="line" ariaLabel="Line chart of three styled datasets from January to July" [data]="data" [options]="options" class="h-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartLinestyleDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+            this.data = {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'First Dataset',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        fill: false,
+                        tension: 0.4,
+                        borderColor: documentStyle.getPropertyValue('--p-cyan-500')
+                    },
+                    {
+                        label: 'Second Dataset',
+                        data: [28, 48, 40, 19, 86, 27, 90],
+                        fill: false,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        borderColor: documentStyle.getPropertyValue('--p-orange-500')
+                    },
+                    {
+                        label: 'Third Dataset',
+                        data: [12, 51, 62, 33, 21, 62, 45],
+                        fill: true,
+                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        tension: 0.4,
+                        backgroundColor: 'rgba(107, 114, 128, 0.2)'
+                    }
+                ]
+            };
+
+            this.options = {
+                maintainAspectRatio: false,
+                aspectRatio: 0.6,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Polar Area
+
+Polar area charts are similar to pie charts, but each segment has the same angle - the radius of the segment differs depending on the value.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-chart type="polarArea" ariaLabel="Polar area chart of five values" [data]="data" [options]="options" class="w-full md:w-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartPolarareaDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+            this.data = {
+                datasets: [
+                    {
+                        data: [11, 16, 7, 3, 14],
+                        backgroundColor: [
+                            documentStyle.getPropertyValue('--p-pink-500'),
+                            documentStyle.getPropertyValue('--p-gray-500'),
+                            documentStyle.getPropertyValue('--p-orange-500'),
+                            documentStyle.getPropertyValue('--p-purple-500'),
+                            documentStyle.getPropertyValue('--p-cyan-500')
+                        ],
+                        label: 'My dataset'
+                    }
+                ],
+                labels: ['Pink', 'Gray', 'Orange', 'Purple', 'Cyan']
+            };
+
+            this.options = {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Radar
+
+A radar chart is a graphical method of displaying multivariate data in the form of a two-dimensional chart of three or more quantitative variables represented on axes starting from the same point.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-chart type="radar" ariaLabel="Radar chart comparing two datasets across seven activities" [data]="data" [options]="options" class="w-full md:w-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartRadarDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+
+            this.data = {
+                labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
+                datasets: [
+                    {
+                        label: 'My First dataset',
+                        borderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                        pointBackgroundColor: documentStyle.getPropertyValue('--p-gray-400'),
+                        pointBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                        pointHoverBackgroundColor: textColor,
+                        pointHoverBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                        data: [65, 59, 90, 81, 56, 55, 40]
+                    },
+                    {
+                        label: 'My Second dataset',
+                        borderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                        pointBackgroundColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                        pointBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                        pointHoverBackgroundColor: textColor,
+                        pointHoverBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                        data: [28, 48, 40, 19, 96, 27, 100]
+                    }
+                ]
+            };
+
+            this.options = {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        grid: {
+                            color: textColorSecondary
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Combo
+
+Different chart types can be combined in the same graph using the type option of a dataset.
+
+```typescript
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from '@exhaustive-ui/core/chart';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-chart type="line" ariaLabel="Combined line and bar chart of three datasets from January to July" [data]="data" [options]="options" class="h-120" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ChartModule]
+})
+export class ChartComboDemo implements OnInit {
+    data: any;
+
+    options: any;
+
+    platformId = inject(PLATFORM_ID);
+
+    ngOnInit() {
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            const documentStyle = getComputedStyle(document.documentElement);
+            const textColor = documentStyle.getPropertyValue('--p-text-color');
+            const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+            const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+            this.data = {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Dataset 1',
+                        borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        data: [50, 25, 12, 48, 56, 76, 42]
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Dataset 2',
+                        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                        data: [21, 84, 24, 75, 37, 65, 34],
+                        borderColor: 'white',
+                        borderWidth: 2
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Dataset 3',
+                        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                        data: [41, 52, 24, 74, 23, 21, 32]
+                    }
+                ]
+            };
+
+            this.options = {
+                maintainAspectRatio: false,
+                aspectRatio: 0.6,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: textColorSecondary
+                        },
+                        grid: {
+                            color: surfaceBorder
+                        }
+                    }
+                }
+            };
+        }
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Chart components internally use canvas element, refer to the Chart.js accessibility guide for more information.
 
 ## Pass Through Options
 

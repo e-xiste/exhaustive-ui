@@ -2,10 +2,6 @@
 
 MegaMenu is navigation component that displays submenus together.
 
-## Accessibility
-
-Screen Reader MegaMenu component uses the menubar role along with aria-orientation and the value to describe the component can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a MegaMenu uses the menu role with an aria-labelledby defined as the id of the submenu root menuitem label. In addition, root menuitems that open a submenu have aria-haspopup , aria-expanded and aria-controls to define the relation between the item and the submenu. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. space If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. escape If focus is inside a popup submenu, closes the submenu and moves focus to the root item of the closed submenu. down arrow If focus is on a root element, open a submenu and moves focus to the first element in the submenu otherwise moves focus to the next menuitem within the submenu. up arrow If focus is on a root element, opens a submenu and moves focus to the last element in the submenu otherwise moves focus to the previous menuitem within the submenu. right arrow If focus is on a root element, moves focus to the next menuitem. If the focus in inside a submenu, moves focus to the first menuitem of the next menu group. left arrow If focus is on a root element, moves focus to the previous menuitem. If the focus in inside a submenu, moves focus to the first menuitem of the previous menu group. home Moves focus to the first menuitem within the submenu. end Moves focus to the last menuitem within the submenu.
-
 ## Basic
 
 MegaMenu requires a collection of menuitems as its model .
@@ -128,69 +124,119 @@ export class MegamenuBasicDemo implements OnInit {
 }
 ```
 
-## Command
+## Vertical
 
-The command property of a menuitem defines the callback to run when an item is activated by click or a key event.
-
-## Router
-
-Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
+Layout of the MegaMenu is changed with the orientation property that accepts horizontal and vertical as options.
 
 ```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { MegaMenuItem } from '@exhaustive-ui/core/api';
 import { MegaMenuModule } from '@exhaustive-ui/core/megamenu';
 
 @Component({
     template: `
         <div class="card">
-            <p-mega-menu [model]="items" />
+            <p-mega-menu [model]="items" orientation="vertical" />
         </div>
     `,
     standalone: true,
     imports: [MegaMenuModule]
 })
-export class MegamenuRouterDemo implements OnInit {
-    private router = inject(Router);
-
+export class MegamenuVerticalDemo implements OnInit {
     items: MegaMenuItem[] | undefined;
 
     ngOnInit() {
         this.items = [
             {
-                label: 'Router',
-                icon: 'pi pi-palette',
+                label: 'Furniture',
+                icon: 'pi pi-box',
                 items: [
                     [
                         {
-                            label: 'RouterLink',
-                            items: [{ label: 'Theming', routerLink: '/theming' }]
+                            label: 'Living Room',
+                            items: [{ label: 'Accessories' }, { label: 'Armchair' }, { label: 'Coffee Table' }, { label: 'Couch' }, { label: 'TV Stand' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Kitchen',
+                            items: [{ label: 'Bar stool' }, { label: 'Chair' }, { label: 'Table' }]
+                        },
+                        {
+                            label: 'Bathroom',
+                            items: [{ label: 'Accessories' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Bedroom',
+                            items: [{ label: 'Bed' }, { label: 'Chaise lounge' }, { label: 'Cupboard' }, { label: 'Dresser' }, { label: 'Wardrobe' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Office',
+                            items: [{ label: 'Bookcase' }, { label: 'Cabinet' }, { label: 'Chair' }, { label: 'Desk' }, { label: 'Executive Chair' }]
                         }
                     ]
                 ]
             },
             {
-                label: 'Programmatic',
-                icon: 'pi pi-link',
-                command: () => {
-                    this.router.navigate(['/installation']);
-                }
-            },
-            {
-                label: 'External',
-                icon: 'pi pi-home',
+                label: 'Electronics',
+                icon: 'pi pi-mobile',
                 items: [
                     [
                         {
-                            label: 'External',
-                            items: [
-                                { label: 'Angular', url: 'https://angular.dev/' },
-                                {
-                                    label: 'Vite.js',
-                                    url: 'https://vitejs.dev/'
-                                }
-                            ]
+                            label: 'Computer',
+                            items: [{ label: 'Monitor' }, { label: 'Mouse' }, { label: 'Notebook' }, { label: 'Keyboard' }, { label: 'Printer' }, { label: 'Storage' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Home Theater',
+                            items: [{ label: 'Projector' }, { label: 'Speakers' }, { label: 'TVs' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Gaming',
+                            items: [{ label: 'Accessories' }, { label: 'Console' }, { label: 'PC' }, { label: 'Video Games' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Appliances',
+                            items: [{ label: 'Coffee Machine' }, { label: 'Fridge' }, { label: 'Oven' }, { label: 'Vaccum Cleaner' }, { label: 'Washing Machine' }]
+                        }
+                    ]
+                ]
+            },
+            {
+                label: 'Sports',
+                icon: 'pi pi-clock',
+                items: [
+                    [
+                        {
+                            label: 'Football',
+                            items: [{ label: 'Kits' }, { label: 'Shoes' }, { label: 'Shorts' }, { label: 'Training' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Running',
+                            items: [{ label: 'Accessories' }, { label: 'Shoes' }, { label: 'T-Shirts' }, { label: 'Shorts' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Swimming',
+                            items: [{ label: 'Kickboard' }, { label: 'Nose Clip' }, { label: 'Swimsuits' }, { label: 'Paddles' }]
+                        }
+                    ],
+                    [
+                        {
+                            label: 'Tennis',
+                            items: [{ label: 'Balls' }, { label: 'Rackets' }, { label: 'Shoes' }, { label: 'Training' }]
                         }
                     ]
                 ]
@@ -328,119 +374,69 @@ export class MegamenuTemplateDemo implements OnInit {
 }
 ```
 
-## Vertical
+## Command
 
-Layout of the MegaMenu is changed with the orientation property that accepts horizontal and vertical as options.
+The command property of a menuitem defines the callback to run when an item is activated by click or a key event.
+
+## Router
+
+Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
 
 ```typescript
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { MegaMenuItem } from '@exhaustive-ui/core/api';
 import { MegaMenuModule } from '@exhaustive-ui/core/megamenu';
 
 @Component({
     template: `
         <div class="card">
-            <p-mega-menu [model]="items" orientation="vertical" />
+            <p-mega-menu [model]="items" />
         </div>
     `,
     standalone: true,
     imports: [MegaMenuModule]
 })
-export class MegamenuVerticalDemo implements OnInit {
+export class MegamenuRouterDemo implements OnInit {
+    private router = inject(Router);
+
     items: MegaMenuItem[] | undefined;
 
     ngOnInit() {
         this.items = [
             {
-                label: 'Furniture',
-                icon: 'pi pi-box',
+                label: 'Router',
+                icon: 'pi pi-palette',
                 items: [
                     [
                         {
-                            label: 'Living Room',
-                            items: [{ label: 'Accessories' }, { label: 'Armchair' }, { label: 'Coffee Table' }, { label: 'Couch' }, { label: 'TV Stand' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Kitchen',
-                            items: [{ label: 'Bar stool' }, { label: 'Chair' }, { label: 'Table' }]
-                        },
-                        {
-                            label: 'Bathroom',
-                            items: [{ label: 'Accessories' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Bedroom',
-                            items: [{ label: 'Bed' }, { label: 'Chaise lounge' }, { label: 'Cupboard' }, { label: 'Dresser' }, { label: 'Wardrobe' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Office',
-                            items: [{ label: 'Bookcase' }, { label: 'Cabinet' }, { label: 'Chair' }, { label: 'Desk' }, { label: 'Executive Chair' }]
+                            label: 'RouterLink',
+                            items: [{ label: 'Theming', routerLink: '/theming' }]
                         }
                     ]
                 ]
             },
             {
-                label: 'Electronics',
-                icon: 'pi pi-mobile',
-                items: [
-                    [
-                        {
-                            label: 'Computer',
-                            items: [{ label: 'Monitor' }, { label: 'Mouse' }, { label: 'Notebook' }, { label: 'Keyboard' }, { label: 'Printer' }, { label: 'Storage' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Home Theater',
-                            items: [{ label: 'Projector' }, { label: 'Speakers' }, { label: 'TVs' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Gaming',
-                            items: [{ label: 'Accessories' }, { label: 'Console' }, { label: 'PC' }, { label: 'Video Games' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Appliances',
-                            items: [{ label: 'Coffee Machine' }, { label: 'Fridge' }, { label: 'Oven' }, { label: 'Vaccum Cleaner' }, { label: 'Washing Machine' }]
-                        }
-                    ]
-                ]
+                label: 'Programmatic',
+                icon: 'pi pi-link',
+                command: () => {
+                    this.router.navigate(['/installation']);
+                }
             },
             {
-                label: 'Sports',
-                icon: 'pi pi-clock',
+                label: 'External',
+                icon: 'pi pi-home',
                 items: [
                     [
                         {
-                            label: 'Football',
-                            items: [{ label: 'Kits' }, { label: 'Shoes' }, { label: 'Shorts' }, { label: 'Training' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Running',
-                            items: [{ label: 'Accessories' }, { label: 'Shoes' }, { label: 'T-Shirts' }, { label: 'Shorts' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Swimming',
-                            items: [{ label: 'Kickboard' }, { label: 'Nose Clip' }, { label: 'Swimsuits' }, { label: 'Paddles' }]
-                        }
-                    ],
-                    [
-                        {
-                            label: 'Tennis',
-                            items: [{ label: 'Balls' }, { label: 'Rackets' }, { label: 'Shoes' }, { label: 'Training' }]
+                            label: 'External',
+                            items: [
+                                { label: 'Angular', url: 'https://angular.dev/' },
+                                {
+                                    label: 'Vite.js',
+                                    url: 'https://vitejs.dev/'
+                                }
+                            ]
                         }
                     ]
                 ]
@@ -449,6 +445,10 @@ export class MegamenuVerticalDemo implements OnInit {
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader MegaMenu component uses the menubar role along with aria-orientation and the value to describe the component can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a MegaMenu uses the menu role with an aria-labelledby defined as the id of the submenu root menuitem label. In addition, root menuitems that open a submenu have aria-haspopup , aria-expanded and aria-controls to define the relation between the item and the submenu. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. space If menuitem has a submenu, toggles the visibility of the submenu otherwise activates the menuitem and closes all open overlays. escape If focus is inside a popup submenu, closes the submenu and moves focus to the root item of the closed submenu. down arrow If focus is on a root element, open a submenu and moves focus to the first element in the submenu otherwise moves focus to the next menuitem within the submenu. up arrow If focus is on a root element, opens a submenu and moves focus to the last element in the submenu otherwise moves focus to the previous menuitem within the submenu. right arrow If focus is on a root element, moves focus to the next menuitem. If the focus in inside a submenu, moves focus to the first menuitem of the next menu group. left arrow If focus is on a root element, moves focus to the previous menuitem. If the focus in inside a submenu, moves focus to the first menuitem of the previous menu group. home Moves focus to the first menuitem within the submenu. end Moves focus to the last menuitem within the submenu.
 
 ## Mega Menu
 

@@ -2,10 +2,6 @@
 
 ColorPicker is an input component to select a color.
 
-## Accessibility
-
-Screen Reader Specification does not cover a color picker yet and using a semantic native color picker is not consistent across browsers so currently component is not compatible with screen readers. In the upcoming versions, text fields will be introduced below the slider section to be able to pick a color using accessible text boxes in hsl, rgba and hex formats.
-
 ## Basic
 
 ColorPicker is used as a controlled input with ngModel property.
@@ -30,9 +26,9 @@ export class ColorpickerBasicDemo {
 }
 ```
 
-## Disabled
+## Inline
 
-When disabled is present, the element cannot be edited and focused.
+ColorPicker is displayed as a popup by default, add inline property to customize this behavior.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -43,13 +39,13 @@ import { ColorPickerModule } from '@exhaustive-ui/core/colorpicker';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-color-picker [(ngModel)]="color" [disabled]="true" />
+            <p-color-picker [(ngModel)]="color" [inline]="true" />
         </div>
     `,
     standalone: true,
     imports: [CommonModule, FormsModule, ColorPickerModule]
 })
-export class ColorpickerDisabledDemo {
+export class ColorpickerInlineDemo {
     color: string | undefined;
 }
 ```
@@ -96,31 +92,52 @@ export class ColorpickerFormatDemo {
 }
 ```
 
-## Inline
-
-ColorPicker is displayed as a popup by default, add inline property to customize this behavior.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { ColorPickerModule } from '@exhaustive-ui/core/colorpicker';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-color-picker [(ngModel)]="color" [inline]="true" />
+            <p-toast />
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+                <div class="flex flex-col items-center gap-2">
+                    <p-color-picker name="color" [(ngModel)]="color" #colorModel="ngModel" required defaultColor="989898" />
+                    @if (colorModel.invalid && (colorModel.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Color is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [CommonModule, FormsModule, ColorPickerModule]
+    imports: [CommonModule, FormsModule, ColorPickerModule, ButtonModule, MessageModule, ToastModule],
+    providers: [MessageService]
 })
-export class ColorpickerInlineDemo {
+export class ColorpickerTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
     color: string | undefined;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form is submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 ColorPicker can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -236,50 +253,33 @@ export class ColorpickerSignalformsDemo {
 }
 ```
 
-## templatedrivenforms-doc
+## Disabled
+
+When disabled is present, the element cannot be edited and focused.
 
 ```typescript
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
 import { ColorPickerModule } from '@exhaustive-ui/core/colorpicker';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-toast />
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-                <div class="flex flex-col items-center gap-2">
-                    <p-color-picker name="color" [(ngModel)]="color" #colorModel="ngModel" required defaultColor="989898" />
-                    @if (colorModel.invalid && (colorModel.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Color is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
+            <p-color-picker [(ngModel)]="color" [disabled]="true" />
         </div>
     `,
     standalone: true,
-    imports: [CommonModule, FormsModule, ColorPickerModule, ButtonModule, MessageModule, ToastModule],
-    providers: [MessageService]
+    imports: [CommonModule, FormsModule, ColorPickerModule]
 })
-export class ColorpickerTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
+export class ColorpickerDisabledDemo {
     color: string | undefined;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form is submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
 }
 ```
+
+## Accessibility
+
+Screen Reader Specification does not cover a color picker yet and using a semantic native color picker is not consistent across browsers so currently component is not compatible with screen readers. In the upcoming versions, text fields will be introduced below the slider section to be able to pick a color using accessible text boxes in hsl, rgba and hex formats.
 
 ## Color Picker
 

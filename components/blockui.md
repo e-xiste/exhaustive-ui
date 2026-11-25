@@ -2,10 +2,6 @@
 
 BlockUI can either block other components or the whole page.
 
-## Accessibility
-
-Screen Reader BlockUI manages aria-busy state attribute when the UI gets blocked and unblocked. Any valid attribute is passed to the root element so additional attributes like role and aria-live can be used to define live regions. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 The element to block should be placed as a child of BlockUI and blocked property is required to control the state.
@@ -68,6 +64,10 @@ export class BlockuiDocumentDemo {
     }
 }
 ```
+
+## Accessibility
+
+Screen Reader BlockUI manages aria-busy state attribute when the UI gets blocked and unblocked. Any valid attribute is passed to the root element so additional attributes like role and aria-live can be used to define live regions. Keyboard Support Component does not include any interactive elements.
 
 ## Block U I
 

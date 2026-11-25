@@ -2,10 +2,6 @@
 
 ToggleSwitch is used to select a boolean value.
 
-## Accessibility
-
-Screen Reader InputSwitch component uses a hidden native checkbox element with switch role internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
-
 ## Basic
 
 Two-way value binding is defined using ngModel .
@@ -25,6 +21,57 @@ import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
     imports: [FormsModule, ToggleSwitchModule]
 })
 export class ToggleswitchBasicDemo {
+    checked: boolean = false;
+}
+```
+
+## Preselection
+
+Enabling ngModel property displays the component as active initially.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, ToggleSwitchModule]
+})
+export class ToggleswitchPreselectionDemo {
+    checked: boolean = true;
+}
+```
+
+## Template
+
+The handle template is available to display custom content.
+
+```typescript
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-4">
+            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications">
+                <ng-template #handle let-checked="checked">
+                    <i [ngClass]="['text-xs!', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                </ng-template>
+            </p-toggle-switch>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, ToggleSwitchModule]
+})
+export class ToggleswitchTemplateDemo {
     checked: boolean = false;
 }
 ```
@@ -75,30 +122,52 @@ export class ToggleswitchInvalidDemo {
 }
 ```
 
-## Preselection
-
-Enabling ngModel property displays the component as active initially.
+## Forms: Template Driven
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
 import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     template: `
+        <p-toast />
         <div class="card flex justify-center">
-            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications" />
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-48">
+                <div class="flex flex-col items-center gap-2">
+                    <p-toggle-switch #model="ngModel" [(ngModel)]="checked" name="activation" [invalid]="model.invalid && exampleForm.submitted" required ariaLabel="Notifications" />
+                    @if (model.invalid && exampleForm.submitted) {
+                        <p-message severity="error" size="small" variant="simple">Activation is required.</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
         </div>
     `,
     standalone: true,
-    imports: [FormsModule, ToggleSwitchModule]
+    imports: [CommonModule, FormsModule, ToggleSwitchModule, ToastModule, MessageModule, ButtonModule],
+    providers: [MessageService]
 })
-export class ToggleswitchPreselectionDemo {
-    checked: boolean = true;
+export class ToggleswitchTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    checked: boolean;
+
+    onSubmit(form: any) {
+        if (form.valid) {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
+            form.resetForm();
+        }
+    }
 }
 ```
 
-## reactiveforms-doc
+## Reactive Forms
 
 ToggleSwitch can also be used with reactive forms. In this case, the formControlName property is used to bind the component to a form control.
 
@@ -214,78 +283,9 @@ export class ToggleswitchSignalformsDemo {
 }
 ```
 
-## Template
+## Accessibility
 
-The handle template is available to display custom content.
-
-```typescript
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
-
-@Component({
-    template: `
-        <div class="card flex justify-center gap-4">
-            <p-toggle-switch [(ngModel)]="checked" ariaLabel="Notifications">
-                <ng-template #handle let-checked="checked">
-                    <i [ngClass]="['text-xs!', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
-                </ng-template>
-            </p-toggle-switch>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, ToggleSwitchModule]
-})
-export class ToggleswitchTemplateDemo {
-    checked: boolean = false;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ToggleSwitchModule } from '@exhaustive-ui/core/toggleswitch';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4 w-48">
-                <div class="flex flex-col items-center gap-2">
-                    <p-toggle-switch #model="ngModel" [(ngModel)]="checked" name="activation" [invalid]="model.invalid && exampleForm.submitted" required ariaLabel="Notifications" />
-                    @if (model.invalid && exampleForm.submitted) {
-                        <p-message severity="error" size="small" variant="simple">Activation is required.</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, FormsModule, ToggleSwitchModule, ToastModule, MessageModule, ButtonModule],
-    providers: [MessageService]
-})
-export class ToggleswitchTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    checked: boolean;
-
-    onSubmit(form: any) {
-        if (form.valid) {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Form Submitted', life: 3000 });
-            form.resetForm();
-        }
-    }
-}
-```
+Screen Reader InputSwitch component uses a hidden native checkbox element with switch role internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy , ariaLabel props.
 
 ## Pass Through Options
 

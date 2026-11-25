@@ -2,10 +2,6 @@
 
 Chip represents entities using icons, labels and images.
 
-## Accessibility
-
-Screen Reader Chip uses the label property as the default aria-label , since any attribute is passed to the root element aria-labelledby or aria-label can be used to override the default behavior. Removable chips have a tabindex and focusable with the tab key. Keyboard Support Key Function backspace Hides removable. enter Hides removable.
-
 ## Basic
 
 A basic chip with a text is created with the label property. In addition when removable is added, a delete icon is displayed to remove a chip, the optional onRemove event is available to get notified when a chip is hidden.
@@ -101,6 +97,10 @@ import { ChipModule } from '@exhaustive-ui/core/chip';
 export class ChipTemplateDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader Chip uses the label property as the default aria-label , since any attribute is passed to the root element aria-labelledby or aria-label can be used to override the default behavior. Removable chips have a tabindex and focusable with the tab key. Keyboard Support Key Function backspace Hides removable. enter Hides removable.
 
 ## Chip
 

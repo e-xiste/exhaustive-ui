@@ -2,10 +2,6 @@
 
 Tag component is used to categorize content.
 
-## Accessibility
-
-Screen Reader Tag does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the tags are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
-
 ## Basic
 
 Label of the tag is defined with the value property.
@@ -24,60 +20,6 @@ import { TagModule } from '@exhaustive-ui/core/tag';
     imports: [TagModule]
 })
 export class TagBasicDemo {
-}
-```
-
-## Icon
-
-A font icon next to the value can be displayed with the icon property.
-
-```typescript
-import { Component } from '@angular/core';
-import { TagModule } from '@exhaustive-ui/core/tag';
-
-@Component({
-    template: `
-        <div class="card flex flex-wrap justify-center gap-2">
-            <p-tag icon="pi pi-user" value="Primary" />
-            <p-tag icon="pi pi-search" severity="secondary" value="Secondary" />
-            <p-tag icon="pi pi-check" severity="success" value="Success" />
-            <p-tag icon="pi pi-info-circle" severity="info" value="Info" />
-            <p-tag icon="pi pi-exclamation-triangle" severity="warn" value="Warn" />
-            <p-tag icon="pi pi-times" severity="danger" value="Danger" />
-            <p-tag icon="pi pi-cog" severity="contrast" value="Contrast" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TagModule]
-})
-export class TagIconDemo {
-}
-```
-
-## Pill
-
-Enabling rounded , displays a tag as a pill.
-
-```typescript
-import { Component } from '@angular/core';
-import { TagModule } from '@exhaustive-ui/core/tag';
-
-@Component({
-    template: `
-        <div class="card flex justify-center gap-2">
-            <p-tag value="Primary" [rounded]="true" />
-            <p-tag severity="secondary" value="Secondary" [rounded]="true" />
-            <p-tag severity="success" value="Success" [rounded]="true" />
-            <p-tag severity="info" value="Info" [rounded]="true" />
-            <p-tag severity="warn" value="Warn" [rounded]="true" />
-            <p-tag severity="danger" value="Danger" [rounded]="true" />
-            <p-tag severity="contrast" value="Contrast" [rounded]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [TagModule]
-})
-export class TagPillDemo {
 }
 ```
 
@@ -108,6 +50,60 @@ export class TagSeverityDemo {
 }
 ```
 
+## Pill
+
+Enabling rounded , displays a tag as a pill.
+
+```typescript
+import { Component } from '@angular/core';
+import { TagModule } from '@exhaustive-ui/core/tag';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-tag value="Primary" [rounded]="true" />
+            <p-tag severity="secondary" value="Secondary" [rounded]="true" />
+            <p-tag severity="success" value="Success" [rounded]="true" />
+            <p-tag severity="info" value="Info" [rounded]="true" />
+            <p-tag severity="warn" value="Warn" [rounded]="true" />
+            <p-tag severity="danger" value="Danger" [rounded]="true" />
+            <p-tag severity="contrast" value="Contrast" [rounded]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TagModule]
+})
+export class TagPillDemo {
+}
+```
+
+## Icon
+
+A font icon next to the value can be displayed with the icon property.
+
+```typescript
+import { Component } from '@angular/core';
+import { TagModule } from '@exhaustive-ui/core/tag';
+
+@Component({
+    template: `
+        <div class="card flex flex-wrap justify-center gap-2">
+            <p-tag icon="pi pi-user" value="Primary" />
+            <p-tag icon="pi pi-search" severity="secondary" value="Secondary" />
+            <p-tag icon="pi pi-check" severity="success" value="Success" />
+            <p-tag icon="pi pi-info-circle" severity="info" value="Info" />
+            <p-tag icon="pi pi-exclamation-triangle" severity="warn" value="Warn" />
+            <p-tag icon="pi pi-times" severity="danger" value="Danger" />
+            <p-tag icon="pi pi-cog" severity="contrast" value="Contrast" />
+        </div>
+    `,
+    standalone: true,
+    imports: [TagModule]
+})
+export class TagIconDemo {
+}
+```
+
 ## Template
 
 Children of the component are passed as the content for templating.
@@ -133,6 +129,10 @@ import { TagModule } from '@exhaustive-ui/core/tag';
 export class TagTemplateDemo {
 }
 ```
+
+## Accessibility
+
+Screen Reader Tag does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the tags are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers. Keyboard Support Component does not include any interactive elements.
 
 ## Tag
 

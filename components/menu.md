@@ -2,10 +2,6 @@
 
 Menu is a navigation / command component that supports dynamic and static positioning.
 
-## Accessibility
-
-Screen Reader Menu component uses the menu role and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a Menu uses the group role with an aria-labelledby defined as the id of the submenu root menuitem label. In popup mode, the component implicitly manages the aria-expanded , aria-haspopup and aria-controls attributes of the target element to define the relation between the target and the popup. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter Activates the focused menuitem. If menu is in overlay mode, popup gets closes and focus moves to target. space Activates the focused menuitem. If menu is in overlay mode, popup gets closes and focus moves to target. escape If menu is in overlay mode, popup gets closes and focus moves to target. down arrow Moves focus to the next menuitem. up arrow Moves focus to the previous menuitem. home Moves focus to the first menuitem. end Moves focus to the last menuitem.
-
 ## Basic
 
 Menu requires a collection of menuitems as its model .
@@ -32,61 +28,6 @@ export class MenuBasicDemo implements OnInit {
             { label: 'New', icon: 'pi pi-plus' },
             { label: 'Search', icon: 'pi pi-search' }
         ];
-    }
-}
-```
-
-## Command
-
-The function to invoke when an item is clicked is defined using the command property.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
-import { MenuModule } from '@exhaustive-ui/core/menu';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-toast />
-            <p-menu [model]="items" />
-        </div>
-    `,
-    standalone: true,
-    imports: [MenuModule, ToastModule],
-    providers: [MessageService]
-})
-export class MenuCommandDemo implements OnInit {
-    private messageService = inject(MessageService);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'New',
-                icon: 'pi pi-plus',
-                command: () => {
-                    this.update();
-                }
-            },
-            {
-                label: 'Search',
-                icon: 'pi pi-search',
-                command: () => {
-                    this.delete();
-                }
-            }
-        ];
-    }
-
-    update() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
-    }
-
-    delete() {
-        this.messageService.add({ severity: 'warn', summary: 'Search Completed', detail: 'No results found', life: 3000 });
     }
 }
 ```
@@ -182,59 +123,6 @@ export class MenuPopupDemo implements OnInit {
                     {
                         label: 'Export',
                         icon: 'pi pi-upload'
-                    }
-                ]
-            }
-        ];
-    }
-}
-```
-
-## Router
-
-Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
-
-```typescript
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { MenuItem } from '@exhaustive-ui/core/api';
-import { MenuModule } from '@exhaustive-ui/core/menu';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-menu [model]="items" />
-        </div>
-    `,
-    standalone: true,
-    imports: [MenuModule]
-})
-export class MenuRouterDemo implements OnInit {
-    private router = inject(Router);
-
-    items: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Navigate',
-                items: [
-                    {
-                        label: 'Router Link',
-                        icon: 'pi pi-palette',
-                        routerLink: '/theming'
-                    },
-                    {
-                        label: 'Programmatic',
-                        icon: 'pi pi-link',
-                        command: () => {
-                            this.router.navigate(['/installation']);
-                        }
-                    },
-                    {
-                        label: 'External',
-                        icon: 'pi pi-home',
-                        url: 'https://angular.io//'
                     }
                 ]
             }
@@ -371,6 +259,118 @@ export class MenuTemplateDemo implements OnInit {
     }
 }
 ```
+
+## Command
+
+The function to invoke when an item is clicked is defined using the command property.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { MenuItem, MessageService } from '@exhaustive-ui/core/api';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-menu [model]="items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [MenuModule, ToastModule],
+    providers: [MessageService]
+})
+export class MenuCommandDemo implements OnInit {
+    private messageService = inject(MessageService);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'New',
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.update();
+                }
+            },
+            {
+                label: 'Search',
+                icon: 'pi pi-search',
+                command: () => {
+                    this.delete();
+                }
+            }
+        ];
+    }
+
+    update() {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File created', life: 3000 });
+    }
+
+    delete() {
+        this.messageService.add({ severity: 'warn', summary: 'Search Completed', detail: 'No results found', life: 3000 });
+    }
+}
+```
+
+## Router
+
+Menu items support navigation via routerLink, programmatic routing using commands, or external URLs.
+
+```typescript
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { MenuItem } from '@exhaustive-ui/core/api';
+import { MenuModule } from '@exhaustive-ui/core/menu';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-menu [model]="items" />
+        </div>
+    `,
+    standalone: true,
+    imports: [MenuModule]
+})
+export class MenuRouterDemo implements OnInit {
+    private router = inject(Router);
+
+    items: MenuItem[] | undefined;
+
+    ngOnInit() {
+        this.items = [
+            {
+                label: 'Navigate',
+                items: [
+                    {
+                        label: 'Router Link',
+                        icon: 'pi pi-palette',
+                        routerLink: '/theming'
+                    },
+                    {
+                        label: 'Programmatic',
+                        icon: 'pi pi-link',
+                        command: () => {
+                            this.router.navigate(['/installation']);
+                        }
+                    },
+                    {
+                        label: 'External',
+                        icon: 'pi pi-home',
+                        url: 'https://angular.io//'
+                    }
+                ]
+            }
+        ];
+    }
+}
+```
+
+## Accessibility
+
+Screen Reader Menu component uses the menu role and the value to describe the menu can either be provided with aria-labelledby or aria-label props. Each list item has a presentation role whereas anchor elements have a menuitem role with aria-label referring to the label of the item and aria-disabled defined if the item is disabled. A submenu within a Menu uses the group role with an aria-labelledby defined as the id of the submenu root menuitem label. In popup mode, the component implicitly manages the aria-expanded , aria-haspopup and aria-controls attributes of the target element to define the relation between the target and the popup. Keyboard Support Key Function tab Add focus to the first item if focus moves in to the menu. If the focus is already within the menu, focus moves to the next focusable item in the page tab sequence. shift + tab Add focus to the last item if focus moves in to the menu. If the focus is already within the menu, focus moves to the previous focusable item in the page tab sequence. enter Activates the focused menuitem. If menu is in overlay mode, popup gets closes and focus moves to target. space Activates the focused menuitem. If menu is in overlay mode, popup gets closes and focus moves to target. escape If menu is in overlay mode, popup gets closes and focus moves to target. down arrow Moves focus to the next menuitem. up arrow Moves focus to the previous menuitem. home Moves focus to the first menuitem. end Moves focus to the last menuitem.
 
 ## Menu
 

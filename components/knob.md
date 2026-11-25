@@ -2,10 +2,6 @@
 
 Knob is a form component to define number inputs with a dial.
 
-## Accessibility
-
-Screen Reader Knob element component uses slider role in addition to the aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using ariaLabelledBy and ariaLabel props.
-
 ## Basic
 
 Knob is an input component and used with the standard ngModel directive.
@@ -29,52 +25,6 @@ export class KnobBasicDemo {
 }
 ```
 
-## Color
-
-Colors are customized with the textColor , rangeColor and valueColor properties.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" valueColor="SlateGray" rangeColor="MediumTurquoise" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobColorDemo {
-    value: number = 50;
-}
-```
-
-## Disabled
-
-When disabled is present, a visual hint is applied to indicate that the Knob cannot be interacted with.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" [disabled]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobDisabledDemo {
-    value: number = 75;
-}
-```
-
 ## Min/Max
 
 Boundaries are configured with the min and max properties whose defaults are 0 and 100 respectively.
@@ -95,6 +45,121 @@ import { KnobModule } from '@exhaustive-ui/core/knob';
 })
 export class KnobMinmaxDemo {
     value: number = 10;
+}
+```
+
+## Step
+
+Size of each movement is defined with the step property.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" [step]="10" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobStepDemo {
+    value!: number;
+}
+```
+
+## Template
+
+Label is a string template that can be customized with the valueTemplate property having 60 as the placeholder .
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" valueTemplate="{value}%" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobTemplateDemo {
+    value: number = 60;
+}
+```
+
+## Stroke
+
+The border size is specified with the strokeWidth property as a number in pixels.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" [strokeWidth]="5" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobStrokeDemo {
+    value: number = 40;
+}
+```
+
+## Size
+
+Diameter of the knob is defined in pixels using the size property.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" [size]="200" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobSizeDemo {
+    value: number = 60;
+}
+```
+
+## Color
+
+Colors are customized with the textColor , rangeColor and valueColor properties.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" valueColor="SlateGray" rangeColor="MediumTurquoise" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobColorDemo {
+    value: number = 50;
 }
 ```
 
@@ -123,6 +188,101 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
 })
 export class KnobReactiveDemo {
     value: number = 0;
+}
+```
+
+## ReadOnly
+
+When readonly present, value cannot be edited.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-knob [(ngModel)]="value" [readonly]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule]
+})
+export class KnobReadonlyDemo {
+    value: number = 50;
+}
+```
+
+## Forms: Template Driven
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { KnobModule } from '@exhaustive-ui/core/knob';
+import { MessageModule } from '@exhaustive-ui/core/message';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <p-toast />
+        <div class="card flex justify-center">
+            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
+                <div class="flex flex-col items-center gap-1">
+                    <p-knob #model="ngModel" [(ngModel)]="value" [invalid]="isInvalid(model)" name="knob" />
+                    @if (isInvalid(model)) {
+                        <p-message severity="error" size="small" variant="simple">{{ getErrorMessage(model) }}</p-message>
+                    }
+                </div>
+                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+            </form>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, KnobModule, ButtonModule, ToastModule, MessageModule],
+    providers: [MessageService]
+})
+export class KnobTemplatedrivenformsDemo {
+    messageService = inject(MessageService);
+
+    value: number = 15;
+
+    formSubmitted: boolean = false;
+
+    onSubmit(form: NgForm) {
+        this.formSubmitted = true;
+
+        if (!this.isInvalid(form.controls['knob'])) {
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Form is submitted',
+                life: 3000
+            });
+
+            form.resetForm({ knob: 15 });
+
+            this.formSubmitted = false;
+        }
+    }
+
+    getErrorMessage(control: any): string | null {
+        const value = control?.value;
+
+        return value < 25 ? 'Value must be greater than 25.' : value > 75 ? 'Must be less than 75.' : null;
+    }
+
+    isInvalid(control: any): boolean {
+        if (!control) return false;
+
+        const value = control.value;
+
+        const hasError = value < 25 || value > 75;
+
+        return hasError && (this.formSubmitted || control.dirty);
+    }
 }
 ```
 
@@ -210,29 +370,6 @@ export class KnobReactiveformsDemo {
 }
 ```
 
-## ReadOnly
-
-When readonly present, value cannot be edited.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" [readonly]="true" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobReadonlyDemo {
-    value: number = 50;
-}
-```
-
 ## Signal Forms
 
 Knob can also be used with Angular Signal Forms , the @angular/forms/signals API of Angular 21 and newer. The form model is a signal, form() declares its validators and the [formField] directive binds the component to a field. The field also sets the invalid and touched states of the component, so it is styled as invalid once the field is touched or the form is submitted, like the messages below.
@@ -291,32 +428,9 @@ export class KnobSignalformsDemo {
 }
 ```
 
-## Size
+## Disabled
 
-Diameter of the knob is defined in pixels using the size property.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" [size]="200" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobSizeDemo {
-    value: number = 60;
-}
-```
-
-## Step
-
-Size of each movement is defined with the step property.
+When disabled is present, a visual hint is applied to indicate that the Knob cannot be interacted with.
 
 ```typescript
 import { Component } from '@angular/core';
@@ -326,134 +440,20 @@ import { KnobModule } from '@exhaustive-ui/core/knob';
 @Component({
     template: `
         <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" [step]="10" />
+            <p-knob [(ngModel)]="value" [disabled]="true" />
         </div>
     `,
     standalone: true,
     imports: [FormsModule, KnobModule]
 })
-export class KnobStepDemo {
-    value!: number;
+export class KnobDisabledDemo {
+    value: number = 75;
 }
 ```
 
-## Stroke
+## Accessibility
 
-The border size is specified with the strokeWidth property as a number in pixels.
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" [strokeWidth]="5" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobStrokeDemo {
-    value: number = 40;
-}
-```
-
-## Template
-
-Label is a string template that can be customized with the valueTemplate property having 60 as the placeholder .
-
-```typescript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-
-@Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-knob [(ngModel)]="value" valueTemplate="{value}%" />
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule]
-})
-export class KnobTemplateDemo {
-    value: number = 60;
-}
-```
-
-## templatedrivenforms-doc
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { MessageService } from '@exhaustive-ui/core/api';
-import { ButtonModule } from '@exhaustive-ui/core/button';
-import { KnobModule } from '@exhaustive-ui/core/knob';
-import { MessageModule } from '@exhaustive-ui/core/message';
-import { ToastModule } from '@exhaustive-ui/core/toast';
-
-@Component({
-    template: `
-        <p-toast />
-        <div class="card flex justify-center">
-            <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
-                <div class="flex flex-col items-center gap-1">
-                    <p-knob #model="ngModel" [(ngModel)]="value" [invalid]="isInvalid(model)" name="knob" />
-                    @if (isInvalid(model)) {
-                        <p-message severity="error" size="small" variant="simple">{{ getErrorMessage(model) }}</p-message>
-                    }
-                </div>
-                <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-            </form>
-        </div>
-    `,
-    standalone: true,
-    imports: [FormsModule, KnobModule, ButtonModule, ToastModule, MessageModule],
-    providers: [MessageService]
-})
-export class KnobTemplatedrivenformsDemo {
-    messageService = inject(MessageService);
-
-    value: number = 15;
-
-    formSubmitted: boolean = false;
-
-    onSubmit(form: NgForm) {
-        this.formSubmitted = true;
-
-        if (!this.isInvalid(form.controls['knob'])) {
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Form is submitted',
-                life: 3000
-            });
-
-            form.resetForm({ knob: 15 });
-
-            this.formSubmitted = false;
-        }
-    }
-
-    getErrorMessage(control: any): string | null {
-        const value = control?.value;
-
-        return value < 25 ? 'Value must be greater than 25.' : value > 75 ? 'Must be less than 75.' : null;
-    }
-
-    isInvalid(control: any): boolean {
-        if (!control) return false;
-
-        const value = control.value;
-
-        const hasError = value < 25 || value > 75;
-
-        return hasError && (this.formSubmitted || control.dirty);
-    }
-}
-```
+Screen Reader Knob element component uses slider role in addition to the aria-valuemin , aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using ariaLabelledBy and ariaLabel props.
 
 ## Knob
 

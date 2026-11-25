@@ -2,10 +2,6 @@
 
 Tabs is a container component to group content with tabs.
 
-## Accessibility
-
-Screen Reader Tabs container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Tabs. Each tab header has a tab role along with aria-selected state attribute and aria-controls to refer to the corresponding tab content element. The content element of each tab has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name. Tab Header Keyboard Support Key Function tab Moves focus through the header. enter Activates the focused tab header. space Activates the focused tab header. right arrow Moves focus to the next header. left arrow Moves focus to the previous header. home Moves focus to the last header. end Moves focus to the first header.
-
 ## Basic
 
 Tabs is defined using TabList , Tab , TabPanels and TabPanel components. Tab and TabPanel components are associated with their value properties
@@ -51,6 +47,50 @@ import { TabsModule } from '@exhaustive-ui/core/tabs';
     imports: [TabsModule]
 })
 export class TabsBasicDemo {
+}
+```
+
+## Dynamic
+
+Tabs can be generated dynamically using the standard @for block.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tabs value="0">
+                <p-tab-list>
+                    @for (tab of tabs; track tab.value) {
+                        <p-tab [value]="tab.value">{{ tab.title }}</p-tab>
+                    }
+                </p-tab-list>
+                <p-tab-panels>
+                    @for (tab of tabs; track tab.value) {
+                        <p-tab-panel [value]="tab.value">
+                            <p class="m-0">{{ tab.content }}</p>
+                        </p-tab-panel>
+                    }
+                </p-tab-panels>
+            </p-tabs>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, TabsModule]
+})
+export class TabsDynamicDemo implements OnInit {
+    tabs: { title: string; value: string; content: string }[] = [];
+
+    ngOnInit() {
+        this.tabs = [
+            { title: 'Tab 1', value: '0', content: 'Tab 1 Content' },
+            { title: 'Tab 2', value: '1', content: 'Tab 2 Content' },
+            { title: 'Tab 3', value: '2', content: 'Tab 3 Content' }
+        ];
+    }
 }
 ```
 
@@ -109,7 +149,143 @@ export class TabsControlledDemo {
 }
 ```
 
-## customtemplate-doc
+## Scrollable
+
+Adding scrollable property displays navigational buttons at each side to scroll between tabs.
+
+```typescript
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tabs value="0" scrollable>
+                <p-tab-list>
+                    @for (tab of scrollableTabs; track tab.value) {
+                        <p-tab [value]="tab.value">
+                            {{ tab.title }}
+                        </p-tab>
+                    }
+                </p-tab-list>
+                <p-tab-panels>
+                    @for (tab of scrollableTabs; track tab.value) {
+                        <p-tab-panel [value]="tab.value">
+                            <p class="m-0">{{ tab.content }}</p>
+                        </p-tab-panel>
+                    }
+                </p-tab-panels>
+            </p-tabs>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, TabsModule]
+})
+export class TabsScrollableDemo {
+    scrollableTabs: any[] = Array.from({ length: 50 }, (_, i) => ({
+        title: `Tab ${i + 1}`,
+        content: `Tab ${i + 1} Content`,
+        value: `${i}`
+    }));
+}
+```
+
+## Lazy
+
+By default, inactive tab's content is rendered (but hidden). You can use the lazy input (either globally on Tabs or individually on a TabPanel ) to change this behavior so that content is only rendered when the tab becomes active. If a lazy tab contains complex components that should only be initialized when the tab is activated, you should wrap the content inside: &lt;ng-template #content&gt;your content&lt;/ng-template&gt; .
+
+```typescript
+import { Component } from '@angular/core';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tabs lazy value="0">
+                <p-tab-list>
+                    <p-tab value="0">Header I</p-tab>
+                    <p-tab value="1">Header II</p-tab>
+                    <p-tab value="2">Header III</p-tab>
+                </p-tab-list>
+                <p-tab-panels>
+                    <p-tab-panel value="0">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                            laborum.
+                        </p>
+                    </p-tab-panel>
+                    <p-tab-panel value="1">
+                        <p class="m-0">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                        </p>
+                    </p-tab-panel>
+                    <p-tab-panel value="2">
+                        <ng-template #content>Complex components that should only be initialized when the tab becomes active</ng-template>
+                    </p-tab-panel>
+                </p-tab-panels>
+            </p-tabs>
+        </div>
+    `,
+    standalone: true,
+    imports: [TabsModule]
+})
+export class TabsLazyDemo {
+}
+```
+
+## Disabled
+
+Setting the disabled property prevents tab activation or selection, while pointer-based interactions such as pTooltip hover remain available.
+
+```typescript
+import { Component } from '@angular/core';
+import { TabsModule } from '@exhaustive-ui/core/tabs';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tabs value="0">
+                <p-tab-list>
+                    <p-tab value="0">Header I</p-tab>
+                    <p-tab value="1">Header II</p-tab>
+                    <p-tab value="2">Header III</p-tab>
+                    <p-tab disabled>Header IV</p-tab>
+                </p-tab-list>
+                <p-tab-panels>
+                    <p-tab-panel value="0">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                            laborum.
+                        </p>
+                    </p-tab-panel>
+                    <p-tab-panel value="1">
+                        <p class="m-0">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                        </p>
+                    </p-tab-panel>
+                    <p-tab-panel value="2">
+                        <p class="m-0">
+                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                        </p>
+                    </p-tab-panel>
+                </p-tab-panels>
+            </p-tabs>
+        </div>
+    `,
+    standalone: true,
+    imports: [TabsModule]
+})
+export class TabsDisabledDemo {
+}
+```
+
+## Template
 
 Custom content for a tab is defined with the default ng-content.
 
@@ -175,186 +351,6 @@ export class TabsCustomtemplateDemo {
 }
 ```
 
-## Disabled
-
-Setting the disabled property prevents tab activation or selection, while pointer-based interactions such as pTooltip hover remain available.
-
-```typescript
-import { Component } from '@angular/core';
-import { TabsModule } from '@exhaustive-ui/core/tabs';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tabs value="0">
-                <p-tab-list>
-                    <p-tab value="0">Header I</p-tab>
-                    <p-tab value="1">Header II</p-tab>
-                    <p-tab value="2">Header III</p-tab>
-                    <p-tab disabled>Header IV</p-tab>
-                </p-tab-list>
-                <p-tab-panels>
-                    <p-tab-panel value="0">
-                        <p class="m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                            laborum.
-                        </p>
-                    </p-tab-panel>
-                    <p-tab-panel value="1">
-                        <p class="m-0">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                        </p>
-                    </p-tab-panel>
-                    <p-tab-panel value="2">
-                        <p class="m-0">
-                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
-                            culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-                        </p>
-                    </p-tab-panel>
-                </p-tab-panels>
-            </p-tabs>
-        </div>
-    `,
-    standalone: true,
-    imports: [TabsModule]
-})
-export class TabsDisabledDemo {
-}
-```
-
-## Dynamic
-
-Tabs can be generated dynamically using the standard @for block.
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TabsModule } from '@exhaustive-ui/core/tabs';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tabs value="0">
-                <p-tab-list>
-                    @for (tab of tabs; track tab.value) {
-                        <p-tab [value]="tab.value">{{ tab.title }}</p-tab>
-                    }
-                </p-tab-list>
-                <p-tab-panels>
-                    @for (tab of tabs; track tab.value) {
-                        <p-tab-panel [value]="tab.value">
-                            <p class="m-0">{{ tab.content }}</p>
-                        </p-tab-panel>
-                    }
-                </p-tab-panels>
-            </p-tabs>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, TabsModule]
-})
-export class TabsDynamicDemo implements OnInit {
-    tabs: { title: string; value: string; content: string }[] = [];
-
-    ngOnInit() {
-        this.tabs = [
-            { title: 'Tab 1', value: '0', content: 'Tab 1 Content' },
-            { title: 'Tab 2', value: '1', content: 'Tab 2 Content' },
-            { title: 'Tab 3', value: '2', content: 'Tab 3 Content' }
-        ];
-    }
-}
-```
-
-## Lazy
-
-By default, inactive tab's content is rendered (but hidden). You can use the lazy input (either globally on Tabs or individually on a TabPanel ) to change this behavior so that content is only rendered when the tab becomes active. If a lazy tab contains complex components that should only be initialized when the tab is activated, you should wrap the content inside: &lt;ng-template #content&gt;your content&lt;/ng-template&gt; .
-
-```typescript
-import { Component } from '@angular/core';
-import { TabsModule } from '@exhaustive-ui/core/tabs';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tabs lazy value="0">
-                <p-tab-list>
-                    <p-tab value="0">Header I</p-tab>
-                    <p-tab value="1">Header II</p-tab>
-                    <p-tab value="2">Header III</p-tab>
-                </p-tab-list>
-                <p-tab-panels>
-                    <p-tab-panel value="0">
-                        <p class="m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                            laborum.
-                        </p>
-                    </p-tab-panel>
-                    <p-tab-panel value="1">
-                        <p class="m-0">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                            enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                        </p>
-                    </p-tab-panel>
-                    <p-tab-panel value="2">
-                        <ng-template #content>Complex components that should only be initialized when the tab becomes active</ng-template>
-                    </p-tab-panel>
-                </p-tab-panels>
-            </p-tabs>
-        </div>
-    `,
-    standalone: true,
-    imports: [TabsModule]
-})
-export class TabsLazyDemo {
-}
-```
-
-## Scrollable
-
-Adding scrollable property displays navigational buttons at each side to scroll between tabs.
-
-```typescript
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TabsModule } from '@exhaustive-ui/core/tabs';
-
-@Component({
-    template: `
-        <div class="card">
-            <p-tabs value="0" scrollable>
-                <p-tab-list>
-                    @for (tab of scrollableTabs; track tab.value) {
-                        <p-tab [value]="tab.value">
-                            {{ tab.title }}
-                        </p-tab>
-                    }
-                </p-tab-list>
-                <p-tab-panels>
-                    @for (tab of scrollableTabs; track tab.value) {
-                        <p-tab-panel [value]="tab.value">
-                            <p class="m-0">{{ tab.content }}</p>
-                        </p-tab-panel>
-                    }
-                </p-tab-panels>
-            </p-tabs>
-        </div>
-    `,
-    standalone: true,
-    imports: [CommonModule, TabsModule]
-})
-export class TabsScrollableDemo {
-    scrollableTabs: any[] = Array.from({ length: 50 }, (_, i) => ({
-        title: `Tab ${i + 1}`,
-        content: `Tab ${i + 1} Content`,
-        value: `${i}`
-    }));
-}
-```
-
 ## Tab Menu
 
 A navigation menu is implemented using tabs without the panels where the content of a tab is provided by a route component like router-outlet . For the purpose of this demo, router-outlet is not included.
@@ -392,6 +388,10 @@ export class TabsTabmenuDemo {
     ];
 }
 ```
+
+## Accessibility
+
+Screen Reader Tabs container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Tabs. Each tab header has a tab role along with aria-selected state attribute and aria-controls to refer to the corresponding tab content element. The content element of each tab has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name. Tab Header Keyboard Support Key Function tab Moves focus through the header. enter Activates the focused tab header. space Activates the focused tab header. right arrow Moves focus to the next header. left arrow Moves focus to the previous header. home Moves focus to the last header. end Moves focus to the first header.
 
 ## Tabs
 
