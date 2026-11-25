@@ -10,7 +10,7 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
     imports: [FormsModule, DatePickerModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>When <i>touchUI</i> is enabled, overlay is displayed as optimized for touch devices.</p>
+            <p>When <i>touchUI</i> is enabled, the calendar opens as a modal in the center of the screen, which suits touch devices better than an overlay next to the input.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-date-picker [(ngModel)]="date" [touchUI]="true" [readonlyInput]="true" ariaLabel="Date" />
@@ -19,5 +19,5 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
     `
 })
 export class TouchUIDoc {
-    date: Date[] | undefined;
+    date: Date | undefined;
 }

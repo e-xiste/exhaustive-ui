@@ -27,6 +27,8 @@ import { YearDoc } from '@/doc/datepicker/year-doc';
 import { FluidDoc } from '@/doc/datepicker/fluid-doc';
 import { ClearIconDoc } from '@/doc/datepicker/clearicon-doc';
 import { PTComponent } from '@/doc/datepicker/pt/PTComponent';
+import { TemplateDoc } from '@/doc/datepicker/template-doc';
+import { TouchUIDoc } from '@/doc/datepicker/touchui-doc';
 import { Component } from '@angular/core';
 import { AppDoc } from '@/components/doc/app.doc';
 
@@ -125,9 +127,19 @@ export class DatePickerDemo {
             component: DateTemplateDoc
         },
         {
+            id: 'template',
+            label: 'Header and Footer',
+            component: TemplateDoc
+        },
+        {
             id: 'inline',
             label: 'Inline',
             component: InlineDoc
+        },
+        {
+            id: 'touchui',
+            label: 'Touch UI',
+            component: TouchUIDoc
         },
         {
             id: 'floatlabel',

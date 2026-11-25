@@ -2,18 +2,18 @@ import { Component } from '@angular/core';
 import { MessageService } from '@exhaustive-ui/core/api';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
 import { AppCode } from '@/components/doc/app.code';
-import { Toast } from '@exhaustive-ui/core/toast';
+import { ToastModule } from '@exhaustive-ui/core/toast';
 import { ButtonModule } from '@exhaustive-ui/core/button';
 
 @Component({
     selector: 'clear-doc',
     standalone: true,
-    imports: [AppDocSectionText, AppCode, Toast, ButtonModule],
+    imports: [AppDocSectionText, AppCode, ToastModule, ButtonModule],
     template: `
         <app-docsectiontext>
             <p>
-                Clicking the close icon on the toast, removes it manually. Same can also be achieved programmatically using the clear function of the <i>messageService</i>. Calling it without any arguments, removes all displayed messages whereas
-                calling it with a key, removes the messages displayed on a toast having the same key.
+                Clicking the close icon removes a message. The <i>clear</i> method of the <i>messageService</i> does the same programmatically: without arguments it removes all the messages, with a key it only removes the messages of the Toast with
+                the same key.
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
@@ -33,6 +33,6 @@ export class ClearDoc {
     }
 
     clear() {
-        this.messageService.clear();
+        this.messageService.clear('myKey');
     }
 }

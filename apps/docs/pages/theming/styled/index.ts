@@ -1,6 +1,7 @@
 import { AppDoc } from '@/components/doc/app.doc';
 import { ReversedKeysDoc } from '@/doc/splitbutton/reversedkeys-doc';
 import { ArchitectureDoc } from '@/doc/theming/styled/architecture-doc';
+import { BootstrapDoc } from '@/doc/theming/styled/bootstrap-doc';
 import { ColorsDoc } from '@/doc/theming/styled/colors-doc';
 import { ColorSchemeDoc } from '@/doc/theming/styled/colorscheme-doc';
 import { ComponentDoc } from '@/doc/theming/styled/component-doc';
@@ -186,6 +187,11 @@ export class ThemingStyledDemo {
                     id: 'reset',
                     label: 'Reset',
                     component: ResetDoc
+                },
+                {
+                    id: 'bootstrap',
+                    label: 'Bootstrap',
+                    component: BootstrapDoc
                 }
             ]
         },

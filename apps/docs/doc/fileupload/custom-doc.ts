@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MessageService } from '@exhaustive-ui/core/api';
 import { AppCode } from '@/components/doc/app.code';
 import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
-import { FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { FileUpload, FileUploadHandlerEvent, FileUploadModule } from '@exhaustive-ui/core/fileupload';
 import { ToastModule } from '@exhaustive-ui/core/toast';
 
 @Component({
@@ -11,11 +11,18 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
     imports: [AppCode, AppDocSectionText, FileUploadModule, ToastModule],
     template: `
         <app-docsectiontext>
-            <p>FileUpload basic <i>mode</i> provides a simpler UI as an alternative to default advanced mode.</p>
+            <p>
+                When <i>customUpload</i> is enabled, the component does not send the files: the Upload button calls <i>uploadHandler</i> with the selected files, to upload them with your own service. Call the <i>clear</i> method once they are
+                processed.
+            </p>
         </app-docsectiontext>
-        <div class="card flex justify-center">
-            <p-toast></p-toast>
-            <p-file-upload name="myfile[]" [customUpload]="true" (uploadHandler)="customUploader($event)"></p-file-upload>
+        <div class="card">
+            <p-toast />
+            <p-file-upload #uploader name="demo[]" [customUpload]="true" (uploadHandler)="upload($event, uploader)" accept="image/*" [multiple]="true" maxFileSize="1000000">
+                <ng-template #empty>
+                    <div>Drag and drop files to here to upload.</div>
+                </ng-template>
+            </p-file-upload>
         </div>
         <app-code></app-code>
     `,
@@ -24,17 +31,12 @@ import { ToastModule } from '@exhaustive-ui/core/toast';
 export class CustomDoc {
     constructor(private messageService: MessageService) {}
 
-    async customUploader(event) {
-        const file = event.files[0];
-        const reader = new FileReader();
-        let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
-
-        reader.readAsDataURL(blob);
-
-        reader.onloadend = function () {
-            const base64data = reader.result;
-        };
-
-        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
+    async upload(event: FileUploadHandlerEvent, uploader: FileUpload) {
+        for (const file of event.files) {
+            const content = await file.arrayBuffer();
+            // send the content with your own service here
+            this.messageService.add({ severity: 'info', summary: file.name, detail: `${content.byteLength} bytes processed` });
+        }
+        uploader.clear();
     }
 }

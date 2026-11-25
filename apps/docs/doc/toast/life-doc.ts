@@ -11,12 +11,12 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [AppDocSectionText, AppCode, ToastModule, ButtonModule],
     template: `
         <app-docsectiontext>
-            <p>A toast disappears after 3000ms by default, set the <i>life</i> option on either the message or toast to override this.</p>
+            <p>A toast disappears after 3000ms by default, set the <i>life</i> option on either the message or the Toast to override this. The option of the message has precedence.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
             <p-toast [life]="10000" />
-            <p-button (click)="showLife()" label="Show Life" />
-            <p-button (click)="showLifeLong()" label="Show Life Long" />
+            <p-button (click)="showLife()" label="10 Seconds" />
+            <p-button (click)="showLifeLong()" label="20 Seconds" severity="secondary" />
         </div>
         <app-code></app-code>
     `,

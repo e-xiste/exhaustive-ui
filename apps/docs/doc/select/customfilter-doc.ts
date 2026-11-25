@@ -10,7 +10,7 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
 import { InputTextModule } from '@exhaustive-ui/core/inputtext';
 import { CommonModule } from '@angular/common';
 
-interface City {
+interface Country {
     name: string;
     code: string;
 }
@@ -21,22 +21,22 @@ interface City {
     imports: [CommonModule, AppDocSectionText, AppCode, FormsModule, SelectModule, InputGroupModule, InputGroupAddonModule, ButtonModule, InputTextModule],
     template: `
         <app-docsectiontext>
-            <p>Custom filter can be applied with the <i>filter</i> template.</p>
+            <p>The filter input can be replaced with the <i>filter</i> template, which receives <i>options</i> with the <i>filter</i> and <i>reset</i> functions. The <i>filterBy</i> property is required.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
+            <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country" class="w-full md:w-72">
                 <ng-template #filter let-options="options">
                     <div class="flex gap-1">
                         <p-input-group (click)="$event.stopPropagation()">
                             <p-input-group-addon><i class="pi pi-search"></i></p-input-group-addon>
-                            <input type="text" pInputText placeholder="Filter" [(ngModel)]="filterValue" (keyup)="customFilterFunction($event, options)" />
+                            <input type="text" pInputText placeholder="Filter" aria-label="Filter" [(ngModel)]="filterValue" (keyup)="customFilterFunction($event, options)" />
                         </p-input-group>
-                        <p-button icon="pi pi-times" (click)="resetFunction(options)" severity="secondary" />
+                        <p-button icon="pi pi-times" (click)="resetFunction(options)" severity="secondary" ariaLabel="Reset the filter" />
                     </div>
                 </ng-template>
                 <ng-template #selectedItem let-selectedOption>
                     <div class="flex items-center gap-2">
-                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" style="width: 18px" />
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedOption.code.toLowerCase()" style="width: 18px" />
                         <div>{{ selectedOption.name }}</div>
                     </div>
                 </ng-template>
@@ -52,9 +52,9 @@ interface City {
     `
 })
 export class CustomFilterDoc implements OnInit {
-    countries: City[] | undefined;
+    countries: Country[] | undefined;
 
-    selectedCountry: string | undefined;
+    selectedCountry: Country | undefined;
 
     filterValue: string | undefined = '';
 

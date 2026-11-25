@@ -18,15 +18,15 @@ interface City {
     template: `
         <app-docsectiontext>
             <p>
-                When dialog includes other components with overlays such as dropdown, the overlay part cannot exceed dialog boundaries due to overflow. In order to solve this, you can either append the overlay to the body by using
-                <i>appendTo</i> property or allow overflow in dialog.
+                When a Dialog contains components with an overlay such as Select, the overlay cannot exceed the boundaries of the Dialog, whose content scrolls. Set the <i>appendTo</i> property of the component to <i>body</i> to display the overlay
+                above the Dialog.
             </p>
         </app-docsectiontext>
         <div class="card flex justify-center">
-            <p-button (click)="showDialog()" icon="pi pi-external-link" label="Show"></p-button>
-            <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '50vw' }">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Select a City" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
                 <div class="flex py-2 justify-center">
-                    <p-select appendTo="body" [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name"></p-select>
+                    <p-select appendTo="body" [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name" ariaLabel="City" class="w-full" />
                 </div>
             </p-dialog>
         </div>

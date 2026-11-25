@@ -1,5 +1,6 @@
 import { AccessibilityDoc } from '@/doc/inputmask/accessibility-doc';
 import { BasicDoc } from '@/doc/inputmask/basic-doc';
+import { ClearIconDoc } from '@/doc/inputmask/clearicon-doc';
 import { DisabledDoc } from '@/doc/inputmask/disabled-doc';
 import { FilledDoc } from '@/doc/inputmask/filled-doc';
 import { FloatlabelDoc } from '@/doc/inputmask/floatlabel-doc';
@@ -74,6 +75,11 @@ export class InputMaskDemo {
             id: 'iftalabel',
             label: 'Ifta Label',
             component: IftaLabelDoc
+        },
+        {
+            id: 'clearicon',
+            label: 'Clear Icon',
+            component: ClearIconDoc
         },
         {
             id: 'sizes',

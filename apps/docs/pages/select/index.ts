@@ -2,6 +2,7 @@ import { AccessibilityDoc } from '@/doc/select/accessibility-doc';
 import { BasicDoc } from '@/doc/select/basic-doc';
 import { CheckmarkDoc } from '@/doc/select/checkmark-doc';
 import { ClearIconDoc } from '@/doc/select/clearicon-doc';
+import { CustomFilterDoc } from '@/doc/select/customfilter-doc';
 import { DisabledDoc } from '@/doc/select/disabled-doc';
 import { EditableDoc } from '@/doc/select/editable-doc';
 import { FilledDoc } from '@/doc/select/filled-doc';
@@ -75,6 +76,11 @@ export class SelectDemo {
             id: 'filter',
             label: 'Filter',
             component: FilterDoc
+        },
+        {
+            id: 'customfilter',
+            label: 'Custom Filter',
+            component: CustomFilterDoc
         },
         {
             id: 'loadingstate',

@@ -10,17 +10,17 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
     imports: [FormsModule, DatePickerModule, AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>DatePicker accepts custom content using <i>header</i> and <i>footer</i> templates.</p>
+            <p>Custom content can be placed above and below the calendar with the <i>header</i> and <i>footer</i> templates.</p>
         </app-docsectiontext>
         <div class="card flex justify-center">
             <p-date-picker [(ngModel)]="date" ariaLabel="Date">
-                <ng-template #header>Header</ng-template>
-                <ng-template #footer>Footer</ng-template>
+                <ng-template #header><div class="font-semibold pb-2">Departure date</div></ng-template>
+                <ng-template #footer><div class="text-sm pt-2">Times are in Coordinated Universal Time (UTC).</div></ng-template>
             </p-date-picker>
         </div>
         <app-code></app-code>
     `
 })
 export class TemplateDoc {
-    date: Date[] | undefined;
+    date: Date | undefined;
 }

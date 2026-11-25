@@ -11,16 +11,13 @@ import { ButtonModule } from '@exhaustive-ui/core/button';
     imports: [AppDocSectionText, AppCode, ToastModule, ButtonModule],
     template: `
         <app-docsectiontext>
-            <p>
-                A page may have multiple toast components, in case you'd like to target a specific message to a particular toast, use the
-                <i>key</i> property so that toast and the message can match.
-            </p>
+            <p>A page may have multiple Toast components. Set the same <i>key</i> on a message and on a Toast to display the message in that Toast only.</p>
         </app-docsectiontext>
         <div class="card flex justify-center gap-2">
-            <p-toast key="toast1" />
-            <p-toast key="toast2" />
-            <p-button (click)="showToast1()" label="Show Success" />
-            <p-button (click)="showToast2()" label="Show Warning" severity="warn" />
+            <p-toast key="toast1" position="top-right" />
+            <p-toast key="toast2" position="bottom-right" />
+            <p-button (click)="showToast1()" label="Top" />
+            <p-button (click)="showToast2()" label="Bottom" severity="warn" />
         </div>
         <app-code></app-code>
     `,

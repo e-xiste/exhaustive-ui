@@ -9,6 +9,7 @@ import { ConditionalStyleDoc } from '@/doc/treetable/conditionalstyle-doc';
 import { ContextMenuDoc } from '@/doc/treetable/contextmenu-doc';
 import { ControlledDoc } from '@/doc/treetable/controlled-doc';
 import { DynamicColumnsDoc } from '@/doc/treetable/dynamiccolumns-doc';
+import { EditDoc } from '@/doc/treetable/edit-doc';
 import { FilterDoc } from '@/doc/treetable/filter-doc';
 import { ScrollFlexibleDoc } from '@/doc/treetable/flexiblescroll-doc';
 import { GridlinesDoc } from '@/doc/treetable/gridlines-doc';
@@ -132,11 +133,6 @@ export class TreeTableDemo {
                     label: 'Multiple Columns',
                     component: SortMultipleColumnsDoc
                 }
-                // {
-                //     id: 'sortremovable',
-                //     label: 'Removable Sort',
-                //     component: SortRemovableDoc
-                // }
             ]
         },
         {
@@ -180,11 +176,11 @@ export class TreeTableDemo {
             label: 'Lazy Load',
             component: LazyLoadDoc
         },
-        // {
-        //     id: 'edit',
-        //     label: 'Edit',
-        //     component: EditDoc,
-        // },
+        {
+            id: 'edit',
+            label: 'Edit',
+            component: EditDoc
+        },
         {
             id: 'scroll',
             label: 'Scroll',

@@ -2,6 +2,7 @@ import { AccessibilityDoc } from '@/doc/fileupload/accessibility-doc';
 import { AdvancedDoc } from '@/doc/fileupload/advanced-doc';
 import { AutoDoc } from '@/doc/fileupload/auto-doc';
 import { BasicDoc } from '@/doc/fileupload/basic-doc';
+import { CustomDoc } from '@/doc/fileupload/custom-doc';
 import { ImportDoc } from '@/doc/fileupload/import-doc';
 import { PTComponent } from '@/doc/fileupload/pt/PTComponent';
 import { TemplateDoc } from '@/doc/fileupload/template-doc';
@@ -42,6 +43,11 @@ export class FileUploadDemo {
             id: 'advanced',
             label: 'Advanced',
             component: AdvancedDoc
+        },
+        {
+            id: 'custom',
+            label: 'Custom',
+            component: CustomDoc
         },
         {
             id: 'template',

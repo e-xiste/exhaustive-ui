@@ -9,6 +9,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 ### Documentation
 
 - **llms:** in the Markdown documentation and the MCP server, the sections of a component have the title and the order they have on the site ("Pagination: Basic" instead of "paginatorbasic-doc"). The sections that are not on the site, left from older versions, are no longer included.
+- **site:** 12 sections are back on the site and in the Markdown documentation, with their examples corrected: Toast life, clear and target, Select custom filter, overlays inside a Dialog, DatePicker header and footer and touch UI, InputMask clear icon, Image preview source, FileUpload custom upload, TreeTable cell editing, and CSS layers with Bootstrap.
 
 ## 22.9.0 (2026-11-25)
 

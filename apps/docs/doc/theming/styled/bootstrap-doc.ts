@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
     imports: [AppCode, AppDocSectionText],
     template: `
         <app-docsectiontext>
-            <p>Bootstrap has a <i>reboot</i> utility to reset the CSS of the standard elements. If you are including this utility, you may give it a layer while importing it.</p>
+            <p>Bootstrap has a <i>reboot</i> utility to reset the CSS of the standard elements. If you include it, import it in a layer that comes before the ExhaustiveUI one.</p>
         </app-docsectiontext>
         <app-code [code]="code" [hideToggleCode]="true"></app-code>
     `
@@ -17,6 +17,6 @@ export class BootstrapDoc {
     code = {
         typescript: `@layer bootstrap-reboot, exhaustive;
 
-@import "bootstrap-reboot.css" layer(bootstrap-rebooot);`
+@import "bootstrap-reboot.css" layer(bootstrap-reboot);`
     };
 }

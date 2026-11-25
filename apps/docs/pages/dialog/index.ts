@@ -4,6 +4,7 @@ import { HeadlessDoc } from '@/doc/dialog/headless-doc';
 import { ImportDoc } from '@/doc/dialog/import-doc';
 import { LongContentDoc } from '@/doc/dialog/longcontent-doc';
 import { MaximizableDoc } from '@/doc/dialog/maximizable-doc';
+import { OverlaysInsideDoc } from '@/doc/dialog/overlaysinside-doc';
 import { PositionDoc } from '@/doc/dialog/position-doc';
 import { PTComponent } from '@/doc/dialog/pt/PTComponent';
 import { ResponsiveDoc } from '@/doc/dialog/responsive-doc';
@@ -52,6 +53,11 @@ export class DialogDemo {
             id: 'longcontent',
             label: 'Long Content',
             component: LongContentDoc
+        },
+        {
+            id: 'overlaysinside',
+            label: 'Overlays Inside',
+            component: OverlaysInsideDoc
         },
         {
             id: 'withoutmodal',

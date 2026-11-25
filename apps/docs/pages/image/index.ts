@@ -2,6 +2,7 @@ import { AccessibilityDoc } from '@/doc/image/accessibility-doc';
 import { BasicDoc } from '@/doc/image/basic-doc';
 import { ImportDoc } from '@/doc/image/import-doc';
 import { PreviewDoc } from '@/doc/image/preview-doc';
+import { PreviewImageSourceDoc } from '@/doc/image/previewimagesource-doc';
 import { TemplateDoc } from '@/doc/image/template-doc';
 import { PTComponent } from '@/doc/image/pt/PTComponent';
 import { Component } from '@angular/core';
@@ -36,6 +37,11 @@ export class ImageDemo {
             id: 'preview',
             label: 'Preview',
             component: PreviewDoc
+        },
+        {
+            id: 'previewimagesource',
+            label: 'Preview Image Source',
+            component: PreviewImageSourceDoc
         },
         {
             id: 'template',
