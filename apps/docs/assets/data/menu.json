@@ -591,6 +591,10 @@
                     "routerLink": "/migration/primeng"
                 },
                 {
+                    "name": "PrimeNG Case Study",
+                    "routerLink": "/migration/sakai"
+                },
+                {
                     "name": "From Optimus UI",
                     "routerLink": "/migration/optimus"
                 },

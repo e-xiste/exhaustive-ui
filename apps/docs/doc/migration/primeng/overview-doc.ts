@@ -20,6 +20,7 @@ import { AppDocSectionText } from '@/components/doc/app.docsectiontext';
                 </li>
             </ol>
             <p>No license is needed. A PrimeTek license or subscription for PrimeNG, its templates or its theme designer does not carry over, and is not required.</p>
+            <p>For a real migration with its numbers, see the <a [routerLink]="'/migration/sakai'" class="doc-link">case study of sakai-ng</a>.</p>
         </app-docsectiontext>
     `
 })

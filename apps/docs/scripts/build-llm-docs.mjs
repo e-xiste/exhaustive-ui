@@ -188,6 +188,12 @@ const GUIDE_PAGES = [
         description: 'Moving a PrimeNG v21 application to ExhaustiveUI: the migrate-from-primeng schematic, what it changes (packages, imports, configuration API, icons, CSS layer), the manual checks and the v22 migrations.'
     },
     {
+        route: 'migration/sakai',
+        docPath: 'migration/sakai',
+        title: 'Moving a PrimeNG 21 application to Angular 22',
+        description: 'A real migration, with its numbers: sakai-ng, an admin template of 24 routes, from PrimeNG 21 to ExhaustiveUI 22 and Angular 22.'
+    },
+    {
         route: 'migration/optimus',
         docPath: 'migration/optimus',
         title: 'Migrating from Optimus UI',

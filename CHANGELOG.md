@@ -4,7 +4,9 @@ All notable changes to the `@exhaustive-ui/*` packages. They are released togeth
 
 Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-ui/releases). The [update guide](https://exhaustive-ui.com/migration/update) explains how to move between versions.
 
-## Unreleased
+## 22.9.1 (2026-11-25)
+
+Fewer false reports from the template validator; a Claude Code plugin, a starter template and Markdown pages for coding agents.
 
 ### Features
 
@@ -21,6 +23,7 @@ Each version also has a [GitHub release](https://github.com/e-xiste/exhaustive-u
 - **site:** `.md` after the address of a page gives its Markdown version, as the LLMs page says: it answered with the HTML home page. A client that sends `Accept: text/markdown` gets it at the normal address, and the HTML pages link to it. `llms.txt` and `llms-full.txt` are also at the root of the site.
 - **migration:** the install of the PrimeNG guide failed with npm while `primeng` was there: it now passes `--legacy-peer-deps`. The guide also covers the `baseUrl` option, which stops the build on TypeScript 6.
 - **site:** a [comparison](https://exhaustive-ui.com/comparison) with PrimeNG, Optimus UI and Angular Material, and the cases where they suit better.
+- **migration:** a [case study](https://exhaustive-ui.com/migration/sakai), sakai-ng from PrimeNG 21 to ExhaustiveUI 22.
 - **llms:** the tables of the guides are tables in the Markdown documentation too.
 - **migration:** the PrimeNG pages said that its repository is archived, that v21 gets no more fixes and that its Community license is for non-profits. The repository publishes security fixes for the MIT versions, and the Community license has other conditions.
 - **site:** an address that does not exist is a 404 instead of the home page, and a missing Markdown, text or JSON file a short text one.

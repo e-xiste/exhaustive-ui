@@ -26,7 +26,7 @@ import { Component } from '@angular/core';
                     <tbody>
                         <tr>
                             <th scope="row">Version</th>
-                            <td>22.9.0</td>
+                            <td>22.9.1</td>
                             <td>22.1.5</td>
                             <td>2.1.0</td>
                             <td>22.3.0</td>

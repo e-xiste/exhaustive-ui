@@ -3,7 +3,7 @@
     "name": "io.github.e-xiste/exhaustive-ui",
     "title": "ExhaustiveUI",
     "description": "Docs, API, code examples and template validation for the ExhaustiveUI Angular component library.",
-    "version": "22.9.0",
+    "version": "22.9.1",
     "websiteUrl": "https://exhaustive-ui.com/llms",
     "repository": {
         "url": "https://github.com/e-xiste/exhaustive-ui",
@@ -15,7 +15,7 @@
         {
             "registryType": "npm",
             "identifier": "@exhaustive-ui/mcp",
-            "version": "22.9.0",
+            "version": "22.9.1",
             "runtimeHint": "npx",
             "transport": { "type": "stdio" },
             "environmentVariables": [
