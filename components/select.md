@@ -311,6 +311,90 @@ export class SelectFilterDemo implements OnInit {
 }
 ```
 
+## Custom Filter
+
+The filter input can be replaced with the filter template, which receives options with the filter and reset functions. The filterBy property is required.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { SelectFilterOptions } from '@exhaustive-ui/core/select';
+import { SelectModule } from '@exhaustive-ui/core/select';
+import { InputGroupModule } from '@exhaustive-ui/core/inputgroup';
+import { InputGroupAddonModule } from '@exhaustive-ui/core/inputgroupaddon';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+
+interface Country {
+    name: string;
+    code: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country" class="w-full md:w-72">
+                <ng-template #filter let-options="options">
+                    <div class="flex gap-1">
+                        <p-input-group (click)="$event.stopPropagation()">
+                            <p-input-group-addon><i class="pi pi-search"></i></p-input-group-addon>
+                            <input type="text" pInputText placeholder="Filter" aria-label="Filter" [(ngModel)]="filterValue" (keyup)="customFilterFunction($event, options)" />
+                        </p-input-group>
+                        <p-button icon="pi pi-times" (click)="resetFunction(options)" severity="secondary" ariaLabel="Reset the filter" />
+                    </div>
+                </ng-template>
+                <ng-template #selectedItem let-selectedOption>
+                    <div class="flex items-center gap-2">
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedOption.code.toLowerCase()" style="width: 18px" />
+                        <div>{{ selectedOption.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-country #item>
+                    <div class="flex items-center gap-2">
+                        <img src="https://exhaustive-ui.com/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                        <div>{{ country.name }}</div>
+                    </div>
+                </ng-template>
+            </p-select>
+        </div>
+    `,
+    standalone: true,
+    imports: [CommonModule, FormsModule, SelectModule, InputGroupModule, InputGroupAddonModule, ButtonModule, InputTextModule]
+})
+export class SelectCustomfilterDemo implements OnInit {
+    countries: Country[] | undefined;
+
+    selectedCountry: Country | undefined;
+
+    filterValue: string | undefined = '';
+
+    ngOnInit() {
+        this.countries = [
+            { name: 'Australia', code: 'AU' },
+            { name: 'Brazil', code: 'BR' },
+            { name: 'China', code: 'CN' },
+            { name: 'Egypt', code: 'EG' },
+            { name: 'France', code: 'FR' },
+            { name: 'Germany', code: 'DE' },
+            { name: 'India', code: 'IN' },
+            { name: 'Japan', code: 'JP' },
+            { name: 'Spain', code: 'ES' },
+            { name: 'United States', code: 'US' }
+        ];
+    }
+
+    resetFunction(options: SelectFilterOptions) {
+        options.reset();
+        this.filterValue = '';
+    }
+
+    customFilterFunction(event: KeyboardEvent, options: SelectFilterOptions) {
+        options.filter(event);
+    }
+}
+```
+
 ## Loading State
 
 Loading state can be used loading property.

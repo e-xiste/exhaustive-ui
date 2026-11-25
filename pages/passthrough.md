@@ -2,12 +2,6 @@
 
 Pass Through Props allow direct access to the underlying elements for complete customization.
 
-## Basic
-
-Each component has a special `pt` property to define an object with keys corresponding to the available DOM elements. Each value can either be a string, an object or a function that returns a string or an object to define the
-arbitrary properties to apply to the element such as styling, aria, data-* or custom attributes. If the value is a string or a function that returns a string, it is considered as a class definition and added to the class attribute of
-the element. Every component documentation has a dedicated section to document the available section names exposed via PT.
-
 ## Global
 
 PassThrough object can also be defined at a global level to apply all components in an application using the `provideExhaustive` provider. For example, with the configuration here all panel headers have the

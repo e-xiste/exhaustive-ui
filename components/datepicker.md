@@ -385,6 +385,32 @@ export class DatepickerDatetemplateDemo {
 }
 ```
 
+## Header and Footer
+
+Custom content can be placed above and below the calendar with the header and footer templates.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-date-picker [(ngModel)]="date" ariaLabel="Date">
+                <ng-template #header><div class="font-semibold pb-2">Departure date</div></ng-template>
+                <ng-template #footer><div class="text-sm pt-2">Times are in Coordinated Universal Time (UTC).</div></ng-template>
+            </p-date-picker>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, DatePickerModule]
+})
+export class DatepickerTemplateDemo {
+    date: Date | undefined;
+}
+```
+
 ## Inline
 
 DatePicker is displayed as a popup by default, add inline property to customize this behavior.
@@ -405,6 +431,29 @@ import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
 })
 export class DatepickerInlineDemo {
     date: Date[] | undefined;
+}
+```
+
+## Touch UI
+
+When touchUI is enabled, the calendar opens as a modal in the center of the screen, which suits touch devices better than an overlay next to the input.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DatePickerModule } from '@exhaustive-ui/core/datepicker';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-date-picker [(ngModel)]="date" [touchUI]="true" [readonlyInput]="true" ariaLabel="Date" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, DatePickerModule]
+})
+export class DatepickerTouchuiDemo {
+    date: Date | undefined;
 }
 ```
 

@@ -45,6 +45,27 @@ export class ImagePreviewDemo {
 }
 ```
 
+## Preview Image Source
+
+A different image is displayed in the preview with the previewImageSrc property, for example a thumbnail on the page and the full size image in the preview.
+
+```typescript
+import { Component } from '@angular/core';
+import { ImageModule } from '@exhaustive-ui/core/image';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-image src="https://exhaustive-ui.com/demo/galleria/galleria11s.jpg" previewImageSrc="https://exhaustive-ui.com/demo/galleria/galleria11.jpg" alt="Image" width="250" [preview]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ImageModule]
+})
+export class ImagePreviewimagesourceDemo {
+}
+```
+
 ## Template
 
 An eye icon is displayed by default when the image is hovered in preview mode. Use the indicator template for custom content.

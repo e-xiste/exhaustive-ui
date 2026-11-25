@@ -248,6 +248,59 @@ export class DialogLongcontentDemo {
 }
 ```
 
+## Overlays Inside
+
+When a Dialog contains components with an overlay such as Select, the overlay cannot exceed the boundaries of the Dialog, whose content scrolls. Set the appendTo property of the component to body to display the overlay above the Dialog.
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DialogModule } from '@exhaustive-ui/core/dialog';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+import { SelectModule } from '@exhaustive-ui/core/select';
+
+interface City {
+    name: string;
+    code: string;
+}
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-button (click)="showDialog()" label="Show" />
+            <p-dialog header="Select a City" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+                <div class="flex py-2 justify-center">
+                    <p-select appendTo="body" [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name" ariaLabel="City" class="w-full" />
+                </div>
+            </p-dialog>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, DialogModule, ButtonModule, SelectModule]
+})
+export class DialogOverlaysinsideDemo implements OnInit {
+    cities: City[] | undefined;
+
+    selectedCity: City | undefined;
+
+    visible: boolean = false;
+
+    ngOnInit() {
+        this.cities = [
+            { name: 'New York', code: 'NY' },
+            { name: 'Rome', code: 'RM' },
+            { name: 'London', code: 'LDN' },
+            { name: 'Istanbul', code: 'IST' },
+            { name: 'Paris', code: 'PRS' }
+        ];
+    }
+
+    showDialog() {
+        this.visible = true;
+    }
+}
+```
+
 ## Without Modal
 
 Mask layer behind the Dialog is configured with the modal property. By default, no modal layer is added.

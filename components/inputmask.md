@@ -208,6 +208,29 @@ export class InputmaskIftalabelDemo {
 }
 ```
 
+## Clear Icon
+
+When showClear is enabled, a clear icon is displayed to clear the value.
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputMaskModule } from '@exhaustive-ui/core/inputmask';
+
+@Component({
+    template: `
+        <div class="card flex justify-center">
+            <p-input-mask mask="99-999999" [(ngModel)]="value" placeholder="99-999999" [showClear]="true" />
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, InputMaskModule]
+})
+export class InputmaskCleariconDemo {
+    value: string | undefined;
+}
+```
+
 ## Sizes
 
 InputMask provides small and large sizes as alternatives to the base.

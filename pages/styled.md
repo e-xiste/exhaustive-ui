@@ -225,16 +225,12 @@ app without a layer has the highest CSS specificity, so you'll be able to overri
 In case ExhaustiveUI components have visual issues in your application, a Reset CSS may be the culprit. CSS layers would be an efficient solution that involves enabling the ExhaustiveUI layer, wrapping the Reset CSS in another layer
 and defining the layer order. This way, your Reset CSS does not get in the way of ExhaustiveUI components.
 
+## Bootstrap
+
+Bootstrap has a `reboot` utility to reset the CSS of the standard elements. If you include it, import it in a layer that comes before the ExhaustiveUI one.
+
 ## Scale
 
 ExhaustiveUI UI component use `rem` units, 1rem equals to the font size of the `html` element which is `16px` by default. Use the root font-size to adjust the size of the components globally. This website uses
 `14px` as the base so it may differ from your application if your base font size is different.
-
-## Bootstrap
-
-Bootstrap has a `reboot` utility to reset the CSS of the standard elements. If you are including this utility, you may give it a layer while importing it.
-
-## Libraries
-
-Example layer configuration for the popular CSS libraries.
 

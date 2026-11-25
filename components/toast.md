@@ -225,6 +225,114 @@ export class ToastStickyDemo {
 }
 ```
 
+## Life
+
+A toast disappears after 3000ms by default, set the life option on either the message or the Toast to override this. The option of the message has precedence.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-toast [life]="10000" />
+            <p-button (click)="showLife()" label="10 Seconds" />
+            <p-button (click)="showLifeLong()" label="20 Seconds" severity="secondary" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ToastModule, ButtonModule],
+    providers: [MessageService]
+})
+export class ToastLifeDemo {
+    private messageService = inject(MessageService);
+
+    showLife() {
+        this.messageService.add({ severity: 'info', summary: 'Life', detail: 'I show for 10000ms' });
+    }
+
+    showLifeLong() {
+        this.messageService.add({ severity: 'info', summary: 'Life', detail: 'I show for 20000ms', life: 20000 });
+    }
+}
+```
+
+## Clear
+
+Clicking the close icon removes a message. The clear method of the messageService does the same programmatically: without arguments it removes all the messages, with a key it only removes the messages of the Toast with the same key.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-toast key="myKey" />
+            <p-button (click)="show()" label="Show" />
+            <p-button (click)="clear()" label="Clear" severity="secondary" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ToastModule, ButtonModule],
+    providers: [MessageService]
+})
+export class ToastClearDemo {
+    private messageService = inject(MessageService);
+
+    show() {
+        this.messageService.add({ key: 'myKey', severity: 'success', summary: 'Message 1', detail: 'Message Content' });
+    }
+
+    clear() {
+        this.messageService.clear('myKey');
+    }
+}
+```
+
+## Target
+
+A page may have multiple Toast components. Set the same key on a message and on a Toast to display the message in that Toast only.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+import { ButtonModule } from '@exhaustive-ui/core/button';
+
+@Component({
+    template: `
+        <div class="card flex justify-center gap-2">
+            <p-toast key="toast1" position="top-right" />
+            <p-toast key="toast2" position="bottom-right" />
+            <p-button (click)="showToast1()" label="Top" />
+            <p-button (click)="showToast2()" label="Bottom" severity="warn" />
+        </div>
+    `,
+    standalone: true,
+    imports: [ToastModule, ButtonModule],
+    providers: [MessageService]
+})
+export class ToastTargetDemo {
+    private messageService = inject(MessageService);
+
+    showToast1() {
+        this.messageService.clear();
+        this.messageService.add({ key: 'toast1', severity: 'success', summary: 'Success', detail: 'key: toast1' });
+    }
+
+    showToast2() {
+        this.messageService.clear();
+        this.messageService.add({ key: 'toast2', severity: 'warn', summary: 'Warning', detail: 'key: toast2' });
+    }
+}
+```
+
 ## Template
 
 Templating allows customizing the content where the message instance is available as the implicit variable.

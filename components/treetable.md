@@ -1728,6 +1728,81 @@ export class TreetableLazyloadDemo implements OnInit {
 }
 ```
 
+## Edit
+
+Cell editing is enabled by adding the ttEditableColumn directive to a cell and defining the input and output templates of a p-tree-table-cell-editor in it. Clicking the cell displays the input, the enter and escape keys or a click outside close it.
+
+```typescript
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeNode } from '@exhaustive-ui/core/api';
+import { InputTextModule } from '@exhaustive-ui/core/inputtext';
+import { TreeTableModule } from '@exhaustive-ui/core/treetable';
+import { NodeService } from '@/service/nodeservice';
+
+interface Column {
+    field: string;
+    header: string;
+}
+
+@Component({
+    template: `
+        <div class="card">
+            <p-tree-table [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template #header let-columns>
+                    <tr>
+                        @for (col of columns; track col) {
+                            <th>{{ col.header }}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
+                    <tr [ttRow]="rowNode">
+                        @for (col of columns; let first = $first; track col) {
+                            <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" [ttEditableColumnDisabled]="first">
+                                @if (first) {
+                                    <div class="flex items-center gap-2">
+                                        <p-tree-table-toggler [rowNode]="rowNode" />
+                                        <span>{{ rowData[col.field] }}</span>
+                                    </div>
+                                } @else {
+                                    <p-tree-table-cell-editor>
+                                        <ng-template #input>
+                                            <input pInputText type="text" [(ngModel)]="rowData[col.field]" [attr.aria-label]="col.header" class="w-full" />
+                                        </ng-template>
+                                        <ng-template #output>{{ rowData[col.field] }}</ng-template>
+                                    </p-tree-table-cell-editor>
+                                }
+                            </td>
+                        }
+                    </tr>
+                </ng-template>
+            </p-tree-table>
+        </div>
+    `,
+    standalone: true,
+    imports: [FormsModule, TreeTableModule, InputTextModule],
+    providers: [NodeService]
+})
+export class TreetableEditDemo implements OnInit {
+    private nodeService = inject(NodeService);
+
+    files!: TreeNode[];
+
+    cols!: Column[];
+
+    ngOnInit() {
+        this.nodeService.getFilesystem().then((files) => (this.files = files));
+
+        this.cols = [
+            { field: 'name', header: 'Name' },
+            { field: 'size', header: 'Size' },
+            { field: 'type', header: 'Type' }
+        ];
+    }
+}
+```
+
 ## Scroll: Vertical
 
 Adding scrollable property along with a scrollHeight for the data viewport enables vertical scrolling with fixed headers.

@@ -119,6 +119,45 @@ export class FileuploadAdvancedDemo {
 }
 ```
 
+## Custom
+
+When customUpload is enabled, the component does not send the files: the Upload button calls uploadHandler with the selected files, to upload them with your own service. Call the clear method once they are processed.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageService } from '@exhaustive-ui/core/api';
+import { FileUpload, FileUploadHandlerEvent, FileUploadModule } from '@exhaustive-ui/core/fileupload';
+import { ToastModule } from '@exhaustive-ui/core/toast';
+
+@Component({
+    template: `
+        <div class="card">
+            <p-toast />
+            <p-file-upload #uploader name="demo[]" [customUpload]="true" (uploadHandler)="upload($event, uploader)" accept="image/*" [multiple]="true" maxFileSize="1000000">
+                <ng-template #empty>
+                    <div>Drag and drop files to here to upload.</div>
+                </ng-template>
+            </p-file-upload>
+        </div>
+    `,
+    standalone: true,
+    imports: [FileUploadModule, ToastModule],
+    providers: [MessageService]
+})
+export class FileuploadCustomDemo {
+    private messageService = inject(MessageService);
+
+    async upload(event: FileUploadHandlerEvent, uploader: FileUpload) {
+        for (const file of event.files) {
+            const content = await file.arrayBuffer();
+            // send the content with your own service here
+            this.messageService.add({ severity: 'info', summary: file.name, detail: `${content.byteLength} bytes processed` });
+        }
+        uploader.clear();
+    }
+}
+```
+
 ## Template
 
 ```typescript
