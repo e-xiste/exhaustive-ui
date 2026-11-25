@@ -1,5 +1,7 @@
 {
     "$schema": "https://context7.com/schema/context7.json",
+    "url": "https://context7.com/e-xiste/exhaustive-ui",
+    "public_key": "pk_2IqyaaTfCGDTiJCj5Otg4",
     "projectTitle": "ExhaustiveUI",
     "description": "Open source (MIT) Angular UI component library for Angular 22: 80+ accessible components built on Signals (table, form fields, overlays, scheduler, kanban), with design tokens and theme presets. Fork of PrimeNG v21 by way of Optimus UI, with migration schematics for both.",
     "branch": "docs-markdown",
